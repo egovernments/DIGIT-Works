@@ -33,6 +33,8 @@ mixin _$MusterCreateEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,
@@ -61,6 +63,8 @@ mixin _$MusterCreateEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,
@@ -89,6 +93,8 @@ mixin _$MusterCreateEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,
@@ -213,6 +219,8 @@ abstract class _$$CreateMusterEventCopyWith<$Res>
       String registerNo,
       String registerName,
       int startDate,
+      String? serviceCode,
+      String? referenceId,
       String? projectName,
       String? projectDesc,
       String? locality,
@@ -239,6 +247,8 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
     Object? registerNo = null,
     Object? registerName = null,
     Object? startDate = null,
+    Object? serviceCode = freezed,
+    Object? referenceId = freezed,
     Object? projectName = freezed,
     Object? projectDesc = freezed,
     Object? locality = freezed,
@@ -275,6 +285,14 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
           ? _value.startDate
           : startDate // ignore: cast_nullable_to_non_nullable
               as int,
+      serviceCode: freezed == serviceCode
+          ? _value.serviceCode
+          : serviceCode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      referenceId: freezed == referenceId
+          ? _value.referenceId
+          : referenceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       projectName: freezed == projectName
           ? _value.projectName
           : projectName // ignore: cast_nullable_to_non_nullable
@@ -314,6 +332,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       required this.registerNo,
       required this.registerName,
       required this.startDate,
+      this.serviceCode,
+      this.referenceId,
       this.projectName,
       this.projectDesc,
       this.locality,
@@ -337,6 +357,10 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   @override
   final int startDate;
   @override
+  final String? serviceCode;
+  @override
+  final String? referenceId;
+  @override
   final String? projectName;
   @override
   final String? projectDesc;
@@ -358,7 +382,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
 
   @override
   String toString() {
-    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, projectName: $projectName, projectDesc: $projectDesc, locality: $locality, ward: $ward, amount: $amount, skillsList: $skillsList)';
+    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, serviceCode: $serviceCode, referenceId: $referenceId, projectName: $projectName, projectDesc: $projectDesc, locality: $locality, ward: $ward, amount: $amount, skillsList: $skillsList)';
   }
 
   @override
@@ -379,6 +403,10 @@ class _$CreateMusterEvent implements CreateMusterEvent {
                 other.registerName == registerName) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
+            (identical(other.serviceCode, serviceCode) ||
+                other.serviceCode == serviceCode) &&
+            (identical(other.referenceId, referenceId) ||
+                other.referenceId == referenceId) &&
             (identical(other.projectName, projectName) ||
                 other.projectName == projectName) &&
             (identical(other.projectDesc, projectDesc) ||
@@ -401,6 +429,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       registerNo,
       registerName,
       startDate,
+      serviceCode,
+      referenceId,
       projectName,
       projectDesc,
       locality,
@@ -425,6 +455,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,
@@ -450,6 +482,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
         registerNo,
         registerName,
         startDate,
+        serviceCode,
+        referenceId,
         projectName,
         projectDesc,
         locality,
@@ -469,6 +503,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,
@@ -494,6 +530,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
         registerNo,
         registerName,
         startDate,
+        serviceCode,
+        referenceId,
         projectName,
         projectDesc,
         locality,
@@ -513,6 +551,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,
@@ -540,6 +580,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
           registerNo,
           registerName,
           startDate,
+          serviceCode,
+          referenceId,
           projectName,
           projectDesc,
           locality,
@@ -591,6 +633,8 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
       required final String registerNo,
       required final String registerName,
       required final int startDate,
+      final String? serviceCode,
+      final String? referenceId,
       final String? projectName,
       final String? projectDesc,
       final String? locality,
@@ -610,6 +654,8 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
   @override
   String get registerName;
   int get startDate;
+  String? get serviceCode;
+  String? get referenceId;
   String? get projectName;
   String? get projectDesc;
   String? get locality;
@@ -780,6 +826,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,
@@ -812,6 +860,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,
@@ -844,6 +894,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String registerNo,
             String registerName,
             int startDate,
+            String? serviceCode,
+            String? referenceId,
             String? projectName,
             String? projectDesc,
             String? locality,

@@ -101,7 +101,7 @@ class WorkDetailsCard extends StatelessWidget {
       String? contractNumber,
       String? registerNumber}) {
     var labelList = <Widget>[];
-    if (isWorkOrderInbox) {
+    if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
         child: SvgPicture.asset('assets/svg/new_tag.svg'),
