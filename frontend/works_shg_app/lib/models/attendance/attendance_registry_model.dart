@@ -24,6 +24,8 @@ class AttendanceRegister with _$AttendanceRegister {
     String? id,
     String? tenantId,
     String? registerNumber,
+    String? serviceCode,
+    String? referenceId,
     String? name,
     int? startDate,
     int? endDate,

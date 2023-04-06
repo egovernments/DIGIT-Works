@@ -559,6 +559,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                   tenantId: widget.tenantId,
                                                                                                                   registerId: widget.id,
                                                                                                                   startDate: selectedDateRange!.startDate,
+                                                                                                                  serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode,
+                                                                                                                  referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId,
                                                                                                                   orgName: individualAttendanceRegisterModel.attendanceRegister
                                                                                                                       ?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA',
                                                                                                                   contractId: individualAttendanceRegisterModel.attendanceRegister

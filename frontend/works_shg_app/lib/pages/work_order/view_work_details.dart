@@ -21,6 +21,7 @@ import '../../widgets/Back.dart';
 import '../../widgets/SideBar.dart';
 import '../../widgets/atoms/app_bar_logo.dart';
 import '../../widgets/atoms/attachments.dart';
+import '../../widgets/atoms/digit_timeline.dart';
 import '../../widgets/drawer_wrapper.dart';
 import '../../widgets/loaders.dart' as shg_loader;
 
@@ -107,10 +108,15 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                       loaded: (ContractsModel? contracts) {
                         if (contracts?.contracts != null) {
                           termsNCond = contracts!.contracts!.first
-                              .additionalDetails!.termsAndConditions!
-                              .where((w) => w != null)
-                              .map((e) => e!.description.toString())
-                              .toList();
+                                      .additionalDetails!.termsAndConditions !=
+                                  null
+                              ? contracts.contracts!.first.additionalDetails!
+                                  .termsAndConditions!
+                                  .where(
+                                      (w) => w != null && w.description != "")
+                                  .map((e) => e!.description.toString())
+                                  .toList()
+                              : [];
                           workOrderList = contracts.contracts!
                               .map((e) => {
                                     'cardDetails': {
@@ -258,6 +264,10 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                               .workOrder
                                                               .contractDetails),
                                                 ),
+                                                const DigitCard(
+                                                    child: DigitTimeline(
+                                                  timelineOptions: [],
+                                                )),
                                                 WorkDetailsCard(
                                                   workFlowDetails,
                                                   viewWorkOrder: true,
@@ -328,7 +338,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                                     label: t.translate(
                                                                         i18.common.close),
                                                                     action: (context) => Navigator.of(context, rootNavigator: true).pop()),
-                                                            isScrollable: true)),
+                                                                isScrollable: true)),
                                                     align: Alignment.centerLeft,
                                                   ),
                                                 ),

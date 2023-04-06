@@ -152,6 +152,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                 )),
             kIsWeb && FilePickerData.bytes != null
                 ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         t.translate(i18.common.photoGraph),
@@ -175,6 +176,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                   )
                 : !kIsWeb && FilePickerData.imageFile != null
                     ? Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
                             t.translate(i18.common.photoGraph),
