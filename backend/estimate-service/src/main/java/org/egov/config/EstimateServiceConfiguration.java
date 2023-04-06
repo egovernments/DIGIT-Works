@@ -66,6 +66,13 @@ public class EstimateServiceConfiguration {
     @Value("${estimate.workflow.module.name}")
     private String estimateWFModuleName;
 
+    //HRMS
+    @Value("${egov.hrms.host}")
+    private String hrmsHost;
+
+    @Value("${egov.hrms.search.endpoint}")
+    private String hrmsEndPoint;
+
 
     //Works -Project management system Config
     @Value("${works.project.service.host}")
@@ -73,6 +80,37 @@ public class EstimateServiceConfiguration {
 
     @Value("${works.project.service.path}")
     private String worksProjectManagementSystemPath;
+
+    //Location Service
+    @Value("${egov.location.host}")
+    private String locationHost;
+
+    @Value("${egov.location.context.path}")
+    private String locationContextPath;
+
+    @Value("${egov.location.endpoint}")
+    private String locationEndpoint;
+
+    //Notification
+    @Value("${notification.sms.enabled}")
+    private Boolean isSMSEnabled;
+
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotifTopic;
+
+    //Localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.localization.statelevel}")
+    private Boolean isLocalizationStateLevel;
+
 
     @PostConstruct
     public void initialize() {
