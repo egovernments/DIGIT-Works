@@ -45,7 +45,7 @@ class ORGSearchState with _$ORGSearchState {
   const ORGSearchState._();
   const factory ORGSearchState.initial() = _Initial;
   const factory ORGSearchState.loading() = _Loading;
-  const factory ORGSearchState.loaded(OrganisationListModel? musterRollsModel) =
-      _Loaded;
+  const factory ORGSearchState.loaded(
+      OrganisationListModel? organisationListModel) = _Loaded;
   const factory ORGSearchState.error() = _Error;
 }

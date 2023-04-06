@@ -32,22 +32,22 @@ class OrganisationListModelMapperElement
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   OrganisationListModel fromMap(Map<String, dynamic> map) =>
       OrganisationListModel(
-          organisationIds: container.$getOpt(map, 'organisationIds'));
+          organisations: container.$getOpt(map, 'organisations'));
 
   @override
   Function get encoder => encode;
   dynamic encode(OrganisationListModel v) => toMap(v);
   Map<String, dynamic> toMap(OrganisationListModel o) =>
-      {'organisationIds': container.$enc(o.organisationIds, 'organisationIds')};
+      {'organisations': container.$enc(o.organisations, 'organisations')};
 
   @override
   String stringify(OrganisationListModel self) =>
-      'OrganisationListModel(organisationIds: ${container.asString(self.organisationIds)})';
+      'OrganisationListModel(organisations: ${container.asString(self.organisations)})';
   @override
-  int hash(OrganisationListModel self) => container.hash(self.organisationIds);
+  int hash(OrganisationListModel self) => container.hash(self.organisations);
   @override
   bool equals(OrganisationListModel self, OrganisationListModel other) =>
-      container.isEqual(self.organisationIds, other.organisationIds);
+      container.isEqual(self.organisations, other.organisations);
 }
 
 mixin OrganisationListModelMappable {
@@ -87,8 +87,8 @@ abstract class OrganisationListModelCopyWith<$R,
           Then<OrganisationListModel, $Out2> t, Then<$Out2, $R2> t2);
   ListCopyWith<$R, OrganisationModel,
           OrganisationModelCopyWith<$R, OrganisationModel, OrganisationModel>>?
-      get organisationIds;
-  $R call({List<OrganisationModel>? organisationIds});
+      get organisations;
+  $R call({List<OrganisationModel>? organisations});
 }
 
 class _OrganisationListModelCopyWithImpl<$R, $Out extends OrganisationListModel>
@@ -104,15 +104,15 @@ class _OrganisationListModelCopyWithImpl<$R, $Out extends OrganisationListModel>
   @override
   ListCopyWith<$R, OrganisationModel,
           OrganisationModelCopyWith<$R, OrganisationModel, OrganisationModel>>?
-      get organisationIds => $value.organisationIds != null
+      get organisations => $value.organisations != null
           ? ListCopyWith(
-              $value.organisationIds!,
+              $value.organisations!,
               (v, t) => v.copyWith.chain<$R, OrganisationModel>($identity, t),
-              (v) => call(organisationIds: v))
+              (v) => call(organisations: v))
           : null;
   @override
-  $R call({Object? organisationIds = $none}) => $then(OrganisationListModel(
-      organisationIds: or(organisationIds, $value.organisationIds)));
+  $R call({Object? organisations = $none}) => $then(OrganisationListModel(
+      organisations: or(organisations, $value.organisations)));
 }
 
 class OrganisationModelMapper extends MapperBase<OrganisationModel> {

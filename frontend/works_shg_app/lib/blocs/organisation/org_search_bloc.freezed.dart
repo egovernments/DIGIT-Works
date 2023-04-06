@@ -234,7 +234,8 @@ mixin _$ORGSearchState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OrganisationListModel? musterRollsModel) loaded,
+    required TResult Function(OrganisationListModel? organisationListModel)
+        loaded,
     required TResult Function() error,
   }) =>
       throw _privateConstructorUsedError;
@@ -242,7 +243,7 @@ mixin _$ORGSearchState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult? Function(OrganisationListModel? organisationListModel)? loaded,
     TResult? Function()? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -250,7 +251,7 @@ mixin _$ORGSearchState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult Function(OrganisationListModel? organisationListModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) =>
@@ -345,7 +346,8 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OrganisationListModel? musterRollsModel) loaded,
+    required TResult Function(OrganisationListModel? organisationListModel)
+        loaded,
     required TResult Function() error,
   }) {
     return initial();
@@ -356,7 +358,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult? Function(OrganisationListModel? organisationListModel)? loaded,
     TResult? Function()? error,
   }) {
     return initial?.call();
@@ -367,7 +369,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult Function(OrganisationListModel? organisationListModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
@@ -465,7 +467,8 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OrganisationListModel? musterRollsModel) loaded,
+    required TResult Function(OrganisationListModel? organisationListModel)
+        loaded,
     required TResult Function() error,
   }) {
     return loading();
@@ -476,7 +479,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult? Function(OrganisationListModel? organisationListModel)? loaded,
     TResult? Function()? error,
   }) {
     return loading?.call();
@@ -487,7 +490,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult Function(OrganisationListModel? organisationListModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
@@ -545,7 +548,7 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({OrganisationListModel? musterRollsModel});
+  $Res call({OrganisationListModel? organisationListModel});
 }
 
 /// @nodoc
@@ -558,12 +561,12 @@ class __$$_LoadedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? musterRollsModel = freezed,
+    Object? organisationListModel = freezed,
   }) {
     return _then(_$_Loaded(
-      freezed == musterRollsModel
-          ? _value.musterRollsModel
-          : musterRollsModel // ignore: cast_nullable_to_non_nullable
+      freezed == organisationListModel
+          ? _value.organisationListModel
+          : organisationListModel // ignore: cast_nullable_to_non_nullable
               as OrganisationListModel?,
     ));
   }
@@ -572,14 +575,14 @@ class __$$_LoadedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.musterRollsModel) : super._();
+  const _$_Loaded(this.organisationListModel) : super._();
 
   @override
-  final OrganisationListModel? musterRollsModel;
+  final OrganisationListModel? organisationListModel;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ORGSearchState.loaded(musterRollsModel: $musterRollsModel)';
+    return 'ORGSearchState.loaded(organisationListModel: $organisationListModel)';
   }
 
   @override
@@ -587,7 +590,8 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'ORGSearchState.loaded'))
-      ..add(DiagnosticsProperty('musterRollsModel', musterRollsModel));
+      ..add(
+          DiagnosticsProperty('organisationListModel', organisationListModel));
   }
 
   @override
@@ -595,12 +599,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
-            (identical(other.musterRollsModel, musterRollsModel) ||
-                other.musterRollsModel == musterRollsModel));
+            (identical(other.organisationListModel, organisationListModel) ||
+                other.organisationListModel == organisationListModel));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, musterRollsModel);
+  int get hashCode => Object.hash(runtimeType, organisationListModel);
 
   @JsonKey(ignore: true)
   @override
@@ -613,10 +617,11 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OrganisationListModel? musterRollsModel) loaded,
+    required TResult Function(OrganisationListModel? organisationListModel)
+        loaded,
     required TResult Function() error,
   }) {
-    return loaded(musterRollsModel);
+    return loaded(organisationListModel);
   }
 
   @override
@@ -624,10 +629,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult? Function(OrganisationListModel? organisationListModel)? loaded,
     TResult? Function()? error,
   }) {
-    return loaded?.call(musterRollsModel);
+    return loaded?.call(organisationListModel);
   }
 
   @override
@@ -635,12 +640,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult Function(OrganisationListModel? organisationListModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(musterRollsModel);
+      return loaded(organisationListModel);
     }
     return orElse();
   }
@@ -684,11 +689,11 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
 }
 
 abstract class _Loaded extends ORGSearchState {
-  const factory _Loaded(final OrganisationListModel? musterRollsModel) =
+  const factory _Loaded(final OrganisationListModel? organisationListModel) =
       _$_Loaded;
   const _Loaded._() : super._();
 
-  OrganisationListModel? get musterRollsModel;
+  OrganisationListModel? get organisationListModel;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -738,7 +743,8 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OrganisationListModel? musterRollsModel) loaded,
+    required TResult Function(OrganisationListModel? organisationListModel)
+        loaded,
     required TResult Function() error,
   }) {
     return error();
@@ -749,7 +755,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult? Function(OrganisationListModel? organisationListModel)? loaded,
     TResult? Function()? error,
   }) {
     return error?.call();
@@ -760,7 +766,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OrganisationListModel? musterRollsModel)? loaded,
+    TResult Function(OrganisationListModel? organisationListModel)? loaded,
     TResult Function()? error,
     required TResult orElse(),
   }) {

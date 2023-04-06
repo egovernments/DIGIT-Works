@@ -154,9 +154,9 @@ class WorkDetailsCard extends StatelessWidget {
                   elevatedButtonLabel,
                   outLinedCallBack: () => DigitDialog.show(context,
                       options: DigitDialogOptions(
-                          title: AppLocalizations.of(context)
+                          titleText: AppLocalizations.of(context)
                               .translate(i18.common.warning),
-                          content: AppLocalizations.of(context)
+                          contentText: AppLocalizations.of(context)
                               .translate(i18.workOrder.warningMsg),
                           primaryAction: DigitDialogActions(
                             label: AppLocalizations.of(context)
