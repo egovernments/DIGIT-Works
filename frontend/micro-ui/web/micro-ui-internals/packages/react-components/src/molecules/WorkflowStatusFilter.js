@@ -1,45 +1,48 @@
-import React,{Fragment} from 'react'
-import CheckBox from "../atoms/CheckBox"
-import { Loader } from '../atoms/Loader';
+import React, { Fragment,useEffect,useState } from "react";
+import CheckBox from "../atoms/CheckBox";
+import { Loader } from "../atoms/Loader";
 
-const WorkflowStatusFilter = ({props,t,populators,formData}) => {
+const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse }) => {
+//from inbox response get the statusMap and show the relevant statuses
+  //here need to filter these options based on logged in user(and test based on single roles in every inbox)(new requirement from vasanth)
 
-    const { data, isLoading } = Digit.Hooks.useApplicationStatusGeneral({ businessServices: [populators.businessService] }, {});
+  
+  const [statusMap,setStatusMap] = useState(null)
 
-    if(isLoading) return <Loader />
+  useEffect(() => {
+    if(inboxResponse) {
+      setStatusMap(inboxResponse.statusMap.map(row => {
+       return {
+         uuid:row.statusid,
+         state: row.applicationstatus
+       }
+      }))
+    }
+  }, [inboxResponse])
+  
+
+  if (!statusMap) return <Loader />;
 
   return (
     <>
-        {data?.userRoleStates?.map(row=>{
-            return <CheckBox 
-                onChange={(e) => {
-                    const obj = {
-                        ...props.value,
-                        [e.target.value]:e.target.checked
-                    }
-                    props.onChange(obj)
-                }}
-                value={row.uuid}
-                checked={formData?.[populators.name]?.[row.uuid]}
-                label={t(`${populators.labelPrefix}${row?.state}`)}
-            />
-        })}
-        {data?.otherRoleStates?.map(row => {
-            return <CheckBox
-                onChange={(e) => {
-                    const obj = {
-                        ...props.value,
-                        [e.target.value]: e.target.checked
-                    }
-                    props.onChange(obj)
-                }}
-                value={row.uuid}
-                checked={formData?.[populators.name]?.[row.uuid]}
-                label={t(`${populators.labelPrefix}${row?.state}`)}
-            />
-        })}
+        {statusMap?.map((row) => {
+        return (
+          <CheckBox
+            onChange={(e) => {
+              const obj = {
+                ...props.value,
+                [e.target.value]: e.target.checked,
+              };
+              props.onChange(obj);
+            }}
+            value={row.uuid}
+            checked={formData?.[populators.name]?.[row.uuid]}
+            label={t(`${populators.labelPrefix}${row?.state}`)}
+          />
+        );
+      })}
     </>
   )
-}
+};
 
-export default WorkflowStatusFilter
+export default WorkflowStatusFilter;
