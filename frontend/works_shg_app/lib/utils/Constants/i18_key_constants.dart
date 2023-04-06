@@ -113,6 +113,11 @@ class Common {
   String get info => 'ES_COMMON_INFO';
   String get workOrderInfo => 'WORK_ORDER_INFO';
   String get days => 'COMMON_DAYS';
+  String get orgId => 'COMMON_ORG_ID';
+  String get orgName => 'COMMON_ORG_NAME';
+  String get registeredDept => 'REGISTERED_WITH_DEPT';
+  String get deptRegNo => 'DEPT_REG_NO';
+  String get dateOfIncorporation => 'DATE_OF_INCORP';
 }
 
 class Home {

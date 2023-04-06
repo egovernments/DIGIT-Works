@@ -295,9 +295,12 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                         options:
                                                             DigitDialogOptions(
                                                                 title: Text(t.translate(i18.common.termsAndConditions),
-                                                                    style: Theme.of(context)
-                                                                        .textTheme
-                                                                        .displayMedium),
+                                                                    style: const TextStyle(
+                                                                        fontWeight: FontWeight.w700,
+                                                                        fontSize: 16,
+                                                                        fontFamily: 'Roboto Condensed',
+                                                                        fontStyle: FontStyle.normal,
+                                                                        color: Color.fromRGBO(11, 12, 12, 1))),
                                                                 content: Column(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
@@ -396,10 +399,10 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                                   context,
                                                                   options:
                                                                       DigitDialogOptions(
-                                                                          title: AppLocalizations.of(context).translate(i18
+                                                                          titleText: AppLocalizations.of(context).translate(i18
                                                                               .common
                                                                               .warning),
-                                                                          content: AppLocalizations.of(context).translate(i18
+                                                                          contentText: AppLocalizations.of(context).translate(i18
                                                                               .workOrder
                                                                               .warningMsg),
                                                                           primaryAction:

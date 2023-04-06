@@ -5,8 +5,8 @@ part 'organisation_model.mapper.dart';
 
 @MappableClass()
 class OrganisationListModel with OrganisationListModelMappable {
-  List<OrganisationModel>? organisationIds;
-  OrganisationListModel({this.organisationIds});
+  List<OrganisationModel>? organisations;
+  OrganisationListModel({this.organisations});
 }
 
 @MappableClass()

@@ -14,7 +14,8 @@ class BankAccountDetails with BankAccountDetailsMappable {
   String? tenantId;
   String? referenceId;
   String? id;
+  String? indID;
 
   BankAccountDetails(
-      {this.id, this.tenantId, this.referenceId, this.serviceCode});
+      {this.id, this.tenantId, this.referenceId, this.serviceCode, this.indID});
 }
