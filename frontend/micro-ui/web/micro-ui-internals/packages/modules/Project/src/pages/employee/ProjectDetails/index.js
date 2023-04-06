@@ -20,6 +20,8 @@ const ProjectDetails = () => {
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
     const [sessionFormData, clearSessionFormData] = projectSession;
     const location = useLocation();
+    let isProjectModifier = false;
+    let isEstimateViewerAndCreator = false;
     const [actionsMenu, setActionsMenu] = useState([ 
         {
             name : "MODIFY_PROJECT"
@@ -103,39 +105,47 @@ const ProjectDetails = () => {
     const { data : estimates, isError : isEstimateSearchError } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
 
     useEffect(()=>{
+        const projectModifierRoles = ["PROJECT_CREATOR"];
+        isProjectModifier = projectModifierRoles?.some(role=>loggedInUserRoles?.includes(role));
+    },[loggedInUserRoles]);
+
+    useEffect(()=>{
+        const estimateViewerAndCreatorRole = ["ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER", "ESTIMATE_VIEWER"];
+        isEstimateViewerAndCreator = estimateViewerAndCreatorRole?.some(role=>loggedInUserRoles?.includes(role));
+    },[loggedInUserRoles]);
+
+    useEffect(()=>{
         let isUserEstimateCreator = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
-        if(isEstimateSearchError) {
+        if(isEstimateSearchError && isEstimateViewerAndCreator) {
             setToast({show : true, label : t("COMMON_ERROR_FETCHING_ESTIMATE_DETAILS"), error : true});
             setActionsMenu([]);
             setHideActionBar(true);
         }else {
-            setHideActionBar(false);
             if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED")) {
                 if(isUserEstimateCreator) {
+                    setHideActionBar(false);
                     setActionsMenu([
                         {
                             name : "CREATE_ESTIMATE"
-                        },
-                        {
-                            name : "MODIFY_PROJECT"
                         }
                     ])
                 }else {
-                    setActionsMenu([
-                        {
-                            name : "MODIFY_PROJECT"
-                        }
-                    ])
+                    setHideActionBar(true);
+                    setActionsMenu([])
                 }
-            }else{
+            }else if(isEstimateViewerAndCreator){
+                setHideActionBar(false);
                 setActionsMenu([
                     {
                         name : "VIEW_ESTIMATE"
-                    },
-                    {
-                        name : "MODIFY_PROJECT"
                     }
                 ])
+            }
+            if(isProjectModifier) {
+                setHideActionBar(false);
+                setActionsMenu((prev)=>[...prev, {
+                    name : "MODIFY_PROJECT"
+                }])
             }
         }
     },[estimates, isEstimateSearchError]);
