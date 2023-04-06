@@ -40,6 +40,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
                 values: allDocuments?.map((document) => {
                    if(document?.status !== "INACTIVE") {
                     if(document?.fileStoreId){
+                            //ESTIMATE FILES
                             return {
                                 title: document?.fileType,
                                 documentType: document?.fileName,
@@ -47,10 +48,11 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
                                 fileStoreId: document?.fileStoreId,
                             };
                         }
+                        //WO FILES
                         return {
-                            title: document?.documentType,
+                            title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
                             documentType: document?.documentType,
-                            documentUid: document?.documentUid,
+                            documentUid: document?.fileStore,
                             fileStoreId: document?.fileStore,
                         };
                    }

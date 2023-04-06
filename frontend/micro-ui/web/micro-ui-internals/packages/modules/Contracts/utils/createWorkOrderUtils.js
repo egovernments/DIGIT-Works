@@ -22,7 +22,7 @@ const documentType = {
     payload_modal.id = document?.[1]?.['file']?.['id'];
     payload_modal.key = docType;
     payload_modal.additionalDetails = {
-      fileName : document?.[1]?.['file']?.['name'],
+      fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] : documentType?.[docType],
       otherCategoryName : otherDocFileName
     }
     return payload_modal;
@@ -46,13 +46,15 @@ const documentType = {
     // if existing docs exists
     if(documentDefaultValue) {
       for(let defaultDocKey of Object.keys(documentDefaultValue)) {
+        debugger;
         let isExist = false;
         for(let uploadedDocObject of documents_payload_list) {
+          //checks if default and new file exist for same file category
           if(defaultDocKey === uploadedDocObject?.key && defaultDocKey !== "doc_others_name") {
   
             //new file being uploaded, if ID is undefined ( Update Case )
             if(!uploadedDocObject?.id) {
-              //if old file exists, make it inactive
+              //if old file exists, make old file as inactive
               let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
               documents_payload_list.push(payload_modal);
             }
