@@ -25,7 +25,6 @@ const ApplicationDetails = (props) => {
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
   
-  const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
 
   const {
     applicationDetails,
@@ -56,7 +55,9 @@ const ApplicationDetails = (props) => {
     setshowEditTitle = () => {},
     customClass,
     modify,
-    setModify
+    setModify,
+    saveAttendanceState,
+    setSaveAttendanceState
   } = props;
   
   
