@@ -14,7 +14,8 @@ import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
 import LocationDropdownWrapper from './LocationDropdownWrapper';
 import WorkflowStatusFilter from './WorkflowStatusFilter';
 import ApiDropdown from './ApiDropdown';
-const RenderFormFields = (props) => {
+const RenderFormFields = ({data,...props}) => {
+  
     const { t } = useTranslation();
     const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
     
@@ -255,6 +256,7 @@ const RenderFormFields = (props) => {
                   return (
                     <div style={{ display: "grid", gridAutoFlow: "row" }}>
                       <WorkflowStatusFilter
+                        inboxResponse={data}
                         props={props}
                         populators={populators}
                         t={t}
