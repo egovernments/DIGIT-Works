@@ -61,7 +61,7 @@ public class AddressTestBuilder {
                 .street("Street-1")
                 .boundaryType("Ward")
                 .boundaryCode("B1")
-                .geoLocation(null);
+                .geoLocation(getGeoLocation());
         return this;
     }
 
