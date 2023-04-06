@@ -46,7 +46,6 @@ const documentType = {
     // if existing docs exists
     if(documentDefaultValue) {
       for(let defaultDocKey of Object.keys(documentDefaultValue)) {
-        debugger;
         let isExist = false;
         for(let uploadedDocObject of documents_payload_list) {
           //checks if default and new file exist for same file category
