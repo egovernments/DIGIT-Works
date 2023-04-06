@@ -26,6 +26,8 @@ _$_AttendanceRegister _$$_AttendanceRegisterFromJson(
       id: json['id'] as String?,
       tenantId: json['tenantId'] as String?,
       registerNumber: json['registerNumber'] as String?,
+      serviceCode: json['serviceCode'] as String?,
+      referenceId: json['referenceId'] as String?,
       name: json['name'] as String?,
       startDate: json['startDate'] as int?,
       endDate: json['endDate'] as int?,
@@ -52,6 +54,8 @@ Map<String, dynamic> _$$_AttendanceRegisterToJson(
       'id': instance.id,
       'tenantId': instance.tenantId,
       'registerNumber': instance.registerNumber,
+      'serviceCode': instance.serviceCode,
+      'referenceId': instance.referenceId,
       'name': instance.name,
       'startDate': instance.startDate,
       'endDate': instance.endDate,
@@ -73,6 +77,9 @@ _$_AttendanceRegisterAdditionalDetails
           projectId: json['projectId'] as String?,
           projectName: json['projectName'] as String?,
           projectType: json['projectType'] as String?,
+          projectDesc: json['projectDesc'] as String?,
+          locality: json['locality'] as String?,
+          ward: json['ward'] as String?,
           amount: json['amount'] as int?,
         );
 
@@ -86,6 +93,9 @@ Map<String, dynamic> _$$_AttendanceRegisterAdditionalDetailsToJson(
       'projectId': instance.projectId,
       'projectName': instance.projectName,
       'projectType': instance.projectType,
+      'projectDesc': instance.projectDesc,
+      'locality': instance.locality,
+      'ward': instance.ward,
       'amount': instance.amount,
     };
 

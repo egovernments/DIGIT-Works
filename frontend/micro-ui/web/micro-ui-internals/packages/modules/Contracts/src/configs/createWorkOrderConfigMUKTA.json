@@ -14,6 +14,25 @@
               "body": [
                 {
                   "inline": true,
+                  "label": "WORKS_ORDER_NO",
+                  "isMandatory": false,
+                  "key": "basicDetails_workOrdernumber",
+                  "type": "text",
+                  "disable": true,
+                  "appendColon": true,
+                  "preProcess" : {
+                    "updateDependent" : ["populators.customStyle.display"]
+                  },
+                  "populators": {
+                    "name": "basicDetails_workOrdernumber",
+                    "customStyle" : {
+                      "display" : "none"
+                    },
+                    "customClass": "fc-header-texts"
+                  }
+                },
+                {
+                  "inline": true,
                   "label": "WORKS_PROJECT_ID",
                   "isMandatory": false,
                   "key": "basicDetails_projectID",
@@ -110,6 +129,11 @@
                   "type": "radioordropdown",
                   "label": "COMMON_ROLE_OF_CBO",
                   "disable": false,
+                  "preProcess": {
+                    "updateDependent": [
+                      "disable", "populators.options"
+                    ]
+                  },
                   "populators": {
                     "name": "roleOfCBO",
                     "optionsKey": "name",
@@ -118,11 +142,7 @@
                     "optionsCustomStyle": {
                       "top": "2.5rem"
                     },
-                    "mdmsConfig": {
-                      "masterName": "CBORoles",
-                      "moduleName": "works",
-                      "localePrefix": "COMMON_MASTERS"
-                    }
+                    "options" : []
                   }
                 },
                 {

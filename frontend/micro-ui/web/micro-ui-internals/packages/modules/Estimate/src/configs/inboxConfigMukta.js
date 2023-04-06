@@ -34,7 +34,6 @@ const inboxConfigMukta = () => {
                     "defaultValues": {
                         "estimateNumber": "",
                         "projectId": "",
-                        "department": "",
                         "projectType": ""
                     },
                     "fields": [
@@ -173,7 +172,7 @@ const inboxConfigMukta = () => {
                     ],
                     "label": "MUKTA",
                     "logoIcon": {
-                        "component": "PropertyHouse",
+                        "component": "MuktaIcon",
                         "customClass": "inbox-search-icon--projects"
                     }
                 },
@@ -186,7 +185,7 @@ const inboxConfigMukta = () => {
                     "headerStyle": null,
                     "primaryLabel": "Filter",
                     "secondaryLabel": "",
-                    "minReqFields": 1,
+                    "minReqFields": 0,
                     "defaultValues": {
                         "state": "",
                         "ward": [],

@@ -144,18 +144,20 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                   children: [
                     getItemWidget(context,
                         title: t.translate(i18.wageSeeker.skillCategory),
-                        description: item.type.toString()),
+                        description: t.translate(item.level.toString())),
                     getItemWidget(context,
                         title: t.translate(i18.wageSeeker.skill),
-                        description: item.type.toString()),
+                        description: t.translate(item.type.toString())),
                   ],
                 )),
             kIsWeb && FilePickerData.bytes != null
                 ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         t.translate(i18.common.photoGraph),
-                        style: Theme.of(context).textTheme.displayMedium,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700),
                         textAlign: TextAlign.left,
                       ),
                       const SizedBox(
@@ -174,10 +176,12 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                   )
                 : !kIsWeb && FilePickerData.imageFile != null
                     ? Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
                             t.translate(i18.common.photoGraph),
-                            style: Theme.of(context).textTheme.displayMedium,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w700),
                             textAlign: TextAlign.left,
                           ),
                           const SizedBox(

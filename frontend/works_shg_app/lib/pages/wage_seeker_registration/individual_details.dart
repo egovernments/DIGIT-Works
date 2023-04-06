@@ -6,7 +6,6 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/wage_seeker/financial_details_model.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
-import 'package:works_shg_app/utils/models.dart';
 import 'package:works_shg_app/utils/models/file_picker_data.dart';
 import 'package:works_shg_app/widgets/atoms/radio_button_list.dart';
 
@@ -41,6 +40,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
   String aadhaarNoKey = 'aadhaarNo';
   String relationshipKey = 'relationship';
   String dobKey = 'dob';
+  String genderKey = 'gender';
   String socialCategoryKey = 'socialCategory';
   String mobileKey = 'mobileNo';
 
@@ -65,8 +65,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
         .wageSeekerMDMS!.commonMDMS!.socialCategory!
         .map((e) => (e.code))
         .toList();
-    List<KeyValue> gender = widget.wageSeekerMDMS!.commonMDMS!.genderType!
-        .map((e) => KeyValue(t.translate(e.code), e.code))
+    List<String> gender = widget.wageSeekerMDMS!.commonMDMS!.genderType!
+        .map((e) => (e.code))
         .toList();
 
     return ReactiveFormBuilder(
@@ -79,6 +79,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
           form.control(relationshipKey).value = individualDetails?.relationship;
           form.control(socialCategoryKey).value =
               individualDetails?.socialCategory;
+          form.control(genderKey).value = individualDetails?.gender;
           genderController = individualDetails!.gender.toString();
           form.control(dobKey).value = individualDetails?.dateOfBirth;
           form.control(mobileKey).value = individualDetails?.mobileNumber;
@@ -122,6 +123,9 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       formControlName: nameKey,
                       isRequired: true,
                       label: t.translate(i18.common.nameLabel),
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
+                      ],
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.nameRequired,
@@ -132,6 +136,9 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       formControlName: fatherNameKey,
                       isRequired: true,
                       label: t.translate(i18.common.guardianName),
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
+                      ],
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.fatherNameRequired,
@@ -172,32 +179,29 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                     ),
                     StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
-                      return DigitRadioButtonList(
-                          context,
-                          t.translate(i18.common.gender),
-                          genderController,
-                          '',
-                          '',
-                          true,
-                          gender, (value) {
-                        setState(() {
-                          genderController = value;
-                        });
-                      });
+                      return DigitRadioButtonList<String>(
+                        context,
+                        labelText: t.translate(i18.common.gender),
+                        formControlName: genderKey,
+                        options: gender
+                            .map((e) => t.translate(e).toString())
+                            .toList(),
+                        isRequired: true,
+                        valueMapper: (value) => value,
+                        onValueChange: (value) {
+                          setState(() {
+                            genderController = value;
+                          });
+                        },
+                      );
                     }),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.socialCategory),
                       menuItems: socialCategory
                           .map((e) => t.translate(e).toString())
                           .toList(),
-                      isRequired: true,
                       formControlName: socialCategoryKey,
                       valueMapper: (value) => value,
-                      validationMessages: {
-                        'required': (_) => t.translate(
-                              i18.wageSeeker.socialCatRequired,
-                            ),
-                      },
                       onChanged: (value) {},
                     ),
                     DigitTextFormField(
@@ -234,7 +238,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                           // });
                         }
                       },
-                      extensions: const ['jpg', 'png'],
+                      extensions: const ['jpg', 'png', 'jpeg'],
                       moduleName: 'works',
                       label: t.translate(i18.common.photoGraph),
                     )
@@ -295,14 +299,15 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
         ]),
         nameKey:
             FormControl<String>(value: '', validators: [Validators.required]),
+        genderKey:
+            FormControl<String>(value: null, validators: [Validators.required]),
         fatherNameKey:
             FormControl<String>(value: '', validators: [Validators.required]),
         relationshipKey:
             FormControl<String>(value: null, validators: [Validators.required]),
         dobKey: FormControl<DateTime>(
             value: null, validators: [Validators.required]),
-        socialCategoryKey:
-            FormControl<String>(value: null, validators: [Validators.required]),
+        socialCategoryKey: FormControl<String>(value: null),
         mobileKey: FormControl<String>(value: '', validators: [
           Validators.required,
           Validators.minLength(10),

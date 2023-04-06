@@ -9,7 +9,7 @@ const ViewOrganisation = () => {
   const history = useHistory()
   const [showDataError, setShowDataError] = useState(null)
 
-  const { organizationId, tenantId } = Digit.Hooks.useQueryParams()
+  const { orgId, tenantId } = Digit.Hooks.useQueryParams()
 
   const [activeLink, setActiveLink] = useState("Location_Details");
 
@@ -32,7 +32,7 @@ const ViewOrganisation = () => {
 ]
   const payload = {
     SearchCriteria: {
-      orgNumber: organizationId
+      orgNumber: orgId
     }
   }
 
@@ -45,7 +45,7 @@ const ViewOrganisation = () => {
   }, [error])
 
   const handleModify = () => {
-    history.push(`/${window.contextPath}/employee/masters/create-organization?tenantId=${tenantId}&organizationId=${organizationId}`);
+    history.push(`/${window.contextPath}/employee/masters/create-organization?tenantId=${tenantId}&orgId=${orgId}`);
   }
 
   if(isLoading) return <Loader />
