@@ -28,6 +28,8 @@ _$_MusterRoll _$$_MusterRollFromJson(Map<String, dynamic> json) =>
       registerId: json['registerId'] as String?,
       status: json['status'] as String?,
       musterRollStatus: json['musterRollStatus'] as String?,
+      serviceCode: json['serviceCode'] as String?,
+      referenceId: json['referenceId'] as String?,
       startDate: json['startDate'] as int?,
       endDate: json['endDate'] as int?,
       individualEntries: (json['individualEntries'] as List<dynamic>?)
@@ -50,6 +52,8 @@ Map<String, dynamic> _$$_MusterRollToJson(_$_MusterRoll instance) =>
       'registerId': instance.registerId,
       'status': instance.status,
       'musterRollStatus': instance.musterRollStatus,
+      'serviceCode': instance.serviceCode,
+      'referenceId': instance.referenceId,
       'startDate': instance.startDate,
       'endDate': instance.endDate,
       'individualEntries': instance.individualEntries,

@@ -548,9 +548,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             ),
                                             child: SizedBox(
                                               height: 100,
-                                              child: BlocListener<
-                                                  MusterGetWorkflowBloc,
-                                                  MusterGetWorkflowState>(
+                                              child: BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
                                                 listener:
                                                     (context, workflowState) {
                                                   workflowState.maybeWhen(

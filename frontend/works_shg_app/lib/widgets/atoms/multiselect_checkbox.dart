@@ -111,7 +111,8 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                     runSpacing: 3.0,
                     children: widget.selectedOptions
                         .map((option) => Chip(
-                              label: Text(option),
+                              label: Text(AppLocalizations.of(context)
+                                  .translate(option)),
                               padding: const EdgeInsets.all(2.0),
                               deleteIcon: const Icon(Icons.cancel),
                               onDeleted: () {
