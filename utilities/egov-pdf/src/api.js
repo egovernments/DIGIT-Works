@@ -40,6 +40,7 @@ async function search_musterRoll(tenantId, requestinfo, musterRollNumber) {
     musterRollNumber: musterRollNumber
   };
 
+
   var searchEndpoint = config.paths.musterRoll_search;
 
   return await axios({
@@ -49,6 +50,39 @@ async function search_musterRoll(tenantId, requestinfo, musterRollNumber) {
     params,
   });
 }
+async function search_contract(tenantId, requestinfo, contractId) {
+  var params = {
+    tenantId: tenantId,
+    contractNumber: contractId
+  };
+
+  var searchEndpoint = config.paths.contract_search;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.contract, searchEndpoint),
+    data: Object.assign(requestinfo, params),
+
+  });
+}
+async function search_mdmsWageSeekerSkills(tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId.split(".")[0],
+    moduleName: "common-masters",
+    masterName: "WageSeekerSkills",
+  };
+
+  var searchEndpoint = config.paths.mdmsWageSeekerSkills_search;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.mdms, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params
+
+  });
+}
+
 
 async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
   var params = {
@@ -277,5 +311,7 @@ module.exports = {
   search_workflow,
   search_projectDetails,
   search_estimateDetails,
-  search_musterRoll
+  search_musterRoll,
+  search_contract,
+  search_mdmsWageSeekerSkills
 };
