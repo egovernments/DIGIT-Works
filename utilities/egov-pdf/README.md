@@ -14,6 +14,7 @@ Egov-pdf service work in between pdf-service and client requesting pdfs. Earlier
 - Project-service
 - Estimate-service
 - MusterRoll-service
+- contract-service
 
 
 ### Swagger API Contract
@@ -28,6 +29,7 @@ For any new pdf requirement one new endpoint with validations and logic for gett
 
 - ProjectDetail pdf
 - Estimate pdf
+- Nominal Muster Roll pdf
 
 
 #### Configurations
