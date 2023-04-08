@@ -1,5 +1,4 @@
-import 'package:digit_components/widgets/digit_card.dart';
-import 'package:digit_components/widgets/digit_elevated_button.dart';
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/models/wage_seeker/skill_details_model.dart';
@@ -79,7 +78,8 @@ class SkillDetailsState extends State<SkillDetailsPage> {
               children: [
                 Text(
                   t.translate(i18.attendanceMgmt.skillDetails),
-                  style: Theme.of(context).textTheme.displayMedium,
+                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                      ?.apply(color: const DigitColors().black),
                 ),
                 Column(children: [
                   StatefulBuilder(

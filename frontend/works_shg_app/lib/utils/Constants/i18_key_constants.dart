@@ -107,6 +107,7 @@ class Common {
   String get accountType => 'CORE_COMMON_ACCOUNT_TYPE';
   String get ifscCode => 'COMMON_IFSC_CODE';
   String get bankHint => 'HINT_BANK_DETAILS';
+  String get branchName => 'COMMON_BRANCH_NAME';
   String get photoGraph => 'COMMON_PHOTOGRAPH';
   String get inProgress => 'IN_PROGRESS_LABEL';
   String get completed => 'COMPLETED_LABEL';
@@ -118,6 +119,16 @@ class Common {
   String get registeredDept => 'REGISTERED_WITH_DEPT';
   String get deptRegNo => 'DEPT_REG_NO';
   String get dateOfIncorporation => 'DATE_OF_INCORP';
+  String get orgType => 'ORG_TYPE';
+  String get orgSubType => 'ORG_SUB_TYPE';
+  String get funcCat => 'ORG_FUNC_CAT';
+  String get functionalDetails => 'ORG_FUNC_DETAILS';
+  String get contactDetails => 'ORG_CONTACT_DETAILS';
+  String get classOrRank => 'ORG_CLASS_OR_RANK';
+  String get validFrom => 'ORG_VALID_FROM';
+  String get validTo => 'ORG_VALID_TO';
+  String get contactPersonName => 'ORG_CONTACT_PERSON_NAME';
+  String get download => "COMMON_DOWNLOAD";
 }
 
 class Home {
@@ -185,6 +196,7 @@ class WageSeeker {
   String get skillCategory => 'WAGE_SEEKER_SKILL_CAT';
   String get skill => 'WAGE_SEEKER_SKILL';
   String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
+  String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
 }
 
 class AttendanceMgmt {

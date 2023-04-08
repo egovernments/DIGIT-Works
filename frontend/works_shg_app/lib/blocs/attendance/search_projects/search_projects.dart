@@ -38,7 +38,7 @@ class AttendanceProjectsSearchBloc
         queryParameters: event.id.trim().toString().isNotEmpty
             ? {
                 "tenantId": GlobalVariables
-                    .globalConfigObject!.globalConfigs!.stateTenantId
+                    .organisationListModel!.organisations!.first.tenantId
                     .toString(),
                 "ids": event.id
               }

@@ -484,7 +484,7 @@ mixin _$WageSeekerBankCreateState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)
+            BankAccounts? bankAccounts)
         loaded,
     required TResult Function(String? error) error,
   }) =>
@@ -494,7 +494,7 @@ mixin _$WageSeekerBankCreateState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult? Function(String? error)? error,
   }) =>
@@ -504,7 +504,7 @@ mixin _$WageSeekerBankCreateState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -596,7 +596,7 @@ class _$_Initial extends _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)
+            BankAccounts? bankAccounts)
         loaded,
     required TResult Function(String? error) error,
   }) {
@@ -609,7 +609,7 @@ class _$_Initial extends _Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult? Function(String? error)? error,
   }) {
@@ -622,7 +622,7 @@ class _$_Initial extends _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -716,7 +716,7 @@ class _$_Loading extends _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)
+            BankAccounts? bankAccounts)
         loaded,
     required TResult Function(String? error) error,
   }) {
@@ -729,7 +729,7 @@ class _$_Loading extends _Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult? Function(String? error)? error,
   }) {
@@ -742,7 +742,7 @@ class _$_Loading extends _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
@@ -802,8 +802,7 @@ abstract class _$$_LoadedCopyWith<$Res> {
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
   $Res call(
-      {BankingDetailsModel? bankingDetailsModel,
-      BankAccountDetails? bankAccountDetails});
+      {BankingDetailsModel? bankingDetailsModel, BankAccounts? bankAccounts});
 }
 
 /// @nodoc
@@ -817,17 +816,17 @@ class __$$_LoadedCopyWithImpl<$Res>
   @override
   $Res call({
     Object? bankingDetailsModel = freezed,
-    Object? bankAccountDetails = freezed,
+    Object? bankAccounts = freezed,
   }) {
     return _then(_$_Loaded(
       freezed == bankingDetailsModel
           ? _value.bankingDetailsModel
           : bankingDetailsModel // ignore: cast_nullable_to_non_nullable
               as BankingDetailsModel?,
-      freezed == bankAccountDetails
-          ? _value.bankAccountDetails
-          : bankAccountDetails // ignore: cast_nullable_to_non_nullable
-              as BankAccountDetails?,
+      freezed == bankAccounts
+          ? _value.bankAccounts
+          : bankAccounts // ignore: cast_nullable_to_non_nullable
+              as BankAccounts?,
     ));
   }
 }
@@ -835,17 +834,16 @@ class __$$_LoadedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Loaded extends _Loaded {
-  const _$_Loaded(this.bankingDetailsModel, this.bankAccountDetails)
-      : super._();
+  const _$_Loaded(this.bankingDetailsModel, this.bankAccounts) : super._();
 
   @override
   final BankingDetailsModel? bankingDetailsModel;
   @override
-  final BankAccountDetails? bankAccountDetails;
+  final BankAccounts? bankAccounts;
 
   @override
   String toString() {
-    return 'WageSeekerBankCreateState.loaded(bankingDetailsModel: $bankingDetailsModel, bankAccountDetails: $bankAccountDetails)';
+    return 'WageSeekerBankCreateState.loaded(bankingDetailsModel: $bankingDetailsModel, bankAccounts: $bankAccounts)';
   }
 
   @override
@@ -855,13 +853,13 @@ class _$_Loaded extends _Loaded {
             other is _$_Loaded &&
             (identical(other.bankingDetailsModel, bankingDetailsModel) ||
                 other.bankingDetailsModel == bankingDetailsModel) &&
-            (identical(other.bankAccountDetails, bankAccountDetails) ||
-                other.bankAccountDetails == bankAccountDetails));
+            (identical(other.bankAccounts, bankAccounts) ||
+                other.bankAccounts == bankAccounts));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, bankingDetailsModel, bankAccountDetails);
+      Object.hash(runtimeType, bankingDetailsModel, bankAccounts);
 
   @JsonKey(ignore: true)
   @override
@@ -875,11 +873,11 @@ class _$_Loaded extends _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)
+            BankAccounts? bankAccounts)
         loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(bankingDetailsModel, bankAccountDetails);
+    return loaded(bankingDetailsModel, bankAccounts);
   }
 
   @override
@@ -888,11 +886,11 @@ class _$_Loaded extends _Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(bankingDetailsModel, bankAccountDetails);
+    return loaded?.call(bankingDetailsModel, bankAccounts);
   }
 
   @override
@@ -901,13 +899,13 @@ class _$_Loaded extends _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(bankingDetailsModel, bankAccountDetails);
+      return loaded(bankingDetailsModel, bankAccounts);
     }
     return orElse();
   }
@@ -952,11 +950,11 @@ class _$_Loaded extends _Loaded {
 
 abstract class _Loaded extends WageSeekerBankCreateState {
   const factory _Loaded(final BankingDetailsModel? bankingDetailsModel,
-      final BankAccountDetails? bankAccountDetails) = _$_Loaded;
+      final BankAccounts? bankAccounts) = _$_Loaded;
   const _Loaded._() : super._();
 
   BankingDetailsModel? get bankingDetailsModel;
-  BankAccountDetails? get bankAccountDetails;
+  BankAccounts? get bankAccounts;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -1027,7 +1025,7 @@ class _$_Error extends _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)
+            BankAccounts? bankAccounts)
         loaded,
     required TResult Function(String? error) error,
   }) {
@@ -1040,7 +1038,7 @@ class _$_Error extends _Error {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult? Function(String? error)? error,
   }) {
@@ -1053,7 +1051,7 @@ class _$_Error extends _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(BankingDetailsModel? bankingDetailsModel,
-            BankAccountDetails? bankAccountDetails)?
+            BankAccounts? bankAccounts)?
         loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
