@@ -92,6 +92,6 @@ class WageSeekerBankCreateState with _$WageSeekerBankCreateState {
   const factory WageSeekerBankCreateState.loading() = _Loading;
   const factory WageSeekerBankCreateState.loaded(
       BankingDetailsModel? bankingDetailsModel,
-      BankAccountDetails? bankAccountDetails) = _Loaded;
+      BankAccounts? bankAccounts) = _Loaded;
   const factory WageSeekerBankCreateState.error(String? error) = _Error;
 }

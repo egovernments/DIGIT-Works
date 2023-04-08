@@ -8,6 +8,7 @@ import 'package:works_shg_app/pages/wage_seeker_registration/skills.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/summary_details.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/utils/global_variables.dart';
 import 'package:works_shg_app/utils/notifiers.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';
@@ -45,7 +46,10 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
           const WageSeekerMDMSEvent(),
         );
     context.read<WageSeekerLocationBloc>().add(
-          const LocationEventWageSeeker(tenantId: 'pg.citya'),
+          LocationEventWageSeeker(
+              tenantId: GlobalVariables
+                  .organisationListModel!.organisations!.first.tenantId
+                  .toString()),
         );
   }
 
@@ -81,7 +85,6 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
 
   @override
   Widget build(BuildContext context) {
-    var genderController = TextEditingController();
     return Scaffold(
         appBar: AppBar(
           titleSpacing: 0,

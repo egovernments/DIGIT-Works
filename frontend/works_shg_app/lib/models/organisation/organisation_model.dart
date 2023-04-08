@@ -21,6 +21,9 @@ class OrganisationModel with OrganisationModelMappable {
   List<OrgAddress>? orgAddress;
   List<OrgContact>? contactDetails;
   List<OrgIdentifier>? identifiers;
+  List<OrgFunctions>? functions;
+  OrgAdditionalDetails? additionalDetails;
+  int? dateOfIncorporation;
   OrganisationModel(
       {this.name,
       this.id,
@@ -31,7 +34,26 @@ class OrganisationModel with OrganisationModelMappable {
       this.externalRefNumber,
       this.orgAddress,
       this.contactDetails,
-      this.identifiers});
+      this.identifiers,
+      this.additionalDetails,
+      this.dateOfIncorporation,
+      this.functions});
+}
+
+@MappableClass()
+class OrgAdditionalDetails with OrgAdditionalDetailsMappable {
+  String? registeredByDept;
+  String? deptRegistrationNum;
+  ORGLocality? locality;
+  OrgAdditionalDetails(
+      {this.registeredByDept, this.deptRegistrationNum, this.locality});
+}
+
+@MappableClass()
+class ORGLocality with ORGLocalityMappable {
+  String? code;
+  String? i18nKey;
+  ORGLocality({this.code, this.i18nKey});
 }
 
 @MappableClass()
@@ -116,6 +138,8 @@ class OrgFunctions with OrgFunctionsMappable {
   String? category;
   @JsonKey(name: 'class')
   String? orgClass;
+  int? validFrom;
+  int? validTo;
   bool? isActive;
   OrgFunctions(
       {this.orgId,
@@ -125,5 +149,7 @@ class OrgFunctions with OrgFunctionsMappable {
       this.category,
       this.isActive,
       this.organisationType,
-      this.orgClass});
+      this.orgClass,
+      this.validFrom,
+      this.validTo});
 }

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/pages/org_profile.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/register_individual.dart';
 
 import '../models/attendance/attendance_registry_model.dart';
@@ -43,6 +44,7 @@ part 'app_router.gr.dart';
       path: '/',
       children: [
         AutoRoute(page: HomePage, path: ''),
+        AutoRoute(page: ORGProfilePage, path: 'orgProfile'),
         AutoRoute(
             page: AttendanceRegisterTablePage,
             path: 'manageAttendanceTable/:registerId/:tenantId'),

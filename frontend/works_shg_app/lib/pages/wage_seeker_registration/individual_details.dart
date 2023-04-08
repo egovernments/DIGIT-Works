@@ -95,7 +95,9 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                 children: [
                   Text(
                     t.translate(i18.attendanceMgmt.individualDetails),
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.displayMedium
+                        ?.apply(color: const DigitColors().black),
                   ),
                   Column(children: [
                     DigitTextFormField(
@@ -166,15 +168,11 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       formControlName: dobKey,
                       autoValidation: AutovalidateMode.always,
                       requiredMessage: t.translate(i18.wageSeeker.dobRequired),
-                      validator: (val) {
-                        if (val == null) {
-                          return t.translate(i18.wageSeeker.dobRequired);
-                        }
-                      },
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.dobRequired,
                             ),
+                        'max': (_) => t.translate(i18.wageSeeker.ageValidation)
                       },
                     ),
                     StatefulBuilder(
@@ -251,20 +249,16 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
                           final individualDetails = IndividualDetails(
-                              name: form.value[nameKey].toString() ?? '',
-                              fatherName:
-                                  form.value[fatherNameKey].toString() ?? '',
-                              aadhaarNo:
-                                  form.value[aadhaarNoKey].toString() ?? '',
+                              name: form.value[nameKey].toString(),
+                              fatherName: form.value[fatherNameKey].toString(),
+                              aadhaarNo: form.value[aadhaarNoKey].toString(),
                               relationship:
-                                  form.value[relationshipKey].toString() ?? '',
+                                  form.value[relationshipKey].toString(),
                               socialCategory:
-                                  form.value[socialCategoryKey].toString() ??
-                                      '',
+                                  form.value[socialCategoryKey].toString(),
                               dateOfBirth: form.value[dobKey] as DateTime,
-                              mobileNumber:
-                                  form.value[mobileKey].toString() ?? '',
-                              gender: genderController ?? '',
+                              mobileNumber: form.value[mobileKey].toString(),
+                              gender: form.value[genderKey].toString(),
                               imageFile: FilePickerData.imageFile,
                               bytes: FilePickerData.bytes,
                               photo: photo);
@@ -306,7 +300,13 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
         relationshipKey:
             FormControl<String>(value: null, validators: [Validators.required]),
         dobKey: FormControl<DateTime>(
-            value: null, validators: [Validators.required]),
+          value: null,
+          validators: [
+            Validators.required,
+            Validators.max(
+                DateTime.now().subtract(const Duration(days: 18 * 365)))
+          ],
+        ),
         socialCategoryKey: FormControl<String>(value: null),
         mobileKey: FormControl<String>(value: '', validators: [
           Validators.required,

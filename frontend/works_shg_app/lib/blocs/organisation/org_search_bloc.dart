@@ -25,11 +25,10 @@ class ORGSearchBloc extends Bloc<ORGSearchEvent, ORGSearchState> {
     OrganisationListModel organisationListModel =
         await ORGRepository(client.init())
             .searchORG(url: Urls.orgServices.orgSearch, body: {
-      "SearchCriteria": {
-        "contactMobileNumber": GlobalVariables.userRequestModel!['mobileNumber']
-      },
+      "SearchCriteria": {"contactMobileNumber": event.mobileNumber},
       "Pagination": {"offSet": 0, "limit": 10}
     });
+    GlobalVariables.organisationListModel = organisationListModel;
     await Future.delayed(const Duration(seconds: 1));
     emit(ORGSearchState.loaded(organisationListModel));
   }

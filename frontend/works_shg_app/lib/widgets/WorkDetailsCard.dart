@@ -25,6 +25,7 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isManageAttendance;
   final bool isWorkOrderInbox;
   final bool viewWorkOrder;
+  final bool orgProfile;
   final bool isSHGInbox;
   final String? cardTitle;
   final bool isTrackAttendance;
@@ -45,6 +46,7 @@ class WorkDetailsCard extends StatelessWidget {
       this.attendanceRegistersModel,
       this.musterRollsModel,
       this.contractModel,
+      this.orgProfile = false,
       super.key});
 
   @override
@@ -107,12 +109,13 @@ class WorkDetailsCard extends StatelessWidget {
         child: SvgPicture.asset('assets/svg/new_tag.svg'),
       ));
     }
-    if (viewWorkOrder && cardTitle != null) {
+    if ((viewWorkOrder || orgProfile) && cardTitle != null) {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
         child: Text(
           cardTitle ?? '',
-          style: Theme.of(context).textTheme.displayMedium,
+          style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+              ?.apply(color: const DigitColors().black),
           textAlign: TextAlign.left,
         ),
       ));

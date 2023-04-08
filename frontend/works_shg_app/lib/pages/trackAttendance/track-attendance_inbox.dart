@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
@@ -13,7 +14,7 @@ import '../../widgets/SideBar.dart';
 import '../../widgets/atoms/app_bar_logo.dart';
 import '../../widgets/atoms/empty_image.dart';
 import '../../widgets/drawer_wrapper.dart';
-import '../../widgets/loaders.dart';
+import '../../widgets/loaders.dart' as shg_loader;
 
 class TrackAttendanceInboxPage extends StatelessWidget {
   const TrackAttendanceInboxPage({Key? key}) : super(key: key);
@@ -33,7 +34,7 @@ class TrackAttendanceInboxPage extends StatelessWidget {
             AttendanceProjectsSearchBloc,
             AttendanceProjectsSearchState>(builder: (context, state) {
           return state.maybeWhen(
-              loading: () => Loaders.circularLoader(context),
+              loading: () => shg_loader.Loaders.circularLoader(context),
               loaded: (AttendanceRegistersModel? attendanceRegistersModel) {
                 final attendanceRegisters = List<AttendanceRegister>.from(
                     attendanceRegistersModel!.attendanceRegister!);
@@ -86,8 +87,10 @@ class TrackAttendanceInboxPage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          '${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceRegisters)}(${attendanceRegistersModel!.attendanceRegister!.length})',
-                          style: Theme.of(context).textTheme.displayMedium,
+                          '${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceRegisters)}(${attendanceRegistersModel.attendanceRegister!.length})',
+                          style: DigitTheme
+                              .instance.mobileTheme.textTheme.displayMedium
+                              ?.apply(color: const DigitColors().black),
                           textAlign: TextAlign.left,
                         ),
                       ),

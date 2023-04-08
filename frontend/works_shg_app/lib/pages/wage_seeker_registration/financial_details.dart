@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:digit_components/widgets/atoms/digit_text_form_field.dart';
-import 'package:digit_components/widgets/digit_card.dart';
-import 'package:digit_components/widgets/digit_elevated_button.dart';
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -85,7 +83,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                 children: [
                   Text(
                     t.translate(i18.common.financialDetails),
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.displayMedium
+                        ?.apply(color: const DigitColors().black),
                   ),
                   Column(children: [
                     DigitTextFormField(
@@ -133,7 +133,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         builder: (BuildContext context, StateSetter setState) {
                       return DigitRadioButtonList<String>(
                         context,
-                        labelText: t.translate(i18.common.gender),
+                        labelText: t.translate(i18.common.accountType),
                         formControlName: accountTypeKey,
                         options: accountTypeList
                             .map((e) => t.translate(e).toString())
@@ -182,13 +182,14 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                           if (!form.valid) return;
                           final financeDetails = FinancialDetails(
                               accountHolderName:
-                                  form.value[accountHolderKey].toString() ?? '',
+                                  form.value[accountHolderKey].toString(),
                               accountNumber:
-                                  form.value[accountNoKey].toString() ?? '',
+                                  form.value[accountNoKey].toString(),
                               reAccountNumber:
                                   form.value[reAccountNoKey].toString(),
                               ifscCode: form.value[ifscCodeKey].toString(),
-                              accountType: accountType);
+                              accountType:
+                                  form.value[accountTypeKey].toString());
                           BlocProvider.of<WageSeekerBloc>(context).add(
                             WageSeekerCreateEvent(
                                 individualDetails: individualDetails,

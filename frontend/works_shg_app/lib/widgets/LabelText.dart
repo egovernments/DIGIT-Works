@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 
 class LabelText extends StatelessWidget {
@@ -16,7 +17,8 @@ class LabelText extends StatelessWidget {
                     : const EdgeInsets.all(8.0)),
             child: Text(
               input,
-              style: Theme.of(context).textTheme.displayMedium,
+              style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                  ?.apply(color: const DigitColors().black),
               textAlign: TextAlign.left,
             ),
           ));

@@ -15,13 +15,13 @@ import '../../blocs/work_orders/search_individual_work.dart';
 import '../../models/file_store/file_store_model.dart';
 import '../../models/works/contracts_model.dart';
 import '../../router/app_router.dart';
+import '../../utils/common_widgets.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
 import '../../widgets/SideBar.dart';
 import '../../widgets/atoms/app_bar_logo.dart';
 import '../../widgets/atoms/attachments.dart';
-import '../../widgets/atoms/digit_timeline.dart';
 import '../../widgets/drawer_wrapper.dart';
 import '../../widgets/loaders.dart' as shg_loader;
 
@@ -140,7 +140,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                     'payload': e.toMap()
                                   })
                               .toList();
-                          contractDetails = contracts!.contracts!
+                          contractDetails = contracts.contracts!
                               .map((e) => {
                                     'cardDetails': {
                                       i18.workOrder.nameOfCBO:
@@ -165,7 +165,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                     'payload': e.toMap()
                                   })
                               .toList();
-                          workFlowDetails = contracts!.contracts!
+                          workFlowDetails = contracts.contracts!
                               .map((e) => {
                                     'cardDetails': {
                                       i18.workOrder.contractIssueDate:
@@ -187,7 +187,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                   })
                               .toList();
                           // fileStoreList = ;
-                          attachedFiles = contracts!.contracts!.first.documents!
+                          attachedFiles = contracts.contracts!.first.documents!
                               .map((e) => FileStoreModel(
                                   name: e.documentType,
                                   fileStoreId: e.fileStore))
@@ -206,9 +206,19 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                           return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Back(
-                                  backLabel: AppLocalizations.of(context)
-                                      .translate(i18.common.back),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Back(
+                                      backLabel: AppLocalizations.of(context)
+                                          .translate(i18.common.back),
+                                    ),
+                                    CommonWidgets.downloadButton(
+                                        AppLocalizations.of(context)
+                                            .translate(i18.common.download),
+                                        null)
+                                  ],
                                 ),
                                 Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -219,9 +229,8 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
                                           '${AppLocalizations.of(context).translate(i18.workOrder.workOrderDetails)}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displayMedium,
+                                          style: DigitTheme.instance.mobileTheme
+                                              .textTheme.displayMedium,
                                           textAlign: TextAlign.left,
                                         ),
                                       ),
@@ -264,10 +273,6 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                               .workOrder
                                                               .contractDetails),
                                                 ),
-                                                const DigitCard(
-                                                    child: DigitTimeline(
-                                                  timelineOptions: [],
-                                                )),
                                                 WorkDetailsCard(
                                                   workFlowDetails,
                                                   viewWorkOrder: true,
@@ -296,11 +301,19 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                             DigitDialogOptions(
                                                                 title: Text(t.translate(i18.common.termsAndConditions),
                                                                     style: const TextStyle(
-                                                                        fontWeight: FontWeight.w700,
-                                                                        fontSize: 16,
-                                                                        fontFamily: 'Roboto Condensed',
-                                                                        fontStyle: FontStyle.normal,
-                                                                        color: Color.fromRGBO(11, 12, 12, 1))),
+                                                                        fontWeight: FontWeight
+                                                                            .w700,
+                                                                        fontSize:
+                                                                            16,
+                                                                        fontFamily:
+                                                                            'Roboto Condensed',
+                                                                        fontStyle: FontStyle
+                                                                            .normal,
+                                                                        color: Color.fromRGBO(
+                                                                            11,
+                                                                            12,
+                                                                            12,
+                                                                            1))),
                                                                 content: Column(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
@@ -333,14 +346,9 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                                     const EdgeInsets.all(
                                                                         8.0),
                                                                 contentPadding:
-                                                                    const EdgeInsets.all(
-                                                                        8.0),
-                                                                barrierDismissible:
-                                                                    true,
-                                                                primaryAction: DigitDialogActions(
-                                                                    label: t.translate(
-                                                                        i18.common.close),
-                                                                    action: (context) => Navigator.of(context, rootNavigator: true).pop()),
+                                                                    const EdgeInsets.all(8.0),
+                                                                barrierDismissible: true,
+                                                                primaryAction: DigitDialogActions(label: t.translate(i18.common.close), action: (context) => Navigator.of(context, rootNavigator: true).pop()),
                                                                 isScrollable: true)),
                                                     align: Alignment.centerLeft,
                                                   ),

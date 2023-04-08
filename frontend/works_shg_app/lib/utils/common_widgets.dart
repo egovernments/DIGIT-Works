@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 
 class CommonWidgets {
@@ -45,5 +46,18 @@ class CommonWidgets {
                 ))
           ],
         )));
+  }
+
+  static Widget downloadButton(String label, void Function()? onPressed) {
+    return TextButton.icon(
+        onPressed: onPressed,
+        icon: Icon(
+          Icons.download_sharp,
+          color: DigitTheme.instance.colorScheme.primary,
+        ),
+        label: Text(
+          label,
+          style: TextStyle(color: DigitTheme.instance.colorScheme.primary),
+        ));
   }
 }

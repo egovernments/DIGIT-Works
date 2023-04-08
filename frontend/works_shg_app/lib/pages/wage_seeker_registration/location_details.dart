@@ -93,7 +93,9 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                 children: [
                   Text(
                     t.translate(i18.common.locationDetails),
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.displayMedium
+                        ?.apply(color: const DigitColors().black),
                   ),
                   Column(children: [
                     DigitTextFormField(
@@ -175,8 +177,8 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
                           final locationDetails = LocationDetails(
-                              pinCode: form.value[pinCodeKey].toString() ?? '',
-                              city: form.value[cityKey].toString() ?? '',
+                              pinCode: form.value[pinCodeKey].toString(),
+                              city: form.value[cityKey].toString(),
                               locality: form.value[localityKey].toString(),
                               ward: form.value[wardKey].toString(),
                               streetName: form.value[streetNameKey].toString(),

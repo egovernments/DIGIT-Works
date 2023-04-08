@@ -122,6 +122,8 @@ class OrganisationModelMapper extends MapperBase<OrganisationModel> {
       OrgAddressMapper.container,
       OrgContactMapper.container,
       OrgIdentifierMapper.container,
+      OrgAdditionalDetailsMapper.container,
+      OrgFunctionsMapper.container,
     });
 
   @override
@@ -154,7 +156,10 @@ class OrganisationModelMapperElement
       externalRefNumber: container.$getOpt(map, 'externalRefNumber'),
       orgAddress: container.$getOpt(map, 'orgAddress'),
       contactDetails: container.$getOpt(map, 'contactDetails'),
-      identifiers: container.$getOpt(map, 'identifiers'));
+      identifiers: container.$getOpt(map, 'identifiers'),
+      additionalDetails: container.$getOpt(map, 'additionalDetails'),
+      dateOfIncorporation: container.$getOpt(map, 'dateOfIncorporation'),
+      functions: container.$getOpt(map, 'functions'));
 
   @override
   Function get encoder => encode;
@@ -172,12 +177,17 @@ class OrganisationModelMapperElement
             container.$enc(o.externalRefNumber, 'externalRefNumber'),
         'orgAddress': container.$enc(o.orgAddress, 'orgAddress'),
         'contactDetails': container.$enc(o.contactDetails, 'contactDetails'),
-        'identifiers': container.$enc(o.identifiers, 'identifiers')
+        'identifiers': container.$enc(o.identifiers, 'identifiers'),
+        'additionalDetails':
+            container.$enc(o.additionalDetails, 'additionalDetails'),
+        'dateOfIncorporation':
+            container.$enc(o.dateOfIncorporation, 'dateOfIncorporation'),
+        'functions': container.$enc(o.functions, 'functions')
       };
 
   @override
   String stringify(OrganisationModel self) =>
-      'OrganisationModel(name: ${container.asString(self.name)}, applicationNumber: ${container.asString(self.applicationNumber)}, tenantId: ${container.asString(self.tenantId)}, id: ${container.asString(self.id)}, orgNumber: ${container.asString(self.orgNumber)}, applicationStatus: ${container.asString(self.applicationStatus)}, externalRefNumber: ${container.asString(self.externalRefNumber)}, orgAddress: ${container.asString(self.orgAddress)}, contactDetails: ${container.asString(self.contactDetails)}, identifiers: ${container.asString(self.identifiers)})';
+      'OrganisationModel(name: ${container.asString(self.name)}, applicationNumber: ${container.asString(self.applicationNumber)}, tenantId: ${container.asString(self.tenantId)}, id: ${container.asString(self.id)}, orgNumber: ${container.asString(self.orgNumber)}, applicationStatus: ${container.asString(self.applicationStatus)}, externalRefNumber: ${container.asString(self.externalRefNumber)}, orgAddress: ${container.asString(self.orgAddress)}, contactDetails: ${container.asString(self.contactDetails)}, identifiers: ${container.asString(self.identifiers)}, functions: ${container.asString(self.functions)}, additionalDetails: ${container.asString(self.additionalDetails)}, dateOfIncorporation: ${container.asString(self.dateOfIncorporation)})';
   @override
   int hash(OrganisationModel self) =>
       container.hash(self.name) ^
@@ -189,7 +199,10 @@ class OrganisationModelMapperElement
       container.hash(self.externalRefNumber) ^
       container.hash(self.orgAddress) ^
       container.hash(self.contactDetails) ^
-      container.hash(self.identifiers);
+      container.hash(self.identifiers) ^
+      container.hash(self.functions) ^
+      container.hash(self.additionalDetails) ^
+      container.hash(self.dateOfIncorporation);
   @override
   bool equals(OrganisationModel self, OrganisationModel other) =>
       container.isEqual(self.name, other.name) &&
@@ -201,7 +214,10 @@ class OrganisationModelMapperElement
       container.isEqual(self.externalRefNumber, other.externalRefNumber) &&
       container.isEqual(self.orgAddress, other.orgAddress) &&
       container.isEqual(self.contactDetails, other.contactDetails) &&
-      container.isEqual(self.identifiers, other.identifiers);
+      container.isEqual(self.identifiers, other.identifiers) &&
+      container.isEqual(self.functions, other.functions) &&
+      container.isEqual(self.additionalDetails, other.additionalDetails) &&
+      container.isEqual(self.dateOfIncorporation, other.dateOfIncorporation);
 }
 
 mixin OrganisationModelMappable {
@@ -244,6 +260,10 @@ abstract class OrganisationModelCopyWith<$R, $In extends OrganisationModel,
       get contactDetails;
   ListCopyWith<$R, OrgIdentifier,
       OrgIdentifierCopyWith<$R, OrgIdentifier, OrgIdentifier>>? get identifiers;
+  OrgAdditionalDetailsCopyWith<$R, OrgAdditionalDetails, OrgAdditionalDetails>?
+      get additionalDetails;
+  ListCopyWith<$R, OrgFunctions,
+      OrgFunctionsCopyWith<$R, OrgFunctions, OrgFunctions>>? get functions;
   $R call(
       {String? name,
       String? id,
@@ -254,7 +274,10 @@ abstract class OrganisationModelCopyWith<$R, $In extends OrganisationModel,
       String? externalRefNumber,
       List<OrgAddress>? orgAddress,
       List<OrgContact>? contactDetails,
-      List<OrgIdentifier>? identifiers});
+      List<OrgIdentifier>? identifiers,
+      OrgAdditionalDetails? additionalDetails,
+      int? dateOfIncorporation,
+      List<OrgFunctions>? functions});
 }
 
 class _OrganisationModelCopyWithImpl<$R, $Out extends OrganisationModel>
@@ -293,6 +316,19 @@ class _OrganisationModelCopyWithImpl<$R, $Out extends OrganisationModel>
               (v) => call(identifiers: v))
           : null;
   @override
+  OrgAdditionalDetailsCopyWith<$R, OrgAdditionalDetails, OrgAdditionalDetails>?
+      get additionalDetails => $value.additionalDetails?.copyWith
+          .chain($identity, (v) => call(additionalDetails: v));
+  @override
+  ListCopyWith<$R, OrgFunctions,
+          OrgFunctionsCopyWith<$R, OrgFunctions, OrgFunctions>>?
+      get functions => $value.functions != null
+          ? ListCopyWith(
+              $value.functions!,
+              (v, t) => v.copyWith.chain<$R, OrgFunctions>($identity, t),
+              (v) => call(functions: v))
+          : null;
+  @override
   $R call(
           {Object? name = $none,
           Object? id = $none,
@@ -303,7 +339,10 @@ class _OrganisationModelCopyWithImpl<$R, $Out extends OrganisationModel>
           Object? externalRefNumber = $none,
           Object? orgAddress = $none,
           Object? contactDetails = $none,
-          Object? identifiers = $none}) =>
+          Object? identifiers = $none,
+          Object? additionalDetails = $none,
+          Object? dateOfIncorporation = $none,
+          Object? functions = $none}) =>
       $then(OrganisationModel(
           name: or(name, $value.name),
           id: or(id, $value.id),
@@ -314,7 +353,230 @@ class _OrganisationModelCopyWithImpl<$R, $Out extends OrganisationModel>
           externalRefNumber: or(externalRefNumber, $value.externalRefNumber),
           orgAddress: or(orgAddress, $value.orgAddress),
           contactDetails: or(contactDetails, $value.contactDetails),
-          identifiers: or(identifiers, $value.identifiers)));
+          identifiers: or(identifiers, $value.identifiers),
+          additionalDetails: or(additionalDetails, $value.additionalDetails),
+          dateOfIncorporation:
+              or(dateOfIncorporation, $value.dateOfIncorporation),
+          functions: or(functions, $value.functions)));
+}
+
+class OrgAdditionalDetailsMapper extends MapperBase<OrgAdditionalDetails> {
+  static MapperContainer container = MapperContainer(
+    mappers: {OrgAdditionalDetailsMapper()},
+  )..linkAll({ORGLocalityMapper.container});
+
+  @override
+  OrgAdditionalDetailsMapperElement createElement(MapperContainer container) {
+    return OrgAdditionalDetailsMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'OrgAdditionalDetails';
+
+  static final fromMap = container.fromMap<OrgAdditionalDetails>;
+  static final fromJson = container.fromJson<OrgAdditionalDetails>;
+}
+
+class OrgAdditionalDetailsMapperElement
+    extends MapperElementBase<OrgAdditionalDetails> {
+  OrgAdditionalDetailsMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  OrgAdditionalDetails decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  OrgAdditionalDetails fromMap(Map<String, dynamic> map) =>
+      OrgAdditionalDetails(
+          registeredByDept: container.$getOpt(map, 'registeredByDept'),
+          deptRegistrationNum: container.$getOpt(map, 'deptRegistrationNum'),
+          locality: container.$getOpt(map, 'locality'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(OrgAdditionalDetails v) => toMap(v);
+  Map<String, dynamic> toMap(OrgAdditionalDetails o) => {
+        'registeredByDept':
+            container.$enc(o.registeredByDept, 'registeredByDept'),
+        'deptRegistrationNum':
+            container.$enc(o.deptRegistrationNum, 'deptRegistrationNum'),
+        'locality': container.$enc(o.locality, 'locality')
+      };
+
+  @override
+  String stringify(OrgAdditionalDetails self) =>
+      'OrgAdditionalDetails(registeredByDept: ${container.asString(self.registeredByDept)}, deptRegistrationNum: ${container.asString(self.deptRegistrationNum)}, locality: ${container.asString(self.locality)})';
+  @override
+  int hash(OrgAdditionalDetails self) =>
+      container.hash(self.registeredByDept) ^
+      container.hash(self.deptRegistrationNum) ^
+      container.hash(self.locality);
+  @override
+  bool equals(OrgAdditionalDetails self, OrgAdditionalDetails other) =>
+      container.isEqual(self.registeredByDept, other.registeredByDept) &&
+      container.isEqual(self.deptRegistrationNum, other.deptRegistrationNum) &&
+      container.isEqual(self.locality, other.locality);
+}
+
+mixin OrgAdditionalDetailsMappable {
+  String toJson() =>
+      OrgAdditionalDetailsMapper.container.toJson(this as OrgAdditionalDetails);
+  Map<String, dynamic> toMap() =>
+      OrgAdditionalDetailsMapper.container.toMap(this as OrgAdditionalDetails);
+  OrgAdditionalDetailsCopyWith<OrgAdditionalDetails, OrgAdditionalDetails,
+          OrgAdditionalDetails>
+      get copyWith => _OrgAdditionalDetailsCopyWithImpl(
+          this as OrgAdditionalDetails, $identity, $identity);
+  @override
+  String toString() => OrgAdditionalDetailsMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          OrgAdditionalDetailsMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => OrgAdditionalDetailsMapper.container.hash(this);
+}
+
+extension OrgAdditionalDetailsValueCopy<$R, $Out extends OrgAdditionalDetails>
+    on ObjectCopyWith<$R, OrgAdditionalDetails, $Out> {
+  OrgAdditionalDetailsCopyWith<$R, OrgAdditionalDetails, $Out>
+      get asOrgAdditionalDetails =>
+          base.as((v, t, t2) => _OrgAdditionalDetailsCopyWithImpl(v, t, t2));
+}
+
+typedef OrgAdditionalDetailsCopyWithBound = OrgAdditionalDetails;
+
+abstract class OrgAdditionalDetailsCopyWith<$R,
+        $In extends OrgAdditionalDetails, $Out extends OrgAdditionalDetails>
+    implements ObjectCopyWith<$R, $In, $Out> {
+  OrgAdditionalDetailsCopyWith<$R2, $In, $Out2>
+      chain<$R2, $Out2 extends OrgAdditionalDetails>(
+          Then<OrgAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
+  ORGLocalityCopyWith<$R, ORGLocality, ORGLocality>? get locality;
+  $R call(
+      {String? registeredByDept,
+      String? deptRegistrationNum,
+      ORGLocality? locality});
+}
+
+class _OrgAdditionalDetailsCopyWithImpl<$R, $Out extends OrgAdditionalDetails>
+    extends CopyWithBase<$R, OrgAdditionalDetails, $Out>
+    implements OrgAdditionalDetailsCopyWith<$R, OrgAdditionalDetails, $Out> {
+  _OrgAdditionalDetailsCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  OrgAdditionalDetailsCopyWith<$R2, OrgAdditionalDetails, $Out2>
+      chain<$R2, $Out2 extends OrgAdditionalDetails>(
+              Then<OrgAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2) =>
+          _OrgAdditionalDetailsCopyWithImpl($value, t, t2);
+
+  @override
+  ORGLocalityCopyWith<$R, ORGLocality, ORGLocality>? get locality =>
+      $value.locality?.copyWith.chain($identity, (v) => call(locality: v));
+  @override
+  $R call(
+          {Object? registeredByDept = $none,
+          Object? deptRegistrationNum = $none,
+          Object? locality = $none}) =>
+      $then(OrgAdditionalDetails(
+          registeredByDept: or(registeredByDept, $value.registeredByDept),
+          deptRegistrationNum:
+              or(deptRegistrationNum, $value.deptRegistrationNum),
+          locality: or(locality, $value.locality)));
+}
+
+class ORGLocalityMapper extends MapperBase<ORGLocality> {
+  static MapperContainer container = MapperContainer(
+    mappers: {ORGLocalityMapper()},
+  );
+
+  @override
+  ORGLocalityMapperElement createElement(MapperContainer container) {
+    return ORGLocalityMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'ORGLocality';
+
+  static final fromMap = container.fromMap<ORGLocality>;
+  static final fromJson = container.fromJson<ORGLocality>;
+}
+
+class ORGLocalityMapperElement extends MapperElementBase<ORGLocality> {
+  ORGLocalityMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  ORGLocality decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  ORGLocality fromMap(Map<String, dynamic> map) => ORGLocality(
+      code: container.$getOpt(map, 'code'),
+      i18nKey: container.$getOpt(map, 'i18nKey'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(ORGLocality v) => toMap(v);
+  Map<String, dynamic> toMap(ORGLocality o) => {
+        'code': container.$enc(o.code, 'code'),
+        'i18nKey': container.$enc(o.i18nKey, 'i18nKey')
+      };
+
+  @override
+  String stringify(ORGLocality self) =>
+      'ORGLocality(code: ${container.asString(self.code)}, i18nKey: ${container.asString(self.i18nKey)})';
+  @override
+  int hash(ORGLocality self) =>
+      container.hash(self.code) ^ container.hash(self.i18nKey);
+  @override
+  bool equals(ORGLocality self, ORGLocality other) =>
+      container.isEqual(self.code, other.code) &&
+      container.isEqual(self.i18nKey, other.i18nKey);
+}
+
+mixin ORGLocalityMappable {
+  String toJson() => ORGLocalityMapper.container.toJson(this as ORGLocality);
+  Map<String, dynamic> toMap() =>
+      ORGLocalityMapper.container.toMap(this as ORGLocality);
+  ORGLocalityCopyWith<ORGLocality, ORGLocality, ORGLocality> get copyWith =>
+      _ORGLocalityCopyWithImpl(this as ORGLocality, $identity, $identity);
+  @override
+  String toString() => ORGLocalityMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          ORGLocalityMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => ORGLocalityMapper.container.hash(this);
+}
+
+extension ORGLocalityValueCopy<$R, $Out extends ORGLocality>
+    on ObjectCopyWith<$R, ORGLocality, $Out> {
+  ORGLocalityCopyWith<$R, ORGLocality, $Out> get asORGLocality =>
+      base.as((v, t, t2) => _ORGLocalityCopyWithImpl(v, t, t2));
+}
+
+typedef ORGLocalityCopyWithBound = ORGLocality;
+
+abstract class ORGLocalityCopyWith<$R, $In extends ORGLocality,
+    $Out extends ORGLocality> implements ObjectCopyWith<$R, $In, $Out> {
+  ORGLocalityCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends ORGLocality>(
+      Then<ORGLocality, $Out2> t, Then<$Out2, $R2> t2);
+  $R call({String? code, String? i18nKey});
+}
+
+class _ORGLocalityCopyWithImpl<$R, $Out extends ORGLocality>
+    extends CopyWithBase<$R, ORGLocality, $Out>
+    implements ORGLocalityCopyWith<$R, ORGLocality, $Out> {
+  _ORGLocalityCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  ORGLocalityCopyWith<$R2, ORGLocality, $Out2>
+      chain<$R2, $Out2 extends ORGLocality>(
+              Then<ORGLocality, $Out2> t, Then<$Out2, $R2> t2) =>
+          _ORGLocalityCopyWithImpl($value, t, t2);
+
+  @override
+  $R call({Object? code = $none, Object? i18nKey = $none}) => $then(ORGLocality(
+      code: or(code, $value.code), i18nKey: or(i18nKey, $value.i18nKey)));
 }
 
 class OrgAddressMapper extends MapperBase<OrgAddress> {
@@ -796,7 +1058,9 @@ class OrgFunctionsMapperElement extends MapperElementBase<OrgFunctions> {
       category: container.$getOpt(map, 'category'),
       isActive: container.$getOpt(map, 'isActive'),
       organisationType: container.$getOpt(map, 'organisationType'),
-      orgClass: container.$getOpt(map, 'orgClass'));
+      orgClass: container.$getOpt(map, 'orgClass'),
+      validFrom: container.$getOpt(map, 'validFrom'),
+      validTo: container.$getOpt(map, 'validTo'));
 
   @override
   Function get encoder => encode;
@@ -811,12 +1075,14 @@ class OrgFunctionsMapperElement extends MapperElementBase<OrgFunctions> {
         'isActive': container.$enc(o.isActive, 'isActive'),
         'organisationType':
             container.$enc(o.organisationType, 'organisationType'),
-        'orgClass': container.$enc(o.orgClass, 'orgClass')
+        'orgClass': container.$enc(o.orgClass, 'orgClass'),
+        'validFrom': container.$enc(o.validFrom, 'validFrom'),
+        'validTo': container.$enc(o.validTo, 'validTo')
       };
 
   @override
   String stringify(OrgFunctions self) =>
-      'OrgFunctions(id: ${container.asString(self.id)}, orgId: ${container.asString(self.orgId)}, applicationNumber: ${container.asString(self.applicationNumber)}, type: ${container.asString(self.type)}, organisationType: ${container.asString(self.organisationType)}, category: ${container.asString(self.category)}, orgClass: ${container.asString(self.orgClass)}, isActive: ${container.asString(self.isActive)})';
+      'OrgFunctions(id: ${container.asString(self.id)}, orgId: ${container.asString(self.orgId)}, applicationNumber: ${container.asString(self.applicationNumber)}, type: ${container.asString(self.type)}, organisationType: ${container.asString(self.organisationType)}, category: ${container.asString(self.category)}, orgClass: ${container.asString(self.orgClass)}, validFrom: ${container.asString(self.validFrom)}, validTo: ${container.asString(self.validTo)}, isActive: ${container.asString(self.isActive)})';
   @override
   int hash(OrgFunctions self) =>
       container.hash(self.id) ^
@@ -826,6 +1092,8 @@ class OrgFunctionsMapperElement extends MapperElementBase<OrgFunctions> {
       container.hash(self.organisationType) ^
       container.hash(self.category) ^
       container.hash(self.orgClass) ^
+      container.hash(self.validFrom) ^
+      container.hash(self.validTo) ^
       container.hash(self.isActive);
   @override
   bool equals(OrgFunctions self, OrgFunctions other) =>
@@ -836,6 +1104,8 @@ class OrgFunctionsMapperElement extends MapperElementBase<OrgFunctions> {
       container.isEqual(self.organisationType, other.organisationType) &&
       container.isEqual(self.category, other.category) &&
       container.isEqual(self.orgClass, other.orgClass) &&
+      container.isEqual(self.validFrom, other.validFrom) &&
+      container.isEqual(self.validTo, other.validTo) &&
       container.isEqual(self.isActive, other.isActive);
 }
 
@@ -876,7 +1146,9 @@ abstract class OrgFunctionsCopyWith<$R, $In extends OrgFunctions,
       String? category,
       bool? isActive,
       String? organisationType,
-      String? orgClass});
+      String? orgClass,
+      int? validFrom,
+      int? validTo});
 }
 
 class _OrgFunctionsCopyWithImpl<$R, $Out extends OrgFunctions>
@@ -898,7 +1170,9 @@ class _OrgFunctionsCopyWithImpl<$R, $Out extends OrgFunctions>
           Object? category = $none,
           Object? isActive = $none,
           Object? organisationType = $none,
-          Object? orgClass = $none}) =>
+          Object? orgClass = $none,
+          Object? validFrom = $none,
+          Object? validTo = $none}) =>
       $then(OrgFunctions(
           orgId: or(orgId, $value.orgId),
           id: or(id, $value.id),
@@ -907,5 +1181,7 @@ class _OrgFunctionsCopyWithImpl<$R, $Out extends OrgFunctions>
           category: or(category, $value.category),
           isActive: or(isActive, $value.isActive),
           organisationType: or(organisationType, $value.organisationType),
-          orgClass: or(orgClass, $value.orgClass)));
+          orgClass: or(orgClass, $value.orgClass),
+          validFrom: or(validFrom, $value.validFrom),
+          validTo: or(validTo, $value.validTo)));
 }
