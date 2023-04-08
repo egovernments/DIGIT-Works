@@ -32,7 +32,10 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
               body: {
                 "tenantId": GlobalVariables
                     .organisationListModel?.organisations?.first.tenantId,
-                "orgIds": [],
+                "orgIds": [
+                  GlobalVariables.organisationListModel?.organisations?.first.id
+                ],
+                "wfStatus": ['ACCEPTED', "APPROVED"],
                 "pagination": {
                   "limit": "100",
                   "offSet": "0",

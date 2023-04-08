@@ -6,7 +6,6 @@ import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
-import 'package:works_shg_app/widgets/atoms/info_card.dart';
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
@@ -134,7 +133,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                           e.additionalDetails?.projectName ??
                                               'NA',
                                       i18.attendanceMgmt.projectDesc:
-                                          e.additionalDetails?.projectName ??
+                                          e.additionalDetails?.projectDesc ??
                                               'NA',
                                     },
                                     'payload': e.toMap()
@@ -150,11 +149,13 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                   'NA'),
                                       i18.workOrder.roleOfCBO:
                                           AppLocalizations.of(context)
-                                              .translate(
-                                                  e.executingAuthority ?? 'NA'),
+                                              .translate(e.additionalDetails
+                                                      ?.officerInChargeDesgn ??
+                                                  'NA'),
                                       i18.attendanceMgmt.engineerInCharge: e
                                               .additionalDetails
-                                              ?.officerInChargeId ??
+                                              ?.officerInChargeName
+                                              ?.name ??
                                           'NA',
                                       i18.workOrder.completionPeriod:
                                           '${e.completionPeriod} ${AppLocalizations.of(context).translate(i18.common.days)}',
@@ -234,18 +235,28 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                           textAlign: TextAlign.left,
                                         ),
                                       ),
-                                      InfoCard(
+                                      DigitInfoCard(
                                           title: AppLocalizations.of(context)
                                               .translate(i18.common.info),
+                                          titleStyle: DigitTheme
+                                              .instance
+                                              .mobileTheme
+                                              .textTheme
+                                              .headlineMedium
+                                              ?.apply(
+                                                  color: const DigitColors()
+                                                      .black),
                                           description:
                                               AppLocalizations.of(context)
                                                   .translate(
                                                       i18.common.workOrderInfo),
+                                          descStyle: DigitTheme.instance
+                                              .mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(80, 90, 95, 1)),
                                           icon: Icons.info,
-                                          iconColor: DigitTheme.instance
-                                              .colorScheme.secondaryContainer,
-                                          backGroundColor: DigitTheme.instance
-                                              .colorScheme.secondaryContainer),
+                                          iconColor: const Color.fromRGBO(
+                                              52, 152, 219, 1),
+                                          backgroundColor: DigitTheme.instance
+                                              .colorScheme.tertiaryContainer),
                                       workOrderList.isNotEmpty
                                           ? Column(
                                               children: [
