@@ -104,7 +104,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentRequest'
+              $ref: '#/components/schemas/PaymentUpdateRequest'
       responses:
         '202':
           description: Accepted account updation request.
@@ -167,43 +167,50 @@ components:
           description: Bill Payment due date
           type: number
           format: int64
+          example: 1685491199000
         netPayableAmount:
           description: Net payable amount of the bill 
           type: number
           format: BigDecimal
+          example: 500
         netPaidAmount:
           description: Net paid amount for a bill
           type: number
           format: BigDecimal
         businessService:
           description: Capture the expense system unique identifier.(It's name spaced master data defined in MDMS) 
-          example: WORKS, SALARY etc
+          example: WORKS-MUSTERROLE
           type: string
           minLength: 2
           maxLength: 64
         referenceId:
           description: Pass reference id to link the bill with business entity
           type: string
+          example: MUSTERROLE-WAGE-01
           minLength: 2
           maxLength: 64
         fromPeriod:
           description: Start date of billing period 
           type: number
           format: int64
+          example: 1680307200000
         toPeriod:
           description: End date of demand period  
           type: number
           format: int64
+          example: 1682899199000
         paymentStatus:
           description: Payment status for the bill 
           type: string
           minLength: 2
           maxLength: 64
+          example: null
         status:
           description: Workflow status of the bill
           type: string
           minLength: 2
           maxLength: 64
+          example: ACTIVE
         payer:
             $ref: '#/components/schemas/Party'
         billDetails:
@@ -221,14 +228,13 @@ components:
         - businessService
         - billDetails
         - payer
-        
     Party:
       description: Account details
       type: object
       properties:
         type:
           description: Party type
-          example: individual, department etc
+          example: DEPARTMENT
           type: string
           minLength: 2
           maxLength: 64
@@ -237,10 +243,10 @@ components:
           type: string
           minLength: 2
           maxLength: 64
+          example: RURALMINISTRY-MUKTHA
       required:
         - type
         - identifier
-        
     BillDetail:
       description: Bill details of the individual payees
       type: object
@@ -255,37 +261,45 @@ components:
           type: string
           minLength: 2
           maxLength: 64
+          example: WAGESEEKER-01
         paymentStatus:
           description: Payment status for each bill details
           type: string
           minLength: 2
           maxLength: 64
+          example: null
         fromPeriod:
           description: Start date of bill period  
           type: number
           format: int64
+          example: 1680307200000
         toPeriod:
           description: End date of bill period  
           type: number
           format: int64
+          example: 1682899199000
         payee:
             $ref: '#/components/schemas/Party'
         lineItems:
           type: array
           description: Bill line items
           items:
-            $ref: '#/components/schemas/LineItems'
+            $ref: '#/components/schemas/LineItem'
         payableLineItems:
           type: array
           description: Bill line items
           items:
-            $ref: '#/components/schemas/LineItems'
+            $ref: '#/components/schemas/LineItem'
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
         
       required:
         - payee
         - payableLineItem
-
-    LineItems:
+    LineItem:
       description: Line items are the amount breakups for net amounts 
       type: object
       properties:
@@ -293,7 +307,7 @@ components:
           description: Unique identifier of the account
           readOnly: true
           type: string
-          format: uuid
+          example: 67dcdf9f-40c4-4621-be35-1982ecc650aa
         tenantId:
           description: Tenant Identifier
           example: pb.amritsar
@@ -302,12 +316,13 @@ components:
           maxLength: 64
         headCode:
           description: Head codes are define master data  
-          example: BASICSALARY, HRA, INCOMETAX 
+          example: WAGE 
           type: string
           minLength: 2
           maxLength: 64
         amount:
           description: amount for head code
+          example: 500
           type: number
           format: BigDecimal
         type:
@@ -320,8 +335,9 @@ components:
           description: Net paid amount for a bill
           type: number
           format: BigDecimal
-        isActive:
-          type: boolean
+        status:
+          type: string
+          example: ACTIVE
         additionalDetails:
           description: Any additional details that need to be captured
           type: object
@@ -332,9 +348,6 @@ components:
         - headCode
         - amount
         - type
-    
-   
-    
     BillRequest:
       type: object
       properties:
@@ -372,18 +385,18 @@ components:
             type: string
         businessService:
           description: Search bill by business service
-          example: WORKS, SALARY etc
+          example: WORKS-MUSTERROLE
           type: string
           minLength: 2
           maxLength: 64
         referenceId:
           description: search bill by  referance ids         
           type: array
-          format: uuid
           items:
             type: string
         status:
           type: string
+          example: INWORFKLOW
       required: 
         - tenantId
     BillSearchRequest:
@@ -414,14 +427,13 @@ components:
             example: f259e11f-fc28-4202-95a3-129d9feed203
         businessService:
           description: create payment based on business service
-          example: muster-role
+          example: WORKS-MUSTERROLE
           type: string
           minLength: 2
           maxLength: 64
         referenceId:
           description: create payment based on referance ids of the bills
           type: array
-          format: uuid
           items:
             type: string
             example: muster-role/01
@@ -473,6 +485,7 @@ components:
           description: Net payable amount of the bill 
           type: number
           format: BigDecimal
+          example: 500
         netPaidAmount:
           description: Net paid amount for a bill
           type: number
@@ -485,6 +498,12 @@ components:
             $ref: '#/components/schemas/Bill'
         status:
           type: string
+          example: PROCESSING
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
       
       required: 
         - tenantId    
@@ -506,6 +525,14 @@ components:
                 https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         paymentRequestCriteria:
           $ref: '#/components/schemas/PaymentRequestCriteria'
+    PaymentUpdateRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        payment:
+          $ref: '#/components/schemas/Payment'  
     PaymentResponse:
       type: object
       properties:
