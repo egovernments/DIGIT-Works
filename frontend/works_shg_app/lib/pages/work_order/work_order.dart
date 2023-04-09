@@ -85,13 +85,17 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                 i18.workOrder.workOrderNo:
                                     e.contractNumber ?? 'NA',
                                 i18.attendanceMgmt.projectDesc:
-                                    e.additionalDetails?.projectName ?? 'NA',
+                                    e.additionalDetails?.projectDesc ?? 'NA',
                                 i18.workOrder.roleOfCBO:
-                                    AppLocalizations.of(context).translate(
-                                        e.executingAuthority ?? 'NA'),
-                                i18.attendanceMgmt.engineerInCharge:
-                                    e.additionalDetails?.officerInChargeId ??
-                                        'NA',
+                                    AppLocalizations.of(context).translate(e
+                                            .additionalDetails
+                                            ?.officerInChargeDesgn ??
+                                        'NA'),
+                                i18.attendanceMgmt.engineerInCharge: e
+                                        .additionalDetails
+                                        ?.officerInChargeName
+                                        ?.name ??
+                                    'NA',
                                 i18.workOrder.contractIssueDate: e.issueDate !=
                                         null
                                     ? DateFormats.timeStampToDate(e.issueDate,

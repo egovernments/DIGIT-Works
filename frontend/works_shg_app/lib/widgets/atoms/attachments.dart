@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
@@ -22,8 +23,10 @@ class Attachments extends StatelessWidget {
               ? Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    label ?? '',
-                    style: Theme.of(context).textTheme.displayMedium,
+                    label,
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.displayMedium
+                        ?.apply(color: const DigitColors().black),
                     textAlign: TextAlign.left,
                   ),
                 )

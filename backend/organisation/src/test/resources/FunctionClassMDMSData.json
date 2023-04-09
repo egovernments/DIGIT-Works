@@ -1,0 +1,10 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "common-masters": {
+      "OrgFunctionClass": [
+       "A", "B"
+      ]
+    }
+  }
+}

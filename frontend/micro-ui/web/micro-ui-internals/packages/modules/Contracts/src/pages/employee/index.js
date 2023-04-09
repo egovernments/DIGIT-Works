@@ -74,11 +74,9 @@ const App = ({ path }) => {
   };
 
   useEffect(() => {
-    return () => {
       if (!window.location.href.includes("create-contract") && sessionFormData && Object.keys(sessionFormData) != 0) {
         clearSessionFormData();
       }
-    };
   }, [location]);
 
   return (

@@ -137,12 +137,14 @@ import useCreateWageSeeker from "./wageSeeker/useCreateWageSeeker";
 import useDeleteWageSeeker from "./wageSeeker/useDeleteWageSeeker";
 
 import useCreateWO from "./works/useCreateWO";
+
 import useSearchOrg from "./works/useSearchOrg";
 
 import useViewBill from "./bills/useViewBill";
 import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
+import useUpdateWO from "./works/useUpdateWO";
 
 import useViewOrganisation from "./organisation/useViewOrganisation";
 import useOrganisationDetails from "./organisation/useOrganisationDetails";
@@ -181,6 +183,7 @@ const contracts = {
   useViewContractDetails,
   useViewContractDetailsClosureScreen,
   useCreateWO,
+  useUpdateWO,
   useContractSearch
 };
 

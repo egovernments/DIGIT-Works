@@ -7,7 +7,6 @@ import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/remote_client.dart';
 import '../../data/repositories/wage_seeker_repository/wage_seeker_repository.dart';
-import '../../models/attendance/individual_list_model.dart';
 import '../../models/wage_seeker/banking_details_model.dart';
 
 part 'wage_seeker_bank_create.freezed.dart';
@@ -53,8 +52,12 @@ class WageSeekerBankCreateBloc
           }
         ]
       });
+
       await Future.delayed(const Duration(seconds: 1));
-      emit(WageSeekerBankCreateState.loaded(bankingDetailsModel));
+      emit(WageSeekerBankCreateState.loaded(
+          bankingDetailsModel,
+          bankingDetailsModel.bankAccounts?.first
+              .copyWith(indID: event.indId)));
     } on DioError catch (e) {
       emit(WageSeekerBankCreateState.error(
           e.response?.data['Errors'][0]['code']));
@@ -75,7 +78,8 @@ class WageSeekerBankCreateEvent with _$WageSeekerBankCreateEvent {
       String? accountNo,
       String? accountType,
       String? ifscCode,
-      String? referenceId}) = CreateBankWageSeekerEvent;
+      String? referenceId,
+      String? indId}) = CreateBankWageSeekerEvent;
   const factory WageSeekerBankCreateEvent.dispose() =
       CreateBankWageSeekerDisposeEvent;
 }
@@ -87,6 +91,7 @@ class WageSeekerBankCreateState with _$WageSeekerBankCreateState {
   const factory WageSeekerBankCreateState.initial() = _Initial;
   const factory WageSeekerBankCreateState.loading() = _Loading;
   const factory WageSeekerBankCreateState.loaded(
-      BankingDetailsModel? bankingDetailsModel) = _Loaded;
+      BankingDetailsModel? bankingDetailsModel,
+      BankAccounts? bankAccounts) = _Loaded;
   const factory WageSeekerBankCreateState.error(String? error) = _Error;
 }

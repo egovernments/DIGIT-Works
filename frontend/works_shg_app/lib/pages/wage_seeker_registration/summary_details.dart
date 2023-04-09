@@ -62,7 +62,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
           margin: const EdgeInsets.all(8.0),
           child: Text(
             t.translate(i18.wageSeeker.summaryDetails),
-            style: Theme.of(context).textTheme.displayMedium,
+            style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                ?.apply(color: const DigitColors().black),
           ),
         ),
         DigitCard(
@@ -73,7 +74,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
               children: [
                 Text(
                   t.translate(i18.attendanceMgmt.individualDetails),
-                  style: Theme.of(context).textTheme.displayMedium,
+                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                      ?.apply(color: const DigitColors().black),
                   textAlign: TextAlign.left,
                 ),
                 GestureDetector(
@@ -144,14 +146,15 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                   children: [
                     getItemWidget(context,
                         title: t.translate(i18.wageSeeker.skillCategory),
-                        description: item.type.toString()),
+                        description: t.translate(item.level.toString())),
                     getItemWidget(context,
                         title: t.translate(i18.wageSeeker.skill),
-                        description: item.type.toString()),
+                        description: t.translate(item.type.toString())),
                   ],
                 )),
             kIsWeb && FilePickerData.bytes != null
                 ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         t.translate(i18.common.photoGraph),
@@ -175,6 +178,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                   )
                 : !kIsWeb && FilePickerData.imageFile != null
                     ? Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
                             t.translate(i18.common.photoGraph),
@@ -207,7 +211,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
               children: [
                 Text(
                   t.translate(i18.common.locationDetails),
-                  style: Theme.of(context).textTheme.displayMedium,
+                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                      ?.apply(color: const DigitColors().black),
                   textAlign: TextAlign.left,
                 ),
                 GestureDetector(
@@ -267,7 +272,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
               children: [
                 Text(
                   t.translate(i18.common.financialDetails),
-                  style: Theme.of(context).textTheme.displayMedium,
+                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                      ?.apply(color: const DigitColors().black),
                   textAlign: TextAlign.left,
                 ),
                 GestureDetector(
@@ -311,15 +317,17 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                     loaded: (SingleIndividualModel? individualListModel) {
                       context.read<WageSeekerBankCreateBloc>().add(
                             CreateBankWageSeekerEvent(
-                              tenantId:
-                                  individualListModel?.Individual?.tenantId,
-                              accountHolderName:
-                                  financialDetails?.accountHolderName,
-                              accountNo: financialDetails?.accountNumber,
-                              accountType: financialDetails?.accountType,
-                              ifscCode: financialDetails?.ifscCode,
-                              referenceId: individualListModel?.Individual?.id,
-                            ),
+                                tenantId:
+                                    individualListModel?.Individual?.tenantId,
+                                accountHolderName:
+                                    financialDetails?.accountHolderName,
+                                accountNo: financialDetails?.accountNumber,
+                                accountType: financialDetails?.accountType,
+                                ifscCode: financialDetails?.ifscCode,
+                                referenceId:
+                                    individualListModel?.Individual?.id,
+                                indId: individualListModel
+                                    ?.Individual?.individualId),
                           );
                     },
                     error: (String? error) => Notifiers.getToastMessage(
@@ -331,9 +339,16 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                   individualState.maybeWhen(
                       orElse: () => false,
                       loading: () => Loaders.circularLoader(context),
-                      loaded: (BankingDetailsModel? bankingDetails) {
-                        Notifiers.getToastMessage(context,
-                            i18.wageSeeker.createIndSuccess, 'SUCCESS');
+                      loaded: (BankingDetailsModel? bankingDetails,
+                          BankAccounts? bankAccountDetails) {
+                        var localizationText =
+                            '${AppLocalizations.of(context).translate(i18.login.enterOTPSent)}';
+                        localizationText = localizationText.replaceFirst(
+                            '{individualId}', bankAccountDetails?.indID ?? '');
+                        Notifiers.getToastMessage(
+                            context,
+                            '${i18.wageSeeker.createIndSuccess} ${bankAccountDetails?.indID} ',
+                            'SUCCESS');
                         context.router.push(const HomeRoute());
                       },
                       error: (String? error) => Notifiers.getToastMessage(

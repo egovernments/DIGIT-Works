@@ -104,6 +104,16 @@ paths:
           in: query
           schema:
             type: string
+        - name: referenceId
+          description: Id of the entity to which register is associated. Example ContractId
+          in: query
+          schema:
+            type: string
+        - name: serviceCode
+          description: Service to which register is associated.
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: 'Search results'
@@ -152,6 +162,16 @@ components:
           format: timestamp
           example: 1665497271000
           description: Timestamp of the end date in milliseconds. In case of mandatory weekly muster rolls, it is set automatically.
+        referenceId:
+          type: string
+          example: idGen generated value
+          description: Id of the entity to which register is associated. Example ContractId
+          maxLength: 256
+        serviceCode:
+          type: string
+          example: WORKS-CONTRACT
+          description: Service to which register is associated.
+          maxLength: 64
         individualEntries:
           type: array
           items:

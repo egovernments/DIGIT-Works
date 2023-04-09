@@ -14,13 +14,35 @@ class AppBarLogo extends StatelessWidget {
             image: NetworkImage(
               GlobalVariables.stateInfoListModel!.logoUrlWhite!,
             )),
-        const Padding(
-          padding: EdgeInsets.only(right: 16.0),
-          child: Icon(
-            Icons.notifications,
-            size: 30,
-          ),
-        ),
+        Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              children: [
+                Text(
+                  GlobalVariables
+                          .organisationListModel?.organisations?.first.name ??
+                      'NA',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                  ),
+                ),
+                Text(
+                  GlobalVariables.organisationListModel?.organisations?.first
+                          .orgNumber ??
+                      'NA',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
+                  ),
+                )
+              ],
+            )
+            // Icon(
+            //   Icons.notifications,
+            //   size: 30,
+            // ),
+            ),
       ],
     );
   }

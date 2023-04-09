@@ -185,7 +185,7 @@ const inboxConfigMukta = () => {
                     "headerStyle": null,
                     "primaryLabel": "Filter",
                     "secondaryLabel": "",
-                    "minReqFields": 1,
+                    "minReqFields": 0,
                     "defaultValues": {
                         "state": "",
                         "ward": [],

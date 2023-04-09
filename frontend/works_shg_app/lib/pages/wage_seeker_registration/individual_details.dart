@@ -6,7 +6,6 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/wage_seeker/financial_details_model.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
-import 'package:works_shg_app/utils/models.dart';
 import 'package:works_shg_app/utils/models/file_picker_data.dart';
 import 'package:works_shg_app/widgets/atoms/radio_button_list.dart';
 
@@ -41,6 +40,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
   String aadhaarNoKey = 'aadhaarNo';
   String relationshipKey = 'relationship';
   String dobKey = 'dob';
+  String genderKey = 'gender';
   String socialCategoryKey = 'socialCategory';
   String mobileKey = 'mobileNo';
 
@@ -65,8 +65,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
         .wageSeekerMDMS!.commonMDMS!.socialCategory!
         .map((e) => (e.code))
         .toList();
-    List<KeyValue> gender = widget.wageSeekerMDMS!.commonMDMS!.genderType!
-        .map((e) => KeyValue(t.translate(e.code), e.code))
+    List<String> gender = widget.wageSeekerMDMS!.commonMDMS!.genderType!
+        .map((e) => (e.code))
         .toList();
 
     return ReactiveFormBuilder(
@@ -79,6 +79,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
           form.control(relationshipKey).value = individualDetails?.relationship;
           form.control(socialCategoryKey).value =
               individualDetails?.socialCategory;
+          form.control(genderKey).value = individualDetails?.gender;
           genderController = individualDetails!.gender.toString();
           form.control(dobKey).value = individualDetails?.dateOfBirth;
           form.control(mobileKey).value = individualDetails?.mobileNumber;
@@ -94,7 +95,9 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                 children: [
                   Text(
                     t.translate(i18.attendanceMgmt.individualDetails),
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.displayMedium
+                        ?.apply(color: const DigitColors().black),
                   ),
                   Column(children: [
                     DigitTextFormField(
@@ -165,31 +168,30 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       formControlName: dobKey,
                       autoValidation: AutovalidateMode.always,
                       requiredMessage: t.translate(i18.wageSeeker.dobRequired),
-                      validator: (val) {
-                        if (val == null) {
-                          return t.translate(i18.wageSeeker.dobRequired);
-                        }
-                      },
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.dobRequired,
                             ),
+                        'max': (_) => t.translate(i18.wageSeeker.ageValidation)
                       },
                     ),
                     StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
-                      return DigitRadioButtonList(
-                          context,
-                          t.translate(i18.common.gender),
-                          genderController,
-                          '',
-                          '',
-                          true,
-                          gender, (value) {
-                        setState(() {
-                          genderController = value;
-                        });
-                      });
+                      return DigitRadioButtonList<String>(
+                        context,
+                        labelText: t.translate(i18.common.gender),
+                        formControlName: genderKey,
+                        options: gender
+                            .map((e) => t.translate(e).toString())
+                            .toList(),
+                        isRequired: true,
+                        valueMapper: (value) => value,
+                        onValueChange: (value) {
+                          setState(() {
+                            genderController = value;
+                          });
+                        },
+                      );
                     }),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.socialCategory),
@@ -234,7 +236,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                           // });
                         }
                       },
-                      extensions: const ['jpg', 'png'],
+                      extensions: const ['jpg', 'png', 'jpeg'],
                       moduleName: 'works',
                       label: t.translate(i18.common.photoGraph),
                     )
@@ -247,20 +249,16 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
                           final individualDetails = IndividualDetails(
-                              name: form.value[nameKey].toString() ?? '',
-                              fatherName:
-                                  form.value[fatherNameKey].toString() ?? '',
-                              aadhaarNo:
-                                  form.value[aadhaarNoKey].toString() ?? '',
+                              name: form.value[nameKey].toString(),
+                              fatherName: form.value[fatherNameKey].toString(),
+                              aadhaarNo: form.value[aadhaarNoKey].toString(),
                               relationship:
-                                  form.value[relationshipKey].toString() ?? '',
+                                  form.value[relationshipKey].toString(),
                               socialCategory:
-                                  form.value[socialCategoryKey].toString() ??
-                                      '',
+                                  form.value[socialCategoryKey].toString(),
                               dateOfBirth: form.value[dobKey] as DateTime,
-                              mobileNumber:
-                                  form.value[mobileKey].toString() ?? '',
-                              gender: genderController ?? '',
+                              mobileNumber: form.value[mobileKey].toString(),
+                              gender: form.value[genderKey].toString(),
                               imageFile: FilePickerData.imageFile,
                               bytes: FilePickerData.bytes,
                               photo: photo);
@@ -295,12 +293,20 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
         ]),
         nameKey:
             FormControl<String>(value: '', validators: [Validators.required]),
+        genderKey:
+            FormControl<String>(value: null, validators: [Validators.required]),
         fatherNameKey:
             FormControl<String>(value: '', validators: [Validators.required]),
         relationshipKey:
             FormControl<String>(value: null, validators: [Validators.required]),
         dobKey: FormControl<DateTime>(
-            value: null, validators: [Validators.required]),
+          value: null,
+          validators: [
+            Validators.required,
+            Validators.max(
+                DateTime.now().subtract(const Duration(days: 18 * 365)))
+          ],
+        ),
         socialCategoryKey: FormControl<String>(value: null),
         mobileKey: FormControl<String>(value: '', validators: [
           Validators.required,

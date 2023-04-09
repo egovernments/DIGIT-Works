@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/common_widgets.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -16,6 +17,7 @@ import '../blocs/attendance/skills/skills_bloc.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/get_muster_workflow.dart';
 import '../blocs/muster_rolls/muster_roll_estimate.dart';
+import '../blocs/muster_rolls/muster_roll_pdf.dart';
 import '../blocs/muster_rolls/search_individual_muster_roll.dart';
 import '../models/attendance/attendee_model.dart';
 import '../models/mdms/attendance_hours.dart';
@@ -193,10 +195,20 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                     child: CustomScrollView(slivers: [
                                       SliverList(
                                           delegate: SliverChildListDelegate([
-                                        Back(
-                                          backLabel:
-                                              AppLocalizations.of(context)
-                                                  .translate(i18.common.back),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Back(
+                                              backLabel:
+                                                  AppLocalizations.of(context)
+                                                      .translate(i18.common.back),
+                                            ),
+                                            CommonWidgets.downloadButton(AppLocalizations.of(context)
+                                                .translate(i18.common.download), () {
+                                              context.read<MusterRollPDFBloc>().add(PDFEventMusterRoll(
+                                                musterRollNumber: widget.musterRollNo,
+                                                tenantId: widget.tenantId)); })
+                                          ],
                                         ),
                                         WorkDetailsCard(
                                           widget.projectDetails,
@@ -548,9 +560,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             ),
                                             child: SizedBox(
                                               height: 100,
-                                              child: BlocListener<
-                                                  MusterGetWorkflowBloc,
-                                                  MusterGetWorkflowState>(
+                                              child: BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
                                                 listener:
                                                     (context, workflowState) {
                                                   workflowState.maybeWhen(

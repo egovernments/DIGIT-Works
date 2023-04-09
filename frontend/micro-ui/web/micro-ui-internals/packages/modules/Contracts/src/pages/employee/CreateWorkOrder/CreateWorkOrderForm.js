@@ -17,7 +17,7 @@ const navConfig =  [
     }
 ];
 
-const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData}) => {
+const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItems, contractAuditDetails, contractNumber, roleOfCBOOptions}) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
@@ -50,6 +50,10 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         return data?.assignments?.filter(assignment=>assignment?.isCurrentAssignment)?.[0]?.designation;
     }
 
+    const shouldRoleOfCBODisable = (selectedRoleOfCBO, roleOfCBOOptions) => {
+        return roleOfCBOOptions?.filter(roleOfCBOOption=>roleOfCBOOption?.code === selectedRoleOfCBO?.code)[0]?.disable;
+    }
+
     createWorkOrderConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfig(t, createWorkOrderConfig, {
           updateDependent : [
@@ -64,6 +68,14 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
             {
                 key : 'nameOfCBO',
                 value : [preProcessData?.nameOfCBO]
+            },
+            {
+                key : 'basicDetails_workOrdernumber',
+                value : [!isModify ? "none" : "flex"]
+            },
+            {
+                key : 'roleOfCBO',
+                value : [shouldRoleOfCBODisable(createWorkOrderConfig?.defaultValues?.roleOfCBO, roleOfCBOOptions), roleOfCBOOptions] //TODO:
             },
           ]
         }),
@@ -90,6 +102,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     }
 
     const { mutate: CreateWOMutation } = Digit.Hooks.contracts.useCreateWO();
+    const { mutate: UpdateWOMutation } = Digit.Hooks.contracts.useUpdateWO();
 
     //remove Toast after 3s
     useEffect(()=>{
@@ -117,22 +130,16 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         setShowModal(true);
     }
 
-    const onModalSubmit = async (modalData) => {
-        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData});
-        
-        await CreateWOMutation(payload, {
+    const handleResponseForUpdate = async(payload) => {
+        await UpdateWOMutation(payload, {
             onError: async (error, variables) => {
-                if(error?.response?.data?.Errors?.[0]?.code === "INVALID_ESTIMATELINEITEMID") {
-                    setToast(()=>({show : true, label : t("ESTIMATE_ALREADY_ASSOCIATED_TO_OTHER_CONTRACT"), error : true}));
-                }else {
-                    setToast(()=>({show : true, label : t(error?.response?.data?.Errors?.[0]?.code), error : true}));
-                }
+                sendDataToResponsePage(contractNumber, false, "CONTRACT_MODIFICATION_FAILURE", true);
             },
             onSuccess: async (responseData, variables) => {
                 if(responseData?.ResponseInfo?.Errors) {
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
                     }else if(responseData?.ResponseInfo?.status){
-                        sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, responseData, true);
+                        sendDataToResponsePage(contractNumber, true, "CONTRACTS_MODIFIED", true);
                         clearSessionFormData();
                     }else{
                         setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
@@ -141,16 +148,51 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         });
     }
 
-    const sendDataToResponsePage = (contractNumber, responseData, isSuccess) => {
-        let queryString = "";
-        if(responseData) {
-          queryString = contractNumber;
+    const handleResponseForCreateWO = async(payload) => {
+        await CreateWOMutation(payload, {
+            onError: async (error, variables) => {
+                sendDataToResponsePage("", false, "CONTRACTS_WO_FAILED", false);
+            },
+            onSuccess: async (responseData, variables) => {
+                if(responseData?.ResponseInfo?.Errors) {
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                    }else if(responseData?.ResponseInfo?.status){
+                        sendDataToResponsePage(responseData?.contracts?.[0]?.contractNumber, true, "CONTRACTS_WO_CREATED_FORWARDED", true);
+                        clearSessionFormData();
+                    }else{
+                        setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_CONTRACT"), error : true}));
+                    }
+            },
+        });
+    }
+
+    const modifyParams = {
+        contractID,
+        contractNumber,
+        lineItems,
+        contractAuditDetails,
+        updateAction : isModify ? "EDIT" : "",
+    }
+
+    const onModalSubmit = async (modalData) => {
+        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams});
+        if(isModify) {
+            handleResponseForUpdate(payload);
+        }else {
+            handleResponseForCreateWO(payload);
         }
+    }
+
+    const sendDataToResponsePage = (contractNumber, isSuccess, message, showID) => {
         history.push({
           pathname: `/${window?.contextPath}/employee/contracts/create-contract-response`,
-          search: `?contractNumber=${queryString}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+          search: `?contractNumber=${contractNumber}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+          state : {
+            message : message,
+            showID : showID
+          }
         }); 
-    }
+      }
 
     return (
         <React.Fragment>
@@ -162,11 +204,11 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                     config={createWOModalConfig}
                 />
             }
-            <Header styles={{fontSize: "32px"}}>{t("ACTION_TEST_CREATE_WO")}</Header>
+            <Header styles={{fontSize: "32px"}}>{isModify ? t("COMMON_MODIFY_WO") : t("ACTION_TEST_CREATE_WO")}</Header>
                 {
                     createWorkOrderConfig && (
                     <FormComposer
-                        label={"ACTION_TEST_CREATE_WO"}
+                        label={isModify ? "COMMON_MODIFY_WO" : "ACTION_TEST_CREATE_WO"}
                         config={createWorkOrderConfig?.form?.map((config) => {
                         return {
                             ...config,

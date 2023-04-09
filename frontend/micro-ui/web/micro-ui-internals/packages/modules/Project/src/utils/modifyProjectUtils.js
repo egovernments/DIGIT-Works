@@ -14,10 +14,14 @@ export const handleModifyProjectFiles = (uploadedDocs) => {
   ]
 
   let documentObject = {};
+
+  // //keep only active docs -- at a time there would be only fileKeyMappings.length no of files
+  // uploadedDocs = uploadedDocs?.filter(uploadedDoc=>uploadedDocs?.status!=="INACTIVE");
+
   fileKeyMappings?.map((fileKeyMapping)=>{
     let currentDoc = uploadedDocs?.filter((doc)=>doc?.documentType === fileKeyMapping?.value)[0];
 
-    if(currentDoc?.fileStore && currentDoc?.status !== "INACTIVE") {
+    if(currentDoc?.fileStore) {
       if(fileKeyMapping?.value === "Other") {
         documentObject["noSubProject_doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
       }

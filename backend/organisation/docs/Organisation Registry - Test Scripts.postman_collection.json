@@ -1,0 +1,2759 @@
+{
+	"info": {
+		"_postman_id": "ec41da27-a756-422c-bbbb-0bc0d993ed3d",
+		"name": "Organisation Registry - Test Scripts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Organisation - Success - Single Organisation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Change contactMobileNumber for unique user",
+							"pm.collectionVariables.set(\"contactMobileNumber\", \"9111111125\");",
+							"",
+							"pm.collectionVariables.set(\"tenantId\", \"pg.citya\");",
+							"pm.collectionVariables.set(\"tenantId2\", \"pg.cityb\");",
+							"",
+							"pm.collectionVariables.set(\"orgName\", \"org-test\");",
+							"pm.collectionVariables.set(\"orgFuncClass\", \"A\");",
+							"pm.collectionVariables.set(\"orgFunType\", \"VEN.CMS\");",
+							"pm.collectionVariables.set(\"orgFunCategory\", \"VEN.CW\");",
+							"pm.collectionVariables.set(\"boundaryType\", \"Ward\");",
+							"pm.collectionVariables.set(\"boundaryCode\", \"B1\");",
+							"",
+							"pm.collectionVariables.set(\"contactEmail\", \"a@b.com\");",
+							"pm.collectionVariables.set(\"contactName\", \"org-test-1\");",
+							"",
+							"pm.collectionVariables.set(\"identifierType\", \"PAN\");",
+							"pm.collectionVariables.set(\"identifierValue\", \"QWE12345TY\");",
+							"pm.collectionVariables.set(\"jurisdictionCode\", \"code-test\");",
+							"pm.collectionVariables.set(\"identifierType\", \"PAN\");",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RequestInfo is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisations are required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.organisations).to.not.be.undefined;",
+							"    pm.expect(req.organisations).to.not.be.null;",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.tenantId).to.be.not.null;",
+							"    pm.expect(org.tenantId).to.be.not.undefined;",
+							"    pm.expect(org.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Name is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.name).to.be.not.null;",
+							"    pm.expect(org.name).to.be.not.undefined;",
+							"    pm.expect(org.name).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
+							");",
+							"",
+							"pm.test(\"Organisation Number is enriched\", function () {",
+							"    var res = pm.response.json();",
+							"    var orgNumber = res.organisations[0].orgNumber;",
+							"    pm.expect(orgNumber).to.be.not.null;",
+							"    pm.expect(orgNumber).to.be.not.undefined;",
+							"    pm.expect(orgNumber).not.to.eql(\"\");",
+							"    pm.expect(orgNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Application Number is enriched\", function () {",
+							"    var res = pm.response.json();",
+							"    var applicationNumber = res.organisations[0].applicationNumber;",
+							"    pm.expect(applicationNumber).to.be.not.null;",
+							"    pm.expect(applicationNumber).to.be.not.undefined;",
+							"    pm.expect(applicationNumber).not.to.eql(\"\");",
+							"    pm.expect(applicationNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Functions Application Number is enriched\", function () {",
+							"    var res = pm.response.json();",
+							"    var funApplicationNumber = res.organisations[0].functions[0].applicationNumber;",
+							"    pm.expect(funApplicationNumber).to.be.not.null;",
+							"    pm.expect(funApplicationNumber).to.be.not.undefined;",
+							"    pm.expect(funApplicationNumber).not.to.eql(\"\");",
+							"    pm.expect(funApplicationNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Contact Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].contactDetails.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Org Address present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].orgAddress.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Identifiers present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].identifiers.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Functions present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].functions.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Jurisdiction present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].jurisdiction.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Org Documents present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].functions[0].documents.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Function Documents present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].documents.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Audit Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(Object.keys(res.organisations[0].auditDetails).length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Function Audit Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(Object.keys(res.organisations[0].functions[0].auditDetails).length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.collectionVariables.set(\"tenantId\", responseData.organisations[0].tenantId);",
+							"pm.collectionVariables.set(\"stateLevelTenant\", responseData.organisations[0].tenantId.split('.', 1)[0]);",
+							"",
+							"pm.collectionVariables.set(\"orgId\", responseData.organisations[0].id);",
+							"pm.collectionVariables.set(\"orgNumber\", responseData.organisations[0].orgNumber);",
+							"pm.collectionVariables.set(\"applicationNumber\", responseData.organisations[0].applicationNumber);",
+							"",
+							"pm.collectionVariables.set(\"orgAddressId\", responseData.organisations[0].orgAddress.id);",
+							"pm.collectionVariables.set(\"geoLocationId\", responseData.organisations[0].orgAddress[0].geoLocation.id);",
+							"pm.collectionVariables.set(\"contactDetailsId\", responseData.organisations[0].contactDetails[0].id);",
+							"pm.collectionVariables.set(\"identifierId\", responseData.organisations[0].identifiers[0].id);",
+							"pm.collectionVariables.set(\"functionId\", responseData.organisations[0].functions[0].id);",
+							"pm.collectionVariables.set(\"functionApplicationNumber\", responseData.organisations[0].functions[0].applicationNumber);",
+							"pm.collectionVariables.set(\"functionDocumentId\", responseData.organisations[0].functions[0].documents[0].id);",
+							"pm.collectionVariables.set(\"jurisdictionId\", responseData.organisations[0].jurisdiction[0].id);",
+							"pm.collectionVariables.set(\"orgDocumentId\", responseData.organisations[0].documents[0].id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Organisation - Success Multiple Organisation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"contactMobileNumber\", (parseInt(pm.collectionVariables.get('contactMobileNumber')) - 100000).toString());",
+							"pm.collectionVariables.set(\"contactMobileNumber2\", (parseInt(pm.collectionVariables.get('contactMobileNumber')) - 1000000000).toString());",
+							"",
+							"pm.collectionVariables.set(\"orgName2\", \"org-test\");",
+							"pm.collectionVariables.set(\"orgFuncClass2\", \"A\");",
+							"pm.collectionVariables.set(\"orgFunType2\", \"VEN.CMS\");",
+							"pm.collectionVariables.set(\"orgFunCategory2\", \"VEN.CW\");",
+							"pm.collectionVariables.set(\"boundaryType2\", \"Ward\");",
+							"pm.collectionVariables.set(\"boundaryCode2\", \"B1\");",
+							"",
+							"pm.collectionVariables.set(\"contactEmail2\", \"a@b.com\");",
+							"pm.collectionVariables.set(\"contactName2\", \"org-test-1\");",
+							"",
+							"pm.collectionVariables.set(\"identifierType2\", \"PAN\");",
+							"pm.collectionVariables.set(\"identifierValue2\", \"QWE12345TY\");",
+							"pm.collectionVariables.set(\"jurisdictionCode2\", \"code-test\");",
+							"pm.collectionVariables.set(\"identifierType2\", \"PAN\");",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RequestInfo is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisations are required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.organisations).to.not.be.undefined;",
+							"    pm.expect(req.organisations).to.not.be.null;",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.tenantId).to.be.not.null;",
+							"    pm.expect(org.tenantId).to.be.not.undefined;",
+							"    pm.expect(org.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required for second Organisation\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[1];",
+							"    pm.expect(org.tenantId).to.be.not.null;",
+							"    pm.expect(org.tenantId).to.be.not.undefined;",
+							"    pm.expect(org.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Name is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.name).to.be.not.null;",
+							"    pm.expect(org.name).to.be.not.undefined;",
+							"    pm.expect(org.name).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Name is required for second Organisation\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[1];",
+							"    pm.expect(org.name).to.be.not.null;",
+							"    pm.expect(org.name).to.be.not.undefined;",
+							"    pm.expect(org.name).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
+							");",
+							"",
+							"pm.test(\"Organisation Number is enriched\", function () {",
+							"    var res = pm.response.json();",
+							"    var orgNumber = res.organisations[0].orgNumber;",
+							"    pm.expect(orgNumber).to.be.not.null;",
+							"    pm.expect(orgNumber).to.be.not.undefined;",
+							"    pm.expect(orgNumber).not.to.eql(\"\");",
+							"    pm.expect(orgNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisation Number is enriched for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    var orgNumber = res.organisations[1].orgNumber;",
+							"    pm.expect(orgNumber).to.be.not.null;",
+							"    pm.expect(orgNumber).to.be.not.undefined;",
+							"    pm.expect(orgNumber).not.to.eql(\"\");",
+							"    pm.expect(orgNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Application Number is enriched\", function () {",
+							"    var res = pm.response.json();",
+							"    var applicationNumber = res.organisations[0].applicationNumber;",
+							"    pm.expect(applicationNumber).to.be.not.null;",
+							"    pm.expect(applicationNumber).to.be.not.undefined;",
+							"    pm.expect(applicationNumber).not.to.eql(\"\");",
+							"    pm.expect(applicationNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Application Number is enriched for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    var applicationNumber = res.organisations[1].applicationNumber;",
+							"    pm.expect(applicationNumber).to.be.not.null;",
+							"    pm.expect(applicationNumber).to.be.not.undefined;",
+							"    pm.expect(applicationNumber).not.to.eql(\"\");",
+							"    pm.expect(applicationNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Functions Application Number is enriched\", function () {",
+							"    var res = pm.response.json();",
+							"    var funApplicationNumber = res.organisations[0].functions[0].applicationNumber;",
+							"    pm.expect(funApplicationNumber).to.be.not.null;",
+							"    pm.expect(funApplicationNumber).to.be.not.undefined;",
+							"    pm.expect(funApplicationNumber).not.to.eql(\"\");",
+							"    pm.expect(funApplicationNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Functions Application Number is enriched for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    var funApplicationNumber = res.organisations[1].functions[0].applicationNumber;",
+							"    pm.expect(funApplicationNumber).to.be.not.null;",
+							"    pm.expect(funApplicationNumber).to.be.not.undefined;",
+							"    pm.expect(funApplicationNumber).not.to.eql(\"\");",
+							"    pm.expect(funApplicationNumber.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Contact Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].contactDetails.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Contact Details present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[1].contactDetails.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Org Address present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].orgAddress.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Org Address present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[1].orgAddress.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Identifiers present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].identifiers.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Identifiers present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[1].identifiers.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Functions present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].functions.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Functions present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[1].functions.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Jurisdiction present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].jurisdiction.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Jurisdiction present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[1].jurisdiction.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Org Documents present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].functions[0].documents.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Org Documents present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[1].functions[0].documents.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Function Documents present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].documents.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Function Documents present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[1].documents.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Audit Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(Object.keys(res.organisations[0].auditDetails).length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Audit Details present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(Object.keys(res.organisations[1].auditDetails).length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Function Audit Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(Object.keys(res.organisations[0].functions[0].auditDetails).length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Function Audit Details present in response for second organisation\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(Object.keys(res.organisations[1].functions[0].auditDetails).length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"",
+							"let responseData = pm.response.json();",
+							"pm.collectionVariables.set(\"tenantId2\", responseData.organisations[0].tenantId);",
+							"pm.collectionVariables.set(\"stateLevelTenant2\", responseData.organisations[0].tenantId.split('.', 1)[0]);",
+							"",
+							"pm.collectionVariables.set(\"orgId2\", responseData.organisations[0].id);",
+							"pm.collectionVariables.set(\"orgNumber2\", responseData.organisations[0].orgNumber);",
+							"pm.collectionVariables.set(\"applicationNumber2\", responseData.organisations[0].applicationNumber);",
+							"",
+							"pm.collectionVariables.set(\"orgAddressId2\", responseData.organisations[0].orgAddress.id);",
+							"pm.collectionVariables.set(\"contactDetailsId2\", responseData.organisations[0].contactDetails[0].id);",
+							"pm.collectionVariables.set(\"identifierId2\", responseData.organisations[0].identifiers[0].id);",
+							"pm.collectionVariables.set(\"functionId2\", responseData.organisations[0].functions[0].id);",
+							"pm.collectionVariables.set(\"functionApplicationNumber2\", responseData.organisations[0].functions[0].applicationNumber);",
+							"pm.collectionVariables.set(\"functionDocumentId2\", responseData.organisations[0].functions[0].documents[0].id);",
+							"pm.collectionVariables.set(\"jurisdictionId2\", responseData.organisations[0].jurisdiction[0].id);",
+							"pm.collectionVariables.set(\"orgDocumentId2\", responseData.organisations[0].documents[0].id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        },\n        {\n            \"tenantId\": \"{{tenantId2}}\",\n            \"name\": \"{{orgName2}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"tenantId\": \"{{tenantId2}}\",\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType2}}\",\n                    \"boundaryCode\": \"{{boundaryCode2}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName2}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber2}}\",\n                    \"contactEmail\": \"{{contactEmail2}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType2}}\",\n                    \"value\": \"{{identifierValue2}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType2}}\",\n                    \"category\": \"{{orgFunCategory2}}\",\n                    \"class\": \"{{orgFuncClass2}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode2}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Organisation - Error - Organisations Not Provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ORGANISATION_DETAILS\");",
+							"    pm.expect(message).to.eql(\"At least one organisation detail is required\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Organisation - Error - TenantId Not Provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => {",
+							"    pm.expect(pm.response.to.not.have.status(200));",
+							"});",
+							"   ",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.Errors.length).to.be.above(0);",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"name\": \"{{orgName}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Organisation - Error - OrgName Not Provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ORG_NAME\");",
+							"    pm.expect(message).to.eql(\"Organisation name is mandatory\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Organisation - Error - Address Tenant not provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ADDRESS.TENANT_ID\");",
+							"    pm.expect(message).to.eql(\"Tenant id is mandatory\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"name\": \"{{orgName}}\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Organisation - Error - Address BoundaryType not provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ADDRESS.BOUNDARY_TYPE\");",
+							"    pm.expect(message).to.eql(\"Address's boundary type is mandatory\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Organisation - Error - Address BoundaryType not provided Copy",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ADDRESS.BOUNDARY_CODE\");",
+							"    pm.expect(message).to.eql(\"Address's boundary code is mandatory\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Organisation - Error - User already exists",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"USER.MOBILE_NUMBER\");",
+							"    pm.expect(message).to.eql(\"User's mobile number : \" + pm.collectionVariables.get('contactMobileNumber') + \" already exists in the system\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-123\",\n            \"dateOfIncorporation\": 1680091451241,\n            \"orgAddress\": [\n                {\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"district\": \"Amritsar\",\n                    \"region\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"pincode\": \"123456\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\"\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1680091451241,\n                    \"validTo\": 1681647540000,\n                    \"wfStatus\": \"string\",\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - Tenant Only",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).to.be.above(0);",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"\",\n        \"orgNumber\": \"\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"\",\n        \"createdFrom\": 0,\n        \"createdTo\": 0,\n        \"functions\": {\n            \"type\": \"\",\n            \"organisationType\": \"\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"\",\n        \"identifierType\": \"\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - Organisation Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).to.be.above(0);",
+							"    }",
+							");",
+							"",
+							"pm.test(\"Organisation Search response matches the criteria\", function () {",
+							"    var res = pm.response.json();",
+							"    var id = res.organisations[0].id;",
+							"    pm.expect(id).to.eql(pm.collectionVariables.get(\"orgId\"));",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [\"{{orgId}}\"],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"\",\n        \"orgNumber\": \"\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"\",\n        \"createdFrom\": 0,\n        \"createdTo\": 0,\n        \"functions\": {\n            \"type\": \"\",\n            \"organisationType\": \"\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"\",\n        \"identifierType\": \"\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - Org Number & Application Number",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).to.be.above(0);",
+							"    }",
+							");",
+							"",
+							"pm.test(\"Organisation Search response matches the criteria\", function () {",
+							"    var res = pm.response.json();",
+							"    var orgNumber = res.organisations[0].orgNumber;",
+							"    pm.expect(orgNumber).to.eql(pm.collectionVariables.get(\"orgNumber\"));",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"{{applicationNumber}}\",\n        \"orgNumber\": \"{{orgNumber}}\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"\",\n        \"createdFrom\": 0,\n        \"createdTo\": 0,\n        \"functions\": {\n            \"type\": \"\",\n            \"organisationType\": \"\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"\",\n        \"identifierType\": \"\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - Between CreatedFrom and CreatedTo - No Orgs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).eq(0);",
+							"    }",
+							");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [\"{{orgId}}\"],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"\",\n        \"orgNumber\": \"\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"\",\n        \"createdFrom\": 0,\n        \"createdTo\": 100000,\n        \"functions\": {\n            \"type\": \"\",\n            \"organisationType\": \"\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"\",\n        \"identifierType\": \"\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - contactMobileNumber",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).to.be.above(0);",
+							"    }",
+							");",
+							"",
+							"pm.test(\"Organisation Search response matches the criteria\", function () {",
+							"    var res = pm.response.json();",
+							"    var contactMobileNumber = res.organisations[0].contactDetails[0].contactMobileNumber;",
+							"    pm.expect(contactMobileNumber).to.eql(pm.collectionVariables.get(\"contactMobileNumber\"));",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"\",\n        \"orgNumber\": \"\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n        \"createdFrom\": \"\",\n        \"createdTo\": \"\",\n        \"functions\": {\n            \"type\": \"\",\n            \"organisationType\": \"\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"\",\n        \"identifierType\": \"\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - Organisation Type only",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).to.be.above(0);",
+							"    }",
+							");",
+							"",
+							"pm.test(\"Organisation Search response matches the criteria\", function () {",
+							"    var res = pm.response.json();",
+							"    var organisationType = res.organisations[0].functions[0].type.split(\".\")[0];",
+							"    pm.expect(organisationType).to.eql(pm.collectionVariables.get(\"organisationType\"));",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"organisationType\", pm.collectionVariables.get('orgFunType').split(\".\")[0]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"\",\n        \"orgNumber\": \"\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"\",\n        \"createdFrom\": \"\",\n        \"createdTo\": \"\",\n        \"functions\": {\n            \"type\": \"VEN\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"\",\n        \"identifierType\": \"\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - Organisation Type with Sub Type",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).to.be.above(0);",
+							"    }",
+							");",
+							"",
+							"pm.test(\"Organisation Search response matches the criteria\", function () {",
+							"    var res = pm.response.json();",
+							"    var orgFunType = res.organisations[0].functions[0].type;",
+							"    pm.expect(orgFunType).to.eql(pm.collectionVariables.get(\"orgFunType\"));",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"\",\n        \"orgNumber\": \"\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"\",\n        \"createdFrom\": \"\",\n        \"createdTo\": \"\",\n        \"functions\": {\n            \"type\": \"{{orgFunType}}\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"\",\n        \"identifierType\": \"\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - IdentifierType and IdentifierCode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).to.be.above(0);",
+							"    }",
+							");",
+							"",
+							"pm.test(\"Organisation Search response matches the criteria\", function () {",
+							"    var res = pm.response.json();",
+							"    var identifierType = res.organisations[0].identifiers[0].type;",
+							"    pm.expect(identifierType).to.eql(pm.collectionVariables.get(\"identifierType\"));",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"\",\n        \"orgNumber\": \"\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"\",\n        \"createdFrom\": \"\",\n        \"createdTo\": \"\",\n        \"functions\": {\n            \"type\": \"\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"\",\n        \"identifierType\": \"{{identifierType}}\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Organisation Search - Boundary",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(200)));",
+							"",
+							"pm.test(\"Organisation Search response is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations.length).to.be.above(0);",
+							"    }",
+							");",
+							"",
+							"pm.test(\"Organisation Search response matches the criteria\", function () {",
+							"    var res = pm.response.json();",
+							"    var boundaryCode = res.organisations[0].orgAddress[0].boundaryCode;",
+							"    pm.expect(boundaryCode).to.eql(pm.collectionVariables.get(\"boundaryCode\"));",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"SearchCriteria\": {\n        \"id\": [],\n        \"tenantId\": \"{{tenantId}}\",\n        \"name\": \"\",\n        \"applicationNumber\": \"\",\n        \"orgNumber\": \"\",\n        \"applicationStatus\": \"\",\n        \"contactMobileNumber\": \"\",\n        \"createdFrom\": \"\",\n        \"createdTo\": \"\",\n        \"functions\": {\n            \"type\": \"\",\n            \"category\": null,\n            \"class\": null,\n            \"validFrom\": 0,\n            \"validTo\": 0,\n            \"wfStatus\": null,\n            \"isActive\": true\n        },\n        \"boundaryCode\": \"{{boundaryCode}}\",\n        \"identifierType\": \"\",\n        \"identifierValue\": null,\n        \"includeDeleted\": false\n    },\n    \"Pagination\": {\n        \"offSet\": 0,\n        \"limit\": 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_search",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Success - Single Organisation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RequestInfo is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisations are required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.organisations).to.not.be.undefined;",
+							"    pm.expect(req.organisations).to.not.be.null;",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.tenantId).to.be.not.null;",
+							"    pm.expect(org.tenantId).to.be.not.undefined;",
+							"    pm.expect(org.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Name is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.name).to.be.not.null;",
+							"    pm.expect(org.name).to.be.not.undefined;",
+							"    pm.expect(org.name).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisation id is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.id).to.be.not.null;",
+							"    pm.expect(org.id).to.be.not.undefined;",
+							"    pm.expect(org.id).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
+							");",
+							"",
+							"",
+							"pm.test(\"Response have same organisation id as request\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var orgIdRequest = req.organisations[0].id;",
+							"    var res = pm.response.json();",
+							"    var orgIdResponse = res.organisations[0].id;",
+							"   ",
+							"    pm.expect(orgIdRequest).to.eql(orgIdResponse);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response have same organisation number as request\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var orgNumberRequest = req.organisations[0].id;",
+							"    var res = pm.response.json();",
+							"    var orgNumberResponse = res.organisations[0].id;",
+							"",
+							"    pm.expect(orgNumberRequest).to.eql(orgNumberResponse);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Contact Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].contactDetails.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Org Address present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].orgAddress.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Identifiers present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].identifiers.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Functions present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].functions.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Jurisdiction present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].jurisdiction.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Org Documents present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].functions[0].documents.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Function Documents present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].documents.length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Audit Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(Object.keys(res.organisations[0].auditDetails).length).to.be.above(0);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Function Audit Details present in response\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(Object.keys(res.organisations[0].functions[0].auditDetails).length).to.be.above(0);",
+							"}",
+							");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Success - Add Function",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RequestInfo is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisations are required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.organisations).to.not.be.undefined;",
+							"    pm.expect(req.organisations).to.not.be.null;",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.tenantId).to.be.not.null;",
+							"    pm.expect(org.tenantId).to.be.not.undefined;",
+							"    pm.expect(org.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Name is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.name).to.be.not.null;",
+							"    pm.expect(org.name).to.be.not.undefined;",
+							"    pm.expect(org.name).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisation id is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.id).to.be.not.null;",
+							"    pm.expect(org.id).to.be.not.undefined;",
+							"    pm.expect(org.id).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
+							");",
+							"",
+							"",
+							"pm.test(\"Response have same organisation id as request\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var orgIdRequest = req.organisations[0].id;",
+							"    var res = pm.response.json();",
+							"    var orgIdResponse = res.organisations[0].id;",
+							"   ",
+							"    pm.expect(orgIdRequest).to.eql(orgIdResponse);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response have upserted function\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].functions.length).to.be.above(1);",
+							"}",
+							");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                },\n                {\n                    \"type\": \"{{orgFunType2}}\",\n                    \"category\": \"{{orgFunCategory2}}\",\n                    \"class\": \"{{orgFuncClass2}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Success - Add Document",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RequestInfo is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisations are required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.organisations).to.not.be.undefined;",
+							"    pm.expect(req.organisations).to.not.be.null;",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.tenantId).to.be.not.null;",
+							"    pm.expect(org.tenantId).to.be.not.undefined;",
+							"    pm.expect(org.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Name is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.name).to.be.not.null;",
+							"    pm.expect(org.name).to.be.not.undefined;",
+							"    pm.expect(org.name).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisation id is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.id).to.be.not.null;",
+							"    pm.expect(org.id).to.be.not.undefined;",
+							"    pm.expect(org.id).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
+							");",
+							"",
+							"",
+							"pm.test(\"Response have same organisation id as request\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var orgIdRequest = req.organisations[0].id;",
+							"    var res = pm.response.json();",
+							"    var orgIdResponse = res.organisations[0].id;",
+							"   ",
+							"    pm.expect(orgIdRequest).to.eql(orgIdResponse);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response have upserted document\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].documents.length).to.be.above(1);",
+							"}",
+							");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                },\n                {\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Success - Add Function Document",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RequestInfo is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisations are required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.organisations).to.not.be.undefined;",
+							"    pm.expect(req.organisations).to.not.be.null;",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.tenantId).to.be.not.null;",
+							"    pm.expect(org.tenantId).to.be.not.undefined;",
+							"    pm.expect(org.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Name is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.name).to.be.not.null;",
+							"    pm.expect(org.name).to.be.not.undefined;",
+							"    pm.expect(org.name).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisation id is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.id).to.be.not.null;",
+							"    pm.expect(org.id).to.be.not.undefined;",
+							"    pm.expect(org.id).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
+							");",
+							"",
+							"",
+							"pm.test(\"Response have same organisation id as request\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var orgIdRequest = req.organisations[0].id;",
+							"    var res = pm.response.json();",
+							"    var orgIdResponse = res.organisations[0].id;",
+							"   ",
+							"    pm.expect(orgIdRequest).to.eql(orgIdResponse);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response have upserted document\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].functions[0].documents.length).to.be.above(1);",
+							"}",
+							");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        },\n                        {\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Success - Add Tax Identifier",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"RequestInfo is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.RequestInfo).to.not.be.null;",
+							"    pm.expect(req.RequestInfo).to.not.be.undefined;",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisations are required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    pm.expect(req.organisations).to.not.be.undefined;",
+							"    pm.expect(req.organisations).to.not.be.null;",
+							"}",
+							");",
+							"",
+							"pm.test(\"TenantId is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.tenantId).to.be.not.null;",
+							"    pm.expect(org.tenantId).to.be.not.undefined;",
+							"    pm.expect(org.tenantId).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Name is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.name).to.be.not.null;",
+							"    pm.expect(org.name).to.be.not.undefined;",
+							"    pm.expect(org.name).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Organisation id is required\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var org = req.organisations[0];",
+							"    pm.expect(org.id).to.be.not.null;",
+							"    pm.expect(org.id).to.be.not.undefined;",
+							"    pm.expect(org.id).not.to.eql(\"\");",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response is successful\", () =>",
+							"    pm.expect(pm.response.to.have.status(200))",
+							");",
+							"",
+							"",
+							"pm.test(\"Response have same organisation id as request\", function () {",
+							"    var req = JSON.parse(pm.request.body.raw);",
+							"    var orgIdRequest = req.organisations[0].id;",
+							"    var res = pm.response.json();",
+							"    var orgIdResponse = res.organisations[0].id;",
+							"   ",
+							"    pm.expect(orgIdRequest).to.eql(orgIdResponse);",
+							"}",
+							");",
+							"",
+							"pm.test(\"Response have upserted document\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.organisations[0].identifiers.length).to.be.above(1);",
+							"}",
+							");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                },\n                {\n                    \"type\": \"{{identifierType2}}\",\n                    \"value\": \"{{identifierValue2}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Error - Organisations not provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ORGANISATION_DETAILS\");",
+							"    pm.expect(message).to.eql(\"At least one organisation detail is required\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Error - TenantId not provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => {",
+							"    pm.expect(pm.response.to.not.have.status(200));",
+							"});",
+							"   ",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    pm.expect(res.Errors.length).to.be.above(0);",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Error - OrgId not provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ORGANISATION_ID\");",
+							"    pm.expect(message).to.eql(\"Organisation id is missing\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"{{orgName}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Error - Organisation Name not provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ORG_NAME\");",
+							"    pm.expect(message).to.eql(\"Organisation name is mandatory\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryType\": \"{{boundaryType}}\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Error - Address Boundary Type not provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ADDRESS.BOUNDARY_TYPE\");",
+							"    pm.expect(message).to.eql(\"Address's boundary type is mandatory\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"name\": \"{{orgName}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                    \"boundaryCode\": \"{{boundaryCode}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organisation - Error - Address Boundary Code not provided",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => ",
+							"   pm.expect(pm.response.to.have.status(400)));",
+							"",
+							"pm.test(\"Correct Error with message and code is received\", function () {",
+							"    var res = pm.response.json();",
+							"    var code = res.Errors[0].code;",
+							"    var message = res.Errors[0].message;",
+							"    pm.expect(code).to.eql(\"ADDRESS.BOUNDARY_CODE\");",
+							"    pm.expect(message).to.eql(\"Address's boundary code is mandatory\");",
+							"    }",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"simple org registry\",\n        \"ver\": \"v1\",\n        \"ts\": 0,\n        \"action\": \"string\",\n        \"did\": \"string\",\n        \"key\": \"string\",\n        \"msgId\": \"create-org\",\n        \"requesterId\": \"string\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"organisations\": [\n        {\n            \"id\": \"{{orgId}}\",\n            \"name\": \"{{orgName}}\",\n            \"tenantId\": \"{{tenantId}}\",\n            \"applicationNumber\": \"{{applicationNumber}}\",\n            \"orgNumber\": \"{{orgNumber}}\",\n            \"applicationStatus\": \"ACTIVE\",\n            \"externalRefNumber\": \"org-10001\",\n            \"dateOfIncorporation\": 1.680091451241E12,\n            \"orgAddress\": [\n                {\n                    \"id\": \"{{orgAddressId}}\",\n                    \"tenantId\": \"{{tenantId}}\",\n                    \"orgId\": null,\n                    \"doorNo\": \"doorNo-test\",\n                    \"plotNo\": \"plotNo-test\",\n                    \"landmark\": \"landmark-test\",\n                    \"city\": \"citya\",\n                    \"pincode\": \"123456\",\n                    \"district\": \"Amritsar\",\n                    \"resgion\": \"region-test\",\n                    \"state\": \"state-test\",\n                    \"country\": \"country-test\",\n                    \"additionDetails\": \"address-additional\",\n                    \"buildingName\": \"buildingName-1\",\n                    \"street\": \"street-test\",\n                     \"boundaryType\": \"{{boundaryType}}\",\n                    \"geoLocation\": {\n                        \"id\": \"{{geoLocationId}}\",\n                        \"addressId\": null,\n                        \"latitude\": 31.63089,\n                        \"longitude\": 74.871552,\n                        \"additionalDetails\": {\n                            \"geoLocation\": \"test-additionalDetails\"\n                        }\n                    }\n                }\n            ],\n            \"contactDetails\": [\n                {\n                    \"id\": \"{{contactDetailsId}}\",\n                    \"tenantId\": \"{{stateLevelTenant}}\",\n                    \"orgId\": null,\n                    \"contactName\": \"{{contactName}}\",\n                    \"contactMobileNumber\": \"{{contactMobileNumber}}\",\n                    \"contactEmail\": \"{{contactEmail}}\",\n                    \"active\": true,\n                    \"type\": \"CITIZEN\",\n                    \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"createdDate\": 1680666676378,\n                    \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                    \"lastModifiedDate\": 1680666676378\n                }\n            ],\n            \"identifiers\": [\n                {\n                    \"id\": \"{{identifierId}}\",\n                    \"orgId\": null,\n                    \"type\": \"{{identifierType}}\",\n                    \"value\": \"{{identifierValue}}\",\n                    \"additionalDetails\": {\n                        \"identifiers\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"functions\": [\n                {\n                    \"id\": \"{{functionId}}\",\n                    \"orgId\": null,\n                    \"applicationNumber\": \"{{functionApplicationNumber}}\",\n                    \"type\": \"{{orgFunType}}\",\n                    \"category\": \"{{orgFunCategory}}\",\n                    \"class\": \"{{orgFuncClass}}\",\n                    \"validFrom\": 1.680091451241E12,\n                    \"validTo\": 1.68164754E12,\n                    \"applicationStatus\": null,\n                    \"wfStatus\": \"string\",\n                    \"isActive\": true,\n                    \"documents\": [\n                        {\n                            \"id\": \"{{functionDocumentId}}\",\n                            \"orgId\": null,\n                            \"orgFunctionId\": null,\n                            \"documentType\": \"PDF\",\n                            \"fileStore\": \"fileStore-test\",\n                            \"documentUid\": \"documentUid-test\",\n                            \"additionalDetails\": {\n                                \"documents-func\": \"test-additionalDetails\"\n                            }\n                        }\n                    ],\n                    \"additionalDetails\": {\n                        \"func\": \"test-additionalDetails\"\n                    },\n                    \"auditDetails\": {\n                        \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                        \"createdTime\": 1680666675994,\n                        \"lastModifiedTime\": 1680666675994\n                    }\n                }\n            ],\n            \"jurisdiction\": [\n                {\n                    \"id\": \"{{jurisdictionId}}\",\n                    \"orgId\": null,\n                    \"code\": \"{{jurisdictionCode}}\",\n                    \"additionalDetails\": {\n                        \"jurisdiction\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"isActive\": true,\n            \"documents\": [\n                {\n                    \"id\": \"{{orgDocumentId}}\",\n                    \"orgId\": null,\n                    \"orgFunctionId\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": \"fileStore-test\",\n                    \"documentUid\": \"documentUid-test\",\n                    \"additionalDetails\": {\n                        \"documents-org\": \"test-additionalDetails\"\n                    }\n                }\n            ],\n            \"additionalDetails\": {\n                \"org\": \"test-additionalDetails\"\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"lastModifiedBy\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n                \"createdTime\": 1680666675796,\n                \"lastModifiedTime\": 1680666675796\n            }\n        }\n    ],\n    \"pagination\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/org-services/organisation/v1/_update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"org-services",
+						"organisation",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if (pm.environment.get(\"base_url\").includes(\"localhost\")) {",
+					"",
+					"    var tenantId = \"pg.citya\";",
+					"    var id = 1;",
+					"    var uuid = \"11b0e02b-0145-4de2-bc42-c97b96264807\";",
+					"",
+					"    var roles = [{",
+					"                    \"name\": \"HRMS Admin\",",
+					"                    \"code\": \"HRMS_ADMIN\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"Employee\",",
+					"                    \"code\": \"EMPLOYEE\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"ESTIMATE VERIFIER\",",
+					"                    \"code\": \"ESTIMATE_VERIFIER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"CBO ADMIN\",",
+					"                    \"code\": \"CBO_ADMIN\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"LOI CREATOR\",",
+					"                    \"code\": \"LOI_CREATOR\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"OFFICER IN CHARGE\",",
+					"                    \"code\": \"OFFICER_IN_CHARGE\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"LOI APPROVER\",",
+					"                    \"code\": \"LOI_APPROVER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"EST CREATOR\",",
+					"                    \"code\": \"EST_CREATOR\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"EST_CHECKER\",",
+					"                    \"code\": \"EST_CHECKER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"JUNIOR ENGINEER\",",
+					"                    \"code\": \"JUNIOR_ENGINEER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"MUKTA Admin\",",
+					"                    \"code\": \"MUKTA_ADMIN\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"LOI CHECKER\",",
+					"                    \"code\": \"LOI_CHECKER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"WORK ORDER CREATOR\",",
+					"                    \"code\": \"WORK_ORDER_CREATOR\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"ESTIMATE APPROVER\",",
+					"                    \"code\": \"ESTIMATE_APPROVER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"EST TECH SANC\",",
+					"                    \"code\": \"EST_TECH_SANC\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"WORK ORDER VERIFIER\",",
+					"                    \"code\": \"WORK_ORDER_VERIFIER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"EST FIN SANC\",",
+					"                    \"code\": \"EST_FIN_SANC\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"Organization admin\",",
+					"                    \"code\": \"ORG_ADMIN\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"Organization staff\",",
+					"                    \"code\": \"ORG_STAFF\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"MUNICIPAL ENGINEER\",",
+					"                    \"code\": \"MUNICIPAL_ENGINEER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"TECHNICAL SANCTIONER\",",
+					"                    \"code\": \"TECHNICAL_SANCTIONER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"WORK ORDER APPROVER\",",
+					"                    \"code\": \"WORK_ORDER_APPROVER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"ESTIMATE CREATOR\",",
+					"                    \"code\": \"ESTIMATE_CREATOR\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"EST TECH SANC\",",
+					"                    \"code\": \"EST_ADMIN_SANC\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"State Dashboard Admin\",",
+					"                    \"code\": \"STADMIN\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                },",
+					"                {",
+					"                    \"name\": \"SUPER USER\",",
+					"                    \"code\": \"SUPERUSER\",",
+					"                    \"tenantId\": \"pg.citya\"",
+					"                }];",
+					"",
+					"    var userInfo = {",
+					"        \"id\": id,",
+					"        \"uuid\": uuid,",
+					"        \"userName\": \"\",",
+					"        \"name\": \"\",",
+					"        \"mobileNumber\": \"\",",
+					"        \"emailId\": \"\",",
+					"        \"type\": \"\",",
+					"        \"roles\": roles,",
+					"        \"active\": true,",
+					"        \"tenantId\": \"pg.citya\"",
+					"    };",
+					"",
+					"    pm.request.body.raw = pm.request.body.raw.replace('\"{{token}}\"', '\"\", \\n \"userInfo\":  ' + JSON.stringify(userInfo));",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "tenantId",
+			"value": ""
+		},
+		{
+			"key": "tenantId2",
+			"value": ""
+		},
+		{
+			"key": "orgFuncClass",
+			"value": ""
+		},
+		{
+			"key": "orgFunType",
+			"value": ""
+		},
+		{
+			"key": "orgFunCategory",
+			"value": ""
+		},
+		{
+			"key": "boundaryType",
+			"value": ""
+		},
+		{
+			"key": "boundaryCode",
+			"value": ""
+		},
+		{
+			"key": "contactMobileNumber",
+			"value": ""
+		},
+		{
+			"key": "contactEmail",
+			"value": ""
+		},
+		{
+			"key": "contactName",
+			"value": ""
+		},
+		{
+			"key": "identifierType",
+			"value": ""
+		},
+		{
+			"key": "identifierValue",
+			"value": ""
+		},
+		{
+			"key": "jurisdictionCode",
+			"value": ""
+		},
+		{
+			"key": "orgName",
+			"value": ""
+		},
+		{
+			"key": "stateLevelTenant",
+			"value": ""
+		},
+		{
+			"key": "orgId",
+			"value": ""
+		},
+		{
+			"key": "orgNumber",
+			"value": ""
+		},
+		{
+			"key": "applicationNumber",
+			"value": ""
+		},
+		{
+			"key": "orgAddressId",
+			"value": ""
+		},
+		{
+			"key": "contactDetailsId",
+			"value": ""
+		},
+		{
+			"key": "identifierId",
+			"value": ""
+		},
+		{
+			"key": "functionId",
+			"value": ""
+		},
+		{
+			"key": "functionApplicationNumber",
+			"value": ""
+		},
+		{
+			"key": "functionDocumentId",
+			"value": ""
+		},
+		{
+			"key": "jurisdictionId",
+			"value": ""
+		},
+		{
+			"key": "orgDocumentId",
+			"value": ""
+		},
+		{
+			"key": "contactMobileNumber2",
+			"value": ""
+		},
+		{
+			"key": "orgName2",
+			"value": ""
+		},
+		{
+			"key": "orgFuncClass2",
+			"value": ""
+		},
+		{
+			"key": "orgFunType2",
+			"value": ""
+		},
+		{
+			"key": "orgFunCategory2",
+			"value": ""
+		},
+		{
+			"key": "boundaryType2",
+			"value": ""
+		},
+		{
+			"key": "boundaryCode2",
+			"value": ""
+		},
+		{
+			"key": "contactEmail2",
+			"value": ""
+		},
+		{
+			"key": "contactName2",
+			"value": ""
+		},
+		{
+			"key": "identifierType2",
+			"value": ""
+		},
+		{
+			"key": "identifierValue2",
+			"value": ""
+		},
+		{
+			"key": "jurisdictionCode2",
+			"value": ""
+		},
+		{
+			"key": "stateLevelTenant2",
+			"value": ""
+		},
+		{
+			"key": "orgId2",
+			"value": ""
+		},
+		{
+			"key": "orgNumber2",
+			"value": ""
+		},
+		{
+			"key": "applicationNumber2",
+			"value": ""
+		},
+		{
+			"key": "orgAddressId2",
+			"value": ""
+		},
+		{
+			"key": "contactDetailsId2",
+			"value": ""
+		},
+		{
+			"key": "identifierId2",
+			"value": ""
+		},
+		{
+			"key": "functionId2",
+			"value": ""
+		},
+		{
+			"key": "functionApplicationNumber2",
+			"value": ""
+		},
+		{
+			"key": "functionDocumentId2",
+			"value": ""
+		},
+		{
+			"key": "jurisdictionId2",
+			"value": ""
+		},
+		{
+			"key": "orgDocumentId2",
+			"value": ""
+		},
+		{
+			"key": "geoLocationId",
+			"value": ""
+		},
+		{
+			"key": "organisationType",
+			"value": ""
+		}
+	]
+}

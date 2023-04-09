@@ -27,6 +27,8 @@ class MusterRoll with _$MusterRoll {
     String? registerId,
     String? status,
     String? musterRollStatus,
+    String? serviceCode,
+    String? referenceId,
     int? startDate,
     int? endDate,
     @JsonKey(name: 'individualEntries')

@@ -31,6 +31,7 @@ class Contracts with ContractsMappable {
   ContractAuditDetails? auditDetails;
   ContractAdditionalDetails? additionalDetails;
   ContractProcessInstance? processInstance;
+  ORGAdditionalDetails? orgAdditionalDetails;
 
   Contracts(
       {this.id,
@@ -53,7 +54,16 @@ class Contracts with ContractsMappable {
       this.documents,
       this.processInstance,
       this.additionalDetails,
-      this.auditDetails});
+      this.auditDetails,
+      this.orgAdditionalDetails});
+}
+
+@MappableClass()
+class ORGAdditionalDetails with ORGAdditionalDetailsMappable {
+  String? registeredByDept;
+  String? deptRegistrationNum;
+
+  ORGAdditionalDetails({this.deptRegistrationNum, this.registeredByDept});
 }
 
 @MappableClass()
@@ -110,9 +120,12 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   String? orgName;
   String? projectId;
   String? projectName;
+  String? projectDesc;
   String? projectType;
   String? ward;
   String? cboName;
+  OfficerInCharge? officerInChargeName;
+  String? officerInChargeDesgn;
   String? cboCode;
   String? estimateNumber;
   String? locality;
@@ -135,7 +148,17 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
       this.estimateNumber,
       this.totalEstimatedAmount,
       this.completionPeriod,
-      this.termsAndConditions});
+      this.termsAndConditions,
+      this.projectDesc,
+      this.officerInChargeName,
+      this.officerInChargeDesgn});
+}
+
+@MappableClass()
+class OfficerInCharge with OfficerInChargeMappable {
+  String? code;
+  String? name;
+  OfficerInCharge({this.code, this.name});
 }
 
 @MappableClass()

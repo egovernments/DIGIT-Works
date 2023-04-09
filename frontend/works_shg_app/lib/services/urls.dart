@@ -7,6 +7,7 @@ class Urls {
   static CommonServices commonServices = const CommonServices();
   static WageSeekerServices wageSeekerServices = const WageSeekerServices();
   static WorkServices workServices = const WorkServices();
+  static ORGServices orgServices = const ORGServices();
 }
 
 class CommonServices {
@@ -16,6 +17,14 @@ class CommonServices {
   String get fileFetch => 'filestore/v1/files/url';
   String get fetchCities => 'egov-location/location/v11/boundarys/_search';
   String get bankDetails => 'https://ifsc.razorpay.com';
+  String get pdfDownload => 'egov-pdf/download/musterRoll/muster-roll';
+}
+
+class ORGServices {
+  const ORGServices();
+
+  String get orgSearch => 'org-services/organisation/v1/_search';
+  String get financeSearch => 'bankaccount-service/bankaccount/v1/_search';
 }
 
 class WageSeekerServices {

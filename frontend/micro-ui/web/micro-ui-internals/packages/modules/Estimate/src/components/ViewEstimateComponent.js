@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import ApplicationDetails from '../../../templates/ApplicationDetails';
 import { useHistory } from 'react-router-dom';
 const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
-
     const history = useHistory();
     const [showActions, setShowActions] = useState(false);
     const [toast, setToast] = useState({show : false, label : "", error : false});
@@ -19,7 +18,9 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
     const { t } = useTranslation()
 
     const { tenantId, estimateNumber } = Digit.Hooks.useQueryParams();
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
+    const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const closeMenu = () => {
         setShowActions(false);
@@ -56,7 +57,14 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
         if(isError || (!isLoading && applicationDetails?.isNoDataFound)) {
             setToast({show : true, label : t("COMMON_ESTIMATE_NOT_FOUND"), error : true});
         }
-    },[isLoading, isError, applicationDetails])
+    },[isLoading, isError, applicationDetails]);
+
+    //clear all contract session before Create Contract
+    useEffect(() => {
+        if (!window.location.href.includes("create-contract") && sessionFormData && Object.keys(sessionFormData) != 0) {
+          clearSessionFormData();
+        }
+    }, [location]);
     
     const handleActionBar = (option) => {
         if (option?.name === "CREATE_CONTRACT") {

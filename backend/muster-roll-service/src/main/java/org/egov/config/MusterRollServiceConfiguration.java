@@ -90,6 +90,10 @@ public class MusterRollServiceConfiguration {
     @Value("${works.bankaccounts.search.endpoint}")
     private String bankaccountsSearchEndpoint;
 
+    //contract service code
+    @Value("${works.contract.service.code}")
+    private String contractServiceCode;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
