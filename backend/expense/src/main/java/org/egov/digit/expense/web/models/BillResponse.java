@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,19 +30,19 @@ public class BillResponse {
 	@Valid
 	private ResponseInfo responseInfo;
 
-	@JsonProperty("bill")
+	@JsonProperty("bills")
 	@Valid
-	private List<Bill> bill;
+	private List<Bill> bills;
 
 	@JsonProperty("pagination")
 	@Valid
 	private Pagination pagination;
 
 	public BillResponse addBillItem(Bill billItem) {
-		if (this.bill == null) {
-			this.bill = new ArrayList<>();
+		if (this.bills == null) {
+			this.bills = new ArrayList<>();
 		}
-		this.bill.add(billItem);
+		this.bills.add(billItem);
 		return this;
 	}
 

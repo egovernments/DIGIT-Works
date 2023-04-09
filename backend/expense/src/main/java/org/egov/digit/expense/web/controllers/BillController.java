@@ -2,36 +2,44 @@ package org.egov.digit.expense.web.controllers;
 
 import javax.validation.Valid;
 
+import org.egov.digit.expense.service.BillService;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillResponse;
 import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 
 @Controller
-@RequestMapping("expense")
+@RequestMapping("expense/bill/v1/")
 public class BillController {
+	
+	@Autowired
+	private BillService service;
 
-	@RequestMapping(value = "/bill/v1/_create", method = RequestMethod.POST)
-	public ResponseEntity<BillResponse> billV1CreatePost(@Valid @RequestBody BillRequest body) {
+	@PostMapping(value = "_create")
+	public ResponseEntity<BillResponse> Create(@Valid @RequestBody BillRequest billRequest) {
 
-		return new ResponseEntity<BillResponse>(new BillResponse(), HttpStatus.NOT_IMPLEMENTED);
+		BillResponse response = service.create(billRequest);
+		return new ResponseEntity<BillResponse>(response, HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value = "/bill/v1/_search", method = RequestMethod.POST)
-	public ResponseEntity<BillResponse> billV1SearchPost(@Valid @RequestBody BillSearchRequest body) {
-		return new ResponseEntity<BillResponse>(new BillResponse(), HttpStatus.NOT_IMPLEMENTED);
+	@PostMapping(value = "_search")
+	public ResponseEntity<BillResponse> search(@Valid @RequestBody BillSearchRequest billSearchCriteria) {
+		BillResponse response = service.search(billSearchCriteria);
+		return new ResponseEntity<BillResponse>(response, HttpStatus.ACCEPTED);
 	}
 
-	@RequestMapping(value = "/bill/v1/_update", method = RequestMethod.POST)
-	public ResponseEntity<BillResponse> billV1UpdatePost(@Valid @RequestBody BillRequest body) {
-		return new ResponseEntity<BillResponse>(new BillResponse(), HttpStatus.NOT_IMPLEMENTED);
+	@PostMapping(value = "_update")
+	public ResponseEntity<BillResponse> update(@Valid @RequestBody BillRequest billRequest) {
+		BillResponse response = service.update(billRequest);
+		return new ResponseEntity<BillResponse>(response, HttpStatus.ACCEPTED);
 	}
 
 }

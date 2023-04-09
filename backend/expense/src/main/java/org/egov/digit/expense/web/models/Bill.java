@@ -1,8 +1,8 @@
 package org.egov.digit.expense.web.models;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -12,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.ProcessInstance;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,9 +31,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Bill {
+	
 	@JsonProperty("id")
 	@Valid
-	private UUID id;
+	private String id;
 
 	@JsonProperty("tenantId")
 	@NotNull
@@ -40,11 +43,11 @@ public class Bill {
 
 	@JsonProperty("billDate")
 	@Valid
-	private BigDecimal billDate;
+	private Long billDate;
 
 	@JsonProperty("dueDate")
 	@Valid
-	private BigDecimal dueDate;
+	private Long dueDate;
 
 	@JsonProperty("netPayableAmount")
 	@Valid
@@ -65,19 +68,19 @@ public class Bill {
 
 	@JsonProperty("fromPeriod")
 	@Valid
-	private BigDecimal fromPeriod;
+	private Long fromPeriod;
 
 	@JsonProperty("toPeriod")
 	@Valid
-	private BigDecimal toPeriod;
+	private Long toPeriod;
 	
 	@JsonProperty("paymentStatus")
 	@Size(min = 2, max = 64)
 	private String paymentStatus;
 
-	@JsonProperty("wfStatus")
+	@JsonProperty("status")
 	@Size(min = 2, max = 64)
-	private String wfStatus;
+	private String status;
 
 	@JsonProperty("payer")
 	@NotNull
@@ -89,14 +92,21 @@ public class Bill {
 	@Valid
 	private List<BillDetail> billDetails;
 
-	@JsonProperty("additionalFields")
-	private Object additionalFields;
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
 
 	@JsonProperty("auditDetails")
 	@Valid
 	private AuditDetails auditDetails;
+	
+	@JsonProperty("workflow")
+	private ProcessInstance workflow;
 
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
+		
+		if(null == this.billDetails)
+			this.billDetails = new ArrayList<>();
+		
 		this.billDetails.add(billDetailsItem);
 		return this;
 	}

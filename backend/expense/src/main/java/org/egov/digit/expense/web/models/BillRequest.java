@@ -2,6 +2,7 @@ package org.egov.digit.expense.web.models;
 
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,7 +27,7 @@ public class BillRequest {
 	@Valid
 	private RequestInfo requestInfo;
 
-	@JsonProperty("bill")
+	@JsonProperty("bills")
 	@Valid
 	private Bill bill;
 

@@ -1,0 +1,523 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Expense Bill and Payments
+  description: Capture the details for expense Bill and Payments 
+paths:
+  /bill/v1/_create:
+    post:
+      tags:
+        - Bill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillRequest'
+      responses:
+        '202':
+          description: Accepted account registration request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /bill/v1/_update:
+    post:
+      tags:
+        - Bill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillRequest'
+      responses:
+        '202':
+          description: Accepted account updation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /bill/v1/_search:
+    post:
+      tags:
+        - Bill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillSearchRequest'
+      responses:
+        '200':
+          description: Return search results
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /payment/v1/_fetch:
+    post:
+      tags:
+        - Payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '201':
+          description: Accepted account registration request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /payment/v1/_update:
+    post:
+      tags:
+        - Payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '202':
+          description: Accepted account updation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /Payment/v1/_search:
+    post:
+      tags:
+        - Payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentSearchRequest'
+      responses:
+        '200':
+          description: Return search results
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+components:
+  schemas:
+    Bill:
+      description: A Object which holds the info about the expense details
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the record
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        billDate:
+          description: Bill generation date 
+          type: number
+          format: int64
+        dueDate:
+          description: Bill Payment due date
+          type: number
+          format: int64
+        netPayableAmount:
+          description: Net payable amount of the bill 
+          type: number
+          format: BigDecimal
+        netPaidAmount:
+          description: Net paid amount for a bill
+          type: number
+          format: BigDecimal
+        businessService:
+          description: Capture the expense system unique identifier.(It's name spaced master data defined in MDMS) 
+          example: WORKS, SALARY etc
+          type: string
+          minLength: 2
+          maxLength: 64
+        referenceId:
+          description: Pass reference id to link the bill with business entity
+          type: string
+          minLength: 2
+          maxLength: 64
+        fromPeriod:
+          description: Start date of billing period 
+          type: number
+          format: int64
+        toPeriod:
+          description: End date of demand period  
+          type: number
+          format: int64
+        paymentStatus:
+          description: Payment status for the bill 
+          type: string
+          minLength: 2
+          maxLength: 64
+        status:
+          description: Workflow status of the bill
+          type: string
+          minLength: 2
+          maxLength: 64
+        payer:
+            $ref: '#/components/schemas/Party'
+        billDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillDetail'
+        
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
+      required:
+        - tenantId
+        - businessService
+        - billDetails
+        - payer
+        
+    Party:
+      description: Account details
+      type: object
+      properties:
+        type:
+          description: Party type
+          example: individual, department etc
+          type: string
+          minLength: 2
+          maxLength: 64
+        identifier:
+          description: Unique identifier of a the party individual/Org
+          type: string
+          minLength: 2
+          maxLength: 64
+      required:
+        - type
+        - identifier
+        
+    BillDetail:
+      description: Bill details of the individual payees
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the record
+          readOnly: true
+          type: string
+          format: uuid
+        referenceId:
+          description: Pass reference to link payees to business entity
+          type: string
+          minLength: 2
+          maxLength: 64
+        paymentStatus:
+          description: Payment status for each bill details
+          type: string
+          minLength: 2
+          maxLength: 64
+        fromPeriod:
+          description: Start date of bill period  
+          type: number
+          format: int64
+        toPeriod:
+          description: End date of bill period  
+          type: number
+          format: int64
+        payee:
+            $ref: '#/components/schemas/Party'
+        lineItems:
+          type: array
+          description: Bill line items
+          items:
+            $ref: '#/components/schemas/LineItems'
+        payableLineItems:
+          type: array
+          description: Bill line items
+          items:
+            $ref: '#/components/schemas/LineItems'
+        
+      required:
+        - payee
+        - payableLineItem
+
+    LineItems:
+      description: Line items are the amount breakups for net amounts 
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the account
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        headCode:
+          description: Head codes are define master data  
+          example: BASICSALARY, HRA, INCOMETAX 
+          type: string
+          minLength: 2
+          maxLength: 64
+        amount:
+          description: amount for head code
+          type: number
+          format: BigDecimal
+        type:
+          description: Type of line item
+          type: string
+          enum:
+            - PAYABLE
+            - DEDUCTION
+        paidAmount:
+          description: Net paid amount for a bill
+          type: number
+          format: BigDecimal
+        isActive:
+          type: boolean
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
+      required:
+        - tenantId
+        - headCode
+        - amount
+        - type
+    
+   
+    
+    BillRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        bill:
+          $ref: '#/components/schemas/Bill'
+    BillResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        bill:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+    BillCriteria:
+      type: object
+      properties:
+        tenantId:
+          description: Tenant Identifier
+          example: pg.cityA
+          type: string
+          minLength: 2
+          maxLength: 64
+        ids:
+          type: array
+          description: Search by bill ids 
+          format: uuid
+          items:
+            type: string
+        businessService:
+          description: Search bill by business service
+          example: WORKS, SALARY etc
+          type: string
+          minLength: 2
+          maxLength: 64
+        referenceId:
+          description: search bill by  referance ids         
+          type: array
+          format: uuid
+          items:
+            type: string
+        status:
+          type: string
+      required: 
+        - tenantId
+    BillSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        billCriteria:
+          $ref: '#/components/schemas/BillCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+    PaymentRequestCriteria:
+      type: object
+      properties:
+        tenantId:
+          description: tenant Identifier
+          example: pg.cityA
+          type: string
+          minLength: 2
+          maxLength: 64
+        billIds:
+          type: array
+          description: create payment based on the bill ids 
+          format: uuid
+          items:
+            type: string
+            example: f259e11f-fc28-4202-95a3-129d9feed203
+        businessService:
+          description: create payment based on business service
+          example: muster-role
+          type: string
+          minLength: 2
+          maxLength: 64
+        referenceId:
+          description: create payment based on referance ids of the bills
+          type: array
+          format: uuid
+          items:
+            type: string
+            example: muster-role/01
+    PaymentCriteria:
+      type: object
+      properties:
+        tenantId:
+          description: tenant Identifier
+          example: pg.cityA
+          type: string
+          minLength: 2
+          maxLength: 64
+        ids:
+          type: array
+          description: Search by the payment ids 
+          format: uuid
+          items:
+            type: string
+            example: 44452d1f-d88b-4dee-b87d-679756a88161
+        billIds:
+          description: search payment by the bill ids         
+          type: array
+          format: uuid
+          items:
+            type: string
+            example: 1e4bce04-499d-433c-928b-51d222019d45
+        status:
+          type: string
+          example: ACTIVE
+      
+      required: 
+        - tenantId
+    Payment:
+      type: object
+      properties:
+        tenantId:
+          description: tenant Identifier
+          example: pg.cityA
+          type: string
+          minLength: 2
+          maxLength: 64
+        id:
+          type: string
+          description: The unique payment id
+          format: uuid
+          items:
+            type: string
+        netPayableAmount:
+          description: Net payable amount of the bill 
+          type: number
+          format: BigDecimal
+        netPaidAmount:
+          description: Net paid amount for a bill
+          type: number
+          format: BigDecimal
+        bills:
+          description: search payment by the bill ids         
+          type: array
+          format: uuid
+          items:
+            $ref: '#/components/schemas/Bill'
+        status:
+          type: string
+      
+      required: 
+        - tenantId    
+    PaymentSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        paymentCriteria:
+          $ref: '#/components/schemas/PaymentCriteria'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'   
+    PaymentRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        paymentRequestCriteria:
+          $ref: '#/components/schemas/PaymentRequestCriteria'
+    PaymentResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
+  
+ 
+    
