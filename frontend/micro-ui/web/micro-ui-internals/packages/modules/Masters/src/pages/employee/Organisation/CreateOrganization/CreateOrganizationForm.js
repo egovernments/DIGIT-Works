@@ -148,12 +148,10 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
           ]
         }),
         [orgData, filteredOrgSubTypes, filteredOrgFunCategories, wardsAndLocalities, filteredLocalities, ULBOptions]);
-    console.log('config', config);
 
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
-            console.log('difference', {difference, formData});
             if(formData.locDetails_ward) {
                 setSelectedWard(formData?.locDetails_ward?.code)
             }
@@ -167,9 +165,9 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 setValue("funDetails_orgSubType", '');
                 setValue("funDetails_category", '');
             }
-            if(formData?.transferCodes?.['transferCodes.1.name']?.code == 'IFSC' && difference?.transferCodes?.['transferCodes.1.value']) {
-                if(formData?.transferCodes['transferCodes.1.value'].length > 10) {
-                    const res = await window.fetch(`https://ifsc.razorpay.com/${formData?.transferCodes['transferCodes.1.value']}`);
+            if(formData?.transferCodesData?.[0]?.name?.code == 'IFSC' && difference?.transferCodesData?.[0]?.value) {
+                if(formData?.transferCodesData?.[0]?.value.length > 10) {
+                    const res = await window.fetch(`https://ifsc.razorpay.com/${formData?.transferCodesData?.[0]?.value}`);
                     if (res.ok) {
                         const { BANK, BRANCH } = await res.json();
                         setValue('financeDetails_bankName', `${BANK}`)
@@ -178,7 +176,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 }
             }
             setSessionFormData({ ...sessionFormData, ...formData });
-          }
+        }
     }
 
     const sendDataToResponsePage = (orgId, isSuccess, message, showId, otherMessage = "") => {

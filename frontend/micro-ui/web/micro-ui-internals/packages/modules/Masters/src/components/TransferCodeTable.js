@@ -4,26 +4,21 @@ import _ from "lodash"
 import { AddIcon, DeleteIcon, TextInput, CardLabelError, Loader, Dropdown, Header } from '@egovernments/digit-ui-react-components'
 
 const TransferCodeTable = (props) => {
-   // console.log('@@props', props);
-    const { t, register, errors , setValue, getValues, onSelect, formData, control, formState} = props
-    const { onBlur, value, onChange, ref } = props?.props
-    
-    const columns = [t('WORKS_SNO'), t("MASTERS_IDENTIFIER_TYPE"), t("MASTERS_IDENTIFIER_VALUE"), '']
-    const formFieldName = props?.config?.key //can be transferCodes or taxIdentifier
+    const { t, register, errors , setValue, getValues, onSelect, formData, control, formState, onChange, unregister } = props
 
-    const isTranferCodeTable = formFieldName === "transferCodes"
+    const columns = [t('WORKS_SNO'), t("MASTERS_IDENTIFIER_TYPE"), t("MASTERS_IDENTIFIER_VALUE"), '']
+    const formFieldName = props?.config?.key === "transferCodes" ? 'transferCodesData' : 'taxIdentifierData'
+
+    const module = props?.config?.key
+    const isTranferCodeTable = formFieldName === "transferCodesData"
         
     const initialState = [
         {
-            key: 1,
+            key: 0,
             isShow: true
         }
     ];
     const [rows, setRows] = useState(initialState);
-
-    useEffect(() => {
-       console.log('ROWS', rows);
-    }, [rows]);
 
     const getStyles = (index) => {
         let obj = {}
@@ -67,6 +62,7 @@ const TransferCodeTable = (props) => {
         }
         return e
         })
+        unregister(`${formFieldName}.${row.key}.name`)
         setRows(prev => updatedState)
     }
 
@@ -83,10 +79,6 @@ const TransferCodeTable = (props) => {
         return columns?.map((key, index) => {
             return <th key={index} style={getStyles(index+1)} > {key} </th>
         })
-    }
-
-    const setValueToFormData = (configKey, input, value) => {
-        onSelect(configKey, { ...formData[configKey], [input]: value });
     }
 
     const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey = "name", options = []) => {
@@ -115,7 +107,6 @@ const TransferCodeTable = (props) => {
                 t={t}
                 select={(e) => {
                     props.onChange(e)
-                    setValueToFormData(formFieldName, `${formFieldName}.${row.key}.name`, e)
                 }}
                 onBlur={props.onBlur}
                 optionCardStyles={{ maxHeight: '15rem' }}
@@ -142,7 +133,7 @@ const TransferCodeTable = (props) => {
                                     mdmsConfig: {
                                         masterName: isTranferCodeTable ? "OrgTransferCode" : "OrgTaxIdentifier",
                                         moduleName: "common-masters",
-                                        localePrefix: `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(formFieldName)}`
+                                        localePrefix: `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(module)}`
                                     }
                                 })
                             )}
@@ -158,9 +149,7 @@ const TransferCodeTable = (props) => {
                             name={`${formFieldName}.${row.key}.value`} 
                             selected={formData && formData[formFieldName] ? formData[formFieldName][`${formFieldName}.${row.key}.value`] : undefined}
                             inputRef={register({ required: isTranferCodeTable, pattern: getPatterns()})}
-                            onChange={(e) => {
-                                setValueToFormData(formFieldName, `${formFieldName}.${row.key}.value`, e.target.value)
-                            }}
+                            onChange={onChange}
                         />
                         {errors && errors?.[formFieldName]?.[row.key]?.value?.type === "pattern" && (
                             <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
@@ -183,7 +172,7 @@ const TransferCodeTable = (props) => {
                 <tbody>
                     {renderBody()}
                     {
-                        formFieldName === "taxIdentifier" ? (
+                        formFieldName === "taxIdentifierData" ? (
                             <tr>
                                 <td colSpan={7} style={{ "textAlign": "center" }} onClick={addRow}><span><AddIcon fill={"#F47738"} styles={{ "margin": "auto", "display": "inline", "marginTop": "-2px" }} /><label style={{ "marginLeft": "10px", fontWeight: "600", color: "#F47738" }}>{t("WORKS_ADD_ITEM")}</label></span></td>
                             </tr> ) : null

@@ -215,13 +215,16 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
 }   
 
 export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, orgData, tenantId, ULBOptions, setIsFormReady }) => {
-
-    console.log('organisation@@', {configs, orgData});
-    console.log('sessionFormData@@', sessionFormData);
     const organisation = orgData?.organisation
     const bankAccountDetails = orgData?.bankDetails?.[0]?.bankAccountDetails?.[0]
     
     const funDetails = organisation?.functions?.[0]
+    let identifiers = organisation?.identifiers?.map(item => {
+        return {
+            name: { code: item?.type, name: `COMMON_MASTERS_TAXIDENTIFIER_${item?.type}`, active: true},
+            value: item?.value ? item?.value : ""
+        }
+    })
 
     if(!sessionFormData?.locDetails_city) {
         if(isModify) {
@@ -255,6 +258,13 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
         configs.defaultValues.financeDetails_accountNumber = bankAccountDetails?.accountNumber ? bankAccountDetails?.accountNumber : ""
         configs.defaultValues.financeDetails_bankName = ''
         configs.defaultValues.financeDetails_branchName = ''
+
+        configs.defaultValues.transferCodesData = [{
+            name: { code: 'IFSC', "name": "COMMON_MASTERS_TRANSFERCODES_IFSC", active: true },
+            value: bankAccountDetails?.bankBranchIdentifier?.code ? bankAccountDetails?.bankBranchIdentifier?.code : "" 
+        }]
+
+        configs.defaultValues.taxIdentifierData = identifiers
        
         setSessionFormData({...configs?.defaultValues})
     }
