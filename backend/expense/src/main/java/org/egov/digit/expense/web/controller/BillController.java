@@ -1,4 +1,4 @@
-package org.egov.digit.expense.web.controllers;
+package org.egov.digit.expense.web.controller;
 
 import javax.validation.Valid;
 

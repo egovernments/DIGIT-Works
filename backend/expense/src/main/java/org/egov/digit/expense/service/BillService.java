@@ -10,6 +10,7 @@ import org.egov.digit.expense.kafka.Producer;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.EncrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
+import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillResponse;
@@ -17,6 +18,8 @@ import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import digit.models.coremodels.State;
 
 @Service
 public class BillService {
@@ -28,10 +31,13 @@ public class BillService {
 	private Configuration config;
 	
 	@Autowired
-	private BillRepository billRepository;
+	private BillValidator validator;
 	
 	@Autowired
-	private BillValidator validator;
+	private WorkflowUtil workflowUtil;
+	
+	@Autowired
+	private BillRepository billRepository;
 	
 	@Autowired
 	private EncrichmentUtil enrichmentUtil;
@@ -47,11 +53,15 @@ public class BillService {
 	 */
 	public BillResponse create(BillRequest billRequest) {
 
+		Bill bill = billRequest.getBill();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
 
-		//validation  mdms
+		validator.validateCreateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAudit(billRequest);
+		
+		State wfState =  workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
+		bill.setStatus(wfState.getApplicationStatus());
 		
 		producer.push(config.getBillCreateTopic(), billRequest);
 		
@@ -70,12 +80,16 @@ public class BillService {
 	 */
 	public BillResponse update(BillRequest billRequest) {
 
+		Bill bill = billRequest.getBill();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
 		
-		// validation of update request 
-		
+		validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest);
+		
+		State wfState =  workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
+		bill.setStatus(wfState.getApplicationStatus());
+		
 		producer.push(config.getBillUpdateTopic(), billRequest);
 		
 		response = BillResponse.builder()

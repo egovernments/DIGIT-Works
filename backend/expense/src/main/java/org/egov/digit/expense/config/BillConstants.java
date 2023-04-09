@@ -1,14 +1,22 @@
 package org.egov.digit.expense.config;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class BillConstants {
 	
 	
-	private static final String SELECT = "SELECT ";
+	public static final String MODULE_NAME = "ExpenseService";
+	
+	public static final String HEADCODE_CODE_FILTER = "$.MdmsRes.ExpenseService.HeadCodeMaster.*.code";
+	
+	public static final String HEADCODE_MASTERNAME = "HeadCodeMaster";
+	
+	public static final List<String> MDMS_MASTER_NAMES = Collections
+			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME));
+	
 	private static final String INNER_JOIN = "INNER JOIN";
-	private static final String LEFT_JOIN  =  "LEFT OUTER JOIN";
-	private static final String AND_QUERY = " AND ";
-
 	
 	public static final String BILL_QUERY = "SELECT "
 			
@@ -31,7 +39,7 @@ public class BillConstants {
 			
 			+ " payer.id as payer_id, payer.tenantid as payer_tenantid, payer.type as payer_type, payer.identifier as payer_identifier, payer.parentid as payer_parentid, "
 			+ " payer.createdby as payer_createdby, payer.createdtime as payer_createdtime, payer.lastmodifiedby as payer_lastmodifiedby, "
-			+ "	payer.lastmodifiedtime as payer_lastmodifiedtime, payer.additionaldetails as payer_additionaldetails"
+			+ "	payer.lastmodifiedtime as payer_lastmodifiedtime, payer.additionaldetails as payer_additionaldetails "
 			
 			+ "	FROM eg_expense_bill bill "
 			

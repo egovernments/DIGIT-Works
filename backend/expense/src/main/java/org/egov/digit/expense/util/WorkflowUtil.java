@@ -1,8 +1,12 @@
 package org.egov.digit.expense.util;
 
+import java.util.Arrays;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import digit.models.coremodels.BusinessService;
 import digit.models.coremodels.BusinessServiceResponse;
+import digit.models.coremodels.ProcessInstance;
 import digit.models.coremodels.ProcessInstanceRequest;
 import digit.models.coremodels.ProcessInstanceResponse;
 import digit.models.coremodels.RequestInfoWrapper;
@@ -78,12 +83,25 @@ public class WorkflowUtil {
     * @param workflowReq
     * @return
     */
-    private State callWorkFlow(ProcessInstanceRequest workflowReq) {
+    public State callWorkFlow(ProcessInstanceRequest workflowRequest) {
     	
         ProcessInstanceResponse response;
         StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-        Object optional = repository.fetchResult(url, workflowReq);
+        Object optional = repository.fetchResult(url, workflowRequest);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
+    }
+    
+    public ProcessInstanceRequest prepareWorkflowRequestForBill(BillRequest billRequest) {
+    	
+    	Bill bill = billRequest.getBill();
+    	ProcessInstance workflow = bill.getWorkflow();
+    	workflow.setBusinessId(null); // TODO FIXME what is the business ID since muster role id is not unique
+    	workflow.setTenantId(bill.getTenantId());
+    	
+    	return ProcessInstanceRequest.builder()
+    			.processInstances(Arrays.asList(workflow))
+    			.requestInfo(billRequest.getRequestInfo())
+    			.build();
     }
 }
