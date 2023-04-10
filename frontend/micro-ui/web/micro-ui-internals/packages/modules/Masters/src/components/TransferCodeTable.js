@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Controller } from 'react-hook-form';
 import _ from "lodash"
 import { AddIcon, DeleteIcon, TextInput, CardLabelError, Loader, Dropdown, Header } from '@egovernments/digit-ui-react-components'
@@ -6,19 +6,41 @@ import { AddIcon, DeleteIcon, TextInput, CardLabelError, Loader, Dropdown, Heade
 const TransferCodeTable = (props) => {
     const { t, register, errors , setValue, getValues, onSelect, formData, control, formState, onChange, unregister } = props
 
+    const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
+    const [sessionFormData] = orgSession;
+
     const columns = [t('WORKS_SNO'), t("MASTERS_IDENTIFIER_TYPE"), t("MASTERS_IDENTIFIER_VALUE"), '']
     const formFieldName = props?.config?.key === "transferCodes" ? 'transferCodesData' : 'taxIdentifierData'
 
     const module = props?.config?.key
     const isTranferCodeTable = formFieldName === "transferCodesData"
-        
+       
+    const renderTableFromSession = () => {
+        if(!sessionFormData?.taxIdentifierData) {
+            return [{
+                key: 0,
+                isShow: true,
+            }];
+        }
+        let tableState = [];
+        for(let i = 0; i<sessionFormData?.taxIdentifierData?.length; i++) {
+          if(sessionFormData?.taxIdentifierData[i]) {
+            tableState.push({
+              key: i,
+              isShow: true,
+            })
+          }
+        }
+        return tableState;
+    }
+
     const initialState = [
         {
             key: 0,
             isShow: true
         }
     ];
-    const [rows, setRows] = useState(initialState);
+    const [rows, setRows] = useState(isTranferCodeTable ? initialState : renderTableFromSession());
 
     const getStyles = (index) => {
         let obj = {}
@@ -60,9 +82,10 @@ const TransferCodeTable = (props) => {
             isShow: false
             }
         }
-        return e
+            return e
         })
         unregister(`${formFieldName}.${row.key}.name`)
+        unregister(`${formFieldName}.${row.key}.value`)
         setRows(prev => updatedState)
     }
 

@@ -200,7 +200,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             onError: async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_CREATION_FAIL", false),
             onSuccess: async (responseData) => {
                 //Update bank account details if wage seeker update success
-                const bankAccountPayload = getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI: '', tenantId, isModify, referenceId: responseData?.organisations?.[0].id});
+                const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: '', tenantId, isModify, referenceId: responseData?.organisations?.[0].id});
                 await CreateBankAccountMutation(bankAccountPayload, {
                     onError :  async (error) => sendDataToResponsePage('', false, "MASTERS_ORG_CREATION_FAIL", false),
                     onSuccess: async (bankResponseData) => {
@@ -216,8 +216,8 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         console.log('FORM Data', data);
         const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
-            const bankAccountPayload = {} //getBankAccountUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify, referenceId: ''});
-            //handleResponseForUpdate(orgPayload, bankAccountPayload);
+            // const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
+            // handleResponseForUpdate(orgPayload, bankAccountPayload);
         }else {
             handleResponseForCreate(orgPayload, data);
         }

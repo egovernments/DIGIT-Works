@@ -171,7 +171,7 @@ export const getWageSeekerSkillDeletePayload = ({wageSeekerDataFromAPI, tenantId
     }
 }
 
-export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, tenantId, isModify, referenceId, isWageSeeker}) => {
+export const getBankAccountUpdatePayload = ({formData, apiData, tenantId, isModify, referenceId, isWageSeeker}) => {
     let bankAccounts = []
 
     //create new object for bank account details
@@ -182,7 +182,7 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
     bankAccountsData.accountType = formData?.financeDetails_accountType?.code
     bankAccountsData.bankBranchIdentifier = {
         type: "IFSC",
-        code: isWageSeeker? formData?.financeDetails_ifsc : formData?.transferCodes?.['transferCodes.1.value'],
+        code: isWageSeeker? formData?.financeDetails_ifsc : formData?.transferCodesData?.[0]?.value,
         additionalDetails: {
             ifsccode: formData?.financeDetails_branchName
         }
@@ -192,7 +192,7 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
 
     if(isModify) {
         //copy existing data
-        bankAccounts = [...wageSeekerDataFromAPI?.bankDetails]
+        bankAccounts = [...apiData?.bankDetails]
         delete bankAccounts[0]?.auditDetails
 
         let bankAccountDetails = bankAccounts?.[0]?.bankAccountDetails?.[0]
@@ -245,7 +245,7 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
 
         configs.defaultValues.locDetails_city = ULBOptions[0]
         configs.defaultValues.locDetails_ward = organisation?.orgAddress?.[0]?.boundaryCode ? { code: organisation?.orgAddress?.[0]?.boundaryCode, name: organisation?.orgAddress?.[0]?.boundaryCode, i18nKey: Digit.Utils.locale.getMohallaLocale(organisation?.orgAddress?.[0]?.boundaryCode, tenantId)} : ""
-        configs.defaultValues.locDetails_locality = organisation?.additionalDetails?.locality ? { code: organisation?.additionalDetails?.locality?.code, name: organisation?.additionalDetails?.locality?.code, i18nKey: Digit.Utils.locale.getMohallaLocale(organisation?.additionalDetails?.locality?.code, tenantId)} : ""
+        configs.defaultValues.locDetails_locality = organisation?.additionalDetails?.locality ? { code: organisation?.additionalDetails?.locality, name: organisation?.additionalDetails?.locality, i18nKey: Digit.Utils.locale.getMohallaLocale(organisation?.additionalDetails?.locality, tenantId)} : ""
         configs.defaultValues.locDetails_streetName = organisation?.orgAddress?.[0]?.street ? organisation?.orgAddress?.[0]?.street : ""
         configs.defaultValues.locDetails_houseName = organisation?.orgAddress?.[0]?.doorNo ? organisation?.orgAddress?.[0]?.doorNo : ""
         
@@ -272,8 +272,6 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
 }
 
 export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) => {
-
-    console.log('formData', formData);
     let organisation = {}
     let organisations = []
     organisation.tenantId = tenantId
@@ -290,7 +288,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         geoLocation: {}
     }]
     organisation.additionalDetails = {
-        locality: formData?.locDetails_locality,
+        locality: formData?.locDetails_locality?.code,
         registeredByDept: formData?.basicDetails_regDept,
         deptRegistrationNum: formData?.basicDetails_regDeptNo
     }
@@ -306,12 +304,14 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         validFrom: Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validFrom),
         validTo: Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validTo)
     }]
-    organisation.identifiers = [
-        {
-            type: 'PAN',
-            value: 'QWE12345TY'
+    organisation.identifiers = formData?.taxIdentifierData?.map(item => {
+        if(item?.name && item?.value) {
+            return {
+                type: item?.name?.code,
+                value: item?.value
+            }
         }
-    ]
+    })
     organisations.push(organisation)
 
     return {

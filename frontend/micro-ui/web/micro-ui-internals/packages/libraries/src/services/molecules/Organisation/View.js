@@ -44,7 +44,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     values: [
         { title: "CORE_COMMON_PROFILE_CITY", value: organisation?.orgAddress?.[0]?.tenantId ? Digit.Utils.locale.getCityLocale(organisation?.orgAddress?.[0]?.tenantId) : t("NA")},
         { title: "COMMON_WARD", value: organisation?.orgAddress?.[0]?.boundaryCode ? Digit.Utils.locale.getMohallaLocale(organisation?.orgAddress?.[0]?.boundaryCode, tenantId) : t("NA")},
-        { title: "COMMON_LOCALITY", value: organisation?.additionalDetails?.locality ? Digit.Utils.locale.getMohallaLocale(organisation?.additionalDetails?.locality?.code, tenantId) : t("NA")},
+        { title: "COMMON_LOCALITY", value: organisation?.additionalDetails?.locality ? Digit.Utils.locale.getMohallaLocale(organisation?.additionalDetails?.locality, tenantId) : t("NA")},
         { title: "ES_COMMON_STREET", value: organisation?.orgAddress?.[0]?.street || t("NA")},
         { title: "ES_COMMON_DOOR_NO", value: organisation?.orgAddress?.[0]?.doorNo || t("NA")},
     ]
