@@ -12,5 +12,25 @@ export const OrganisationService = {
             method: "POST",
             params: {},
             auth: true,
+        }),
+
+    create: (data) => 
+        Request({
+          url: Urls.organisation.create,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          data: data
+        }),
+
+    update: (data) => 
+        Request({
+          url: Urls.organisation.update,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          data: data
         })
 };

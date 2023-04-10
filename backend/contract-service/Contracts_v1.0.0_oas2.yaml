@@ -236,6 +236,14 @@ definitions:
         type: string
         description: Contract Type
         example: Work Order
+      contractNumber:
+        type: string
+        description: Contract Number
+        example: WO/2022-23/000338
+      status:
+        type: string
+        description: Contract status
+        example: ACTIVE
       ids:
         type: array
         description: Search by contract ids
@@ -256,8 +264,13 @@ definitions:
           type: string
       orgIds:
         type: array
-        description: Search by orgnization ids
+        description: Search by organization ids
         format: uuid
+        items:
+          type: string
+      wfStatus:
+        type: array
+        description: Search by workflow status
         items:
           type: string
       fromDate:
