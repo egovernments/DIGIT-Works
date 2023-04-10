@@ -171,6 +171,7 @@ public class EstimateServiceValidator {
         log.info("EstimateServiceValidator::validateMDMSData");
         List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
+        Map<String, List<String>> overheadAmountTypeMap = new HashMap<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
             reqSorIds = estimate.getEstimateDetails().stream()
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getSorId()))
@@ -180,21 +181,42 @@ public class EstimateServiceValidator {
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getCategory()))
                     .map(EstimateDetail::getCategory)
                     .collect(Collectors.toList());
+
+            for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
+                if (overheadAmountTypeMap.containsKey(estimateDetail.getCategory())) {
+                    List<String> amountTypeList = estimateDetail.getAmountDetail().stream()
+                            .filter(amountDetail -> StringUtils.isNotBlank(amountDetail.getType()))
+                            .map(AmountDetail::getType)
+                            .collect(Collectors.toList());
+                    List<String> existingAmountTypeList = overheadAmountTypeMap.get(estimateDetail.getCategory());
+                    existingAmountTypeList.addAll(amountTypeList);
+                    overheadAmountTypeMap.put(estimateDetail.getCategory(), existingAmountTypeList);
+                } else {
+                    List<String> amountTypeList = estimateDetail.getAmountDetail().stream()
+                            .filter(amountDetail -> StringUtils.isNotBlank(amountDetail.getType()))
+                            .map(AmountDetail::getType)
+                            .collect(Collectors.toList());
+                    overheadAmountTypeMap.put(estimateDetail.getCategory(), amountTypeList);
+                }
+            }
         }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
         final String jsonPathForSorIds = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
         final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
+        final String jsonPathForOverHead = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
 
         List<Object> deptRes = null;
         List<Object> tenantRes = null;
         List<Object> sorIdRes = null;
         List<Object> categoryRes = null;
+        List<Object> overHeadRes = null;
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
             // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
             categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
+            overHeadRes = JsonPath.read(mdmsData, jsonPathForOverHead);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
@@ -214,10 +236,66 @@ public class EstimateServiceValidator {
 //            }
 //        }
 
+        Map<String, Integer> reqCategoryMap = new HashMap<>();
         if (!CollectionUtils.isEmpty(categoryRes) && !CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
-            reqEstimateDetailCategories.removeAll(categoryRes);
-            if (!CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
-                errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + reqEstimateDetailCategories + " is not present in MDMS");
+
+            for (String reqCategory : reqEstimateDetailCategories) {
+                if (reqCategoryMap.containsKey(reqCategory)) {
+                    reqCategoryMap.put(reqCategory, reqCategoryMap.get(reqCategory) + 1);
+                } else {
+                    reqCategoryMap.put(reqCategory, 1);
+                }
+            }
+
+            List<String> invalidCategories = new ArrayList<>();
+            for (String reqCategory : reqCategoryMap.keySet()) {
+                if (categoryRes.contains(reqCategory)) {
+                    if (reqCategoryMap.get(reqCategory) > 1) {
+                        errorMap.put("ESTIMATE_DETAIL.DUPLICATE.CATEGORY", "The category : " + reqCategory + " is added more than one time");
+                    }
+                } else {
+                    invalidCategories.add(reqCategory);
+                }
+            }
+
+            if (!CollectionUtils.isEmpty(invalidCategories)) {
+                errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + invalidCategories + " is not present in MDMS");
+            }
+        }
+
+
+        //Overhead -amount type validation
+        if (!CollectionUtils.isEmpty(overHeadRes) && !CollectionUtils.isEmpty(overheadAmountTypeMap)) {
+            for(String overheadCategoryKey:overheadAmountTypeMap.keySet()){
+                if(StringUtils.isNotBlank(overheadCategoryKey) && overheadCategoryKey.equalsIgnoreCase(MASTER_OVERHEAD)){
+                    List<String> amountTypes = overheadAmountTypeMap.get(overheadCategoryKey);
+                    //frequency map
+                    Map<String, Integer> reqTypeMap = new HashMap<>();
+                    for (String type : amountTypes) {
+                        if (reqTypeMap.containsKey(type)) {
+                            reqTypeMap.put(type, reqCategoryMap.get(type) + 1);
+                        } else {
+                            reqTypeMap.put(type, 1);
+                        }
+                    }
+
+                    List<String> invalidList = new ArrayList<>();
+                    for (String reqType : reqTypeMap.keySet()) {
+                        if (overHeadRes.contains(reqType)) {
+                            if (reqTypeMap.get(reqType) > 1) {
+                                errorMap.put("ESTIMATE_DETAIL.AMOUNT_DETAIL.DUPLICATE.TYPE", "The amount type : " + reqType + " is added more than one time");
+                            }
+                        } else {
+                            invalidList.add(reqType);
+                        }
+                    }
+
+                    if (!CollectionUtils.isEmpty(invalidList)) {
+                        errorMap.put("ESTIMATE_DETAIL.AMOUNT_DETAIL.TYPE", "The amount types : " + invalidList + " is not present in MDMS");
+                    }
+
+
+                }
             }
         }
 

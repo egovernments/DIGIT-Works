@@ -64,12 +64,14 @@ public class MDMSUtils {
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
         ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request);
         ModuleDetail estimateCategoryModuleDetail = getCategoryModuleRequestData(request);
+        ModuleDetail estimateOverheadModuleDetail = getOverHeadModuleRequestData(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(estimateTenantModuleDetail);
         moduleDetails.add(estimateDepartmentModuleDetail);
         moduleDetails.add(estimateSorIdModuleDetail);
         moduleDetails.add(estimateCategoryModuleDetail);
+        moduleDetails.add(estimateOverheadModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
@@ -79,6 +81,22 @@ public class MDMSUtils {
 
         log.info("MDMSUtils::search MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
         return mdmsCriteriaReq;
+    }
+
+    private ModuleDetail getOverHeadModuleRequestData(EstimateRequest request) {
+        log.info("MDMSUtils::getOverHeadModuleRequestData");
+
+        List<MasterDetail> estimateOverheadMasterDetails = new ArrayList<>();
+
+        MasterDetail overheadMasterDetails = MasterDetail.builder().name(MASTER_OVERHEAD)
+                .filter(activeCodeFilter).build();
+
+        estimateOverheadMasterDetails.add(overheadMasterDetails);
+
+        ModuleDetail estimateOverHeadModuleDetail = ModuleDetail.builder().masterDetails(estimateOverheadMasterDetails)
+                .moduleName(MDMS_WORKS_MODULE_NAME).build();
+
+        return estimateOverHeadModuleDetail;
     }
 
     private ModuleDetail getCategoryModuleRequestData(EstimateRequest request) {
