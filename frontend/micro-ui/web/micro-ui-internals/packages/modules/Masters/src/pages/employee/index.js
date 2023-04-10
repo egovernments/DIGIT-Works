@@ -27,7 +27,7 @@ const MastersBreadCrumb = ({ location }) => {
     },
     {
         path: `/${window.contextPath}/employee/masters/create-organization`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_CREATE_ORGANISATION")}` : t("MASTERS_CREATE_ORGANISATION"),
+        content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_MASTERS")}` : t("WORKS_MASTERS"),
         show: location.pathname.includes("/masters/create-organization") ? true : false,
         isBack: fromScreen && true,
     },
