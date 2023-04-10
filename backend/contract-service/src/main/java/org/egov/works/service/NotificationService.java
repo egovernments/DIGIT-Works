@@ -166,7 +166,8 @@ public class NotificationService {
 
         //get location name from boundary type
         String boundaryCode = projectDetails.get("boundary");
-        Map<String, String> locationName = locationServiceUtil.getLocationName(tenantId, requestInfo, boundaryCode);
+        String boundaryType=projectDetails.get("boundaryType");
+        Map<String, String> locationName = locationServiceUtil.getLocationName(tenantId, requestInfo, boundaryCode, boundaryType);
 
         //get org name
         Map<String, List<String>> orgDetails = organisationServiceUtil.getOrganisationInfo(request);
