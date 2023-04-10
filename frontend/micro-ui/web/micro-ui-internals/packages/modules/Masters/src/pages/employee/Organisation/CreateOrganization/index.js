@@ -13,9 +13,7 @@ const CreateOrganisation = () => {
 
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
     
-    /*
     const { isLoading, data: configs } = Digit.Hooks.useCustomMDMS(
         stateTenant,
         Digit.Utils.getConfigModuleName(),
@@ -30,10 +28,10 @@ const CreateOrganisation = () => {
             },
         }
     );
-    */
+    
 
     //For local config
-    const configs = createOrganizationConfigMUKTA?.CreateOrganizationConfig?.[0]
+    //const configs = createOrganizationConfigMUKTA?.CreateOrganizationConfig?.[0]
 
     const ULB = Digit.Utils.locale.getCityLocale(tenantId)
     let ULBOptions = []
@@ -51,7 +49,6 @@ const CreateOrganisation = () => {
         cacheTime:0
     }})
 
-    console.log('orgData!!', orgData);
     useEffect(() => {
         if(isError) {
             setShowDataError(true)
@@ -73,7 +70,7 @@ const CreateOrganisation = () => {
         }
       },[configs, orgDataFetching]);
     
-    //if(isLoading || orgDataFetching) return <Loader />
+    if(isLoading || orgDataFetching) return <Loader />
     return (
         <React.Fragment>
             <Header styles={{fontSize: "32px"}}>{isModify ? t("MASTERS_MODIFY_VENDOR_ORG") : t("ACTION_TEST_MASTERS_CREATE_ORGANISATION")}</Header>
