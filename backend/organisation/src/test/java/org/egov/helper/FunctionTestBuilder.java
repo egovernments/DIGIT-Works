@@ -4,6 +4,7 @@ import org.egov.web.models.ApplicationStatus;
 import org.egov.web.models.Function;
 import org.egov.web.models.Jurisdiction;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 
 public class FunctionTestBuilder {
@@ -30,8 +31,8 @@ public class FunctionTestBuilder {
                 .type("OrgType-1.CD")
                 .category("FUN.CD")
                 .propertyClass("A")
-                .validFrom(1680527922000d)
-                .validTo(2532604722000d)
+                .validFrom(BigDecimal.valueOf(System.currentTimeMillis()))
+                .validTo(BigDecimal.valueOf(System.currentTimeMillis()))
                 .applicationStatus(ApplicationStatus.ACTIVE)
                 .wfStatus(null)
                 .isActive(true)
@@ -48,8 +49,8 @@ public class FunctionTestBuilder {
                 .type("OrgType-1.CD")
                 .category("FUN.CD")
                 .propertyClass("A")
-                .validFrom(1680527922000d)
-                .validTo(2532604722000d)
+                .validFrom(BigDecimal.valueOf(System.currentTimeMillis()))
+                .validTo(BigDecimal.valueOf(System.currentTimeMillis()))
                 .applicationStatus(ApplicationStatus.ACTIVE)
                 .wfStatus(null)
                 .isActive(true)
