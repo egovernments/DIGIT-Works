@@ -166,7 +166,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 setValue("funDetails_orgSubType", '');
                 setValue("funDetails_category", '');
             }
-            if(formData?.transferCodesData?.[0]?.name?.code == 'IFSC' && difference?.transferCodesData?.[0]?.value) {
+            if(formData?.transferCodesData?.[0]?.name?.code == 'IFSC' && formData?.transferCodesData?.[0]?.value && !formData?.financeDetails_branchName) {
                 if(formData?.transferCodesData?.[0]?.value.length > 10) {
                     const res = await window.fetch(`https://ifsc.razorpay.com/${formData?.transferCodesData?.[0]?.value}`);
                     if (res.ok) {

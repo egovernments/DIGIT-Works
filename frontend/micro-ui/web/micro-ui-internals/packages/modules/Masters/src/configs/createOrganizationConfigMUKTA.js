@@ -338,7 +338,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_email",
                             error: "EMAIL_VALIDATION",
-                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2}                           
+                            validation: {pattern: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,})+$", minlength : 2}                         
                         }
                     }
                 ]

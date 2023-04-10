@@ -59,9 +59,11 @@ const TransferCodeTable = (props) => {
     }
     const errorCardStyle = {width:"100%"}
 
-    const getPatterns = () => {
+    const getPatterns = (rowKey) => {
         if(isTranferCodeTable) return Digit.Utils.getPattern('IFSC')
-        return Digit.Utils.getPattern('PAN')
+        if(formData?.taxIdentifierData?.[rowKey]?.name?.code === 'PAN') return Digit.Utils.getPattern('PAN')
+        if(formData?.taxIdentifierData?.[rowKey]?.name?.code === 'GSTIN') return Digit.Utils.getPattern('GSTNo')
+        return ""
     }
 
     const showDelete = () => {
@@ -171,7 +173,7 @@ const TransferCodeTable = (props) => {
                             style={{ "marginBottom": "0px" }} 
                             name={`${formFieldName}.${row.key}.value`} 
                             selected={formData && formData[formFieldName] ? formData[formFieldName][`${formFieldName}.${row.key}.value`] : undefined}
-                            inputRef={register({ required: isTranferCodeTable, pattern: getPatterns()})}
+                            inputRef={register({ required: isTranferCodeTable, pattern: getPatterns(row.key)})}
                             onChange={onChange}
                         />
                         {errors && errors?.[formFieldName]?.[row.key]?.value?.type === "pattern" && (
