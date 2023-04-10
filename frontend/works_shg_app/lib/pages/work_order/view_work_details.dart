@@ -149,8 +149,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                   'NA'),
                                       i18.workOrder.roleOfCBO:
                                           AppLocalizations.of(context)
-                                              .translate(e.additionalDetails
-                                                      ?.officerInChargeDesgn ??
+                                              .translate(e.executingAuthority ??
                                                   'NA'),
                                       i18.attendanceMgmt.engineerInCharge: e
                                               .additionalDetails
