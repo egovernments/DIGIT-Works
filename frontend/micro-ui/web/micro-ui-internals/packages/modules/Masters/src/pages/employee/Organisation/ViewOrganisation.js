@@ -36,7 +36,7 @@ const ViewOrganisation = () => {
     }
   }
 
-  const {isLoading, data: organisation, isError, isSuccess, error} = Digit.Hooks.organisation.useViewOrganisation({ tenantId, data: payload })
+  const {isLoading, data: organisation, isError, isSuccess, error} = Digit.Hooks.organisation.useViewOrganisation({ tenantId, data: payload, config: { cacheTime:0 } })
 
   useEffect(() => {
     if(isError) {

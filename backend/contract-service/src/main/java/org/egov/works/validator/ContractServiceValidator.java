@@ -8,12 +8,8 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.LineItemsRepository;
 import org.egov.works.service.ContractService;
-import org.egov.works.util.EstimateServiceUtil;
-import org.egov.works.util.HRMSUtils;
-import org.egov.works.util.MDMSDataParser;
+import org.egov.works.util.*;
 import org.egov.works.repository.ContractRepository;
-import org.egov.works.util.CommonUtil;
-import org.egov.works.util.MDMSUtils;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -57,6 +53,9 @@ public class ContractServiceValidator {
 
     @Autowired
     private CommonUtil commonUtil;
+
+    @Autowired
+    private OrgUtils orgUtils;
 
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
@@ -335,12 +334,19 @@ public class ContractServiceValidator {
     }
 
     private void validateOrganizationIdAgainstOrgService(ContractRequest contractRequest) {
-        if ("TRUE".equalsIgnoreCase(config.getOrgIdVerificationRequired())) {
-            //TODO
-            // For now throwing exception. Later implementation will be done
-            log.error("Org service not integrated yet");
-            throw new CustomException("SERVICE_UNAVAILABLE", "Org service not integrated yet");
+        RequestInfo requestInfo = contractRequest.getRequestInfo();
+        Contract contract = contractRequest.getContract();
+        String tenantId = contract.getTenantId();
+        String orgId = contract.getOrgId();
+
+        Object fetchedOrg = orgUtils.fetchOrg(requestInfo,tenantId,Collections.singletonList(orgId));
+        List<Object> orgRes = commonUtil.readJSONPathValue(fetchedOrg,ORG_ORGANISATIONS_VALIDATION_PATH);
+
+        if (CollectionUtils.isEmpty(orgRes) ){
+            log.error("Org ["+orgId+"] is not present");
+            throw new CustomException("INVALID_ORGID","Org ["+orgId+"] is not present");
         }
+        log.info("Org ["+orgId+"] is validated successfully");
     }
 
     private Map<String, Set<String>> validateRequestedEstimateIdsAgainstEstimateService(ContractRequest contractRequest) {

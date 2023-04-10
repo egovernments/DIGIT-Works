@@ -236,7 +236,9 @@ const Urls = {
   },
 
   organisation : {
-    search : "/org-services/organisation/v1/_search"
+    search: "/org-services/organisation/v1/_search",
+    create: "/org-services/organisation/v1/_create",
+    update: "/org-services/organisation/v1/_update"
   },
   
   bankaccount : {
