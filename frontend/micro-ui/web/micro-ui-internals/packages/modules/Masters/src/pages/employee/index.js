@@ -89,14 +89,12 @@ const App = ({ path }) => {
   const MastersResponse = Digit?.ComponentRegistryService?.getComponent("MastersResponse");
 
   useEffect(() => {
-    return () => {
-      if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
-        clearSessionFormData();
-      }
-      if (!window.location.href.includes("modify-wageseeker") && wsSesionFormData && Object.keys(wsSesionFormData) != 0) {
-        clearWsSessionFormData();
-      }
-    };
+    if (!window.location.href.includes("create-organization") && sessionFormData && Object.keys(sessionFormData) != 0) {
+      clearSessionFormData();
+    }
+    if (!window.location.href.includes("modify-wageseeker") && wsSesionFormData && Object.keys(wsSesionFormData) != 0) {
+      clearWsSessionFormData();
+    }
   }, [location]);
 
   return (

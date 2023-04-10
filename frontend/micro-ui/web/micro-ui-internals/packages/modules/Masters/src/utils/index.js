@@ -271,6 +271,31 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
     setIsFormReady(true)
 }
 
+const getOrgIdentifiersToUpdate = (formData, orgDataFromAPI) => {
+    let updatedIdentifiers = formData?.taxIdentifierData
+    let existingIdentifiers = orgDataFromAPI?.organisation?.identifiers
+
+    let orgIdentifiers = []
+    let types = ['PAN', 'GSTIN']
+    types?.forEach(type => {
+        let formIdentifier = updatedIdentifiers?.find(item => item?.name?.code === type)
+        let apiIdentifier = existingIdentifiers?.find(item => item?.type === type)
+        if(formIdentifier && apiIdentifier && formIdentifier?.value !== apiIdentifier?.value) {
+            orgIdentifiers.push({...apiIdentifier, value: formIdentifier?.value, isActive: true})
+        }
+        if(formIdentifier && apiIdentifier && formIdentifier?.value === apiIdentifier?.value) {
+            orgIdentifiers.push({...apiIdentifier, isActive: true})
+        }
+        if(formIdentifier && !apiIdentifier) {
+            orgIdentifiers.push({type: formIdentifier?.name?.code,  value: formIdentifier?.value })
+        }
+        if(!formIdentifier && apiIdentifier) {
+            orgIdentifiers.push({...apiIdentifier, isActive: false})
+        }
+    })
+    return orgIdentifiers
+}
+
 export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) => {
     let organisation = {}
     let organisations = []
@@ -308,7 +333,8 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         if(item?.name && item?.value) {
             return {
                 type: item?.name?.code,
-                value: item?.value
+                value: item?.value,
+                isActive: true
             }
         }
     })
@@ -338,16 +364,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
             contactEmail: formData?.contactDetails_email
         }]
 
-        organisation.identifiers = formData?.taxIdentifierData?.map(item => {
-            if(item?.name && item?.value) {
-                return {
-                    id: orgDataFromAPI?.organisation?.identifiers?.find(data => data?.type === item?.name?.code)?.id,
-                    orgId: orgDataFromAPI?.organisation?.id,
-                    type: item?.name?.code,
-                    value: item?.value
-                }
-            }
-        })
+        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI)
 
         organisation.functions[0].id = orgDataFromAPI?.organisation?.functions?.[0]?.id
         organisation.functions[0].orgId = orgDataFromAPI?.organisation?.id
