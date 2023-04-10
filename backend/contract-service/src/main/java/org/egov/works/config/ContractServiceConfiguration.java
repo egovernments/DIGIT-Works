@@ -170,19 +170,6 @@ public class ContractServiceConfiguration {
     @Value("${works.cbo.url.endpoint}")
     private String cboUrlEndpoint;
 
-    //Organisation
-    @Value("${works.organisation.host}")
-    private String organisationHost;
-
-    @Value("${works.organisation.context.path}")
-    private String organisationContextPath;
-
-    @Value("${works.organisation.endpoint}")
-    private String organisationEndpoint;
-
-//    @Value("${contract.org.id.verification.required}")
-//    private String orgIdVerificationRequired;
-
     @Value("${contract.duedate.period}")
     private String contractDueDatePeriod;
 

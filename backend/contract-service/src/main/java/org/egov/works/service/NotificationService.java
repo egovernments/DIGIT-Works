@@ -49,8 +49,8 @@ public class NotificationService {
     @Autowired
     private LocationServiceUtil locationServiceUtil;
 
-    @Autowired
-    private OrganisationServiceUtil organisationServiceUtil;
+   @Autowired
+   private OrgUtils organisationServiceUtil;
 
 
     /**
