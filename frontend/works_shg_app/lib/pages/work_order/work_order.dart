@@ -87,10 +87,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                 i18.attendanceMgmt.projectDesc:
                                     e.additionalDetails?.projectDesc ?? 'NA',
                                 i18.workOrder.roleOfCBO:
-                                    AppLocalizations.of(context).translate(e
-                                            .additionalDetails
-                                            ?.officerInChargeDesgn ??
-                                        'NA'),
+                                    AppLocalizations.of(context).translate(
+                                        e.executingAuthority ?? 'NA'),
                                 i18.attendanceMgmt.engineerInCharge: e
                                         .additionalDetails
                                         ?.officerInChargeName

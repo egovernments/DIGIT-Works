@@ -141,7 +141,7 @@ const CreateWorkOrder = () => {
     }
 
     const createNameOfCBOObject = (organisationOptions) => {
-        return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber } ))
+        return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber, orgNumber : organisationOption?.orgNumber } ))
     }
 
     const handleWorkOrderAmount = ({estimate, overHeadMasterData}) => {

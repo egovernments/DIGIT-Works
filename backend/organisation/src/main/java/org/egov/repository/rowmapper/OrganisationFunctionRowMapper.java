@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -53,7 +54,7 @@ public class OrganisationFunctionRowMapper implements ResultSetExtractor<List<Or
         String organisation_name = rs.getString("organisation_name");
         String organisation_orgNumber = rs.getString("organisation_orgNumber");
         String organisation_externalRefNumber = rs.getString("organisation_externalRefNumber");
-        Double organisation_dateOfIncorporation = rs.getDouble("organisation_dateOfIncorporation");;
+        BigDecimal organisation_dateOfIncorporation = rs.getBigDecimal("organisation_dateOfIncorporation");;
         String organisation_applicationStatus = rs.getString("organisation_applicationStatus");
         Boolean organisation_isActive = rs.getBoolean("organisation_isActive");
         JsonNode organisation_additionalDetails = getAdditionalDetail("organisation_additionalDetails", rs);
@@ -91,8 +92,8 @@ public class OrganisationFunctionRowMapper implements ResultSetExtractor<List<Or
         String organisationFunction_type = rs.getString("organisationFunction_type");
         String organisationFunction_category = rs.getString("organisationFunction_category");
         String organisationFunction_class = rs.getString("organisationFunction_class");
-        Double organisationFunction_valid_from = rs.getDouble("organisationFunction_valid_from");
-        Double organisationFunction_validTo = rs.getDouble("organisationFunction_validTo");
+        BigDecimal organisationFunction_valid_from = rs.getBigDecimal("organisationFunction_valid_from");
+        BigDecimal organisationFunction_validTo = rs.getBigDecimal("organisationFunction_validTo");
         String organisationFunction_applicationStatus = rs.getString("organisationFunction_applicationStatus");
         String organisationFunction_wfStatus = rs.getString("organisationFunction_wfStatus");
         Boolean organisationFunction_isActive = rs.getBoolean("organisationFunction_isActive");
