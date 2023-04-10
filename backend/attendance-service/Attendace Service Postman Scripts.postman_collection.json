@@ -108,7 +108,8 @@
 									"",
 									"pm.collectionVariables.set(\"registerStartDate\", responseData.attendanceRegister[0].startDate);",
 									"pm.collectionVariables.set(\"registerEndDate\", responseData.attendanceRegister[0].endDate);",
-									"pm.collectionVariables.set(\"invalidRegisterEndDate\", responseData.attendanceRegister[0].endDate+24*60*60*1000);"
+									"pm.collectionVariables.set(\"invalidRegisterEndDate\", responseData.attendanceRegister[0].endDate+24*60*60*1000);",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -120,13 +121,18 @@
 									"pm.collectionVariables.set(\"tenantId\", \"pg.citya\");",
 									"// pm.collectionVariables.set(\"individualId\", \"2d12b93a-829b-4aef-9073-5418e2315355\");",
 									"//dev",
-									"pm.collectionVariables.set(\"individualId-1\", \"246f1ae3-1f2b-4ea7-931d-6858b825665a\");",
-									"pm.collectionVariables.set(\"individualId-2\", \"5fd7935d-8b90-4be4-93fd-92b218fdad09\");",
+									"pm.collectionVariables.set(\"individualId-1\", \"6731ed44-2407-457d-aa3e-70ffbd1d6d21\");",
+									"pm.collectionVariables.set(\"individualId-2\", \"311b13c2-0029-4679-8723-fe6f57870a35\");",
 									"",
 									"",
 									"//qa",
-									"// pm.collectionVariables.set(\"individualId-1\", \"246f1ae3-1f2b-4ea7-931d-6858b825665a\");",
-									"// pm.collectionVariables.set(\"individualId-2\", \"5fd7935d-8b90-4be4-93fd-92b218fdad09\");"
+									"// pm.collectionVariables.set(\"individualId-1\", \"3ff2861e-8bbd-4431-a6b4-6f6a1c116356\");",
+									"// pm.collectionVariables.set(\"individualId-2\", \"a7d7ec01-68e0-428d-8762-c81e2fd5c864\");",
+									"",
+									"",
+									"pm.collectionVariables.set(\"referenceId\", \"test_contract_number_01\");",
+									"pm.collectionVariables.set(\"serviceCode\", \"WORKS-CONTRACT\");",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -137,7 +143,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"attendanceRegister\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"TestRegister_01\",\n            \"startDate\": 1640995200000,\n            \"endDate\": 1703980800000\n        }\n    ]\n}",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"attendanceRegister\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"TestRegister_01\",\n            \"referenceId\": \"{{referenceId}}+{{$randomPhoneNumber}}\",\n            \"serviceCode\": \"{{serviceCode}}\",\n            \"startDate\": 1640995200000,\n            \"endDate\": 1703980800000\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -267,7 +273,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"attendanceRegister\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"TestRegister_01\",\n            \"startDate\": 1640995200000,\n            \"endDate\": 1703980800000\n        },\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"TestRegister_02\",\n            \"startDate\": 1640995200000,\n            \"additionalDetails\": {}\n        }\n    ]\n}",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"attendanceRegister\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"TestRegister_01\",\n            \"referenceId\": \"{{referenceId}}+{{$randomPhoneNumber}}\",\n            \"serviceCode\": \"{{serviceCode}}\",\n            \"startDate\": 1640995200000,\n            \"endDate\": 1703980800000\n        },\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"name\": \"TestRegister_02\",\n            \"referenceId\": \"{{referenceId}}+{{$randomPhoneNumber}}\",\n            \"serviceCode\": \"{{serviceCode}}\",\n            \"startDate\": 1640995200000,\n            \"additionalDetails\": {}\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -414,7 +420,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"attendanceRegister\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"startDate\": 1640995200000,\n            \"endDate\": 1703980800000\n        }\n    ]\n}",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"mukta-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"Create Attendance Register\",\n        \"authToken\": \"{{token}}\"\n    },\n    \"attendanceRegister\": [\n        {\n            \"tenantId\": \"{{tenantId}}\",\n            \"referenceId\": \"{{referenceId}}+{{$randomPhoneNumber}}\",\n            \"serviceCode\": \"{{serviceCode}}\",\n            \"startDate\": 1640995200000,\n            \"endDate\": 1703980800000\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3613,6 +3619,14 @@
 		},
 		{
 			"key": "attendanceLogId",
+			"value": ""
+		},
+		{
+			"key": "referenceId",
+			"value": ""
+		},
+		{
+			"key": "serviceCode",
 			"value": ""
 		}
 	]
