@@ -899,7 +899,7 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "MASTERS_ORGANISATION_ID")
-          link = `/${window.contextPath}/employee/masters/view-organisation?tenantId=${tenantId}&orgId=${row[key]}`;
+          link = `/${window.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgId=${row[key]}`;
       });
       return link;
     },
