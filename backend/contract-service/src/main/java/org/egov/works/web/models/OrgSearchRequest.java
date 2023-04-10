@@ -1,4 +1,4 @@
-package org.egov.works.web.models.Organisation;
+package org.egov.works.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.works.web.models.Pagination;
 import org.springframework.validation.annotation.Validated;
 
 /**

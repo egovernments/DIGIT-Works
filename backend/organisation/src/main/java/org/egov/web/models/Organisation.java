@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class Organisation {
     private String externalRefNumber = null;
 
     @JsonProperty("dateOfIncorporation")
-    private Double dateOfIncorporation = null;
+    private BigDecimal dateOfIncorporation = null;
 
     @JsonProperty("orgAddress")
     @Valid

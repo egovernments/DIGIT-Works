@@ -66,6 +66,25 @@ public class ContractQueryBuilder {
             addToPreparedStatement(preparedStmtList, ids);
         }
 
+        if (StringUtils.isNotBlank(criteria.getContractNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.contract_number=? ");
+            preparedStmtList.add(criteria.getContractNumber());
+        }
+
+        if (StringUtils.isNotBlank(criteria.getStatus())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.status=? ");
+            preparedStmtList.add(criteria.getStatus());
+        }
+
+        List<String> wfStatus = criteria.getWfStatus();
+        if (wfStatus != null && !wfStatus.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.wf_status IN (").append(createQuery(wfStatus)).append(")");
+            addToPreparedStatement(preparedStmtList, wfStatus);
+        }
+
         List<String> orgIds = criteria.getOrgIds();
         if (orgIds != null && !orgIds.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);

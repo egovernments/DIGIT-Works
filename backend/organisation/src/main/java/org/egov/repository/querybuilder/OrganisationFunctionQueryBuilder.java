@@ -9,8 +9,10 @@ import org.egov.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Component
@@ -134,13 +136,13 @@ public class OrganisationFunctionQueryBuilder {
                 preparedStmtList.add(searchCriteria.getFunctions().getPropertyClass());
             }
 
-            if (searchCriteria.getFunctions().getValidFrom() != null && searchCriteria.getFunctions().getValidFrom() != 0) {
+            if (searchCriteria.getFunctions().getValidFrom() != null && BigDecimal.ZERO.compareTo(searchCriteria.getFunctions().getValidFrom()) != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" orgFunction.valid_from >= ? ");
                 preparedStmtList.add(searchCriteria.getFunctions().getValidFrom());
             }
 
-            if (searchCriteria.getFunctions().getValidTo() != null && searchCriteria.getFunctions().getValidTo() != 0) {
+            if (searchCriteria.getFunctions().getValidTo() != null && BigDecimal.ZERO.compareTo(searchCriteria.getFunctions().getValidTo()) != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" orgFunction.valid_to <= ? ");
                 preparedStmtList.add(searchCriteria.getFunctions().getValidTo());

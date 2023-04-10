@@ -40,6 +40,9 @@ public class OrganisationServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    NotificationService notificationService;
+
     @Test
     public void shouldCreateOrganisationSuccessfully(){
         OrgRequest orgRequest = OrganisationRequestTestBuilder.builder().withRequestInfo().addGoodOrganisationForCreate().build();

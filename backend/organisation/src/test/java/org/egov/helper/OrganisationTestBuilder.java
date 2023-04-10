@@ -2,6 +2,8 @@ package org.egov.helper;
 
 import org.egov.web.models.ApplicationStatus;
 import org.egov.web.models.Organisation;
+
+import java.math.BigDecimal;
 import java.util.Collections;
 
 public class OrganisationTestBuilder {
@@ -28,7 +30,7 @@ public class OrganisationTestBuilder {
                 .name("Organisation-1")
                 .applicationStatus(ApplicationStatus.ACTIVE)
                 .externalRefNumber("External-ref_no")
-                .dateOfIncorporation((double) System.currentTimeMillis())
+                .dateOfIncorporation(BigDecimal.valueOf(System.currentTimeMillis()))
                 .orgAddress(Collections.singletonList(AddressTestBuilder.builder().addGoodAddress().build()))
                 .contactDetails(Collections.singletonList(ContactDetailsTestBuilder.builder().addGoodContactDetailsForOrg().build()))
                 .identifiers(Collections.singletonList(IdentifierTestBuilder.builder().addGoodIdentifierForOrg().build()))
@@ -49,7 +51,7 @@ public class OrganisationTestBuilder {
                 .name("Organisation-1")
                 .applicationStatus(ApplicationStatus.ACTIVE)
                 .externalRefNumber("External-ref_no")
-                .dateOfIncorporation((double) System.currentTimeMillis())
+                .dateOfIncorporation(BigDecimal.valueOf(System.currentTimeMillis()))
                 .orgAddress(Collections.singletonList(AddressTestBuilder.builder().addGoodAddressWithoutId().build()))
                 .contactDetails(Collections.singletonList(ContactDetailsTestBuilder.builder().addGoodContactDetailsWithoutIdForOrg().build()))
                 .identifiers(Collections.singletonList(IdentifierTestBuilder.builder().addGoodIdentifierWithoutIdForOrg().build()))

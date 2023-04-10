@@ -38,6 +38,9 @@ public class ContractCriteria {
     @Size(min = 2, max = 64)
     private String tenantId = null;
 
+    @JsonProperty("contractNumber")
+    private String contractNumber = null;
+
     @JsonProperty("ids")
     private List<String> ids = null;
 
@@ -49,6 +52,12 @@ public class ContractCriteria {
 
     @JsonProperty("contractType")
     private String contractType = null;
+
+    @JsonProperty("status")
+    private String status = null;
+
+    @JsonProperty("wfStatus")
+    private List<String> wfStatus = null;
 
     @JsonProperty("orgIds")
     private List<String> orgIds = null;

@@ -32,12 +32,22 @@ public class ContractServiceConfiguration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+    @Value("${works.contract.service.code}")
+    private String serviceCode;
+
     //Attendance Config
     @Value("${egov.attendance.host}")
     private String attendanceHost;
 
     @Value("${egov.attendance.register.path}")
     private String attendanceRegisterPath;
+
+    //Org Config
+    @Value("${egov.org.host}")
+    private String orgHost;
+
+    @Value("${egov.org.search.endpoint}")
+    private String orgSearchPath;
 
     @Value("${egov.idgen.contract.number.name}")
     private String idgenContractNumberName;
@@ -122,8 +132,8 @@ public class ContractServiceConfiguration {
     @Value("${works.contract.search.endpoint}")
     private String contractEndpoint;
 
-    @Value("${contract.document.id.verification.required}")
-    private String documentIdVerificationRequired;
+//    @Value("${contract.document.id.verification.required}")
+//    private String documentIdVerificationRequired;
 
 
     //SMS notification
@@ -159,20 +169,6 @@ public class ContractServiceConfiguration {
 
     @Value("${works.cbo.url.endpoint}")
     private String cboUrlEndpoint;
-
-    //Organisation
-    @Value("${works.organisation.host}")
-    private String organisationHost;
-
-    @Value("${works.organisation.context.path}")
-    private String organisationContextPath;
-
-    @Value("${works.organisation.endpoint}")
-    private String organisationEndpoint;
-
-
-    @Value("${contract.org.id.verification.required}")
-    private String orgIdVerificationRequired;
 
     @Value("${contract.duedate.period}")
     private String contractDueDatePeriod;
