@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb, AppContainer } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 import CreateBill from "./CreateBill";
+import PurchaseBill from "./PurchaseBill/PurchaseBill";
 
 const ExpenditureBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -84,6 +85,7 @@ const App = ({ path }) => {
                 <PrivateRoute path={`${path}/inbox`} component={() => <BillInbox parentRoute={path} />}/>
                 <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBill parentRoute={path} />}/>
                 <PrivateRoute path={`${path}/view-bill`} component={() => <ViewBill parentRoute={path} />}/>
+                <PrivateRoute path={`${path}/purchase-bill`} component={() => <PurchaseBill parentRoute={path} />} />
             </AppContainer>
         </Switch>
     );
