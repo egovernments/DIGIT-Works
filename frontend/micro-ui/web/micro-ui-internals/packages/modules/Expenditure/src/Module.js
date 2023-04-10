@@ -9,6 +9,7 @@ import ViewBills from "./pages/employee/viewBills/viewBills";
 import BillInbox from "./pages/employee/Bills/BillInbox";
 import SearchBill from "./pages/employee/Bills/SearchBill";
 import ViewBill from "./pages/employee/Bills/ViewBill";
+import ViewPurchaseBill from "./components/ViewBill/ViewPurchaseBill";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -37,7 +38,8 @@ const componentsToRegister = {
     //new
     BillInbox,
     SearchBill,
-    ViewBill
+    ViewBill,
+    ViewPurchaseBill
 };
 
 export const initExpenditureComponents = () => {
