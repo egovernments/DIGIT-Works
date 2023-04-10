@@ -90,7 +90,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
             }
 
             if(formData.nameOfCBO) {
-                setValue("cboID", formData.nameOfCBO?.applicationNumber);
+                setValue("cboID", formData.nameOfCBO?.orgNumber);
             }
 
             setSessionFormData({ ...sessionFormData, ...formData });

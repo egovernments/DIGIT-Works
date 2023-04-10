@@ -8,7 +8,7 @@ const documentType = {
   //This handler will return the payload for doc according to API spec. 
   //This object will be later pushed to an array
   const createDocObject = (document, docType, otherDocFileName="Others", isActive) =>{
-   
+  
     //handle empty Category Name in File Type
     if((otherDocFileName.trim()).length === 0) {
       otherDocFileName = "";
@@ -125,9 +125,9 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
                 "locality" : project?.additionalDetails?.locality?.code,
                 "estimateNumber" : estimate?.estimateNumber,
                 "officerInChargeDesgn" : inputFormdata?.designationOfOfficerInCharge,
-                "officerInChargeName" : inputFormdata?.nameOfOfficerInCharge,
+                "officerInChargeName" : {code : inputFormdata?.nameOfOfficerInCharge?.code, name : inputFormdata?.nameOfOfficerInCharge?.name},
                 "projectDesc" : project?.description,
-                "cboApplicationNumber" : inputFormdata?.nameOfCBO?.applicationNumber,
+                "cboOrgNumber" : inputFormdata?.nameOfCBO?.orgNumber
             }
         },
         workflow : {
