@@ -1,5 +1,6 @@
 package org.egov.digit.expense.web.models;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,11 @@ public class BillDetail {
 	@JsonProperty("billId")
 	@Valid
 	private String billId;
-
+	
+	@JsonProperty("netLineItemAmount")
+	@Valid
+	private BigDecimal netLineItemAmount;
+	
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 64)
 	private String referenceId;

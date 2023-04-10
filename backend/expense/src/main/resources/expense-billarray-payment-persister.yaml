@@ -381,3 +381,70 @@ serviceMaps:
        - jsonPath: $.bills.*.billDetails.*.payableLineItems.*.additionalDetails
          type: JSON
          dbType: JSONB
+         
+
+ - version: 1.0
+   name: Payment create
+   description: create payment in eg_expense_payment
+   fromTopic: save-expense-payment-db
+   queryMaps: 
+    - query: INSERT INTO eg_expense_payment(id, tenantid, netpayableamount, netpaidamount, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      basePath: $.payment
+      jsonMaps:
+       
+       - jsonPath: $.payment.id
+
+       - jsonPath: $.payment.tenantId
+         
+       - jsonPath: $.payment.netPayableAmount
+         
+       - jsonPath: $.payment.netPaidAmount
+       
+       - jsonPath: $.payment.status
+
+       - jsonPath: $.payment.auditDetails.createdBy
+
+       - jsonPath: $.payment.auditDetails.createdTime
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
+
+       - jsonPath: $.payment.additionalDetails
+         type: JSON
+         dbType: JSONB
+
+
+    # insert into party from payer of payment
+    - query: INSERT INTO eg_expense_bill_payment(paymentid, billid, tenantid) VALUES (?, ?, ?);
+      basePath: $.payment.bills.*
+      jsonMaps:
+       
+       - jsonPath: $.payment.id
+
+       - jsonPath: $.payment.bills.*.id
+         
+       - jsonPath: $.payment.tenantid
+
+ - version: 1.0
+   name: Payment update
+   description: update payment status in eg_expense_payment
+   fromTopic: update-expense-payment-db
+   queryMaps: 
+    - query: UPDATE eg_expense_payment SET status=?, lastmodifiedby=?, lastmodifiedtime=?, additionaldetails=? WHERE id=? AND tenantid=?;
+      basePath: $.payment
+      jsonMaps:
+       
+       - jsonPath: $.payment.status
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
+
+       - jsonPath: $.payment.additionalDetails
+         type: JSON
+         dbType: JSONB
+      
+       - jsonPath: $.payment.id
+
+       - jsonPath: $.payment.tenantId

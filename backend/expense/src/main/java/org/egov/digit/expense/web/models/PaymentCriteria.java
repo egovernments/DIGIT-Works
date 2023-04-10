@@ -1,6 +1,6 @@
 package org.egov.digit.expense.web.models;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -31,11 +31,11 @@ public class PaymentCriteria   {
 
   @JsonProperty("ids")
   @Valid
-  private List<String> ids;
+  private Set<String> ids;
 
   @JsonProperty("billIds")
   @Valid
-  private List<String> billIds;
+  private Set<String> billIds;
 
   @JsonProperty("status")
   private String status;

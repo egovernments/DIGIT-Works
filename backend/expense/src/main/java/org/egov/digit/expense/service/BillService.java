@@ -8,13 +8,14 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.Producer;
 import org.egov.digit.expense.repository.BillRepository;
-import org.egov.digit.expense.util.EncrichmentUtil;
+import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillResponse;
 import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class BillService {
 	private BillRepository billRepository;
 	
 	@Autowired
-	private EncrichmentUtil enrichmentUtil;
+	private EnrichmentUtil enrichmentUtil;
 	
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
@@ -60,8 +61,13 @@ public class BillService {
 		validator.validateCreateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAudit(billRequest);
 		
-		State wfState =  workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
-		bill.setStatus(wfState.getApplicationStatus());
+		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+
+			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
+			bill.setStatus(wfState.getApplicationStatus());
+		} else {
+			bill.setStatus(Status.ACTIVE.toString());
+		}
 		
 		producer.push(config.getBillCreateTopic(), billRequest);
 		
@@ -87,8 +93,13 @@ public class BillService {
 		validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest);
 		
-		State wfState =  workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
-		bill.setStatus(wfState.getApplicationStatus());
+		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+
+			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
+			bill.setStatus(wfState.getApplicationStatus());
+		} else {
+			bill.setStatus(Status.ACTIVE.toString());
+		}
 		
 		producer.push(config.getBillUpdateTopic(), billRequest);
 		

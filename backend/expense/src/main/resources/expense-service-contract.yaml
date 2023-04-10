@@ -73,7 +73,7 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  /payment/v1/_fetch:
+  /payment/v1/_create:
     post:
       tags:
         - Payment
@@ -104,7 +104,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentUpdateRequest'
+              $ref: '#/components/schemas/PaymentRequest'
       responses:
         '202':
           description: Accepted account updation request.
@@ -278,6 +278,11 @@ components:
           type: number
           format: int64
           example: 1682899199000
+        netLineItemAmount:
+          description: Amount being paid for the particular bill-detail during payment  
+          type: number
+          format: int64
+          example: 1682899199000
         payee:
             $ref: '#/components/schemas/Party'
         lineItems:
@@ -409,34 +414,6 @@ components:
           $ref: '#/components/schemas/BillCriteria'
         pagination:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-    PaymentRequestCriteria:
-      type: object
-      properties:
-        tenantId:
-          description: tenant Identifier
-          example: pg.cityA
-          type: string
-          minLength: 2
-          maxLength: 64
-        billIds:
-          type: array
-          description: create payment based on the bill ids 
-          format: uuid
-          items:
-            type: string
-            example: f259e11f-fc28-4202-95a3-129d9feed203
-        businessService:
-          description: create payment based on business service
-          example: WORKS-MUSTERROLE
-          type: string
-          minLength: 2
-          maxLength: 64
-        referenceId:
-          description: create payment based on referance ids of the bills
-          type: array
-          items:
-            type: string
-            example: muster-role/01
     PaymentCriteria:
       type: object
       properties:
@@ -478,9 +455,7 @@ components:
         id:
           type: string
           description: The unique payment id
-          format: uuid
-          items:
-            type: string
+          example: c346bbc6-244a-4aef-b5ae-fdd9a02827ff
         netPayableAmount:
           description: Net payable amount of the bill 
           type: number
@@ -524,15 +499,7 @@ components:
           $ref: >-
                 https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         paymentRequestCriteria:
-          $ref: '#/components/schemas/PaymentRequestCriteria'
-    PaymentUpdateRequest:
-      type: object
-      properties:
-        requestInfo:
-          $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        payment:
-          $ref: '#/components/schemas/Payment'  
+          $ref: '#/components/schemas/Payment'
     PaymentResponse:
       type: object
       properties:

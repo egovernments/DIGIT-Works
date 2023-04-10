@@ -6,17 +6,20 @@ import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.LineItem;
+import org.egov.digit.expense.web.models.Payment;
+import org.egov.digit.expense.web.models.PaymentRequest;
 import org.springframework.stereotype.Component;
 
 import digit.models.coremodels.AuditDetails;
 
 @Component
-public class EncrichmentUtil {
+public class EnrichmentUtil {
 	
 	public BillRequest encrichBillWithUuidAndAudit(BillRequest billRequest) {
 
 		Bill bill = billRequest.getBill();
-		AuditDetails audit = getAuditDetails(null, true);
+		String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
+		AuditDetails audit = getAuditDetails(createdBy, true);
 
 		bill.setId(UUID.randomUUID().toString());
 		bill.setAuditDetails(audit);
@@ -42,8 +45,9 @@ public class EncrichmentUtil {
 	public BillRequest encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest) {
 
 		Bill bill = billRequest.getBill();
-		AuditDetails updateAudit = getAuditDetails(null, false);
-		AuditDetails createAudit = getAuditDetails(null, true);
+		String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
+		AuditDetails updateAudit = getAuditDetails(createdBy, false);
+		AuditDetails createAudit = getAuditDetails(createdBy, true);
 
 		bill.setAuditDetails(updateAudit);
 
@@ -96,6 +100,23 @@ public class EncrichmentUtil {
 			}
 		}
 		return billRequest;
+	}
+	
+	public PaymentRequest encrichCreatePayment(PaymentRequest paymentRequest) {
+
+		Payment payment = paymentRequest.getPayment();
+		String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
+		payment.setId(UUID.randomUUID().toString());
+		payment.setAuditDetails(getAuditDetails(createdBy, true));
+		return paymentRequest; 
+	}
+	
+	public PaymentRequest encrichUpdatePayment(PaymentRequest paymentRequest) {
+
+		Payment payment = paymentRequest.getPayment();
+		String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
+		payment.setAuditDetails(getAuditDetails(createdBy, false));
+		return paymentRequest;
 	}
 
 	

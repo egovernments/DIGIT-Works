@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.egov.digit.expense.config.BillConstants;
+import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.Bill;
@@ -40,13 +40,11 @@ public class BillValidator {
 		
 		Bill bill = billRequest.getBill();
 		Map<String, String> errorMap = new HashMap<>();
-		
-		Map<String, Boolean> workflowActiveMap = configs.getBusinessServiceWorkflowStatusMap();
-		boolean isWorkflowActiveForBusinessService = null != workflowActiveMap.get(bill.getBusinessService()) 
-				? workflowActiveMap.get(bill.getBusinessService()) : false; 
-		
-		if(isWorkflowActiveForBusinessService){
-			
+
+		boolean isWorkflowActiveForBusinessService = isWorkflowActiveForBusinessService(bill.getBusinessService());
+
+		if (isWorkflowActiveForBusinessService) {
+
 			ProcessInstance workflow = bill.getWorkflow();
 			
 			if (null == workflow.getBusinessService())
@@ -65,7 +63,7 @@ public class BillValidator {
 			throw new CustomException(errorMap);
 		
 	}
-	
+
 	public void validateUpdateRequest(BillRequest billRequest) {
 		
 		Map<String, String> errorMap = new HashMap<>();
@@ -90,10 +88,10 @@ public class BillValidator {
 
 		Bill bill = billRequest.getBill();
 		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-				bill.getTenantId(), BillConstants.MODULE_NAME, BillConstants.MDMS_MASTER_NAMES);
+				bill.getTenantId(), Constants.MODULE_NAME, Constants.MDMS_MASTER_NAMES);
 
 		/* validating head code master data */
-		List<String> headCodeList = JsonPath.read(mdmsData, BillConstants.HEADCODE_CODE_FILTER);
+		List<String> headCodeList = JsonPath.read(mdmsData, Constants.HEADCODE_CODE_FILTER);
 		
 		Set<String> missingHeadCodes = new HashSet<>();
 
@@ -114,5 +112,20 @@ public class BillValidator {
 
 		if (!CollectionUtils.isEmpty(missingHeadCodes))
 			errorMap.put("EG_EXPENSE_INVALID_HEADCODES", "The following head codes are invalid : " + missingHeadCodes);
+	}
+	
+	
+	/**
+	 * check whether the workflow is enabled for the given business type
+	 * 
+	 * @param bill
+	 * @return
+	 */
+	public boolean isWorkflowActiveForBusinessService(String businessServiceName) {
+		Map<String, Boolean> workflowActiveMap = configs.getBusinessServiceWorkflowStatusMap();
+		boolean isWorkflowActiveForBusinessService = null != workflowActiveMap.get(businessServiceName)
+				? workflowActiveMap.get(businessServiceName)
+				: false;
+		return isWorkflowActiveForBusinessService;
 	}
 }

@@ -56,7 +56,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.id(billId)
 					.tenantId(rs.getString("b_tenantid"))
 					.billDate(rs.getLong("billdate"))
-					.billDate(rs.getLong("duedate"))
+					.dueDate(rs.getLong("duedate"))
 					.netPayableAmount(rs.getBigDecimal("netpayableamount"))
 					.netPaidAmount(rs.getBigDecimal("netpaidamount"))
 					.businessService(rs.getString("businessservice"))

@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +34,7 @@ public class Payment {
 
 	@JsonProperty("id")
 	@Valid
-	private List<String> id;
+	private String id;
 
 	@JsonProperty("netPayableAmount")
 	private BigDecimal netPayableAmount;
@@ -47,6 +48,12 @@ public class Payment {
 
 	@JsonProperty("status")
 	private String status;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails;
+	
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
 	
 	public Payment addBillDetailsItem(Bill bill) {
 

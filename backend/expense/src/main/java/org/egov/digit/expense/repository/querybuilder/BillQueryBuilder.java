@@ -4,14 +4,13 @@ package org.egov.digit.expense.repository.querybuilder;
 import java.util.List;
 import java.util.Set;
 
-import org.egov.digit.expense.config.BillConstants;
-import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.util.QueryBuilderUtils;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -19,99 +18,50 @@ import org.springframework.util.StringUtils;
 public class BillQueryBuilder {
 	
 	@Autowired
-	private Configuration configs;
+	private QueryBuilderUtils builderUtils;
 
 	public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStatementValues) {
 
 		BillCriteria billCriteria = billSearchRequest.getBillcriteria();
 		Pagination pagination = billSearchRequest.getPagination();
 		
-		StringBuilder billSearchQuery = new StringBuilder(BillConstants.BILL_QUERY);
+		StringBuilder billSearchQuery = new StringBuilder(Constants.BILL_QUERY);
 
-		billSearchQuery.append(" property.tenantId = ? ");
+		billSearchQuery.append(" bill.tenantId = ? ");
 		preparedStatementValues.add(billCriteria.getTenantId());
 
 		if (!StringUtils.isEmpty(billCriteria.getBusinessService())) {
 
-			addClauseIfRequired(preparedStatementValues, billSearchQuery);
-			billSearchQuery.append(" property.businessservice = ? ");
+			builderUtils.addClauseIfRequired(preparedStatementValues, billSearchQuery);
+			billSearchQuery.append(" bill.businessservice = ? ");
 			preparedStatementValues.add(billCriteria.getBusinessService());
+		}
+		
+		if (!StringUtils.isEmpty(billCriteria.getStatus())) {
+
+			builderUtils.addClauseIfRequired(preparedStatementValues, billSearchQuery);
+			billSearchQuery.append(" bill.status = ? ");
+			preparedStatementValues.add(billCriteria.getStatus());
 		}
 
 		Set<String> referenceIds = billCriteria.getReferenceIds();
 		if (!CollectionUtils.isEmpty(billCriteria.getReferenceIds())) {
 
-			addClauseIfRequired(preparedStatementValues, billSearchQuery);
-			billSearchQuery.append("property.tenantid IN (").append(createQuery(referenceIds)).append(")");
-			addToPreparedStatement(preparedStatementValues, referenceIds);
+			builderUtils.addClauseIfRequired(preparedStatementValues, billSearchQuery);
+			billSearchQuery.append("bill.referenceid IN (").append(builderUtils.createQuery(referenceIds)).append(")");
+			builderUtils.addToPreparedStatement(preparedStatementValues, referenceIds);
 		}
 
 		Set<String> ids = billCriteria.getIds();
 		if (CollectionUtils.isEmpty(ids)) {
 
-			addClauseIfRequired(preparedStatementValues, billSearchQuery);
-			billSearchQuery.append("property.tenantid IN (").append(createQuery(ids)).append(")");
-			addToPreparedStatement(preparedStatementValues, ids);
+			builderUtils.addClauseIfRequired(preparedStatementValues, billSearchQuery);
+			billSearchQuery.append("bill.id IN (").append(builderUtils.createQuery(ids)).append(")");
+			builderUtils.addToPreparedStatement(preparedStatementValues, ids);
 		}
 
-		String finalQuery = addPaginationWrapper(billSearchQuery.toString(), preparedStatementValues, pagination);
+		String finalQuery = builderUtils.addPaginationWrapper(billSearchQuery.toString(), preparedStatementValues, pagination);
 
 		return finalQuery;
 	}
-	
-	/*
-	 * Utility methods for query builders
-	 */
-	
-	private void addToPreparedStatement(List<Object> preparedStmtList, Set<String> ids) {
-		ids.forEach(id -> {
-			preparedStmtList.add(id);
-		});
-	}
-	
-	private String createQuery(Set<String> ids) {
-		StringBuilder builder = new StringBuilder();
-		int length = ids.size();
-		for (int i = 0; i < length; i++) {
-			builder.append(" ?");
-			if (i != length - 1)
-				builder.append(",");
-		}
-		return builder.toString();
-	}
-	
-	private static void addClauseIfRequired(List<Object> values,StringBuilder queryString) {
-		if (values.isEmpty())
-			queryString.append(" WHERE ");
-		else {
-			queryString.append(" AND ");
-		}
-	}
-	
-	private final String PAGINATION_WRAPPER = "SELECT * FROM "
-			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY b_lastmodifiedtime DESC, b_id) offset_ FROM " + "({})" + " result) result_offset "
-			+ "WHERE offset_ > ? AND offset_ <= ?";
-
-	private String addPaginationWrapper(String query, List<Object> preparedStmtList, Pagination pagination) {
-		
-		
-		Long limit = configs.getDefaultLimit();
-		Long offset = configs.getDefaultOffset();
-		String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
-
-		if (pagination.getLimit() != null && pagination.getLimit() <= configs.getMaxSearchLimit())
-			limit = pagination.getLimit();
-
-		if (pagination.getLimit() != null && pagination.getLimit() > configs.getMaxSearchLimit())
-			limit = configs.getMaxSearchLimit();
-
-		if (pagination.getOffSet() != null)
-			offset = pagination.getOffSet();
-
-		preparedStmtList.add(offset);
-		preparedStmtList.add(limit + offset);
-
-		return finalQuery;
-	}
-
 }
