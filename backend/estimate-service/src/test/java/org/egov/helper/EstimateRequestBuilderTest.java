@@ -27,7 +27,7 @@ public class EstimateRequestBuilderTest {
 
     public EstimateRequest withEstimateForCreateSuccess() {
         List<AmountDetail> amountDetails = new ArrayList<>();
-        AmountDetail amountDetail = AmountDetail.builder().amount(2345.0).build();
+        AmountDetail amountDetail = AmountDetail.builder().type("GST").amount(2345.0).build();
         amountDetails.add(amountDetail);
 
         List<EstimateDetail> estimateDetails = new ArrayList<>();
