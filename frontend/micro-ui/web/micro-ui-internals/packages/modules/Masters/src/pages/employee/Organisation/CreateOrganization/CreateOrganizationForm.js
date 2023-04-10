@@ -22,6 +22,7 @@ const navConfig =  [
 const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, setSessionFormData, clearSessionFormData, isModify, orgDataFromAPI }) => {
     const {t} = useTranslation();
     const history = useHistory()
+    const orgId = orgDataFromAPI?.organisation?.orgNumber
 
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -193,7 +194,20 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         }); 
     }
 
-    const handleResponseForUpdate = async (orgPayload, data) => {}
+    const handleResponseForUpdate = async (orgPayload, bankAccountPayload) => {
+        await UpdateOrganisationMutation(orgPayload, {
+            onError: async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
+            onSuccess: async (responseData) => {
+                await UpdateBankAccountMutation(bankAccountPayload, {
+                    onError :  async (error) => sendDataToResponsePage(orgId, false, "MASTERS_ORG_MODIFICATION_FAIL", true),
+                    onSuccess: async (responseData) => {
+                        sendDataToResponsePage(orgId, true, "MASTERS_ORG_MODIFICATION_SUCCESS", true)
+                        clearSessionFormData()
+                    }
+                })
+            }
+        });
+    }
 
     const handleResponseForCreate = async (orgPayload, data) => {
         await CreateOrganisationMutation(orgPayload, {
@@ -213,11 +227,10 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
 
     const onSubmit = (data) => {
-        console.log('FORM Data', data);
         const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
-            // const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
-            // handleResponseForUpdate(orgPayload, bankAccountPayload);
+            const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
+            handleResponseForUpdate(orgPayload, bankAccountPayload);
         }else {
             handleResponseForCreate(orgPayload, data);
         }

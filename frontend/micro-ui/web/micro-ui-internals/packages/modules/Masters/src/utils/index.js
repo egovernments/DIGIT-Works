@@ -312,6 +312,50 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
             }
         }
     })
+
+    if(isModify) {
+        organisation.id = orgDataFromAPI?.organisation?.id
+        organisation.applicationNumber = orgDataFromAPI?.organisation?.applicationNumber
+        organisation.applicationStatus = 'ACTIVE'
+        organisation.orgNumber = orgDataFromAPI?.organisation?.orgNumber
+        organisation.orgAddress = [{
+            id: orgDataFromAPI?.organisation?.orgAddress?.[0]?.id,
+            orgId: orgDataFromAPI?.organisation?.id,
+            tenantId: tenantId,
+            boundaryType: 'Ward',
+            boundaryCode: formData?.locDetails_ward?.code,
+            city: formData?.locDetails_city?.code,
+            doorNo: formData?.locDetails_houseName,
+            street: formData?.locDetails_streetName,
+        }]
+
+        organisation.contactDetails = [{
+            id: orgDataFromAPI?.organisation?.contactDetails?.[0]?.id,
+            orgId: orgDataFromAPI?.organisation?.id,
+            tenantId: tenantId,
+            contactName: formData?.contactDetails_name, 
+            contactMobileNumber: formData?.contactDetails_mobile,
+            contactEmail: formData?.contactDetails_email
+        }]
+
+        organisation.identifiers = formData?.taxIdentifierData?.map(item => {
+            if(item?.name && item?.value) {
+                return {
+                    id: orgDataFromAPI?.organisation?.identifiers?.find(data => data?.type === item?.name?.code)?.id,
+                    orgId: orgDataFromAPI?.organisation?.id,
+                    type: item?.name?.code,
+                    value: item?.value
+                }
+            }
+        })
+
+        organisation.functions[0].id = orgDataFromAPI?.organisation?.functions?.[0]?.id
+        organisation.functions[0].orgId = orgDataFromAPI?.organisation?.id
+        organisation.functions[0].applicationNumber = orgDataFromAPI?.organisation?.functions?.[0]?.applicationNumber
+        organisation.functions[0].isActive = true
+
+        organisation.isActive = true
+    }
     organisations.push(organisation)
 
     return {
