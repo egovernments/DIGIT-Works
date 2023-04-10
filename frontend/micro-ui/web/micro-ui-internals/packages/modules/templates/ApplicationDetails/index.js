@@ -60,7 +60,6 @@ const ApplicationDetails = (props) => {
     setSaveAttendanceState
   } = props;
   
-  
   useEffect(() => {
     if (showToast) {
       workflowDetails.revalidate();

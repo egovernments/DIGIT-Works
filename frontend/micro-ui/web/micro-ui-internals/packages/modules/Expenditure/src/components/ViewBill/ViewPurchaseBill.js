@@ -1,20 +1,21 @@
 import { Toast } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { Fragment, useState } from "react";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
 
 const ViewPurchaseBill = ({props}) => {
-
     const [toast, setToast] = useState({show : false, label : "", error : false});
-    const { data, isViewPurchaseBillDataLoading, isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails();
-
+    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails({});
+    if(!isViewPurchaseBillDataLoading) {
+      console.log("view bill details", data);
+    }
     return (
         <>
             {
-              !data?.isNoDataFound && 
+              !isViewPurchaseBillDataLoading && !data?.isNoDataFound && 
                 <ApplicationDetails
-                  applicationDetails={data?.applicationDetails}
+                  applicationDetails={data}
                   isLoading={isViewPurchaseBillDataLoading} 
-                  applicationData={{}}
+                  applicationData={data?.applicationDetails}
                   moduleCode="works"
                   isDataLoading={isViewPurchaseBillDataLoading}
                   workflowDetails={{}}
