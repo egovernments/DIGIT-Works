@@ -3,7 +3,6 @@ package org.egov.digit.expense.web.models;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -13,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Bill details of the individual payees
+ * Bill details of the individual payee
  */
 @Schema(description = "Bill details of the individual payees")
 @Validated
@@ -33,8 +33,16 @@ public class BillDetail {
 
 	@JsonProperty("id")
 	@Valid
-	private UUID id;
-
+	private String id;
+	
+	@JsonProperty("billId")
+	@Valid
+	private String billId;
+	
+	@JsonProperty("netLineItemAmount")
+	@Valid
+	private BigDecimal netLineItemAmount;
+	
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 64)
 	private String referenceId;
@@ -45,11 +53,11 @@ public class BillDetail {
 
 	@JsonProperty("fromPeriod")
 	@Valid
-	private BigDecimal fromPeriod;
+	private Long fromPeriod;
 
 	@JsonProperty("toPeriod")
 	@Valid
-	private BigDecimal toPeriod;
+	private Long toPeriod;
 
 	@JsonProperty("payee")
 	@NotNull
@@ -58,23 +66,35 @@ public class BillDetail {
 
 	@JsonProperty("lineItems")
 	@Valid
-	private List<LineItems> lineItems;
-
-	@JsonProperty("payableLineItem")
+	private List<LineItem> lineItems;
+	
+	@JsonProperty("payableLineItems")
 	@NotNull
 	@Valid
-	private List<LineItems> payableLineItem;
+	private List<LineItem> payableLineItems;
+	
+	@JsonProperty("auditDetails")
+	@Valid
+	private AuditDetails auditDetails;
+	
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
 
-	public BillDetail addLineItemsItem(LineItems lineItemsItem) {
+	public BillDetail addLineItems(LineItem lineItem) {
+
 		if (this.lineItems == null) {
 			this.lineItems = new ArrayList<>();
 		}
-		this.lineItems.add(lineItemsItem);
+		this.lineItems.add(lineItem);
 		return this;
 	}
 
-	public BillDetail addPayableLineItemItem(LineItems payableLineItemItem) {
-		this.payableLineItem.add(payableLineItemItem);
+	public BillDetail addPayableLineItems(LineItem payableLineItem) {
+		
+		if (this.payableLineItems == null) {
+			this.payableLineItems = new ArrayList<>();
+		}
+		this.payableLineItems.add(payableLineItem);
 		return this;
 	}
 

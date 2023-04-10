@@ -1,18 +1,26 @@
 package org.egov.digit.expense.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.digit.expense.config.Configuration;
+import java.util.Arrays;
+
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
-import digit.models.coremodels.*;
+import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import digit.models.coremodels.BusinessService;
+import digit.models.coremodels.BusinessServiceResponse;
+import digit.models.coremodels.ProcessInstance;
+import digit.models.coremodels.ProcessInstanceRequest;
+import digit.models.coremodels.ProcessInstanceResponse;
+import digit.models.coremodels.RequestInfoWrapper;
+import digit.models.coremodels.State;
 
 @Service
 public class WorkflowUtil {
@@ -55,27 +63,6 @@ public class WorkflowUtil {
     }
 
     /**
-    * Calls the workflow service with the given action and updates the status
-    * Returns the updated status of the application
-    * @param requestInfo
-    * @param tenantId
-    * @param businessId
-    * @param businessServiceCode
-    * @param workflow
-    * @param wfModuleName
-    * @return
-    */
-    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId,
-        String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
-        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId,
-        businessServiceCode, workflow, wfModuleName);
-        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
-        State state = callWorkFlow(workflowRequest);
-
-        return state.getApplicationStatus();
-    }
-
-    /**
     * Creates url for search based on given tenantId and businessServices
     * @param tenantId
     * @param businessService
@@ -92,82 +79,29 @@ public class WorkflowUtil {
     }
 
     /**
-    * Enriches ProcessInstance Object for Workflow
-    * @param requestInfo
-    * @param tenantId
-    * @param businessId
-    * @param businessServiceCode
-    * @param workflow
-    * @param wfModuleName
-    * @return
-    */
-    private ProcessInstance getProcessInstanceForWorkflow(RequestInfo requestInfo, String tenantId,
-        String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
-
-        ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setBusinessId(businessId);
-        processInstance.setAction(workflow.getAction());
-        processInstance.setModuleName(wfModuleName);
-        processInstance.setTenantId(tenantId);
-        processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
-        processInstance.setDocuments(workflow.getVerificationDocuments());
-        processInstance.setComment(workflow.getComments());
-
-        if(!CollectionUtils.isEmpty(workflow.getAssignes())) {
-            List<User> users = new ArrayList<>();
-
-            workflow.getAssignes().forEach(uuid -> {
-                User user = new User();
-                user.setUuid(uuid);
-                users.add(user);
-            });
-
-            processInstance.setAssignes(users);
-        }
-
-        return processInstance;
-    }
-
-    /**
-    * Gets the workflow corresponding to the processInstance
-    * @param processInstances
-    * @return
-    */
-    public Map<String, Workflow> getWorkflow(List<ProcessInstance> processInstances) {
-
-        Map<String, Workflow> businessIdToWorkflow = new HashMap<>();
-
-        processInstances.forEach(processInstance -> {
-            List<String> userIds = null;
-
-            if(!CollectionUtils.isEmpty(processInstance.getAssignes())){
-                userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
-            }
-
-            Workflow workflow = Workflow.builder()
-                .action(processInstance.getAction())
-                .assignes(userIds)
-                .comments(processInstance.getComment())
-                .verificationDocuments(processInstance.getDocuments())
-                .build();
-
-            businessIdToWorkflow.put(processInstance.getBusinessId(), workflow);
-        });
-
-        return businessIdToWorkflow;
-    }
-
-    /**
     * Method to take the ProcessInstanceRequest as parameter and set resultant status
     * @param workflowReq
     * @return
     */
-    private State callWorkFlow(ProcessInstanceRequest workflowReq) {
+    public State callWorkFlow(ProcessInstanceRequest workflowRequest) {
     	
         ProcessInstanceResponse response;
         StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-        Object optional = repository.fetchResult(url, workflowReq);
+        Object optional = repository.fetchResult(url, workflowRequest);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
+    }
+    
+    public ProcessInstanceRequest prepareWorkflowRequestForBill(BillRequest billRequest) {
+    	
+    	Bill bill = billRequest.getBill();
+    	ProcessInstance workflow = bill.getWorkflow();
+    	workflow.setBusinessId(null); // TODO FIXME what is the business ID since muster role id is not unique
+    	workflow.setTenantId(bill.getTenantId());
+    	
+    	return ProcessInstanceRequest.builder()
+    			.processInstances(Arrays.asList(workflow))
+    			.requestInfo(billRequest.getRequestInfo())
+    			.build();
     }
 }

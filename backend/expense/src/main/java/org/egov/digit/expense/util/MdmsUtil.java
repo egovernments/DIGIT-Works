@@ -36,7 +36,7 @@ public class MdmsUtil {
                                                                                 List<String> masterNameList) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
+        MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, moduleName, masterNameList);
         Object response = new HashMap<>();
         MdmsResponse mdmsResponse = new MdmsResponse();
         try {
@@ -50,29 +50,41 @@ public class MdmsUtil {
         //log.info(ulbToCategoryListMap.toString());
     }
 
-    private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,
-                                           String moduleName, List<String> masterNameList) {
-        List<MasterDetail> masterDetailList = new ArrayList<>();
-        for(String masterName: masterNameList) {
-            MasterDetail masterDetail = new MasterDetail();
-            masterDetail.setName(masterName);
-            masterDetailList.add(masterDetail);
-        }
+	/**
+	 * prepares Master Data request
+	 * 
+	 * @param tenantId
+	 * @param moduleName
+	 * @param masterNames
+	 * @param filter
+	 * @param requestInfo
+	 * @return
+	 */
+	public MdmsCriteriaReq prepareMdMsRequest(RequestInfo requestInfo, String tenantId, String moduleName,
+			List<String> masterNames) {
 
-        ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(masterDetailList);
-        moduleDetail.setModuleName(moduleName);
-        List<ModuleDetail> moduleDetailList = new ArrayList<>();
-        moduleDetailList.add(moduleDetail);
+		List<MasterDetail> masterDetails = new ArrayList<>();
+		masterNames.forEach(name -> {
+			masterDetails.add(MasterDetail.builder().name(name).build());
+		});
 
-        MdmsCriteria mdmsCriteria = new MdmsCriteria();
-        mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
-        mdmsCriteria.setModuleDetails(moduleDetailList);
+		ModuleDetail moduleDetail = ModuleDetail.builder()
+				.moduleName(moduleName)
+				.masterDetails(masterDetails)
+				.build();
+		
+		List<ModuleDetail> moduleDetails = new ArrayList<>();
+		moduleDetails.add(moduleDetail);
+		
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+				.tenantId(tenantId)
+				.moduleDetails(moduleDetails)
+				.build();
 
-        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-        mdmsCriteriaReq.setRequestInfo(requestInfo);
-
-        return mdmsCriteriaReq;
-    }
+		return MdmsCriteriaReq.builder()
+				.requestInfo(requestInfo)
+				.mdmsCriteria(mdmsCriteria)
+				.build();
+	}
+	
 }

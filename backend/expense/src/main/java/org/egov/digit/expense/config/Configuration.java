@@ -1,5 +1,7 @@
 package org.egov.digit.expense.config;
 
+import java.util.Map;
+
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
@@ -13,78 +15,100 @@ import lombok.Setter;
 
 @Component
 @Data
-@Import({TracerConfiguration.class})
+@Import({ TracerConfiguration.class })
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 public class Configuration {
 
+	// service kafka topics
 
-    // User Config
-    @Value("${egov.user.host}")
-    private String userHost;
+	@Value("${expense.billing.bill.create}")
+	private String billCreateTopic;
 
-    @Value("${egov.user.context.path}")
-    private String userContextPath;
+	@Value("${expense.billing.bill.update}")
+	private String billUpdateTopic;
 
-    @Value("${egov.user.create.path}")
-    private String userCreateEndpoint;
+	@Value("${expense.billing.payment.create}")
+	private String paymentCreateTopic;
 
-    @Value("${egov.user.search.path}")
-    private String userSearchEndpoint;
+	@Value("${expense.billing.payment.update}")
+	private String paymentUpdateTopic;
 
-    @Value("${egov.user.update.path}")
-    private String userUpdateEndpoint;
+	// User Config
+	@Value("${egov.user.host}")
+	private String userHost;
 
+	@Value("${egov.user.context.path}")
+	private String userContextPath;
 
-    //Idgen Config
-    @Value("${egov.idgen.host}")
-    private String idGenHost;
+	@Value("${egov.user.create.path}")
+	private String userCreateEndpoint;
 
-    @Value("${egov.idgen.path}")
-    private String idGenPath;
+	@Value("${egov.user.search.path}")
+	private String userSearchEndpoint;
 
+	@Value("${egov.user.update.path}")
+	private String userUpdateEndpoint;
 
-    //Workflow Config
-    @Value("${egov.workflow.host}")
-    private String wfHost;
+	// Idgen Config
+	@Value("${egov.idgen.host}")
+	private String idGenHost;
 
-    @Value("${egov.workflow.transition.path}")
-    private String wfTransitionPath;
+	@Value("${egov.idgen.path}")
+	private String idGenPath;
 
-    @Value("${egov.workflow.businessservice.search.path}")
-    private String wfBusinessServiceSearchPath;
+	// Workflow Config
+	@Value("${egov.workflow.host}")
+	private String wfHost;
 
-    @Value("${egov.workflow.processinstance.search.path}")
-    private String wfProcessInstanceSearchPath;
+	@Value("${egov.workflow.transition.path}")
+	private String wfTransitionPath;
 
+	@Value("${egov.workflow.businessservice.search.path}")
+	private String wfBusinessServiceSearchPath;
 
-    //MDMS
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
+	@Value("${egov.workflow.processinstance.search.path}")
+	private String wfProcessInstanceSearchPath;
+	
+	@Value("#{${business.workflow.status.map}}")
+	private Map<String, Boolean> businessServiceWorkflowStatusMap;
 
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsEndPoint;
+	// MDMS
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
 
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndPoint;
 
-    //HRMS
-    @Value("${egov.hrms.host}")
-    private String hrmsHost;
+	// HRMS
+	@Value("${egov.hrms.host}")
+	private String hrmsHost;
 
-    @Value("${egov.hrms.search.endpoint}")
-    private String hrmsEndPoint;
+	@Value("${egov.hrms.search.endpoint}")
+	private String hrmsEndPoint;
 
+	// URLShortening
+	@Value("${egov.url.shortner.host}")
+	private String urlShortnerHost;
 
-    //URLShortening
-    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
+	@Value("${egov.url.shortner.endpoint}")
+	private String urlShortnerEndpoint;
 
-    @Value("${egov.url.shortner.endpoint}")
-    private String urlShortnerEndpoint;
+	// SMSNotification
+	@Value("${egov.sms.notification.topic}")
+	private String smsNotificationTopic;
+	
+	// bill search configs
+	
+    @Value("${bill.search.pagination.default.limit}")
+    private Long defaultLimit;
 
+    @Value("${bill.search.pagination.default.offset}")
+    private Long defaultOffset;
+    
+    @Value("${bill.search.pagination.max.search.limit}")
+    private Long maxSearchLimit;
 
-    //SMSNotification
-    @Value("${egov.sms.notification.topic}")
-    private String smsNotificationTopic;
 }

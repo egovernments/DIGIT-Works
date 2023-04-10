@@ -1,7 +1,6 @@
 package org.egov.digit.expense.web.models;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -12,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,11 +28,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LineItems {
+public class LineItem {
 
 	@JsonProperty("id")
 	@Valid
-	private UUID id;
+	private String id;
 
 	@JsonProperty("tenantId")
 	@NotNull
@@ -57,11 +57,14 @@ public class LineItems {
 	@Valid
 	private BigDecimal paidAmount;
 
-	@JsonProperty("isActive")
-	private Boolean isActive;
+	@JsonProperty("status")
+	private String status;
+	
+	@JsonProperty("isLineItemPayable")
+	private Boolean isLineItemPayable;
 
-	@JsonProperty("additionalFields")
-	private Object additionalFields;
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
 
 	@JsonProperty("auditDetails")
 	@Valid

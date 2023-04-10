@@ -1,7 +1,7 @@
 package org.egov.digit.expense.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,31 +32,31 @@ public class BillCriteria {
 	private String tenantId;
 
 	@JsonProperty("ids")
-	private List<String> ids;
+	private Set<String> ids;
 
 	@JsonProperty("businessService")
 	@Size(min = 2, max = 64)
 	private String businessService;
 
-	@JsonProperty("referenceId")
-	private List<String> referenceId;
+	@JsonProperty("referenceIds")
+	private Set<String> referenceIds;
 
-	@JsonProperty("isActive")
-	private Boolean isActive;
+	@JsonProperty("status")
+	private String status;
 
 	public BillCriteria addIdsItem(String idsItem) {
 		if (this.ids == null) {
-			this.ids = new ArrayList<>();
+			this.ids = new HashSet<>();
 		}
 		this.ids.add(idsItem);
 		return this;
 	}
 
 	public BillCriteria addReferenceIdItem(String referenceIdItem) {
-		if (this.referenceId == null) {
-			this.referenceId = new ArrayList<>();
+		if (this.referenceIds == null) {
+			this.referenceIds = new HashSet<>();
 		}
-		this.referenceId.add(referenceIdItem);
+		this.referenceIds.add(referenceIdItem);
 		return this;
 	}
 

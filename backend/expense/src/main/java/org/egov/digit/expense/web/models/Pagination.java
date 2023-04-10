@@ -29,14 +29,14 @@ public class Pagination {
 	@JsonProperty("limit")
 	@DecimalMax("100")
 	@Default
-	private Double limit = 10d;
+	private Long limit = 10l;
 
 	@JsonProperty("offSet")
 	@Default
-	private Double offSet = 0d;
+	private Long offSet = 0l;
 
 	@JsonProperty("totalCount")
-	private Double totalCount;
+	private Long totalCount;
 
 	@JsonProperty("sortBy")
 	private String sortBy;
