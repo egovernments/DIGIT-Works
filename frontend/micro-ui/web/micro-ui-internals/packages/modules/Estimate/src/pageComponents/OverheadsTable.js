@@ -163,9 +163,20 @@ const OverheadsTable = ({control,watch,...props}) => {
             return <Loader />;
             //show MDMS data if options are not provided. Options are in use here for pre defined options from config. 
             //Usage example : dependent dropdown
-        } else return <Dropdown
+        } else {
+            //here filter out the options available to select
+            let filteredOptions = []
+            if(options?.mdmsConfig){
+                console.log(data);
+                console.log(formData?.[formFieldName]);
+                filteredOptions = data?.filter(row => {
+                    return !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
+                })
+            }
+            console.log(formData?.[formFieldName]);
+            return <Dropdown
             inputRef={register()}
-            option={options?.mdmsConfig ? data : options}
+            option={options?.mdmsConfig ? filteredOptions : options}
             selected={props?.value}
             optionKey={optionKey}
             t={t}
@@ -177,6 +188,7 @@ const OverheadsTable = ({control,watch,...props}) => {
             optionCardStyles={{ maxHeight: '15rem' }}
             style={{ marginBottom: "0px" }}
         />
+        }
     }
 
     const handleDropdownChange = (e, props, row, inputName) => {
