@@ -343,11 +343,13 @@ public class OrganisationServiceValidator {
         validateRequestInfo(orgSearchRequest.getRequestInfo(), errorMap);
         //Verify the search criteria
         log.info("Organisation search criteria validation");
-        validateSearchCriteria(orgSearchRequest.getSearchCriteria());
+        validateSearchCriteria(orgSearchRequest.getSearchCriteria(),errorMap);
+
+        if(!errorMap.isEmpty())
+            throw new CustomException(errorMap);
     }
 
-    private void validateSearchCriteria(OrgSearchCriteria searchCriteria) {
-        Map<String, String> errorMap = new HashMap<>();
+    private void validateSearchCriteria(OrgSearchCriteria searchCriteria,Map<String, String> errorMap) {
 
         if (searchCriteria == null) {
             log.error("Search criteria is mandatory");

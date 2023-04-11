@@ -13,7 +13,7 @@ import java.util.Set;
 public class TaxIdentifierQueryBuilder {
 
     private static final String FETCH_TAX_IDENTIFIER_QUERY = " SELECT i.id as taxIdentifier_Id, i.org_id as taxIdentifier_orgId, " +
-            "i.type as taxIdentifier_type, i.value as taxIdentifier_value, i.additional_details as taxIdentifier_additionalDetails " +
+            "i.type as taxIdentifier_type, i.value as taxIdentifier_value, i.additional_details as taxIdentifier_additionalDetails, i.is_active as taxIdentifier_active " +
             "FROM eg_tax_identifier i";
 
     public String getTaxIdentifierSearchQuery(Set<String> organisationIds, List<Object> preparedStmtList) {
