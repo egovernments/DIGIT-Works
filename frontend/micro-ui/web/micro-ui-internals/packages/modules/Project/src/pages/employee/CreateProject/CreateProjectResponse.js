@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Banner, Card, LinkLabel, AddFileFilled, ArrowLeftWhite, ActionBar, SubmitBar} from "@egovernments/digit-ui-react-components";
@@ -8,8 +8,14 @@ const CreateProjectResponse = () => {
     const history = useHistory();
     const queryStrings = Digit.Hooks.useQueryParams();
     const [ projectIDsList, setProjectIDsList ] = useState(queryStrings?.projectIDs.split(','));
+    const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
+    const [isEstimateCreator, setIsEstimateCreator] = useState(false);
     const [ isResponseSuccess, setIsResponseSuccess ] = useState(queryStrings?.isSuccess === "true" ? true : queryStrings?.isSuccess === "false" ? false : true);
     const {state} = useLocation();
+
+    useEffect(()=>{
+        setIsEstimateCreator(loggedInUserRoles?.includes("ESTIMATE_CREATOR"));
+    },[]);
 
     const navigate = (page) =>{
         switch(page){
@@ -41,7 +47,7 @@ const CreateProjectResponse = () => {
                 <LinkLabel style={{ display: "flex", marginRight : "3rem" }} onClick={()=>navigate('search-project')}>
                     <ArrowLeftWhite  fill="#F47738" style={{marginRight: "8px", marginTop : "3px"}}/>{t("PROJECT_GO_TO_SEARCH_PROJECT")}
                 </LinkLabel>
-                {isResponseSuccess && <LinkLabel style={{ display: "flex" }} onClick={()=>navigate('create-estimate')}>
+                {isResponseSuccess && isEstimateCreator && <LinkLabel style={{ display: "flex" }} onClick={()=>navigate('create-estimate')}>
                     <AddFileFilled style={{marginRight: "8px", marginTop : "3px"}}/>{t("COMMON_CREATE_ESTIMATE")}
                 </LinkLabel>  }    
             </div>
