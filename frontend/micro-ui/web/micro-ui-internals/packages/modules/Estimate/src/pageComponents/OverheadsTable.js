@@ -167,8 +167,6 @@ const OverheadsTable = ({control,watch,...props}) => {
             //here filter out the options available to select
             let filteredOptions = []
             if(options?.mdmsConfig){
-                console.log(data);
-                console.log(formData?.[formFieldName]);
                 filteredOptions = data?.filter(row => {
                     return !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
                 })
