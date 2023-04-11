@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { FormComposer, Loader } from '@egovernments/digit-ui-react-components';
+import { FormComposer, Loader, Toast } from '@egovernments/digit-ui-react-components';
 import { getTomorrowsDate, getBankAccountUpdatePayload, getOrgPayload } from '../../../../utils';
 
 const navConfig =  [
@@ -30,6 +30,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
 
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
+    const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
 
     const { mutate: CreateOrganisationMutation } = Digit.Hooks.organisation.useCreateOrganisation();
     const { mutate: UpdateOrganisationMutation } = Digit.Hooks.organisation.useUpdateOrganisation();
@@ -166,20 +167,29 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 setValue("funDetails_orgSubType", '');
                 setValue("funDetails_category", '');
             }
-            if(formData?.transferCodesData?.[0]?.name?.code == 'IFSC' && formData?.transferCodesData?.[0]?.value && !formData?.financeDetails_branchName) {
+            if(formData?.transferCodesData?.[0]?.name?.code == 'IFSC' && formData?.transferCodesData?.[0]?.value ) {
                 if(formData?.transferCodesData?.[0]?.value.length > 10) {
-                    const res = await window.fetch(`https://ifsc.razorpay.com/${formData?.transferCodesData?.[0]?.value}`);
-                    if (res.ok) {
-                        const { BANK, BRANCH } = await res.json();
-                        setValue('financeDetails_bankName', `${BANK}`)
-                        setValue('financeDetails_branchName', `${BRANCH}`)
-                    }
+                    setTimeout(() => {
+                        fetchIFSCDetails(formData?.transferCodesData?.[0]?.value, 'financeDetails_branchName', 'financeDetails_bankName', setValue);
+                    }, 500);
                 }
             }
             setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
 
+    const fetchIFSCDetails = async (ifscCode, branchNameField, bankNameField, setValue) => {
+        const res = await window.fetch(`https://ifsc.razorpay.com/${ifscCode}`);
+        if (res.ok) {
+            const { BANK, BRANCH } = await res.json();
+            setValue(bankNameField, `${BANK}`)
+            setValue(branchNameField, `${BRANCH}`)
+        }
+        if(res.status === 404) {
+            setValue(bankNameField, "")
+            setValue(branchNameField, "")
+        }
+    }
     const sendDataToResponsePage = (orgId, isSuccess, message, showId, otherMessage = "") => {
         history.push({
             pathname: `/${window?.contextPath}/employee/masters/response`,
@@ -226,12 +236,17 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         });
     }
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
             const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
             handleResponseForUpdate(orgPayload, bankAccountPayload);
         }else {
+            const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
+            if(userData?.user?.length > 0) {
+                setShowDuplicateUserError(true)
+                return
+            }
             handleResponseForCreate(orgPayload, data);
         }
     }   
@@ -259,6 +274,9 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 onFormValueChange={onFormValueChange}
                 cardClassName = "mukta-header-card"
             />
+            {
+                showDuplicateUserError && <Toast error={true} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />
+            }
         </React.Fragment>
     )
 }
