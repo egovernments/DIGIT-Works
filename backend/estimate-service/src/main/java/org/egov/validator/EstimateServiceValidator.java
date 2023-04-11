@@ -60,8 +60,9 @@ public class EstimateServiceValidator {
         rootTenantId = rootTenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
 
-        validateMDMSData(estimate, mdmsData, errorMap);
+        validateMDMSData(estimate, mdmsData,mdmsDataForOverHead, errorMap);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
@@ -167,7 +168,7 @@ public class EstimateServiceValidator {
         }
     }
 
-    private void validateMDMSData(Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
+    private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateMDMSData");
         List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
@@ -216,7 +217,7 @@ public class EstimateServiceValidator {
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
             // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
             categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
-            overHeadRes = JsonPath.read(mdmsData, jsonPathForOverHead);
+            overHeadRes = JsonPath.read(mdmsDataForOverHead, jsonPathForOverHead);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
@@ -362,7 +363,8 @@ public class EstimateServiceValidator {
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
-        validateMDMSData(estimate, mdmsData, errorMap);
+        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
+        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())

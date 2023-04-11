@@ -50,6 +50,33 @@ public class MDMSUtils {
         return result;
     }
 
+
+    /**
+     * Calls MDMS service to fetch overhead category
+     *
+     * @param request
+     * @param tenantId
+     * @return
+     */
+    public Object mDMSCallForOverHeadCategory(EstimateRequest request, String tenantId) {
+        log.info("MDMSUtils::mDMSCallForOverHeadCategory");
+        RequestInfo requestInfo = request.getRequestInfo();
+
+        ModuleDetail estimateOverheadModuleDetail = getOverHeadModuleRequestData(request);
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(estimateOverheadModuleDetail);
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
+
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+
+        log.info("MDMSUtils::search MDMS request for overhead -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
+
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
+
     /**
      * Returns mdms search criteria based on the tenantId
      *
@@ -64,14 +91,12 @@ public class MDMSUtils {
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
         ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request);
         ModuleDetail estimateCategoryModuleDetail = getCategoryModuleRequestData(request);
-        ModuleDetail estimateOverheadModuleDetail = getOverHeadModuleRequestData(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(estimateTenantModuleDetail);
         moduleDetails.add(estimateDepartmentModuleDetail);
         moduleDetails.add(estimateSorIdModuleDetail);
         moduleDetails.add(estimateCategoryModuleDetail);
-        moduleDetails.add(estimateOverheadModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
                 .build();
