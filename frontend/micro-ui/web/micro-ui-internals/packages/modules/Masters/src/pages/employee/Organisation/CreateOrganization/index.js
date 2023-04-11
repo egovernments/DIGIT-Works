@@ -42,7 +42,7 @@ const CreateOrganisation = () => {
 
     //Call Search Wage Seeker
     const payload = {
-        SearchCriteria: { orgNumber: orgId }
+        SearchCriteria: { orgNumber: orgId, tenantId }
     }
     const {isLoading: orgDataFetching, data: orgData, isError, isSuccess, error} = Digit.Hooks.organisation.useOrganisationDetails({tenantId, data: payload, config:{
         enabled: isModify,

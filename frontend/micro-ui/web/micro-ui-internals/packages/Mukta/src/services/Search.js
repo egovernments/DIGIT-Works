@@ -90,7 +90,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA",
                 uuid:currentProject?.id,
                 address:currentProject?.address,
-                ward: currentProject?.additionalDetails?.ward
+                ward: currentProject?.address?.boundary,
+                locality:currentProject?.additionalDetails?.locality
             }
             totalProjects.searchedProject = {
                 basicDetails,

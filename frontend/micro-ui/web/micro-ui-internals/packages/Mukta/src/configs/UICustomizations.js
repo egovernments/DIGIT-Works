@@ -497,6 +497,14 @@ export const UICustomizations = {
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
     },
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { startDate, endDate } = data;
+      if ((startDate === "" && endDate !== "") || (startDate !== "" && endDate === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "ES_COMMON_MUSTER_ROLL_ID") {
         return (
