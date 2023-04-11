@@ -14,6 +14,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     const history = useHistory()
     const individualId = wageSeekerDataFromAPI?.individual?.individualId
 
+    console.log('sessionFormData GOT from default values', sessionFormData)
     const [financeDetailsUpdated, setFinanceDetailsUpdated] = useState(false)
     const [individualDetailsUpdated, setIndividualDetailsUpdated] = useState(false)
     const [isBirthDateValid, setIsBirthDateValid] = useState(true);

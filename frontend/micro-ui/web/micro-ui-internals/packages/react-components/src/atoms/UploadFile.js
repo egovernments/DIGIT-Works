@@ -148,6 +148,7 @@ const UploadFile = (props) => {
     else setHasFile(false);
   };
 
+  console.log('INSIDE Upload file', props);
   // for common aligmnent issues added common styles
   extraStyles = getCitizenStyles("OBPS");
   

@@ -38,9 +38,12 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
         configs.defaultValues.basicDetails_gender = individual?.gender ? { code: individual?.gender, name: `COMMON_MASTERS_GENDER_${individual?.gender}`, active: true } : ""
         configs.defaultValues.basicDetails_mobileNumber = individual?.mobileNumber ? individual?.mobileNumber : ""
         configs.defaultValues.basicDetails_socialCategory = socialCategory ? { code:socialCategory?.value, name: `COMMON_MASTERS_SOCIAL_${socialCategory?.value}`, active: true} : ""
+        console.log('individual?.photo FROM API', individual?.photo);
+        console.log('imageName', imageName);
         configs.defaultValues.basicDetails_photograph = individual?.photo ? [[ 
             imageName , {  file: {}, fileStoreId: { fileStoreId: individual?.photo, tenantId }
         }]] : ""
+        console.log('configs.defaultValues.basicDetails_photograph', configs.defaultValues.basicDetails_photograph);
     
         configs.defaultValues.skillDetails_skill = skills
     
@@ -56,6 +59,7 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
         configs.defaultValues.financeDetails_ifsc = bankAccountDetails?.bankBranchIdentifier?.code ? bankAccountDetails?.bankBranchIdentifier?.code : ""
         configs.defaultValues.financeDetails_branchName = bankAccountDetails?.bankBranchIdentifier?.additionalDetails?.ifsccode ? bankAccountDetails?.bankBranchIdentifier?.additionalDetails?.ifsccode : ""
     
+        console.log('configs?.defaultValues', configs?.defaultValues);
         setSessionFormData({...configs?.defaultValues})
     }
     setIsFormReady(true)
