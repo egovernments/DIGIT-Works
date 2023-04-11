@@ -203,7 +203,7 @@ export const WorksSearch = {
             return [
                 index+1,
                 row?.description,
-                row?.uom,
+                t(`ES_COMMON_UOM_${row?.uom}`),
                 Digit.Utils.dss.formatterWithoutRound(row?.unitRate, 'number'),
                 row?.noOfunit,
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail[0]?.amount?.toFixed(2), 'number')
