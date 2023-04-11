@@ -12,8 +12,8 @@ export const getTomorrowsDate = () => {
 
 export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady }) => {
     console.log('INSIDE updateWageSeekerFormDefaultValues');
-    console.log('INSIDE updateWageSeekerFormDefaultValues2', individual?.photo);
     const individual = wageSeekerData?.individual
+    console.log('INSIDE updateWageSeekerFormDefaultValues2', individual?.photo);
     const bankAccountDetails = wageSeekerData?.bankDetails?.[0]?.bankAccountDetails?.[0]
 
     const adhaar = individual?.identifiers?.find(item => item?.identifierType === 'AADHAAR')
@@ -43,7 +43,7 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
         console.log('imageName', imageName);
         configs.defaultValues.basicDetails_photograph = individual?.photo ? [[ 
             imageName , {  file: {}, fileStoreId: { fileStoreId: individual?.photo, tenantId }
-        }]] : null
+        }]] : []
         console.log('configs.defaultValues.basicDetails_photograph', configs.defaultValues.basicDetails_photograph);
     
         configs.defaultValues.skillDetails_skill = skills
