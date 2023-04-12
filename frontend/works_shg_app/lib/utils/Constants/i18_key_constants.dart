@@ -129,6 +129,9 @@ class Common {
   String get validTo => 'ORG_VALID_TO';
   String get contactPersonName => 'ORG_CONTACT_PERSON_NAME';
   String get download => "COMMON_DOWNLOAD";
+  String get showWorkflowTimeline => 'SHOW_WORKFLOW_TIMELINE';
+  String get hideWorkflowTimeline => 'HIDE_WORKFLOW_TIMELINE';
+  String get workflowTimeline => 'WORKS_WORKFLOW_TIMELINE';
 }
 
 class Home {

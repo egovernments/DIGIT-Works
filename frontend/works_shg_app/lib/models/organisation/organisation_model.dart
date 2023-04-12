@@ -44,7 +44,7 @@ class OrganisationModel with OrganisationModelMappable {
 class OrgAdditionalDetails with OrgAdditionalDetailsMappable {
   String? registeredByDept;
   String? deptRegistrationNum;
-  ORGLocality? locality;
+  String? locality;
   OrgAdditionalDetails(
       {this.registeredByDept, this.deptRegistrationNum, this.locality});
 }

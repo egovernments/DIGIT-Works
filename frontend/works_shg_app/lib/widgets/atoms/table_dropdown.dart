@@ -25,6 +25,8 @@ class DropDownDialog extends StatefulWidget {
 }
 
 class _DropDownDialogState extends State<DropDownDialog> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -76,6 +78,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          scrollable: true,
           title: Text(
             AppLocalizations.of(context)
                 .translate(widget.label ?? i18.common.selectAnOption),
@@ -84,25 +87,32 @@ class _DropDownDialogState extends State<DropDownDialog> {
           content: SizedBox(
             height: 180,
             width: 200,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: widget.options.map((option) {
-                  return RadioListTile(
-                    title: Text(AppLocalizations.of(context).translate(option),
-                        style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w400)),
-                    value: option,
-                    groupValue: widget.selectedOption,
-                    onChanged: (value) {
-                      setState(() {
-                        widget.selectedOption = value ?? '';
-                      });
-                      widget.onChanged(value);
-                      Navigator.pop(context);
-                    },
-                  );
-                }).toList(),
+            child: Scrollbar(
+              controller: _scrollController,
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                physics: const ClampingScrollPhysics(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widget.options.map((option) {
+                    return RadioListTile(
+                      title: Text(
+                          AppLocalizations.of(context).translate(option),
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w400)),
+                      value: option,
+                      groupValue: widget.selectedOption,
+                      onChanged: (value) {
+                        setState(() {
+                          widget.selectedOption = value ?? '';
+                        });
+                        widget.onChanged(value);
+                        Navigator.pop(context);
+                      },
+                    );
+                  }).toList(),
+                ),
               ),
             ),
           ),
