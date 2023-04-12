@@ -304,7 +304,11 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                 description: financialDetails != null &&
                         financialDetails?.ifscCode != null
                     ? financialDetails!.ifscCode.toString()
-                    : 'NA'),
+                    : 'NA',
+                subDescription: financialDetails != null &&
+                        financialDetails?.bankName != null
+                    ? '( ${financialDetails?.bankName} )'
+                    : ''),
             const SizedBox(
               height: 10,
               width: 0,
@@ -377,10 +381,14 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
   }
 
   static getItemWidget(BuildContext context,
-      {String title = '', String description = '', String subtitle = ''}) {
+      {String title = '',
+      String description = '',
+      String subtitle = '',
+      String subDescription = ''}) {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -408,16 +416,32 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                             )
                           : const Text('')
                     ])),
-            SizedBox(
-                width: MediaQuery.of(context).size.width / 2,
-                child: Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  textAlign: TextAlign.left,
-                ))
+            Column(
+              children: [
+                SizedBox(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Text(
+                      description,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      textAlign: TextAlign.left,
+                    )),
+                subDescription.isNotEmpty
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width / 2,
+                        child: Text(
+                          subDescription,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: const DigitColors().cloudGray),
+                          textAlign: TextAlign.left,
+                        ))
+                    : Container()
+              ],
+            )
           ],
         )));
   }

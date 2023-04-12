@@ -25,8 +25,8 @@ class ORGFinanceBloc extends Bloc<ORGFinanceEvent, ORGFinanceState> {
     BankingDetailsModel bankingDetailsModel = await ORGRepository(client.init())
         .searchORGFinance(url: Urls.orgServices.financeSearch, body: {
       "bankAccountDetails": {
-        "tenantId": "pg.citya",
-        "referenceId": ["fc2ba8e7-096c-4b71-80ac-7ceaec56a7e7"]
+        "tenantId": event.tenantId,
+        "referenceId": [event.referenceId]
       },
       "pagination": {
         "limit": 20,
