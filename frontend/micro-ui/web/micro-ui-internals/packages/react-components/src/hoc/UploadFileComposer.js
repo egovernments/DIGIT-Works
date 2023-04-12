@@ -77,7 +77,9 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
           return ( 
             <LabelFieldPair key={index}>
               { item.code && (
-                <CardLabel>
+                <CardLabel
+                  className="bolder"
+                >
                   { t(`${localePrefix}_${item?.code}`)} { item?.isMandatory ? " * " : null }
                 </CardLabel>) 
               }

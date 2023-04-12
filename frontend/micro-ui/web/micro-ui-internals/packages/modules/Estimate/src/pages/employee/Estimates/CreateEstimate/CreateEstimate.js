@@ -395,7 +395,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             horizontalNavConfig={configNavItems}
             showFormInNav={true}  
             showNavs={true}
-            sectionHeadStyle={{marginTop:"2rem"}}  
+            sectionHeadStyle={{marginTop:"2rem"}} 
+            labelBold={true} 
         />:null}
           {showToast && (
               <Toast

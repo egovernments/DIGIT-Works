@@ -258,6 +258,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 horizontalNavConfig={navConfig}
                 onFormValueChange={onFormValueChange}
                 cardClassName = "mukta-header-card"
+                labelBold={true}
             />
         </React.Fragment>
     )
