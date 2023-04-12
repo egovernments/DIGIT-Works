@@ -127,10 +127,10 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                         'PG_${e.orgAddress?.first.city?.toUpperCase()}') ??
                                     'NA',
                                 i18.common.ward: t.translate(
-                                        'PG_CITY_${e.orgAddress?.first.boundaryCode ?? 'NA'}') ??
+                                        '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${e.orgAddress?.first.boundaryCode ?? 'NA'}') ??
                                     'NA',
                                 i18.common.locality: t.translate(
-                                    e.additionalDetails?.locality ?? 'NA'),
+                                    '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${e.additionalDetails?.locality}'),
                                 i18.common.streetName:
                                     e.orgAddress?.first.street ?? 'NA',
                                 i18.common.doorNo:
