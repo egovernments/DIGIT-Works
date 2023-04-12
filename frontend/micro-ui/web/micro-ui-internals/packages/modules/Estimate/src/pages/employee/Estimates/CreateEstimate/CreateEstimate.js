@@ -169,6 +169,13 @@ const CreateEstimate = ({ EstimateSession }) => {
             }
         }
     );
+
+    const closeToast = () => {
+        setTimeout(() => {
+            setShowToast(null)
+        }, 7000);
+    }
+
     // estimateFormConfig = createEstimateConfig()
     const onFormSubmit = async (_data) => {
         
@@ -194,6 +201,7 @@ const CreateEstimate = ({ EstimateSession }) => {
         
         if (_data.totalEstimateAmount < totalLabourAndMaterial )   {
             setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" })
+            closeToast()
             return
         } 
             
