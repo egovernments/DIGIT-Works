@@ -879,7 +879,8 @@ input[type="number"] {
 
 .mukta-header-card {
   margin-bottom: 3rem !important;
-  padding-bottom: 0;
+  padding: 26px !important;
+  padding-bottom: 0 !important;
 }
 
 .text-input-customIcon {
@@ -943,5 +944,9 @@ input[type="number"] {
 
 .card-section-header {
     margin-bottom: 20px !important;
-    margin-top: 30px !important;
+    margin-top: 20px !important;
+}
+
+.label-field-pair {
+  align-items: flex-start !important;
 }
