@@ -231,6 +231,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                         horizontalNavConfig={navConfig}
                         onFormValueChange={onFormValueChange}
                         cardClassName = "mukta-header-card"
+                        labelBold={true}
                     />
                     )
                 }

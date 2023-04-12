@@ -33,7 +33,7 @@ public class EstimateRequestBuilderTest {
         List<EstimateDetail> estimateDetails = new ArrayList<>();
         EstimateDetail estimateDetail = EstimateDetail.builder()
                 .sorId("sor id")
-                .category("OVERHEAD")
+                .category("OVERHEAD").name("GST")
                 .amountDetail(amountDetails).build();
         estimateDetails.add(estimateDetail);
 
