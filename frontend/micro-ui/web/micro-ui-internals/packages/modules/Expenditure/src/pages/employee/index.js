@@ -85,7 +85,7 @@ const App = ({ path }) => {
                 <PrivateRoute path={`${path}/inbox`} component={() => <BillInbox parentRoute={path} />}/>
                 <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBill parentRoute={path} />}/>
                 <PrivateRoute path={`${path}/view-bill`} component={() => <ViewBill parentRoute={path} />}/>
-                <PrivateRoute path={`${path}/purchase-bill`} component={() => <PurchaseBill parentRoute={path} />} />
+                <PrivateRoute path={`${path}/create-purchase-bill`} component={() => <PurchaseBill parentRoute={path} />} />
             </AppContainer>
         </Switch>
     );

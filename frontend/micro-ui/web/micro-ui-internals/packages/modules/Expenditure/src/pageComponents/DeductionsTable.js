@@ -302,7 +302,7 @@ const DeductionsTable = ({control,watch,...props}) => {
             <tbody>
                 {renderBody()}
                 <tr>
-                    <td colSpan={3} style={{textAlign:"right",fontWeight:"600"}}>{t("RT_TOTAL")}</td>
+                    <td colSpan={3} style={{textAlign:"right",fontWeight:"600"}}>{t("TOTAL_DEDUCTIONS")}</td>
                     <td colSpan={1}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
                     <td colSpan={1}></td>
                     <td colSpan={1}></td>

@@ -18,47 +18,51 @@ const CreatePurchaseBillForm = ({createPurchaseBillConfig, sessionFormData, setS
     const history = useHistory();
     const [showModal, setShowModal] = useState(false);
     const [createPBModalConfig, setCreatePBModalConfig] = useState({});
-    const rolesForThisAction = "WORK_ORDER_VERIFIER" //hardcoded for now
-    const [approvers, setApprovers] = useState([]);
-    const [selectedApprover, setSelectedApprover] = useState({});
+    const rolesForThisAction = "BILL_CREATOR" //hardcoded for now
+    //const [approvers, setApprovers] = useState([]);
+    //const [selectedApprover, setSelectedApprover] = useState({});
     const [inputFormdata, setInputFormData] = useState([]);
     const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
 
-    useEffect(() => {
-        setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
-        //TODO: if name-designation is req
-        // let refactoredAppoversNames = [];
-        // if(employeeDatav1?.Employees?.length > 0) {
-        //     refactoredAppoversNames = employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA").map((emp=>{
-        //         let designation = t(`COMMON_MASTERS_DESIGNATION_${emp?.assignments?.[0]?.designation}`);
-        //         return {...emp, name_designation : `${emp?.nameOfEmp} - ${designation}`}
-        //     }))
-        // }else {
-        //     refactoredAppoversNames = [];
-        // }
+    // useEffect(() => {
+    //     setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
+    //     //TODO: if name-designation is req
+    //     // let refactoredAppoversNames = [];
+    //     // if(employeeDatav1?.Employees?.length > 0) {
+    //     //     refactoredAppoversNames = employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA").map((emp=>{
+    //     //         let designation = t(`COMMON_MASTERS_DESIGNATION_${emp?.assignments?.[0]?.designation}`);
+    //     //         return {...emp, name_designation : `${emp?.nameOfEmp} - ${designation}`}
+    //     //     }))
+    //     // }else {
+    //     //     refactoredAppoversNames = [];
+    //     // }
 
-        // setApprovers(refactoredAppoversNames);
-    }, [employeeDatav1])
+    //     // setApprovers(refactoredAppoversNames);
+    // }, [employeeDatav1])
 
-    // createPurchaseBillConfig = useMemo(
-    //     () => Digit.Utils.preProcessMDMSConfig(t, createPurchaseBillConfig, {
-    //       updateDependent : [
-    //         {
-    //             key : 'InvoiceDetails',
-    //             value : [preProcessData?.documents]
-    //         }
-    //       ]
-    //     }),
-    // [preProcessData?.documents]);
+    createPurchaseBillConfig = useMemo(
+        () => Digit.Utils.preProcessMDMSConfig(t, createPurchaseBillConfig, {
+            updateDependent : [
+              {
+                  key : 'nameOfVendor',
+                  value : [preProcessData?.nameOfVendor]
+              }
+            ]
+          }),
+      [preProcessData?.nameOfVendor]);
 
-    // const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    //     if (!_.isEqual(sessionFormData, formData)) {
-    //         const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+        if (!_.isEqual(sessionFormData, formData)) {
+            const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
-    //         setSessionFormData({ ...sessionFormData, ...formData });
-    //     }
-    // }
+            if(formData.nameOfVender) {
+                setValue("vendorID", formData.nameOfVendor?.orgNumber);
+            }
+
+            setSessionFormData({ ...sessionFormData, ...formData });
+        }
+    }
 
     const handleToastClose = () => {
         setToast({show : false, label : "", error : false});
@@ -73,17 +77,17 @@ const CreatePurchaseBillForm = ({createPurchaseBillConfig, sessionFormData, setS
         }
     },[toast?.show]);
 
-    useEffect(() => {
-        setCreatePBModalConfig(
-            getBillModalConfig({
-                t,
-                approvers,
-                selectedApprover,
-                setSelectedApprover,
-                approverLoading
-            })
-        )
-    }, [approvers]);
+    // useEffect(() => {
+    //     setCreatePBModalConfig(
+    //         getBillModalConfig({
+    //             t,
+    //             approvers,
+    //             selectedApprover,
+    //             setSelectedApprover,
+    //             approverLoading
+    //         })
+    //     )
+    // }, [approvers]);
 
     const onFormSubmit = (_data) => {
         console.log("Form data :", _data);
@@ -117,7 +121,7 @@ const CreatePurchaseBillForm = ({createPurchaseBillConfig, sessionFormData, setS
                         fieldStyle={{ marginRight: 0 }}
                         inline={false}
                         className="form-no-margin"
-                        //defaultValues={sessionFormData}
+                        defaultValues={sessionFormData}
                         showWrapperContainers={false}
                         isDescriptionBold={false}
                         noBreakLine={true}
@@ -126,7 +130,7 @@ const CreatePurchaseBillForm = ({createPurchaseBillConfig, sessionFormData, setS
                         showMultipleCardsWithoutNavs={false}
                         showMultipleCardsInNavs={false}
                         horizontalNavConfig={navConfig}
-                        //onFormValueChange={onFormValueChange}
+                        onFormValueChange={onFormValueChange}
                         cardClassName = "mukta-header-card"
                     />)
                 }

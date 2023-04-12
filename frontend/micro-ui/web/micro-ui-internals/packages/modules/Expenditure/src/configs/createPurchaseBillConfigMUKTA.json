@@ -72,8 +72,8 @@
               "body": [
                 {
                   "isMandatory": true,
-                  "key": "vendor",
-                  "type": "radioordropdown", 
+                  "key": "nameOfVendor",
+                  "type": "radioordropdown",
                   "label": "EXP_VENDOR",
                   "disable": false,
                   "preProcess": {
@@ -82,32 +82,23 @@
                     ]
                   },
                   "populators": {
-                    "name": "vendor",
+                    "name": "nameOfVendor",
                     "optionsKey": "name",
                     "error": "WORKS_REQUIRED_ERR",
                     "required": false,
                     "optionsCustomStyle": {
                       "top": "2.5rem"
                     },
-                    "options": [
-                      {
-                        "name": "Vendor 1",
-                        "code": "VENDOR_1"
-                      },
-                      {
-                        "name": "Vendor 2",
-                        "code": "VENDOR_2"
-                      }
-                    ]
+                    "options": []
                   }
                 },
                 {
                   "inline": true,
                   "label": "EXP_VENDOR_ID",
-                  "isMandatory": true,
+                  "isMandatory": false,
                   "key": "vendorID",
                   "type": "text",
-                  "disable": false,
+                  "disable": true,
                   "populators": {
                     "name": "vendorID",
                     "customClass": "disabled-text-field"
@@ -241,16 +232,22 @@
             },
             {
               "navLink": "Section",
-              "head": "",
+              "head": "WORKS_RELEVANT_DOCS",
               "body": [
                 {
-                  "type": "documentUpload",
-                  "withoutLabel": true,
-                  "module": "Expenditure",
-                  "error": "WORKS_REQUIRED_ERR",
-                  "name": "documents",
-                  "customClass": "",
-                  "localePrefix": "BILL_DOC"
+                  "label": "ES_COMMON_INVOICE",
+                  "isMandatory": false,
+                  "key": "basicDetails_invoice",
+                  "type": "multiupload",
+                  "preProcess" : {
+                    "convertStringToRegEx" : ["populators.allowedFileTypes"]
+                  },
+                  "populators": {
+                    "name": "basicDetails_invoice",
+                    "allowedMaxSizeInMB": 2,
+                    "maxFilesAllowed": 1,
+                    "allowedFileTypes": "(.*?)(jpg|jpeg|png)$"
+                  }
                 }
               ]
             }
