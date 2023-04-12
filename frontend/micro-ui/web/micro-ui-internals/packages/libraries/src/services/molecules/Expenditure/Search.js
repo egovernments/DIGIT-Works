@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { WorksService } from "../../elements/Works";
-import { Link } from "react-router-dom";
+
 export const BillsSearch = {
   viewSupervisionBill: async ({ t }) => {
     const billDetails = {
@@ -68,7 +68,7 @@ export const BillsSearch = {
       return [
         {
           type: "link",
-          label: row?.billNo
+          label: row?.billNo,
         },
         row.billType,
         row?.billDate,
@@ -114,7 +114,12 @@ export const BillsSearch = {
     };
 
     return {
-      applicationDetails: [billDetails, supervisionDetails, billTable, totalBillAmt, billDetailsBelow, totalBillAmtBelow],
+      applicationDetailsCardOne: {
+        applicationDetails: [billDetails, supervisionDetails, billTable, totalBillAmt],
+      },
+      applicationDetailsCardTwo: {
+        applicationDetails: [billDetailsBelow, totalBillAmtBelow],
+      },
       applicationData: {},
       isNoDataFound: false,
     };
