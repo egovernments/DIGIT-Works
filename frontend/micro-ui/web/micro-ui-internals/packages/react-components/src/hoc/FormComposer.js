@@ -519,7 +519,7 @@ export const FormComposer = (props) => {
                   {!field.withoutLabel && (
                     <CardLabel
                       style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
-                      className={field?.disable ? "disabled" : ""}
+                      className={field?.disable ? `disabled ${props?.labelBold ? 'bolder' : ""}` : `${props?.labelBold ? 'bolder' : ""}`}
                     >
                       {t(field.label)}
                       {field.isMandatory ? " * " : null}
@@ -540,6 +540,7 @@ export const FormComposer = (props) => {
                           color: "#505A5F",
                           ...field?.descriptionStyles,
                         }}
+                        className="bolder"
                       >
                         {t(field.description)}
                       </CardLabel>
@@ -565,6 +566,7 @@ export const FormComposer = (props) => {
                       marginBottom: props.inline ? "8px" : "revert",
                       fontWeight: props.isDescriptionBold ? "600" : null,
                     }}
+                    className="bolder"
                   >
                     {t(field.label)}
                     {field?.appendColon ? ' : ' : null}
