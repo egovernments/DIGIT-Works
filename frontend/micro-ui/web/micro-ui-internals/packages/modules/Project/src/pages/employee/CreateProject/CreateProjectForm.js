@@ -374,6 +374,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
                 currentFormCategory={currentFormCategory}
                 onFormValueChange={onFormValueChange}
                 cardClassName = "mukta-header-card"
+                labelBold={true}
             />
            )}
       </React.Fragment>

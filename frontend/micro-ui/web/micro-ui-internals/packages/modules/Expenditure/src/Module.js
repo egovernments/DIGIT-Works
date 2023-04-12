@@ -14,6 +14,7 @@ import ViewBill from "./pages/employee/Bills/ViewBill";
 import PurchaseBill from "./pages/employee/PurchaseBill/PurchaseBill";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
+    
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const tenantId = Digit.ULBService.getCurrentTenantId();

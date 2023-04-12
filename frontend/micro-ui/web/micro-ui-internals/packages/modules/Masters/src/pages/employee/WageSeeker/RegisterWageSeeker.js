@@ -64,6 +64,7 @@ const RegisterWageSeeker = () => {
             inline={false}
             className="card-no-margin"
             defaultValues={{}}
+            labelBold={true}
           />
         )}
       </div>

@@ -19,6 +19,7 @@ class ToastUtils {
         if (_overlayEntry != null) {
           _overlayEntry!.remove();
         }
+        _overlayEntry!.remove();
       });
     }
   }

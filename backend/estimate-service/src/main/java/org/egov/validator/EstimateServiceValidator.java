@@ -62,7 +62,7 @@ public class EstimateServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
 
-        validateMDMSData(estimate, mdmsData,mdmsDataForOverHead, errorMap);
+        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
@@ -172,6 +172,8 @@ public class EstimateServiceValidator {
         log.info("EstimateServiceValidator::validateMDMSData");
         List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
+       // List<String> reqEstimateDetailNames = new ArrayList<>();
+        Map<String, List<String>> reqEstimateDetailNameMap = new HashMap<>();
         Map<String, List<String>> overheadAmountTypeMap = new HashMap<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
             reqSorIds = estimate.getEstimateDetails().stream()
@@ -182,6 +184,22 @@ public class EstimateServiceValidator {
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getCategory()))
                     .map(EstimateDetail::getCategory)
                     .collect(Collectors.toList());
+
+//            reqEstimateDetailNames = estimate.getEstimateDetails().stream()
+//                    .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getName()))
+//                    .map(EstimateDetail::getName)
+//                    .collect(Collectors.toList());
+
+            //name map for each category
+            for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
+                if (reqEstimateDetailNameMap.containsKey(estimateDetail.getCategory())) {
+                    reqEstimateDetailNameMap.get(estimateDetail.getCategory()).add(estimateDetail.getName());
+                } else {
+                    List<String> names = new ArrayList<>();
+                    names.add(estimateDetail.getName());
+                    reqEstimateDetailNameMap.put(estimateDetail.getCategory(), names);
+                }
+            }
 
             for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
                 if (overheadAmountTypeMap.containsKey(estimateDetail.getCategory())) {
@@ -237,44 +255,61 @@ public class EstimateServiceValidator {
 //            }
 //        }
 
-        Map<String, Integer> reqCategoryMap = new HashMap<>();
+        //estimate detail - category
         if (!CollectionUtils.isEmpty(categoryRes) && !CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
-
-            for (String reqCategory : reqEstimateDetailCategories) {
-                if (reqCategoryMap.containsKey(reqCategory)) {
-                    reqCategoryMap.put(reqCategory, reqCategoryMap.get(reqCategory) + 1);
-                } else {
-                    reqCategoryMap.put(reqCategory, 1);
-                }
-            }
-
-            List<String> invalidCategories = new ArrayList<>();
-            for (String reqCategory : reqCategoryMap.keySet()) {
-                if (categoryRes.contains(reqCategory)) {
-                    if (reqCategoryMap.get(reqCategory) > 1) {
-                        errorMap.put("ESTIMATE_DETAIL.DUPLICATE.CATEGORY", "The category : " + reqCategory + " is added more than one time");
-                    }
-                } else {
-                    invalidCategories.add(reqCategory);
-                }
-            }
-
-            if (!CollectionUtils.isEmpty(invalidCategories)) {
-                errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + invalidCategories + " is not present in MDMS");
+            reqEstimateDetailCategories.removeAll(categoryRes);
+            if (!CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
+                errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + reqEstimateDetailCategories + " is not present in MDMS");
             }
         }
 
 
+        //estimate detail - name
+        if (!CollectionUtils.isEmpty(overHeadRes) && !CollectionUtils.isEmpty(reqEstimateDetailNameMap)) {
+
+            for (String category : reqEstimateDetailNameMap.keySet()) {
+
+                if (StringUtils.isNotBlank(category) && category.equalsIgnoreCase(OVERHEAD_CODE)) {
+                    List<String> reqEstimateDetailNames = reqEstimateDetailNameMap.get(category);
+
+                    Map<String, Integer> reqNameMap = new HashMap<>();
+                    for (String reqName : reqEstimateDetailNames) {
+                        if (reqNameMap.containsKey(reqName)) {
+                            reqNameMap.put(reqName, reqNameMap.get(reqName) + 1);
+                        } else {
+                            reqNameMap.put(reqName, 1);
+                        }
+                    }
+
+                    List<String> invalidNames = new ArrayList<>();
+                    for (String reqName : reqNameMap.keySet()) {
+                        if (overHeadRes.contains(reqName)) {
+                            if (reqNameMap.get(reqName) > 1) {
+                                errorMap.put("ESTIMATE_DETAIL.DUPLICATE.NAME", "The name : " + reqName + " is added more than one time");
+                                break;
+                            }
+                        } else {
+                            invalidNames.add(reqName);
+                        }
+                    }
+                    if (!CollectionUtils.isEmpty(invalidNames)) {
+                        errorMap.put("ESTIMATE_DETAIL.NAME", "The names : " + invalidNames + " is not present in MDMS");
+                    }
+                }
+            }
+
+        }
+
         //Overhead -amount type validation
         if (!CollectionUtils.isEmpty(overHeadRes) && !CollectionUtils.isEmpty(overheadAmountTypeMap)) {
-            for(String overheadCategoryKey:overheadAmountTypeMap.keySet()){
-                if(StringUtils.isNotBlank(overheadCategoryKey) && overheadCategoryKey.equalsIgnoreCase(MASTER_OVERHEAD)){
+            for (String overheadCategoryKey : overheadAmountTypeMap.keySet()) {
+                if (StringUtils.isNotBlank(overheadCategoryKey) && overheadCategoryKey.equalsIgnoreCase(OVERHEAD_CODE)) {
                     List<String> amountTypes = overheadAmountTypeMap.get(overheadCategoryKey);
                     //frequency map
                     Map<String, Integer> reqTypeMap = new HashMap<>();
                     for (String type : amountTypes) {
                         if (reqTypeMap.containsKey(type)) {
-                            reqTypeMap.put(type, reqCategoryMap.get(type) + 1);
+                            reqTypeMap.put(type, reqTypeMap.get(type) + 1);
                         } else {
                             reqTypeMap.put(type, 1);
                         }
