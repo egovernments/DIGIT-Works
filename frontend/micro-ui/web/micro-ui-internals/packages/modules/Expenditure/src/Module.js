@@ -11,7 +11,7 @@ import ViewBills from "./pages/employee/viewBills/viewBills";
 import BillInbox from "./pages/employee/Bills/BillInbox";
 import SearchBill from "./pages/employee/Bills/SearchBill";
 import ViewBill from "./pages/employee/Bills/ViewBill";
-import PurchaseBill from "./pages/employee/PurchaseBill/PurchaseBill";
+import PurchaseBill from "./pages/employee/CreateBills/PurchaseBill";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     

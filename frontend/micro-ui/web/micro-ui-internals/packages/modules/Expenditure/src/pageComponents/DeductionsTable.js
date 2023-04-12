@@ -144,16 +144,6 @@ const DeductionsTable = ({control,watch,...props}) => {
     }
 
     const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey = "name", options = []) => {
-        const option = [
-                {
-                  "name": "Deduction 1",
-                  "code": "DEDUCTION_1"
-                },
-                {
-                  "name": "Deduction 2",
-                  "code": "DEDUCTION_2"
-                }
-        ];
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
             Digit.ULBService.getStateId(),
             options?.mdmsConfig?.moduleName,
@@ -171,10 +161,17 @@ const DeductionsTable = ({control,watch,...props}) => {
             return <Loader />;
             //show MDMS data if options are not provided. Options are in use here for pre defined options from config. 
             //Usage example : dependent dropdown
-        } else return <Dropdown
+        } else {
+            //here filter out the options available to select
+            let filteredOptions = []
+            if(options?.mdmsConfig){
+                filteredOptions = data?.filter(row => {
+                    return !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
+                })
+            }
+            return <Dropdown
             inputRef={register()}
-            //option={options?.mdmsConfig ? data : option}
-            option={option}
+            option={options?.mdmsConfig ? filteredOptions : options}
             selected={props?.value}
             optionKey={optionKey}
             t={t}
@@ -186,6 +183,7 @@ const DeductionsTable = ({control,watch,...props}) => {
             optionCardStyles={{ maxHeight: '15rem' }}
             style={{ marginBottom: "0px" }}
         />
+        }
     }
 
     const handleDropdownChange = (e, props, row, inputName) => {

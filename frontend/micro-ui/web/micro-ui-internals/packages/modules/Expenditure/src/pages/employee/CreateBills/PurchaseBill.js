@@ -8,13 +8,13 @@ import { updateDefaultValues } from "../../../utils/index.js";
 const PurchaseBill = () => {
     const {t} = useTranslation();
     const queryStrings = Digit.Hooks.useQueryParams();
-    const contractNumber = queryStrings?.workOrderNumber;
+    const [contractNumber, setContractNumber] = useState(queryStrings?.workOrderNumber ? queryStrings?.workOrderNumber : "");
     const tenantId = queryStrings?.tenantId;
     const [documents, setDocuments] = useState([]);
 
     const isModify = queryStrings?.workOrderNumber ? false : true;
     const [nameOfVendor, setNameOfVendor] = useState([]);
-    //const [isFormReady, setIsFormReady] = useState(false);
+    const [isFormReady, setIsFormReady] = useState(false);
 
     // const { isLoading : isConfigLoading, data : createPurchaseBillConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
     // stateTenant,
@@ -32,46 +32,36 @@ const PurchaseBill = () => {
     // );
 
     let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
+
+    // useEffect(()=>{
+    //     //if session PB# is diff from queryString PB#, reset sessionFormData
+    //     if(sessionFormData?.basicDetails_purchaseBillNumber !== queryStrings?.purchaseBillNumber) {
+    //         clearSessionFormData();
+    //     }
+    // },[])
+
+    // useEffect(()=>{
+    //     if(!isBillLoading && isModify) {
+    //         setContractNumber(bill?.additionalDetails?.contractNumber)
+    //     }
+    // },[bill])
+
     //fetching contract data
     const { isLoading: isContractLoading,data:contract } = Digit.Hooks.contracts.useContractSearch({
         tenantId,
         filters: { contractNumber, tenantId },
         config:{
-            enabled: true,
+            enabled: !!(contractNumber),
             cacheTime : 0
         }
     })
-
     console.log("CONTRACT :", contract);
 
-
     //session data
-    const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {
-        basicDetails_workOrderNumber : "",
-        basicDetails_projectID : "",
-        basicDetails_projectDesc : "",
-        basicDetails_location : ""
-    });
+    const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = PurchaseBillSession;
 
-    const createDocumentObject = (documents) => {
-        let docs =  documents?.filter(document=>document?.fileStoreId)?.map((document) => {
-            return {
-                title: document?.fileType,
-                documentType: document?.fileType,
-                documentUid: document?.documentUid,
-                fileStoreId: document?.fileStoreId,
-            };
-        })
 
-        return [
-            {
-                title: "",
-                BS : 'Works',
-                values: docs,
-            }
-        ];
-    }
 
     const searchVendorPayload = {
         "SearchCriteria": {
@@ -87,32 +77,51 @@ const PurchaseBill = () => {
 
     
     //Deductions Search
-    // const { isLoading : isDeductionsMasterDataLoading, data : deductionsMasterData } = Digit.Hooks.useCustomMDMS(
-    //     Digit.ULBService.getStateId(),
-    //     "works",
-    //     [{ "name": "Deductions" }]
-    // );
+    const { isLoading : isDeductionsMasterDataLoading, data : deductionMasterData } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getStateId(),
+        "works",
+        [{ "name": "Deductions" }]
+    );
 
     const createNameOfVendorObject = (vendorOptions) => {
         return vendorOptions?.organisations?.map(vendorOption => ( {code : vendorOption?.id, name : vendorOption?.name, applicationNumber : vendorOption?.applicationNumber, orgNumber : vendorOption?.orgNumber } ))
     }
 
-    useEffect(()=>{
-        if((contract && configs && !isOrgSearchLoading && !isContractLoading)) {
-            updateDefaultValues({ configs, isModify, contract, createNameOfVendorObject, vendorOptions, t});
+    // const handleWorkOrderAmount = ({contract, deductionMasterData}) => {
+    //     deductionMasterData = deductionMasterData?.works?.Deductions;
+    //     let totalAmount = contract?.totalContractedAmount;
 
-            //setDocuments(createDocumentObject(contract?.additionalDetails?.documents));
+    //     //loop through the contract Details and filter with DEDUCTION
+    //     bill?.contractDetails?.forEach((contractDetail)=>{
+    //         if(contractDetail?.category !== "DEDUCTION") return;
+    //         let amountDetails = contractDetail?.amountDetail?.[0];
+
+    //         let deductionCode = amountDetails?.type;
+    //         let shouldSubtract = !((deductionMasterData?.filter(deduction=>deduction?.code === deductionCode)?.[0])?.isWorkOrderValue);  //change accordingly
+
+    //         if(shouldSubtract) {
+    //             totalAmount -= amountDetails?.amount;
+    //         }
+    //     })
+    //     return totalAmount;
+    // }
+
+    useEffect(()=>{
+        if((contract && configs && !isOrgSearchLoading && !isDeductionsMasterDataLoading && !isContractLoading)) {
+            updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, contract, t});
+
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
 
-            //setIsFormReady(true);
+            setIsFormReady(true);
         }
-    },[isContractLoading, isOrgSearchLoading, isContractLoading, contract]);
+    },[isContractLoading, isOrgSearchLoading, isDeductionsMasterDataLoading, contract]);
+
     
     // if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             {
-                 <CreatePurchaseBillForm 
+                isFormReady && <CreatePurchaseBillForm 
                 createPurchaseBillConfig={configs} 
                 sessionFormData={sessionFormData} 
                 setSessionFormData={setSessionFormData} 
@@ -120,6 +129,7 @@ const PurchaseBill = () => {
                 tenantId={tenantId} 
                 contract={contract} 
                 preProcessData={{nameOfVendor : nameOfVendor}}
+                isModify={isModify} 
                 ></CreatePurchaseBillForm>
             }
         </React.Fragment>

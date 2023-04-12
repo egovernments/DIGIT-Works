@@ -14,6 +14,25 @@
               "body": [
                 {
                   "inline": true,
+                  "label": "PURCHASE_BILL_NO",
+                  "isMandatory": false,
+                  "key": "basicDetails_purchaseBillNumber",
+                  "type": "text",
+                  "disable": true,
+                  "appendColon": false,
+                  "preProcess" : {
+                    "updateDependent" : ["populators.customStyle.display"]
+                  },
+                  "populators": {
+                    "name": "basicDetails_purchaseBillNumber",
+                    "customStyle" : {
+                      "display" : "none"
+                    },
+                    "customClass": "fc-header-texts"
+                  }
+                },
+                {
+                  "inline": true,
                   "label": "WORKS_ORDER_NO",
                   "isMandatory": false,
                   "key": "basicDetails_workOrderNumber",
@@ -109,7 +128,7 @@
                   "label": "INVOICE_NUMBER",
                   "isMandatory": true,
                   "key": "invoiceNumber",
-                  "type": "number",
+                  "type": "text",
                   "disable": false,
                   "preProcess": {
                     "convertStringToRegEx": [
@@ -118,10 +137,11 @@
                   },
                   "populators": {
                     "name": "invoiceNumber",
-                    "error": "COMMON_PATTERN_ERR_MSG_INVOICE_NUMBER",
+                    "error": "WORKS_REQUIRED_ERR",
                     "validation": {
-                      "pattern": "^(?:0|[1-9]\\d*)(?:\\.(?!.*000)\\d+)?$",
-                      "maxlength": 10
+                      "pattern": "^[a-zA-Z0-9 .\\-_@\\']*$",
+                      "maxlength": 64,
+                      "minlength": 2
                     }
                   }
                 },
@@ -158,7 +178,7 @@
                 {
                   "inline": true,
                   "label": "GST",
-                  "isMandatory": true,
+                  "isMandatory": false,
                   "key": "gst",
                   "type": "number",
                   "disable": false,
@@ -179,7 +199,7 @@
               ]
             },
             {
-              "navLink": "Section",
+              "navLink":"PB_Details",
               "head": "EXP_BILL_DETAILS",
               "body": [
                 {
@@ -207,7 +227,7 @@
             {
               "head": "WORKS_DEDUCTIONS",
               "subHead": "",
-              "navLink": "Section",
+              "navLink": "PB_Details",
               "body": [
                   {
                       "type": "component",
@@ -220,7 +240,7 @@
             {
               "head": "",
               "subHead": "",
-              "navLink": "Section",
+              "navLink": "PB_Details",
               "body": [
                   {
                       "type": "component",
@@ -231,7 +251,7 @@
               ]
             },
             {
-              "navLink": "Section",
+              "navLink": "PB_Details",
               "head": "WORKS_RELEVANT_DOCS",
               "body": [
                 {
