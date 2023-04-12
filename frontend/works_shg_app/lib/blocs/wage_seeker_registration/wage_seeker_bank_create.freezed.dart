@@ -25,7 +25,8 @@ mixin _$WageSeekerBankCreateEvent {
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)
+            String? indId,
+            String? bankName)
         create,
     required TResult Function() dispose,
   }) =>
@@ -39,7 +40,8 @@ mixin _$WageSeekerBankCreateEvent {
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)?
+            String? indId,
+            String? bankName)?
         create,
     TResult? Function()? dispose,
   }) =>
@@ -53,7 +55,8 @@ mixin _$WageSeekerBankCreateEvent {
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)?
+            String? indId,
+            String? bankName)?
         create,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -113,7 +116,8 @@ abstract class _$$CreateBankWageSeekerEventCopyWith<$Res> {
       String? accountType,
       String? ifscCode,
       String? referenceId,
-      String? indId});
+      String? indId,
+      String? bankName});
 }
 
 /// @nodoc
@@ -135,6 +139,7 @@ class __$$CreateBankWageSeekerEventCopyWithImpl<$Res>
     Object? ifscCode = freezed,
     Object? referenceId = freezed,
     Object? indId = freezed,
+    Object? bankName = freezed,
   }) {
     return _then(_$CreateBankWageSeekerEvent(
       tenantId: freezed == tenantId
@@ -165,6 +170,10 @@ class __$$CreateBankWageSeekerEventCopyWithImpl<$Res>
           ? _value.indId
           : indId // ignore: cast_nullable_to_non_nullable
               as String?,
+      bankName: freezed == bankName
+          ? _value.bankName
+          : bankName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -179,7 +188,8 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
       this.accountType,
       this.ifscCode,
       this.referenceId,
-      this.indId});
+      this.indId,
+      this.bankName});
 
   @override
   final String? tenantId;
@@ -195,10 +205,12 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
   final String? referenceId;
   @override
   final String? indId;
+  @override
+  final String? bankName;
 
   @override
   String toString() {
-    return 'WageSeekerBankCreateEvent.create(tenantId: $tenantId, accountHolderName: $accountHolderName, accountNo: $accountNo, accountType: $accountType, ifscCode: $ifscCode, referenceId: $referenceId, indId: $indId)';
+    return 'WageSeekerBankCreateEvent.create(tenantId: $tenantId, accountHolderName: $accountHolderName, accountNo: $accountNo, accountType: $accountType, ifscCode: $ifscCode, referenceId: $referenceId, indId: $indId, bankName: $bankName)';
   }
 
   @override
@@ -218,12 +230,14 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
                 other.ifscCode == ifscCode) &&
             (identical(other.referenceId, referenceId) ||
                 other.referenceId == referenceId) &&
-            (identical(other.indId, indId) || other.indId == indId));
+            (identical(other.indId, indId) || other.indId == indId) &&
+            (identical(other.bankName, bankName) ||
+                other.bankName == bankName));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, tenantId, accountHolderName,
-      accountNo, accountType, ifscCode, referenceId, indId);
+      accountNo, accountType, ifscCode, referenceId, indId, bankName);
 
   @JsonKey(ignore: true)
   @override
@@ -242,12 +256,13 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)
+            String? indId,
+            String? bankName)
         create,
     required TResult Function() dispose,
   }) {
     return create(tenantId, accountHolderName, accountNo, accountType, ifscCode,
-        referenceId, indId);
+        referenceId, indId, bankName);
   }
 
   @override
@@ -260,12 +275,13 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)?
+            String? indId,
+            String? bankName)?
         create,
     TResult? Function()? dispose,
   }) {
     return create?.call(tenantId, accountHolderName, accountNo, accountType,
-        ifscCode, referenceId, indId);
+        ifscCode, referenceId, indId, bankName);
   }
 
   @override
@@ -278,14 +294,15 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)?
+            String? indId,
+            String? bankName)?
         create,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (create != null) {
       return create(tenantId, accountHolderName, accountNo, accountType,
-          ifscCode, referenceId, indId);
+          ifscCode, referenceId, indId, bankName);
     }
     return orElse();
   }
@@ -330,7 +347,8 @@ abstract class CreateBankWageSeekerEvent implements WageSeekerBankCreateEvent {
       final String? accountType,
       final String? ifscCode,
       final String? referenceId,
-      final String? indId}) = _$CreateBankWageSeekerEvent;
+      final String? indId,
+      final String? bankName}) = _$CreateBankWageSeekerEvent;
 
   String? get tenantId;
   String? get accountHolderName;
@@ -339,6 +357,7 @@ abstract class CreateBankWageSeekerEvent implements WageSeekerBankCreateEvent {
   String? get ifscCode;
   String? get referenceId;
   String? get indId;
+  String? get bankName;
   @JsonKey(ignore: true)
   _$$CreateBankWageSeekerEventCopyWith<_$CreateBankWageSeekerEvent>
       get copyWith => throw _privateConstructorUsedError;
@@ -394,7 +413,8 @@ class _$CreateBankWageSeekerDisposeEvent
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)
+            String? indId,
+            String? bankName)
         create,
     required TResult Function() dispose,
   }) {
@@ -411,7 +431,8 @@ class _$CreateBankWageSeekerDisposeEvent
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)?
+            String? indId,
+            String? bankName)?
         create,
     TResult? Function()? dispose,
   }) {
@@ -428,7 +449,8 @@ class _$CreateBankWageSeekerDisposeEvent
             String? accountType,
             String? ifscCode,
             String? referenceId,
-            String? indId)?
+            String? indId,
+            String? bankName)?
         create,
     TResult Function()? dispose,
     required TResult orElse(),

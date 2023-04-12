@@ -57,33 +57,35 @@ const CreateEstimate = ({ EstimateSession }) => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
-    const cardState = {
+    const cardState = [
 
-        "title": " ",
-        "asSectionHeader": true,
-        values: [
-            {
-                "title": "WORKS_ESTIMATE_TYPE",
-                "value": "Original Estimate"
-            },
-            {
-                "title": "WORKS_PROJECT_ID",
-                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID
-            },
-            {
-                "title": "WORKS_DATE_PROPOSAL",
-                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate
-            },
-            {
-                "title": "WORKS_PROJECT_NAME",
-                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
-            },
-            {
-                "title": "PROJECTS_DESCRIPTION",
-                "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc
-            },
-        ]
-    }
+        {
+            "title": " ",
+            "asSectionHeader": true,
+            values: [
+                {
+                    "title": "WORKS_ESTIMATE_TYPE",
+                    "value": "Original Estimate"
+                },
+                {
+                    "title": "WORKS_PROJECT_ID",
+                    "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID
+                },
+                {
+                    "title": "WORKS_DATE_PROPOSAL",
+                    "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate
+                },
+                {
+                    "title": "WORKS_PROJECT_NAME",
+                    "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
+                },
+                {
+                    "title": "PROJECTS_DESCRIPTION",
+                    "value": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc
+                },
+            ]
+        }
+    ]
 
     if(isEdit) {
         cardState.values = [{
@@ -169,6 +171,13 @@ const CreateEstimate = ({ EstimateSession }) => {
             }
         }
     );
+
+    const closeToast = () => {
+        setTimeout(() => {
+            setShowToast(null)
+        }, 7000);
+    }
+
     // estimateFormConfig = createEstimateConfig()
     const onFormSubmit = async (_data) => {
         
@@ -194,6 +203,7 @@ const CreateEstimate = ({ EstimateSession }) => {
         
         if (_data.totalEstimateAmount < totalLabourAndMaterial )   {
             setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" })
+            closeToast()
             return
         } 
             
@@ -362,15 +372,7 @@ const CreateEstimate = ({ EstimateSession }) => {
           }
         <Header styles={{ marginLeft: "14px" }}>{isEdit ? t("ACTION_TEST_EDIT_ESTIMATE") :t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
         {/* Will fetch projectId from url params and do a search for project to show the below data in card while integrating with the API  */}
-        {isLoading ?<Loader />:<Card styles={{ marginLeft: "14px" }}>
-            <StatusTable>
-                {cardState.values.map((value)=>{
-                    return (
-                        <Row key={t(value.title)} label={`${t(value.title)}:`} text={value.value} />
-                    )
-                })}
-            </StatusTable>
-        </Card>}
+        {isLoading?<Loader /> : <ViewDetailsCard cardState={cardState} t={t} createScreen={true}/>}
         {/* {isLoading? <Loader/>: <ViewDetailsCard cardState={cardState} t={t} />} */}
         {isFormReady ? <FormComposer
             label={isEdit ? "ACTION_TEST_EDIT_ESTIMATE" :"ACTION_TEST_CREATE_ESTIMATE"}
@@ -395,7 +397,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             horizontalNavConfig={configNavItems}
             showFormInNav={true}  
             showNavs={true}
-            sectionHeadStyle={{marginTop:"2rem"}}  
+            sectionHeadStyle={{marginTop:"2rem"}} 
+            labelBold={true} 
         />:null}
           {showToast && (
               <Toast

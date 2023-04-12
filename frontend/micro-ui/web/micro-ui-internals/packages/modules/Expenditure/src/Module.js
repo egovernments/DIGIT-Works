@@ -10,8 +10,10 @@ import BillInbox from "./pages/employee/Bills/BillInbox";
 import SearchBill from "./pages/employee/Bills/SearchBill";
 import ViewBill from "./pages/employee/Bills/ViewBill";
 import ViewPurchaseBill from "./components/ViewBill/ViewPurchaseBill";
+import TotalBillAmount from "./pageComponents/TotalBillAmount";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
+    
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -30,16 +32,17 @@ const ExpenditureModule = ({ stateCode, userType, tenants }) => {
 };
 
 const componentsToRegister = {
-    ExpenditureModule,
-    billInboxFilter,
-    ExpCard:ExpenditureCard,
-    ViewBillsMenu,
-    ViewBills,
-    //new
-    BillInbox,
-    SearchBill,
-    ViewBill,
-    ViewPurchaseBill
+  ExpenditureModule,
+  billInboxFilter,
+  ExpCard: ExpenditureCard,
+  ViewBillsMenu,
+  ViewBills,
+  //new
+  BillInbox,
+  SearchBill,
+  ViewBill,
+  TotalBillAmount,
+  ViewPurchaseBill
 };
 
 export const initExpenditureComponents = () => {

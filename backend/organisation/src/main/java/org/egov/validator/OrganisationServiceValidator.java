@@ -51,7 +51,7 @@ public class OrganisationServiceValidator {
         validateOrganisationDetails(organisationList, errorMap);
 
         //validate organisation details against MDMS
-        validateMDMSData(organisationList, requestInfo,organisationList.get(0).getTenantId(), errorMap);
+        validateMDMSData(organisationList, requestInfo, organisationList.get(0).getTenantId(), errorMap);
 
         //validate location - boundary code(s)
         Map<String, List<String>> boundariesForValidation = getBoundaryForValidation(organisationList);
@@ -104,24 +104,24 @@ public class OrganisationServiceValidator {
 
         //get the organisation related MDMS data
         //tenant -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForTenant = mdmsUtil.getTenantMDMSRequest(requestInfo,rootTenantId,organisationList);
+        MdmsCriteriaReq mdmsCriteriaReqForTenant = mdmsUtil.getTenantMDMSRequest(requestInfo, rootTenantId, organisationList);
         Object tenantMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForTenant, rootTenantId);
 
         //Org type -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgType = mdmsUtil.getOrgTypeMDMSRequest(requestInfo,rootTenantId,organisationList);
+        MdmsCriteriaReq mdmsCriteriaReqForOrgType = mdmsUtil.getOrgTypeMDMSRequest(requestInfo, rootTenantId, organisationList);
         Object orgTypeMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgType, rootTenantId);
 
         //Org Fun Category -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgFunCategory = mdmsUtil.getOrgFunCategoryMDMSRequest(requestInfo,rootTenantId,organisationList);
+        MdmsCriteriaReq mdmsCriteriaReqForOrgFunCategory = mdmsUtil.getOrgFunCategoryMDMSRequest(requestInfo, rootTenantId, organisationList);
         Object orgFunCategoryMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunCategory, rootTenantId);
 
         //Org Tax Identifier -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgTaxIdentifier = mdmsUtil.getOrgTaxIdentifierMDMSRequest(requestInfo,rootTenantId,organisationList);
+        MdmsCriteriaReq mdmsCriteriaReqForOrgTaxIdentifier = mdmsUtil.getOrgTaxIdentifierMDMSRequest(requestInfo, rootTenantId, organisationList);
         Object orgTaxIdentifierMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgTaxIdentifier, rootTenantId);
 
 
         //Org Function Class -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgFunctionClass = mdmsUtil.getOrgFunctionMDMSRequest(requestInfo,rootTenantId,organisationList);
+        MdmsCriteriaReq mdmsCriteriaReqForOrgFunctionClass = mdmsUtil.getOrgFunctionMDMSRequest(requestInfo, rootTenantId, organisationList);
         Object orgFunctionClassMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunctionClass, rootTenantId);
 
 
@@ -291,7 +291,7 @@ public class OrganisationServiceValidator {
         validateOrgIdsExistInSystem(requestInfo, organisationList);
 
         //validate organisation details against MDMS
-        validateMDMSData(organisationList, requestInfo,organisationList.get(0).getTenantId(), errorMap);
+        validateMDMSData(organisationList, requestInfo, organisationList.get(0).getTenantId(), errorMap);
 
         //validate location - boundary code(s)
         Map<String, List<String>> boundariesForValidation = getBoundaryForValidation(organisationList);
@@ -343,11 +343,13 @@ public class OrganisationServiceValidator {
         validateRequestInfo(orgSearchRequest.getRequestInfo(), errorMap);
         //Verify the search criteria
         log.info("Organisation search criteria validation");
-        validateSearchCriteria(orgSearchRequest.getSearchCriteria());
+        validateSearchCriteria(orgSearchRequest.getSearchCriteria(), errorMap);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
     }
 
-    private void validateSearchCriteria(OrgSearchCriteria searchCriteria) {
-        Map<String, String> errorMap = new HashMap<>();
+    private void validateSearchCriteria(OrgSearchCriteria searchCriteria, Map<String, String> errorMap) {
 
         if (searchCriteria == null) {
             log.error("Search criteria is mandatory");
@@ -363,6 +365,28 @@ public class OrganisationServiceValidator {
                 (searchCriteria.getFunctions().getValidFrom().compareTo(searchCriteria.getFunctions().getValidTo()) > 0)) {
             log.error("Valid From in search parameters should be less than Valid To");
             throw new CustomException("INVALID_DATE", "Valid From in search parameters should be less than Valid To");
+        }
+
+        if (searchCriteria.getCreatedTo() != null && searchCriteria.getCreatedFrom() == null) {
+            log.error("Valid From in search parameters should be less than Valid To");
+            throw new CustomException("INVALID_ORG_SEARCH_DATE", "Created From date in search parameters is required when created to date is passed");
+        }
+
+        if (searchCriteria.getCreatedFrom() != null && searchCriteria.getCreatedTo() == null) {
+            long currentDate = System.currentTimeMillis();
+            if (searchCriteria.getCreatedFrom() > currentDate) {
+                log.error("Invalid created from date");
+                throw new CustomException("INVALID_ORG_SEARCH_DATE", "invalid created from date");
+            } else {
+                searchCriteria.setCreatedTo(currentDate);
+            }
+        }
+
+        if (searchCriteria.getCreatedFrom() != null && searchCriteria.getCreatedTo() != null
+                && Long.compare(searchCriteria.getCreatedFrom(), searchCriteria.getCreatedTo()) > 0) {
+            log.error("Created from date is greater than created to date");
+            throw new CustomException("INVALID_ORG_SEARCH_DATE", "Created from date is greater than created to date");
+
         }
     }
 }

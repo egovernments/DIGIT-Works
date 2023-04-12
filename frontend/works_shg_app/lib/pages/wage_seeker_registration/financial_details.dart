@@ -37,6 +37,8 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   LocationDetails? locationDetails = LocationDetails();
   SkillDetails? skillDetails = SkillDetails();
   String hintText = '';
+  String bank = '';
+  String branch = '';
   String accountHolderKey = 'accountHolder';
   String accountNoKey = 'accountNo';
   String reAccountNoKey = 'reAccountNo';
@@ -54,6 +56,13 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
       financialDetails = registrationState.financialDetails;
       accountType =
           registrationState.financialDetails?.accountType.toString() ?? '';
+      bank = registrationState.financialDetails?.bankName ?? '';
+      branch = registrationState.financialDetails?.branchName ?? '';
+      if (registrationState.financialDetails?.bankName != null) {
+        hintText = hintText.isNotEmpty
+            ? hintText
+            : '${registrationState.financialDetails!.bankName}';
+      }
     }
   }
 
@@ -156,12 +165,15 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                           final response = await http.get(url);
                           if (response.statusCode == 200) {
                             final data = jsonDecode(response.body);
-                            final String bankName = data['BANKCODE'];
+                            final String bankName = data['BANK'];
                             final String branchName = data['BRANCH'];
 
                             setState(() {
-                              hintText =
-                                  '${t.translate(bankName)}, ${t.translate(branchName)}';
+                              hintText = '$bankName, $branchName';
+                            });
+                          } else {
+                            setState(() {
+                              hintText = '';
                             });
                           }
                         },
@@ -189,7 +201,8 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                                   form.value[reAccountNoKey].toString(),
                               ifscCode: form.value[ifscCodeKey].toString(),
                               accountType:
-                                  form.value[accountTypeKey].toString());
+                                  form.value[accountTypeKey].toString(),
+                              bankName: hintText);
                           BlocProvider.of<WageSeekerBloc>(context).add(
                             WageSeekerCreateEvent(
                                 individualDetails: individualDetails,
@@ -221,8 +234,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
         reAccountNoKey: FormControl<String>(value: finance.reAccountNumber),
         accountTypeKey: FormControl<String>(
             value: finance.accountType, validators: [Validators.required]),
-        ifscCodeKey: FormControl<String>(
-            value: finance.ifscCode, validators: [Validators.required]),
+        ifscCodeKey: FormControl<String>(value: finance.ifscCode, validators: [
+          Validators.required,
+        ]),
       }, [
         Validators.mustMatch(accountNoKey, reAccountNoKey)
       ]);

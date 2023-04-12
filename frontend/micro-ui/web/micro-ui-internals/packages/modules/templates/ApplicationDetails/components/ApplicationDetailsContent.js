@@ -144,7 +144,6 @@ function ApplicationDetailsContent({
     window.location.href.includes("employee/tl") || window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc");
   const isNocLocation = window.location.href.includes("employee/noc");
   const isBPALocation = window.location.href.includes("employee/obps");
-  let isWS = window.location.href.includes("employee/ws") || window.location.href.includes("employee/works")|| window.location.href.includes("employee/project") || window.location.href.includes("employee/estimate") ;
 
   
 
@@ -353,7 +352,7 @@ function ApplicationDetailsContent({
                   return (
                     <Row
                       key={t(value.title)}
-                      label={isWS ? `${t(value.title)}:` : t(value.title)}
+                      label={t(value.title)}
                       text={value?.isImages ? <ViewImages fileStoreIds={value?.fileStoreIds}
                         tenantId={value?.tenant}
                         onClick={() => { }} />: getTextValue(value)}

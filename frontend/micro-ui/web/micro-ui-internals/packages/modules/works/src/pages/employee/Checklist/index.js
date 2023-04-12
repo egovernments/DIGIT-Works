@@ -48,6 +48,7 @@ const Checklist = (props) => {
             showNavs={true}
             showMultipleCardsWithoutNavs={true}
             showMultipleCardsInNavs={false}
+            labelBold={true}
         />
     </React.Fragment>
   )

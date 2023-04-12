@@ -60,8 +60,9 @@ public class EstimateServiceValidator {
         rootTenantId = rootTenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
 
-        validateMDMSData(estimate, mdmsData, errorMap);
+        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
@@ -167,10 +168,13 @@ public class EstimateServiceValidator {
         }
     }
 
-    private void validateMDMSData(Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
+    private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateMDMSData");
         List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
+       // List<String> reqEstimateDetailNames = new ArrayList<>();
+        Map<String, List<String>> reqEstimateDetailNameMap = new HashMap<>();
+        Map<String, List<String>> overheadAmountTypeMap = new HashMap<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
             reqSorIds = estimate.getEstimateDetails().stream()
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getSorId()))
@@ -180,21 +184,58 @@ public class EstimateServiceValidator {
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getCategory()))
                     .map(EstimateDetail::getCategory)
                     .collect(Collectors.toList());
+
+//            reqEstimateDetailNames = estimate.getEstimateDetails().stream()
+//                    .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getName()))
+//                    .map(EstimateDetail::getName)
+//                    .collect(Collectors.toList());
+
+            //name map for each category
+            for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
+                if (reqEstimateDetailNameMap.containsKey(estimateDetail.getCategory())) {
+                    reqEstimateDetailNameMap.get(estimateDetail.getCategory()).add(estimateDetail.getName());
+                } else {
+                    List<String> names = new ArrayList<>();
+                    names.add(estimateDetail.getName());
+                    reqEstimateDetailNameMap.put(estimateDetail.getCategory(), names);
+                }
+            }
+
+            for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
+                if (overheadAmountTypeMap.containsKey(estimateDetail.getCategory())) {
+                    List<String> amountTypeList = estimateDetail.getAmountDetail().stream()
+                            .filter(amountDetail -> StringUtils.isNotBlank(amountDetail.getType()))
+                            .map(AmountDetail::getType)
+                            .collect(Collectors.toList());
+                    List<String> existingAmountTypeList = overheadAmountTypeMap.get(estimateDetail.getCategory());
+                    existingAmountTypeList.addAll(amountTypeList);
+                    overheadAmountTypeMap.put(estimateDetail.getCategory(), existingAmountTypeList);
+                } else {
+                    List<String> amountTypeList = estimateDetail.getAmountDetail().stream()
+                            .filter(amountDetail -> StringUtils.isNotBlank(amountDetail.getType()))
+                            .map(AmountDetail::getType)
+                            .collect(Collectors.toList());
+                    overheadAmountTypeMap.put(estimateDetail.getCategory(), amountTypeList);
+                }
+            }
         }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
         final String jsonPathForSorIds = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
         final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
+        final String jsonPathForOverHead = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
 
         List<Object> deptRes = null;
         List<Object> tenantRes = null;
         List<Object> sorIdRes = null;
         List<Object> categoryRes = null;
+        List<Object> overHeadRes = null;
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
             // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
             categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
+            overHeadRes = JsonPath.read(mdmsDataForOverHead, jsonPathForOverHead);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
@@ -214,10 +255,83 @@ public class EstimateServiceValidator {
 //            }
 //        }
 
+        //estimate detail - category
         if (!CollectionUtils.isEmpty(categoryRes) && !CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
             reqEstimateDetailCategories.removeAll(categoryRes);
             if (!CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
                 errorMap.put("ESTIMATE_DETAIL.CATEGORY", "The categories : " + reqEstimateDetailCategories + " is not present in MDMS");
+            }
+        }
+
+
+        //estimate detail - name
+        if (!CollectionUtils.isEmpty(overHeadRes) && !CollectionUtils.isEmpty(reqEstimateDetailNameMap)) {
+
+            for (String category : reqEstimateDetailNameMap.keySet()) {
+
+                if (StringUtils.isNotBlank(category) && category.equalsIgnoreCase(OVERHEAD_CODE)) {
+                    List<String> reqEstimateDetailNames = reqEstimateDetailNameMap.get(category);
+
+                    Map<String, Integer> reqNameMap = new HashMap<>();
+                    for (String reqName : reqEstimateDetailNames) {
+                        if (reqNameMap.containsKey(reqName)) {
+                            reqNameMap.put(reqName, reqNameMap.get(reqName) + 1);
+                        } else {
+                            reqNameMap.put(reqName, 1);
+                        }
+                    }
+
+                    List<String> invalidNames = new ArrayList<>();
+                    for (String reqName : reqNameMap.keySet()) {
+                        if (overHeadRes.contains(reqName)) {
+                            if (reqNameMap.get(reqName) > 1) {
+                                errorMap.put("ESTIMATE_DETAIL.DUPLICATE.NAME", "The name : " + reqName + " is added more than one time");
+                                break;
+                            }
+                        } else {
+                            invalidNames.add(reqName);
+                        }
+                    }
+                    if (!CollectionUtils.isEmpty(invalidNames)) {
+                        errorMap.put("ESTIMATE_DETAIL.NAME", "The names : " + invalidNames + " is not present in MDMS");
+                    }
+                }
+            }
+
+        }
+
+        //Overhead -amount type validation
+        if (!CollectionUtils.isEmpty(overHeadRes) && !CollectionUtils.isEmpty(overheadAmountTypeMap)) {
+            for (String overheadCategoryKey : overheadAmountTypeMap.keySet()) {
+                if (StringUtils.isNotBlank(overheadCategoryKey) && overheadCategoryKey.equalsIgnoreCase(OVERHEAD_CODE)) {
+                    List<String> amountTypes = overheadAmountTypeMap.get(overheadCategoryKey);
+                    //frequency map
+                    Map<String, Integer> reqTypeMap = new HashMap<>();
+                    for (String type : amountTypes) {
+                        if (reqTypeMap.containsKey(type)) {
+                            reqTypeMap.put(type, reqTypeMap.get(type) + 1);
+                        } else {
+                            reqTypeMap.put(type, 1);
+                        }
+                    }
+
+                    List<String> invalidList = new ArrayList<>();
+                    for (String reqType : reqTypeMap.keySet()) {
+                        if (overHeadRes.contains(reqType)) {
+                            if (reqTypeMap.get(reqType) > 1) {
+                                errorMap.put("ESTIMATE_DETAIL.AMOUNT_DETAIL.DUPLICATE.TYPE", "The amount type : " + reqType + " is added more than one time");
+                            }
+                        } else {
+                            invalidList.add(reqType);
+                        }
+                    }
+
+                    if (!CollectionUtils.isEmpty(invalidList)) {
+                        errorMap.put("ESTIMATE_DETAIL.AMOUNT_DETAIL.TYPE", "The amount types : " + invalidList + " is not present in MDMS");
+                    }
+
+
+                }
             }
         }
 
@@ -284,7 +398,8 @@ public class EstimateServiceValidator {
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
-        validateMDMSData(estimate, mdmsData, errorMap);
+        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
+        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
