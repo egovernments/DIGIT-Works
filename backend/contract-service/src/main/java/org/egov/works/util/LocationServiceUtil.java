@@ -27,8 +27,8 @@ public class LocationServiceUtil {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    public Map<String, String> getLocationName(String tenantId, RequestInfo requestInfo, String boundaryCode) {
-        StringBuilder uri = getLocationURI(tenantId, boundaryCode);
+    public Map<String, String> getLocationName(String tenantId, RequestInfo requestInfo, String boundaryCode, String boundaryType) {
+        StringBuilder uri = getLocationURI(tenantId, boundaryCode,boundaryType);
 
         Object response = serviceRequestRepository.fetchResult(uri, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 
@@ -47,14 +47,14 @@ public class LocationServiceUtil {
         return locationDetails;
     }
 
-    private StringBuilder getLocationURI(String tenantId, String boundaryCode) {
+    private StringBuilder getLocationURI(String tenantId, String boundaryCode, String boundaryType) {
 
         StringBuilder builder = new StringBuilder(config.getLocationHost());
         builder.append(config.getLocationContextPath()).append(config.getLocationEndpoint());
         builder.append("?tenantId=");
         builder.append(tenantId);
         builder.append("&boundaryType=");
-        builder.append("Locality");
+        builder.append(boundaryType);
         builder.append("&codes=");
         builder.append(boundaryCode);
 

@@ -36,7 +36,9 @@ class FinancialDetailsMapperElement
       reAccountNumber: container.$getOpt(map, 'reAccountNumber'),
       accountType: container.$getOpt(map, 'accountType'),
       ifscCode: container.$getOpt(map, 'ifscCode'),
-      referenceID: container.$getOpt(map, 'referenceID'));
+      referenceID: container.$getOpt(map, 'referenceID'),
+      branchName: container.$getOpt(map, 'branchName'),
+      bankName: container.$getOpt(map, 'bankName'));
 
   @override
   Function get encoder => encode;
@@ -48,12 +50,14 @@ class FinancialDetailsMapperElement
         'reAccountNumber': container.$enc(f.reAccountNumber, 'reAccountNumber'),
         'accountType': container.$enc(f.accountType, 'accountType'),
         'ifscCode': container.$enc(f.ifscCode, 'ifscCode'),
-        'referenceID': container.$enc(f.referenceID, 'referenceID')
+        'referenceID': container.$enc(f.referenceID, 'referenceID'),
+        'branchName': container.$enc(f.branchName, 'branchName'),
+        'bankName': container.$enc(f.bankName, 'bankName')
       };
 
   @override
   String stringify(FinancialDetails self) =>
-      'FinancialDetails(accountHolderName: ${container.asString(self.accountHolderName)}, accountNumber: ${container.asString(self.accountNumber)}, reAccountNumber: ${container.asString(self.reAccountNumber)}, accountType: ${container.asString(self.accountType)}, ifscCode: ${container.asString(self.ifscCode)}, referenceID: ${container.asString(self.referenceID)})';
+      'FinancialDetails(accountHolderName: ${container.asString(self.accountHolderName)}, accountNumber: ${container.asString(self.accountNumber)}, reAccountNumber: ${container.asString(self.reAccountNumber)}, accountType: ${container.asString(self.accountType)}, ifscCode: ${container.asString(self.ifscCode)}, referenceID: ${container.asString(self.referenceID)}, branchName: ${container.asString(self.branchName)}, bankName: ${container.asString(self.bankName)})';
   @override
   int hash(FinancialDetails self) =>
       container.hash(self.accountHolderName) ^
@@ -61,7 +65,9 @@ class FinancialDetailsMapperElement
       container.hash(self.reAccountNumber) ^
       container.hash(self.accountType) ^
       container.hash(self.ifscCode) ^
-      container.hash(self.referenceID);
+      container.hash(self.referenceID) ^
+      container.hash(self.branchName) ^
+      container.hash(self.bankName);
   @override
   bool equals(FinancialDetails self, FinancialDetails other) =>
       container.isEqual(self.accountHolderName, other.accountHolderName) &&
@@ -69,7 +75,9 @@ class FinancialDetailsMapperElement
       container.isEqual(self.reAccountNumber, other.reAccountNumber) &&
       container.isEqual(self.accountType, other.accountType) &&
       container.isEqual(self.ifscCode, other.ifscCode) &&
-      container.isEqual(self.referenceID, other.referenceID);
+      container.isEqual(self.referenceID, other.referenceID) &&
+      container.isEqual(self.branchName, other.branchName) &&
+      container.isEqual(self.bankName, other.bankName);
 }
 
 mixin FinancialDetailsMappable {
@@ -110,7 +118,9 @@ abstract class FinancialDetailsCopyWith<$R, $In extends FinancialDetails,
       String? reAccountNumber,
       String? accountType,
       String? ifscCode,
-      String? referenceID});
+      String? referenceID,
+      String? branchName,
+      String? bankName});
 }
 
 class _FinancialDetailsCopyWithImpl<$R, $Out extends FinancialDetails>
@@ -130,12 +140,16 @@ class _FinancialDetailsCopyWithImpl<$R, $Out extends FinancialDetails>
           Object? reAccountNumber = $none,
           Object? accountType = $none,
           Object? ifscCode = $none,
-          Object? referenceID = $none}) =>
+          Object? referenceID = $none,
+          Object? branchName = $none,
+          Object? bankName = $none}) =>
       $then(FinancialDetails(
           accountHolderName: or(accountHolderName, $value.accountHolderName),
           accountNumber: or(accountNumber, $value.accountNumber),
           reAccountNumber: or(reAccountNumber, $value.reAccountNumber),
           accountType: or(accountType, $value.accountType),
           ifscCode: or(ifscCode, $value.ifscCode),
-          referenceID: or(referenceID, $value.referenceID)));
+          referenceID: or(referenceID, $value.referenceID),
+          branchName: or(branchName, $value.branchName),
+          bankName: or(bankName, $value.bankName)));
 }

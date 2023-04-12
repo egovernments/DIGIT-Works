@@ -557,7 +557,7 @@ export const UICustomizations = {
         case "MASTERS_ORGANISATION_ID":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row?.tenantId}&orgId=${value}`}>
+              <Link to={`/${window.contextPath}/employee/masters/view-organization?tenantId=${row?.tenantId}&orgId=${value}`}>
                 {value ? value : t("ES_COMMON_NA")}
               </Link>
             </span>
@@ -586,7 +586,7 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "MASTERS_ORGANISATION_ID")
-          link = `/${window.contextPath}/employee/masters/view-organisation?tenantId=${tenantId}&orgId=${row[key]}`;
+          link = `/${window.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgId=${row[key]}`;
       });
       return link;
     },

@@ -21,7 +21,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
         asSectionHeader: false,
         values: [
             { title: "COMMON_NAME_OF_CBO", value: contract?.additionalDetails?.orgName || t("NA")},
-            { title: "WORKS_ORGN_ID", value: contract?.additionalDetails?.cboApplicationNumber || t("NA")},
+            { title: "WORKS_ORGN_ID", value: contract?.additionalDetails?.cboOrgNumber || t("NA")},
             { title: "COMMON_ROLE_OF_CBO", value: contract?.executingAuthority ? t(`COMMON_MASTERS_${contract?.executingAuthority}`) : "NA"},
             { title: "COMMON_DESGN_OF_OFFICER_IN_CHARGE",  value : contract?.additionalDetails?.officerInChargeDesgn || "NA"},
             { title: "COMMON_NAME_OF_OFFICER_IN_CHARGE",value: contract?.additionalDetails?.officerInChargeName?.name || "NA"},

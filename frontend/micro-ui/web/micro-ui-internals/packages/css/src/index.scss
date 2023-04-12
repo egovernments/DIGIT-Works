@@ -751,6 +751,9 @@ input[type="number"] {
   &:empty {
     padding: 0px !important;
   }
+  .card-label{
+    font-weight: 700 !important;
+  }
 }
 
 @screen sm {
@@ -893,7 +896,7 @@ input[type="number"] {
 }
 
 .skill-details-wrapper {
-  max-width: 950px;
+  max-width: 760px;
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
@@ -935,4 +938,18 @@ input[type="number"] {
   border: none;
   color: black !important;
   padding: 0;
+}
+
+.label-field-pair {
+  &:last-child {
+    .field {
+      .field-container {
+        .text-input {
+          input {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
 }

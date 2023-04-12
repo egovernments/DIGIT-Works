@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Header, ViewDetailsCard, HorizontalNav, Loader, ActionBar, SubmitBar, Toast } from '@egovernments/digit-ui-react-components';
 import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewOrganisation = () => {
   const { t } = useTranslation()
   const history = useHistory()
+  const location = useLocation()
   const [showDataError, setShowDataError] = useState(null)
 
   const { orgId, tenantId } = Digit.Hooks.useQueryParams()
 
   const [activeLink, setActiveLink] = useState("Location_Details");
+  const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
+  const [sessionFormData, clearSessionFormData] = orgSession;
 
   const configNavItems = [
     {
@@ -32,17 +35,24 @@ const ViewOrganisation = () => {
 ]
   const payload = {
     SearchCriteria: {
-      orgNumber: orgId
+      orgNumber: orgId,
+      tenantId
     }
   }
 
-  const {isLoading, data: organisation, isError, isSuccess, error} = Digit.Hooks.organisation.useViewOrganisation({ tenantId, data: payload })
+  const {isLoading, data: organisation, isError, isSuccess, error} = Digit.Hooks.organisation.useViewOrganisation({ tenantId, data: payload, config: { cacheTime:0 } })
 
   useEffect(() => {
     if(isError) {
       setShowDataError(true)
     }
   }, [error])
+
+  useEffect(()=>{
+    if (!window.location.href.includes("create-organization") && sessionFormData && Object.keys(sessionFormData) != 0) {
+      clearSessionFormData();
+    }
+},[location]);
 
   const handleModify = () => {
     history.push(`/${window.contextPath}/employee/masters/create-organization?tenantId=${tenantId}&orgId=${orgId}`);
