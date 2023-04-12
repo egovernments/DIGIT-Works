@@ -14,6 +14,6 @@ public class MusterRollServiceConstants {
     public static final String ROUND_OFF_HOURS = "ROUND_OFF_HOURS";
     public static final String ENTRY_EVENT = "ENTRY";
     public static final String EXIT_EVENT = "EXIT";
-    public static final String DEFAULT_SKILL_LEVEL = "UNSKILLED";
+    public static final String STATUS_APPROVED = "APPROVED";
 
 }
