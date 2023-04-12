@@ -278,7 +278,6 @@ export const FormComposer = (props) => {
                     });
                   });
                 }
-                console.log('IN FORM COMPOSER', {numberOfFiles, value});
                 //here we need to update the form the same way as the state of the reducer in multiupload, since Upload component within the multiupload wrapper uses that same format of state so we need to set the form data as well in the same way. Previously we were altering it and updating the formData
                 onChange(numberOfFiles>0?filesData:[]);
               }

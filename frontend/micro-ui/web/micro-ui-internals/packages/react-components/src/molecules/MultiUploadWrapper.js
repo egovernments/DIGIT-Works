@@ -58,8 +58,6 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
     const FILES_UPLOADED = "FILES_UPLOADED"
     const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL"
 
-    console.log('INSIDE MultiUploadWrapper', {getFormState, setuploadedstate});
-
     const [fileErrors, setFileErrors] = useState([]);
     const [enableButton, setEnableButton] = useState(true)
 

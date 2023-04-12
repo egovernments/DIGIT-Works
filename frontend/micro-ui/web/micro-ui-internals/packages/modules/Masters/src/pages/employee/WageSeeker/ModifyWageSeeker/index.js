@@ -7,7 +7,7 @@ import { updateWageSeekerFormDefaultValues } from '../../../../utils';
 
 const ModifyWageSeeker = () => {
     const {t} = useTranslation();
-    console.log('INSIDE ModifyWageSeeker');
+   
     const [showDataError, setShowDataError] = useState(null)
     const [isFormReady, setIsFormReady] = useState(false);
 
@@ -68,7 +68,6 @@ const ModifyWageSeeker = () => {
 
     useEffect(() => {
         if(configs && !wageSeekerDataFetching) {
-            console.log('INSIDE USEEFFECT');
             updateWageSeekerFormDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady})
         }
       },[configs, wageSeekerDataFetching]);
