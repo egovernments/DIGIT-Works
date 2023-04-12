@@ -44,7 +44,7 @@ class AttendanceProjectsSearchBloc
               }
             : {
                 "tenantId": GlobalVariables
-                    .globalConfigObject!.globalConfigs!.stateTenantId
+                    .organisationListModel!.organisations!.first.tenantId
                     .toString()
               },
       );
