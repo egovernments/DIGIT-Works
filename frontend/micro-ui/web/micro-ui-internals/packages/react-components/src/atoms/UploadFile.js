@@ -80,8 +80,7 @@ const getCitizenStyles = (value) => {
       },
       tagContainerStyles: {
        margin: "0px",
-       padding: "0px",
-       width: "46%"
+       padding: "0px"
       },
       tagStyles: {
         height: "auto", 
@@ -96,7 +95,8 @@ const getCitizenStyles = (value) => {
         lineHeight: "16px",
         overflow: "hidden",
         // minHeight: "35px",
-        maxHeight: "34px"
+        maxHeight: "34px",
+        maxWidth: "100%"
       },   
       inputStyles: {
         width: "42%",
@@ -201,7 +201,7 @@ const UploadFile = (props) => {
           <ButtonSelector
             theme="border"
             label={t("CS_COMMON_CHOOSE_FILE")}
-            style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(props.disabled ? { display: "none" } : {}) }}
+            style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(!props.enableButton ? { opacity: 0.5 } : {}) }}
             textStyles={props?.textStyles}
             type={props.buttonType}
           />
@@ -225,8 +225,12 @@ const UploadFile = (props) => {
           disabled={props.disabled}
           onChange={(e) => props.onUpload(e)}
           onClick ={ event => {
-            const { target = {} } = event || {};
-            target.value = "";
+            if (!props?.enableButton) {
+              event.preventDefault()
+            } else {
+              const { target = {} } = event || {};
+              target.value = "";
+            }
           }}
         />
       </div>

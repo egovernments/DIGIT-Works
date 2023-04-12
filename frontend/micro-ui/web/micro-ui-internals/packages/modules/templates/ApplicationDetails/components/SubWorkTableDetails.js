@@ -1,7 +1,7 @@
 import { EditIcon } from '@egovernments/digit-ui-react-components';
 import React from 'react'
 import { useTranslation } from "react-i18next";
-import { useHistory } from 'react-router-dom';
+import { useHistory,Link } from 'react-router-dom';
 
 const SubWorkTableDetails = ({data}) => {
 
@@ -21,6 +21,13 @@ const SubWorkTableDetails = ({data}) => {
                 {row?.map((lineItem,idx)=>{
                     let extraStyles = {}
                     if (lineItem === "Total") extraStyles = { "fontWeight": "bold" }
+                    else if(lineItem?.type === "link") return (
+                      <td>                      
+                        <div className="link">
+                          <Link to={`/${window.contextPath}/employee/`}>{String(lineItem.label ? lineItem.label : t("ES_COMMON_NA"))}</Link>
+                        </div>
+                      </td>
+                    );
                     return <td style={{ ...cellStyle?.[idx], ...extraStyles }}>{lineItem}</td>
                 })}
             </tr>

@@ -201,8 +201,10 @@ export const getBankAccountUpdatePayload = ({formData, apiData, tenantId, isModi
         delete bankAccounts[0]?.auditDetails
 
         let bankAccountDetails = bankAccounts?.[0]?.bankAccountDetails?.[0]
-        bankAccountDetails.isActive = false
-        bankAccountDetails.isPrimary = false
+        if(bankAccountDetails) {
+            bankAccountDetails.isActive = false
+            bankAccountDetails.isPrimary = false
+        }
         delete bankAccountDetails?.auditDetails
     } else {
         let bankObj = {}
@@ -224,7 +226,7 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
     const bankAccountDetails = orgData?.bankDetails?.[0]?.bankAccountDetails?.[0]
     
     const funDetails = organisation?.functions?.[0]
-    let identifiers = organisation?.identifiers?.map(item => {
+    let identifiers = organisation?.identifiers?.filter(item => item?.isActive)?.map(item => {
         return {
             name: { code: item?.type, name: `COMMON_MASTERS_TAXIDENTIFIER_${item?.type}`, active: true},
             value: item?.value ? item?.value : ""
@@ -269,7 +271,7 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
             value: bankAccountDetails?.bankBranchIdentifier?.code ? bankAccountDetails?.bankBranchIdentifier?.code : "" 
         }]
 
-        configs.defaultValues.taxIdentifierData = identifiers
+        configs.defaultValues.taxIdentifierData = identifiers?.length > 0 ? identifiers : ""
        
         setSessionFormData({...configs?.defaultValues})
     }

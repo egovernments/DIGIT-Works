@@ -61,6 +61,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
     console.log('INSIDE MultiUploadWrapper', {getFormState, setuploadedstate});
 
     const [fileErrors, setFileErrors] = useState([]);
+    const [enableButton, setEnableButton] = useState(true)
 
     const uploadMultipleFiles = (state, payload) => {
         const { files, fileStoreIds } = payload;
@@ -89,6 +90,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
     const [state, dispatch] = useReducer(uploadReducer, [...setuploadedstate])
     
     const onUploadMultipleFiles = async (e) => {
+        setEnableButton(false)
         setFileErrors([])
         const files = Array.from(e.target.files);
 
@@ -98,11 +100,14 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
         if (!error) {
             try {
                 const { data: { files: fileStoreIds } = {} } = await Digit.UploadServices.MultipleFilesStorage(module, e.target.files, tenantId)
+                setEnableButton(true)
                 return dispatch({ type: FILES_UPLOADED, payload: { files: e.target.files, fileStoreIds } })
             } catch (err) {
+                setEnableButton(true)
             }
         } else {
             setFileErrors(validationMsg)
+            setEnableButton(true)
         }
     }
 
@@ -128,6 +133,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
                 accept={acceptFiles}
                 message={t(`WORKS_NO_FILE_SELECTED`)}
                 customClass={customClass}
+                enableButton={enableButton}
             />
             <span style={{ display: 'flex' }}>
                 {fileErrors.length ? fileErrors.map(({ valid, name, type, size, error }) => (
