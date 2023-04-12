@@ -8,6 +8,7 @@ import 'package:works_shg_app/models/app_config/app_config_model.dart';
 import 'package:works_shg_app/models/init_mdms/global_config_model.dart';
 
 import '../models/init_mdms/init_mdms_model.dart';
+import '../models/organisation/organisation_model.dart';
 import '../services/local_storage.dart';
 
 class GlobalVariables {
@@ -98,6 +99,7 @@ class GlobalVariables {
   static GlobalConfigModel? globalConfigObject;
   static StateInfoListModel? stateInfoListModel;
   static String? uuid;
+  static OrganisationListModel? organisationListModel;
   static String? authToken;
   static Map<String, dynamic>? userRequestModel;
 }

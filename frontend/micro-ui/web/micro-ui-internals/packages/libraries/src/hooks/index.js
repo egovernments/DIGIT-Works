@@ -137,14 +137,20 @@ import useCreateWageSeeker from "./wageSeeker/useCreateWageSeeker";
 import useDeleteWageSeeker from "./wageSeeker/useDeleteWageSeeker";
 
 import useCreateWO from "./works/useCreateWO";
+
 import useSearchOrg from "./works/useSearchOrg";
 
 import useViewBill from "./bills/useViewBill";
 import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
+import useUpdateWO from "./works/useUpdateWO";
 
 import useViewOrganisation from "./organisation/useViewOrganisation";
+import useOrganisationDetails from "./organisation/useOrganisationDetails";
+import useCreateOrganisation from "./organisation/useCreateOrganisation";
+import useUpdateOrganisation from "./organisation/useUpdateOrganisation";
+
 import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
 import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
 
@@ -177,12 +183,16 @@ const contracts = {
   useViewContractDetails,
   useViewContractDetailsClosureScreen,
   useCreateWO,
+  useUpdateWO,
   useContractSearch
 };
 
 const organisation = {
   useSearchOrg,
-  useViewOrganisation
+  useViewOrganisation,
+  useOrganisationDetails,
+  useCreateOrganisation,
+  useUpdateOrganisation
 }
 
 const estimates = {

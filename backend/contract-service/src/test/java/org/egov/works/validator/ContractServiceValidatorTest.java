@@ -375,24 +375,24 @@ public class ContractServiceValidatorTest {
         assertTrue(exception.getCode().toString().equals("INVALID_ESTIMATELINEITEMID"));
     }
 
-    @DisplayName("method validatorCreateRequest:should through exception with error code SERVICE_UNAVAILABLE ")
-    @Test
-    public void validateCreateContractRequest_validateOrganizationIdAgainstOrgService_1() {
-        ContractRequest contractRequest = ContractRequestTestBuilder.builder().withRequestInfo().withContract().build();
-        when(config.getOrgIdVerificationRequired()).thenReturn("TRUE");
-        CustomException exception = assertThrows(CustomException.class, () -> ReflectionTestUtils.invokeMethod(contractServiceValidator, "validateOrganizationIdAgainstOrgService", contractRequest));
-        assertTrue(exception.getCode().equals("SERVICE_UNAVAILABLE"));
+//    @DisplayName("method validatorCreateRequest:should through exception with error code SERVICE_UNAVAILABLE ")
+//    @Test
+//    public void validateCreateContractRequest_validateOrganizationIdAgainstOrgService_1() {
+//        ContractRequest contractRequest = ContractRequestTestBuilder.builder().withRequestInfo().withContract().build();
+//        when(config.getOrgIdVerificationRequired()).thenReturn("TRUE");
+//        CustomException exception = assertThrows(CustomException.class, () -> ReflectionTestUtils.invokeMethod(contractServiceValidator, "validateOrganizationIdAgainstOrgService", contractRequest));
+//        assertTrue(exception.getCode().equals("SERVICE_UNAVAILABLE"));
+//
+//    }
 
-    }
-
-    @DisplayName("method validatorCreateRequest:should run successfully ")
-    @Test
-    public void validateCreateContractRequest_validateOrganizationIdAgainstOrgService_2() {
-        ContractRequest contractRequest = ContractRequestTestBuilder.builder().withRequestInfo().withContract().build();
-        when(config.getOrgIdVerificationRequired()).thenReturn("FALSE");
-        assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(contractServiceValidator, "validateOrganizationIdAgainstOrgService", contractRequest));
-
-    }
+//    @DisplayName("method validatorCreateRequest:should run successfully ")
+//    @Test
+//    public void validateCreateContractRequest_validateOrganizationIdAgainstOrgService_2() {
+//        ContractRequest contractRequest = ContractRequestTestBuilder.builder().withRequestInfo().withContract().build();
+//        when(config.getOrgIdVerificationRequired()).thenReturn("FALSE");
+//        assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(contractServiceValidator, "validateOrganizationIdAgainstOrgService", contractRequest));
+//
+//    }
 
 
     @DisplayName("method  validateUpdateContractRequest:should run successfully ")

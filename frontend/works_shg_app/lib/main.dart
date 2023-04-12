@@ -36,7 +36,10 @@ import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
 import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
+import 'blocs/muster_rolls/muster_roll_pdf.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
+import 'blocs/organisation/org_financial_bloc.dart';
+import 'blocs/organisation/org_search_bloc.dart';
 import 'blocs/user/user_search.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_bank_create.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_create_bloc.dart';
@@ -134,6 +137,9 @@ class MainApplication extends StatelessWidget {
         BlocProvider(create: (context) => WageSeekerLocationBloc()),
         BlocProvider(create: (context) => WageSeekerCreateBloc()),
         BlocProvider(create: (context) => WageSeekerBankCreateBloc()),
+        BlocProvider(create: (context) => ORGSearchBloc()),
+        BlocProvider(create: (context) => ORGFinanceBloc()),
+        BlocProvider(create: (context) => MusterRollPDFBloc()),
         BlocProvider(
             create: (context) => WageSeekerMDMSBloc(
                 const WageSeekerMDMSState.initial(),

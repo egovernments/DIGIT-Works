@@ -32,6 +32,7 @@ class Common {
   String get continueToLogin => 'CONTINUE_TO_LOGIN';
   String get mobileNumber => 'CORE_COMMON_MOBILE_NUMBER';
   String get logOut => 'CORE_COMMON_LOGOUT';
+  String get orgProfile => 'ORG_PROFILE';
   String get oK => 'CORE_CHANGE_TENANT_OK';
   String get email => 'CORE_COMMON_EMAIL';
   String get save => 'CORE_COMMON_SAVE';
@@ -83,6 +84,7 @@ class Common {
   String get attachments => 'CS_COMMON_ATTACHMENTS';
   String get apply => 'ES_COMMON_APPLY';
   String get cancel => 'CS_ACTION_CANCEL';
+  String get close => 'CS_ACTION_CLOSE';
   String get startDate => 'EVENTS_START_DATE_LABEL';
   String get endDate => 'EVENTS_END_DATE_LABEL';
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
@@ -105,12 +107,28 @@ class Common {
   String get accountType => 'CORE_COMMON_ACCOUNT_TYPE';
   String get ifscCode => 'COMMON_IFSC_CODE';
   String get bankHint => 'HINT_BANK_DETAILS';
+  String get branchName => 'COMMON_BRANCH_NAME';
   String get photoGraph => 'COMMON_PHOTOGRAPH';
   String get inProgress => 'IN_PROGRESS_LABEL';
   String get completed => 'COMPLETED_LABEL';
   String get info => 'ES_COMMON_INFO';
   String get workOrderInfo => 'WORK_ORDER_INFO';
   String get days => 'COMMON_DAYS';
+  String get orgId => 'COMMON_ORG_ID';
+  String get orgName => 'COMMON_ORG_NAME';
+  String get registeredDept => 'REGISTERED_WITH_DEPT';
+  String get deptRegNo => 'DEPT_REG_NO';
+  String get dateOfIncorporation => 'DATE_OF_INCORP';
+  String get orgType => 'ORG_TYPE';
+  String get orgSubType => 'ORG_SUB_TYPE';
+  String get funcCat => 'ORG_FUNC_CAT';
+  String get functionalDetails => 'ORG_FUNC_DETAILS';
+  String get contactDetails => 'ORG_CONTACT_DETAILS';
+  String get classOrRank => 'ORG_CLASS_OR_RANK';
+  String get validFrom => 'ORG_VALID_FROM';
+  String get validTo => 'ORG_VALID_TO';
+  String get contactPersonName => 'ORG_CONTACT_PERSON_NAME';
+  String get download => "COMMON_DOWNLOAD";
 }
 
 class Home {
@@ -159,7 +177,7 @@ class WageSeeker {
   String get relationshipRequired => 'RELATIONSHIP_IS_REQUIRED';
   String get socialCatRequired => 'SOCIAL_CATEGORY_IS_REQUIRED';
   String get genderRequired => 'GENDER_IS_REQUIRED';
-  String get mobileRequired => 'MOBILE_NUJMBER_IS_REQUIRED';
+  String get mobileRequired => 'MOBILE_NUMBER_IS_REQUIRED';
   String get minMobileCharacters => 'MIN_MOBILE_CHARCTERS_REQUIRED';
   String get minAadhaarCharacters => 'MIN_AADHAAR_CHARCTERS_REQUIRED';
   String get maxMobileCharacters => 'MAX_MOBILE_CHARCTERS_REQUIRED';
@@ -178,6 +196,7 @@ class WageSeeker {
   String get skillCategory => 'WAGE_SEEKER_SKILL_CAT';
   String get skill => 'WAGE_SEEKER_SKILL';
   String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
+  String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
 }
 
 class AttendanceMgmt {

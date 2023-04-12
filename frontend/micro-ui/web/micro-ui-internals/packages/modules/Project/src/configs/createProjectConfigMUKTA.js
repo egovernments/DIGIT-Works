@@ -132,7 +132,7 @@ export const createProjectConfigMUKTA = {
                 label: ("PROJECT_ESTIMATED_COST_IN_RS"),
                 isMandatory: false,
                 key: "noSubProject_estimatedCostInRs",
-                type: "number",
+                type: "text",
                 disable: false,
                 preProcess: {
                   convertStringToRegEx: ["populators.validation.pattern"]
@@ -141,8 +141,8 @@ export const createProjectConfigMUKTA = {
                     name: "noSubProject_estimatedCostInRs",
                     error: "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
                     validation: {
-                      pattern: /^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/,
-                      maxlength : 32,
+                      pattern: /^(?:0|[0-9][^+-]\d*)(?:\.(?!.*000)\d+)?$/,
+                      maxlength : 12,
                       step : "0.01"
                     }
                   }

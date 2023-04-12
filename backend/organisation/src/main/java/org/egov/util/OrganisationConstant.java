@@ -28,4 +28,24 @@ public class OrganisationConstant {
     public static final String PATTERN_CITY = "^[a-zA-Z. ]*$";
     public static final String PATTERN_TENANT = "^[a-zA-Z. ]*$";
     public static final String PATTERN_PINCODE = "^[1-9][0-9]{5}$";
+
+    // localization contants
+    public static final String ORGANISATION_CREATE_LOCALIZATION_CODE="ORGANISATION_NOTIFICATION_ON_CREATE";
+    public static final String ORGANISATION_UPDATE_LOCALIZATION_CODE="ORGANISATION_NOTIFICATION_ON_UPDATE";
+
+    public static final String ORGANISATION_NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
+
+    public static final String ORGANISATION_MODULE_CODE = "rainmaker-common-masters";
+
+    public static final String ORGANISATION_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+    public static final String ORGANISATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+
+    //HRMS User Constants
+    public static final String HRMS_USER_USERNAME_CODE = "$.Employees.*.user.userName";
+
+    public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
+
+
+
+
 }

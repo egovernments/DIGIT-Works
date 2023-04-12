@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:digit_components/widgets/atoms/digit_text_form_field.dart';
-import 'package:digit_components/widgets/digit_card.dart';
-import 'package:digit_components/widgets/digit_elevated_button.dart';
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +16,6 @@ import '../../models/wage_seeker/financial_details_model.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
 import '../../models/wage_seeker/skill_details_model.dart';
-import '../../utils/models.dart';
 import '../../widgets/atoms/radio_button_list.dart';
 
 class FinancialDetailsPage extends StatefulWidget {
@@ -44,6 +41,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   String accountNoKey = 'accountNo';
   String reAccountNoKey = 'reAccountNo';
   String ifscCodeKey = 'ifscCode';
+  String accountTypeKey = 'accountType';
 
   @override
   void initState() {
@@ -62,9 +60,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
-    List<KeyValue> accountTypeList = widget
+    List<String> accountTypeList = widget
         .wageSeekerMDMS!.worksMDMS!.bankAccType!
-        .map((e) => KeyValue(t.translate(e.code), e.code))
+        .map((e) => e.code)
         .toList();
     return ReactiveFormBuilder(
       form: () => buildForm(financialDetails ?? FinancialDetails()),
@@ -85,7 +83,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                 children: [
                   Text(
                     t.translate(i18.common.financialDetails),
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.displayMedium
+                        ?.apply(color: const DigitColors().black),
                   ),
                   Column(children: [
                     DigitTextFormField(
@@ -103,6 +103,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                       formControlName: accountNoKey,
                       label: t.translate(i18.common.accountNo),
                       isRequired: true,
+                      obscureText: true,
                       keyboardType: TextInputType.number,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
@@ -130,18 +131,21 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                     ),
                     StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
-                      return DigitRadioButtonList(
-                          context,
-                          t.translate(i18.common.accountType),
-                          accountType,
-                          '',
-                          '',
-                          true,
-                          accountTypeList, (value) {
-                        setState(() {
-                          accountType = value;
-                        });
-                      });
+                      return DigitRadioButtonList<String>(
+                        context,
+                        labelText: t.translate(i18.common.accountType),
+                        formControlName: accountTypeKey,
+                        options: accountTypeList
+                            .map((e) => t.translate(e).toString())
+                            .toList(),
+                        isRequired: true,
+                        valueMapper: (value) => value,
+                        onValueChange: (value) {
+                          setState(() {
+                            accountType = value;
+                          });
+                        },
+                      );
                     }),
                     DigitTextFormField(
                         formControlName: ifscCodeKey,
@@ -178,13 +182,14 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                           if (!form.valid) return;
                           final financeDetails = FinancialDetails(
                               accountHolderName:
-                                  form.value[accountHolderKey].toString() ?? '',
+                                  form.value[accountHolderKey].toString(),
                               accountNumber:
-                                  form.value[accountNoKey].toString() ?? '',
+                                  form.value[accountNoKey].toString(),
                               reAccountNumber:
                                   form.value[reAccountNoKey].toString(),
                               ifscCode: form.value[ifscCodeKey].toString(),
-                              accountType: accountType);
+                              accountType:
+                                  form.value[accountTypeKey].toString());
                           BlocProvider.of<WageSeekerBloc>(context).add(
                             WageSeekerCreateEvent(
                                 individualDetails: individualDetails,
@@ -195,7 +200,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                           widget.onPressed();
                         },
                         child: Center(
-                          child: Text(t.translate(i18.common.submit)),
+                          child: Text(t.translate(i18.common.next)),
                         )),
                   ))
                 ],
@@ -214,6 +219,8 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
         accountNoKey: FormControl<String>(
             value: finance.accountNumber, validators: [Validators.required]),
         reAccountNoKey: FormControl<String>(value: finance.reAccountNumber),
+        accountTypeKey: FormControl<String>(
+            value: finance.accountType, validators: [Validators.required]),
         ifscCodeKey: FormControl<String>(
             value: finance.ifscCode, validators: [Validators.required]),
       }, [

@@ -33,7 +33,7 @@ ThemeData get theme => ThemeData(
         displayMedium: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,
-            fontFamily: 'Roboto Condensed',
+            fontFamily: 'Roboto',
             fontStyle: FontStyle.normal,
             color: Color.fromRGBO(11, 12, 12, 1)),
         titleMedium: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),

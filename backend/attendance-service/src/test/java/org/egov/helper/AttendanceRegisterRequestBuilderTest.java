@@ -46,6 +46,8 @@ public class AttendanceRegisterRequestBuilderTest {
                 .name("self help3")
                 .startDate(new BigDecimal("1673740800000"))
                 .endDate(new BigDecimal("1692057600000"))
+                .serviceCode("serviceCode")
+                .referenceId("referenceId")
                 .auditDetails(AuditDetailsTestBuilder.builder().build())
                 .attendees(Collections.singletonList(IndividualEntry.builder().build()))
                 .staff(Collections.singletonList(StaffPermission.builder().build()))

@@ -141,6 +141,17 @@ export const WorksService = {
             params: {},
             auth: true,
         }),
+    updateWO: (details) =>
+        Request({
+            url: Urls?.contracts?.update,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            params: {},
+            auth: true,
+        }),
     searchOrg :(details) =>
         Request({
             url: Urls?.organisation?.search,

@@ -158,6 +158,7 @@ export const FormComposer = (props) => {
                   inputRef={ref}
                   errorStyle={errors?.[populators.name]}
                   max={populators.max}
+                  min={populators.min}
                   disable={disable}
                   style={type === "date" ? { paddingRight: "3px" } : ""}
                   maxlength={populators?.validation?.maxlength}

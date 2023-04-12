@@ -102,6 +102,10 @@
   }
 }
 
+.clear-search {
+  margin-right: 1rem;
+}
+
 .clear-search-label {
   color: #f47738;
   cursor: pointer;
@@ -747,6 +751,9 @@ input[type="number"] {
   &:empty {
     padding: 0px !important;
   }
+  .card-label{
+    font-weight: 700 !important;
+  }
 }
 
 @screen sm {
@@ -931,4 +938,18 @@ input[type="number"] {
   border: none;
   color: black !important;
   padding: 0;
+}
+
+.label-field-pair {
+  &:last-child {
+    .field {
+      .field-container {
+        .text-input {
+          input {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
 }

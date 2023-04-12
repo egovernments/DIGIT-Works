@@ -45,7 +45,7 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive)
   payload_modal.id = document?.[1]?.['file']?.['id'];
   payload_modal.key = docType;
   payload_modal.additionalDetails = {
-    fileName : document?.[1]?.['file']?.['name'],
+    fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] : documentType?.[docType],
     otherCategoryName : otherDocFileName
   }
   return payload_modal;
@@ -69,11 +69,12 @@ const createDocumentsPayload = (documents, otherDocFileName, configs) => {
     for(let defaultDocKey of Object.keys(documentDefaultValue)) {
       let isExist = false;
       for(let uploadedDocObject of documents_payload_list) {
+         //comparing same file types from default and new uplaoded files
         if(defaultDocKey === uploadedDocObject?.key && defaultDocKey !== "others_name") {
 
           //new file being uploaded, if ID is undefined ( Update Case )
           if(!uploadedDocObject?.id) {
-            //if old file exists, make it inactive
+            //if old file exists, make default value file as inactive
             let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
             documents_payload_list.push(payload_modal);
           }
@@ -166,7 +167,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
             "subScheme" :  project_details?.subScheme?.code,  
             "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal),
             "recommendedModeOfEntrustment" : project_details?.recommendedModeOfEntrustment?.code,
-            "locality" : project_details?.locality,
+            "locality" : project_details?.locality?.code,
             "creator": Digit.UserService.getUser()?.info?.name,
             "targetDemography" : project_details?.targetDemography?.code,
           },

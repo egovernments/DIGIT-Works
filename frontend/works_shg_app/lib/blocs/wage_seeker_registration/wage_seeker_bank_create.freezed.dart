@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'wage_seeker_bank_create.dart';
 
@@ -24,7 +24,8 @@ mixin _$WageSeekerBankCreateEvent {
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)
+            String? referenceId,
+            String? indId)
         create,
     required TResult Function() dispose,
   }) =>
@@ -37,7 +38,8 @@ mixin _$WageSeekerBankCreateEvent {
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)?
+            String? referenceId,
+            String? indId)?
         create,
     TResult? Function()? dispose,
   }) =>
@@ -50,7 +52,8 @@ mixin _$WageSeekerBankCreateEvent {
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)?
+            String? referenceId,
+            String? indId)?
         create,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -109,7 +112,8 @@ abstract class _$$CreateBankWageSeekerEventCopyWith<$Res> {
       String? accountNo,
       String? accountType,
       String? ifscCode,
-      String? referenceId});
+      String? referenceId,
+      String? indId});
 }
 
 /// @nodoc
@@ -130,6 +134,7 @@ class __$$CreateBankWageSeekerEventCopyWithImpl<$Res>
     Object? accountType = freezed,
     Object? ifscCode = freezed,
     Object? referenceId = freezed,
+    Object? indId = freezed,
   }) {
     return _then(_$CreateBankWageSeekerEvent(
       tenantId: freezed == tenantId
@@ -156,6 +161,10 @@ class __$$CreateBankWageSeekerEventCopyWithImpl<$Res>
           ? _value.referenceId
           : referenceId // ignore: cast_nullable_to_non_nullable
               as String?,
+      indId: freezed == indId
+          ? _value.indId
+          : indId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -169,7 +178,8 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
       this.accountNo,
       this.accountType,
       this.ifscCode,
-      this.referenceId});
+      this.referenceId,
+      this.indId});
 
   @override
   final String? tenantId;
@@ -183,10 +193,12 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
   final String? ifscCode;
   @override
   final String? referenceId;
+  @override
+  final String? indId;
 
   @override
   String toString() {
-    return 'WageSeekerBankCreateEvent.create(tenantId: $tenantId, accountHolderName: $accountHolderName, accountNo: $accountNo, accountType: $accountType, ifscCode: $ifscCode, referenceId: $referenceId)';
+    return 'WageSeekerBankCreateEvent.create(tenantId: $tenantId, accountHolderName: $accountHolderName, accountNo: $accountNo, accountType: $accountType, ifscCode: $ifscCode, referenceId: $referenceId, indId: $indId)';
   }
 
   @override
@@ -205,12 +217,13 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
             (identical(other.ifscCode, ifscCode) ||
                 other.ifscCode == ifscCode) &&
             (identical(other.referenceId, referenceId) ||
-                other.referenceId == referenceId));
+                other.referenceId == referenceId) &&
+            (identical(other.indId, indId) || other.indId == indId));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, tenantId, accountHolderName,
-      accountNo, accountType, ifscCode, referenceId);
+      accountNo, accountType, ifscCode, referenceId, indId);
 
   @JsonKey(ignore: true)
   @override
@@ -228,12 +241,13 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)
+            String? referenceId,
+            String? indId)
         create,
     required TResult Function() dispose,
   }) {
     return create(tenantId, accountHolderName, accountNo, accountType, ifscCode,
-        referenceId);
+        referenceId, indId);
   }
 
   @override
@@ -245,12 +259,13 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)?
+            String? referenceId,
+            String? indId)?
         create,
     TResult? Function()? dispose,
   }) {
     return create?.call(tenantId, accountHolderName, accountNo, accountType,
-        ifscCode, referenceId);
+        ifscCode, referenceId, indId);
   }
 
   @override
@@ -262,14 +277,15 @@ class _$CreateBankWageSeekerEvent implements CreateBankWageSeekerEvent {
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)?
+            String? referenceId,
+            String? indId)?
         create,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (create != null) {
       return create(tenantId, accountHolderName, accountNo, accountType,
-          ifscCode, referenceId);
+          ifscCode, referenceId, indId);
     }
     return orElse();
   }
@@ -313,7 +329,8 @@ abstract class CreateBankWageSeekerEvent implements WageSeekerBankCreateEvent {
       final String? accountNo,
       final String? accountType,
       final String? ifscCode,
-      final String? referenceId}) = _$CreateBankWageSeekerEvent;
+      final String? referenceId,
+      final String? indId}) = _$CreateBankWageSeekerEvent;
 
   String? get tenantId;
   String? get accountHolderName;
@@ -321,6 +338,7 @@ abstract class CreateBankWageSeekerEvent implements WageSeekerBankCreateEvent {
   String? get accountType;
   String? get ifscCode;
   String? get referenceId;
+  String? get indId;
   @JsonKey(ignore: true)
   _$$CreateBankWageSeekerEventCopyWith<_$CreateBankWageSeekerEvent>
       get copyWith => throw _privateConstructorUsedError;
@@ -375,7 +393,8 @@ class _$CreateBankWageSeekerDisposeEvent
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)
+            String? referenceId,
+            String? indId)
         create,
     required TResult Function() dispose,
   }) {
@@ -391,7 +410,8 @@ class _$CreateBankWageSeekerDisposeEvent
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)?
+            String? referenceId,
+            String? indId)?
         create,
     TResult? Function()? dispose,
   }) {
@@ -407,7 +427,8 @@ class _$CreateBankWageSeekerDisposeEvent
             String? accountNo,
             String? accountType,
             String? ifscCode,
-            String? referenceId)?
+            String? referenceId,
+            String? indId)?
         create,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -462,7 +483,9 @@ mixin _$WageSeekerBankCreateState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(BankingDetailsModel? bankingDetailsModel) loaded,
+    required TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)
+        loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -470,7 +493,9 @@ mixin _$WageSeekerBankCreateState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult? Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -478,7 +503,9 @@ mixin _$WageSeekerBankCreateState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -568,7 +595,9 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(BankingDetailsModel? bankingDetailsModel) loaded,
+    required TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -579,7 +608,9 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult? Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -590,7 +621,9 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -682,7 +715,9 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(BankingDetailsModel? bankingDetailsModel) loaded,
+    required TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -693,7 +728,9 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult? Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -704,7 +741,9 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -762,7 +801,8 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({BankingDetailsModel? bankingDetailsModel});
+  $Res call(
+      {BankingDetailsModel? bankingDetailsModel, BankAccounts? bankAccounts});
 }
 
 /// @nodoc
@@ -776,12 +816,17 @@ class __$$_LoadedCopyWithImpl<$Res>
   @override
   $Res call({
     Object? bankingDetailsModel = freezed,
+    Object? bankAccounts = freezed,
   }) {
     return _then(_$_Loaded(
       freezed == bankingDetailsModel
           ? _value.bankingDetailsModel
           : bankingDetailsModel // ignore: cast_nullable_to_non_nullable
               as BankingDetailsModel?,
+      freezed == bankAccounts
+          ? _value.bankAccounts
+          : bankAccounts // ignore: cast_nullable_to_non_nullable
+              as BankAccounts?,
     ));
   }
 }
@@ -789,14 +834,16 @@ class __$$_LoadedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Loaded extends _Loaded {
-  const _$_Loaded(this.bankingDetailsModel) : super._();
+  const _$_Loaded(this.bankingDetailsModel, this.bankAccounts) : super._();
 
   @override
   final BankingDetailsModel? bankingDetailsModel;
+  @override
+  final BankAccounts? bankAccounts;
 
   @override
   String toString() {
-    return 'WageSeekerBankCreateState.loaded(bankingDetailsModel: $bankingDetailsModel)';
+    return 'WageSeekerBankCreateState.loaded(bankingDetailsModel: $bankingDetailsModel, bankAccounts: $bankAccounts)';
   }
 
   @override
@@ -805,11 +852,14 @@ class _$_Loaded extends _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
             (identical(other.bankingDetailsModel, bankingDetailsModel) ||
-                other.bankingDetailsModel == bankingDetailsModel));
+                other.bankingDetailsModel == bankingDetailsModel) &&
+            (identical(other.bankAccounts, bankAccounts) ||
+                other.bankAccounts == bankAccounts));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, bankingDetailsModel);
+  int get hashCode =>
+      Object.hash(runtimeType, bankingDetailsModel, bankAccounts);
 
   @JsonKey(ignore: true)
   @override
@@ -822,10 +872,12 @@ class _$_Loaded extends _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(BankingDetailsModel? bankingDetailsModel) loaded,
+    required TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)
+        loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(bankingDetailsModel);
+    return loaded(bankingDetailsModel, bankAccounts);
   }
 
   @override
@@ -833,10 +885,12 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult? Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(bankingDetailsModel);
+    return loaded?.call(bankingDetailsModel, bankAccounts);
   }
 
   @override
@@ -844,12 +898,14 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(bankingDetailsModel);
+      return loaded(bankingDetailsModel, bankAccounts);
     }
     return orElse();
   }
@@ -893,11 +949,12 @@ class _$_Loaded extends _Loaded {
 }
 
 abstract class _Loaded extends WageSeekerBankCreateState {
-  const factory _Loaded(final BankingDetailsModel? bankingDetailsModel) =
-      _$_Loaded;
+  const factory _Loaded(final BankingDetailsModel? bankingDetailsModel,
+      final BankAccounts? bankAccounts) = _$_Loaded;
   const _Loaded._() : super._();
 
   BankingDetailsModel? get bankingDetailsModel;
+  BankAccounts? get bankAccounts;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -967,7 +1024,9 @@ class _$_Error extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(BankingDetailsModel? bankingDetailsModel) loaded,
+    required TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -978,7 +1037,9 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult? Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -989,7 +1050,9 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(BankingDetailsModel? bankingDetailsModel)? loaded,
+    TResult Function(BankingDetailsModel? bankingDetailsModel,
+            BankAccounts? bankAccounts)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {

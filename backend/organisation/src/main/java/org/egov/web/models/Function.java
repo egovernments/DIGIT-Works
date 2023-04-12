@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,6 @@ public class Function {
     private String applicationNumber = null;
 
     @JsonProperty("type")
-    @Size(min = 2, max = 64)
     private String type = null;
 
     @JsonProperty("category")
@@ -51,10 +51,10 @@ public class Function {
     private String propertyClass = null;
 
     @JsonProperty("validFrom")
-    private Double validFrom = null;
+    private BigDecimal validFrom = null;
 
     @JsonProperty("validTo")
-    private Double validTo = null;
+    private BigDecimal validTo = null;
 
     @JsonProperty("applicationStatus")
     private ApplicationStatus applicationStatus = null;

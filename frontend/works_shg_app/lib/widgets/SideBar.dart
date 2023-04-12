@@ -10,7 +10,8 @@ import 'package:works_shg_app/utils/global_variables.dart';
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
-import '../blocs/user/user_search.dart';
+import '../blocs/organisation/org_search_bloc.dart';
+import '../models/organisation/organisation_model.dart';
 
 class SideBar extends StatefulWidget {
   final String module;
@@ -35,33 +36,49 @@ class _SideBar extends State<SideBar> {
   }
 
   @override
+  dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext buildContext) {
-    final theme = Theme.of(buildContext);
+    final theme = DigitTheme.instance;
 
     return ScrollableContent(
       footer: const PoweredByDigit(),
       children: [
-        BlocBuilder<UserSearchBloc, UserSearchState>(
-            builder: (context, userState) {
-          return !userState.loading && userState.userSearchModel != null
-              ? SizedBox(
+        BlocBuilder<ORGSearchBloc, ORGSearchState>(
+            builder: (context, orgState) {
+          return orgState.maybeWhen(
+              orElse: () => Container(),
+              loading: () => SizedBox(
                   height: MediaQuery.of(buildContext).size.height / 3,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        userState.userSearchModel!.user!.first.name.toString(),
-                        style: theme.textTheme.displayMedium,
-                      ),
-                      Text(
-                        userState.userSearchModel!.user!.first.mobileNumber
-                            .toString(),
-                        style: theme.textTheme.labelSmall,
-                      ),
-                    ],
-                  ),
-                )
-              : Loaders.circularLoader(context);
+                  child: Loaders.circularLoader(context)),
+              loaded: (OrganisationListModel? organisationListModel) {
+                return organisationListModel?.organisations != null
+                    ? SizedBox(
+                        height: MediaQuery.of(buildContext).size.height / 3,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              organisationListModel!.organisations!.first.name
+                                  .toString(),
+                              style: theme.mobileTheme.textTheme.headlineMedium
+                                  ?.apply(color: const DigitColors().black),
+                            ),
+                            Text(
+                              organisationListModel.organisations!.first
+                                  .contactDetails!.first.contactMobileNumber
+                                  .toString(),
+                              style: theme.mobileTheme.textTheme.bodyMedium
+                                  ?.apply(color: const DigitColors().davyGray),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container();
+              });
         }),
         DigitIconTile(
           title: AppLocalizations.of(context).translate(i18.common.home),
@@ -115,10 +132,17 @@ class _SideBar extends State<SideBar> {
           onPressed: () {},
         ),
         DigitIconTile(
+            title:
+                AppLocalizations.of(context).translate(i18.common.orgProfile),
+            icon: Icons.perm_contact_cal_sharp,
+            onPressed: () {
+              context.router.push(const ORGProfileRoute());
+            }),
+        DigitIconTile(
             title: AppLocalizations.of(context).translate(i18.common.logOut),
             icon: Icons.logout,
             onPressed: () {
-              context.read<AuthBloc>().add(AuthLogoutEvent());
+              context.read<AuthBloc>().add(const AuthLogoutEvent());
             }),
       ],
     );

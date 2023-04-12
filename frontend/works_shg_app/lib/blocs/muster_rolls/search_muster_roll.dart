@@ -32,7 +32,7 @@ class MusterRollSearchBloc
               url: Urls.musterRollServices.searchMusterRolls,
               queryParameters: {
                 "tenantId": GlobalVariables
-                    .globalConfigObject!.globalConfigs!.stateTenantId
+                    .organisationListModel!.organisations!.first.tenantId
                     .toString()
               },
               options: Options(extra: {

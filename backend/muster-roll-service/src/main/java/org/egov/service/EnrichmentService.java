@@ -64,6 +64,9 @@ public class EnrichmentService {
         //status
         musterRoll.setStatus(Status.ACTIVE);
 
+        //contract service code
+        musterRoll.setServiceCode(config.getContractServiceCode());
+
     }
 
     /**
@@ -97,6 +100,9 @@ public class EnrichmentService {
 
         //status
         musterRoll.setStatus(Status.ACTIVE);
+
+        //contract service code
+        musterRoll.setServiceCode(config.getContractServiceCode());
 
     }
 

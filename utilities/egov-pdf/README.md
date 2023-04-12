@@ -13,6 +13,8 @@ Egov-pdf service work in between pdf-service and client requesting pdfs. Earlier
 - Workflow-service
 - Project-service
 - Estimate-service
+- MusterRoll-service
+- contract-service
 
 
 ### Swagger API Contract
@@ -27,6 +29,7 @@ For any new pdf requirement one new endpoint with validations and logic for gett
 
 - ProjectDetail pdf
 - Estimate pdf
+- Nominal Muster Roll pdf
 
 
 #### Configurations
@@ -54,6 +57,7 @@ Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
 | -------- | ------ | --------------- | ------------------------------- |
 |`/egov-pdf/download/project/project-details` | project | `projectId, tenantId` | false |
 |`/egov-pdf/download/estimate/estimates`| estimate | `tenantId` , `estimateNumber` | false | 
+|`/egov-pdf/download/musterRoll/muster-roll` | musterRoll | `musterRollNumber, tenantId` | false |
 
 
 ### Kafka Consumers

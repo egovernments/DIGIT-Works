@@ -294,7 +294,7 @@ packages:
     description:
       path: "packages/digit_components"
       ref: main-parallel
-      resolved-ref: "71524fc6e555fce51ff26b7c305276793e55ffd2"
+      resolved-ref: "72c9ba92226eca40b54f2fb8524ec6bac100eb63"
       url: "https://github.com/egovernments/health-campaign-field-worker-app"
     source: git
     version: "0.0.1"
@@ -350,10 +350,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: d8e9ca7e5d1983365c277f12c21b4362df6cf659c99af146ad4d04eb33033013
+      sha256: "0d923fb610d0abf67f2149c3a50ef85f78bebecfc4d645719ca70bcf4abc788f"
       url: "https://pub.dev"
     source: hosted
-    version: "5.2.6"
+    version: "5.2.7"
   fixnum:
     dependency: transitive
     description:
@@ -830,6 +830,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  open_filex:
+    dependency: "direct main"
+    description:
+      name: open_filex
+      sha256: "854aefd72dfd74219dc8c8d1767c34ec1eae64b8399a5be317bddb1ec2108915"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.3.2"
   overlay_builder:
     dependency: transitive
     description:

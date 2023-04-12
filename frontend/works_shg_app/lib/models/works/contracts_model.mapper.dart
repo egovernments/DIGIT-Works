@@ -117,6 +117,7 @@ class ContractsMapper extends MapperBase<Contracts> {
       ContractProcessInstanceMapper.container,
       ContractAdditionalDetailsMapper.container,
       ContractAuditDetailsMapper.container,
+      ORGAdditionalDetailsMapper.container,
     });
 
   @override
@@ -159,7 +160,8 @@ class ContractsMapperElement extends MapperElementBase<Contracts> {
       documents: container.$getOpt(map, 'documents'),
       processInstance: container.$getOpt(map, 'processInstance'),
       additionalDetails: container.$getOpt(map, 'additionalDetails'),
-      auditDetails: container.$getOpt(map, 'auditDetails'));
+      auditDetails: container.$getOpt(map, 'auditDetails'),
+      orgAdditionalDetails: container.$getOpt(map, 'orgAdditionalDetails'));
 
   @override
   Function get encoder => encode;
@@ -190,12 +192,14 @@ class ContractsMapperElement extends MapperElementBase<Contracts> {
         'processInstance': container.$enc(c.processInstance, 'processInstance'),
         'additionalDetails':
             container.$enc(c.additionalDetails, 'additionalDetails'),
-        'auditDetails': container.$enc(c.auditDetails, 'auditDetails')
+        'auditDetails': container.$enc(c.auditDetails, 'auditDetails'),
+        'orgAdditionalDetails':
+            container.$enc(c.orgAdditionalDetails, 'orgAdditionalDetails')
       };
 
   @override
   String stringify(Contracts self) =>
-      'Contracts(id: ${container.asString(self.id)}, contractNumber: ${container.asString(self.contractNumber)}, tenantId: ${container.asString(self.tenantId)}, wfStatus: ${container.asString(self.wfStatus)}, executingAuthority: ${container.asString(self.executingAuthority)}, contractType: ${container.asString(self.contractType)}, totalContractedAmount: ${container.asString(self.totalContractedAmount)}, securityDeposit: ${container.asString(self.securityDeposit)}, agreementDate: ${container.asString(self.agreementDate)}, issueDate: ${container.asString(self.issueDate)}, defectLiabilityPeriod: ${container.asString(self.defectLiabilityPeriod)}, orgId: ${container.asString(self.orgId)}, startDate: ${container.asString(self.startDate)}, endDate: ${container.asString(self.endDate)}, completionPeriod: ${container.asString(self.completionPeriod)}, status: ${container.asString(self.status)}, lineItems: ${container.asString(self.lineItems)}, documents: ${container.asString(self.documents)}, auditDetails: ${container.asString(self.auditDetails)}, additionalDetails: ${container.asString(self.additionalDetails)}, processInstance: ${container.asString(self.processInstance)})';
+      'Contracts(id: ${container.asString(self.id)}, contractNumber: ${container.asString(self.contractNumber)}, tenantId: ${container.asString(self.tenantId)}, wfStatus: ${container.asString(self.wfStatus)}, executingAuthority: ${container.asString(self.executingAuthority)}, contractType: ${container.asString(self.contractType)}, totalContractedAmount: ${container.asString(self.totalContractedAmount)}, securityDeposit: ${container.asString(self.securityDeposit)}, agreementDate: ${container.asString(self.agreementDate)}, issueDate: ${container.asString(self.issueDate)}, defectLiabilityPeriod: ${container.asString(self.defectLiabilityPeriod)}, orgId: ${container.asString(self.orgId)}, startDate: ${container.asString(self.startDate)}, endDate: ${container.asString(self.endDate)}, completionPeriod: ${container.asString(self.completionPeriod)}, status: ${container.asString(self.status)}, lineItems: ${container.asString(self.lineItems)}, documents: ${container.asString(self.documents)}, auditDetails: ${container.asString(self.auditDetails)}, additionalDetails: ${container.asString(self.additionalDetails)}, processInstance: ${container.asString(self.processInstance)}, orgAdditionalDetails: ${container.asString(self.orgAdditionalDetails)})';
   @override
   int hash(Contracts self) =>
       container.hash(self.id) ^
@@ -218,7 +222,8 @@ class ContractsMapperElement extends MapperElementBase<Contracts> {
       container.hash(self.documents) ^
       container.hash(self.auditDetails) ^
       container.hash(self.additionalDetails) ^
-      container.hash(self.processInstance);
+      container.hash(self.processInstance) ^
+      container.hash(self.orgAdditionalDetails);
   @override
   bool equals(Contracts self, Contracts other) =>
       container.isEqual(self.id, other.id) &&
@@ -243,7 +248,8 @@ class ContractsMapperElement extends MapperElementBase<Contracts> {
       container.isEqual(self.documents, other.documents) &&
       container.isEqual(self.auditDetails, other.auditDetails) &&
       container.isEqual(self.additionalDetails, other.additionalDetails) &&
-      container.isEqual(self.processInstance, other.processInstance);
+      container.isEqual(self.processInstance, other.processInstance) &&
+      container.isEqual(self.orgAdditionalDetails, other.orgAdditionalDetails);
 }
 
 mixin ContractsMappable {
@@ -285,6 +291,8 @@ abstract class ContractsCopyWith<$R, $In extends Contracts,
       ContractAdditionalDetails>? get additionalDetails;
   ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
       get auditDetails;
+  ORGAdditionalDetailsCopyWith<$R, ORGAdditionalDetails, ORGAdditionalDetails>?
+      get orgAdditionalDetails;
   $R call(
       {String? id,
       String? contractNumber,
@@ -306,7 +314,8 @@ abstract class ContractsCopyWith<$R, $In extends Contracts,
       List<Documents>? documents,
       ContractProcessInstance? processInstance,
       ContractAdditionalDetails? additionalDetails,
-      ContractAuditDetails? auditDetails});
+      ContractAuditDetails? auditDetails,
+      ORGAdditionalDetails? orgAdditionalDetails});
 }
 
 class _ContractsCopyWithImpl<$R, $Out extends Contracts>
@@ -349,6 +358,10 @@ class _ContractsCopyWithImpl<$R, $Out extends Contracts>
       get auditDetails => $value.auditDetails?.copyWith
           .chain($identity, (v) => call(auditDetails: v));
   @override
+  ORGAdditionalDetailsCopyWith<$R, ORGAdditionalDetails, ORGAdditionalDetails>?
+      get orgAdditionalDetails => $value.orgAdditionalDetails?.copyWith
+          .chain($identity, (v) => call(orgAdditionalDetails: v));
+  @override
   $R call(
           {Object? id = $none,
           Object? contractNumber = $none,
@@ -370,7 +383,8 @@ class _ContractsCopyWithImpl<$R, $Out extends Contracts>
           Object? documents = $none,
           Object? processInstance = $none,
           Object? additionalDetails = $none,
-          Object? auditDetails = $none}) =>
+          Object? auditDetails = $none,
+          Object? orgAdditionalDetails = $none}) =>
       $then(Contracts(
           id: or(id, $value.id),
           contractNumber: or(contractNumber, $value.contractNumber),
@@ -394,7 +408,120 @@ class _ContractsCopyWithImpl<$R, $Out extends Contracts>
           documents: or(documents, $value.documents),
           processInstance: or(processInstance, $value.processInstance),
           additionalDetails: or(additionalDetails, $value.additionalDetails),
-          auditDetails: or(auditDetails, $value.auditDetails)));
+          auditDetails: or(auditDetails, $value.auditDetails),
+          orgAdditionalDetails:
+              or(orgAdditionalDetails, $value.orgAdditionalDetails)));
+}
+
+class ORGAdditionalDetailsMapper extends MapperBase<ORGAdditionalDetails> {
+  static MapperContainer container = MapperContainer(
+    mappers: {ORGAdditionalDetailsMapper()},
+  );
+
+  @override
+  ORGAdditionalDetailsMapperElement createElement(MapperContainer container) {
+    return ORGAdditionalDetailsMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'ORGAdditionalDetails';
+
+  static final fromMap = container.fromMap<ORGAdditionalDetails>;
+  static final fromJson = container.fromJson<ORGAdditionalDetails>;
+}
+
+class ORGAdditionalDetailsMapperElement
+    extends MapperElementBase<ORGAdditionalDetails> {
+  ORGAdditionalDetailsMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  ORGAdditionalDetails decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  ORGAdditionalDetails fromMap(Map<String, dynamic> map) =>
+      ORGAdditionalDetails(
+          deptRegistrationNum: container.$getOpt(map, 'deptRegistrationNum'),
+          registeredByDept: container.$getOpt(map, 'registeredByDept'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(ORGAdditionalDetails v) => toMap(v);
+  Map<String, dynamic> toMap(ORGAdditionalDetails o) => {
+        'deptRegistrationNum':
+            container.$enc(o.deptRegistrationNum, 'deptRegistrationNum'),
+        'registeredByDept':
+            container.$enc(o.registeredByDept, 'registeredByDept')
+      };
+
+  @override
+  String stringify(ORGAdditionalDetails self) =>
+      'ORGAdditionalDetails(registeredByDept: ${container.asString(self.registeredByDept)}, deptRegistrationNum: ${container.asString(self.deptRegistrationNum)})';
+  @override
+  int hash(ORGAdditionalDetails self) =>
+      container.hash(self.registeredByDept) ^
+      container.hash(self.deptRegistrationNum);
+  @override
+  bool equals(ORGAdditionalDetails self, ORGAdditionalDetails other) =>
+      container.isEqual(self.registeredByDept, other.registeredByDept) &&
+      container.isEqual(self.deptRegistrationNum, other.deptRegistrationNum);
+}
+
+mixin ORGAdditionalDetailsMappable {
+  String toJson() =>
+      ORGAdditionalDetailsMapper.container.toJson(this as ORGAdditionalDetails);
+  Map<String, dynamic> toMap() =>
+      ORGAdditionalDetailsMapper.container.toMap(this as ORGAdditionalDetails);
+  ORGAdditionalDetailsCopyWith<ORGAdditionalDetails, ORGAdditionalDetails,
+          ORGAdditionalDetails>
+      get copyWith => _ORGAdditionalDetailsCopyWithImpl(
+          this as ORGAdditionalDetails, $identity, $identity);
+  @override
+  String toString() => ORGAdditionalDetailsMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          ORGAdditionalDetailsMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => ORGAdditionalDetailsMapper.container.hash(this);
+}
+
+extension ORGAdditionalDetailsValueCopy<$R, $Out extends ORGAdditionalDetails>
+    on ObjectCopyWith<$R, ORGAdditionalDetails, $Out> {
+  ORGAdditionalDetailsCopyWith<$R, ORGAdditionalDetails, $Out>
+      get asORGAdditionalDetails =>
+          base.as((v, t, t2) => _ORGAdditionalDetailsCopyWithImpl(v, t, t2));
+}
+
+typedef ORGAdditionalDetailsCopyWithBound = ORGAdditionalDetails;
+
+abstract class ORGAdditionalDetailsCopyWith<$R,
+        $In extends ORGAdditionalDetails, $Out extends ORGAdditionalDetails>
+    implements ObjectCopyWith<$R, $In, $Out> {
+  ORGAdditionalDetailsCopyWith<$R2, $In, $Out2>
+      chain<$R2, $Out2 extends ORGAdditionalDetails>(
+          Then<ORGAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
+  $R call({String? deptRegistrationNum, String? registeredByDept});
+}
+
+class _ORGAdditionalDetailsCopyWithImpl<$R, $Out extends ORGAdditionalDetails>
+    extends CopyWithBase<$R, ORGAdditionalDetails, $Out>
+    implements ORGAdditionalDetailsCopyWith<$R, ORGAdditionalDetails, $Out> {
+  _ORGAdditionalDetailsCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  ORGAdditionalDetailsCopyWith<$R2, ORGAdditionalDetails, $Out2>
+      chain<$R2, $Out2 extends ORGAdditionalDetails>(
+              Then<ORGAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2) =>
+          _ORGAdditionalDetailsCopyWithImpl($value, t, t2);
+
+  @override
+  $R call(
+          {Object? deptRegistrationNum = $none,
+          Object? registeredByDept = $none}) =>
+      $then(ORGAdditionalDetails(
+          deptRegistrationNum:
+              or(deptRegistrationNum, $value.deptRegistrationNum),
+          registeredByDept: or(registeredByDept, $value.registeredByDept)));
 }
 
 class LineItemsMapper extends MapperBase<LineItems> {
@@ -741,7 +868,11 @@ class ContractAdditionalDetailsMapper
     extends MapperBase<ContractAdditionalDetails> {
   static MapperContainer container = MapperContainer(
     mappers: {ContractAdditionalDetailsMapper()},
-  )..linkAll({EstimateDocsMapper.container});
+  )..linkAll({
+      EstimateDocsMapper.container,
+      DescriptionMapper.container,
+      OfficerInChargeMapper.container,
+    });
 
   @override
   ContractAdditionalDetailsMapperElement createElement(
@@ -780,7 +911,11 @@ class ContractAdditionalDetailsMapperElement
           estimateDocs: container.$getOpt(map, 'estimateDocs'),
           estimateNumber: container.$getOpt(map, 'estimateNumber'),
           totalEstimatedAmount: container.$getOpt(map, 'totalEstimatedAmount'),
-          completionPeriod: container.$getOpt(map, 'completionPeriod'));
+          completionPeriod: container.$getOpt(map, 'completionPeriod'),
+          termsAndConditions: container.$getOpt(map, 'termsAndConditions'),
+          projectDesc: container.$getOpt(map, 'projectDesc'),
+          officerInChargeName: container.$getOpt(map, 'officerInChargeName'),
+          officerInChargeDesgn: container.$getOpt(map, 'officerInChargeDesgn'));
 
   @override
   Function get encoder => encode;
@@ -803,12 +938,19 @@ class ContractAdditionalDetailsMapperElement
         'totalEstimatedAmount':
             container.$enc(c.totalEstimatedAmount, 'totalEstimatedAmount'),
         'completionPeriod':
-            container.$enc(c.completionPeriod, 'completionPeriod')
+            container.$enc(c.completionPeriod, 'completionPeriod'),
+        'termsAndConditions':
+            container.$enc(c.termsAndConditions, 'termsAndConditions'),
+        'projectDesc': container.$enc(c.projectDesc, 'projectDesc'),
+        'officerInChargeName':
+            container.$enc(c.officerInChargeName, 'officerInChargeName'),
+        'officerInChargeDesgn':
+            container.$enc(c.officerInChargeDesgn, 'officerInChargeDesgn')
       };
 
   @override
   String stringify(ContractAdditionalDetails self) =>
-      'ContractAdditionalDetails(officerInChargeId: ${container.asString(self.officerInChargeId)}, attendanceRegisterNumber: ${container.asString(self.attendanceRegisterNumber)}, orgName: ${container.asString(self.orgName)}, projectId: ${container.asString(self.projectId)}, projectName: ${container.asString(self.projectName)}, projectType: ${container.asString(self.projectType)}, ward: ${container.asString(self.ward)}, cboName: ${container.asString(self.cboName)}, cboCode: ${container.asString(self.cboCode)}, estimateNumber: ${container.asString(self.estimateNumber)}, locality: ${container.asString(self.locality)}, totalEstimatedAmount: ${container.asString(self.totalEstimatedAmount)}, estimateDocs: ${container.asString(self.estimateDocs)}, completionPeriod: ${container.asString(self.completionPeriod)})';
+      'ContractAdditionalDetails(officerInChargeId: ${container.asString(self.officerInChargeId)}, attendanceRegisterNumber: ${container.asString(self.attendanceRegisterNumber)}, orgName: ${container.asString(self.orgName)}, projectId: ${container.asString(self.projectId)}, projectName: ${container.asString(self.projectName)}, projectDesc: ${container.asString(self.projectDesc)}, projectType: ${container.asString(self.projectType)}, ward: ${container.asString(self.ward)}, cboName: ${container.asString(self.cboName)}, officerInChargeName: ${container.asString(self.officerInChargeName)}, officerInChargeDesgn: ${container.asString(self.officerInChargeDesgn)}, cboCode: ${container.asString(self.cboCode)}, estimateNumber: ${container.asString(self.estimateNumber)}, locality: ${container.asString(self.locality)}, totalEstimatedAmount: ${container.asString(self.totalEstimatedAmount)}, estimateDocs: ${container.asString(self.estimateDocs)}, termsAndConditions: ${container.asString(self.termsAndConditions)}, completionPeriod: ${container.asString(self.completionPeriod)})';
   @override
   int hash(ContractAdditionalDetails self) =>
       container.hash(self.officerInChargeId) ^
@@ -816,14 +958,18 @@ class ContractAdditionalDetailsMapperElement
       container.hash(self.orgName) ^
       container.hash(self.projectId) ^
       container.hash(self.projectName) ^
+      container.hash(self.projectDesc) ^
       container.hash(self.projectType) ^
       container.hash(self.ward) ^
       container.hash(self.cboName) ^
+      container.hash(self.officerInChargeName) ^
+      container.hash(self.officerInChargeDesgn) ^
       container.hash(self.cboCode) ^
       container.hash(self.estimateNumber) ^
       container.hash(self.locality) ^
       container.hash(self.totalEstimatedAmount) ^
       container.hash(self.estimateDocs) ^
+      container.hash(self.termsAndConditions) ^
       container.hash(self.completionPeriod);
   @override
   bool equals(
@@ -834,15 +980,20 @@ class ContractAdditionalDetailsMapperElement
       container.isEqual(self.orgName, other.orgName) &&
       container.isEqual(self.projectId, other.projectId) &&
       container.isEqual(self.projectName, other.projectName) &&
+      container.isEqual(self.projectDesc, other.projectDesc) &&
       container.isEqual(self.projectType, other.projectType) &&
       container.isEqual(self.ward, other.ward) &&
       container.isEqual(self.cboName, other.cboName) &&
+      container.isEqual(self.officerInChargeName, other.officerInChargeName) &&
+      container.isEqual(
+          self.officerInChargeDesgn, other.officerInChargeDesgn) &&
       container.isEqual(self.cboCode, other.cboCode) &&
       container.isEqual(self.estimateNumber, other.estimateNumber) &&
       container.isEqual(self.locality, other.locality) &&
       container.isEqual(
           self.totalEstimatedAmount, other.totalEstimatedAmount) &&
       container.isEqual(self.estimateDocs, other.estimateDocs) &&
+      container.isEqual(self.termsAndConditions, other.termsAndConditions) &&
       container.isEqual(self.completionPeriod, other.completionPeriod);
 }
 
@@ -886,6 +1037,11 @@ abstract class ContractAdditionalDetailsCopyWith<
           Then<ContractAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
   ListCopyWith<$R, EstimateDocs,
       EstimateDocsCopyWith<$R, EstimateDocs, EstimateDocs>>? get estimateDocs;
+  ListCopyWith<$R, Description?,
+          DescriptionCopyWith<$R, Description, Description>?>?
+      get termsAndConditions;
+  OfficerInChargeCopyWith<$R, OfficerInCharge, OfficerInCharge>?
+      get officerInChargeName;
   $R call(
       {String? officerInChargeId,
       String? attendanceRegisterNumber,
@@ -900,7 +1056,11 @@ abstract class ContractAdditionalDetailsCopyWith<
       List<EstimateDocs>? estimateDocs,
       String? estimateNumber,
       double? totalEstimatedAmount,
-      int? completionPeriod});
+      int? completionPeriod,
+      List<Description?>? termsAndConditions,
+      String? projectDesc,
+      OfficerInCharge? officerInChargeName,
+      String? officerInChargeDesgn});
 }
 
 class _ContractAdditionalDetailsCopyWithImpl<$R,
@@ -925,6 +1085,19 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
               (v) => call(estimateDocs: v))
           : null;
   @override
+  ListCopyWith<$R, Description?,
+          DescriptionCopyWith<$R, Description, Description>?>?
+      get termsAndConditions => $value.termsAndConditions != null
+          ? ListCopyWith(
+              $value.termsAndConditions!,
+              (v, t) => v?.copyWith.chain<$R, Description>($identity, t),
+              (v) => call(termsAndConditions: v))
+          : null;
+  @override
+  OfficerInChargeCopyWith<$R, OfficerInCharge, OfficerInCharge>?
+      get officerInChargeName => $value.officerInChargeName?.copyWith
+          .chain($identity, (v) => call(officerInChargeName: v));
+  @override
   $R call(
           {Object? officerInChargeId = $none,
           Object? attendanceRegisterNumber = $none,
@@ -939,7 +1112,11 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
           Object? estimateDocs = $none,
           Object? estimateNumber = $none,
           Object? totalEstimatedAmount = $none,
-          Object? completionPeriod = $none}) =>
+          Object? completionPeriod = $none,
+          Object? termsAndConditions = $none,
+          Object? projectDesc = $none,
+          Object? officerInChargeName = $none,
+          Object? officerInChargeDesgn = $none}) =>
       $then(ContractAdditionalDetails(
           officerInChargeId: or(officerInChargeId, $value.officerInChargeId),
           attendanceRegisterNumber:
@@ -956,7 +1133,202 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
           estimateNumber: or(estimateNumber, $value.estimateNumber),
           totalEstimatedAmount:
               or(totalEstimatedAmount, $value.totalEstimatedAmount),
-          completionPeriod: or(completionPeriod, $value.completionPeriod)));
+          completionPeriod: or(completionPeriod, $value.completionPeriod),
+          termsAndConditions: or(termsAndConditions, $value.termsAndConditions),
+          projectDesc: or(projectDesc, $value.projectDesc),
+          officerInChargeName:
+              or(officerInChargeName, $value.officerInChargeName),
+          officerInChargeDesgn:
+              or(officerInChargeDesgn, $value.officerInChargeDesgn)));
+}
+
+class OfficerInChargeMapper extends MapperBase<OfficerInCharge> {
+  static MapperContainer container = MapperContainer(
+    mappers: {OfficerInChargeMapper()},
+  );
+
+  @override
+  OfficerInChargeMapperElement createElement(MapperContainer container) {
+    return OfficerInChargeMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'OfficerInCharge';
+
+  static final fromMap = container.fromMap<OfficerInCharge>;
+  static final fromJson = container.fromJson<OfficerInCharge>;
+}
+
+class OfficerInChargeMapperElement extends MapperElementBase<OfficerInCharge> {
+  OfficerInChargeMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  OfficerInCharge decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  OfficerInCharge fromMap(Map<String, dynamic> map) => OfficerInCharge(
+      code: container.$getOpt(map, 'code'),
+      name: container.$getOpt(map, 'name'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(OfficerInCharge v) => toMap(v);
+  Map<String, dynamic> toMap(OfficerInCharge o) => {
+        'code': container.$enc(o.code, 'code'),
+        'name': container.$enc(o.name, 'name')
+      };
+
+  @override
+  String stringify(OfficerInCharge self) =>
+      'OfficerInCharge(code: ${container.asString(self.code)}, name: ${container.asString(self.name)})';
+  @override
+  int hash(OfficerInCharge self) =>
+      container.hash(self.code) ^ container.hash(self.name);
+  @override
+  bool equals(OfficerInCharge self, OfficerInCharge other) =>
+      container.isEqual(self.code, other.code) &&
+      container.isEqual(self.name, other.name);
+}
+
+mixin OfficerInChargeMappable {
+  String toJson() =>
+      OfficerInChargeMapper.container.toJson(this as OfficerInCharge);
+  Map<String, dynamic> toMap() =>
+      OfficerInChargeMapper.container.toMap(this as OfficerInCharge);
+  OfficerInChargeCopyWith<OfficerInCharge, OfficerInCharge, OfficerInCharge>
+      get copyWith => _OfficerInChargeCopyWithImpl(
+          this as OfficerInCharge, $identity, $identity);
+  @override
+  String toString() => OfficerInChargeMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          OfficerInChargeMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => OfficerInChargeMapper.container.hash(this);
+}
+
+extension OfficerInChargeValueCopy<$R, $Out extends OfficerInCharge>
+    on ObjectCopyWith<$R, OfficerInCharge, $Out> {
+  OfficerInChargeCopyWith<$R, OfficerInCharge, $Out> get asOfficerInCharge =>
+      base.as((v, t, t2) => _OfficerInChargeCopyWithImpl(v, t, t2));
+}
+
+typedef OfficerInChargeCopyWithBound = OfficerInCharge;
+
+abstract class OfficerInChargeCopyWith<$R, $In extends OfficerInCharge,
+    $Out extends OfficerInCharge> implements ObjectCopyWith<$R, $In, $Out> {
+  OfficerInChargeCopyWith<$R2, $In, $Out2>
+      chain<$R2, $Out2 extends OfficerInCharge>(
+          Then<OfficerInCharge, $Out2> t, Then<$Out2, $R2> t2);
+  $R call({String? code, String? name});
+}
+
+class _OfficerInChargeCopyWithImpl<$R, $Out extends OfficerInCharge>
+    extends CopyWithBase<$R, OfficerInCharge, $Out>
+    implements OfficerInChargeCopyWith<$R, OfficerInCharge, $Out> {
+  _OfficerInChargeCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  OfficerInChargeCopyWith<$R2, OfficerInCharge, $Out2>
+      chain<$R2, $Out2 extends OfficerInCharge>(
+              Then<OfficerInCharge, $Out2> t, Then<$Out2, $R2> t2) =>
+          _OfficerInChargeCopyWithImpl($value, t, t2);
+
+  @override
+  $R call({Object? code = $none, Object? name = $none}) =>
+      $then(OfficerInCharge(
+          code: or(code, $value.code), name: or(name, $value.name)));
+}
+
+class DescriptionMapper extends MapperBase<Description> {
+  static MapperContainer container = MapperContainer(
+    mappers: {DescriptionMapper()},
+  );
+
+  @override
+  DescriptionMapperElement createElement(MapperContainer container) {
+    return DescriptionMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'Description';
+
+  static final fromMap = container.fromMap<Description>;
+  static final fromJson = container.fromJson<Description>;
+}
+
+class DescriptionMapperElement extends MapperElementBase<Description> {
+  DescriptionMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  Description decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  Description fromMap(Map<String, dynamic> map) =>
+      Description(description: container.$getOpt(map, 'description'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(Description v) => toMap(v);
+  Map<String, dynamic> toMap(Description d) =>
+      {'description': container.$enc(d.description, 'description')};
+
+  @override
+  String stringify(Description self) =>
+      'Description(description: ${container.asString(self.description)})';
+  @override
+  int hash(Description self) => container.hash(self.description);
+  @override
+  bool equals(Description self, Description other) =>
+      container.isEqual(self.description, other.description);
+}
+
+mixin DescriptionMappable {
+  String toJson() => DescriptionMapper.container.toJson(this as Description);
+  Map<String, dynamic> toMap() =>
+      DescriptionMapper.container.toMap(this as Description);
+  DescriptionCopyWith<Description, Description, Description> get copyWith =>
+      _DescriptionCopyWithImpl(this as Description, $identity, $identity);
+  @override
+  String toString() => DescriptionMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          DescriptionMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => DescriptionMapper.container.hash(this);
+}
+
+extension DescriptionValueCopy<$R, $Out extends Description>
+    on ObjectCopyWith<$R, Description, $Out> {
+  DescriptionCopyWith<$R, Description, $Out> get asDescription =>
+      base.as((v, t, t2) => _DescriptionCopyWithImpl(v, t, t2));
+}
+
+typedef DescriptionCopyWithBound = Description;
+
+abstract class DescriptionCopyWith<$R, $In extends Description,
+    $Out extends Description> implements ObjectCopyWith<$R, $In, $Out> {
+  DescriptionCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends Description>(
+      Then<Description, $Out2> t, Then<$Out2, $R2> t2);
+  $R call({String? description});
+}
+
+class _DescriptionCopyWithImpl<$R, $Out extends Description>
+    extends CopyWithBase<$R, Description, $Out>
+    implements DescriptionCopyWith<$R, Description, $Out> {
+  _DescriptionCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  DescriptionCopyWith<$R2, Description, $Out2>
+      chain<$R2, $Out2 extends Description>(
+              Then<Description, $Out2> t, Then<$Out2, $R2> t2) =>
+          _DescriptionCopyWithImpl($value, t, t2);
+
+  @override
+  $R call({Object? description = $none}) =>
+      $then(Description(description: or(description, $value.description)));
 }
 
 class EstimateDocsMapper extends MapperBase<EstimateDocs> {

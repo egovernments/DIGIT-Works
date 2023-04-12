@@ -1,7 +1,7 @@
 var config = require("./config");
 var axios = require("axios").default;
 var url = require("url");
-var producer = require("./producer").producer ;
+var producer = require("./producer").producer;
 var logger = require("./logger").logger;
 const { Pool } = require('pg');
 
@@ -18,15 +18,17 @@ auth_token = config.auth_token;
 async function search_projectDetails(tenantId, requestinfo, projectId) {
   var params = {
     tenantId: tenantId,
-    limit:1,
-    offset:0
+    limit: 1,
+    offset: 0
   };
 
   var searchEndpoint = config.paths.projectDetails_search;
-var data= {"Projects": [{
-  "tenantId":tenantId, 
-  "projectNumber": projectId
-  }]}
+  var data = {
+    "Projects": [{
+      "tenantId": tenantId,
+      "projectNumber": projectId
+    }]
+  }
   return await axios({
     method: "post",
     url: url.resolve(config.host.projectDetails, searchEndpoint),
@@ -34,12 +36,60 @@ var data= {"Projects": [{
     params,
   });
 }
+async function search_musterRoll(tenantId, requestinfo, musterRollNumber) {
+  var params = {
+    tenantId: tenantId,
+    musterRollNumber: musterRollNumber
+  };
+
+  var searchEndpoint = config.paths.musterRoll_search;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.musterRoll, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params,
+  });
+}
+async function search_contract(tenantId, requestinfo, contractId) {
+  var params = {
+    tenantId: tenantId,
+    contractNumber: contractId
+  };
+
+  var searchEndpoint = config.paths.contract_search;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.contract, searchEndpoint),
+    data: Object.assign(requestinfo, params),
+
+  });
+}
+async function search_mdmsWageSeekerSkills(tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId.split(".")[0],
+    moduleName: "common-masters",
+    masterName: "WageSeekerSkills",
+  };
+
+  var searchEndpoint = config.paths.mdmsWageSeekerSkills_search;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.mdms, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params
+
+  });
+}
+
 
 async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
   var params = {
     tenantId: tenantId,
     estimateNumber: estimateNumber,
-    limit:1,
+    limit: 1,
     _offset: 0,
     get offset() {
       return this._offset;
@@ -100,7 +150,7 @@ async function search_mdms(tenantId, module, master, requestinfo) {
 
 
 async function create_pdf(tenantId, key, data, requestinfo) {
-  var oj=Object.assign(requestinfo, data);
+  var oj = Object.assign(requestinfo, data);
   return await axios({
     responseType: "stream",
     method: "post",
@@ -139,45 +189,45 @@ function checkIfCitizen(requestinfo) {
  * It generates bill of property tax and merge into single PDF file
  * @param {*} kafkaData - Data pushed in kafka topic
  */
-async function create_bulk_pdf_pt(kafkaData){
+async function create_bulk_pdf_pt(kafkaData) {
   var propertyBills;
-  var consolidatedResult = {Bill:[]};
-  
-  let { 
-    tenantId, 
-    locality, 
-    bussinessService, 
-    isConsolidated, 
-    consumerCode, 
-    requestinfo, 
+  var consolidatedResult = { Bill: [] };
+
+  let {
+    tenantId,
+    locality,
+    bussinessService,
+    isConsolidated,
+    consumerCode,
+    requestinfo,
     jobid
   } = kafkaData;
-  
+
   try {
 
-    try{
-      var searchCriteria = {locality, tenantId, bussinessService};
+    try {
+      var searchCriteria = { locality, tenantId, bussinessService };
       propertyBills = await search_bill(
-        null, 
+        null,
         null,
         {
-          RequestInfo:requestinfo.RequestInfo,
+          RequestInfo: requestinfo.RequestInfo,
           searchCriteria
         }
       );
 
       propertyBills = propertyBills.data.Bills;
 
-      if(propertyBills.length>0){
-        for(let propertyBill of propertyBills){
-          if(propertyBill.status ==='EXPIRED'){
+      if (propertyBills.length > 0) {
+        for (let propertyBill of propertyBills) {
+          if (propertyBill.status === 'EXPIRED') {
             var billresponse = await fetch_bill(
-              tenantId, propertyBill.consumerCode, propertyBill.businessService, {RequestInfo:requestinfo.RequestInfo}
+              tenantId, propertyBill.consumerCode, propertyBill.businessService, { RequestInfo: requestinfo.RequestInfo }
             );
             if (billresponse?.data?.Bill?.[0]) consolidatedResult.Bill.push(billresponse.data.Bill[0]);
           }
-          else{
-            if(propertyBill.status ==='ACTIVE')
+          else {
+            if (propertyBill.status === 'ACTIVE')
               consolidatedResult.Bill.push(propertyBill);
           }
         }
@@ -194,30 +244,30 @@ async function create_bulk_pdf_pt(kafkaData){
       try {
         var batchSize = config.PDF_BATCH_SIZE;
         var size = consolidatedResult.Bill.length;
-        var numberOfFiles = (size%batchSize) == 0 ? (size/batchSize) : (~~(size/batchSize) +1);
-        for(var i = 0;i<size;i+=batchSize){
+        var numberOfFiles = (size % batchSize) == 0 ? (size / batchSize) : (~~(size / batchSize) + 1);
+        for (var i = 0; i < size; i += batchSize) {
           var payloads = [];
-          var billData = consolidatedResult.Bill.slice(i,i+batchSize);
-          var billArray = { 
-              Bill: billData,
-              isBulkPdf: true,
-              pdfJobId: jobid,
-              pdfKey: pdfkey,
-              totalPdfRecords:size,
-              currentPdfRecords: billData.length,
-              tenantId: tenantId,
-              numberOfFiles:numberOfFiles,
-              locality: locality,
-              service: bussinessService,
-              isConsolidated: isConsolidated,
-              consumerCode: consumerCode
+          var billData = consolidatedResult.Bill.slice(i, i + batchSize);
+          var billArray = {
+            Bill: billData,
+            isBulkPdf: true,
+            pdfJobId: jobid,
+            pdfKey: pdfkey,
+            totalPdfRecords: size,
+            currentPdfRecords: billData.length,
+            tenantId: tenantId,
+            numberOfFiles: numberOfFiles,
+            locality: locality,
+            service: bussinessService,
+            isConsolidated: isConsolidated,
+            consumerCode: consumerCode
           };
-          var pdfData = Object.assign({RequestInfo:requestinfo.RequestInfo}, billArray)
+          var pdfData = Object.assign({ RequestInfo: requestinfo.RequestInfo }, billArray)
           payloads.push({
             topic: config.KAFKA_RECEIVE_CREATE_JOB_TOPIC,
             messages: JSON.stringify(pdfData)
           });
-          producer.send(payloads, function(err, data) {
+          producer.send(payloads, function (err, data) {
             if (err) {
               logger.error(err.stack || err);
               errorCallback({
@@ -232,22 +282,22 @@ async function create_bulk_pdf_pt(kafkaData){
 
         try {
           const result = await pool.query('select * from egov_bulk_pdf_info where jobid = $1', [jobid]);
-          if(result.rowCount>=1){
+          if (result.rowCount >= 1) {
             const updateQuery = 'UPDATE egov_bulk_pdf_info SET totalrecords = $1 WHERE jobid = $2';
-            await pool.query(updateQuery,[size, jobid]);
+            await pool.query(updateQuery, [size, jobid]);
           }
         } catch (err) {
           logger.error(err.stack || err);
         }
       } catch (ex) {
-        let errorMessage= "Failed to generate PDF"; 
+        let errorMessage = "Failed to generate PDF";
         if (ex.response && ex.response.data) logger.error(ex.response.data);
         throw new Error(errorMessage);
       }
     } else {
       throw new Error("There is no billfound for the criteria");
     }
-    
+
   } catch (ex) {
     throw new Error("Failed to query bill for property application");
   }
@@ -261,5 +311,8 @@ module.exports = {
   search_user,
   search_workflow,
   search_projectDetails,
-  search_estimateDetails
+  search_estimateDetails,
+  search_musterRoll,
+  search_contract,
+  search_mdmsWageSeekerSkills
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { PropertyHouse, BioMetricIcon} from "./svgindex";
+import { PropertyHouse, BioMetricIcon,WorksMgmtIcon} from "./svgindex";
 
 const InboxSearchLinks = ({headerText, links, businessService, customClass="", logoIcon}) => {
     const { t } = useTranslation();
@@ -16,6 +16,7 @@ const InboxSearchLinks = ({headerText, links, businessService, customClass="", l
         <span className="logo">
            {logoIcon?.component === "PropertyHouse" && <PropertyHouse className={logoIcon?.customClass} />}
            {logoIcon?.component === "BioMetricIcon" && <BioMetricIcon className={logoIcon?.customClass} />}
+           {logoIcon?.component === "MuktaIcon" && <WorksMgmtIcon fill={"#F47738"} className={logoIcon?.customClass} />}
         </span>
         <span className="text">{t(headerText)}</span>
     </div>

@@ -1,0 +1,10 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "common-masters": {
+      "OrgType": [
+        "OrgType-1.CD", "OrgType-2.CD"
+      ]
+    }
+  }
+}

@@ -34,23 +34,8 @@ const inboxConfig = () => {
             attendanceRegisterName: "",
             orgId: "",
             musterRollNumber: "",
-            ward: "",
           },
           fields: [
-            {
-              label: "COMMON_WARD",
-              type: "locationdropdown",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "ward",
-                type: "ward",
-                optionsKey: "i18nKey",
-                defaultText: "COMMON_SELECT_WARD",
-                selectedText: "COMMON_SELECTED",
-                allowMultiSelect: false,
-              },
-            },
             {
               label: "ATM_MUSTER_ROLL_ID",
               type: "text",
@@ -61,7 +46,7 @@ const inboxConfig = () => {
               },
               populators: {
                 name: "musterRollNumber",
-                error: "PROJECT_PATTERN_ERR_MSG",
+                error: "COMMON_PATTERN_ERR_MSG_MUSTER_ID",
                 validation: {
                   pattern: "MR\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
                   minlength: 2,
@@ -69,7 +54,7 @@ const inboxConfig = () => {
               },
             },
             {
-              label: "ATM_REGISTER_NAME",
+              label: "ES_COMMON_PROJECT_NAME",
               type: "text",
               isMandatory: false,
               disable: false,
@@ -109,7 +94,7 @@ const inboxConfig = () => {
           ],
           label: "ES_COMMON_ATTENDENCEMGMT",
           logoIcon: {
-            component: "BioMetricIcon",
+            component: "MuktaIcon",
             customClass: "search-icon--projects",
           },
         },
@@ -159,6 +144,20 @@ const inboxConfig = () => {
                   display: "flex",
                 },
               },
+            },
+            {
+              "label": "COMMON_WARD",
+              "type": "locationdropdown",
+              "isMandatory": false,
+              "disable": false,
+              "populators": {
+                  "name": "ward",
+                  "type": "ward",
+                  "optionsKey": "i18nKey",
+                  "defaultText": "COMMON_SELECT_WARD",
+                  "selectedText": "COMMON_SELECTED",
+                  "allowMultiSelect": true
+              }
             },
             {
               label: "COMMON_WORKFLOW_STATES",
@@ -211,7 +210,7 @@ const inboxConfig = () => {
               key: "estimatedAmount",
             },
             {
-              label: "ATM_SLA",
+              label: "COMMON_SLA_DAYS",
               jsonPath: "businessObject.serviceSla",
               additionalCustomization: true,
             },

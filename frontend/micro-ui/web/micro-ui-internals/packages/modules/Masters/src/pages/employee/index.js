@@ -14,6 +14,12 @@ const MastersBreadCrumb = ({ location }) => {
         show: true,
     },
     {
+      path: `/${window.contextPath}/employee/masters/response`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("ES_COMMON_RESPONSE")}` : t("ES_COMMON_RESPONSE"),
+      show: location.pathname.includes("/masters/response") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
         path: `/${window.contextPath}/employee/masters/search-organization`,
         content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_SEARCH_MASTERS")}` : t("MASTERS_SEARCH_MASTERS"),
         show: location.pathname.includes("/masters/search-organization") ? true : false,
@@ -21,7 +27,7 @@ const MastersBreadCrumb = ({ location }) => {
     },
     {
         path: `/${window.contextPath}/employee/masters/create-organization`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_CREATE_ORGANISATION")}` : t("MASTERS_CREATE_ORGANISATION"),
+        content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_MASTERS")}` : t("WORKS_MASTERS"),
         show: location.pathname.includes("/masters/create-organization") ? true : false,
         isBack: fromScreen && true,
     },
@@ -83,14 +89,12 @@ const App = ({ path }) => {
   const MastersResponse = Digit?.ComponentRegistryService?.getComponent("MastersResponse");
 
   useEffect(() => {
-    return () => {
-      if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
-        clearSessionFormData();
-      }
-      if (!window.location.href.includes("modify-wageseeker") && wsSesionFormData && Object.keys(wsSesionFormData) != 0) {
-        clearWsSessionFormData();
-      }
-    };
+    if (!window.location.href.includes("create-organization") && sessionFormData && Object.keys(sessionFormData) != 0) {
+      clearSessionFormData();
+    }
+    if (!window.location.href.includes("modify-wageseeker") && wsSesionFormData && Object.keys(wsSesionFormData) != 0) {
+      clearWsSessionFormData();
+    }
   }, [location]);
 
   return (

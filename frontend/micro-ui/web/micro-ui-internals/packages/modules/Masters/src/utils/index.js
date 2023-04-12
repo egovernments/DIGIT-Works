@@ -3,6 +3,13 @@ const getValidDateObject = (dateString) => {
     return new Date(+year, +month - 1, +day)
 }
 
+export const getTomorrowsDate = () => {
+    let today = new Date()
+    let tomorrow = new Date()
+    tomorrow.setDate(today.getDate() + 1)
+    return tomorrow.toISOString().split("T")[0]
+}
+
 export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady }) => {
 
     const individual = wageSeekerData?.individual
@@ -38,8 +45,8 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
         configs.defaultValues.skillDetails_skill = skills
     
         configs.defaultValues.locDetails_city = ULBOptions[0]
-        configs.defaultValues.locDetails_ward = individual?.address?.[0]?.ward ? { code: individual?.address?.[0]?.ward?.code, name: individual?.address?.[0]?.ward?.code, i18nKey: `${headerLocale}_ADMIN_${individual?.address?.[0]?.ward?.code}`} : ""
-        configs.defaultValues.locDetails_locality = individual?.address?.[0]?.locality ? { code: individual?.address?.[0]?.locality?.code, name: individual?.address?.[0]?.locality?.code, i18nKey: `${headerLocale}_ADMIN_${individual?.address?.[0]?.locality?.code}`} : ""
+        configs.defaultValues.locDetails_ward = individual?.address?.[0]?.ward ? { code: individual?.address?.[0]?.ward?.code, name: individual?.address?.[0]?.ward?.code, i18nKey: Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.ward?.code, tenantId)} : ""
+        configs.defaultValues.locDetails_locality = individual?.address?.[0]?.locality ? { code: individual?.address?.[0]?.locality?.code, name: individual?.address?.[0]?.locality?.code, i18nKey: Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.locality?.code, tenantId)} : ""
         configs.defaultValues.locDetails_streetName = individual?.address?.[0]?.street ? individual?.address?.[0]?.street : ""
         configs.defaultValues.locDetails_houseName = individual?.address?.[0]?.doorNo ? individual?.address?.[0]?.doorNo : ""
     
@@ -164,7 +171,7 @@ export const getWageSeekerSkillDeletePayload = ({wageSeekerDataFromAPI, tenantId
     }
 }
 
-export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, tenantId, isModify, referenceId}) => {
+export const getBankAccountUpdatePayload = ({formData, apiData, tenantId, isModify, referenceId, isWageSeeker}) => {
     let bankAccounts = []
 
     //create new object for bank account details
@@ -175,7 +182,7 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
     bankAccountsData.accountType = formData?.financeDetails_accountType?.code
     bankAccountsData.bankBranchIdentifier = {
         type: "IFSC",
-        code: formData?.financeDetails_ifsc,
+        code: isWageSeeker? formData?.financeDetails_ifsc : formData?.transferCodesData?.[0]?.value,
         additionalDetails: {
             ifsccode: formData?.financeDetails_branchName
         }
@@ -185,7 +192,7 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
 
     if(isModify) {
         //copy existing data
-        bankAccounts = [...wageSeekerDataFromAPI?.bankDetails]
+        bankAccounts = [...apiData?.bankDetails]
         delete bankAccounts[0]?.auditDetails
 
         let bankAccountDetails = bankAccounts?.[0]?.bankAccountDetails?.[0]
@@ -195,7 +202,7 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
     } else {
         let bankObj = {}
         bankObj.tenantId = tenantId
-        bankObj.serviceCode = "IND"
+        bankObj.serviceCode = isWageSeeker ? "IND" : "ORG"
         bankObj.referenceId = referenceId
         bankObj.bankAccountDetails = []
         bankAccounts.push(bankObj)
@@ -206,3 +213,169 @@ export const getBankAccountUpdatePayload = ({formData, wageSeekerDataFromAPI, te
         bankAccounts
     }
 }   
+
+export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, orgData, tenantId, ULBOptions, setIsFormReady }) => {
+    const organisation = orgData?.organisation
+    const bankAccountDetails = orgData?.bankDetails?.[0]?.bankAccountDetails?.[0]
+    
+    const funDetails = organisation?.functions?.[0]
+    let identifiers = organisation?.identifiers?.map(item => {
+        return {
+            name: { code: item?.type, name: `COMMON_MASTERS_TAXIDENTIFIER_${item?.type}`, active: true},
+            value: item?.value ? item?.value : ""
+        }
+    })
+
+    if(!sessionFormData?.locDetails_city) {
+        if(isModify) {
+            configs.defaultValues.basicDetails_orgId = organisation?.orgNumber ? organisation?.orgNumber : ""
+        }
+
+        configs.defaultValues.basicDetails_orgName = organisation?.name ? organisation?.name : ""
+        configs.defaultValues.basicDetails_regDept = organisation?.additionalDetails?.registeredByDept ? organisation?.additionalDetails?.registeredByDept : ""
+        configs.defaultValues.basicDetails_regDeptNo = organisation?.additionalDetails?.deptRegistrationNum ? organisation?.additionalDetails?.deptRegistrationNum : ""
+        configs.defaultValues.basicDetails_dateOfIncorporation = organisation?.dateOfIncorporation ? Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'yyyy-MM-dd') : ""
+        
+        configs.defaultValues.funDetails_orgType = funDetails?.type ? { code: funDetails?.type?.split('.')?.[0] , name: `COMMON_MASTERS_ORG_${funDetails?.type?.split('.')?.[0]}`} : ""
+        configs.defaultValues.funDetails_orgSubType = funDetails?.type ? { code: funDetails?.type?.split('.')?.[1] , name: `COMMON_MASTERS_SUBORG_${funDetails?.type?.split('.')?.[1]}`} : ""
+        configs.defaultValues.funDetails_category = funDetails?.category ? { code: funDetails?.category?.split('.')?.[1] , name: `COMMON_MASTERS_FUNCATEGORY_${funDetails?.category?.split('.')?.[1]}`} : ""
+        configs.defaultValues.funDetails_classRank = funDetails?.class ? { code:funDetails?.class , name: `COMMON_MASTERS_CLASS_${funDetails?.class}`} : ""
+        configs.defaultValues.funDetails_validFrom = funDetails?.validFrom ? Digit.DateUtils.ConvertTimestampToDate(funDetails?.validFrom, 'yyyy-MM-dd') : ""
+        configs.defaultValues.funDetails_validTo = funDetails?.validTo ? Digit.DateUtils.ConvertTimestampToDate(funDetails?.validTo, 'yyyy-MM-dd') : ""
+
+        configs.defaultValues.locDetails_city = ULBOptions[0]
+        configs.defaultValues.locDetails_ward = organisation?.orgAddress?.[0]?.boundaryCode ? { code: organisation?.orgAddress?.[0]?.boundaryCode, name: organisation?.orgAddress?.[0]?.boundaryCode, i18nKey: Digit.Utils.locale.getMohallaLocale(organisation?.orgAddress?.[0]?.boundaryCode, tenantId)} : ""
+        configs.defaultValues.locDetails_locality = organisation?.additionalDetails?.locality ? { code: organisation?.additionalDetails?.locality, name: organisation?.additionalDetails?.locality, i18nKey: Digit.Utils.locale.getMohallaLocale(organisation?.additionalDetails?.locality, tenantId)} : ""
+        configs.defaultValues.locDetails_streetName = organisation?.orgAddress?.[0]?.street ? organisation?.orgAddress?.[0]?.street : ""
+        configs.defaultValues.locDetails_houseName = organisation?.orgAddress?.[0]?.doorNo ? organisation?.orgAddress?.[0]?.doorNo : ""
+        
+        configs.defaultValues.contactDetails_name = organisation?.contactDetails?.[0]?.contactName ? organisation?.contactDetails?.[0]?.contactName : ""
+        configs.defaultValues.contactDetails_mobile = organisation?.contactDetails?.[0]?.contactMobileNumber ? organisation?.contactDetails?.[0]?.contactMobileNumber : ""
+        configs.defaultValues.contactDetails_email = organisation?.contactDetails?.[0]?.contactEmail ? organisation?.contactDetails?.[0]?.contactEmail : ""
+        
+        configs.defaultValues.financeDetails_accountHolderName = bankAccountDetails?.accountHolderName ? bankAccountDetails?.accountHolderName : ""
+        configs.defaultValues.financeDetails_accountType = bankAccountDetails?.accountType ? { code: bankAccountDetails?.accountType , name: `MASTERS_${bankAccountDetails?.accountType}`, active: true } : ""
+        configs.defaultValues.financeDetails_accountNumber = bankAccountDetails?.accountNumber ? bankAccountDetails?.accountNumber : ""
+        configs.defaultValues.financeDetails_bankName = ''
+        configs.defaultValues.financeDetails_branchName = ''
+
+        configs.defaultValues.transferCodesData = [{
+            name: { code: 'IFSC', "name": "COMMON_MASTERS_TRANSFERCODES_IFSC", active: true },
+            value: bankAccountDetails?.bankBranchIdentifier?.code ? bankAccountDetails?.bankBranchIdentifier?.code : "" 
+        }]
+
+        configs.defaultValues.taxIdentifierData = identifiers
+       
+        setSessionFormData({...configs?.defaultValues})
+    }
+    setIsFormReady(true)
+}
+
+const getOrgIdentifiersToUpdate = (formData, orgDataFromAPI) => {
+    let updatedIdentifiers = formData?.taxIdentifierData
+    let existingIdentifiers = orgDataFromAPI?.organisation?.identifiers
+
+    let orgIdentifiers = []
+    let types = ['PAN', 'GSTIN']
+    types?.forEach(type => {
+        let formIdentifier = updatedIdentifiers?.find(item => item?.name?.code === type)
+        let apiIdentifier = existingIdentifiers?.find(item => item?.type === type)
+        if(formIdentifier && apiIdentifier && formIdentifier?.value !== apiIdentifier?.value) {
+            orgIdentifiers.push({...apiIdentifier, value: formIdentifier?.value, isActive: true})
+        }
+        if(formIdentifier && apiIdentifier && formIdentifier?.value === apiIdentifier?.value) {
+            orgIdentifiers.push({...apiIdentifier, isActive: true})
+        }
+        if(formIdentifier && !apiIdentifier) {
+            orgIdentifiers.push({type: formIdentifier?.name?.code,  value: formIdentifier?.value })
+        }
+        if(!formIdentifier && apiIdentifier) {
+            orgIdentifiers.push({...apiIdentifier, isActive: false})
+        }
+    })
+    return orgIdentifiers
+}
+
+export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) => {
+    let organisation = {}
+    let organisations = []
+    organisation.tenantId = tenantId
+    organisation.name = formData?.basicDetails_orgName
+    organisation.applicationStatus = 'ACTIVE'
+    organisation.dateOfIncorporation = Digit.Utils.pt.convertDateToEpoch(formData?.basicDetails_dateOfIncorporation)
+    organisation.orgAddress = [{
+        tenantId: tenantId,
+        doorNo: formData?.locDetails_houseName,
+        city: formData?.locDetails_city?.code,
+        boundaryType: 'Ward',
+        boundaryCode: formData?.locDetails_ward?.code,
+        street: formData?.locDetails_streetName,
+        geoLocation: {}
+    }]
+    organisation.additionalDetails = {
+        locality: formData?.locDetails_locality?.code,
+        registeredByDept: formData?.basicDetails_regDept,
+        deptRegistrationNum: formData?.basicDetails_regDeptNo
+    }
+    organisation.contactDetails = [{
+        contactName: formData?.contactDetails_name, 
+        contactMobileNumber: formData?.contactDetails_mobile,
+        contactEmail: formData?.contactDetails_email
+    }]
+    organisation.functions = [{
+        type: `${formData?.funDetails_orgType?.code}.${formData?.funDetails_orgSubType?.code}`,
+        category: `${formData?.funDetails_orgType?.code}.${formData?.funDetails_category?.code}`,
+        class: formData?.funDetails_classRank?.code,
+        validFrom: Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validFrom),
+        validTo: Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validTo)
+    }]
+    organisation.identifiers = formData?.taxIdentifierData?.map(item => {
+        if(item?.name && item?.value) {
+            return {
+                type: item?.name?.code,
+                value: item?.value,
+                isActive: true
+            }
+        }
+    })
+
+    if(isModify) {
+        organisation.id = orgDataFromAPI?.organisation?.id
+        organisation.applicationNumber = orgDataFromAPI?.organisation?.applicationNumber
+        organisation.applicationStatus = 'ACTIVE'
+        organisation.orgNumber = orgDataFromAPI?.organisation?.orgNumber
+        organisation.orgAddress = [{
+            id: orgDataFromAPI?.organisation?.orgAddress?.[0]?.id,
+            orgId: orgDataFromAPI?.organisation?.id,
+            tenantId: tenantId,
+            boundaryType: 'Ward',
+            boundaryCode: formData?.locDetails_ward?.code,
+            city: formData?.locDetails_city?.code,
+            doorNo: formData?.locDetails_houseName,
+            street: formData?.locDetails_streetName,
+        }]
+
+        organisation.contactDetails = [{
+            id: orgDataFromAPI?.organisation?.contactDetails?.[0]?.id,
+            orgId: orgDataFromAPI?.organisation?.id,
+            tenantId: tenantId,
+            contactName: formData?.contactDetails_name, 
+            contactMobileNumber: formData?.contactDetails_mobile,
+            contactEmail: formData?.contactDetails_email
+        }]
+
+        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI)
+
+        organisation.functions[0].id = orgDataFromAPI?.organisation?.functions?.[0]?.id
+        organisation.functions[0].orgId = orgDataFromAPI?.organisation?.id
+        organisation.functions[0].applicationNumber = orgDataFromAPI?.organisation?.functions?.[0]?.applicationNumber
+        organisation.functions[0].isActive = true
+
+        organisation.isActive = true
+    }
+    organisations.push(organisation)
+
+    return {
+        organisations
+    }
+}

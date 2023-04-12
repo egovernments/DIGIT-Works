@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
@@ -24,6 +25,7 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isManageAttendance;
   final bool isWorkOrderInbox;
   final bool viewWorkOrder;
+  final bool orgProfile;
   final bool isSHGInbox;
   final String? cardTitle;
   final bool isTrackAttendance;
@@ -44,6 +46,7 @@ class WorkDetailsCard extends StatelessWidget {
       this.attendanceRegistersModel,
       this.musterRollsModel,
       this.contractModel,
+      this.orgProfile = false,
       super.key});
 
   @override
@@ -100,12 +103,19 @@ class WorkDetailsCard extends StatelessWidget {
       String? contractNumber,
       String? registerNumber}) {
     var labelList = <Widget>[];
-    if (viewWorkOrder && cardTitle != null) {
+    if (isWorkOrderInbox && !isAccept!) {
+      labelList.add(Align(
+        alignment: Alignment.centerLeft,
+        child: SvgPicture.asset('assets/svg/new_tag.svg'),
+      ));
+    }
+    if ((viewWorkOrder || orgProfile) && cardTitle != null) {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
         child: Text(
           cardTitle ?? '',
-          style: Theme.of(context).textTheme.displayMedium,
+          style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+              ?.apply(color: const DigitColors().black),
           textAlign: TextAlign.left,
         ),
       ));
@@ -147,9 +157,9 @@ class WorkDetailsCard extends StatelessWidget {
                   elevatedButtonLabel,
                   outLinedCallBack: () => DigitDialog.show(context,
                       options: DigitDialogOptions(
-                          title: AppLocalizations.of(context)
+                          titleText: AppLocalizations.of(context)
                               .translate(i18.common.warning),
-                          content: AppLocalizations.of(context)
+                          contentText: AppLocalizations.of(context)
                               .translate(i18.workOrder.warningMsg),
                           primaryAction: DigitDialogActions(
                             label: AppLocalizations.of(context)

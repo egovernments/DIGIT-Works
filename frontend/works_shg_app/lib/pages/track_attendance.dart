@@ -559,6 +559,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                   tenantId: widget.tenantId,
                                                                                                                   registerId: widget.id,
                                                                                                                   startDate: selectedDateRange!.startDate,
+                                                                                                                  serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode,
+                                                                                                                  referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId,
                                                                                                                   orgName: individualAttendanceRegisterModel.attendanceRegister
                                                                                                                       ?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA',
                                                                                                                   contractId: individualAttendanceRegisterModel.attendanceRegister
@@ -566,6 +568,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                   registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                                                   registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                                                   projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
+                                                                                                                  projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '',
+                                                                                                                  locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '',
+                                                                                                                  ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '',
                                                                                                                   amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500,
                                                                                                                   skillsList: skillsPayLoad));
                                                                                                             }} : null,

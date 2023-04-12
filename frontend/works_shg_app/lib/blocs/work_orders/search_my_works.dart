@@ -30,8 +30,12 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
           await MyWorksRepository(client.init()).searchMyWorks(
               url: Urls.workServices.myWorks,
               body: {
-                "tenantId": 'pg.citya',
-                "orgIds": [],
+                "tenantId": GlobalVariables
+                    .organisationListModel?.organisations?.first.tenantId,
+                "orgIds": [
+                  GlobalVariables.organisationListModel?.organisations?.first.id
+                ],
+                "wfStatus": ['ACCEPTED', "APPROVED"],
                 "pagination": {
                   "limit": "100",
                   "offSet": "0",

@@ -14,12 +14,31 @@
               "body": [
                 {
                   "inline": true,
+                  "label": "WORKS_ORDER_NO",
+                  "isMandatory": false,
+                  "key": "basicDetails_workOrdernumber",
+                  "type": "text",
+                  "disable": true,
+                  "appendColon": false,
+                  "preProcess" : {
+                    "updateDependent" : ["populators.customStyle.display"]
+                  },
+                  "populators": {
+                    "name": "basicDetails_workOrdernumber",
+                    "customStyle" : {
+                      "display" : "none"
+                    },
+                    "customClass": "fc-header-texts"
+                  }
+                },
+                {
+                  "inline": true,
                   "label": "WORKS_PROJECT_ID",
                   "isMandatory": false,
                   "key": "basicDetails_projectID",
                   "type": "text",
                   "disable": true,
-                  "appendColon": true,
+                  "appendColon": false,
                   "populators": {
                     "name": "basicDetails_projectID",
                     "customClass": "fc-header-texts"
@@ -32,7 +51,7 @@
                   "key": "basicDetails_dateOfProposal",
                   "type": "text",
                   "disable": true,
-                  "appendColon": true,
+                  "appendColon": false,
                   "populators": {
                     "name": "basicDetails_dateOfProposal",
                     "customClass": "fc-header-texts"
@@ -45,7 +64,7 @@
                   "key": "basicDetails_projectName",
                   "type": "text",
                   "disable": true,
-                  "appendColon": true,
+                  "appendColon": false,
                   "populators": {
                     "name": "basicDetails_projectName",
                     "customClass": "fc-header-texts"
@@ -58,7 +77,7 @@
                   "key": "basicDetails_projectDesc",
                   "type": "text",
                   "disable": true,
-                  "appendColon": true,
+                  "appendColon": false,
                   "populators": {
                     "name": "basicDetails_projectDesc",
                     "customClass": "fc-header-texts"
@@ -110,6 +129,11 @@
                   "type": "radioordropdown",
                   "label": "COMMON_ROLE_OF_CBO",
                   "disable": false,
+                  "preProcess": {
+                    "updateDependent": [
+                      "disable", "populators.options"
+                    ]
+                  },
                   "populators": {
                     "name": "roleOfCBO",
                     "optionsKey": "name",
@@ -118,11 +142,7 @@
                     "optionsCustomStyle": {
                       "top": "2.5rem"
                     },
-                    "mdmsConfig": {
-                      "masterName": "CBORoles",
-                      "moduleName": "works",
-                      "localePrefix": "COMMON_MASTERS"
-                    }
+                    "options" : []
                   }
                 },
                 {

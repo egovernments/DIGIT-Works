@@ -9,8 +9,10 @@ import org.egov.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Component
@@ -68,8 +70,8 @@ public class OrganisationFunctionQueryBuilder {
 
         if (StringUtils.isNotBlank(searchCriteria.getName())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" org.name=? ");
-            preparedStmtList.add(searchCriteria.getName());
+            queryBuilder.append(" org.name LIKE ? ");
+            preparedStmtList.add('%' + searchCriteria.getName() + '%');
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getApplicationNumber())) {
@@ -110,9 +112,15 @@ public class OrganisationFunctionQueryBuilder {
 
         if (searchCriteria.getFunctions() != null) {
 
+            // This search matches with only organisation type which is the first part of the '.' separated value as well as
+            // exact value in database. i.e. OrgType along with organisation subtype which is '.' separated value
             if (StringUtils.isNotBlank(searchCriteria.getFunctions().getType())) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
-                queryBuilder.append(" orgFunction.type=? ");
+                //This query checks first part of the type field in db
+                queryBuilder.append("( LEFT(orgFunction.type, POSITION('.' in orgFunction.type)-1) = ? ");
+                //If the type doesn't have '.' i.e. the organisation doesn't have subtype
+                queryBuilder.append(" OR orgFunction.type = ?  )");
+                preparedStmtList.add(searchCriteria.getFunctions().getType());
                 preparedStmtList.add(searchCriteria.getFunctions().getType());
             }
 
@@ -128,13 +136,13 @@ public class OrganisationFunctionQueryBuilder {
                 preparedStmtList.add(searchCriteria.getFunctions().getPropertyClass());
             }
 
-            if (searchCriteria.getFunctions().getValidFrom() != null && searchCriteria.getFunctions().getValidFrom() != 0) {
+            if (searchCriteria.getFunctions().getValidFrom() != null && BigDecimal.ZERO.compareTo(searchCriteria.getFunctions().getValidFrom()) != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" orgFunction.valid_from >= ? ");
                 preparedStmtList.add(searchCriteria.getFunctions().getValidFrom());
             }
 
-            if (searchCriteria.getFunctions().getValidTo() != null && searchCriteria.getFunctions().getValidTo() != 0) {
+            if (searchCriteria.getFunctions().getValidTo() != null && BigDecimal.ZERO.compareTo(searchCriteria.getFunctions().getValidTo()) != 0) {
                 addClauseIfRequired(preparedStmtList, queryBuilder);
                 queryBuilder.append(" orgFunction.valid_to <= ? ");
                 preparedStmtList.add(searchCriteria.getFunctions().getValidTo());

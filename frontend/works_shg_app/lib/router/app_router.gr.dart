@@ -57,6 +57,12 @@ class _$AppRouter extends RootStackRouter {
         child: const HomePage(),
       );
     },
+    ORGProfileRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ORGProfilePage(),
+      );
+    },
     AttendanceRegisterTableRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<AttendanceRegisterTableRouteArgs>(
@@ -183,6 +189,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               HomeRoute.name,
               path: '',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ORGProfileRoute.name,
+              path: 'orgProfile',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -329,6 +340,18 @@ class HomeRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'HomeRoute';
+}
+
+/// generated route for
+/// [ORGProfilePage]
+class ORGProfileRoute extends PageRouteInfo<void> {
+  const ORGProfileRoute()
+      : super(
+          ORGProfileRoute.name,
+          path: 'orgProfile',
+        );
+
+  static const String name = 'ORGProfileRoute';
 }
 
 /// generated route for

@@ -47,6 +47,9 @@ public class ContractService {
     @Autowired
     private WorkflowService workflowService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public ContractResponse createContract(ContractRequest contractRequest) {
         log.info("Create contract");
         contractServiceValidator.validateCreateContractRequest(contractRequest);
@@ -67,6 +70,8 @@ public class ContractService {
         contractEnrichment.enrichContractOnUpdate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
         producer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
+        notificationService.sendNotification(contractRequest);
+
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);
         ContractResponse contractResponse = ContractResponse.builder().responseInfo(responseInfo).contracts(Collections.singletonList(contractRequest.getContract())).build();
