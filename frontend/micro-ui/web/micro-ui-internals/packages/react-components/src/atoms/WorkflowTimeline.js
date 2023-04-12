@@ -65,11 +65,24 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                                 {t("WORKS_WORKFLOW_TIMELINE")}
                             </CardSectionHeader>
                             {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
-                                <CheckPoint
+                                  <ConnectingCheckPoints>
+                                  <React.Fragment>
+                                  <CheckPoint
+                                    keyValue={0}
                                     isCompleted={true}
+                                    //info={checkpoint.comment}
                                     label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.[statusAttribute]}`)}
-                                    customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
-                                />
+                                    customChild={null}
+                                    />
+                                  </React.Fragment>
+                                    <React.Fragment key={1}>
+                                        <CheckPoint
+                                            isCompleted={false}
+                                            label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.["status"]}`)}
+                                            customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
+                                        />
+                                    </React.Fragment>         
+                              </ConnectingCheckPoints> 
                             ) : (
                                 <ConnectingCheckPoints>
                                     {workflowDetails?.data?.timeline &&
@@ -81,7 +94,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                                                         isCompleted={index === 0}
                                                         //info={checkpoint.comment}
                                                         label={t(
-                                                            `${timelineStatusPrefix}${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.[statusAttribute]
+                                                            `${timelineStatusPrefix}${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.[index!=0?"status":statusAttribute]
                                                             }`
                                                         )}
                                                         customChild={getTimelineCaptions(checkpoint)}
