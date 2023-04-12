@@ -73,6 +73,7 @@ const CreateOrganizationForm = ({setCreateOrgStatus, sessionFormData, setSession
             sectionHeadStyle={{marginTop: '1rem', marginBottom: '2rem'}}
             defaultValues={defaultValues}
             onFormValueChange={onFormValueChange}
+            labelBold={true}
         /> 
         </React.Fragment>
     )
