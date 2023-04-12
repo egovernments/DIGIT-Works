@@ -382,6 +382,7 @@
   .employee {
     .ground-container {
       @apply block;
+      margin-left: 0px;
     }
     .breadcrumb {
       @apply mb-lg;

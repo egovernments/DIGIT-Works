@@ -273,7 +273,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
                 </div></td>
 
-                <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.amount`} inputRef={register({
+                <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px",textAlign:"right",paddingRight:"1rem" }} name={`${formFieldName}.${row.key}.amount`} inputRef={register({
                     required: isInputDisabled(`${formFieldName}.${row.key}.name`)? false : true,
                     pattern: /^\d*\.?\d*$/
                 })}
@@ -300,7 +300,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                 {renderBody()}
                 <tr>
                     <td colSpan={3} style={{textAlign:"right",fontWeight:"600"}}>{t("RT_TOTAL")}</td>
-                    <td colSpan={1}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
+                    <td colSpan={1} style={{ textAlign: "right" }}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
                     <td colSpan={1}></td>
                 </tr>
                 <tr>

@@ -35,7 +35,8 @@ const ViewOrganisation = () => {
 ]
   const payload = {
     SearchCriteria: {
-      orgNumber: orgId
+      orgNumber: orgId,
+      tenantId
     }
   }
 
