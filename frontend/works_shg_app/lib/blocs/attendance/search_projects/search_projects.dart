@@ -19,7 +19,7 @@ typedef AttendanceProjectsSearchEmitter
 class AttendanceProjectsSearchBloc
     extends Bloc<AttendanceProjectsSearchEvent, AttendanceProjectsSearchState> {
   AttendanceProjectsSearchBloc()
-      : super(const AttendanceProjectsSearchState._()) {
+      : super(const AttendanceProjectsSearchState.initial()) {
     on<SearchAttendanceProjectsEvent>(_onSearch);
     on<DisposeAttendanceRegisterEvent>(_onDispose);
   }
