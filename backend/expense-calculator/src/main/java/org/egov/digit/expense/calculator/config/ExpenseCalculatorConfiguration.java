@@ -18,7 +18,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Configuration {
+public class ExpenseCalculatorConfiguration {
 
 	// User Config
 	@Value("${egov.user.host}")
@@ -63,6 +63,13 @@ public class Configuration {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndPoint;
 
+	// MusterRoll
+	@Value("${egov.musterroll.host}")
+	private String musterRollHost;
+
+	@Value("${egov.musterroll.search.endpoint}")
+	private String musterRollEndPoint;
+
 	// HRMS
 	@Value("${egov.hrms.host}")
 	private String hrmsHost;
@@ -80,4 +87,18 @@ public class Configuration {
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
+
+	//Expense calculator Service specific
+	@Value("${egov.works.expense.wage.head.code}")
+	private String wageHeadCode;
+
+	@Value("${egov.works.expense.wage.payee.type}")
+	private String wagePayeeType;
+
+	@Value("${egov.works.expense.wage.business.service}")
+	private String wageBusinessService;
+
+	@Value("${egov.works.expense.wage.lineitem.type}")
+	private String wageLineItemType;
+
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.digit.expense.calculator.config.Configuration;
+import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class IdgenUtil {
 	private ServiceRequestRepository restRepo;
 
 	@Autowired
-	private Configuration configs;
+	private ExpenseCalculatorConfiguration configs;
 
 	public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat,
 			Integer count) {

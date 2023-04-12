@@ -5,7 +5,11 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.digit.expense.calculator.service.CalculatorService;
+import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
 import org.egov.digit.expense.calculator.web.models.BillResponse;
+import org.egov.digit.expense.calculator.web.models.Calculation;
 import org.egov.digit.expense.calculator.web.models.CalculationRequest;
 import org.egov.digit.expense.calculator.web.models.CalculationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +31,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @RequestMapping("")
 public class WorksCalculatorApiController {
 
+	@Autowired
 	private final ObjectMapper objectMapper;
-
+	@Autowired
 	private final HttpServletRequest request;
+	@Autowired
+	private CalculatorService calculatorService;
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
 	public WorksCalculatorApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -56,19 +65,16 @@ public class WorksCalculatorApiController {
 
 	@RequestMapping(value = "/works-calculator/v1/_estimate", method = RequestMethod.POST)
 	public ResponseEntity<CalculationResponse> worksCalculatorV1EstimatePost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<CalculationResponse>(objectMapper.readValue(
-						"{  \"calculation\" : {    \"totalAmount\" : 2.027123023002322,    \"tenantId\" : \"tenantId\",    \"additionalDetails\" : { },    \"estimates\" : [ {      \"businessService\" : \"WORKS, SALARY etc\",      \"calcDetails\" : [ {        \"payee\" : {          \"identifier\" : \"identifier\",          \"type\" : \"individual, department etc\"        },        \"lineItems\" : [ {          \"amount\" : 7.061401241503109,          \"additionalFields\" : { },          \"auditDetails\" : {            \"lastModifiedTime\" : 3,            \"createdBy\" : \"createdBy\",            \"lastModifiedBy\" : \"lastModifiedBy\",            \"createdTime\" : 9          },          \"tenantId\" : \"pb.amritsar\",          \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",          \"headCode\" : \"BASICSALARY, HRA, INCOMETAX\",          \"type\" : \"EXPENSE\",          \"isActive\" : true        }, {          \"amount\" : 7.061401241503109,          \"additionalFields\" : { },          \"auditDetails\" : {            \"lastModifiedTime\" : 3,            \"createdBy\" : \"createdBy\",            \"lastModifiedBy\" : \"lastModifiedBy\",            \"createdTime\" : 9          },          \"tenantId\" : \"pb.amritsar\",          \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",          \"headCode\" : \"BASICSALARY, HRA, INCOMETAX\",          \"type\" : \"EXPENSE\",          \"isActive\" : true        } ],        \"fromPeriod\" : 5.637376656633329,        \"payableLineItem\" : [ null, null ],        \"billId\" : \"billId\",        \"toPeriod\" : 2.3021358869347655,        \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",        \"referenceId\" : \"referenceId\"      }, {        \"payee\" : {          \"identifier\" : \"identifier\",          \"type\" : \"individual, department etc\"        },        \"lineItems\" : [ {          \"amount\" : 7.061401241503109,          \"additionalFields\" : { },          \"auditDetails\" : {            \"lastModifiedTime\" : 3,            \"createdBy\" : \"createdBy\",            \"lastModifiedBy\" : \"lastModifiedBy\",            \"createdTime\" : 9          },          \"tenantId\" : \"pb.amritsar\",          \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",          \"headCode\" : \"BASICSALARY, HRA, INCOMETAX\",          \"type\" : \"EXPENSE\",          \"isActive\" : true        }, {          \"amount\" : 7.061401241503109,          \"additionalFields\" : { },          \"auditDetails\" : {            \"lastModifiedTime\" : 3,            \"createdBy\" : \"createdBy\",            \"lastModifiedBy\" : \"lastModifiedBy\",            \"createdTime\" : 9          },          \"tenantId\" : \"pb.amritsar\",          \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",          \"headCode\" : \"BASICSALARY, HRA, INCOMETAX\",          \"type\" : \"EXPENSE\",          \"isActive\" : true        } ],        \"fromPeriod\" : 5.637376656633329,        \"payableLineItem\" : [ null, null ],        \"billId\" : \"billId\",        \"toPeriod\" : 2.3021358869347655,        \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",        \"referenceId\" : \"referenceId\"      } ],      \"additionalFields\" : { },      \"fromPeriod\" : 1.4658129805029452,      \"tenantId\" : \"pb.amritsar\",      \"toPeriod\" : 5.962133916683182,      \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",      \"netPayableAmount\" : 6.027456183070403,      \"referenceId\" : \"referenceId\"    }, {      \"businessService\" : \"WORKS, SALARY etc\",      \"calcDetails\" : [ {        \"payee\" : {          \"identifier\" : \"identifier\",          \"type\" : \"individual, department etc\"        },        \"lineItems\" : [ {          \"amount\" : 7.061401241503109,          \"additionalFields\" : { },          \"auditDetails\" : {            \"lastModifiedTime\" : 3,            \"createdBy\" : \"createdBy\",            \"lastModifiedBy\" : \"lastModifiedBy\",            \"createdTime\" : 9          },          \"tenantId\" : \"pb.amritsar\",          \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",          \"headCode\" : \"BASICSALARY, HRA, INCOMETAX\",          \"type\" : \"EXPENSE\",          \"isActive\" : true        }, {          \"amount\" : 7.061401241503109,          \"additionalFields\" : { },          \"auditDetails\" : {            \"lastModifiedTime\" : 3,            \"createdBy\" : \"createdBy\",            \"lastModifiedBy\" : \"lastModifiedBy\",            \"createdTime\" : 9          },          \"tenantId\" : \"pb.amritsar\",          \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",          \"headCode\" : \"BASICSALARY, HRA, INCOMETAX\",          \"type\" : \"EXPENSE\",          \"isActive\" : true        } ],        \"fromPeriod\" : 5.637376656633329,        \"payableLineItem\" : [ null, null ],        \"billId\" : \"billId\",        \"toPeriod\" : 2.3021358869347655,        \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",        \"referenceId\" : \"referenceId\"      }, {        \"payee\" : {          \"identifier\" : \"identifier\",          \"type\" : \"individual, department etc\"        },        \"lineItems\" : [ {          \"amount\" : 7.061401241503109,          \"additionalFields\" : { },          \"auditDetails\" : {            \"lastModifiedTime\" : 3,            \"createdBy\" : \"createdBy\",            \"lastModifiedBy\" : \"lastModifiedBy\",            \"createdTime\" : 9          },          \"tenantId\" : \"pb.amritsar\",          \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",          \"headCode\" : \"BASICSALARY, HRA, INCOMETAX\",          \"type\" : \"EXPENSE\",          \"isActive\" : true        }, {          \"amount\" : 7.061401241503109,          \"additionalFields\" : { },          \"auditDetails\" : {            \"lastModifiedTime\" : 3,            \"createdBy\" : \"createdBy\",            \"lastModifiedBy\" : \"lastModifiedBy\",            \"createdTime\" : 9          },          \"tenantId\" : \"pb.amritsar\",          \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",          \"headCode\" : \"BASICSALARY, HRA, INCOMETAX\",          \"type\" : \"EXPENSE\",          \"isActive\" : true        } ],        \"fromPeriod\" : 5.637376656633329,        \"payableLineItem\" : [ null, null ],        \"billId\" : \"billId\",        \"toPeriod\" : 2.3021358869347655,        \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",        \"referenceId\" : \"referenceId\"      } ],      \"additionalFields\" : { },      \"fromPeriod\" : 1.4658129805029452,      \"tenantId\" : \"pb.amritsar\",      \"toPeriod\" : 5.962133916683182,      \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",      \"netPayableAmount\" : 6.027456183070403,      \"referenceId\" : \"referenceId\"    } ]  },  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}",
-						CalculationResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				return new ResponseEntity<CalculationResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
+			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
 
-		return new ResponseEntity<CalculationResponse>(HttpStatus.NOT_IMPLEMENTED);
+		Calculation calculation = calculatorService.createEstimate(calculationRequest);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
+		CalculationResponse calculationResponse = CalculationResponse.builder()
+																	 .responseInfo(responseInfo)
+				                                                     .calculation(calculation)
+				                                                     .build();
+
+		return new ResponseEntity<CalculationResponse>(calculationResponse, HttpStatus.OK);
 	}
 
 }

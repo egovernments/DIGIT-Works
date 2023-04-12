@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.egov.digit.expense.calculator.config.Configuration;
+import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class UserUtil {
 	private ServiceRequestRepository serviceRequestRepository;
 
 	@Autowired
-	private Configuration configs;
+	private ExpenseCalculatorConfiguration configs;
 
 	@Autowired
 	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {

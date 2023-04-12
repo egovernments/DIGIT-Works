@@ -22,13 +22,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CalculationRequest {
-	@JsonProperty("requestInfo")
-
+	@JsonProperty("RequestInfo")
 	@Valid
 	private RequestInfo requestInfo = null;
 
 	@JsonProperty("criteria")
-
 	@Valid
 	private Criteria criteria = null;
 
