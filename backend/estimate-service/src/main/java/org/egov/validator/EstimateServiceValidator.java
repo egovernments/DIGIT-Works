@@ -269,7 +269,7 @@ public class EstimateServiceValidator {
 
             for (String category : reqEstimateDetailNameMap.keySet()) {
 
-                if (StringUtils.isNotBlank(category) && category.equalsIgnoreCase(MASTER_OVERHEAD)) {
+                if (StringUtils.isNotBlank(category) && category.equalsIgnoreCase(OVERHEAD_CODE)) {
                     List<String> reqEstimateDetailNames = reqEstimateDetailNameMap.get(category);
 
                     Map<String, Integer> reqNameMap = new HashMap<>();
@@ -303,7 +303,7 @@ public class EstimateServiceValidator {
         //Overhead -amount type validation
         if (!CollectionUtils.isEmpty(overHeadRes) && !CollectionUtils.isEmpty(overheadAmountTypeMap)) {
             for (String overheadCategoryKey : overheadAmountTypeMap.keySet()) {
-                if (StringUtils.isNotBlank(overheadCategoryKey) && overheadCategoryKey.equalsIgnoreCase(MASTER_OVERHEAD)) {
+                if (StringUtils.isNotBlank(overheadCategoryKey) && overheadCategoryKey.equalsIgnoreCase(OVERHEAD_CODE)) {
                     List<String> amountTypes = overheadAmountTypeMap.get(overheadCategoryKey);
                     //frequency map
                     Map<String, Integer> reqTypeMap = new HashMap<>();
