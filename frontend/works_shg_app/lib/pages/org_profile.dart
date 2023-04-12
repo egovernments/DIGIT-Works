@@ -99,7 +99,7 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                 i18.common.funcCat: t.translate(
                                     e.functions?.first.category ?? 'NA'),
                                 i18.common.classOrRank:
-                                    e.functions?.first.orgClass ?? 'NA',
+                                    'COMMON_MASTERS_${t.translate(e.functions?.first.orgClass ?? 'NA')}' ,
                                 i18.common.validFrom:
                                     DateFormats.timeStampToDate(
                                         e.functions?.first.validFrom),

@@ -149,12 +149,10 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                     ),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.relationship),
-                      menuItems: relationship
-                          .map((e) => t.translate(e).toString())
-                          .toList(),
+                      menuItems: relationship.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: relationshipKey,
-                      valueMapper: (value) => value,
+                      valueMapper: (value) => t.translate('CORE_COMMON_$value'),
                       onChanged: (value) {},
                       validationMessages: {
                         'required': (_) => t.translate(
@@ -181,11 +179,9 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         context,
                         labelText: t.translate(i18.common.gender),
                         formControlName: genderKey,
-                        options: gender
-                            .map((e) => t.translate(e).toString())
-                            .toList(),
+                        options: gender.map((e) => e.toString()).toList(),
                         isRequired: true,
-                        valueMapper: (value) => value,
+                        valueMapper: (value) => t.translate(value),
                         onValueChange: (value) {
                           setState(() {
                             genderController = value;
@@ -195,11 +191,11 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                     }),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.socialCategory),
-                      menuItems: socialCategory
-                          .map((e) => t.translate(e).toString())
-                          .toList(),
+                      menuItems:
+                          socialCategory.map((e) => e.toString()).toList(),
                       formControlName: socialCategoryKey,
-                      valueMapper: (value) => value,
+                      valueMapper: (value) =>
+                          t.translate('COMMON_MASTERS_SOCIAL_$value'),
                       onChanged: (value) {},
                     ),
                     DigitTextFormField(

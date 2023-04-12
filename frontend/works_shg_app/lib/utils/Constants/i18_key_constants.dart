@@ -200,6 +200,7 @@ class WageSeeker {
   String get skill => 'WAGE_SEEKER_SKILL';
   String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
   String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
+  String get wageSeekerSuccessSubText => 'CREATE_INDIVIDUAL_SUCCESS_SUB_TEXT';
 }
 
 class AttendanceMgmt {
