@@ -7,7 +7,6 @@ import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/app_bar_logo.dart';
 
-import '../blocs/attendance/search_projects/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../blocs/organisation/org_search_bloc.dart';
@@ -101,9 +100,6 @@ class _HomePage extends State<HomePage> {
                             ButtonLink(
                                 AppLocalizations.of(context)
                                     .translate(i18.home.trackAttendance), () {
-                              context.read<AttendanceProjectsSearchBloc>().add(
-                                    const SearchAttendanceProjectsEvent(),
-                                  );
                               context.router
                                   .push(const TrackAttendanceInboxRoute());
                             }),

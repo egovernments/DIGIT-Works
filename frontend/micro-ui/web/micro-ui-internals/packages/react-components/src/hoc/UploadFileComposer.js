@@ -69,7 +69,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
   // if(isLoading) return <Loader />
   return (
     <React.Fragment>
-      <Header styles={{fontSize: "24px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>
+      <Header styles={{fontSize: "24px", marginTop : "40px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>
       <CitizenInfoLabel info={t("ES_COMMON_INFO")} text={t(docConfig?.bannerLabel)} className="doc-banner"></CitizenInfoLabel>
       {
         docConfig?.documents?.map((item, index) => {
@@ -77,7 +77,9 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
           return ( 
             <LabelFieldPair key={index}>
               { item.code && (
-                <CardLabel>
+                <CardLabel
+                  className="bolder"
+                >
                   { t(`${localePrefix}_${item?.code}`)} { item?.isMandatory ? " * " : null }
                 </CardLabel>) 
               }

@@ -10,13 +10,16 @@ class FinancialDetails with FinancialDetailsMappable {
   final String? accountType;
   final String? ifscCode;
   final String? referenceID;
+  final String? branchName;
+  final String? bankName;
 
-  FinancialDetails({
-    this.accountHolderName,
-    this.accountNumber,
-    this.reAccountNumber,
-    this.accountType,
-    this.ifscCode,
-    this.referenceID,
-  });
+  FinancialDetails(
+      {this.accountHolderName,
+      this.accountNumber,
+      this.reAccountNumber,
+      this.accountType,
+      this.ifscCode,
+      this.referenceID,
+      this.branchName,
+      this.bankName});
 }

@@ -363,7 +363,7 @@ class _OrganisationModelCopyWithImpl<$R, $Out extends OrganisationModel>
 class OrgAdditionalDetailsMapper extends MapperBase<OrgAdditionalDetails> {
   static MapperContainer container = MapperContainer(
     mappers: {OrgAdditionalDetailsMapper()},
-  )..linkAll({ORGLocalityMapper.container});
+  );
 
   @override
   OrgAdditionalDetailsMapperElement createElement(MapperContainer container) {
@@ -452,11 +452,10 @@ abstract class OrgAdditionalDetailsCopyWith<$R,
   OrgAdditionalDetailsCopyWith<$R2, $In, $Out2>
       chain<$R2, $Out2 extends OrgAdditionalDetails>(
           Then<OrgAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
-  ORGLocalityCopyWith<$R, ORGLocality, ORGLocality>? get locality;
   $R call(
       {String? registeredByDept,
       String? deptRegistrationNum,
-      ORGLocality? locality});
+      String? locality});
 }
 
 class _OrgAdditionalDetailsCopyWithImpl<$R, $Out extends OrgAdditionalDetails>
@@ -469,9 +468,6 @@ class _OrgAdditionalDetailsCopyWithImpl<$R, $Out extends OrgAdditionalDetails>
               Then<OrgAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2) =>
           _OrgAdditionalDetailsCopyWithImpl($value, t, t2);
 
-  @override
-  ORGLocalityCopyWith<$R, ORGLocality, ORGLocality>? get locality =>
-      $value.locality?.copyWith.chain($identity, (v) => call(locality: v));
   @override
   $R call(
           {Object? registeredByDept = $none,
