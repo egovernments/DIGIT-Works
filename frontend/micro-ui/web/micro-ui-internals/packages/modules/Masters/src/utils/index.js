@@ -11,7 +11,7 @@ export const getTomorrowsDate = () => {
 }
 
 export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady }) => {
-    
+
     const individual = wageSeekerData?.individual
     const bankAccountDetails = wageSeekerData?.bankDetails?.[0]?.bankAccountDetails?.[0]
 
