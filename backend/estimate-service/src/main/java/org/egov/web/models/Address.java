@@ -1,6 +1,7 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.AuditDetails;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
@@ -27,11 +28,20 @@ public class Address {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
+    @JsonProperty("doorNo")
+    private String doorNo = null;
+
     @JsonProperty("latitude")
     private Double latitude = null;
 
     @JsonProperty("longitude")
     private Double longitude = null;
+
+    @JsonProperty("locationAccuracy")
+    private Double locationAccuracy = null;
+
+    @JsonProperty("type")
+    private String type = null;
 
     @JsonProperty("addressNumber")
     private String addressNumber = null;
@@ -54,7 +64,19 @@ public class Address {
     @JsonProperty("detail")
     private String detail = null;
 
-    @JsonProperty("locality")
-    private String locality = null;
+    @JsonProperty("buildingName")
+    private String buildingName = null;
+
+    @JsonProperty("street")
+    private String street = null;
+
+    @JsonProperty("boundaryType")
+    private String boundaryType = null;
+
+    @JsonProperty("boundary")
+    private String boundary = null;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
 }
 
