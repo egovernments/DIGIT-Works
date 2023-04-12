@@ -29,7 +29,7 @@ public class ExpenseCalculatorConsumer {
         log.info("ExpenseCalculatorConsumer:listen");
 		try {
 			MusterRollRequest request = objectMapper.readValue(consumerRecord, MusterRollRequest.class);
-			calculatorService.estimate(request);
+			//calculatorService.estimate(request);
 		} catch (Exception exception) {
 			log.error("Error occurred while processing the consumed muster record from topic : " + topic, exception);
 			throw new RuntimeException(exception);
