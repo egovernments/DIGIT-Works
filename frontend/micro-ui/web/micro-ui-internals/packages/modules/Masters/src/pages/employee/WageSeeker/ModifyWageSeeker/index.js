@@ -7,7 +7,6 @@ import { updateWageSeekerFormDefaultValues } from '../../../../utils';
 
 const ModifyWageSeeker = () => {
     const {t} = useTranslation();
-   
     const [showDataError, setShowDataError] = useState(null)
     const [isFormReady, setIsFormReady] = useState(false);
 

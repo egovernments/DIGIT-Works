@@ -11,8 +11,8 @@ export const getTomorrowsDate = () => {
 }
 
 export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sessionFormData, setSessionFormData, wageSeekerData, tenantId, headerLocale, ULBOptions, setIsFormReady }) => {
+    
     const individual = wageSeekerData?.individual
-
     const bankAccountDetails = wageSeekerData?.bankDetails?.[0]?.bankAccountDetails?.[0]
 
     const adhaar = individual?.identifiers?.find(item => item?.identifierType === 'AADHAAR')
@@ -38,10 +38,9 @@ export const updateWageSeekerFormDefaultValues = async ({configs, isModify, sess
         configs.defaultValues.basicDetails_gender = individual?.gender ? { code: individual?.gender, name: `COMMON_MASTERS_GENDER_${individual?.gender}`, active: true } : ""
         configs.defaultValues.basicDetails_mobileNumber = individual?.mobileNumber ? individual?.mobileNumber : ""
         configs.defaultValues.basicDetails_socialCategory = socialCategory ? { code:socialCategory?.value, name: `COMMON_MASTERS_SOCIAL_${socialCategory?.value}`, active: true} : ""
-       
         configs.defaultValues.basicDetails_photograph = individual?.photo ? [[ 
             imageName , {  file: {}, fileStoreId: { fileStoreId: individual?.photo, tenantId }
-        }]] : []
+        }]] : ""
     
         configs.defaultValues.skillDetails_skill = skills
     
