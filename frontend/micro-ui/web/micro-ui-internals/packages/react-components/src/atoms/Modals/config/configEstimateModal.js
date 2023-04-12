@@ -289,8 +289,8 @@ const configEstimateModal = (
                         populators: {
                             name: "documents",
                             allowedMaxSizeInMB: 5,
-                            maxFilesAllowed: 2,
-                            allowedFileTypes: /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
+                            maxFilesAllowed: 1,
+                            allowedFileTypes: /(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv)$/i,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
                             hintText: "WORKFLOW_MODAL_UPLOAD_HINT_TEXT",
