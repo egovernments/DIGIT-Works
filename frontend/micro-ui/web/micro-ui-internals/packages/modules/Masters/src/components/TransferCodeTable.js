@@ -123,10 +123,16 @@ const TransferCodeTable = (props) => {
         
         if (isLoading) {
             return <Loader />
-        } else return (
-            <Dropdown
+        }  else {
+            let filteredOptions = []
+            if(options?.mdmsConfig){
+                filteredOptions = data?.filter(row => {
+                    return formData?.[formFieldName] && !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
+                })
+            }
+            return <Dropdown
                 inputRef={register()}
-                option={options?.mdmsConfig ? data : options}
+                option={options?.mdmsConfig ? (isTranferCodeTable ? data : filteredOptions) : options}
                 selected={props?.value}
                 optionKey={optionKey}
                 t={t}
@@ -137,7 +143,7 @@ const TransferCodeTable = (props) => {
                 optionCardStyles={{ maxHeight: '15rem' }}
                 style={{ marginBottom: "0px" }}
             /> 
-        )
+        }
     }
 
     const renderBody = () => {
