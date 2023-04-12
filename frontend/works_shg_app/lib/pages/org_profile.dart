@@ -139,8 +139,7 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                             'NA') ??
                                     'NA',
                                 i18.common.locality: t.translate(
-                                    e.additionalDetails?.locality?.i18nKey ??
-                                        'NA'),
+                                    e.additionalDetails?.locality ?? 'NA'),
                                 i18.common.streetName:
                                     e.orgAddress?.first.street ?? 'NA',
                                 i18.common.doorNo:

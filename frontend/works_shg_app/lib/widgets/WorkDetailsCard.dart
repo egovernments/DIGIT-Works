@@ -32,6 +32,9 @@ class WorkDetailsCard extends StatelessWidget {
   final List<AttendanceRegister>? attendanceRegistersModel;
   final List<MusterRoll>? musterRollsModel;
   final ContractsModel? contractModel;
+  final bool? showButtonLink;
+  final String? linkLabel;
+  final void Function()? onLinkPressed;
 
   const WorkDetailsCard(this.detailsList,
       {this.isAttendanceInbox = false,
@@ -40,6 +43,9 @@ class WorkDetailsCard extends StatelessWidget {
       this.isTrackAttendance = false,
       this.isSHGInbox = false,
       this.viewWorkOrder = false,
+      this.showButtonLink = false,
+      this.linkLabel = '',
+      this.onLinkPressed,
       this.elevatedButtonLabel = '',
       this.outlinedButtonLabel = '',
       this.cardTitle,
@@ -241,10 +247,9 @@ class WorkDetailsCard extends StatelessWidget {
                   tenantId: attendanceRegister!.tenantId.toString()));
             } else {
               context.router.push(TrackAttendanceRoute(
-                  id: attendanceRegisterId.toString(),
-                  tenantId: attendanceRegister!.tenantId.toString(),
-                  projectDetails: [cardDetails],
-                  attendanceRegister: attendanceRegister));
+                id: attendanceRegisterId.toString(),
+                tenantId: attendanceRegister!.tenantId.toString(),
+              ));
             }
           },
           child: Center(
@@ -267,7 +272,6 @@ class WorkDetailsCard extends StatelessWidget {
                       tenantId: musterRoll!.tenantId.toString()),
                 );
             context.router.push(SHGInboxRoute(
-                projectDetails: [cardDetails],
                 tenantId: musterRoll.tenantId.toString(),
                 musterRollNo: musterRoll.musterRollNumber.toString()));
             context.read<MusterRollEstimateBloc>().add(
@@ -287,6 +291,12 @@ class WorkDetailsCard extends StatelessWidget {
                     .apply(color: Colors.white)),
           ),
         ),
+      ));
+    }
+    if (showButtonLink! && linkLabel!.isNotEmpty) {
+      labelList.add(Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: ButtonLink(linkLabel ?? '', onLinkPressed),
       ));
     }
     return Column(
