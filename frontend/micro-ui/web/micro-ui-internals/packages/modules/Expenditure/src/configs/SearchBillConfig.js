@@ -1,26 +1,3 @@
-const billStatus = [
-    {
-        name: 'Submitted',
-        code: 'SUBMITTED',
-        i18nKey: 'SUBMITTED'
-    },
-    {
-        name: 'Approved',
-        code: 'APPROVED',
-        i18nKey: 'APPROVED'
-    },
-    {
-        name: 'Rejected',
-        code: 'REJECTED',
-        i18nKey: 'REJECTED'
-    },
-    {
-        name: 'Verified',
-        code: 'VERIFIED',
-        i18nKey: 'VERIFIED'
-    }
-]
-
 export const SearchBillConfig = {
     "tenantId": "pg",
     "moduleName": "commonMuktaUiConfig",
@@ -46,7 +23,8 @@ export const SearchBillConfig = {
                         primaryLabel: 'ES_COMMON_SEARCH',
                         secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                         minReqFields: 1,
-                        showFormInstruction : "",
+                        showFormInstruction : "BILL_SELECT_ONE_PARAM_TO_SEARCH",
+                        formClassName:"custom-both-clear-search",
                         defaultValues : {
                             ward: "",
                             billType: {
@@ -61,23 +39,21 @@ export const SearchBillConfig = {
                             createdTo: ""
                         },
                         fields : [
-                            // {
-                            //     label: "COMMON_WARD",
-                            //     type: "locationdropdown",
-                            //     isMandatory: false,
-                            //     disable: false,
-                            //     populators: {
-                            //         name: "ward",
-                            //         type: "ward",
-                            //         optionsKey: "name",
-                            //         defaultText: "COMMON_SELECT_WARD",
-                            //         selectedText: "COMMON_SELECTED",
-                            //         allowMultiSelect: false,
-                            //         optionsCustomStyle : {
-                            //             top : "2.3rem"
-                            //         }
-                            //     }
-                            // },
+                            {
+                                label: "COMMON_WARD",
+                                type: "locationdropdown",
+                                isMandatory: false,
+                                disable: false,
+                                populators: {
+                                    name: "ward",
+                                    type: "ward",
+                                    optionsKey: "i18nKey",
+                                    allowMultiSelect: false,
+                                    optionsCustomStyle : {
+                                        top : "2.3rem"
+                                    }
+                                }
+                            },
                             {
                                 label: "WORKS_BILL_TYPE",
                                 type: "dropdown",
@@ -107,7 +83,7 @@ export const SearchBillConfig = {
                                 populators: { 
                                     name: "projectName",
                                     error: `PROJECT_PATTERN_ERR_MSG`,
-                                    validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
+                                    validation: { pattern: "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$", minlength : 2 }
                                 }
                             },
                             {
@@ -123,17 +99,20 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                type: "dropdown",
+                                type: "apidropdown",
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                    name: "musterRollStatus",
-                                    optionsKey: "name",
-                                    optionsCustomStyle: {
-                                        top: "2.3rem"
-                                    },
-                                    options: billStatus
-                                }
+                                  optionsCustomStyle: {
+                                    top: "2.3rem",
+                                  },
+                                  name: "musterRollStatus",
+                                  optionsKey: "i18nKey",
+                                  allowMultiSelect: false,
+                                  masterName: "commonUiConfig",
+                                  moduleName: "SearchBillConfig",
+                                  customfn: "populateReqCriteria",
+                                },
                             },
                             {
                                 label: "ES_COMMON_CREATED_FROM",
