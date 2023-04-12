@@ -313,6 +313,7 @@ class WorkDetailsCard extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
