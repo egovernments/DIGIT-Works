@@ -49,7 +49,7 @@ const ViewAttendance = () => {
                   { title: "MUSTER_ROLLS_NO_OF_WAGE_SEEKERS", value: muster?.individualEntries.length || t("ES_COMMON_NA") },
                   { title: "MUSTER_ROLLS_TOTAL_ATTENDANCE_IN_DAYS", value: muster?.individualEntries?.reduce((acc,row)=>acc + (row?.actualTotalAttendance || row?.modifiedTotalAttendance || 0),0) || t("ES_COMMON_NA") },
                   { title: "MUSTER_ROLLS_QUANTITY_OF_WORK_IN_DAYS", value: muster?.individualEntries?.reduce((acc,row)=>acc + ( row?.modifiedTotalAttendance || row?.actualTotalAttendance || 0),0) || t("ES_COMMON_NA") },
-                  { title: "MUSTER_TOTAL_WAGE_AMOUNT", value: muster?.totalAmount || t("ES_COMMON_NA") },
+                  { title: "MUSTER_TOTAL_WAGE_AMOUNT", value:Digit.Utils.dss.formatterWithoutRound(muster?.totalAmount, "number") || t("ES_COMMON_NA") },
                 ]
               }
         ])

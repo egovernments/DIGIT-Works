@@ -31,12 +31,12 @@ const MastersResponse = () => {
             
             <Banner 
                 successful={state?.isSuccess}
-                message={state?.message}
+                message={t(state?.message)}
                 info={`${state?.showId ? (state?.isWageSeeker ? t("MASTERS_WAGESEEKER_ID") : t("MASTERS_ORGANISATION_ID")) : ""}`}
                 applicationNumber={state?.isWageSeeker ? queryParams?.individualId : queryParams?.orgId}
                 whichSvg={`${state?.isSuccess ? "tick" : null}`}
             />
-            {!state?.isWageSeeker && <CardText>{state?.otherMessage}</CardText>}
+            {!state?.isWageSeeker && <CardText>{t(state?.otherMessage)}</CardText>}
 
             <div style={{display: "flex", justifyContent:"space-between", width: "60%"}}>
                 <LinkLabel style={{ display: "flex" }} onClick={() => navigate("home-screen")}>

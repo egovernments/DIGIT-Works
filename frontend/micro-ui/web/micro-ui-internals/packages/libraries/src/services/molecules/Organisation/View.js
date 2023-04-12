@@ -10,8 +10,8 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   const bankDetails = await BankAccountService.search(bankDetailPayload, {});
   const bankAccounts = bankDetails?.bankAccounts?.[0]?.bankAccountDetails
 
-  const PAN = organisation?.identifiers?.find(item => item?.type === 'PAN')
-  const GSTIN = organisation?.identifiers?.find(item => item?.type === 'GSTIN')
+  const PAN = organisation?.identifiers?.find(item => item?.isActive && item?.type === 'PAN' )
+  const GSTIN = organisation?.identifiers?.find(item => item?.isActive && item?.type === 'GSTIN')
 
   const orgDetails = [
     {

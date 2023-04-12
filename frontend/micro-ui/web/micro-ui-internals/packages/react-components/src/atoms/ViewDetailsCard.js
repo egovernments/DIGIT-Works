@@ -3,9 +3,9 @@ import Card from './Card'
 import {StatusTable,Row} from './StatusTable'
 import CardSubHeader from './CardSectionHeader'
 
-const ViewDetailsCard = ({cardState,t,...props}) => {
+const ViewDetailsCard = ({cardState,t,createScreen,...props}) => {
   return (
-    <Card className={"employeeCard-override"} >
+    <Card className={createScreen?"":"employeeCard-override"} >
         <StatusTable style={{maxWidth: "950px", minWidth: "280px"}}>
           {
             cardState.map((item, index) => {

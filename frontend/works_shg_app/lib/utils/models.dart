@@ -4,15 +4,19 @@ import 'package:flutter/cupertino.dart';
 
 class TableHeader {
   final String label;
+  String? subLabel = '';
   final ValueChanged<TableHeader>? callBack;
   bool? isSortingRequired = false;
   bool? isAscendingOrder;
+  bool? hide = false;
   String? apiKey;
   TableHeader(this.label,
       {this.callBack,
+      this.subLabel,
       this.isSortingRequired,
       this.isAscendingOrder,
-      this.apiKey});
+      this.apiKey,
+      this.hide});
 }
 
 class CustomFile {
@@ -65,8 +69,15 @@ class TableData {
   final Widget? widget;
   final TextStyle? style;
   final String? apiKey;
+  bool? hide = false;
   ValueChanged<TableData>? callBack;
-  TableData({this.label, this.widget, this.style, this.callBack, this.apiKey});
+  TableData(
+      {this.label,
+      this.widget,
+      this.style,
+      this.callBack,
+      this.apiKey,
+      this.hide});
 }
 
 class DateRange {
