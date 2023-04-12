@@ -273,6 +273,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 horizontalNavConfig={navConfig}
                 onFormValueChange={onFormValueChange}
                 cardClassName = "mukta-header-card"
+                labelBold={true}
             />
             {
                 showDuplicateUserError && <Toast error={true} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />

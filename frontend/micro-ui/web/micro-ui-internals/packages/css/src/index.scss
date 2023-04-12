@@ -751,7 +751,7 @@ input[type="number"] {
   &:empty {
     padding: 0px !important;
   }
-  .card-label{
+  .card-label.bolder{
     font-weight: 700 !important;
   }
 }
@@ -879,6 +879,8 @@ input[type="number"] {
 
 .mukta-header-card {
   margin-bottom: 3rem !important;
+  padding: 26px !important;
+  padding-bottom: 0 !important;
 }
 
 .text-input-customIcon {
@@ -940,16 +942,12 @@ input[type="number"] {
   padding: 0;
 }
 
-.label-field-pair {
-  &:last-child {
-    .field {
-      .field-container {
-        .text-input {
-          input {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-  }
+.card-section-header {
+    margin-bottom: 20px !important;
+    margin-top: 20px !important;
 }
+
+.label-field-pair {
+  align-items: flex-start !important;
+}
+

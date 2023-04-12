@@ -58,6 +58,11 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
           registrationState.financialDetails?.accountType.toString() ?? '';
       bank = registrationState.financialDetails?.bankName ?? '';
       branch = registrationState.financialDetails?.branchName ?? '';
+      if (registrationState.financialDetails?.bankName != null) {
+        hintText = hintText.isNotEmpty
+            ? hintText
+            : '${registrationState.financialDetails!.bankName}';
+      }
     }
   }
 
@@ -75,12 +80,6 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
           accountType = financialDetails!.accountType != null
               ? financialDetails!.accountType.toString()
               : accountType;
-        }
-        if (financialDetails?.branchName != null) {
-          hintText = financialDetails!.bankName != null &&
-                  financialDetails!.branchName != null
-              ? '${financialDetails!.bankName}, ${financialDetails!.branchName}'
-              : '';
         }
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -172,6 +171,10 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                             setState(() {
                               hintText = '$bankName, $branchName';
                             });
+                          } else {
+                            setState(() {
+                              hintText = '';
+                            });
                           }
                         },
                         isRequired: true,
@@ -199,7 +202,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                               ifscCode: form.value[ifscCodeKey].toString(),
                               accountType:
                                   form.value[accountTypeKey].toString(),
-                              branchName: hintText);
+                              bankName: hintText);
                           BlocProvider.of<WageSeekerBloc>(context).add(
                             WageSeekerCreateEvent(
                                 individualDetails: individualDetails,

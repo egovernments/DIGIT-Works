@@ -271,6 +271,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 onFormValueChange={onFormValueChange}
                 isDisabled={isModify ? !(individualDetailsUpdated || financeDetailsUpdated) : false}
                 cardClassName = "mukta-header-card"
+                labelBold={true}
             />
         </React.Fragment>
     )
