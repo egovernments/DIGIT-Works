@@ -71,8 +71,10 @@ export const Search = {
                 ]
             }
         }
-
-        const details = [headerDetails, invoiceDetails, billDetails, deductionsTable, netPayableAmt, documentDetails]
+        const details = {
+            basic_details :  {applicationDetails : [headerDetails, invoiceDetails]},
+            bill_details :  {applicationDetails : [billDetails, deductionsTable, netPayableAmt, documentDetails]}
+        }
     
         return {
             applicationDetails: details,

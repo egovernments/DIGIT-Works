@@ -21,20 +21,36 @@ const ViewPurchaseBill = ({props}) => {
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("COMMON_PURCHASE_BILL")}</Header>
             {
               !isViewPurchaseBillDataLoading && !data?.isNoDataFound && 
-                <ApplicationDetails
-                  applicationDetails={data}
-                  isLoading={isViewPurchaseBillDataLoading} 
-                  applicationData={data?.applicationDetails}
-                  moduleCode="works"
-                  isDataLoading={isViewPurchaseBillDataLoading}
-                  workflowDetails={{}}
-                  showTimeLine={false}
-                  timelineStatusPrefix={""}
-                  businessService={""}
-                  forcedActionPrefix={"WORKS"}
-                  noBoxShadow={true}
-                  customClass="status-table-custom-class"
-                />
+                <>
+                    <ApplicationDetails
+                      applicationDetails={data?.applicationDetails?.basic_details}
+                      isLoading={isViewPurchaseBillDataLoading} 
+                      applicationData={data?.basic_details}
+                      moduleCode="works"
+                      isDataLoading={isViewPurchaseBillDataLoading}
+                      workflowDetails={{}}
+                      showTimeLine={false}
+                      timelineStatusPrefix={""}
+                      businessService={""}
+                      forcedActionPrefix={"WORKS"}
+                      noBoxShadow={true}
+                      customClass="status-table-custom-class"
+                    />
+                    <ApplicationDetails
+                      applicationDetails={data?.applicationDetails?.bill_details}
+                      isLoading={isViewPurchaseBillDataLoading} 
+                      applicationData={data?.bill_details}
+                      moduleCode="works"
+                      isDataLoading={isViewPurchaseBillDataLoading}
+                      workflowDetails={{}}
+                      showTimeLine={false}
+                      timelineStatusPrefix={""}
+                      businessService={""}
+                      forcedActionPrefix={"WORKS"}
+                      noBoxShadow={true}
+                      customClass="status-table-custom-class"
+                    />
+                </>
             }                
               <WorkflowActions
                 forcedActionPrefix={"WF_ESTIMATE_ACTION"}
