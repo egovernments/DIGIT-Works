@@ -103,6 +103,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                       label: t.translate(i18.common.accountHolderName),
                       isRequired: true,
                       keyboardType: TextInputType.name,
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
+                      ],
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.accountHolderNameRequired,

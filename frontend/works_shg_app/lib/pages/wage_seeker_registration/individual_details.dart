@@ -105,6 +105,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       label: t.translate(i18.common.aadhaarNumber),
                       isRequired: true,
                       minLength: 12,
+                      maxLength: 12,
                       keyboardType: TextInputType.number,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
@@ -204,6 +205,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       prefixText: '+91 - ',
                       isRequired: true,
                       minLength: 10,
+                      maxLength: 10,
                       keyboardType: TextInputType.phone,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
