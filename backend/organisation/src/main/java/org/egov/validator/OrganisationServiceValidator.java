@@ -356,8 +356,8 @@ public class OrganisationServiceValidator {
             throw new CustomException("ORGANISATION", "Search criteria is mandatory");
         }
 
-        if (StringUtils.isBlank(searchCriteria.getTenantId())) {
-            log.error("Tenant ID is mandatory in Organisation request body");
+        if (searchCriteria.getContactMobileNumber()== null && StringUtils.isBlank(searchCriteria.getTenantId())) {
+            log.error("Tenant ID is mandatory in Organisation request body if mobile number is not passed");
             errorMap.put("TENANT_ID", "Tenant ID is mandatory");
         }
 

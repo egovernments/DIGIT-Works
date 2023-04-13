@@ -62,7 +62,7 @@ public class EstimateServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
 
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap);
+        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
@@ -168,11 +168,11 @@ public class EstimateServiceValidator {
         }
     }
 
-    private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap) {
+    private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap, boolean isCreate) {
         log.info("EstimateServiceValidator::validateMDMSData");
         List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
-       // List<String> reqEstimateDetailNames = new ArrayList<>();
+        // List<String> reqEstimateDetailNames = new ArrayList<>();
         Map<String, List<String>> reqEstimateDetailNameMap = new HashMap<>();
         Map<String, List<String>> overheadAmountTypeMap = new HashMap<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
@@ -192,30 +192,37 @@ public class EstimateServiceValidator {
 
             //name map for each category
             for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
-                if (reqEstimateDetailNameMap.containsKey(estimateDetail.getCategory())) {
-                    reqEstimateDetailNameMap.get(estimateDetail.getCategory()).add(estimateDetail.getName());
-                } else {
-                    List<String> names = new ArrayList<>();
-                    names.add(estimateDetail.getName());
-                    reqEstimateDetailNameMap.put(estimateDetail.getCategory(), names);
+                if (!isCreate && estimateDetail.isActive()) {
+                    if (reqEstimateDetailNameMap.containsKey(estimateDetail.getCategory())) {
+                        reqEstimateDetailNameMap.get(estimateDetail.getCategory()).add(estimateDetail.getName());
+                    } else {
+                        List<String> names = new ArrayList<>();
+                        names.add(estimateDetail.getName());
+                        reqEstimateDetailNameMap.put(estimateDetail.getCategory(), names);
+                    }
                 }
             }
 
+            //Amount type
             for (EstimateDetail estimateDetail : estimate.getEstimateDetails()) {
-                if (overheadAmountTypeMap.containsKey(estimateDetail.getCategory())) {
-                    List<String> amountTypeList = estimateDetail.getAmountDetail().stream()
-                            .filter(amountDetail -> StringUtils.isNotBlank(amountDetail.getType()))
-                            .map(AmountDetail::getType)
-                            .collect(Collectors.toList());
-                    List<String> existingAmountTypeList = overheadAmountTypeMap.get(estimateDetail.getCategory());
-                    existingAmountTypeList.addAll(amountTypeList);
-                    overheadAmountTypeMap.put(estimateDetail.getCategory(), existingAmountTypeList);
-                } else {
-                    List<String> amountTypeList = estimateDetail.getAmountDetail().stream()
-                            .filter(amountDetail -> StringUtils.isNotBlank(amountDetail.getType()))
-                            .map(AmountDetail::getType)
-                            .collect(Collectors.toList());
-                    overheadAmountTypeMap.put(estimateDetail.getCategory(), amountTypeList);
+                if (!isCreate && estimateDetail.isActive()) {
+                    if (overheadAmountTypeMap.containsKey(estimateDetail.getCategory())) {
+                        List<String> amountTypeList = estimateDetail.getAmountDetail().stream()
+                                .filter(amountDetail -> StringUtils.isNotBlank(amountDetail.getType())
+                                        && amountDetail.isActive())
+                                .map(AmountDetail::getType)
+                                .collect(Collectors.toList());
+                        List<String> existingAmountTypeList = overheadAmountTypeMap.get(estimateDetail.getCategory());
+                        existingAmountTypeList.addAll(amountTypeList);
+                        overheadAmountTypeMap.put(estimateDetail.getCategory(), existingAmountTypeList);
+                    } else {
+                        List<String> amountTypeList = estimateDetail.getAmountDetail().stream()
+                                .filter(amountDetail -> StringUtils.isNotBlank(amountDetail.getType())
+                                        && amountDetail.isActive())
+                                .map(AmountDetail::getType)
+                                .collect(Collectors.toList());
+                        overheadAmountTypeMap.put(estimateDetail.getCategory(), amountTypeList);
+                    }
                 }
             }
         }
@@ -399,7 +406,7 @@ public class EstimateServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap);
+        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
