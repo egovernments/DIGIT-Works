@@ -13,13 +13,11 @@
               "subHead": "",
               "body": [
                 {
-                  "inline": true,
-                  "label": "PURCHASE_BILL_NO",
+                  "label": "WORKS_BILL_NUMBER",
                   "isMandatory": false,
                   "key": "basicDetails_purchaseBillNumber",
                   "type": "text",
                   "disable": true,
-                  "appendColon": false,
                   "preProcess" : {
                     "updateDependent" : ["populators.customStyle.display"]
                   },
@@ -28,56 +26,65 @@
                     "customStyle" : {
                       "display" : "none"
                     },
-                    "customClass": "fc-header-texts"
+                    "customClass" : "field-value-no-border"
                   }
                 },
                 {
-                  "inline": true,
+                  "label": "WORKS_BILL_DATE",
+                  "isMandatory": false,
+                  "key": "basicDetails_purchaseBillDate",
+                  "type": "date",
+                  "disable": true,
+                  "preProcess" : {
+                    "updateDependent" : ["populators.customStyle.display"]
+                  },
+                  "populators": {
+                    "name": "basicDetails_purchaseBillDate",
+                    "customStyle" : {
+                      "display" : "none"
+                    },
+                    "customClass": "field-value-no-border"
+                  }
+                },
+                {
                   "label": "WORKS_ORDER_NO",
                   "isMandatory": false,
                   "key": "basicDetails_workOrderNumber",
                   "type": "text",
                   "disable": true,
-                  "appendColon": true,
                   "populators": {
                     "name": "basicDetails_workOrderNumber",
                     "customClass": "fc-header-texts"
                   }
                 },
                 {
-                  "inline": true,
                   "label": "WORKS_PROJECT_ID",
                   "isMandatory": false,
                   "key": "basicDetails_projectID",
                   "type": "text",
                   "disable": true,
-                  "appendColon": true,
                   "populators": {
                     "name": "basicDetails_projectID",
                     "customClass": "fc-header-texts"
                   }
                 },
                 {
-                  "inline": true,
                   "label": "PROJECTS_DESCRIPTION",
                   "isMandatory": false,
                   "key": "basicDetails_projectDesc",
                   "type": "text",
                   "disable": true,
-                  "appendColon": true,
                   "populators": {
                     "name": "basicDetails_projectDesc",
                     "customClass": "fc-header-texts"
                   }
                 },
                 {
-                  "inline": true,
                   "label": "ES_COMMON_LOCATION",
                   "isMandatory": false,
                   "key": "basicDetails_location",
                   "type": "text",
                   "disable": true,
-                  "appendColon": true,
                   "populators": {
                     "name": "basicDetails_location",
                     "customClass": "fc-header-texts"
@@ -86,48 +93,40 @@
               ]
             },
             {
-              "navLink": "",
-              "head": "INVOICE_DETAILS",
+              "head": "EXP_INVOICE_DETAILS",
+              "subHead": "",
               "body": [
                 {
-                  "isMandatory": true,
-                  "key": "nameOfVendor",
-                  "type": "radioordropdown",
+                  "key": "invoiceDetails_vendor",
                   "label": "EXP_VENDOR",
+                  "isMandatory": true,
+                  "type": "dropdown",
                   "disable": false,
-                  "preProcess": {
-                    "updateDependent": [
-                      "populators.options"
-                    ]
-                  },
                   "populators": {
-                    "name": "nameOfVendor",
-                    "optionsKey": "name",
-                    "error": "WORKS_REQUIRED_ERR",
-                    "required": false,
-                    "optionsCustomStyle": {
-                      "top": "2.5rem"
-                    },
-                    "options": []
+                      "name": "invoiceDetails_vendor",
+                      "optionsKey": "name",
+                      "error": "WORKS_REQUIRED_ERR",
+                      "optionsCustomStyle": {
+                          "top": "2.3rem"
+                      },
+                      "options": []
                   }
                 },
                 {
-                  "inline": true,
+                  "key": "invoiceDetails_vendorId",
                   "label": "EXP_VENDOR_ID",
-                  "isMandatory": false,
-                  "key": "vendorID",
+                  "isMandatory": true,
                   "type": "text",
                   "disable": true,
                   "populators": {
-                    "name": "vendorID",
+                    "name": "invoiceDetails_vendorId",
                     "customClass": "disabled-text-field"
                   }
                 },
                 { 
-                  "inline": true,
-                  "label": "INVOICE_NUMBER",
+                  "key": "invoiceDetails_invoiceNumber",
+                  "label": "EXP_INVOICE_NUMBER",
                   "isMandatory": true,
-                  "key": "invoiceNumber",
                   "type": "text",
                   "disable": false,
                   "preProcess": {
@@ -136,7 +135,7 @@
                     ]
                   },
                   "populators": {
-                    "name": "invoiceNumber",
+                    "name": "invoiceDetails_invoiceNumber",
                     "error": "WORKS_REQUIRED_ERR",
                     "validation": {
                       "pattern": "^[a-zA-Z0-9 .\\-_@\\']*$",
@@ -146,53 +145,45 @@
                   }
                 },
                 {
-                  "inline": true,
-                  "label": "INVOICE_DATE",
+                  "key": "invoiceDetails_invoiceDate",
+                  "label": "EXP_INVOICE_DATE",
                   "isMandatory": true,
-                  "key": "invoiceDate",
                   "type": "date",
                   "disable": false,
-                  "populators": { "name": "invoice_date", "max" : "currentDate" }
+                  "preProcess" : {
+                    "updateDependent" : ["populators.max"]
+                  },
+                  "populators": { 
+                    "name": "invoice_date", 
+                    "error": "WORKS_REQUIRED_ERR", 
+                    "max" : "currentDate" 
+                  }
                 },
                 {
-                  "inline": true,
-                  "label": "MATERIAL_COST",
+                  "label": "EXP_MATERIALCOST_RS",
                   "isMandatory": true,
-                  "key": "materialCost",
+                  "key": "invoiceDetails_materialCost",
                   "type": "number",
                   "disable": false,
-                  "preProcess": {
-                    "convertStringToRegEx": [
-                      "populators.validation.pattern"
-                    ]
-                  },
                   "populators": {
                     "name": "materialCost",
-                    "error": "COMMON_PATTERN_ERR_MSG_MATERIAL_COST",
+                    "error": "WORKS_REQUIRED_ERR",
                     "validation": {
-                      "pattern": "^(?:0|[1-9]\\d*)(?:\\.(?!.*000)\\d+)?$",
-                      "maxlength": 10
+                      "min": 0
                     }
                   }
                 },
                 {
-                  "inline": true,
-                  "label": "GST",
+                  "label": "EXP_GST_RS",
                   "isMandatory": false,
-                  "key": "gst",
+                  "key": "invoiceDetails_gst",
                   "type": "number",
                   "disable": false,
-                  "preProcess": {
-                    "convertStringToRegEx": [
-                      "populators.validation.pattern"
-                    ]
-                  },
                   "populators": {
-                    "name": "gst",
-                    "error": "COMMON_PATTERN_ERR_MSG_GST",
+                    "name": "invoiceDetails_gst",
+                    "error": "WORKS_REQUIRED_ERR",
                     "validation": {
-                      "pattern": "^(?:0|[1-9]\\d*)(?:\\.(?!.*000)\\d+)?$",
-                      "maxlength": 10
+                      "min": 0
                     }
                   }
                 }
@@ -203,23 +194,26 @@
               "head": "EXP_BILL_DETAILS",
               "body": [
                 {
-                  "inline": true,
                   "label": "WORKS_BILL_DATE",
                   "isMandatory": true,
-                  "key": "billDate",
+                  "key": "billDetails_billDate",
                   "type": "date",
-                  "disable": false,
-                  "populators": { "name": "bill_date", "max" : "currentDate" }
+                  "disable": true,
+                  "populators": { 
+                    "name": "billDetails_billDate",
+                    "error": "WORKS_REQUIRED_ERR"
+                  }
                 },
                 {
                   "inline": true,
                   "label": "EXP_BILL_AMOUNT",
                   "isMandatory": false,
-                  "key": "bill_amount",
-                  "type": "number",
+                  "key": "billDetails_billAmt",
+                  "type": "text",
                   "disable": true,
                   "populators": {
-                    "name": "bill_amount"
+                    "name": "billDetails_billAmt",
+                    "customClass": "fc-header-texts"
                   }
                 }
               ]

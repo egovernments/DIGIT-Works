@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb, AppContainer } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 import CreateBill from "./CreateBill";
-import PurchaseBill from "./CreateBills/PurchaseBill";
 import ViewSupervisionbill from "./Bills/ViewSupervisionbill";
 
 const ExpenditureBreadCrumbs = ({ location }) => {
@@ -77,6 +76,7 @@ const App = ({ path }) => {
     const BillInbox = Digit?.ComponentRegistryService?.getComponent("BillInbox");
     const SearchBill = Digit?.ComponentRegistryService?.getComponent("SearchBill");
     const ViewBill = Digit?.ComponentRegistryService?.getComponent("ViewBill");
+    const PurchaseBill = Digit?.ComponentRegistryService?.getComponent("PurchaseBill");
 
     return (
       <Switch>

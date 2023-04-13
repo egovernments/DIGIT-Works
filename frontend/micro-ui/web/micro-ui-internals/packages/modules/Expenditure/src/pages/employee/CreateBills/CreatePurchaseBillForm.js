@@ -17,7 +17,6 @@ const CreatePurchaseBillForm = ({
     sessionFormData, 
     setSessionFormData, 
     clearSessionFormData, 
-    tenantId, 
     contract,  
     preProcessData,
     isModify
@@ -186,7 +185,6 @@ const CreatePurchaseBillForm = ({
                     config={createPBModalConfig}
                 />
             }
-            <Header styles={{fontSize: "32px"}}>{isModify ? t("COMMON_MODIFY_PB") : t("ACTION_TEST_CREATE_PB")}</Header>
                 {
                     createPurchaseBillConfig && 
                     (<FormComposer

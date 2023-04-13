@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import CreatePurchaseBillForm from "./CreatePurchaseBillForm";
 import createPurchaseBillConfigMUKTA from "../../../configs/createPurchaseBillConfigMUKTA.json";
-import { useTranslation } from "react-i18next";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader, Header } from "@egovernments/digit-ui-react-components";
 import { updateDefaultValues } from "../../../utils/index.js";
 
 const PurchaseBill = () => {
@@ -120,13 +120,13 @@ const PurchaseBill = () => {
     // if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
+            <Header styles={{fontSize: "32px"}}>{isModify ? t("EXP_MODIFY_PB") : t("ACTION_TEST_CREATE_PB")}</Header>
             {
                 isFormReady && <CreatePurchaseBillForm 
                 createPurchaseBillConfig={configs} 
                 sessionFormData={sessionFormData} 
                 setSessionFormData={setSessionFormData} 
                 clearSessionFormData={clearSessionFormData} 
-                tenantId={tenantId} 
                 contract={contract} 
                 preProcessData={{nameOfVendor : nameOfVendor}}
                 isModify={isModify} 
