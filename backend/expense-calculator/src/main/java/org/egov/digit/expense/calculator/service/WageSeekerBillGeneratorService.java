@@ -52,6 +52,8 @@ public class WageSeekerBillGeneratorService {
         return makeCalculation(calcEstimates,criteria.getTenantId());
     }
 
+
+
     public void createAndPostWageSeekerBill(RequestInfo requestInfo, MusterRoll musterRoll){
         // Fetch wage seeker skills from MDMS
         Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, musterRoll.getTenantId());
