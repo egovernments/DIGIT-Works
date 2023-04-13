@@ -122,7 +122,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
                 "cboCode" : inputFormdata?.nameOfCBO?.code,
                 "totalEstimatedAmount" : estimate?.additionalDetails?.totalEstimatedAmount,
                 "termsAndConditions" : inputFormdata?.WOTermsAndConditions,
-                "locality" : project?.additionalDetails?.locality?.code,
+                "locality" : project?.additionalDetails?.locality,
                 "estimateNumber" : estimate?.estimateNumber,
                 "officerInChargeDesgn" : inputFormdata?.designationOfOfficerInCharge,
                 "officerInChargeName" : {code : inputFormdata?.nameOfOfficerInCharge?.code, name : inputFormdata?.nameOfOfficerInCharge?.name},
