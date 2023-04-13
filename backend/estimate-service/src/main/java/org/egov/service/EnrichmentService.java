@@ -105,7 +105,9 @@ public class EnrichmentService {
             throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
         }
 
-        idResponses = idGenerationResponse.getIdResponses();
+        if (idGenerationResponse != null && !CollectionUtils.isEmpty(idGenerationResponse.getIdResponses())) {
+            idResponses = idGenerationResponse.getIdResponses();
+        }
 
         return idResponses.stream()
                 .map(IdResponse::getId).collect(Collectors.toList());
