@@ -177,6 +177,7 @@ class _$AppRouter extends RootStackRouter {
           downloadLabel: args.downloadLabel,
           printLabel: args.printLabel,
           whatsAppLabel: args.whatsAppLabel,
+          backButtonLabel: args.backButtonLabel,
         ),
       );
     },
@@ -633,6 +634,7 @@ class SuccessResponseRoute extends PageRouteInfo<SuccessResponseRouteArgs> {
     String? downloadLabel,
     String? printLabel,
     String? whatsAppLabel,
+    String? backButtonLabel,
   }) : super(
           SuccessResponseRoute.name,
           path: 'success',
@@ -652,6 +654,7 @@ class SuccessResponseRoute extends PageRouteInfo<SuccessResponseRouteArgs> {
             downloadLabel: downloadLabel,
             printLabel: printLabel,
             whatsAppLabel: whatsAppLabel,
+            backButtonLabel: backButtonLabel,
           ),
         );
 
@@ -675,6 +678,7 @@ class SuccessResponseRouteArgs {
     this.downloadLabel,
     this.printLabel,
     this.whatsAppLabel,
+    this.backButtonLabel,
   });
 
   final Key? key;
@@ -707,8 +711,10 @@ class SuccessResponseRouteArgs {
 
   final String? whatsAppLabel;
 
+  final String? backButtonLabel;
+
   @override
   String toString() {
-    return 'SuccessResponseRouteArgs{key: $key, header: $header, subHeader: $subHeader, subText: $subText, subTitle: $subTitle, callBack: $callBack, callBackWhatsapp: $callBackWhatsapp, callBackDownload: $callBackDownload, callBackPrint: $callBackPrint, backButton: $backButton, buttonLabel: $buttonLabel, isWithoutLogin: $isWithoutLogin, downloadLabel: $downloadLabel, printLabel: $printLabel, whatsAppLabel: $whatsAppLabel}';
+    return 'SuccessResponseRouteArgs{key: $key, header: $header, subHeader: $subHeader, subText: $subText, subTitle: $subTitle, callBack: $callBack, callBackWhatsapp: $callBackWhatsapp, callBackDownload: $callBackDownload, callBackPrint: $callBackPrint, backButton: $backButton, buttonLabel: $buttonLabel, isWithoutLogin: $isWithoutLogin, downloadLabel: $downloadLabel, printLabel: $printLabel, whatsAppLabel: $whatsAppLabel, backButtonLabel: $backButtonLabel}';
   }
 }

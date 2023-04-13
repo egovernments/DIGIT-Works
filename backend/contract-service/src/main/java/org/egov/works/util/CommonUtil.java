@@ -36,12 +36,8 @@ public class CommonUtil {
             JsonNode node = mapper.readTree(mapper.writeValueAsString(object));
             if (node.findValue(findValueOf) != null  && StringUtils.isNotBlank(node.findValue(findValueOf).textValue())) {
                 return Optional.of(node.findValue(findValueOf).textValue());
-
             }
-        } catch (IOException e) {
-            log.error("Failed to parse the object :"+e);
-            throw new CustomException("PARSING_ERROR", "Failed to parse the object");
-        }
+        } catch (Exception ignore) {}
         return Optional.empty();
     }
 }
