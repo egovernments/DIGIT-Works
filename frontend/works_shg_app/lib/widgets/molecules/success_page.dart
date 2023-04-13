@@ -8,7 +8,7 @@ import '../atoms/app_bar_logo.dart';
 import '../atoms/success_message.dart';
 import '../drawer_wrapper.dart';
 
-class SuccessResponse extends StatelessWidget {
+class SuccessResponsePage extends StatelessWidget {
   final String header;
   final String? subHeader;
   final String? subText;
@@ -21,9 +21,10 @@ class SuccessResponse extends StatelessWidget {
   final VoidCallback? callBackDownload;
   final VoidCallback? callBackPrint;
   final bool? backButton;
+  final String? buttonLabel;
   final bool isWithoutLogin;
 
-  const SuccessResponse(
+  const SuccessResponsePage(
       {super.key,
       required this.header,
       this.subHeader,
@@ -34,6 +35,7 @@ class SuccessResponse extends StatelessWidget {
       this.callBackDownload,
       this.callBackPrint,
       this.backButton,
+      this.buttonLabel,
       this.isWithoutLogin = false,
       this.downloadLabel,
       this.printLabel,
@@ -152,11 +154,23 @@ class SuccessResponse extends StatelessWidget {
                         ),
                         Visibility(
                           visible: !isWithoutLogin,
-                          child: const PoweredByDigit(),
+                          child: DigitCard(
+                            child: DigitElevatedButton(
+                              onPressed: callBack,
+                              child: Center(
+                                child: Text(buttonLabel ?? '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .apply(color: Colors.white)),
+                              ),
+                            ),
+                          ),
                         ),
                         const SizedBox(
                           height: 20,
                         ),
+                        const PoweredByDigit()
                       ],
                     ))
               ]))),

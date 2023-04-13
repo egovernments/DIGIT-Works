@@ -14,6 +14,7 @@ import '../../models/mdms/wage_seeker_mdms.dart';
 import '../../models/wage_seeker/financial_details_model.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/skill_details_model.dart';
+import '../../utils/global_variables.dart';
 
 class LocationDetailsPage extends StatefulWidget {
   final void Function() onPressed;
@@ -108,12 +109,11 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.city),
-                      menuItems:
-                          city.map((e) => t.translate(e).toString()).toList(),
+                      menuItems: city.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: cityKey,
-                      valueMapper: (value) => value,
-                      initialValue: widget.city,
+                      valueMapper: (value) =>
+                          t.translate('PG_${value.toUpperCase()}'),
                       onChanged: (value) {},
                       validationMessages: {
                         'required': (_) => t.translate(
@@ -123,11 +123,11 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.ward),
-                      menuItems:
-                          ward.map((e) => t.translate(e).toString()).toList(),
+                      menuItems: ward.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: wardKey,
-                      valueMapper: (value) => value,
+                      valueMapper: (value) => t.translate(
+                          '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${value}'),
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.localityRequired,
@@ -148,11 +148,10 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                     DigitDropdown<String>(
                         label: t.translate(i18.common.locality),
-                        menuItems: locality
-                            .map((e) => t.translate(e).toString())
-                            .toList(),
+                        menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,
-                        valueMapper: (value) => value,
+                        valueMapper: (value) => t.translate(
+                            '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${value}'),
                         isRequired: true,
                         onChanged: (value) {},
                         validationMessages: {
