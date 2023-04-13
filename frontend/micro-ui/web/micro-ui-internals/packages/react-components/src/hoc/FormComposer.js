@@ -288,7 +288,7 @@ export const FormComposer = (props) => {
                   tenantId={Digit.ULBService.getCurrentTenantId()}
                   getFormState={getFileStoreData}
                   showHintBelow={populators?.showHintBelow ? true : false}
-                  setuploadedstate={value}
+                  setuploadedstate={value || []}
                   allowedFileTypesRegex={populators.allowedFileTypes}
                   allowedMaxSizeInMB={populators.allowedMaxSizeInMB}
                   hintText={populators.hintText}
