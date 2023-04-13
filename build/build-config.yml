@@ -95,6 +95,14 @@ config:
       - work-dir: "backend/bankaccounts/src/main/resources/db"
         image-name: "bankaccounts-db"
 
+  - name: "builds/digit-works/backend/expense-calculator"
+    build:
+      - work-dir: "backend/expense-calculator"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "expense-calculator"
+      - work-dir: "backend/expense-calculator/src/main/resources/db"
+        image-name: "expense-calculator-db"
+
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
     build:
