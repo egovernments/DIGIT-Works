@@ -252,24 +252,18 @@
             },
             {
               "navLink": "PB_Details",
-              "head": "WORKS_RELEVANT_DOCS",
+              "head": "",
               "body": [
-                {
-                  "label": "ES_COMMON_INVOICE",
-                  "isMandatory": false,
-                  "key": "basicDetails_invoice",
-                  "type": "multiupload",
-                  "preProcess" : {
-                    "convertStringToRegEx" : ["populators.allowedFileTypes"]
-                  },
-                  "populators": {
-                    "name": "basicDetails_invoice",
-                    "allowedMaxSizeInMB": 2,
-                    "maxFilesAllowed": 1,
-                    "allowedFileTypes": "(.*?)(jpg|jpeg|png)$"
+                  {
+                      "type": "documentUpload",
+                      "withoutLabel": true,
+                      "module": "Expenditure",
+                      "error": "WORKS_REQUIRED_ERR",
+                      "name": "uploadedDocs",
+                      "customClass": "",
+                      "localePrefix": "PURCHASE_BILL_DOC"
                   }
-                }
-              ]
+               ]
             }
           ]
         }

@@ -64,17 +64,17 @@ const CreatePurchaseBillForm = ({
       [preProcessData?.nameOfVendor]);
 
     //session storage rendering infinitely
-    // const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    //     if (!_.isEqual(sessionFormData, formData)) {
-    //         const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+        if (!_.isEqual(sessionFormData, formData)) {
+            //const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
-    //         if(formData.nameOfVender) {
-    //             setValue("vendorID", formData.nameOfVendor?.orgNumber);
-    //         }
+            if(formData.nameOfVender) {
+                setValue("vendorID", formData.nameOfVendor?.orgNumber);
+            }
 
-    //         setSessionFormData({ ...sessionFormData, ...formData });
-    //     }
-    // }
+            //setSessionFormData({ ...sessionFormData, ...formData });
+        }
+    }
 
     const handleToastClose = () => {
         setToast({show : false, label : "", error : false});
@@ -211,7 +211,7 @@ const CreatePurchaseBillForm = ({
                         showMultipleCardsWithoutNavs={false}
                         showMultipleCardsInNavs={false}
                         horizontalNavConfig={navConfig}
-                        //onFormValueChange={onFormValueChange}
+                        onFormValueChange={onFormValueChange}
                         cardClassName = "mukta-header-card"
                     />)
                 }

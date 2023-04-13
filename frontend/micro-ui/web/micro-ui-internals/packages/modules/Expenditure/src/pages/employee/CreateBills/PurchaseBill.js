@@ -16,8 +16,8 @@ const PurchaseBill = () => {
     const [nameOfVendor, setNameOfVendor] = useState([]);
     const [isFormReady, setIsFormReady] = useState(false);
 
-    // const { isLoading : isConfigLoading, data : createPurchaseBillConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
-    // stateTenant,
+    // const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
+    // Digit.ULBService.getCurrentTenantId(),
     // Digit.Utils.getConfigModuleName(),
     // [
     //     {
