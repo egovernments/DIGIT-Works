@@ -950,3 +950,17 @@ input[type="number"] {
   display: flex;
   justify-content: center;
 }
+
+.tooltiptext {
+  white-space: nowrap;
+  width: 30rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.employee-data-table  {
+.row {
+  .value {
+    white-space: break-spaces !important;
+  }
+}
+}
