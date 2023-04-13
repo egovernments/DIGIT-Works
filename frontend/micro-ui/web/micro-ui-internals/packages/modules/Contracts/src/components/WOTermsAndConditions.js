@@ -101,7 +101,7 @@ const WOTermsAndConditions = (props) => {
             }
             />
             </div></td>
-            <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+            <td style={getStyles(8)} >{showDelete() && <span className="icon-wrapper" onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} /></span>}</td>
         </tr>
         })
     }
