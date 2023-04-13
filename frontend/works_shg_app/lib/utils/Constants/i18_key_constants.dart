@@ -50,7 +50,7 @@ class Common {
   String get accept => 'CORE_BUTTON_ACCEPT';
   String get termsAndConditions => 'COMMON_TERMS_&_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
-  String get back => 'CORE_BUTTON_BACK';
+  String get back => 'CORE_BACK_BUTTON';
   String get sendForApproval => 'SEND_FOR_APPROVAL';
   String get saveAsDraft => 'SAVE_AS_DRAFT';
   String get warning => 'CORE_MSG_WARNING';
@@ -203,6 +203,8 @@ class WageSeeker {
   String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
   String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
   String get wageSeekerSuccessSubText => 'CREATE_INDIVIDUAL_SUCCESS_SUB_TEXT';
+  String get selectSkillValidation => 'CANNOT_HAVE_SAME_SKILL_TYPE';
+  String get enterValidIFSC => 'ENTER_VALID_IFSC_CODE';
 }
 
 class AttendanceMgmt {
