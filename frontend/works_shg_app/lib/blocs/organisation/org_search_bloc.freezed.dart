@@ -549,6 +549,8 @@ abstract class _$$_LoadedCopyWith<$Res> {
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
   $Res call({OrganisationListModel? organisationListModel});
+
+  $OrganisationListModelCopyWith<$Res>? get organisationListModel;
 }
 
 /// @nodoc
@@ -569,6 +571,19 @@ class __$$_LoadedCopyWithImpl<$Res>
           : organisationListModel // ignore: cast_nullable_to_non_nullable
               as OrganisationListModel?,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $OrganisationListModelCopyWith<$Res>? get organisationListModel {
+    if (_value.organisationListModel == null) {
+      return null;
+    }
+
+    return $OrganisationListModelCopyWith<$Res>(_value.organisationListModel!,
+        (value) {
+      return _then(_value.copyWith(organisationListModel: value));
+    });
   }
 }
 

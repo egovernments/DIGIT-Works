@@ -118,11 +118,14 @@ class WorkDetailsCard extends StatelessWidget {
     if ((viewWorkOrder || orgProfile) && cardTitle != null) {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
-        child: Text(
-          cardTitle ?? '',
-          style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-              ?.apply(color: const DigitColors().black),
-          textAlign: TextAlign.left,
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
+            cardTitle ?? '',
+            style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                ?.apply(color: const DigitColors().black),
+            textAlign: TextAlign.left,
+          ),
         ),
       ));
     }
@@ -313,14 +316,11 @@ class WorkDetailsCard extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                padding: const EdgeInsets.only(right: 16),
-                width: MediaQuery.of(context).size.width > 720
-                    ? MediaQuery.of(context).size.width / 3.5
-                    : MediaQuery.of(context).size.width / 3.5,
+            SizedBox(
+                width: MediaQuery.of(context).size.width / 3,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,7 +342,7 @@ class WorkDetailsCard extends StatelessWidget {
                           : const Text('')
                     ])),
             SizedBox(
-                width: MediaQuery.of(context).size.width / 2,
+                width: MediaQuery.of(context).size.width / 2.5,
                 child: Text(
                   description,
                   style: TextStyle(
