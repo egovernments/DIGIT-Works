@@ -102,13 +102,13 @@ public class Configuration {
 	
 	// bill search configs
 	
-    @Value("${bill.search.pagination.default.limit}")
+    @Value("${expense.billing.default.limit}")
     private Long defaultLimit;
 
-    @Value("${bill.search.pagination.default.offset}")
+    @Value("${expense.billing.default.offset}")
     private Long defaultOffset;
     
-    @Value("${bill.search.pagination.max.search.limit}")
+    @Value("${expense.billing.search.max.limit}")
     private Long maxSearchLimit;
 
 }

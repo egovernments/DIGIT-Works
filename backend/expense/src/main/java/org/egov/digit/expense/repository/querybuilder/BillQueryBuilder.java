@@ -53,7 +53,7 @@ public class BillQueryBuilder {
 		}
 
 		Set<String> ids = billCriteria.getIds();
-		if (CollectionUtils.isEmpty(ids)) {
+		if (!CollectionUtils.isEmpty(ids)) {
 
 			builderUtils.addClauseIfRequired(preparedStatementValues, billSearchQuery);
 			billSearchQuery.append("bill.id IN (").append(builderUtils.createQuery(ids)).append(")");

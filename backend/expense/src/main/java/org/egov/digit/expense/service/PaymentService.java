@@ -104,7 +104,7 @@ public class PaymentService {
 		RequestInfo requestInfo = paymentRequest.getRequestInfo();
 		Payment payment = paymentRequest.getPayment();
 		String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-		AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, false);
+		AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), false);
 		
 		Set<String> billIds = paymentRequest.getPayment().getBills()
 				.stream().map(Bill::getId)

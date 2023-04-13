@@ -57,7 +57,7 @@ public class BillValidator {
 			
 		}
 		
-		validateMasterData(billRequest, errorMap);
+//		validateMasterData(billRequest, errorMap);
 		
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
@@ -67,7 +67,7 @@ public class BillValidator {
 	public void validateUpdateRequest(BillRequest billRequest) {
 		
 		Map<String, String> errorMap = new HashMap<>();
-		validateMasterData(billRequest, errorMap);
+//		validateMasterData(billRequest, errorMap);
 		
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);

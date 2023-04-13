@@ -2,12 +2,7 @@ package org.egov.digit.expense.util;
 
 import java.util.UUID;
 
-import org.egov.digit.expense.web.models.Bill;
-import org.egov.digit.expense.web.models.BillDetail;
-import org.egov.digit.expense.web.models.BillRequest;
-import org.egov.digit.expense.web.models.LineItem;
-import org.egov.digit.expense.web.models.Payment;
-import org.egov.digit.expense.web.models.PaymentRequest;
+import org.egov.digit.expense.web.models.*;
 import org.springframework.stereotype.Component;
 
 import digit.models.coremodels.AuditDetails;
@@ -19,15 +14,21 @@ public class EnrichmentUtil {
 
 		Bill bill = billRequest.getBill();
 		String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
-		AuditDetails audit = getAuditDetails(createdBy, true);
+		AuditDetails audit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
 
 		bill.setId(UUID.randomUUID().toString());
+		bill.getPayer().setId(UUID.randomUUID().toString());
 		bill.setAuditDetails(audit);
+		bill.getPayer().setAuditDetails(audit);
 
 		for (BillDetail billDetail : bill.getBillDetails()) {
 
 			billDetail.setId(UUID.randomUUID().toString());
+			billDetail.setBillId(UUID.randomUUID().toString());
 			billDetail.setAuditDetails(audit);
+
+			billDetail.getPayee().setId(UUID.randomUUID().toString());
+			billDetail.getPayee().setAuditDetails(audit);
 
 			for (LineItem lineItem : billDetail.getLineItems()) {
 				lineItem.setId(UUID.randomUUID().toString());
@@ -46,8 +47,8 @@ public class EnrichmentUtil {
 
 		Bill bill = billRequest.getBill();
 		String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
-		AuditDetails updateAudit = getAuditDetails(createdBy, false);
-		AuditDetails createAudit = getAuditDetails(createdBy, true);
+		AuditDetails updateAudit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), false);
+		AuditDetails createAudit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
 
 		bill.setAuditDetails(updateAudit);
 
@@ -107,7 +108,7 @@ public class EnrichmentUtil {
 		Payment payment = paymentRequest.getPayment();
 		String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
 		payment.setId(UUID.randomUUID().toString());
-		payment.setAuditDetails(getAuditDetails(createdBy, true));
+		payment.setAuditDetails(getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), true));
 		return paymentRequest; 
 	}
 	
@@ -115,7 +116,7 @@ public class EnrichmentUtil {
 
 		Payment payment = paymentRequest.getPayment();
 		String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-		payment.setAuditDetails(getAuditDetails(createdBy, false));
+		payment.setAuditDetails(getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), false));
 		return paymentRequest;
 	}
 
@@ -127,7 +128,7 @@ public class EnrichmentUtil {
      * @param isCreate
      * @return AuditDetails
      */
-    public AuditDetails getAuditDetails(String by, Boolean isCreate) {
+    public AuditDetails getAuditDetails(String by, AuditDetails auditDetails, Boolean isCreate) {
     	
         Long time = System.currentTimeMillis();
         
@@ -140,6 +141,8 @@ public class EnrichmentUtil {
             		.build();
         else
             return AuditDetails.builder()
+					.createdBy(auditDetails.getCreatedBy())
+					.createdTime(auditDetails.getCreatedTime())
             		.lastModifiedBy(by)
             		.lastModifiedTime(time)
             		.build();

@@ -57,7 +57,7 @@ public class Bill {
 	@Valid
 	private BigDecimal netPaidAmount;
 
-	@JsonProperty("businessService")
+	@JsonProperty("businessservice")
 	@NotNull
 	@Size(min = 2, max = 64)
 	private String businessService;

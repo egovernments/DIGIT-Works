@@ -28,7 +28,7 @@ public class QueryBuilderUtils {
 		StringBuilder builder = new StringBuilder();
 		int length = ids.size();
 		for (int i = 0; i < length; i++) {
-			builder.append(" ?");
+			builder.append("?");
 			if (i != length - 1)
 				builder.append(",");
 		}

@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS eg_expense_payment
 (
-
 id character varying(64)   NOT NULL,
 tenantid character varying(250)   NOT NULL,
 netPayableAmount numeric(12,2),
@@ -22,6 +21,6 @@ paymentid character varying(64)   NOT NULL,
 billid character varying(64)   NOT NULL,
 tenantid character varying(250)   NOT NULL,
 
-CONSTRAINT pk_eg_expense_payment PRIMARY KEY (paymentid,billid,tenantid)
+CONSTRAINT pk_eg_expense_bill_payment PRIMARY KEY (paymentid,billid,tenantid)
 );
 

@@ -27,7 +27,7 @@ public class BillRequest {
 	@Valid
 	private RequestInfo requestInfo;
 
-	@JsonProperty("bills")
+	@JsonProperty("bill")
 	@Valid
 	private Bill bill;
 
