@@ -957,3 +957,12 @@ input[type="number"] {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.employee-data-table  {
+  .row {
+    .value {
+      white-space: break-spaces !important;
+      word-break: break-all;
+    }
+  }
+}
