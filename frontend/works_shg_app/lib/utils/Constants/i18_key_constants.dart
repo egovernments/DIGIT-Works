@@ -134,6 +134,8 @@ class Common {
   String get workflowTimeline => 'WORKS_WORKFLOW_TIMELINE';
   String get effectiveFrom => 'MASTERS_EFFECTIVE_FROM';
   String get effectiveTo => 'MASTERS_EFFECTIVE_TO';
+  String get validPhotoGraph => 'PHOTOGRAPH_VALID_SIZE';
+  String get individualAlreadyAdded => 'IND_ALREADY_ADDED_TO_THE_TABLE';
 }
 
 class Home {
