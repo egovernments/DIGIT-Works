@@ -19,6 +19,7 @@ import '../../models/wage_seeker/banking_details_model.dart';
 import '../../models/wage_seeker/financial_details_model.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
+import '../../utils/global_variables.dart';
 import '../../utils/notifiers.dart';
 
 class SummaryDetailsPage extends StatefulWidget {
@@ -234,22 +235,25 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                         : 'NA'),
             getItemWidget(context,
                 title: t.translate(i18.common.city),
-                description:
-                    locationDetails != null && locationDetails?.city != null
-                        ? locationDetails!.city.toString()
-                        : 'NA'),
+                description: locationDetails != null &&
+                        locationDetails?.city != null
+                    ? t.translate(
+                        'PG_${locationDetails!.city.toString().toUpperCase()}')
+                    : 'NA'),
             getItemWidget(context,
                 title: t.translate(i18.common.ward),
-                description:
-                    locationDetails != null && locationDetails?.ward != null
-                        ? locationDetails!.ward.toString()
-                        : 'NA'),
+                description: locationDetails != null &&
+                        locationDetails?.ward != null
+                    ? t.translate(
+                        '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${locationDetails!.ward.toString()}')
+                    : 'NA'),
             getItemWidget(context,
                 title: t.translate(i18.common.locality),
-                description:
-                    locationDetails != null && locationDetails?.locality != null
-                        ? t.translate(locationDetails!.locality.toString())
-                        : 'NA'),
+                description: locationDetails != null &&
+                        locationDetails?.locality != null
+                    ? t.translate(
+                        '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${locationDetails!.locality.toString()}')
+                    : 'NA'),
             getItemWidget(context,
                 title: t.translate(i18.common.streetName),
                 description: locationDetails != null &&
