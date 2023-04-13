@@ -144,11 +144,10 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         context,
                         labelText: t.translate(i18.common.accountType),
                         formControlName: accountTypeKey,
-                        options: accountTypeList
-                            .map((e) => t.translate(e).toString())
-                            .toList(),
+                        options:
+                            accountTypeList.map((e) => e.toString()).toList(),
                         isRequired: true,
-                        valueMapper: (value) => value,
+                        valueMapper: (value) => t.translate(value),
                         onValueChange: (value) {
                           setState(() {
                             accountType = value;

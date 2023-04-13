@@ -103,7 +103,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .id(estDetailsId)
                 .sorId(rs.getString("sor_id"))
                 .category(rs.getString("category"))
-                .name(rs.getString("name"))
+                .name(rs.getString("estDetailName"))
                 .description(rs.getString("estDetailDescription"))
                 .unitRate(rs.getDouble("unit_rate"))
                 .noOfunit(rs.getDouble("no_of_unit"))

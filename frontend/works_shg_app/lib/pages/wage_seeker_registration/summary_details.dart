@@ -253,15 +253,17 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             getItemWidget(context,
                 title: t.translate(i18.common.streetName),
                 description: locationDetails != null &&
-                        locationDetails?.streetName != null
+                        locationDetails?.streetName != null &&
+                        locationDetails!.streetName.toString().isNotEmpty
                     ? locationDetails!.streetName.toString()
                     : 'NA'),
             getItemWidget(context,
                 title: t.translate(i18.common.doorNo),
-                description:
-                    locationDetails != null && locationDetails?.doorNo != null
-                        ? t.translate(locationDetails!.doorNo.toString())
-                        : 'NA'),
+                description: locationDetails != null &&
+                        locationDetails?.doorNo != null &&
+                        locationDetails!.doorNo.toString().isNotEmpty
+                    ? t.translate(locationDetails!.doorNo.toString())
+                    : 'NA'),
           ],
         )),
         DigitCard(
@@ -348,14 +350,17 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                       loaded: (BankingDetailsModel? bankingDetails,
                           BankAccounts? bankAccountDetails) {
                         var localizationText =
-                            '${AppLocalizations.of(context).translate(i18.login.enterOTPSent)}';
+                            '${t.translate(i18.wageSeeker.wageSeekerSuccessSubText)}';
                         localizationText = localizationText.replaceFirst(
-                            '{individualId}', bankAccountDetails?.indID ?? '');
-                        Notifiers.getToastMessage(
-                            context,
-                            '${i18.wageSeeker.createIndSuccess} ${bankAccountDetails?.indID} ',
-                            'SUCCESS');
-                        context.router.push(const HomeRoute());
+                            '{individualID}', bankAccountDetails?.indID ?? '');
+                        context.router.popAndPush(SuccessResponseRoute(
+                            header:
+                                t.translate(i18.wageSeeker.createIndSuccess),
+                            subTitle: localizationText,
+                            backButton: true,
+                            callBack: () =>
+                                context.router.push(const HomeRoute()),
+                            buttonLabel: t.translate(i18.common.backToHome)));
                       },
                       error: (String? error) => Notifiers.getToastMessage(
                           context, error.toString(), 'ERROR'));

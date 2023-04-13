@@ -249,8 +249,7 @@ const NonSORTable = ({control,watch,...props}) => {
           {errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
           </div></td>
-
-        <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+        <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)} className="icon-wrapper"><DeleteIcon fill={"#B1B4B6"}/></span>}</td>
       </tr>
     })
   }
