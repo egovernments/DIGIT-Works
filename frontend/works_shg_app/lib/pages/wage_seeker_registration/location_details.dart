@@ -211,7 +211,8 @@ class LocationDetailsState extends State<LocationDetailsPage> {
       fb.group(<String, Object>{
         pinCodeKey: FormControl<String>(value: locationDetails.pinCode ?? ''),
         cityKey: FormControl<String>(
-            value: locationDetails.city, validators: [Validators.required]),
+            value: locationDetails.city ?? widget.city,
+            validators: [Validators.required]),
         wardKey: FormControl<String>(
             value: locationDetails.ward, validators: [Validators.required]),
         localityKey: FormControl<String>(

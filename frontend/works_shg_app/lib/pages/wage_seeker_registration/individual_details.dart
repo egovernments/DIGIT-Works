@@ -299,8 +299,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
           value: null,
           validators: [
             Validators.required,
-            Validators.max(
-                DateTime.now().subtract(const Duration(days: 18 * 365)))
+            Validators.max(DateTime(DateTime.now().year - 18,
+                DateTime.now().month, DateTime.now().day))
           ],
         ),
         socialCategoryKey: FormControl<String>(value: null),
