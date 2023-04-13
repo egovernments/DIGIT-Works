@@ -123,10 +123,16 @@ const TransferCodeTable = (props) => {
         
         if (isLoading) {
             return <Loader />
-        } else return (
-            <Dropdown
+        }  else {
+            let filteredOptions = []
+            if(options?.mdmsConfig){
+                filteredOptions = data?.filter(row => {
+                    return formData?.[formFieldName] && !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
+                })
+            }
+            return <Dropdown
                 inputRef={register()}
-                option={options?.mdmsConfig ? data : options}
+                option={options?.mdmsConfig ? (isTranferCodeTable ? data : filteredOptions) : options}
                 selected={props?.value}
                 optionKey={optionKey}
                 t={t}
@@ -137,7 +143,7 @@ const TransferCodeTable = (props) => {
                 optionCardStyles={{ maxHeight: '15rem' }}
                 style={{ marginBottom: "0px" }}
             /> 
-        )
+        }
     }
 
     const renderBody = () => {
@@ -152,7 +158,7 @@ const TransferCodeTable = (props) => {
                             control={control}
                             name={`${formFieldName}.${row.key}.name`}
                             defaultValue={formData?.[`${formFieldName}.${row.key}.name`]}
-                            rules={{ required: isTranferCodeTable }}
+                            rules={{ required: true }}
                             render={(props) => (
                                 getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
                                     mdmsConfig: {
@@ -173,7 +179,7 @@ const TransferCodeTable = (props) => {
                             style={{ "marginBottom": "0px" }} 
                             name={`${formFieldName}.${row.key}.value`} 
                             selected={formData && formData[formFieldName] ? formData[formFieldName][`${formFieldName}.${row.key}.value`] : undefined}
-                            inputRef={register({ required: isTranferCodeTable, pattern: getPatterns(row.key)})}
+                            inputRef={register({ required: true, pattern: getPatterns(row.key)})}
                             onChange={onChange}
                         />
                         {errors && errors?.[formFieldName]?.[row.key]?.value?.type === "pattern" && (
@@ -182,7 +188,7 @@ const TransferCodeTable = (props) => {
                             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </td>
-                <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+                <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row) } className="icon-wrapper"><DeleteIcon fill={"#B1B4B6"}/></span>}</td>
             </tr>
         })
     }

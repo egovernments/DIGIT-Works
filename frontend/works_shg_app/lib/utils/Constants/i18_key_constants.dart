@@ -129,6 +129,11 @@ class Common {
   String get validTo => 'ORG_VALID_TO';
   String get contactPersonName => 'ORG_CONTACT_PERSON_NAME';
   String get download => "COMMON_DOWNLOAD";
+  String get showWorkflowTimeline => 'SHOW_WORKFLOW_TIMELINE';
+  String get hideWorkflowTimeline => 'HIDE_WORKFLOW_TIMELINE';
+  String get workflowTimeline => 'WORKS_WORKFLOW_TIMELINE';
+  String get effectiveFrom => 'MASTERS_EFFECTIVE_FROM';
+  String get effectiveTo => 'MASTERS_EFFECTIVE_TO';
 }
 
 class Home {
@@ -197,6 +202,7 @@ class WageSeeker {
   String get skill => 'WAGE_SEEKER_SKILL';
   String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
   String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
+  String get wageSeekerSuccessSubText => 'CREATE_INDIVIDUAL_SUCCESS_SUB_TEXT';
 }
 
 class AttendanceMgmt {
@@ -204,7 +210,7 @@ class AttendanceMgmt {
   String get registerId => 'REGISTER_ID';
   String get attendanceRegisters => 'ATTENDANCE_REGISTERS';
   String get cboRole => 'CBO_ROLE';
-  String get officeInCharge => 'OFFICER_IN_CHARGE';
+  String get officeInCharge => 'COMMON_DESGN_OF_OFFICER_IN_CHARGE';
   String get projectId => 'WORKS_PROJECT_ID';
   String get projectType => 'WORKS_PROJECT_TYPE';
   String get projectDesc => 'WORKS_PROJECT_DESCRIPTION';

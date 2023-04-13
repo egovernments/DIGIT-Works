@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:works_shg_app/models/muster_rolls/muster_roll_model.dart';
 
 part 'muster_workflow_model.freezed.dart';
 part 'muster_workflow_model.g.dart';
@@ -23,6 +24,8 @@ class ProcessInstances with _$ProcessInstances {
     String? id,
     String? businessId,
     String? action,
+    AuditDetails? auditDetails,
+    List<Assignees>? assignes,
     @JsonKey(name: 'state') WorkflowState? workflowState,
   }) = _ProcessInstances;
 
@@ -30,6 +33,24 @@ class ProcessInstances with _$ProcessInstances {
     Map<String, dynamic> json,
   ) =>
       _$ProcessInstancesFromJson(json);
+}
+
+@freezed
+class Assignees with _$Assignees {
+  const factory Assignees({
+    String? emailId,
+    int? id,
+    String? mobileNumber,
+    String? name,
+    String? tenantId,
+    String? uuid,
+    String? userName,
+  }) = _Assignees;
+
+  factory Assignees.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$AssigneesFromJson(json);
 }
 
 @freezed

@@ -32,6 +32,9 @@ class WorkDetailsCard extends StatelessWidget {
   final List<AttendanceRegister>? attendanceRegistersModel;
   final List<MusterRoll>? musterRollsModel;
   final ContractsModel? contractModel;
+  final bool? showButtonLink;
+  final String? linkLabel;
+  final void Function()? onLinkPressed;
 
   const WorkDetailsCard(this.detailsList,
       {this.isAttendanceInbox = false,
@@ -40,6 +43,9 @@ class WorkDetailsCard extends StatelessWidget {
       this.isTrackAttendance = false,
       this.isSHGInbox = false,
       this.viewWorkOrder = false,
+      this.showButtonLink = false,
+      this.linkLabel = '',
+      this.onLinkPressed,
       this.elevatedButtonLabel = '',
       this.outlinedButtonLabel = '',
       this.cardTitle,
@@ -112,11 +118,14 @@ class WorkDetailsCard extends StatelessWidget {
     if ((viewWorkOrder || orgProfile) && cardTitle != null) {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
-        child: Text(
-          cardTitle ?? '',
-          style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-              ?.apply(color: const DigitColors().black),
-          textAlign: TextAlign.left,
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
+            cardTitle ?? '',
+            style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                ?.apply(color: const DigitColors().black),
+            textAlign: TextAlign.left,
+          ),
         ),
       ));
     }
@@ -241,10 +250,9 @@ class WorkDetailsCard extends StatelessWidget {
                   tenantId: attendanceRegister!.tenantId.toString()));
             } else {
               context.router.push(TrackAttendanceRoute(
-                  id: attendanceRegisterId.toString(),
-                  tenantId: attendanceRegister!.tenantId.toString(),
-                  projectDetails: [cardDetails],
-                  attendanceRegister: attendanceRegister));
+                id: attendanceRegisterId.toString(),
+                tenantId: attendanceRegister!.tenantId.toString(),
+              ));
             }
           },
           child: Center(
@@ -267,7 +275,6 @@ class WorkDetailsCard extends StatelessWidget {
                       tenantId: musterRoll!.tenantId.toString()),
                 );
             context.router.push(SHGInboxRoute(
-                projectDetails: [cardDetails],
                 tenantId: musterRoll.tenantId.toString(),
                 musterRollNo: musterRoll.musterRollNumber.toString()));
             context.read<MusterRollEstimateBloc>().add(
@@ -289,6 +296,12 @@ class WorkDetailsCard extends StatelessWidget {
         ),
       ));
     }
+    if (showButtonLink! && linkLabel!.isNotEmpty) {
+      labelList.add(Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: ButtonLink(linkLabel ?? '', onLinkPressed),
+      ));
+    }
     return Column(
       children: labelList,
     );
@@ -303,13 +316,11 @@ class WorkDetailsCard extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                padding: const EdgeInsets.only(right: 16),
-                width: MediaQuery.of(context).size.width > 720
-                    ? MediaQuery.of(context).size.width / 3.5
-                    : MediaQuery.of(context).size.width / 3.5,
+            SizedBox(
+                width: MediaQuery.of(context).size.width / 3,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +342,7 @@ class WorkDetailsCard extends StatelessWidget {
                           : const Text('')
                     ])),
             SizedBox(
-                width: MediaQuery.of(context).size.width / 2,
+                width: MediaQuery.of(context).size.width / 2.5,
                 child: Text(
                   description,
                   style: TextStyle(

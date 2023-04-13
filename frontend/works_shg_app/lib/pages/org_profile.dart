@@ -90,24 +90,16 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                           .toList();
                       functionalDetails = organisationListModel.organisations!
                           .map((e) => {
-                                i18.common.orgType: t.translate(e
-                                            .functions?.first.type
-                                            .toString()
-                                            .split('.')
-                                            .first ??
-                                        'NA') ??
+                                i18.common.orgType: t.translate(
+                                        'COMMON_MASTERS_ORG_${e.functions?.first.type.toString().split('.').first ?? 'NA'}') ??
                                     'NA',
-                                i18.common.orgSubType: t.translate(e
-                                            .functions?.first.type
-                                            .toString()
-                                            .split('.')
-                                            .last ??
-                                        'NA') ??
+                                i18.common.orgSubType: t.translate(
+                                        'COMMON_MASTERS_SUBORG_${e.functions?.first.type.toString().split('.').last ?? 'NA'}') ??
                                     'NA',
-                                i18.common.funcCat:
-                                    e.functions?.first.category ?? 'NA',
+                                i18.common.funcCat: t.translate(
+                                    e.functions?.first.category ?? 'NA'),
                                 i18.common.classOrRank:
-                                    e.functions?.first.orgClass ?? 'NA',
+                                    'COMMON_MASTERS_${t.translate(e.functions?.first.orgClass ?? 'NA')}',
                                 i18.common.validFrom:
                                     DateFormats.timeStampToDate(
                                         e.functions?.first.validFrom),
@@ -135,12 +127,10 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                         'PG_${e.orgAddress?.first.city?.toUpperCase()}') ??
                                     'NA',
                                 i18.common.ward: t.translate(
-                                        e.orgAddress?.first.boundaryCode ??
-                                            'NA') ??
+                                        '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${e.orgAddress?.first.boundaryCode ?? 'NA'}') ??
                                     'NA',
                                 i18.common.locality: t.translate(
-                                    e.additionalDetails?.locality?.i18nKey ??
-                                        'NA'),
+                                    '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${e.additionalDetails?.locality}'),
                                 i18.common.streetName:
                                     e.orgAddress?.first.street ?? 'NA',
                                 i18.common.doorNo:
@@ -230,6 +220,17 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                         ?.additionalDetails
                                         ?.ifsccode ??
                                     'NA',
+                                i18.common.effectiveFrom:
+                                    DateFormats.timeStampToDate(
+                                        e.auditDetails?.createdTime),
+                                i18.common.effectiveTo: (e.bankAccountDetails
+                                                ?.first.isPrimary ==
+                                            true &&
+                                        e.bankAccountDetails?.first.isActive ==
+                                            true)
+                                    ? t.translate('NA')
+                                    : DateFormats.timeStampToDate(
+                                        e.auditDetails?.lastModifiedTime)
                               })
                           .toList();
                     }

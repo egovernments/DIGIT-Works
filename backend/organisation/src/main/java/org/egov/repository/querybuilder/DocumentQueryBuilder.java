@@ -13,7 +13,7 @@ public class DocumentQueryBuilder {
 
     private static final String FETCH_DOCUMENT_QUERY = "SELECT doc.id as document_Id, doc.org_id as document_orgId, " +
             "doc.org_func_id as document_orgFuncId, doc.document_type as document_documentType, doc.file_store as document_fileStore, " +
-            "doc.document_uid as document_documentUid, doc.additional_details as document_additionalDetails " +
+            "doc.document_uid as document_documentUid, doc.additional_details as document_additionalDetails, doc.is_active as document_active " +
             "FROM eg_org_document doc";
     public String getDocumentsSearchQuery(Set<String> organisationIds, Set<String> functionIds, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = null;

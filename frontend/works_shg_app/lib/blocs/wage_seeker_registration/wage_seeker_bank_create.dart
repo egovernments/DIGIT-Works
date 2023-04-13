@@ -44,6 +44,7 @@ class WageSeekerBankCreateBloc
                 "bankBranchIdentifier": {
                   "type": "IFSC",
                   "code": event.ifscCode,
+                  "additionalDetails": {"ifsccode": event.bankName}
                 },
                 "isActive": true,
                 "documents": [],
@@ -79,7 +80,8 @@ class WageSeekerBankCreateEvent with _$WageSeekerBankCreateEvent {
       String? accountType,
       String? ifscCode,
       String? referenceId,
-      String? indId}) = CreateBankWageSeekerEvent;
+      String? indId,
+      String? bankName}) = CreateBankWageSeekerEvent;
   const factory WageSeekerBankCreateEvent.dispose() =
       CreateBankWageSeekerDisposeEvent;
 }
