@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.digit.expense.calculator.service.CalculatorService;
+import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
 import org.egov.digit.expense.calculator.web.models.BillResponse;
 import org.egov.digit.expense.calculator.web.models.Calculation;
@@ -36,7 +36,7 @@ public class WorksCalculatorApiController {
 	@Autowired
 	private final HttpServletRequest request;
 	@Autowired
-	private CalculatorService calculatorService;
+	private ExpenseCalculatorService expenseCalculatorService;
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
@@ -67,7 +67,7 @@ public class WorksCalculatorApiController {
 	public ResponseEntity<CalculationResponse> worksCalculatorV1EstimatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
 
-		Calculation calculation = calculatorService.createEstimate(calculationRequest);
+		Calculation calculation = expenseCalculatorService.calculateEstimates(calculationRequest);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
 		CalculationResponse calculationResponse = CalculationResponse.builder()
 																	 .responseInfo(responseInfo)

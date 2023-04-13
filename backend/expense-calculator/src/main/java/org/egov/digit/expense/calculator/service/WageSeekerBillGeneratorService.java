@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_WAGE_SEEKERS_SKILLS;
@@ -45,13 +46,72 @@ public class WageSeekerBillGeneratorService {
         Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, criteria.getTenantId());
 
         // Calculate estimate for each muster roll
-        List<CalcEstimate> calcEstimates = prepareEstimatesForMusterRolls(musterRolls,wageSeekerSkillCodeAmountMapping);
+        List<CalcEstimate> calcEstimates = makeEstimatesForMusterRolls(musterRolls,wageSeekerSkillCodeAmountMapping);
 
         // Create Calculation
-        return prepareCalculation(calcEstimates,criteria.getTenantId());
+        return makeCalculation(calcEstimates,criteria.getTenantId());
     }
 
-    private Calculation prepareCalculation(List<CalcEstimate> calcEstimates, String tenantId) {
+    public void createAndPostWageSeekerBill(RequestInfo requestInfo, MusterRoll musterRoll){
+        // Fetch wage seeker skills from MDMS
+        Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, musterRoll.getTenantId());
+        List<Bill> bills = createBillForMusterRolls(Collections.singletonList(musterRoll), wageSeekerSkillCodeAmountMapping);
+    }
+
+    private List<Bill> createBillForMusterRolls(List<MusterRoll> musterRolls, Map<String, Double> wageSeekerSkillCodeAmountMapping) {
+            List<Bill> bills = new ArrayList<>();
+            for(MusterRoll musterRoll : musterRolls){
+                List<BillDetail> billDetails = new ArrayList<>();
+                List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
+                String tenantId = musterRoll.getTenantId();
+                BigDecimal netPayableAmount = BigDecimal.ZERO;
+                for(IndividualEntry individualEntry : individualEntries){
+                    String individualId = individualEntry.getIndividualId();
+                    // Calculate net amount to pay to wage seeker
+                    Double skillAmount = getWageSeekerSkillAmount(individualEntry,wageSeekerSkillCodeAmountMapping);
+                    BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount));
+                    // Calculate net payable amount
+                    netPayableAmount = netPayableAmount.add(actualAmountToPay);
+                    // Build lineItem
+                    LineItem lineItem = buildLineItem(tenantId,actualAmountToPay);
+                    // Build payee
+                    Party payee = buildPayee(individualId,configs.getWagePayeeType());
+                    // Build BillDetail
+                    BillDetail billDetail = BillDetail.builder()
+                                                .referenceId(individualId)
+                                                .paymentStatus("PENDING")
+                                                .fromPeriod(musterRoll.getStartDate())
+                                                .toPeriod(musterRoll.getEndDate())
+                                                .payee(payee)
+                                                .lineItems(Collections.singletonList(lineItem))
+                                                .payableLineItems(Collections.singletonList(lineItem))
+                                                .netLineItemAmount(actualAmountToPay)
+                                                .build();
+
+                    billDetails.add(billDetail);
+
+                }
+                Party payer = buildPayee(configs.getWagePayerId(),configs.getWagePayerType());
+                // Build Bill
+                Bill bill = Bill.builder()
+                        .tenantId(tenantId)
+                        .billDate(BigDecimal.valueOf(Instant.now().toEpochMilli()))
+                        .netPayableAmount(netPayableAmount)
+                        .referenceId(musterRoll.getMusterRollNumber())
+                        .businessService(configs.getWageBusinessService())
+                        .fromPeriod(musterRoll.getStartDate())
+                        .toPeriod(musterRoll.getEndDate())
+                        .paymentStatus("PENDING")
+                        .status("ACTIVE")
+                        .billDetails(billDetails)
+                        .build();
+
+                bills.add(bill);
+            }
+            return bills;
+    }
+
+    private Calculation makeCalculation(List<CalcEstimate> calcEstimates, String tenantId) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         for(CalcEstimate estimate : calcEstimates){
             totalAmount = totalAmount.add(estimate.getNetPayableAmount());
@@ -63,7 +123,7 @@ public class WageSeekerBillGeneratorService {
                           .build();
     }
 
-    public List<CalcEstimate> prepareEstimatesForMusterRolls(List<MusterRoll> musterRolls, Map<String, Double> wageSeekerSkillCodeAmountMapping) {
+    public List<CalcEstimate> makeEstimatesForMusterRolls(List<MusterRoll> musterRolls, Map<String, Double> wageSeekerSkillCodeAmountMapping) {
         List<CalcEstimate> calcEstimates = new ArrayList<>();
         for(MusterRoll musterRoll : musterRolls){
             List<CalcDetail> calcDetails = new ArrayList<>();
@@ -71,39 +131,18 @@ public class WageSeekerBillGeneratorService {
             String tenantId = musterRoll.getTenantId();
             BigDecimal netPayableAmount = BigDecimal.ZERO;
             for(IndividualEntry individualEntry : individualEntries){
-                 String individualId = individualEntry.getIndividualId();
-
-                 BigDecimal totalAttendance = null;
-
-                 if(individualEntry.getModifiedTotalAttendance() == null){
-                     totalAttendance = individualEntry.getActualTotalAttendance();
-                 } else {
-                     totalAttendance = individualEntry.getModifiedTotalAttendance();
-                 }
-
-
-                 Object additionalDetails = individualEntry.getAdditionalDetails();
-                 Optional<String> skillCodeOptional = commonUtil.findValue(additionalDetails, "skillCode");
-                 if(!skillCodeOptional.isPresent()){
-                     log.error("SKILL_CODE_MISSING_FOR_INDIVIDUAL","Skill code is missing for individual ["+individualId+"]");
-                     throw new CustomException("SKILL_CODE_MISSING_FOR_INDIVIDUAL","Skill code is missing for individual ["+individualId+"]");
-                 }
-                 Double skillAmount = wageSeekerSkillCodeAmountMapping.get(skillCodeOptional.get());
-                 BigDecimal actualAmountToPay = totalAttendance.multiply(BigDecimal.valueOf(skillAmount));
-                 netPayableAmount = netPayableAmount.add(actualAmountToPay);
-
-                 LineItem lineItem = LineItem.builder()
-                                             .amount(actualAmountToPay)
-                                             .headCode(configs.getWageHeadCode())
-                                             .tenantId(tenantId)
-                                             .build();
-
-                 Party payee = Party.builder()
-                                    .identifier(individualId)
-                                    .type(configs.getWagePayeeType())
-                                    .build();
-
-                 CalcDetail calcDetail = CalcDetail.builder()
+                String individualId = individualEntry.getIndividualId();
+                // Calculate net amount to pay to wage seeker
+                Double skillAmount = getWageSeekerSkillAmount(individualEntry,wageSeekerSkillCodeAmountMapping);
+                BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount));
+                // Calculate net payable amount
+                netPayableAmount = netPayableAmount.add(actualAmountToPay);
+                // Build lineItem
+                LineItem lineItem = buildLineItem(tenantId,actualAmountToPay);
+                // Build payee
+                Party payee = buildPayee(individualId,configs.getWagePayeeType());
+                // Build CalcDetail
+                CalcDetail calcDetail = CalcDetail.builder()
                         .payee(payee)
                         .lineItems(Collections.singletonList(lineItem))
                         .payableLineItem(Collections.singletonList(lineItem))
@@ -113,6 +152,7 @@ public class WageSeekerBillGeneratorService {
                 calcDetails.add(calcDetail);
 
             }
+            // Build CalcEstimate
             CalcEstimate calcEstimate = CalcEstimate.builder()
                     .referenceId(musterRoll.getMusterRollNumber())
                     .fromPeriod(musterRoll.getStartDate())
@@ -128,6 +168,42 @@ public class WageSeekerBillGeneratorService {
       return calcEstimates;
     }
 
+    private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay) {
+       return LineItem.builder()
+                .amount(actualAmountToPay)
+                .headCode(configs.getWageHeadCode())
+                .tenantId(tenantId)
+                .build();
+    }
+
+    private Party buildPayee(String individualId, String type) {
+       return Party.builder()
+                .identifier(individualId)
+                .type(type)
+                .build();
+    }
+
+    private BigDecimal calculateAmount(IndividualEntry individualEntry, BigDecimal skillAmount) {
+        BigDecimal totalAttendance = null;
+        if(individualEntry.getModifiedTotalAttendance() != null){
+            totalAttendance = individualEntry.getModifiedTotalAttendance();
+        } else {
+            totalAttendance = individualEntry.getActualTotalAttendance();
+        }
+        return totalAttendance.multiply(skillAmount);
+    }
+
+    private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, Map<String, Double> wageSeekerSkillCodeAmountMapping) {
+        String individualId = individualEntry.getIndividualId();
+        Object additionalDetails = individualEntry.getAdditionalDetails();
+        Optional<String> skillCodeOptional = commonUtil.findValue(additionalDetails, "skillCode");
+        if(!skillCodeOptional.isPresent()){
+            log.error("SKILL_CODE_MISSING_FOR_INDIVIDUAL","Skill code is missing for individual ["+individualId+"]");
+            throw new CustomException("SKILL_CODE_MISSING_FOR_INDIVIDUAL","Skill code is missing for individual ["+individualId+"]");
+        }
+        return wageSeekerSkillCodeAmountMapping.get(skillCodeOptional.get());
+    }
+
 
     private Map<String,Double> fetchMDMSDataForWageSeekersSkills(RequestInfo requestInfo, String tenantId){
         String rootTenantId = tenantId.split("\\.")[0];
@@ -141,8 +217,6 @@ public class WageSeekerBillGeneratorService {
 
         return wageSeekerSkillCodeAmountMapping;
     }
-
-
     public List<MusterRoll> fetchApprovedMusterRolls(RequestInfo requestInfo, Criteria criteria) {
         List<String> musterRollIds = criteria.getMusterRollId();
         String tenantId = criteria.getTenantId();

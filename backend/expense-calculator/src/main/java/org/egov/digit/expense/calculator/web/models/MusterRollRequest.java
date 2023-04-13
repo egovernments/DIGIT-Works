@@ -34,6 +34,5 @@ public class MusterRollRequest {
     @JsonProperty("workflow")
     private Workflow workflow = null;
 
-
 }
 
