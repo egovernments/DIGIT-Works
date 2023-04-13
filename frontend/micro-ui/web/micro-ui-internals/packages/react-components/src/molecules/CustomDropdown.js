@@ -82,15 +82,15 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
     return <Loader />;
   }
 
-  const getValue = () => {
-    let selectedValue = ""
-    if(data?.length === 1 || config?.options?.length === 1) {
-      selectedValue = data?.[0] || config?.options?.[0]
-    } else {
-      selectedValue = value
-    }
-    return selectedValue
-  }
+  // const getValue = () => {
+  //   let selectedValue = ""
+  //   if(data?.length === 1 || config?.options?.length === 1) {
+  //     selectedValue = data?.[0] || config?.options?.[0]
+  //   } else {
+  //     selectedValue = value
+  //   }
+  //   return selectedValue
+  // }
   
   return (
     <React.Fragment key={config.name}>
@@ -125,13 +125,13 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           option={data || config?.options || []}
           key={config.name}
           optionKey={config?.optionsKey}
-          value={getValue()}
+          value={value}
           select={(e) => {
             onChange(e, config.name);
           }}
           disable={disable}
-          selected={getValue() || config.defaultValue}
-          defaultValue={getValue()  || config.defaultValue}
+          selected={value || config.defaultValue}
+          defaultValue={value || config.defaultValue}
           t={t}
           errorStyle={errorStyle}
           optionCardStyles={config?.optionsCustomStyle}
