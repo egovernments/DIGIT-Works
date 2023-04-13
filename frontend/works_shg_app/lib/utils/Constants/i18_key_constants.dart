@@ -50,7 +50,7 @@ class Common {
   String get accept => 'CORE_BUTTON_ACCEPT';
   String get termsAndConditions => 'COMMON_TERMS_&_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
-  String get back => 'CORE_BUTTON_BACK';
+  String get back => 'CORE_BACK_BUTTON';
   String get sendForApproval => 'SEND_FOR_APPROVAL';
   String get saveAsDraft => 'SAVE_AS_DRAFT';
   String get warning => 'CORE_MSG_WARNING';
@@ -132,6 +132,8 @@ class Common {
   String get showWorkflowTimeline => 'SHOW_WORKFLOW_TIMELINE';
   String get hideWorkflowTimeline => 'HIDE_WORKFLOW_TIMELINE';
   String get workflowTimeline => 'WORKS_WORKFLOW_TIMELINE';
+  String get effectiveFrom => 'MASTERS_EFFECTIVE_FROM';
+  String get effectiveTo => 'MASTERS_EFFECTIVE_TO';
 }
 
 class Home {
@@ -201,6 +203,8 @@ class WageSeeker {
   String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
   String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
   String get wageSeekerSuccessSubText => 'CREATE_INDIVIDUAL_SUCCESS_SUB_TEXT';
+  String get selectSkillValidation => 'CANNOT_HAVE_SAME_SKILL_TYPE';
+  String get enterValidIFSC => 'ENTER_VALID_IFSC_CODE';
 }
 
 class AttendanceMgmt {
@@ -208,7 +212,7 @@ class AttendanceMgmt {
   String get registerId => 'REGISTER_ID';
   String get attendanceRegisters => 'ATTENDANCE_REGISTERS';
   String get cboRole => 'CBO_ROLE';
-  String get officeInCharge => 'OFFICER_IN_CHARGE';
+  String get officeInCharge => 'COMMON_DESGN_OF_OFFICER_IN_CHARGE';
   String get projectId => 'WORKS_PROJECT_ID';
   String get projectType => 'WORKS_PROJECT_TYPE';
   String get projectDesc => 'WORKS_PROJECT_DESCRIPTION';

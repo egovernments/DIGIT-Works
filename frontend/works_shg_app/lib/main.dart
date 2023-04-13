@@ -170,7 +170,8 @@ class MainApplication extends StatelessWidget {
                               const LocalizationState(),
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
-                                module: 'rainmaker-common',
+                                module:
+                                    'rainmaker-common,rainmaker-attendencemgmt',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),

@@ -23,6 +23,7 @@ class SuccessResponsePage extends StatelessWidget {
   final bool? backButton;
   final String? buttonLabel;
   final bool isWithoutLogin;
+  final String? backButtonLabel;
 
   const SuccessResponsePage(
       {super.key,
@@ -39,7 +40,8 @@ class SuccessResponsePage extends StatelessWidget {
       this.isWithoutLogin = false,
       this.downloadLabel,
       this.printLabel,
-      this.whatsAppLabel});
+      this.whatsAppLabel,
+      this.backButtonLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +158,9 @@ class SuccessResponsePage extends StatelessWidget {
                           visible: !isWithoutLogin,
                           child: DigitCard(
                             child: DigitElevatedButton(
-                              onPressed: callBack,
+                              onPressed: () {
+                                context.router.push(const HomeRoute());
+                              },
                               child: Center(
                                 child: Text(buttonLabel ?? '',
                                     style: Theme.of(context)

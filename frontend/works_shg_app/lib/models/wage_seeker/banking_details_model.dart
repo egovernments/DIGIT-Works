@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:works_shg_app/models/works/contracts_model.dart';
 
 part 'banking_details_model.mapper.dart';
 
@@ -15,6 +16,7 @@ class BankAccounts with BankAccountsMappable {
   String? referenceId;
   String? id;
   String? indID;
+  ContractAuditDetails? auditDetails;
   List<BankAccountDetails>? bankAccountDetails;
 
   BankAccounts(
@@ -23,7 +25,8 @@ class BankAccounts with BankAccountsMappable {
       this.referenceId,
       this.serviceCode,
       this.bankAccountDetails,
-      this.indID});
+      this.indID,
+      this.auditDetails});
 }
 
 @MappableClass()
@@ -33,6 +36,7 @@ class BankAccountDetails with BankAccountDetailsMappable {
   String? accountNumber;
   String? id;
   String? accountType;
+  bool? isActive;
   bool? isPrimary;
   BankBranchIdentifier? bankBranchIdentifier;
   BankAccountDetails(
@@ -42,7 +46,8 @@ class BankAccountDetails with BankAccountDetailsMappable {
       this.accountNumber,
       this.accountType,
       this.bankBranchIdentifier,
-      this.isPrimary});
+      this.isPrimary,
+      this.isActive});
 }
 
 @MappableClass()

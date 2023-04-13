@@ -360,7 +360,9 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                             backButton: true,
                             callBack: () =>
                                 context.router.push(const HomeRoute()),
-                            buttonLabel: t.translate(i18.common.backToHome)));
+                            buttonLabel: t.translate(
+                              i18.common.backToHome,
+                            )));
                       },
                       error: (String? error) => Notifiers.getToastMessage(
                           context, error.toString(), 'ERROR'));
@@ -398,9 +400,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
           children: [
             Container(
                 padding: const EdgeInsets.only(right: 16),
-                width: MediaQuery.of(context).size.width > 720
-                    ? MediaQuery.of(context).size.width / 3.5
-                    : MediaQuery.of(context).size.width / 3.5,
+                width: MediaQuery.of(context).size.width / 3.5,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

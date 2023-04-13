@@ -156,8 +156,9 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               ?.officerInChargeName
                                               ?.name ??
                                           'NA',
+                                      i18.attendanceMgmt.officeInCharge :  t.translate(e.additionalDetails?.officerInChargeDesgn ?? 'NA'),
                                       i18.workOrder.completionPeriod:
-                                          '${e.completionPeriod} ${AppLocalizations.of(context).translate(i18.common.days)}',
+                                          '${e.completionPeriod} ${t.translate(i18.common.days)}',
                                       i18.workOrder.contractAmount:
                                           '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                       i18.common.status: e.wfStatus,
