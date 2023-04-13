@@ -102,6 +102,14 @@ config:
         image-name: "expenses-billing"
       - work-dir: "backend/expenses-billing/src/main/resources/db"
         image-name: "expenses-billing-db"
+        
+  - name: "builds/digit-works/backend/expense-calculator"
+    build:
+      - work-dir: "backend/expense-calculator"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "expense-calculator"
+      - work-dir: "backend/expense-calculator/src/main/resources/db"
+        image-name: "expense-calculator-db"
 
 # utilities
   - name: "builds/digit-works/utilities/egov-pdf"
