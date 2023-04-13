@@ -48,15 +48,20 @@ export const createOrganizationConfigMUKTA = {
                         label: "MASTERS_REGISTERED_BY_DEPT",
                         isMandatory: true,
                         key: "basicDetails_regDept",
-                        type: "text",
+                        type: "dropdown",
                         disable: false,
-                        preProcess : {
-                            convertStringToRegEx : ["populators.validation.pattern"]
-                        },
                         populators: {
                             name: "basicDetails_regDept",
-                            error: "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
-                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 64}
+                            optionsKey: "name",
+                            error: "WORKS_REQUIRED_ERR",
+                            optionsCustomStyle: {
+                                top: "2.3rem",
+                            },
+                            mdmsConfig: {
+                                masterName: "Department",
+                                moduleName: "common-masters",
+                                localePrefix: "COMMON_MASTERS_DEPARTMENT",
+                            }
                         }
                     },
                     {
