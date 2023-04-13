@@ -961,6 +961,7 @@ input[type="number"] {
 .row {
   .value {
     white-space: break-spaces !important;
+    word-break: break-all;
   }
 }
 }
