@@ -21,7 +21,7 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 
 @Component
 @Slf4j
-public class CalculatorServiceValidator {
+public class ExpenseCalculatorServiceValidator {
     @Autowired
     private MdmsUtils mdmsUtils;
 
@@ -115,7 +115,7 @@ public class CalculatorServiceValidator {
         List<String> musterRollIds = criteria.getMusterRollId();
         String tenantId = criteria.getTenantId();
         RequestInfo requestInfo = calculationRequest.getRequestInfo();
-        List<String> fetchedMusterRolls = musterRollUtils.fetchMusterRollIdsList(requestInfo, tenantId, musterRollIds);
+        List<String> fetchedMusterRolls = musterRollUtils.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds);
 
         for(String musterRollId : musterRollIds){
             if(!fetchedMusterRolls.contains(musterRollId)){

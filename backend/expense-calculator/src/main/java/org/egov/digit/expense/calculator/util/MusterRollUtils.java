@@ -12,7 +12,6 @@ import org.egov.digit.expense.calculator.web.models.MusterRollResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class MusterRollUtils {
     @Autowired
     private ExpenseCalculatorConfiguration configs;
 
-    public List<String> fetchMusterRollIdsList(RequestInfo requestInfo, String tenantId, List<String> musterRollId) {
+    public List<String> fetchListOfMusterRollIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId) {
         StringBuilder url = getMusterRollURI(tenantId, musterRollId);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
@@ -43,7 +42,7 @@ public class MusterRollUtils {
     }
 
     public List<MusterRoll> fetchMusterRollByIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId) {
-        StringBuilder url = getApprovedMusterRollURI(tenantId, musterRollId);
+        StringBuilder url = getMusterRollURI(tenantId, musterRollId);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);

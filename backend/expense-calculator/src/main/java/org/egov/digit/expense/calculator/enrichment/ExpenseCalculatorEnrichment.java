@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class CalculatorEnrichment {
+public class ExpenseCalculatorEnrichment {
     public void enrichCalculatorEstimateCreateRequest(CalculationRequest calculationRequest){
 
     }

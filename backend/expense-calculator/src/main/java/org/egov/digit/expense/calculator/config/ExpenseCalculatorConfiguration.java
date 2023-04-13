@@ -101,4 +101,10 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.wage.lineitem.type}")
 	private String wageLineItemType;
 
+	@Value("${egov.works.expense.wage.payer.type}")
+	private String wagePayerType;
+
+	@Value("${egov.works.expense.wage.payer.id}")
+	private String wagePayerId;
+
 }
