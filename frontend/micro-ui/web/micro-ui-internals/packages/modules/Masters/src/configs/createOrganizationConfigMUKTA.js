@@ -400,7 +400,10 @@ export const createOrganizationConfigMUKTA = {
                         type: "component",
                         component: "TransferCodeTable",
                         withoutLabel: true,
-                        key: "transferCodes"
+                        key: "transferCodes",
+                        customProps : {
+                            isMandatory: true
+                        }
                     }, 
                     {
                         label: "MASTERS_BANK_NAME",
@@ -422,7 +425,10 @@ export const createOrganizationConfigMUKTA = {
                         type: "component",
                         component: "TransferCodeTable",
                         withoutLabel: true,
-                        key: "taxIdentifier"
+                        key: "taxIdentifier",
+                        customProps : {
+                            isMandatory: false
+                        }
                     }
                 ]
             }
