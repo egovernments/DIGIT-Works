@@ -5,7 +5,7 @@ import { AddIcon, DeleteIcon, TextInput, CardLabelError, Loader, Dropdown, Heade
 
 const TransferCodeTable = (props) => {
     const { t, register, errors , setValue, getValues, onSelect, formData, control, formState, onChange, unregister } = props
-
+    const isMandatory = props?.props?.isMandatory
     const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
     const [sessionFormData] = orgSession;
 
@@ -195,7 +195,7 @@ const TransferCodeTable = (props) => {
 
     return (
         <React.Fragment>
-            <Header styles={{fontSize: "24px", marginTop: "16px", marginBottom: "16px"}}>{isTranferCodeTable ? t("MASTERS_TRANSFER_CODE") : t("MASTERS_TAX_INDENTIFIERS")}</Header>
+            <Header styles={{fontSize: "24px", marginTop: "16px", marginBottom: "16px"}}>{isTranferCodeTable ? t("MASTERS_TRANSFER_CODE") : t("MASTERS_TAX_INDENTIFIERS")}{ isMandatory ? " *" : ""}</Header>
             <table className='table reports-table sub-work-table' style={{ marginTop: "-10px", marginBottom: "2rem" }}>
                 <thead>
                     <tr>{renderHeader()}</tr>
