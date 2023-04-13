@@ -127,7 +127,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                       isRequired: true,
                       formControlName: wardKey,
                       valueMapper: (value) => t.translate(
-                          '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${value}'),
+                          '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_$value'),
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.localityRequired,
@@ -151,7 +151,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,
                         valueMapper: (value) => t.translate(
-                            '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${value}'),
+                            '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_$value'),
                         isRequired: true,
                         onChanged: (value) {},
                         validationMessages: {
@@ -169,32 +169,35 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                   ]),
                   const SizedBox(height: 16),
-                  DigitCard(
-                      child: Center(
-                    child: DigitElevatedButton(
-                        onPressed: () {
-                          form.markAllAsTouched(updateParent: false);
-                          if (!form.valid) return;
-                          final locationDetails = LocationDetails(
-                              pinCode: form.value[pinCodeKey].toString(),
-                              city: form.value[cityKey].toString(),
-                              locality: form.value[localityKey].toString(),
-                              ward: form.value[wardKey].toString(),
-                              streetName: form.value[streetNameKey].toString(),
-                              doorNo: form.value[doorNoKey].toString());
-                          BlocProvider.of<WageSeekerBloc>(context).add(
-                            WageSeekerCreateEvent(
-                                individualDetails: individualDetails,
-                                skillDetails: skillDetails,
-                                locationDetails: locationDetails,
-                                financialDetails: financialDetails),
-                          );
-                          widget.onPressed();
-                        },
-                        child: Center(
-                          child: Text(t.translate(i18.common.next)),
-                        )),
-                  ))
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Center(
+                      child: DigitElevatedButton(
+                          onPressed: () {
+                            form.markAllAsTouched(updateParent: false);
+                            if (!form.valid) return;
+                            final locationDetails = LocationDetails(
+                                pinCode: form.value[pinCodeKey].toString(),
+                                city: form.value[cityKey].toString(),
+                                locality: form.value[localityKey].toString(),
+                                ward: form.value[wardKey].toString(),
+                                streetName:
+                                    form.value[streetNameKey].toString(),
+                                doorNo: form.value[doorNoKey].toString());
+                            BlocProvider.of<WageSeekerBloc>(context).add(
+                              WageSeekerCreateEvent(
+                                  individualDetails: individualDetails,
+                                  skillDetails: skillDetails,
+                                  locationDetails: locationDetails,
+                                  financialDetails: financialDetails),
+                            );
+                            widget.onPressed();
+                          },
+                          child: Center(
+                            child: Text(t.translate(i18.common.next)),
+                          )),
+                    ),
+                  )
                 ],
               ),
             ),
