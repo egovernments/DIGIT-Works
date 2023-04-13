@@ -215,7 +215,7 @@ export const UICustomizations = {
       if (key === "WORKS_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column?.maxlength}ch` }}>
+            <span class="" style={{ "--max-width": `${column?.maxlength}ch` }}>
               {String(t(value))}
             </span>
             {/* check condtion - if length greater than 20 */}
