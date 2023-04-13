@@ -26,7 +26,8 @@
                   "populators": {
                     "name": "basicDetails_workOrdernumber",
                     "customStyle" : {
-                      "display" : "none"
+                      "display" : "none",
+                      "alignItems" : "center !important"
                     },
                     "customClass": "fc-header-texts"
                   }
@@ -41,7 +42,10 @@
                   "appendColon": false,
                   "populators": {
                     "name": "basicDetails_projectID",
-                    "customClass": "fc-header-texts"
+                    "customClass": "fc-header-texts",
+                    "customStyle" : {
+                      "alignItems" : "center !important"
+                    }
                   }
                 },
                 {
@@ -54,7 +58,10 @@
                   "appendColon": false,
                   "populators": {
                     "name": "basicDetails_dateOfProposal",
-                    "customClass": "fc-header-texts"
+                    "customClass": "fc-header-texts",
+                    "customStyle" : {
+                      "alignItems" : "center !important"
+                    }
                   }
                 },
                 {
@@ -67,7 +74,10 @@
                   "appendColon": false,
                   "populators": {
                     "name": "basicDetails_projectName",
-                    "customClass": "fc-header-texts"
+                    "customClass": "fc-header-texts",
+                    "customStyle" : {
+                      "alignItems" : "center !important"
+                    }
                   }
                 },
                 {
@@ -80,7 +90,10 @@
                   "appendColon": false,
                   "populators": {
                     "name": "basicDetails_projectDesc",
-                    "customClass": "fc-header-texts"
+                    "customClass": "fc-header-texts",
+                    "customStyle" : {
+                      "alignItems" : "center !important"
+                    }
                   }
                 }
               ]
