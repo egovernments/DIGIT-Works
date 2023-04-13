@@ -1,5 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
+import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 
 class Back extends StatelessWidget {
   final Widget? widget;
@@ -28,7 +30,10 @@ class Back extends StatelessWidget {
                         Icons.arrow_left,
                         color: const DigitColors().black,
                       ),
-                      Text(backLabel ?? 'Back',
+                      Text(
+                          AppLocalizations.of(context)
+                                  .translate(i18.common.back) ??
+                              'Back',
                           style: TextStyle(
                             color: const DigitColors().black,
                           ))

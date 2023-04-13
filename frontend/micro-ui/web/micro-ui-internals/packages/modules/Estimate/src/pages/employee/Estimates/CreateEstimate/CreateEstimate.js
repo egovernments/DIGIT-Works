@@ -88,10 +88,10 @@ const CreateEstimate = ({ EstimateSession }) => {
     ]
 
     if(isEdit) {
-        cardState.values = [{
+        cardState[0].values = [{
                 "title": "WORKS_ESTIMATE_ID",
                 "value": estimateNumber
-            },...cardState?.values]
+            },...cardState?.[0]?.values]
     }
     
    
