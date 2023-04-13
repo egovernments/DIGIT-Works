@@ -132,6 +132,8 @@ class Common {
   String get showWorkflowTimeline => 'SHOW_WORKFLOW_TIMELINE';
   String get hideWorkflowTimeline => 'HIDE_WORKFLOW_TIMELINE';
   String get workflowTimeline => 'WORKS_WORKFLOW_TIMELINE';
+  String get effectiveFrom => 'MASTERS_EFFECTIVE_FROM';
+  String get effectiveTo => 'MASTERS_EFFECTIVE_TO';
 }
 
 class Home {
@@ -208,7 +210,7 @@ class AttendanceMgmt {
   String get registerId => 'REGISTER_ID';
   String get attendanceRegisters => 'ATTENDANCE_REGISTERS';
   String get cboRole => 'CBO_ROLE';
-  String get officeInCharge => 'OFFICER_IN_CHARGE';
+  String get officeInCharge => 'COMMON_DESGN_OF_OFFICER_IN_CHARGE';
   String get projectId => 'WORKS_PROJECT_ID';
   String get projectType => 'WORKS_PROJECT_TYPE';
   String get projectDesc => 'WORKS_PROJECT_DESCRIPTION';
