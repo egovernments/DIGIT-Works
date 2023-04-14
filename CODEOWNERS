@@ -1,11 +1,8 @@
 *  @sathishp-eGov @rushang7-eGov @subhashini-egov @jagankumar-egov
-*.yaml  @jagankumar-egov @sathishp-eGov  @rushang7-eGov @subhashini-egov
+*.yaml @sathishp-eGov  @rushang7-eGov @subhashini-egov @vishalgupta-eGov
 
 ##Backend
 backend/ @sathishp-eGov @rushang7-eGov @subhashini-egov @vishalgupta-eGov @anitha-srinivasan-egov @pintu-eGov
 
 ##Frontend
 frontend/ @sathishp-eGov @jagankumar-egov @subhashini-egov
-
-##Frontend
-utilities/ @sathishp-eGov @jagankumar-egov @subhashini-egov
