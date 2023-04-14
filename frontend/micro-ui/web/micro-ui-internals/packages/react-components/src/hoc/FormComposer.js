@@ -193,7 +193,7 @@ export const FormComposer = (props) => {
               />
             )}
             name={populators.name}
-            rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {maxLength:512}}
+            rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
             control={control}
           />
         );
