@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:works_shg_app/blocs/work_orders/work_order_pdf.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
@@ -331,8 +332,12 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                 ),
                                 CommonWidgets.downloadButton(
                                     AppLocalizations.of(context)
-                                        .translate(i18.common.download),
-                                    null)
+                                        .translate(i18.common.download), () {
+                                  context.read<WorkOrderPDFBloc>().add(
+                                      PDFEventWorkOrder(
+                                          contractId: widget.contractNumber,
+                                          tenantId: contracts.first.tenantId));
+                                })
                               ],
                             ),
                             Column(

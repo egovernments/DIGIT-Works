@@ -49,6 +49,7 @@ import 'blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import 'blocs/work_orders/accept_work_order.dart';
 import 'blocs/work_orders/search_individual_work.dart';
 import 'blocs/work_orders/search_my_works.dart';
+import 'blocs/work_orders/work_order_pdf.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
@@ -140,6 +141,7 @@ class MainApplication extends StatelessWidget {
         BlocProvider(create: (context) => ORGSearchBloc()),
         BlocProvider(create: (context) => ORGFinanceBloc()),
         BlocProvider(create: (context) => MusterRollPDFBloc()),
+        BlocProvider(create: (context) => WorkOrderPDFBloc()),
         BlocProvider(
             create: (context) => WageSeekerMDMSBloc(
                 const WageSeekerMDMSState.initial(),
