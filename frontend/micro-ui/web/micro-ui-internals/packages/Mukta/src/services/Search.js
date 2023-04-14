@@ -98,7 +98,6 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 headerDetails, 
                 projectDetails, 
                 locationDetails, 
-                financialDetails,
                 documentDetails
             }
         // }
@@ -124,7 +123,7 @@ export const Search = {
         
             //searched Project details
             projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
-            projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails,projects?.searchedProject?.financialDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+            projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
     
         }
 
