@@ -20,7 +20,7 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_bill PRIMARY KEY (id,tenantid),
+CONSTRAINT pk_eg_expense_bill PRIMARY KEY (id),
 CONSTRAINT unique_eg_expense_bill UNIQUE (referenceId, businessservice, tenantid)
 );
 
@@ -39,8 +39,9 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_billdetail PRIMARY KEY (id,tenantid),
-CONSTRAINT unique_eg_expense_billdetail UNIQUE (id, billid, tenantid)
+CONSTRAINT pk_eg_expense_billdetail PRIMARY KEY (id),
+CONSTRAINT unique_eg_expense_billdetail UNIQUE (billid),
+CONSTRAINT fk_eg_expense_billdetail FOREIGN KEY (billid) REFERENCES eg_expense_bill (id)
 
 );
 
@@ -62,11 +63,12 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_lineitem PRIMARY KEY (id,tenantid),
-CONSTRAINT unique_eg_expense_lineitem UNIQUE (id, billdetailid, tenantid)
+CONSTRAINT pk_eg_expense_lineitem PRIMARY KEY (id),
+CONSTRAINT fk_eg_expense_lineitem FOREIGN KEY (billdetailid) REFERENCES eg_expense_billdetail (id)
+
 );
 
-CREATE TABLE IF NOT EXISTS eg_expense_party
+CREATE TABLE IF NOT EXISTS eg_expense_party_payer
 (
 id character varying(64)   NOT NULL,
 tenantid character varying(250)   NOT NULL,
@@ -80,8 +82,26 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_party PRIMARY KEY (id,tenantid),
-CONSTRAINT unique_eg_expense_party UNIQUE (id, parentid, tenantid)
+CONSTRAINT pk_eg_expense_party_payer PRIMARY KEY (id),
+CONSTRAINT fk_eg_expense_party_payer FOREIGN KEY (parentid) REFERENCES eg_expense_bill (id)
+);
+
+CREATE TABLE IF NOT EXISTS eg_expense_party_payee
+(
+id character varying(64)   NOT NULL,
+tenantid character varying(250)   NOT NULL,
+type character varying(250)  NOT NULL,
+status character varying(64) NOT NULL,
+identifier character varying(250)  NOT NULL,
+parentid character varying(250) NOT NULL, -- whether the bill or bill detail id for payer and payee respectively
+createdby character varying(64)   NOT NULL,
+createdtime bigint NOT NULL,
+lastmodifiedby character varying(64) NOT NULL,
+lastmodifiedtime bigint NOT NULL,
+additionaldetails jsonb,
+
+CONSTRAINT pk_eg_expense_party_payee PRIMARY KEY (id),
+CONSTRAINT fk_eg_expense_party_payee FOREIGN KEY (parentid) REFERENCES eg_expense_billdetail (billid)
 );
 
    

@@ -24,7 +24,7 @@ public class EnrichmentUtil {
 		for (BillDetail billDetail : bill.getBillDetails()) {
 
 			billDetail.setId(UUID.randomUUID().toString());
-			billDetail.setBillId(UUID.randomUUID().toString());
+			billDetail.setBillId(bill.getId());
 			billDetail.setAuditDetails(audit);
 
 			billDetail.getPayee().setId(UUID.randomUUID().toString());
