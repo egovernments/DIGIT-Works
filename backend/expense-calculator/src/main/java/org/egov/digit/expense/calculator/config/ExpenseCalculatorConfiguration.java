@@ -70,6 +70,13 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
+	// Bill
+	@Value("${egov.bill.host}")
+	private String billHost;
+
+	@Value("${egov.bill.create.endpoint}")
+	private String billCreateEndPoint;
+
 	// HRMS
 	@Value("${egov.hrms.host}")
 	private String hrmsHost;

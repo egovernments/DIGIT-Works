@@ -34,18 +34,24 @@ public class ExpenseCalculatorServiceValidator {
     @Autowired
     private MusterRollUtils musterRollUtils;
     public void validateCalculatorEstimateRequest(CalculationRequest calculationRequest){
+        validateCalculatorRequest(calculationRequest);
+    }
+    public void validateCalculatorCalculateRequest(CalculationRequest calculationRequest){
+        validateCalculatorRequest(calculationRequest);
+    }
+
+    public void validateCalculatorRequest(CalculationRequest calculationRequest){
         // Validate the Request Info object
         validateRequestInfo(calculationRequest.getRequestInfo());
 
         //Validate required parameters for calculator estimate
-        validateRequiredParametersForCalculatorEstimate(calculationRequest);
+        validateRequiredParametersForCalculatorRequest(calculationRequest);
 
         //Validate request against MDMS
         validateCalculatorEstimateReqeuestAgainstMDMS(calculationRequest);
 
         //Validate musterRollIds or contractId against respective service
         validateMusterRollIdOrContractIdAgainstService(calculationRequest);
-
     }
 
     public void validateWageBillCreateForMusterRollRequest(MusterRollRequest musterRollRequest){
@@ -60,7 +66,8 @@ public class ExpenseCalculatorServiceValidator {
             validateMusterRollIdAgainstService(musterRollRequest);
         }
         catch (Exception exception){
-            //TODO :
+            //TODO : Push the msg to some exception kafka topic.
+            throw exception;
         }
     }
 
@@ -86,30 +93,30 @@ public class ExpenseCalculatorServiceValidator {
          MusterRoll musterRoll = musterRollRequest.getMusterRoll();
          Map<String, String> errorMap = new HashMap<>();
 
-            if (musterRoll == null) {
-                log.error("MusterRoll is mandatory");
-                throw new CustomException("MUSTERROLL","MusterRoll is mandatory");
-            }
+         if (musterRoll == null) {
+            log.error("MusterRoll is mandatory");
+            throw new CustomException("MUSTERROLL","MusterRoll is mandatory");
+         }
 
-            if (StringUtils.isBlank(musterRoll.getTenantId())) {
-                log.error("TenantId is mandatory");
-                errorMap.put("MUSTERROLL.TENANTID", "TenantId is mandatory");
-            }
-
-            String musterRollId = musterRoll.getId();
-
-
-            if(StringUtils.isBlank(musterRollId)) {
-                log.error("musterRollId is mandatory");
-                errorMap.put("MUSTERROLL.MUSTER_ROLL_ID", "MusterRollId is mandatory");
-            }
-
-            if (!errorMap.isEmpty()) {
-                log.error("Calculator Estimate validation failed");
-                throw new CustomException(errorMap);
-            }
-            log.info("Required request parameter validation done for Calculator calculate service");
+        if (StringUtils.isBlank(musterRoll.getTenantId())) {
+            log.error("TenantId is mandatory");
+            errorMap.put("MUSTERROLL.TENANTID", "TenantId is mandatory");
         }
+
+        String musterRollId = musterRoll.getId();
+
+
+        if(StringUtils.isBlank(musterRollId)) {
+            log.error("musterRollId is mandatory");
+            errorMap.put("MUSTERROLL.MUSTER_ROLL_ID", "MusterRollId is mandatory");
+        }
+
+        if (!errorMap.isEmpty()) {
+            log.error("Calculator Estimate validation failed");
+            throw new CustomException(errorMap);
+        }
+        log.info("Required request parameter validation done for Calculator calculate service");
+    }
 
 
     private void validateMusterRollIdOrContractIdAgainstService(CalculationRequest calculationRequest) {
@@ -143,7 +150,7 @@ public class ExpenseCalculatorServiceValidator {
         log.info("Request Info object validation done");
     }
 
-    private void validateRequiredParametersForCalculatorEstimate(CalculationRequest calculationRequest) {
+    private void validateRequiredParametersForCalculatorRequest(CalculationRequest calculationRequest) {
         Map<String, String> errorMap = new HashMap<>();
 
         Criteria criteria = calculationRequest.getCriteria();

@@ -51,13 +51,24 @@ public class WageSeekerBillGeneratorService {
         // Create Calculation
         return makeCalculation(calcEstimates,criteria.getTenantId());
     }
+    public List<Bill> createWageSeekerBill(RequestInfo requestInfo, Criteria criteria){
+        // Fetch wage seeker skills from MDMS
+        Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, criteria.getTenantId());
+        // Fetch musterRolls for given muster roll IDs
+        List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria);
+        // Create bills for muster rolls
+        List<Bill> bills = createBillForMusterRolls(musterRolls, wageSeekerSkillCodeAmountMapping);
 
+        return bills;
+    }
 
-
-    public void createAndPostWageSeekerBill(RequestInfo requestInfo, MusterRoll musterRoll){
+    public List<Bill> createWageSeekerBill(RequestInfo requestInfo, MusterRoll musterRoll){
         // Fetch wage seeker skills from MDMS
         Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, musterRoll.getTenantId());
+        // Create bills for muster rolls
         List<Bill> bills = createBillForMusterRolls(Collections.singletonList(musterRoll), wageSeekerSkillCodeAmountMapping);
+
+        return bills;
     }
 
     private List<Bill> createBillForMusterRolls(List<MusterRoll> musterRolls, Map<String, Double> wageSeekerSkillCodeAmountMapping) {
