@@ -423,7 +423,7 @@ export const UICustomizations = {
        { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column?.maxlength}ch` }}>         
+            <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>         
               {String(t(value))}
             </span>
             {/* check condtion - if length greater than 20 */}

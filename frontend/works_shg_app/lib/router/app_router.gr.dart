@@ -157,6 +157,30 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    SuccessResponseRoute.name: (routeData) {
+      final args = routeData.argsAs<SuccessResponseRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: SuccessResponsePage(
+          key: args.key,
+          header: args.header,
+          subHeader: args.subHeader,
+          subText: args.subText,
+          subTitle: args.subTitle,
+          callBack: args.callBack,
+          callBackWhatsapp: args.callBackWhatsapp,
+          callBackDownload: args.callBackDownload,
+          callBackPrint: args.callBackPrint,
+          backButton: args.backButton,
+          buttonLabel: args.buttonLabel,
+          isWithoutLogin: args.isWithoutLogin,
+          downloadLabel: args.downloadLabel,
+          printLabel: args.printLabel,
+          whatsAppLabel: args.whatsAppLabel,
+          backButtonLabel: args.backButtonLabel,
+        ),
+      );
+    },
   };
 
   @override
@@ -246,6 +270,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               ViewWorkDetailsRoute.name,
               path: 'view-work-order',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              SuccessResponseRoute.name,
+              path: 'success',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -583,5 +612,109 @@ class ViewWorkDetailsRouteArgs {
   @override
   String toString() {
     return 'ViewWorkDetailsRouteArgs{key: $key, contractNumber: $contractNumber}';
+  }
+}
+
+/// generated route for
+/// [SuccessResponsePage]
+class SuccessResponseRoute extends PageRouteInfo<SuccessResponseRouteArgs> {
+  SuccessResponseRoute({
+    Key? key,
+    required String header,
+    String? subHeader,
+    String? subText,
+    String? subTitle,
+    void Function()? callBack,
+    void Function()? callBackWhatsapp,
+    void Function()? callBackDownload,
+    void Function()? callBackPrint,
+    bool? backButton,
+    String? buttonLabel,
+    bool isWithoutLogin = false,
+    String? downloadLabel,
+    String? printLabel,
+    String? whatsAppLabel,
+    String? backButtonLabel,
+  }) : super(
+          SuccessResponseRoute.name,
+          path: 'success',
+          args: SuccessResponseRouteArgs(
+            key: key,
+            header: header,
+            subHeader: subHeader,
+            subText: subText,
+            subTitle: subTitle,
+            callBack: callBack,
+            callBackWhatsapp: callBackWhatsapp,
+            callBackDownload: callBackDownload,
+            callBackPrint: callBackPrint,
+            backButton: backButton,
+            buttonLabel: buttonLabel,
+            isWithoutLogin: isWithoutLogin,
+            downloadLabel: downloadLabel,
+            printLabel: printLabel,
+            whatsAppLabel: whatsAppLabel,
+            backButtonLabel: backButtonLabel,
+          ),
+        );
+
+  static const String name = 'SuccessResponseRoute';
+}
+
+class SuccessResponseRouteArgs {
+  const SuccessResponseRouteArgs({
+    this.key,
+    required this.header,
+    this.subHeader,
+    this.subText,
+    this.subTitle,
+    this.callBack,
+    this.callBackWhatsapp,
+    this.callBackDownload,
+    this.callBackPrint,
+    this.backButton,
+    this.buttonLabel,
+    this.isWithoutLogin = false,
+    this.downloadLabel,
+    this.printLabel,
+    this.whatsAppLabel,
+    this.backButtonLabel,
+  });
+
+  final Key? key;
+
+  final String header;
+
+  final String? subHeader;
+
+  final String? subText;
+
+  final String? subTitle;
+
+  final void Function()? callBack;
+
+  final void Function()? callBackWhatsapp;
+
+  final void Function()? callBackDownload;
+
+  final void Function()? callBackPrint;
+
+  final bool? backButton;
+
+  final String? buttonLabel;
+
+  final bool isWithoutLogin;
+
+  final String? downloadLabel;
+
+  final String? printLabel;
+
+  final String? whatsAppLabel;
+
+  final String? backButtonLabel;
+
+  @override
+  String toString() {
+    return 'SuccessResponseRouteArgs{key: $key, header: $header, subHeader: $subHeader, subText: $subText, subTitle: $subTitle, callBack: $callBack, callBackWhatsapp: $callBackWhatsapp, callBackDownload: $callBackDownload, callBackPrint: $callBackPrint, backButton: $backButton, buttonLabel: $buttonLabel, isWithoutLogin: $isWithoutLogin, downloadLabel: $downloadLabel, printLabel: $printLabel, whatsAppLabel: $whatsAppLabel, backButtonLabel: $backButtonLabel}';
   }
 }

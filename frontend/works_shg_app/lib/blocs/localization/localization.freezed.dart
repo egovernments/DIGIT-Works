@@ -277,12 +277,56 @@ abstract class OnLoadLocalizationEvent implements LocalizationEvent {
 
 /// @nodoc
 mixin _$LocalizationState {
-  List<LocalizationMessageModel>? get localization =>
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<LocalizationMessageModel>? localization)
+        loaded,
+    required TResult Function(String? error) error,
+  }) =>
       throw _privateConstructorUsedError;
-  bool get isLocalizationLoadCompleted => throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $LocalizationStateCopyWith<LocalizationState> get copyWith =>
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult? Function(String? error)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) =>
       throw _privateConstructorUsedError;
 }
 
@@ -291,10 +335,6 @@ abstract class $LocalizationStateCopyWith<$Res> {
   factory $LocalizationStateCopyWith(
           LocalizationState value, $Res Function(LocalizationState) then) =
       _$LocalizationStateCopyWithImpl<$Res, LocalizationState>;
-  @useResult
-  $Res call(
-      {List<LocalizationMessageModel>? localization,
-      bool isLocalizationLoadCompleted});
 }
 
 /// @nodoc
@@ -306,75 +346,285 @@ class _$LocalizationStateCopyWithImpl<$Res, $Val extends LocalizationState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+}
 
-  @pragma('vm:prefer-inline')
+/// @nodoc
+abstract class _$$_InitialCopyWith<$Res> {
+  factory _$$_InitialCopyWith(
+          _$_Initial value, $Res Function(_$_Initial) then) =
+      __$$_InitialCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_InitialCopyWithImpl<$Res>
+    extends _$LocalizationStateCopyWithImpl<$Res, _$_Initial>
+    implements _$$_InitialCopyWith<$Res> {
+  __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Initial extends _Initial with DiagnosticableTreeMixin {
+  const _$_Initial() : super._();
+
   @override
-  $Res call({
-    Object? localization = freezed,
-    Object? isLocalizationLoadCompleted = null,
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'LocalizationState.initial()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'LocalizationState.initial'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Initial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<LocalizationMessageModel>? localization)
+        loaded,
+    required TResult Function(String? error) error,
   }) {
-    return _then(_value.copyWith(
-      localization: freezed == localization
-          ? _value.localization
-          : localization // ignore: cast_nullable_to_non_nullable
-              as List<LocalizationMessageModel>?,
-      isLocalizationLoadCompleted: null == isLocalizationLoadCompleted
-          ? _value.isLocalizationLoadCompleted
-          : isLocalizationLoadCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return initial();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return initial?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return initial(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return initial?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial(this);
+    }
+    return orElse();
   }
 }
 
-/// @nodoc
-abstract class _$$_LocalizationStateCopyWith<$Res>
-    implements $LocalizationStateCopyWith<$Res> {
-  factory _$$_LocalizationStateCopyWith(_$_LocalizationState value,
-          $Res Function(_$_LocalizationState) then) =
-      __$$_LocalizationStateCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {List<LocalizationMessageModel>? localization,
-      bool isLocalizationLoadCompleted});
+abstract class _Initial extends LocalizationState {
+  const factory _Initial() = _$_Initial;
+  const _Initial._() : super._();
 }
 
 /// @nodoc
-class __$$_LocalizationStateCopyWithImpl<$Res>
-    extends _$LocalizationStateCopyWithImpl<$Res, _$_LocalizationState>
-    implements _$$_LocalizationStateCopyWith<$Res> {
-  __$$_LocalizationStateCopyWithImpl(
-      _$_LocalizationState _value, $Res Function(_$_LocalizationState) _then)
+abstract class _$$_LoadingCopyWith<$Res> {
+  factory _$$_LoadingCopyWith(
+          _$_Loading value, $Res Function(_$_Loading) then) =
+      __$$_LoadingCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_LoadingCopyWithImpl<$Res>
+    extends _$LocalizationStateCopyWithImpl<$Res, _$_Loading>
+    implements _$$_LoadingCopyWith<$Res> {
+  __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_Loading extends _Loading with DiagnosticableTreeMixin {
+  const _$_Loading() : super._();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'LocalizationState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'LocalizationState.loading'));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_Loading);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<LocalizationMessageModel>? localization)
+        loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return loading();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return loading?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loading != null) {
+      return loading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Loading extends LocalizationState {
+  const factory _Loading() = _$_Loading;
+  const _Loading._() : super._();
+}
+
+/// @nodoc
+abstract class _$$_LoadedCopyWith<$Res> {
+  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
+      __$$_LoadedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<LocalizationMessageModel>? localization});
+}
+
+/// @nodoc
+class __$$_LoadedCopyWithImpl<$Res>
+    extends _$LocalizationStateCopyWithImpl<$Res, _$_Loaded>
+    implements _$$_LoadedCopyWith<$Res> {
+  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? localization = freezed,
-    Object? isLocalizationLoadCompleted = null,
   }) {
-    return _then(_$_LocalizationState(
-      localization: freezed == localization
+    return _then(_$_Loaded(
+      freezed == localization
           ? _value._localization
           : localization // ignore: cast_nullable_to_non_nullable
               as List<LocalizationMessageModel>?,
-      isLocalizationLoadCompleted: null == isLocalizationLoadCompleted
-          ? _value.isLocalizationLoadCompleted
-          : isLocalizationLoadCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
 
 /// @nodoc
 
-class _$_LocalizationState
-    with DiagnosticableTreeMixin
-    implements _LocalizationState {
-  const _$_LocalizationState(
-      {final List<LocalizationMessageModel>? localization,
-      this.isLocalizationLoadCompleted = false})
-      : _localization = localization;
+class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
+  const _$_Loaded(final List<LocalizationMessageModel>? localization)
+      : _localization = localization,
+        super._();
 
   final List<LocalizationMessageModel>? _localization;
   @override
@@ -387,62 +637,273 @@ class _$_LocalizationState
   }
 
   @override
-  @JsonKey()
-  final bool isLocalizationLoadCompleted;
-
-  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'LocalizationState(localization: $localization, isLocalizationLoadCompleted: $isLocalizationLoadCompleted)';
+    return 'LocalizationState.loaded(localization: $localization)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'LocalizationState'))
-      ..add(DiagnosticsProperty('localization', localization))
-      ..add(DiagnosticsProperty(
-          'isLocalizationLoadCompleted', isLocalizationLoadCompleted));
+      ..add(DiagnosticsProperty('type', 'LocalizationState.loaded'))
+      ..add(DiagnosticsProperty('localization', localization));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LocalizationState &&
+            other is _$_Loaded &&
             const DeepCollectionEquality()
-                .equals(other._localization, _localization) &&
-            (identical(other.isLocalizationLoadCompleted,
-                    isLocalizationLoadCompleted) ||
-                other.isLocalizationLoadCompleted ==
-                    isLocalizationLoadCompleted));
+                .equals(other._localization, _localization));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_localization),
-      isLocalizationLoadCompleted);
+      runtimeType, const DeepCollectionEquality().hash(_localization));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LocalizationStateCopyWith<_$_LocalizationState> get copyWith =>
-      __$$_LocalizationStateCopyWithImpl<_$_LocalizationState>(
-          this, _$identity);
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      __$$_LoadedCopyWithImpl<_$_Loaded>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<LocalizationMessageModel>? localization)
+        loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return loaded(localization);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return loaded?.call(localization);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(localization);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return loaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(this);
+    }
+    return orElse();
+  }
 }
 
-abstract class _LocalizationState implements LocalizationState {
-  const factory _LocalizationState(
-      {final List<LocalizationMessageModel>? localization,
-      final bool isLocalizationLoadCompleted}) = _$_LocalizationState;
+abstract class _Loaded extends LocalizationState {
+  const factory _Loaded(final List<LocalizationMessageModel>? localization) =
+      _$_Loaded;
+  const _Loaded._() : super._();
+
+  List<LocalizationMessageModel>? get localization;
+  @JsonKey(ignore: true)
+  _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$_ErrorCopyWith<$Res> {
+  factory _$$_ErrorCopyWith(_$_Error value, $Res Function(_$_Error) then) =
+      __$$_ErrorCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String? error});
+}
+
+/// @nodoc
+class __$$_ErrorCopyWithImpl<$Res>
+    extends _$LocalizationStateCopyWithImpl<$Res, _$_Error>
+    implements _$$_ErrorCopyWith<$Res> {
+  __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? error = freezed,
+  }) {
+    return _then(_$_Error(
+      freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$_Error extends _Error with DiagnosticableTreeMixin {
+  const _$_Error(this.error) : super._();
 
   @override
-  List<LocalizationMessageModel>? get localization;
+  final String? error;
+
   @override
-  bool get isLocalizationLoadCompleted;
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'LocalizationState.error(error: $error)';
+  }
+
   @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'LocalizationState.error'))
+      ..add(DiagnosticsProperty('error', error));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_Error &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, error);
+
   @JsonKey(ignore: true)
-  _$$_LocalizationStateCopyWith<_$_LocalizationState> get copyWith =>
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_ErrorCopyWith<_$_Error> get copyWith =>
+      __$$_ErrorCopyWithImpl<_$_Error>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<LocalizationMessageModel>? localization)
+        loaded,
+    required TResult Function(String? error) error,
+  }) {
+    return error(this.error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult? Function(String? error)? error,
+  }) {
+    return error?.call(this.error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<LocalizationMessageModel>? localization)? loaded,
+    TResult Function(String? error)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this.error);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Error extends LocalizationState {
+  const factory _Error(final String? error) = _$_Error;
+  const _Error._() : super._();
+
+  String? get error;
+  @JsonKey(ignore: true)
+  _$$_ErrorCopyWith<_$_Error> get copyWith =>
       throw _privateConstructorUsedError;
 }

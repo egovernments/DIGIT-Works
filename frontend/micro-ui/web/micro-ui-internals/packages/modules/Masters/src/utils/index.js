@@ -234,7 +234,7 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
         }
 
         configs.defaultValues.basicDetails_orgName = organisation?.name ? organisation?.name : ""
-        configs.defaultValues.basicDetails_regDept = organisation?.additionalDetails?.registeredByDept ? organisation?.additionalDetails?.registeredByDept : ""
+        configs.defaultValues.basicDetails_regDept = organisation?.additionalDetails?.registeredByDept ? { code: organisation?.additionalDetails?.registeredByDept, name: `COMMON_MASTERS_DEPARTMENT_${organisation?.additionalDetails?.registeredByDept}`, active: true } : ""
         configs.defaultValues.basicDetails_regDeptNo = organisation?.additionalDetails?.deptRegistrationNum ? organisation?.additionalDetails?.deptRegistrationNum : ""
         configs.defaultValues.basicDetails_dateOfIncorporation = organisation?.dateOfIncorporation ? Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'yyyy-MM-dd') : ""
         
@@ -316,7 +316,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
     }]
     organisation.additionalDetails = {
         locality: formData?.locDetails_locality?.code,
-        registeredByDept: formData?.basicDetails_regDept,
+        registeredByDept: formData?.basicDetails_regDept?.code,
         deptRegistrationNum: formData?.basicDetails_regDeptNo
     }
     organisation.contactDetails = [{

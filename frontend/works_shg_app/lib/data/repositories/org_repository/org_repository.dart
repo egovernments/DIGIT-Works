@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_dynamic_calls
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
@@ -25,8 +26,9 @@ class ORGRepository {
             "accessToken": GlobalVariables.authToken,
           }));
 
-      return OrganisationListModelMapper.fromMap(
-          response.data as Map<String, dynamic>);
+      return OrganisationListModel.fromJson(
+        json.decode(response.toString()),
+      );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;

@@ -105,7 +105,7 @@ const OverheadsTable = ({control,watch,...props}) => {
         }
         return obj
     }
-    const columns = [t('WORKS_SNO'), t('WORKS_OVERHEAD'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), '']
+    const columns = [t('WORKS_SNO'), t('WORKS_OVERHEAD'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), t('CS_COMMON_ACTION')]
     const renderHeader = () => {
         return columns?.map((key, index) => {
             return <th key={index} style={getStyles(index+1)} > {key} </th>
@@ -171,7 +171,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                     return !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
                 })
             }
-            console.log(formData?.[formFieldName]);
+           
             return <Dropdown
             inputRef={register()}
             option={options?.mdmsConfig ? filteredOptions : options}
@@ -285,7 +285,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                 </div></td>
                 
-                <td style={getStyles(5)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+                <td style={getStyles(5)} >{showDelete() && <span onClick={() => removeRow(row)} className="icon-wrapper"><DeleteIcon fill={"#B1B4B6"}/></span>}</td>
             </tr>
         })
     }
@@ -300,7 +300,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                 {renderBody()}
                 <tr>
                     <td colSpan={3} style={{textAlign:"right",fontWeight:"600"}}>{t("RT_TOTAL")}</td>
-                    <td colSpan={1} style={{ textAlign: "right" }}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
+                    <td colSpan={1} style={{ textAlign: "right" }}>{Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), 'number')}</td>
                     <td colSpan={1}></td>
                 </tr>
                 <tr>

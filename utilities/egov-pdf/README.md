@@ -58,6 +58,7 @@ Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
 |`/egov-pdf/download/project/project-details` | project | `projectId, tenantId` | false |
 |`/egov-pdf/download/estimate/estimates`| estimate | `tenantId` , `estimateNumber` | false | 
 |`/egov-pdf/download/musterRoll/muster-roll` | musterRoll | `musterRollNumber, tenantId` | false |
+|`/egov-pdf/download/workOrder/work-order` | workOrder | `contractId, tenantId` | false |
 
 
 ### Kafka Consumers

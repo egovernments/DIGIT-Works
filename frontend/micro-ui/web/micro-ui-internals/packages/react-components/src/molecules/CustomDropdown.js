@@ -81,6 +81,17 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
   if (isLoading) {
     return <Loader />;
   }
+
+  // const getValue = () => {
+  //   let selectedValue = ""
+  //   if(data?.length === 1 || config?.options?.length === 1) {
+  //     selectedValue = data?.[0] || config?.options?.[0]
+  //   } else {
+  //     selectedValue = value
+  //   }
+  //   return selectedValue
+  // }
+  
   return (
     <React.Fragment key={config.name}>
       {/* <LabelFieldPair>
