@@ -365,7 +365,7 @@ export const CreateWageSeekerConfig = {
               },
               populators: { 
                 name: "financeDetails_ifsc", 
-                error: "WORKS_REQUIRED_ERR", 
+                error: "ES_COMMON_IFSC_CODE_ERROR", 
                 validation: { pattern: "^[A-Z]{4}0[A-Z0-9]{6}$" }
               }
             },

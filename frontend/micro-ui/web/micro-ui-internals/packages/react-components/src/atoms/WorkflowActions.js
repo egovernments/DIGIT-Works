@@ -52,6 +52,11 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     setDisplayMenu(false);
   }
   
+  const closeToast = () => {
+    setTimeout(() => {
+      setShowToast(null)
+    }, 5000);
+  }
  
   setTimeout(() => {
     setShowToast(null);
@@ -69,6 +74,8 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   const closeModal = () => {
     setSelectedAction(null);
     setShowModal(false);
+    setShowToast({ warning:true,label:`WF_ACTION_CANCELLED`})
+    closeToast()
   };
 
   const onActionSelect = (action) => {

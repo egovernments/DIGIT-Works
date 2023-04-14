@@ -134,6 +134,8 @@ class Common {
   String get workflowTimeline => 'WORKS_WORKFLOW_TIMELINE';
   String get effectiveFrom => 'MASTERS_EFFECTIVE_FROM';
   String get effectiveTo => 'MASTERS_EFFECTIVE_TO';
+  String get validPhotoGraph => 'PHOTOGRAPH_VALID_SIZE';
+  String get individualAlreadyAdded => 'IND_ALREADY_ADDED_TO_THE_TABLE';
 }
 
 class Home {
@@ -171,6 +173,8 @@ class WorkOrder {
   String get contractDetails => 'WORK_ORDER_CONTRACT_DETAILS';
   String get timeLineDetails => 'WORK_ORDER_TIMELINE_DETAILS';
   String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
+  String get workStartDate => 'WORKS_START_DATE';
+  String get workEndDate => 'WORKS_END_DATE';
 }
 
 class WageSeeker {

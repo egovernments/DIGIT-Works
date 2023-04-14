@@ -183,6 +183,17 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .toLocal()
                                               .toString())
                                           : 'NA',
+                                      i18.workOrder.workStartDate : e.startDate != null
+                                          ? DateFormats.getFilteredDate(DateTime
+                                          .fromMillisecondsSinceEpoch(
+                                          e.startDate ?? 0).toString())
+                                          : 'NA',
+                                      i18.workOrder.workEndDate : e.endDate != null
+                                          ? DateFormats.getFilteredDate(DateTime
+                                          .fromMillisecondsSinceEpoch(
+                                          e.endDate ?? 0).toString())
+                                          : 'NA',
+
                                     },
                                     'payload': e.toMap()
                                   })
