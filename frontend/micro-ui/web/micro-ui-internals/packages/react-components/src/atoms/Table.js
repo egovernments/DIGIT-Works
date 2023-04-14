@@ -100,22 +100,12 @@ const Table = ({
                     {showAutoSerialNo && typeof showAutoSerialNo == "string" ? t(showAutoSerialNo) : t("TB_SNO")}
                   </th>
                 )}
-                {headerGroup.headers.map((column) => {
-                  let style = {
-                    verticalAlign: "top"
-                  }
-
-                  if(column?.id === "additionalDetails.estimatedCostInRs") {
-                    style = {
-                      ...style,
-                      textAlign : "end"
-                    }
-                  }
-                  return <th {...column.getHeaderProps(column.getSortByToggleProps())} style={style}>
+                {headerGroup.headers.map((column) => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())} style={{ verticalAlign: "top" }}>
                     {column.render("Header")}
                     <span>{column.isSorted ? column.isSortedDesc ? <SortDown /> : <SortUp /> : ""}</span>
                   </th>
-                })}
+                ))}
               </tr>
             ))}
           </thead>
