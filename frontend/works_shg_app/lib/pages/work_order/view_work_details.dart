@@ -288,7 +288,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .toString())
                                       : 'NA',
                                   i18.workOrder.workStartDate: e.startDate !=
-                                          null
+                                          null && e.startDate != 0
                                       ? DateFormats.getFilteredDate(
                                           DateTime.fromMillisecondsSinceEpoch(
                                                   e.startDate ?? 0)
