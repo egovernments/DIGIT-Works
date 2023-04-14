@@ -45,7 +45,7 @@ class _AuthenticatedPageWrapper extends State<AuthenticatedPageWrapper> {
         ],
         child: BlocProvider(
           create: (context) => LocalizationBloc(
-            const LocalizationState(),
+            const LocalizationState.initial(),
             LocalizationRepository(client.init()),
           )..add(LocalizationEvent.onLoadLocalization(
               module: 'rainmaker-attendencemgmt',

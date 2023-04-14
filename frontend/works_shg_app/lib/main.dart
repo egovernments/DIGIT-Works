@@ -167,7 +167,7 @@ class MainApplication extends StatelessWidget {
                                     .stateInfoListModel?.localizationModules !=
                                 null)
                         ? (context) => LocalizationBloc(
-                              const LocalizationState(),
+                              const LocalizationState.initial(),
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
                                 module:
@@ -180,7 +180,7 @@ class MainApplication extends StatelessWidget {
                                     .value,
                               ))
                         : (context) => LocalizationBloc(
-                              const LocalizationState(),
+                              const LocalizationState.initial(),
                               LocalizationRepository(client.init()),
                             ),
                     child: MaterialApp.router(

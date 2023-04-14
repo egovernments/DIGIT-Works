@@ -90,7 +90,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
         titleSpacing: 0,
         title: const AppBarLogo(),
       ),
-      drawer: DrawerWrapper(const Drawer(
+      drawer: const DrawerWrapper(Drawer(
           child: SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
       bottomNavigationBar:
           BlocBuilder<SearchIndividualWorkBloc, SearchIndividualWorkState>(
@@ -102,9 +102,9 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
               return workOrderList.isNotEmpty &&
                       workOrderList.first['payload']['wfStatus'] == 'APPROVED'
                   ? SizedBox(
-                    height: 120,
-                    child: DigitCard(
-                        child: Column(
+                      height: 120,
+                      child: DigitCard(
+                          child: Column(
                         children: [
                           DigitElevatedButton(
                             onPressed: () {
@@ -143,10 +143,12 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .read<DeclineWorkOrderBloc>()
                                               .add(
                                                 WorkOrderDeclineEvent(
-                                                    contractsModel: workOrderList
-                                                        .first['payload'],
+                                                    contractsModel:
+                                                        workOrderList
+                                                            .first['payload'],
                                                     action: 'DECLINE',
-                                                    comments: 'DECLINE contract'),
+                                                    comments:
+                                                        'DECLINE contract'),
                                               );
                                           Navigator.of(context,
                                                   rootNavigator: true)
@@ -166,23 +168,25 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                           )
                         ],
                       )),
-                  )
+                    )
                   : workOrderList.isNotEmpty &&
                           workOrderList.first['payload']['wfStatus'] ==
                               'ACCEPTED'
                       ? SizedBox(
-                height: 80,
-                        child: DigitCard(
+                          height: 80,
+                          child: DigitCard(
                             child: DigitElevatedButton(
                               onPressed: () {
-                                context.router.push(AttendanceRegisterTableRoute(
-                                    registerId: workOrderList.first['payload']
-                                            ['additionalDetails']
-                                            ['attendanceRegisterNumber']
-                                        .toString(),
-                                    tenantId: workOrderList.first['payload']
-                                            ['tenantId']
-                                        .toString()));
+                                context.router.push(
+                                    AttendanceRegisterTableRoute(
+                                        registerId: workOrderList
+                                            .first['payload']
+                                                ['additionalDetails']
+                                                ['attendanceRegisterNumber']
+                                            .toString(),
+                                        tenantId: workOrderList.first['payload']
+                                                ['tenantId']
+                                            .toString()));
                               },
                               child: Center(
                                 child: Text(
@@ -194,7 +198,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                               ),
                             ),
                           ),
-                      )
+                        )
                       : Container();
             });
       }),

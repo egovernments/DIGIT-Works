@@ -186,7 +186,8 @@ class SHGFilePickerState extends State<SHGFilePicker> {
       Container(
         padding: const EdgeInsets.only(top: 2.0),
         alignment: Alignment.centerLeft,
-        child: Text(i18.common.validPhotoGraph,
+        child: Text(
+            AppLocalizations.of(context).translate(i18.common.validPhotoGraph),
             style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
