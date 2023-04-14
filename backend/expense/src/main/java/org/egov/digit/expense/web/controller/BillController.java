@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 
 @Controller
-@RequestMapping("expense/bill/v1/")
+@RequestMapping("/bill/v1/")
 public class BillController {
 	
 	@Autowired
