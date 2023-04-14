@@ -135,7 +135,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(
-                                      '${AppLocalizations.of(context).translate(i18.home.workOrder)} (${workOrderList.length})',
+                                      '${AppLocalizations.of(context).translate(i18.home.myWorks)} (${workOrderList.length})',
                                       style: Theme.of(context)
                                           .textTheme
                                           .displayMedium,

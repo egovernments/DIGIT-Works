@@ -66,6 +66,31 @@ async function search_contract(tenantId, requestinfo, contractId) {
 
   });
 }
+async function search_organisation(tenantId, requestinfo, orgId) {
+
+  var params = {
+    limit: 10,
+    offset: 0
+  };
+  var data = {
+    "apiOperation": "SEARCH",
+    "SearchCriteria": {
+      "tenantId": tenantId,
+      "id": [orgId]
+    }
+  }
+
+  var searchEndpoint = config.paths.orgnisation_search;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.organisation, searchEndpoint),
+    data: Object.assign(requestinfo, data),
+    params,
+
+  });
+}
+
 async function search_mdmsWageSeekerSkills(tenantId, requestinfo) {
   var params = {
     tenantId: tenantId.split(".")[0],
@@ -314,5 +339,6 @@ module.exports = {
   search_estimateDetails,
   search_musterRoll,
   search_contract,
-  search_mdmsWageSeekerSkills
+  search_mdmsWageSeekerSkills,
+  search_organisation
 };

@@ -3,6 +3,7 @@
 
 HOST = process.env.EGOV_HOST;
 
+
 if (!HOST) {
   console.log("You need to set the HOST variable");
   process.exit(1);
@@ -25,7 +26,9 @@ module.exports = {
       process.env.PROJECT_DETAILS_TEMPLATE || "project-detail",
     estimate_template: process.env.ESTIMATE_TEMPLATE || "estimate",
     nominal_muster_roll_template:
-      process.env.NOMINAL_MUSTER_ROLL_TEMPLATE || "nominal-muster-roll"
+      process.env.NOMINAL_MUSTER_ROLL_TEMPLATE || "nominal-muster-roll",
+    work_order_template:
+      process.env.WORK_ORDER_TEMPLATE || "work-order",
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
@@ -41,7 +44,9 @@ module.exports = {
     projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/',
     estimates: process.env.EGOV_ESTIMATE_HOST || 'http://localhost:8084/',
     musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
-    contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086'
+    contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086',
+    organisation: process.env.EGOV_ORGANISATION_HOST || 'http://localhost:8087'
+
 
   },
   paths: {
@@ -55,6 +60,8 @@ module.exports = {
     estimate_search: "/estimate-service/estimate/v1/_search",
     musterRoll_search: "/muster-roll/v1/_search",
     contract_search: "/contract-service/contract/v1/_search",
-    mdmsWageSeekerSkills_search: "/egov-mdms-service/v1/_get"
+    mdmsWageSeekerSkills_search: "/egov-mdms-service/v1/_get",
+    orgnisation_search: "/org-services/organisation/v1/_search"
+
   },
 };
