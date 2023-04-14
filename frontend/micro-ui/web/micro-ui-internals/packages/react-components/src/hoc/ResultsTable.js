@@ -170,12 +170,20 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 onPrevPage={previousPage}
                 pageSizeLimit={getValues("limit")}
                 getCellProps={(cellInfo) => {
+                    let otherStyles = {};
+                    if(cellInfo?.column?.id === "additionalDetails.estimatedCostInRs") {
+                        otherStyles = {
+                            ...otherStyles,
+                            textAlign : "end"
+                        }
+                    }
                     return {
                         style: {
                             padding: "20px 18px",
                             fontSize: "16px",
                             wordBreak : "break-all",
                             whiteSpace: "break-spaces",
+                            ...otherStyles
                         },
                     };
                 }}
