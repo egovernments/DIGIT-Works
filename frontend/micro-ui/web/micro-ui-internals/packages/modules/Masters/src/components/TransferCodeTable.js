@@ -5,7 +5,7 @@ import { AddIcon, DeleteIcon, TextInput, CardLabelError, Loader, Dropdown, Heade
 
 const TransferCodeTable = (props) => {
     const { t, register, errors , setValue, getValues, onSelect, formData, control, formState, onChange, unregister } = props
-
+    const isMandatory = props?.props?.isMandatory
     const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
     const [sessionFormData] = orgSession;
 
@@ -123,10 +123,16 @@ const TransferCodeTable = (props) => {
         
         if (isLoading) {
             return <Loader />
-        } else return (
-            <Dropdown
+        }  else {
+            let filteredOptions = []
+            if(options?.mdmsConfig){
+                filteredOptions = data?.filter(row => {
+                    return formData?.[formFieldName] && !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
+                })
+            }
+            return <Dropdown
                 inputRef={register()}
-                option={options?.mdmsConfig ? data : options}
+                option={options?.mdmsConfig ? (isTranferCodeTable ? data : filteredOptions) : options}
                 selected={props?.value}
                 optionKey={optionKey}
                 t={t}
@@ -137,7 +143,7 @@ const TransferCodeTable = (props) => {
                 optionCardStyles={{ maxHeight: '15rem' }}
                 style={{ marginBottom: "0px" }}
             /> 
-        )
+        }
     }
 
     const renderBody = () => {
@@ -152,7 +158,7 @@ const TransferCodeTable = (props) => {
                             control={control}
                             name={`${formFieldName}.${row.key}.name`}
                             defaultValue={formData?.[`${formFieldName}.${row.key}.name`]}
-                            rules={{ required: isTranferCodeTable }}
+                            rules={{ required: true }}
                             render={(props) => (
                                 getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
                                     mdmsConfig: {
@@ -173,23 +179,23 @@ const TransferCodeTable = (props) => {
                             style={{ "marginBottom": "0px" }} 
                             name={`${formFieldName}.${row.key}.value`} 
                             selected={formData && formData[formFieldName] ? formData[formFieldName][`${formFieldName}.${row.key}.value`] : undefined}
-                            inputRef={register({ required: isTranferCodeTable, pattern: getPatterns(row.key)})}
+                            inputRef={register({ required: true, pattern: getPatterns(row.key)})}
                             onChange={onChange}
                         />
-                        {errors && errors?.[formFieldName]?.[row.key]?.value?.type === "pattern" && (
-                            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                         {errors && errors?.[formFieldName]?.[row.key]?.value?.type === "required" && (
                             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                        {errors && (errors?.[formFieldName]?.[row.key]?.value?.type === "pattern" || errors?.[formFieldName]?.type === "custom") && (
+                            <CardLabelError style={errorCardStyle}>{isTranferCodeTable ? t('ES_COMMON_IFSC_CODE_ERROR') : t('WORKS_PATTERN_ERR')}</CardLabelError>)}
                     </div>
                 </td>
-                <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+                <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row) } className="icon-wrapper"><DeleteIcon fill={"#B1B4B6"}/></span>}</td>
             </tr>
         })
     }
 
     return (
         <React.Fragment>
-            <Header styles={{fontSize: "24px", marginTop: "16px", marginBottom: "16px"}}>{isTranferCodeTable ? t("MASTERS_TRANSFER_CODE") : t("MASTERS_TAX_INDENTIFIERS")}</Header>
+            <Header styles={{fontSize: "24px", marginTop: "16px", marginBottom: "16px"}}>{isTranferCodeTable ? t("MASTERS_TRANSFER_CODE") : t("MASTERS_TAX_INDENTIFIERS")}{ isMandatory ? " *" : ""}</Header>
             <table className='table reports-table sub-work-table' style={{ marginTop: "-10px", marginBottom: "2rem" }}>
                 <thead>
                     <tr>{renderHeader()}</tr>

@@ -163,9 +163,18 @@ const OverheadsTable = ({control,watch,...props}) => {
             return <Loader />;
             //show MDMS data if options are not provided. Options are in use here for pre defined options from config. 
             //Usage example : dependent dropdown
-        } else return <Dropdown
+        } else {
+            //here filter out the options available to select
+            let filteredOptions = []
+            if(options?.mdmsConfig){
+                filteredOptions = data?.filter(row => {
+                    return !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
+                })
+            }
+            console.log(formData?.[formFieldName]);
+            return <Dropdown
             inputRef={register()}
-            option={options?.mdmsConfig ? data : options}
+            option={options?.mdmsConfig ? filteredOptions : options}
             selected={props?.value}
             optionKey={optionKey}
             t={t}
@@ -177,6 +186,7 @@ const OverheadsTable = ({control,watch,...props}) => {
             optionCardStyles={{ maxHeight: '15rem' }}
             style={{ marginBottom: "0px" }}
         />
+        }
     }
 
     const handleDropdownChange = (e, props, row, inputName) => {
@@ -263,7 +273,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                         <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
                 </div></td>
 
-                <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.amount`} inputRef={register({
+                <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px",textAlign:"right",paddingRight:"1rem" }} name={`${formFieldName}.${row.key}.amount`} inputRef={register({
                     required: isInputDisabled(`${formFieldName}.${row.key}.name`)? false : true,
                     pattern: /^\d*\.?\d*$/
                 })}
@@ -275,7 +285,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                 </div></td>
                 
-                <td style={getStyles(5)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+                <td style={getStyles(5)} >{showDelete() && <span onClick={() => removeRow(row)} className="icon-wrapper"><DeleteIcon fill={"#B1B4B6"}/></span>}</td>
             </tr>
         })
     }
@@ -290,7 +300,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                 {renderBody()}
                 <tr>
                     <td colSpan={3} style={{textAlign:"right",fontWeight:"600"}}>{t("RT_TOTAL")}</td>
-                    <td colSpan={1}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
+                    <td colSpan={1} style={{ textAlign: "right" }}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
                     <td colSpan={1}></td>
                 </tr>
                 <tr>

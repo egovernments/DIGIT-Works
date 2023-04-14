@@ -3,7 +3,7 @@ package org.egov.digit.expense.calculator.util;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.digit.expense.calculator.config.Configuration;
+import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -18,7 +18,7 @@ public class UrlShortenerUtil {
 	private RestTemplate restTemplate;
 
 	@Autowired
-	private Configuration configs;
+	private ExpenseCalculatorConfiguration configs;
 
 	public String getShortenedUrl(String url) {
 

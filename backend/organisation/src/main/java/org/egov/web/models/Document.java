@@ -41,5 +41,8 @@ public class Document {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
+    @JsonProperty("isActive")
+    private Boolean isActive = null;
+
 }
 

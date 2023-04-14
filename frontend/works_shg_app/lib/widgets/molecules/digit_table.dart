@@ -61,7 +61,7 @@ class DigitTable extends StatelessWidget {
 
   List<Widget> _getTitleWidget() {
     var index = 0;
-    return headerList.map((e) {
+    return headerList.where((e) => e.hide != true).map((e) {
       index++;
       if (e.isSortingRequired ?? false) {
         return TextButton(
@@ -70,16 +70,17 @@ class DigitTable extends StatelessWidget {
             ),
             onPressed: e.callBack == null ? null : () => e.callBack!(e),
             child: _getTitleItemWidget((e.label),
+                subLabel: e.subLabel ?? '',
                 isAscending: e.isAscendingOrder,
                 isBorderRequired: (index - 1) == 0));
       } else {
-        return _getTitleItemWidget(e.label);
+        return _getTitleItemWidget(e.label, subLabel: e.subLabel ?? '');
       }
     }).toList();
   }
 
   Widget _getTitleItemWidget(String label,
-      {bool? isAscending, bool isBorderRequired = false}) {
+      {bool? isAscending, String? subLabel, bool isBorderRequired = false}) {
     var textWidget = Text(label,
         style: const TextStyle(
             fontWeight: FontWeight.w700, color: Colors.black, fontSize: 12));
@@ -97,17 +98,39 @@ class DigitTable extends StatelessWidget {
       padding: const EdgeInsets.only(left: 17, right: 5, top: 6, bottom: 6),
       alignment: Alignment.centerLeft,
       child: isAscending != null
-          ? Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 5,
+          ? Column(
               children: [
-                textWidget,
-                Icon(isAscending
-                    ? Icons.arrow_upward
-                    : Icons.arrow_downward_sharp)
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 5,
+                  children: [
+                    textWidget,
+                    Icon(isAscending
+                        ? Icons.arrow_upward
+                        : Icons.arrow_downward_sharp)
+                  ],
+                ),
+                Text(
+                  subLabel ?? '',
+                  style: TextStyle(
+                      color: const DigitColors().cloudGray,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400),
+                )
               ],
             )
-          : textWidget,
+          : Column(
+              children: [
+                textWidget,
+                Text(
+                  subLabel ?? '',
+                  style: TextStyle(
+                      color: const DigitColors().cloudGray,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400),
+                )
+              ],
+            ),
     );
   }
 
@@ -181,9 +204,12 @@ class DigitTable extends StatelessWidget {
     var data = tableData[index];
     var list = <Widget>[];
     for (int i = 1; i < data.tableRow.length; i++) {
-      list.add(_generateColumnRow(context, index, data.tableRow[i].label ?? '',
-          style: data.tableRow[i].style,
-          buttonWidget: data.tableRow[i].widget));
+      if (data.tableRow[i].hide != true) {
+        list.add(_generateColumnRow(
+            context, index, data.tableRow[i].label ?? '',
+            style: data.tableRow[i].style,
+            buttonWidget: data.tableRow[i].widget));
+      }
     }
     return Container(
         color: index % 2 == 0 ? const Color(0xffEEEEEE) : Colors.white,

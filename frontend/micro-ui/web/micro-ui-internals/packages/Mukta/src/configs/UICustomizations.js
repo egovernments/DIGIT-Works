@@ -340,7 +340,7 @@ export const UICustomizations = {
   },
   SearchProjectConfig: {
     preProcess: (data) => {
-      const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
+      const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom, "daystart");
       const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
       const projectType = data.body.Projects[0]?.projectType?.code;
       const ward = data.body.Projects[0]?.ward?.[0]?.code;
@@ -464,7 +464,7 @@ export const UICustomizations = {
     },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
   },
@@ -496,6 +496,14 @@ export const UICustomizations = {
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
+    },
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { startDate, endDate } = data;
+      if ((startDate === "" && endDate !== "") || (startDate !== "" && endDate === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "ES_COMMON_MUSTER_ROLL_ID") {

@@ -196,8 +196,10 @@ export const getBankAccountUpdatePayload = ({formData, apiData, tenantId, isModi
         delete bankAccounts[0]?.auditDetails
 
         let bankAccountDetails = bankAccounts?.[0]?.bankAccountDetails?.[0]
-        bankAccountDetails.isActive = false
-        bankAccountDetails.isPrimary = false
+        if(bankAccountDetails) {
+            bankAccountDetails.isActive = false
+            bankAccountDetails.isPrimary = false
+        }
         delete bankAccountDetails?.auditDetails
     } else {
         let bankObj = {}
@@ -219,7 +221,7 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
     const bankAccountDetails = orgData?.bankDetails?.[0]?.bankAccountDetails?.[0]
     
     const funDetails = organisation?.functions?.[0]
-    let identifiers = organisation?.identifiers?.map(item => {
+    let identifiers = organisation?.identifiers?.filter(item => item?.isActive)?.map(item => {
         return {
             name: { code: item?.type, name: `COMMON_MASTERS_TAXIDENTIFIER_${item?.type}`, active: true},
             value: item?.value ? item?.value : ""
@@ -232,7 +234,7 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
         }
 
         configs.defaultValues.basicDetails_orgName = organisation?.name ? organisation?.name : ""
-        configs.defaultValues.basicDetails_regDept = organisation?.additionalDetails?.registeredByDept ? organisation?.additionalDetails?.registeredByDept : ""
+        configs.defaultValues.basicDetails_regDept = organisation?.additionalDetails?.registeredByDept ? { code: organisation?.additionalDetails?.registeredByDept, name: `COMMON_MASTERS_DEPARTMENT_${organisation?.additionalDetails?.registeredByDept}`, active: true } : ""
         configs.defaultValues.basicDetails_regDeptNo = organisation?.additionalDetails?.deptRegistrationNum ? organisation?.additionalDetails?.deptRegistrationNum : ""
         configs.defaultValues.basicDetails_dateOfIncorporation = organisation?.dateOfIncorporation ? Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'yyyy-MM-dd') : ""
         
@@ -264,11 +266,36 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
             value: bankAccountDetails?.bankBranchIdentifier?.code ? bankAccountDetails?.bankBranchIdentifier?.code : "" 
         }]
 
-        configs.defaultValues.taxIdentifierData = identifiers
+        configs.defaultValues.taxIdentifierData = identifiers?.length > 0 ? identifiers : ""
        
         setSessionFormData({...configs?.defaultValues})
     }
     setIsFormReady(true)
+}
+
+const getOrgIdentifiersToUpdate = (formData, orgDataFromAPI) => {
+    let updatedIdentifiers = formData?.taxIdentifierData
+    let existingIdentifiers = orgDataFromAPI?.organisation?.identifiers
+
+    let orgIdentifiers = []
+    let types = ['PAN', 'GSTIN']
+    types?.forEach(type => {
+        let formIdentifier = updatedIdentifiers?.find(item => item?.name?.code === type)
+        let apiIdentifier = existingIdentifiers?.find(item => item?.type === type)
+        if(formIdentifier && apiIdentifier && formIdentifier?.value !== apiIdentifier?.value) {
+            orgIdentifiers.push({...apiIdentifier, value: formIdentifier?.value, isActive: true})
+        }
+        if(formIdentifier && apiIdentifier && formIdentifier?.value === apiIdentifier?.value) {
+            orgIdentifiers.push({...apiIdentifier, isActive: true})
+        }
+        if(formIdentifier && !apiIdentifier) {
+            orgIdentifiers.push({type: formIdentifier?.name?.code,  value: formIdentifier?.value })
+        }
+        if(!formIdentifier && apiIdentifier) {
+            orgIdentifiers.push({...apiIdentifier, isActive: false})
+        }
+    })
+    return orgIdentifiers
 }
 
 export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) => {
@@ -289,7 +316,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
     }]
     organisation.additionalDetails = {
         locality: formData?.locDetails_locality?.code,
-        registeredByDept: formData?.basicDetails_regDept,
+        registeredByDept: formData?.basicDetails_regDept?.code,
         deptRegistrationNum: formData?.basicDetails_regDeptNo
     }
     organisation.contactDetails = [{
@@ -308,7 +335,8 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         if(item?.name && item?.value) {
             return {
                 type: item?.name?.code,
-                value: item?.value
+                value: item?.value,
+                isActive: true
             }
         }
     })
@@ -338,16 +366,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
             contactEmail: formData?.contactDetails_email
         }]
 
-        organisation.identifiers = formData?.taxIdentifierData?.map(item => {
-            if(item?.name && item?.value) {
-                return {
-                    id: orgDataFromAPI?.organisation?.identifiers?.find(data => data?.type === item?.name?.code)?.id,
-                    orgId: orgDataFromAPI?.organisation?.id,
-                    type: item?.name?.code,
-                    value: item?.value
-                }
-            }
-        })
+        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI)
 
         organisation.functions[0].id = orgDataFromAPI?.organisation?.functions?.[0]?.id
         organisation.functions[0].orgId = orgDataFromAPI?.organisation?.id

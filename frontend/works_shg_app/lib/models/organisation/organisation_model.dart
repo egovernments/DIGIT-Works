@@ -1,155 +1,131 @@
-import 'package:dart_mappable/dart_mappable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'organisation_model.mapper.dart';
+part 'organisation_model.freezed.dart';
+part 'organisation_model.g.dart';
 
-@MappableClass()
-class OrganisationListModel with OrganisationListModelMappable {
-  List<OrganisationModel>? organisations;
-  OrganisationListModel({this.organisations});
+@freezed
+class OrganisationListModel with _$OrganisationListModel {
+  const factory OrganisationListModel(
+      {List<OrganisationModel>? organisations}) = _OrganisationListModel;
+
+  factory OrganisationListModel.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$OrganisationListModelFromJson(json);
 }
 
-@MappableClass()
-class OrganisationModel with OrganisationModelMappable {
-  String? name;
-  String? applicationNumber;
-  String? tenantId;
-  String? id;
-  String? orgNumber;
-  String? applicationStatus;
-  String? externalRefNumber;
-  List<OrgAddress>? orgAddress;
-  List<OrgContact>? contactDetails;
-  List<OrgIdentifier>? identifiers;
-  List<OrgFunctions>? functions;
-  OrgAdditionalDetails? additionalDetails;
-  int? dateOfIncorporation;
-  OrganisationModel(
-      {this.name,
-      this.id,
-      this.orgNumber,
-      this.applicationNumber,
-      this.tenantId,
-      this.applicationStatus,
-      this.externalRefNumber,
-      this.orgAddress,
-      this.contactDetails,
-      this.identifiers,
-      this.additionalDetails,
-      this.dateOfIncorporation,
-      this.functions});
+@freezed
+class OrganisationModel with _$OrganisationModel {
+  const factory OrganisationModel({
+    String? name,
+    String? applicationNumber,
+    String? tenantId,
+    String? id,
+    String? orgNumber,
+    String? applicationStatus,
+    String? externalRefNumber,
+    List<OrgAddress>? orgAddress,
+    List<OrgContact>? contactDetails,
+    List<OrgIdentifier>? identifiers,
+    List<OrgFunctions>? functions,
+    OrgAdditionalDetails? additionalDetails,
+    int? dateOfIncorporation,
+  }) = _OrganisationModel;
+
+  factory OrganisationModel.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$OrganisationModelFromJson(json);
 }
 
-@MappableClass()
-class OrgAdditionalDetails with OrgAdditionalDetailsMappable {
-  String? registeredByDept;
-  String? deptRegistrationNum;
-  ORGLocality? locality;
-  OrgAdditionalDetails(
-      {this.registeredByDept, this.deptRegistrationNum, this.locality});
+@freezed
+class OrgAdditionalDetails with _$OrgAdditionalDetails {
+  const factory OrgAdditionalDetails({
+    String? registeredByDept,
+    String? deptRegistrationNum,
+    String? locality,
+  }) = _OrgAdditionalDetails;
+
+  factory OrgAdditionalDetails.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$OrgAdditionalDetailsFromJson(json);
 }
 
-@MappableClass()
-class ORGLocality with ORGLocalityMappable {
-  String? code;
-  String? i18nKey;
-  ORGLocality({this.code, this.i18nKey});
+@freezed
+class OrgAddress with _$OrgAddress {
+  const factory OrgAddress({
+    String? id,
+    String? orgId,
+    String? tenantId,
+    String? doorNo,
+    String? plotNo,
+    String? landmark,
+    String? city,
+    String? pincode,
+    String? district,
+    String? region,
+    String? state,
+    String? country,
+    String? buildingName,
+    String? street,
+    String? boundaryType,
+    String? boundaryCode,
+  }) = _OrgAddress;
+
+  factory OrgAddress.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$OrgAddressFromJson(json);
 }
 
-@MappableClass()
-class OrgAddress with OrgAddressMappable {
-  String? id;
-  String? orgId;
-  String? tenantId;
-  String? doorNo;
-  String? plotNo;
-  String? landmark;
-  String? city;
-  String? pincode;
-  String? district;
-  String? region;
-  String? state;
-  String? country;
-  String? buildingName;
-  String? street;
-  String? boundaryType;
-  String? boundaryCode;
+@freezed
+class OrgContact with _$OrgContact {
+  const factory OrgContact(
+      {String? id,
+      String? orgId,
+      String? tenantId,
+      String? contactName,
+      String? contactMobileNumber,
+      String? contactEmail}) = _OrgContact;
 
-  OrgAddress(
-      {this.orgId,
-      this.id,
-      this.doorNo,
-      this.plotNo,
-      this.tenantId,
-      this.landmark,
-      this.city,
-      this.state,
-      this.street,
-      this.pincode,
-      this.buildingName,
-      this.boundaryCode,
-      this.boundaryType,
-      this.country,
-      this.district,
-      this.region});
+  factory OrgContact.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$OrgContactFromJson(json);
 }
 
-@MappableClass()
-class OrgContact with OrgContactMappable {
-  String? id;
-  String? orgId;
-  String? tenantId;
-  String? contactName;
-  String? contactMobileNumber;
-  String? contactEmail;
+@freezed
+class OrgIdentifier with _$OrgIdentifier {
+  const factory OrgIdentifier(
+      {String? id,
+      String? orgId,
+      String? type,
+      String? value}) = _OrgIdentifier;
 
-  OrgContact({
-    this.orgId,
-    this.id,
-    this.tenantId,
-    this.contactEmail,
-    this.contactMobileNumber,
-    this.contactName,
-  });
+  factory OrgIdentifier.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$OrgIdentifierFromJson(json);
 }
 
-@MappableClass()
-class OrgIdentifier with OrgIdentifierMappable {
-  String? id;
-  String? orgId;
-  String? type;
-  String? value;
+@freezed
+class OrgFunctions with _$OrgFunctions {
+  const factory OrgFunctions({
+    String? id,
+    String? orgId,
+    String? applicationNumber,
+    String? type,
+    String? organisationType,
+    String? category,
+    @JsonKey(name: 'class') String? orgClass,
+    int? validFrom,
+    int? validTo,
+    bool? isActive,
+  }) = _OrgFunctions;
 
-  OrgIdentifier({
-    this.orgId,
-    this.id,
-    this.type,
-    this.value,
-  });
-}
-
-@MappableClass()
-class OrgFunctions with OrgFunctionsMappable {
-  String? id;
-  String? orgId;
-  String? applicationNumber;
-  String? type;
-  String? organisationType;
-  String? category;
-  @JsonKey(name: 'class')
-  String? orgClass;
-  int? validFrom;
-  int? validTo;
-  bool? isActive;
-  OrgFunctions(
-      {this.orgId,
-      this.id,
-      this.type,
-      this.applicationNumber,
-      this.category,
-      this.isActive,
-      this.organisationType,
-      this.orgClass,
-      this.validFrom,
-      this.validTo});
+  factory OrgFunctions.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$OrgFunctionsFromJson(json);
 }

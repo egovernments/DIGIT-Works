@@ -203,7 +203,7 @@ export const WorksSearch = {
             return [
                 index+1,
                 row?.description,
-                row?.uom,
+                t(`ES_COMMON_UOM_${row?.uom}`),
                 Digit.Utils.dss.formatterWithoutRound(row?.unitRate, 'number'),
                 row?.noOfunit,
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail[0]?.amount?.toFixed(2), 'number')
@@ -231,7 +231,8 @@ export const WorksSearch = {
             state: estimate,
             tableStyles:{
                 rowStyle:{},
-                cellStyle: [{}, { "width": "40vw" }, {}, {}, {  },{"textAlign":"right"}]
+                cellStyle: [{}, { "width": "40vw",whiteSpace: 'break-spaces',
+                wordBreak: 'break-all' }, {}, {}, {  },{"textAlign":"right"}]
             }
         }
         const overheadItems = {
@@ -243,7 +244,8 @@ export const WorksSearch = {
             state: estimate,
             tableStyles: {
                 rowStyle: {},
-                cellStyle: [{}, { "width": "50vw" }, {  }, { "textAlign": "right" }]
+                cellStyle: [{}, { "width": "50vw", whiteSpace: 'break-spaces',
+                wordBreak: 'break-all' }, {  }, { "textAlign": "right" }]
             }
         }
         

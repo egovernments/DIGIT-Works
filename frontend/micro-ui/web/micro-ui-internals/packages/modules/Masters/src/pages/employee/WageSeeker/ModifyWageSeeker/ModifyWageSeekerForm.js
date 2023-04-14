@@ -127,14 +127,25 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
             }
             if(formData.financeDetails_ifsc) {
                 if(formData.financeDetails_ifsc?.length > 10) {
-                    const res = await window.fetch(`https://ifsc.razorpay.com/${formData.financeDetails_ifsc}`);
-                    if (res.ok) {
-                        const { BANK, BRANCH } = await res.json();
-                        setValue('financeDetails_branchName', `${BANK}, ${BRANCH}`)
-                    }
+                    setTimeout(() => {
+                        fetchIFSCDetails(formData.financeDetails_ifsc, 'financeDetails_branchName', setValue, setError, clearErrors);
+                    }, 500);
                 }
             }
             setSessionFormData({ ...sessionFormData, ...formData });
+        }
+    }
+
+    const fetchIFSCDetails = async (ifscCode, branchNameField, setValue, setError, clearErrors) => {
+        const res = await window.fetch(`https://ifsc.razorpay.com/${ifscCode}`);
+        if (res.ok) {
+            const { BANK, BRANCH } = await res.json();
+            setValue(branchNameField, `${BANK}, ${BRANCH}`)
+            clearErrors("financeDetails_ifsc")
+        }
+        if(res.status === 404) {
+            setValue(branchNameField, "")
+            setError("financeDetails_ifsc",{ type: "pattern" }, { shouldFocus: true })
         }
     }
 
@@ -262,6 +273,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 onFormValueChange={onFormValueChange}
                 isDisabled={isModify ? !(individualDetailsUpdated || financeDetailsUpdated) : false}
                 cardClassName = "mukta-header-card"
+                labelBold={true}
             />
         </React.Fragment>
     )

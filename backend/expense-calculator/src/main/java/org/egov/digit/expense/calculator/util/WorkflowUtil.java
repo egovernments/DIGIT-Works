@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.digit.expense.calculator.config.Configuration;
+import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class WorkflowUtil {
 	private ObjectMapper mapper;
 
 	@Autowired
-	private Configuration configs;
+	private ExpenseCalculatorConfiguration configs;
 
 	/**
 	 * Searches the BussinessService corresponding to the businessServiceCode

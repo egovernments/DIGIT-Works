@@ -145,6 +145,7 @@ import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
 import useUpdateWO from "./works/useUpdateWO";
+import useSupervisionBillScreen from "./bills/useSupervisionBillScreen";
 
 import useViewOrganisation from "./organisation/useViewOrganisation";
 import useOrganisationDetails from "./organisation/useOrganisationDetails";
@@ -153,6 +154,7 @@ import useUpdateOrganisation from "./organisation/useUpdateOrganisation";
 
 import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
 import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
+
 
 const works = {
   useViewEstimateDetails,
@@ -272,8 +274,9 @@ const attendance = {
 const bills = {
   useViewBills,
   useViewBill,
-  useBillCreate
-}
+  useBillCreate,
+  useSupervisionBillScreen,
+};
 const masters = {
   useViewOrg
 }

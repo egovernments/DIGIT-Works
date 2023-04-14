@@ -38,7 +38,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
                 { title: "WORKS_CITY",value: currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "NA" }, //will check with Backend
                 { title: "WORKS_WARD", value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA"  }, ///backend to update this
-                { title: "WORKS_LOCALITY",value: currentProject?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.locality?.code}`) : "NA" },
+                { title: "WORKS_LOCALITY",value: currentProject?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.locality}`) : "NA" },
             ]
         };
 
@@ -90,7 +90,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA",
                 uuid:currentProject?.id,
                 address:currentProject?.address,
-                ward: currentProject?.additionalDetails?.ward
+                ward: currentProject?.address?.boundary,
+                locality:currentProject?.additionalDetails?.locality
             }
             totalProjects.searchedProject = {
                 basicDetails,
