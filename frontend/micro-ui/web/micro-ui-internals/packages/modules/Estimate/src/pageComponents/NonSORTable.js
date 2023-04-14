@@ -221,21 +221,23 @@ const NonSORTable = ({control,watch,...props}) => {
 
         <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px",textAlign:"right",paddingRight:"1rem" }} name={`${formFieldName}.${row.key}.rate`} inputRef={register({
           required: true,
-          pattern: /^\d*\.?\d*$/
+          // pattern: /^\d*\.?\d*$/,
+          pattern : /^\d*(\.\d{0,2})?$/,
         })}
         onChange={(e) => setAmountField(e, row)}
         />{errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (
-            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_AMOUNT_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
         <td style={getStyles(5)}><div ><TextInput style={{ "marginBottom": "0px",textAlign:"right",paddingRight:"1rem" }} name={`${formFieldName}.${row.key}.estimatedQuantity`} inputRef={register({
           required: true,
-          pattern: /^[0-9]*$/
+          // pattern: /^[0-9]*$/,
+          pattern: /^\d*(\.\d{0,2})?$/
         })}
         onChange={(e)=>setAmountField(e,row)}
         />{errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "pattern" && (
-            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_QT_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 

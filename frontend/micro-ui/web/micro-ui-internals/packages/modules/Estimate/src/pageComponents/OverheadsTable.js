@@ -171,7 +171,7 @@ const OverheadsTable = ({control,watch,...props}) => {
                     return !formData?.[formFieldName]?.some((formRow)=> formRow?.name?.code === row?.code )
                 })
             }
-            console.log(formData?.[formFieldName]);
+           
             return <Dropdown
             inputRef={register()}
             option={options?.mdmsConfig ? filteredOptions : options}
