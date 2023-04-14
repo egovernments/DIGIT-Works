@@ -90,7 +90,7 @@ const NonSORTable = ({control,watch,...props}) => {
     }
     return obj
   }
-  const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('PROJECT_UOM'), t('CS_COMMON_RATE'), t('WORKS_ESTIMATED_QUANTITY'), t('WORKS_ESTIMATED_AMOUNT'), '']
+  const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('PROJECT_UOM'), t('CS_COMMON_RATE'), t('WORKS_ESTIMATED_QUANTITY'), t('WORKS_ESTIMATED_AMOUNT'), t('CS_COMMON_ACTION')]
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return <th key={index} style={getStyles(index + 1)} > {key} </th>
@@ -221,21 +221,23 @@ const NonSORTable = ({control,watch,...props}) => {
 
         <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px",textAlign:"right",paddingRight:"1rem" }} name={`${formFieldName}.${row.key}.rate`} inputRef={register({
           required: true,
-          pattern: /^\d*\.?\d*$/
+          // pattern: /^\d*\.?\d*$/,
+          pattern : /^\d*(\.\d{0,2})?$/,
         })}
         onChange={(e) => setAmountField(e, row)}
         />{errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (
-            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_AMOUNT_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
         <td style={getStyles(5)}><div ><TextInput style={{ "marginBottom": "0px",textAlign:"right",paddingRight:"1rem" }} name={`${formFieldName}.${row.key}.estimatedQuantity`} inputRef={register({
           required: true,
-          pattern: /^[0-9]*$/
+          // pattern: /^[0-9]*$/,
+          pattern: /^\d*(\.\d{0,2})?$/
         })}
         onChange={(e)=>setAmountField(e,row)}
         />{errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "pattern" && (
-            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+            <CardLabelError style={errorCardStyle}>{t(`WORKS_QT_ERR`)}</CardLabelError>)}
           {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "required" && (
             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}</div></td>
 
@@ -266,7 +268,7 @@ const NonSORTable = ({control,watch,...props}) => {
         <tr>
           <td colSpan={1}></td>
           <td colSpan={4} style={{ textAlign: "right", fontWeight: "600" }}>{t("RT_TOTAL")}</td>
-          <td colSpan={1} style={{ textAlign: "right" }}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
+          <td colSpan={1} style={{ textAlign: "right" }}>{Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), 'number')}</td>
           <td colSpan={1}></td>
         </tr>
         

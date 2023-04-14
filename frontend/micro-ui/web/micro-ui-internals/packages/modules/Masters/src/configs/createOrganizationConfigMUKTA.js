@@ -280,7 +280,8 @@ export const createOrganizationConfigMUKTA = {
                         },
                         populators: { 
                             name: "locDetails_streetName", 
-                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 128 }
+                            error: "WORKS_PATTERN_ERR",
+                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 128 }
                         }
                     },
                     {
@@ -294,7 +295,8 @@ export const createOrganizationConfigMUKTA = {
                         },
                         populators: { 
                             name: "locDetails_houseName", 
-                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 8 }
+                            error: "WORKS_PATTERN_ERR",
+                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 8 }
                         }
                     }
                 ]
@@ -316,7 +318,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_name",
                             error: "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
-                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 64}
+                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 5}
                         }
                     },
                     {
@@ -343,7 +345,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_email",
                             error: "EMAIL_VALIDATION",
-                            validation: {pattern: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,})+$", minlength : 2}                         
+                            validation: {pattern: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,})+$", minlength : 2, maxlength: 128}                         
                         }
                     }
                 ]
@@ -432,7 +434,7 @@ export const createOrganizationConfigMUKTA = {
                         withoutLabel: true,
                         key: "taxIdentifier",
                         customProps : {
-                            isMandatory: false
+                            isMandatory: true
                         }
                     }
                 ]

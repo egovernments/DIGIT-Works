@@ -965,3 +965,8 @@ input[type="number"] {
   }
 }
 }
+
+.text-wrap-overflow {
+  word-wrap: break-word;
+  word-break: break-all;
+}
