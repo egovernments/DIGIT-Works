@@ -66,7 +66,7 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       configs.defaultValues.noSubProject_geoLocation = project?.address?.addressLine1 ? project?.address?.addressLine1  : ""; 
       configs.defaultValues.noSubProject_ward = project?.address?.boundary ?  { code : project?.address?.boundary, name : project?.address?.boundary, i18nKey: `${headerLocale}_ADMIN_${project?.address?.boundary}`}  : "";
       configs.defaultValues.noSubProject_locality = project?.additionalDetails?.locality ? { code : project?.additionalDetails?.locality , name : project?.additionalDetails?.locality, i18nKey: `${headerLocale}_ADMIN_${project?.additionalDetails?.locality}`}  : "";
-      configs.defaultValues.noSubProject_fund = project?.additionalDetails?.fund ? { code : project?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(project?.additionalDetails?.fund)}`}  : "";
+      // configs.defaultValues.noSubProject_fund = project?.additionalDetails?.fund ? { code : project?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(project?.additionalDetails?.fund)}`}  : "";
       configs.defaultValues.noSubProject_docs = project?.documents ? handleModifyProjectFiles(project?.documents) : "";
    
       setSessionFormData({...configs?.defaultValues});

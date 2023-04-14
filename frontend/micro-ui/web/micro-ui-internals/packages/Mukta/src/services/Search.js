@@ -42,13 +42,13 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             ]
         };
 
-        const financialDetails = {
-            title: "WORKS_FINANCIAL_DETAILS",
-            asSectionHeader: false,
-            values: [
-                { title: "WORKS_HEAD_OF_ACCOUNTS", value: currentProject?.additionalDetails?.fund ? t(`COMMON_MASTERS_FUND_${currentProject?.additionalDetails?.fund}`) : "NA" },
-            ],
-          };
+        // const financialDetails = {
+        //     title: "WORKS_FINANCIAL_DETAILS",
+        //     asSectionHeader: false,
+        //     values: [
+        //         { title: "WORKS_HEAD_OF_ACCOUNTS", value: currentProject?.additionalDetails?.fund ? t(`COMMON_MASTERS_FUND_${currentProject?.additionalDetails?.fund}`) : "NA" },
+        //     ],
+        //   };
 
         let documentDetails = {
             title: "",
