@@ -90,7 +90,7 @@ const NonSORTable = ({control,watch,...props}) => {
     }
     return obj
   }
-  const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('PROJECT_UOM'), t('CS_COMMON_RATE'), t('WORKS_ESTIMATED_QUANTITY'), t('WORKS_ESTIMATED_AMOUNT'), '']
+  const columns = [t('WORKS_SNO'), t('PROJECT_DESC'), t('PROJECT_UOM'), t('CS_COMMON_RATE'), t('WORKS_ESTIMATED_QUANTITY'), t('WORKS_ESTIMATED_AMOUNT'), t('CS_COMMON_ACTION')]
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return <th key={index} style={getStyles(index + 1)} > {key} </th>
@@ -268,7 +268,7 @@ const NonSORTable = ({control,watch,...props}) => {
         <tr>
           <td colSpan={1}></td>
           <td colSpan={4} style={{ textAlign: "right", fontWeight: "600" }}>{t("RT_TOTAL")}</td>
-          <td colSpan={1} style={{ textAlign: "right" }}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
+          <td colSpan={1} style={{ textAlign: "right" }}>{Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), 'number')}</td>
           <td colSpan={1}></td>
         </tr>
         
