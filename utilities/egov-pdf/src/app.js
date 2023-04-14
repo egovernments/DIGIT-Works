@@ -7,6 +7,7 @@ var config = require("./config");
 var projectsRouter=require("./routes/projects");
 var estimateRouter=require("./routes/estimate");
 var musterRollRouter = require("./routes/musterRolls");
+var workOrderRouter = require("./routes/workOrder");
 var {listenConsumer} = require("./consumer")
 
 // sample one
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(config.app.contextPath + "/download/project", projectsRouter);
 app.use(config.app.contextPath + "/download/estimate", estimateRouter);
 app.use(config.app.contextPath + "/download/musterRoll", musterRollRouter);
+app.use(config.app.contextPath + "/download/workOrder", workOrderRouter);
 
 
 // catch 404 and forward to error handler
