@@ -5,7 +5,7 @@ import { AddIcon, DeleteIcon, TextInput, CardLabelError, Loader, Dropdown, Heade
 
 const TransferCodeTable = (props) => {
     const { t, register, errors , setValue, getValues, onSelect, formData, control, formState, onChange, unregister } = props
-
+    const isMandatory = props?.props?.isMandatory
     const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
     const [sessionFormData] = orgSession;
 
@@ -182,10 +182,10 @@ const TransferCodeTable = (props) => {
                             inputRef={register({ required: true, pattern: getPatterns(row.key)})}
                             onChange={onChange}
                         />
-                        {errors && errors?.[formFieldName]?.[row.key]?.value?.type === "pattern" && (
-                            <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
                         {errors && errors?.[formFieldName]?.[row.key]?.value?.type === "required" && (
                             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
+                        {errors && (errors?.[formFieldName]?.[row.key]?.value?.type === "pattern" || errors?.[formFieldName]?.type === "custom") && (
+                            <CardLabelError style={errorCardStyle}>{isTranferCodeTable ? t('ES_COMMON_IFSC_CODE_ERROR') : t('WORKS_PATTERN_ERR')}</CardLabelError>)}
                     </div>
                 </td>
                 <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row) } className="icon-wrapper"><DeleteIcon fill={"#B1B4B6"}/></span>}</td>
@@ -195,7 +195,7 @@ const TransferCodeTable = (props) => {
 
     return (
         <React.Fragment>
-            <Header styles={{fontSize: "24px", marginTop: "16px", marginBottom: "16px"}}>{isTranferCodeTable ? t("MASTERS_TRANSFER_CODE") : t("MASTERS_TAX_INDENTIFIERS")}</Header>
+            <Header styles={{fontSize: "24px", marginTop: "16px", marginBottom: "16px"}}>{isTranferCodeTable ? t("MASTERS_TRANSFER_CODE") : t("MASTERS_TAX_INDENTIFIERS")}{ isMandatory ? " *" : ""}</Header>
             <table className='table reports-table sub-work-table' style={{ marginTop: "-10px", marginBottom: "2rem" }}>
                 <thead>
                     <tr>{renderHeader()}</tr>

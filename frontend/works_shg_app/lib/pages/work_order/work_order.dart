@@ -135,7 +135,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(
-                                      '${AppLocalizations.of(context).translate(i18.home.workOrder)} (${workOrderList.length})',
+                                      '${AppLocalizations.of(context).translate(i18.home.myWorks)} (${workOrderList.length})',
                                       style: Theme.of(context)
                                           .textTheme
                                           .displayMedium,
@@ -193,11 +193,11 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                         hasLoaded = true;
                                       }
                                     },
-                                    loaded: (ContractsModel? contractsModel) {
+                                    loaded: (ContractsModel? declinedContract) {
                                       if (!hasLoaded) {
                                         Notifiers.getToastMessage(
                                             context,
-                                            '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderDeclineSuccess)}',
+                                            '${declinedContract?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderDeclineSuccess)}',
                                             'SUCCESS');
                                         context.read<SearchMyWorksBloc>().add(
                                               const MyWorksSearchEvent(),
@@ -224,11 +224,11 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                         hasLoaded = true;
                                       }
                                     },
-                                    loaded: (ContractsModel? contractsModel) {
+                                    loaded: (ContractsModel? acceptedContract) {
                                       if (!hasLoaded) {
                                         Notifiers.getToastMessage(
                                             context,
-                                            '${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${contractsModel?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
+                                            '${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${acceptedContract?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
                                             'SUCCESS');
                                         context.read<SearchMyWorksBloc>().add(
                                               const MyWorksSearchEvent(),

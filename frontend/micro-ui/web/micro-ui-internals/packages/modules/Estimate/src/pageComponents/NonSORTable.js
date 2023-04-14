@@ -1,5 +1,5 @@
 import React, { Fragment, useState ,useEffect,useMemo} from 'react'
-import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError,Dropdown,Loader } from '@egovernments/digit-ui-react-components'
+import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError,Dropdown,Loader, TextArea } from '@egovernments/digit-ui-react-components'
 import { Controller } from 'react-hook-form';
 import _ from "lodash"
 
@@ -181,10 +181,11 @@ const NonSORTable = ({control,watch,...props}) => {
       return row.isShow && <tr key={index} style={{ "height": "50%" }}>
         <td style={getStyles(1)}>{i}</td>
 
-        <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.description`} inputRef={register({
+        <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px",wordWrap:'break-word' }} maxlength={512} name={`${formFieldName}.${row.key}.description`} inputRef={register({
           required: true,
+          maxLength:512,
           //@Burhan-j Don't remove this whitespace in pattern, it is used for validation
-          pattern: /^[a-zA-Z0-9_ .$@#{}:;&()\/ ]*$/
+          // pattern: /^[a-zA-Z0-9_ .$@#{}:;&(),\/ ]*$/
         })
         }
         />{errors && errors?.[formFieldName]?.[row.key]?.description?.type === "pattern" && (

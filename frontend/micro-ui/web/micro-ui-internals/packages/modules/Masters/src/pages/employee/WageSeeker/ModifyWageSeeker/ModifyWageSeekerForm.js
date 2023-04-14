@@ -128,7 +128,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
             if(formData.financeDetails_ifsc) {
                 if(formData.financeDetails_ifsc?.length > 10) {
                     setTimeout(() => {
-                        fetchIFSCDetails(formData.financeDetails_ifsc, 'financeDetails_branchName', setValue);
+                        fetchIFSCDetails(formData.financeDetails_ifsc, 'financeDetails_branchName', setValue, setError, clearErrors);
                     }, 500);
                 }
             }
@@ -136,14 +136,16 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
         }
     }
 
-    const fetchIFSCDetails = async (ifscCode, branchNameField, setValue) => {
+    const fetchIFSCDetails = async (ifscCode, branchNameField, setValue, setError, clearErrors) => {
         const res = await window.fetch(`https://ifsc.razorpay.com/${ifscCode}`);
         if (res.ok) {
             const { BANK, BRANCH } = await res.json();
             setValue(branchNameField, `${BANK}, ${BRANCH}`)
+            clearErrors("financeDetails_ifsc")
         }
         if(res.status === 404) {
             setValue(branchNameField, "")
+            setError("financeDetails_ifsc",{ type: "pattern" }, { shouldFocus: true })
         }
     }
 

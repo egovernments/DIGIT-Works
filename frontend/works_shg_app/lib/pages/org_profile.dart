@@ -99,7 +99,7 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                 i18.common.funcCat: t.translate(
                                     e.functions?.first.category ?? 'NA'),
                                 i18.common.classOrRank:
-                                    'COMMON_MASTERS_${t.translate(e.functions?.first.orgClass ?? 'NA')}' ,
+                                    'COMMON_MASTERS_${t.translate(e.functions?.first.orgClass ?? 'NA')}',
                                 i18.common.validFrom:
                                     DateFormats.timeStampToDate(
                                         e.functions?.first.validFrom),
@@ -220,6 +220,17 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                         ?.additionalDetails
                                         ?.ifsccode ??
                                     'NA',
+                                i18.common.effectiveFrom:
+                                    DateFormats.timeStampToDate(
+                                        e.auditDetails?.createdTime),
+                                i18.common.effectiveTo: (e.bankAccountDetails
+                                                ?.first.isPrimary ==
+                                            true &&
+                                        e.bankAccountDetails?.first.isActive ==
+                                            true)
+                                    ? t.translate('NA')
+                                    : DateFormats.timeStampToDate(
+                                        e.auditDetails?.lastModifiedTime)
                               })
                           .toList();
                     }
