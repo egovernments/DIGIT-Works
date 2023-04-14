@@ -34,14 +34,15 @@ class CommonRepository {
       {dynamic body,
       Map<String, String>? queryParameters,
       required String url,
-      Options? options}) async {
+      Options? options,
+      String? fileName}) async {
     try {
       final response = await _client.post(url,
           queryParameters: queryParameters, data: body ?? {}, options: options);
 
       if (response.statusCode == 200) {
         final List<int> bytes = response.data;
-        await saveAndLaunchFile(bytes, 'Muster-Roll.pdf');
+        await saveAndLaunchFile(bytes, fileName ?? 'Common.pdf');
       } else {
         throw Exception('Failed to download file.');
       }

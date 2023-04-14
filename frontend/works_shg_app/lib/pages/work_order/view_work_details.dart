@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:works_shg_app/blocs/work_orders/work_order_pdf.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
@@ -90,7 +91,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
         titleSpacing: 0,
         title: const AppBarLogo(),
       ),
-      drawer: DrawerWrapper(const Drawer(
+      drawer: const DrawerWrapper(Drawer(
           child: SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
       bottomNavigationBar:
           BlocBuilder<SearchIndividualWorkBloc, SearchIndividualWorkState>(
@@ -102,9 +103,9 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
               return workOrderList.isNotEmpty &&
                       workOrderList.first['payload']['wfStatus'] == 'APPROVED'
                   ? SizedBox(
-                    height: 120,
-                    child: DigitCard(
-                        child: Column(
+                      height: 120,
+                      child: DigitCard(
+                          child: Column(
                         children: [
                           DigitElevatedButton(
                             onPressed: () {
@@ -143,10 +144,12 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .read<DeclineWorkOrderBloc>()
                                               .add(
                                                 WorkOrderDeclineEvent(
-                                                    contractsModel: workOrderList
-                                                        .first['payload'],
+                                                    contractsModel:
+                                                        workOrderList
+                                                            .first['payload'],
                                                     action: 'DECLINE',
-                                                    comments: 'DECLINE contract'),
+                                                    comments:
+                                                        'DECLINE contract'),
                                               );
                                           Navigator.of(context,
                                                   rootNavigator: true)
@@ -166,23 +169,25 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                           )
                         ],
                       )),
-                  )
+                    )
                   : workOrderList.isNotEmpty &&
                           workOrderList.first['payload']['wfStatus'] ==
                               'ACCEPTED'
                       ? SizedBox(
-                height: 80,
-                        child: DigitCard(
+                          height: 80,
+                          child: DigitCard(
                             child: DigitElevatedButton(
                               onPressed: () {
-                                context.router.push(AttendanceRegisterTableRoute(
-                                    registerId: workOrderList.first['payload']
-                                            ['additionalDetails']
-                                            ['attendanceRegisterNumber']
-                                        .toString(),
-                                    tenantId: workOrderList.first['payload']
-                                            ['tenantId']
-                                        .toString()));
+                                context.router.push(
+                                    AttendanceRegisterTableRoute(
+                                        registerId: workOrderList
+                                            .first['payload']
+                                                ['additionalDetails']
+                                                ['attendanceRegisterNumber']
+                                            .toString(),
+                                        tenantId: workOrderList.first['payload']
+                                                ['tenantId']
+                                            .toString()));
                               },
                               child: Center(
                                 child: Text(
@@ -194,7 +199,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                               ),
                             ),
                           ),
-                      )
+                        )
                       : Container();
             });
       }),
@@ -327,8 +332,12 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                 ),
                                 CommonWidgets.downloadButton(
                                     AppLocalizations.of(context)
-                                        .translate(i18.common.download),
-                                    null)
+                                        .translate(i18.common.download), () {
+                                  context.read<WorkOrderPDFBloc>().add(
+                                      PDFEventWorkOrder(
+                                          contractId: widget.contractNumber,
+                                          tenantId: contracts.first.tenantId));
+                                })
                               ],
                             ),
                             Column(
