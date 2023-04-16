@@ -29,10 +29,18 @@ class AcceptWorkOrderBloc
       emit(const AcceptWorkOrderState.loading());
 
       ContractsModel contractsModel = ContractsModel();
+      DateTime startOfToday = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      int startOfTodayTimestamp = startOfToday.millisecondsSinceEpoch;
+      Map? contract = {
+        ...?event.contractsModel,
+        'startDate': startOfTodayTimestamp
+      };
+
       await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
           url: Urls.workServices.updateWorkOrder,
           body: {
-            "contract": event.contractsModel,
+            "contract": contract,
             "workflow": {
               "action": event.action,
               "comment": event.comments,

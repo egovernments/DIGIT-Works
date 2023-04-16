@@ -15,7 +15,7 @@ class AppBarLogo extends StatelessWidget {
               GlobalVariables.stateInfoListModel!.logoUrlWhite!,
             )),
         Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.only(right: 8.0, top: 4.0, bottom: 4.0),
             child: Column(
               children: [
                 Text(
@@ -26,6 +26,7 @@ class AppBarLogo extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
                   ),
+                  textAlign: TextAlign.start,
                 ),
                 Text(
                   GlobalVariables.organisationListModel?.organisations?.first
@@ -35,6 +36,7 @@ class AppBarLogo extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
                   ),
+                  textAlign: TextAlign.start,
                 )
               ],
             )

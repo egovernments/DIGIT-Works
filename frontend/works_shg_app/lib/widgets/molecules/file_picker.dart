@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:digit_components/theme/colors.dart';
 import 'package:digit_components/theme/digit_theme.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -181,6 +182,16 @@ class SHGFilePickerState extends State<SHGFilePicker> {
                       ),
                     ),
         ),
+      ),
+      Container(
+        padding: const EdgeInsets.only(top: 2.0),
+        alignment: Alignment.centerLeft,
+        child: Text(
+            AppLocalizations.of(context).translate(i18.common.validPhotoGraph),
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: const DigitColors().cloudGray)),
       )
     ];
   }

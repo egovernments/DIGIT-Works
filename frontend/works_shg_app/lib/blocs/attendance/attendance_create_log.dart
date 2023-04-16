@@ -58,7 +58,7 @@ class AttendanceLogCreateBloc
               body: {"attendance": event.attendanceList});
       await Future.delayed(const Duration(seconds: 2));
       if (attendanceRegistersModel != null) {
-        emit(AttendanceLogCreateState.loaded());
+        emit(const AttendanceLogCreateState.loaded());
       }
     } on DioError catch (e) {
       emit(const AttendanceLogCreateState.error());

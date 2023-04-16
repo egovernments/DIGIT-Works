@@ -159,12 +159,12 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
           "isTaskEnabled": false, //Not being captured on UI //For Health Team Project
           "parent": parentProjectID || "", // In case of Single project, Parent ID is empty.
           "additionalDetails": { //These are financial details. Adding them here as they will be integrated with a different service.
-            "budgetHead" : project_details?.budgetHead?.code,
+            // "budgetHead" : project_details?.budgetHead?.code,
             "estimatedCostInRs" : project_details?.estimatedCostInRs,
-            "function" : project_details?.function?.code,
-            "fund" : project_details?.fund?.code,
-            "scheme" :  project_details?.scheme?.code,
-            "subScheme" :  project_details?.subScheme?.code,  
+            // "function" : project_details?.function?.code,
+            // "fund" : project_details?.fund?.code,
+            // "scheme" :  project_details?.scheme?.code,
+            // "subScheme" :  project_details?.subScheme?.code,  
             "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal),
             "recommendedModeOfEntrustment" : project_details?.recommendedModeOfEntrustment?.code,
             "locality" : project_details?.locality?.code,
