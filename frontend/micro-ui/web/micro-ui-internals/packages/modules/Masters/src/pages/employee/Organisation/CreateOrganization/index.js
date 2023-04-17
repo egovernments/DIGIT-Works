@@ -55,6 +55,14 @@ const CreateOrganisation = () => {
         }
     }, [error])
 
+    useEffect(() => {
+        if(showDataError) {
+          setTimeout(()=>{
+            setShowDataError(false);
+          },3000);
+        }
+    },[showDataError]);
+
     const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
 
