@@ -95,6 +95,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${expense.calculator.error.topic}")
 	private String calculatorErrorTopic;
 
+	@Value("${expense.calculator.create.bill.topic}")
+	private String calculatorCreateBillTopic;
+
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
@@ -102,6 +105,9 @@ public class ExpenseCalculatorConfiguration {
 	//Expense calculator Service specific
 	@Value("${egov.works.expense.wage.head.code}")
 	private String wageHeadCode;
+
+	@Value("${egov.works.expense.wage.bill.type}")
+	private String wageBillType;
 
 	@Value("${egov.works.expense.wage.payee.type}")
 	private String wagePayeeType;

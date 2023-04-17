@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorConstants.BILL_TYPE_CONSTANT;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorConstants.CONTRACT_ID_CONSTANT;
 
 @Slf4j
@@ -100,6 +101,7 @@ public class WageSeekerBillGeneratorService {
                         .build();
 
                 populateBillAdditionalDetails(bill, CONTRACT_ID_CONSTANT, contractId);
+                populateBillAdditionalDetails(bill, BILL_TYPE_CONSTANT, configs.getWageBillType());
                 bills.add(bill);
             }
 
