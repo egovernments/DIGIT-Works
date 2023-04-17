@@ -13,7 +13,7 @@ const HRMSCard = () => {
 
   const propsForModuleCard = {
     Icon: <HRIcon />,
-    moduleName: t("ACTION_TEST_HRMS"),
+    moduleName: t("ACTION_TEST_9HRMS"),
     kpis: [
       // {
       //     count:  isLoading ? "-" : data?.EmployeCount?.totalEmployee,
