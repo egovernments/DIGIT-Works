@@ -37,24 +37,25 @@ class AcceptWorkOrderBloc
         'startDate': startOfTodayTimestamp
       };
 
-      await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
-          url: Urls.workServices.updateWorkOrder,
-          body: {
-            "contract": contract,
-            "workflow": {
-              "action": event.action,
-              "comment": event.comments,
-              "assignees": []
-            }
-          },
-          options: Options(extra: {
-            "userInfo": GlobalVariables.userRequestModel,
-            "accessToken": GlobalVariables.authToken,
-            "apiId": "mukta-services",
-            "msgId": "Create Contract"
-          }));
+      ContractsModel acceptedContracts =
+          await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
+              url: Urls.workServices.updateWorkOrder,
+              body: {
+                "contract": contract,
+                "workflow": {
+                  "action": event.action,
+                  "comment": event.comments,
+                  "assignees": []
+                }
+              },
+              options: Options(extra: {
+                "userInfo": GlobalVariables.userRequestModel,
+                "accessToken": GlobalVariables.authToken,
+                "apiId": "mukta-services",
+                "msgId": "Create Contract"
+              }));
       await Future.delayed(const Duration(seconds: 1));
-      emit(AcceptWorkOrderState.loaded(contractsModel));
+      emit(AcceptWorkOrderState.loaded(acceptedContracts));
     } on DioError catch (e) {
       emit(AcceptWorkOrderState.error(e.response?.data['Errors'][0]['code']));
     }
