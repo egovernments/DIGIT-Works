@@ -289,29 +289,28 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                               return const EmptyImage(align: Alignment.center);
                             },
                             loaded: (IndividualListModel? individualListModel) {
-                              userList =
-                                  individualListModel!.Individual!.isNotEmpty
-                                      ? individualListModel!.Individual!
-                                          .map((e) => {
-                                                "name": e.name?.givenName,
-                                                "aadhaar": e.identifiers?.first
-                                                        .identifierId ??
-                                                    e.individualId,
-                                                "individualCode":
-                                                    e.individualId,
-                                                "skill": AppLocalizations.of(
-                                                        context)
-                                                    .translate(
-                                                        '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
-                                                "individualId": e.id,
-                                                "uuid": e.id,
-                                                "individualGaurdianName":
-                                                    e.fatherName,
-                                                "mobileNumber": e.mobileNumber,
-                                                "tenantId": e.tenantId
-                                              })
-                                          .toList()
-                                      : [];
+                              userList = individualListModel!
+                                      .Individual!.isNotEmpty
+                                  ? individualListModel.Individual!
+                                      .map((e) => {
+                                            "name": e.name?.givenName,
+                                            "aadhaar": e.identifiers?.first
+                                                    .identifierId ??
+                                                e.individualId,
+                                            "individualCode": e.individualId,
+                                            "skill": AppLocalizations.of(
+                                                    context)
+                                                .translate(
+                                                    '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
+                                            "individualId": e.id,
+                                            "uuid": e.id,
+                                            "individualGaurdianName":
+                                                e.fatherName ?? e.husbandName,
+                                            "mobileNumber": e.mobileNumber,
+                                            "tenantId": e.tenantId
+                                          })
+                                      .toList()
+                                  : [];
                               if (userList.isNotEmpty) {
                                 for (var user in userList) {
                                   var userToAdd = {
