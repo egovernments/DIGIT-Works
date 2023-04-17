@@ -187,6 +187,9 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                     setTimeout(() => {
                         fetchIFSCDetails(formData?.transferCodesData?.[0]?.value, 'financeDetails_branchName', 'financeDetails_bankName', setValue, setError, clearErrors);
                     }, 500);
+                } else {
+                    setValue("financeDetails_branchName", "")
+                    setValue("financeDetails_bankName", "")
                 }
             }
             setSessionFormData({ ...sessionFormData, ...formData });
