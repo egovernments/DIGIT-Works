@@ -59,6 +59,57 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /works-calculator/purchase/v1/_createbill:
+    description: This API is a pass through for the creation of a purchase bill.
+    post:
+      tags:
+        - Purchase Bill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseBillRequest'
+      responses:
+        '202':
+          description: Accepted calculation request.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Works/expense-service-codegen/backend/expense/src/main/resources/expense-service-contract.yaml#/components/schemas/BillResponse
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  
+  /works-calculator/purchase/v1/_updatebill:
+    description: This API is a pass through for the updation of a purchase bill.
+    post:
+      tags:
+        - Purchase Bill
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseBillRequest'
+      responses:
+        '202':
+          description: Accepted calculation request.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Works/expense-service-codegen/backend/expense/src/main/resources/expense-service-contract.yaml#/components/schemas/BillResponse
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
 components:
   schemas:
     CalculationRequest:
@@ -284,3 +335,18 @@ components:
         - headCode
         - amount
         - type
+    PurchaseBillRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        bill:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-Works/expense-service-codegen/backend/expense/src/main/resources/expense-service-contract.yaml#/components/schemas/Bill
+        documents:
+          type: array
+          description: Attachments to the purchase bill
+          items:
+            $ref: >-
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document
