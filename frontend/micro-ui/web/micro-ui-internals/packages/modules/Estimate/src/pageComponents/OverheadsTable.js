@@ -201,7 +201,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
         //set the percentage field
         //set the amount field
         //disable both the fields
-        const amount = (parseFloat(sorTotal) * (parseFloat(e.value) / 100)).toFixed(1);
+        const amount = (parseFloat(sorTotal) * (parseFloat(e.value) / 100)).toFixed(2);
         setValue(`overheadDetails.${row.key}.percentage`, `${e.value} ${t("WORKS_PERCENT")}`);
         setValue(`overheadDetails.${row.key}.amount`, amount);
       } else if (e.type === "lumpsum") {
