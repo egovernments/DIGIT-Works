@@ -151,6 +151,14 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         }),
         [orgData, filteredOrgSubTypes, filteredOrgFunCategories, wardsAndLocalities, filteredLocalities, ULBOptions]);
 
+    useEffect(() => {
+        if(showDuplicateUserError) {
+            setTimeout(()=>{
+                setShowDuplicateUserError(false);
+            },3000);
+        }
+    },[showDuplicateUserError]);
+
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
