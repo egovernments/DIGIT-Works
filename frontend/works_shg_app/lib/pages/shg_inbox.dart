@@ -103,6 +103,17 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         );
   }
 
+
+  @override
+  void deactivate() {
+    context.read<MusterRollEstimateBloc>().add(
+      const DisposeEstimateMusterRollEvent(),
+    );
+    context.read<MusterGetWorkflowBloc>().add(
+      const DisposeMusterRollWorkflowEvent(),
+    ); // Change the state of the widget when it is no longer visible
+    super.deactivate();
+  }
   @override
   void dispose() {
     // Clear the data when the widget is disposed
