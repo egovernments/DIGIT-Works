@@ -175,13 +175,13 @@ const NonSORTable = ({ control, watch, ...props }) => {
   };
 
   const setAmountField = (e, row) => {
-    const quantity = parseInt(watch(`${formFieldName}.${row.key}.estimatedQuantity`));
+    const quantity = parseFloat(watch(`${formFieldName}.${row.key}.estimatedQuantity`));
     const ratePerUnit = parseFloat(watch(`${formFieldName}.${row.key}.rate`));
     if (!ratePerUnit || !quantity) {
       setValue(`${formFieldName}.${row.key}.estimatedAmount`, 0);
       return;
     }
-    const amountToSet = parseFloat(quantity * ratePerUnit).toFixed(1);
+    const amountToSet = parseFloat(quantity * ratePerUnit).toFixed(2);
     setValue(`${formFieldName}.${row.key}.estimatedAmount`, amountToSet);
   };
 

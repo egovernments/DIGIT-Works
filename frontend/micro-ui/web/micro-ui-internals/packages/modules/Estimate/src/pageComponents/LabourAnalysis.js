@@ -38,6 +38,7 @@ const LabourAnalysis = ({watch,formState,...props}) => {
                           pattern: /^\d*\.?\d*$/
                       })}
                       style={inputStyle}
+                      defaultValue={0}
                   />
                   {errors && errors?.[formFieldName]?.labour?.type === "required" && (
                       <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
@@ -55,6 +56,7 @@ const LabourAnalysis = ({watch,formState,...props}) => {
                           pattern: /^\d*\.?\d*$/
                       })}
                       style={inputStyle}
+                      defaultValue={0}
                   />
                   {errors && errors?.[formFieldName]?.material?.type === "required" && (
                       <CardLabelError style={errorStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
