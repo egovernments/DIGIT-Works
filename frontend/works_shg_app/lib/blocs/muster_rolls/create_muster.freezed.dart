@@ -38,6 +38,7 @@ mixin _$MusterCreateEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)
@@ -68,6 +69,7 @@ mixin _$MusterCreateEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)?
@@ -98,6 +100,7 @@ mixin _$MusterCreateEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)?
@@ -224,6 +227,7 @@ abstract class _$$CreateMusterEventCopyWith<$Res>
       String? projectName,
       String? projectDesc,
       String? locality,
+      String? projectId,
       String? ward,
       int? amount,
       List<Map<String, dynamic>>? skillsList});
@@ -252,6 +256,7 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
     Object? projectName = freezed,
     Object? projectDesc = freezed,
     Object? locality = freezed,
+    Object? projectId = freezed,
     Object? ward = freezed,
     Object? amount = freezed,
     Object? skillsList = freezed,
@@ -305,6 +310,10 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
           ? _value.locality
           : locality // ignore: cast_nullable_to_non_nullable
               as String?,
+      projectId: freezed == projectId
+          ? _value.projectId
+          : projectId // ignore: cast_nullable_to_non_nullable
+              as String?,
       ward: freezed == ward
           ? _value.ward
           : ward // ignore: cast_nullable_to_non_nullable
@@ -337,6 +346,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       this.projectName,
       this.projectDesc,
       this.locality,
+      this.projectId,
       this.ward,
       this.amount,
       final List<Map<String, dynamic>>? skillsList})
@@ -367,6 +377,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   @override
   final String? locality;
   @override
+  final String? projectId;
+  @override
   final String? ward;
   @override
   final int? amount;
@@ -382,7 +394,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
 
   @override
   String toString() {
-    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, serviceCode: $serviceCode, referenceId: $referenceId, projectName: $projectName, projectDesc: $projectDesc, locality: $locality, ward: $ward, amount: $amount, skillsList: $skillsList)';
+    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, serviceCode: $serviceCode, referenceId: $referenceId, projectName: $projectName, projectDesc: $projectDesc, locality: $locality, projectId: $projectId, ward: $ward, amount: $amount, skillsList: $skillsList)';
   }
 
   @override
@@ -413,6 +425,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
                 other.projectDesc == projectDesc) &&
             (identical(other.locality, locality) ||
                 other.locality == locality) &&
+            (identical(other.projectId, projectId) ||
+                other.projectId == projectId) &&
             (identical(other.ward, ward) || other.ward == ward) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             const DeepCollectionEquality()
@@ -434,6 +448,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       projectName,
       projectDesc,
       locality,
+      projectId,
       ward,
       amount,
       const DeepCollectionEquality().hash(_skillsList));
@@ -460,6 +475,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)
@@ -487,6 +503,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
         projectName,
         projectDesc,
         locality,
+        projectId,
         ward,
         amount,
         skillsList);
@@ -508,6 +525,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)?
@@ -535,6 +553,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
         projectName,
         projectDesc,
         locality,
+        projectId,
         ward,
         amount,
         skillsList);
@@ -556,6 +575,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)?
@@ -585,6 +605,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
           projectName,
           projectDesc,
           locality,
+          projectId,
           ward,
           amount,
           skillsList);
@@ -638,6 +659,7 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
       final String? projectName,
       final String? projectDesc,
       final String? locality,
+      final String? projectId,
       final String? ward,
       final int? amount,
       final List<Map<String, dynamic>>? skillsList}) = _$CreateMusterEvent;
@@ -659,6 +681,7 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
   String? get projectName;
   String? get projectDesc;
   String? get locality;
+  String? get projectId;
   String? get ward;
   int? get amount;
   @override
@@ -831,6 +854,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)
@@ -865,6 +889,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)?
@@ -899,6 +924,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String? projectName,
             String? projectDesc,
             String? locality,
+            String? projectId,
             String? ward,
             int? amount,
             List<Map<String, dynamic>>? skillsList)?

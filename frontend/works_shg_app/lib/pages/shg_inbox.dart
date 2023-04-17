@@ -251,7 +251,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                 if(musterWorkFlowModel?.processInstances != null && musterWorkFlowModel!.processInstances!.isNotEmpty){
                                                   timeLineAttributes = musterWorkFlowModel.processInstances!.mapIndexed((i, e) =>
                                                       DigitTimelineOptions(
-                                                        title: t.translate('WF_MUSTOR_${e.action}'),
+                                                        title: t.translate('WF_MUSTOR_${e.workflowState?.applicationStatus}'),
                                                         subTitle: DateFormats.getTimeLineDate(e.auditDetails?.lastModifiedTime ?? 0),
                                                         isCurrentState: i == 0,
                                                         assignee: e.assignes?.first.name,
