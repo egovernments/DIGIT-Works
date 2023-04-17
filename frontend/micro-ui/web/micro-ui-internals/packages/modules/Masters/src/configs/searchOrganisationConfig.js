@@ -92,33 +92,6 @@ const searchOrganisationConfig = () => {
               },
             },
             {
-              label: "CORE_COMMON_STATUS",
-              type: "dropdown",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "applicationStatus",
-                optionsKey: "name",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
-                options: [
-                  {
-                    code: "ACTIVE",
-                    name: "MASTERS_ORG_STATUS_ACTIVE",
-                  },
-                  {
-                    code: "DEBARRED",
-                    name: "MASTERS_ORG_STATUS_DEBARRED",
-                  },
-                  {
-                    code: "INACTIVE",
-                    name: "MASTERS_ORG_STATUS_INACTIVE",
-                  },
-                ],
-              },
-            },
-            {
               label: "CREATED_FROM_DATE",
               type: "date",
               isMandatory: false,
