@@ -123,8 +123,13 @@ const searchOrganisationConfig = () => {
               type: "date",
               isMandatory: false,
               disable: false,
+              key : "createdFrom",
+              preProcess : {
+                updateDependent : ["populators.max"]
+              },
               populators: {
                 name: "createdFrom",
+                max : "currentDate"
               },
             },
             {
@@ -132,9 +137,14 @@ const searchOrganisationConfig = () => {
               type: "date",
               isMandatory: false,
               disable: false,
+              key : "createdTo",
+              preProcess : {
+                updateDependent : ["populators.max"]
+              },
               populators: {
                 name: "createdTo",
                 error: "DATE_VALIDATION_MSG",
+                max : "currentDate"
               },
               additionalValidation: {
                 type: "date",
