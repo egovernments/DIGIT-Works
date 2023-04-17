@@ -10,7 +10,7 @@ info:
     mappings between the bill creating and bill entities,  persists the results
     and creates a bill. 
 paths:
-  /works-calculator/v1/_estimate:
+  /v1/_estimate:
     description: This API will estimate the bill and send back responses.
     post:
       tags:
@@ -34,7 +34,7 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  /works-calculator/v1/_calculate:
+  /v1/_calculate:
     description: This API will calculate
     post:
       tags:

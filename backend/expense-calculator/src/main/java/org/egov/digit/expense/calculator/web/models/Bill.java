@@ -31,70 +31,57 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Bill {
 	@JsonProperty("id")
-
 	@Valid
-	private UUID id = null;
+	private String id = null;
 
 	@JsonProperty("tenantId")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
 	@JsonProperty("billDate")
-
 	@Valid
 	private BigDecimal billDate = null;
 
 	@JsonProperty("dueDate")
-
 	@Valid
 	private BigDecimal dueDate = null;
 
 	@JsonProperty("netPayableAmount")
-
 	@Valid
 	private BigDecimal netPayableAmount = null;
 
 	@JsonProperty("netPaidAmount")
-
 	@Valid
 	private BigDecimal netPaidAmount = null;
 
 	@JsonProperty("businessService")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String businessService = null;
 
 	@JsonProperty("referenceId")
-
 	@Size(min = 2, max = 64)
 	private String referenceId = null;
 
 	@JsonProperty("fromPeriod")
-
 	@Valid
 	private BigDecimal fromPeriod = null;
 
 	@JsonProperty("toPeriod")
-
 	@Valid
 	private BigDecimal toPeriod = null;
 
 	@JsonProperty("paymentStatus")
-
 	@Size(min = 2, max = 64)
 	private String paymentStatus = null;
 
 	@JsonProperty("status")
-
 	@Size(min = 2, max = 64)
 	private String status = null;
 
 	@JsonProperty("payer")
 	@NotNull
-
 	@Valid
 	private Party payer = null;
 
@@ -104,11 +91,9 @@ public class Bill {
 	private List<BillDetail> billDetails = new ArrayList<>();
 
 	@JsonProperty("additionalDetails")
-
 	private Object additionalDetails = null;
 
 	@JsonProperty("auditDetails")
-
 	@Valid
 	private AuditDetails auditDetails = null;
 
