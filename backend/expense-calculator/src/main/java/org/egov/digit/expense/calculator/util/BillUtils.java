@@ -31,7 +31,7 @@ public class BillUtils {
     @Autowired
     private ObjectMapper mapper;
 
-    public List<Bill> postBills(RequestInfo requestInfo, List<Bill> bills) {
+    public BillResponse postBills(RequestInfo requestInfo, List<Bill> bills) {
         StringBuilder url = getBillCreateURI();
         BillCalculatorRequestInfoWrapper requestInfoWrapper = BillCalculatorRequestInfoWrapper.builder()
                                                                 .requestInfo(requestInfo)
@@ -39,8 +39,7 @@ public class BillUtils {
                                                                 .build();
 
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
-        BillResponse billResponse = mapper.convertValue(responseObj, BillResponse.class);
-        return billResponse.getBill();
+        return mapper.convertValue(responseObj, BillResponse.class);
     }
 
     private StringBuilder getBillCreateURI() {

@@ -34,13 +34,35 @@ public class ExpenseCalculatorServiceValidator {
     @Autowired
     private MusterRollUtils musterRollUtils;
     public void validateCalculatorEstimateRequest(CalculationRequest calculationRequest){
-        validateCalculatorRequest(calculationRequest);
-    }
-    public void validateCalculatorCalculateRequest(CalculationRequest calculationRequest){
-        validateCalculatorRequest(calculationRequest);
+        validateCommonCalculatorRequest(calculationRequest);
+
+        // Validate musterRollIds if given against muster roll service
+        validateMusterRollIdAgainstService(calculationRequest,false);
+
+        // Validate contractId if given against contract service
+        validateContractIdAgainstService(calculationRequest);
+
     }
 
-    public void validateCalculatorRequest(CalculationRequest calculationRequest){
+    public void validateCalculatorCalculateRequest(CalculationRequest calculationRequest){
+        validateCommonCalculatorRequest(calculationRequest);
+
+        //Validate muster roll Ids against muster roll service
+        validateMusterRollIdAgainstService(calculationRequest,true);
+
+        // Validate contractId if given against contract service
+        validateContractIdAgainstService(calculationRequest);
+    }
+
+    private void validateContractIdAgainstService(CalculationRequest calculationRequest) {
+        final Criteria criteria = calculationRequest.getCriteria();
+        // Validate contractId if given against contract service
+        if(StringUtils.isNotBlank(criteria.getContractId())) {
+            //TODO validate against contract service
+        }
+    }
+
+    public void validateCommonCalculatorRequest(CalculationRequest calculationRequest){
         // Validate the Request Info object
         validateRequestInfo(calculationRequest.getRequestInfo());
 
@@ -49,34 +71,41 @@ public class ExpenseCalculatorServiceValidator {
 
         //Validate request against MDMS
         validateCalculatorEstimateReqeuestAgainstMDMS(calculationRequest);
-
-        //Validate musterRollIds or contractId against respective service
-        validateMusterRollIdOrContractIdAgainstService(calculationRequest);
     }
 
     public void validateWageBillCreateForMusterRollRequest(MusterRollRequest musterRollRequest){
-        try {
-            // Validate the Request Info object
-            validateRequestInfo(musterRollRequest.getRequestInfo());
-            // Validate the required params
-            validateRequiredParametersForMusterRollRequest(musterRollRequest);
-            //Validate request against MDMS
-            validateMusterRollRequestAgainstMDMS(musterRollRequest);
-            //Validate musterRollId against service
-            validateMusterRollIdAgainstService(musterRollRequest);
-        }
-        catch (Exception exception){
-            //TODO : Push the msg to some exception kafka topic.
-            throw exception;
-        }
+        // Validate the Request Info object
+        validateRequestInfo(musterRollRequest.getRequestInfo());
+        // Validate the required params
+        validateRequiredParametersForMusterRollRequest(musterRollRequest);
+        //Validate request against MDMS
+        validateMusterRollRequestAgainstMDMS(musterRollRequest);
+        //Validate musterRollId against service
+        validateMusterRollIdAgainstService(musterRollRequest);
+        log.info("Validation done for muster roll number ["+musterRollRequest.getMusterRoll().getMusterRollNumber()+"]");
     }
 
+    private void validateMusterRollIdAgainstService(CalculationRequest calculationRequest, boolean onlyApproved) {
+        // Validate musterRollIds if given against muster roll service
+        Criteria criteria = calculationRequest.getCriteria();
+        List<String> musterRollIds = criteria.getMusterRollId();
+
+        if(musterRollIds != null && !musterRollIds.isEmpty()) {
+            //Validate requested musterRollIds against musterroll service
+            String tenantId = criteria.getTenantId();
+            RequestInfo requestInfo = calculationRequest.getRequestInfo();
+            List<String> fetchedMusterRollIds = fetchListOfMusterRollIdsForGivenIds(requestInfo, tenantId, musterRollIds, onlyApproved);
+            validateMusterRollIds(musterRollIds,fetchedMusterRollIds);
+        }
+    }
     private void validateMusterRollIdAgainstService(MusterRollRequest musterRollRequest) {
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         String musterRollId = musterRoll.getId();
         String tenantId = musterRoll.getTenantId();
-        validateMusterRollId(requestInfo,tenantId, Collections.singletonList(musterRollId));
+        List<String> fetchedMusterRollIds = fetchListOfMusterRollIdsForGivenIds(requestInfo, tenantId, Collections.singletonList(musterRollId), true);
+        validateMusterRollIds( Collections.singletonList(musterRollId),fetchedMusterRollIds);
+        log.info("Muster roll validated against muster roll service ["+musterRollId+"]");
     }
 
     private void validateMusterRollRequestAgainstMDMS(MusterRollRequest musterRollRequest) {
@@ -87,6 +116,8 @@ public class ExpenseCalculatorServiceValidator {
         Object mdmsData = fetchMDMSDataForValidation(requestInfo,tenantId);
         // Validate tenantId against MDMS data
         validateTenantIdAgainstMDMS(mdmsData, tenantId);
+
+        log.info("MDMD validation done");
     }
 
     private void validateRequiredParametersForMusterRollRequest(MusterRollRequest musterRollRequest) {
@@ -117,22 +148,6 @@ public class ExpenseCalculatorServiceValidator {
         }
         log.info("Required request parameter validation done for Calculator calculate service");
     }
-
-
-    private void validateMusterRollIdOrContractIdAgainstService(CalculationRequest calculationRequest) {
-        Criteria criteria = calculationRequest.getCriteria();
-        List<String> musterRollId = criteria.getMusterRollId();
-
-        if(musterRollId != null && !musterRollId.isEmpty()) {
-            //Validate requested musterRollId against musterroll service
-            validateMusterRollId(calculationRequest);
-            return;
-        }
-
-        //TODO
-        // Supervision Service implementation : Validate contractId against contract service
-    }
-
     private void validateRequestInfo(RequestInfo requestInfo) {
         if (requestInfo == null) {
             log.error("Request info is mandatory");
@@ -207,20 +222,10 @@ public class ExpenseCalculatorServiceValidator {
         log.info("TenantId data validated against MDMS");
     }
 
-    private void validateMusterRollId(CalculationRequest calculationRequest) {
-        Criteria criteria = calculationRequest.getCriteria();
-        List<String> musterRollIds = criteria.getMusterRollId();
-        if((musterRollIds == null || musterRollIds.isEmpty()))
-            return;
-
-        String tenantId = criteria.getTenantId();
-        RequestInfo requestInfo = calculationRequest.getRequestInfo();
-        validateMusterRollId(requestInfo,tenantId,musterRollIds);
+    private List<String> fetchListOfMusterRollIdsForGivenIds(RequestInfo requestInfo, String tenantId, List<String> musterRollIds, boolean onlyApproved){
+        return musterRollUtils.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds,onlyApproved);
     }
-
-    private void validateMusterRollId(RequestInfo requestInfo,String tenantId,List<String> musterRollIds) {
-        List<String> fetchedMusterRolls = musterRollUtils.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds);
-
+    private void validateMusterRollIds(List<String> musterRollIds, List<String> fetchedMusterRolls) {
         for(String musterRollId : musterRollIds){
             if(!fetchedMusterRolls.contains(musterRollId)){
                 log.error("INVALID_MUSTER_ROLL","Provided musterroll is invalid ["+musterRollId+"]");

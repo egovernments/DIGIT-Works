@@ -1,1 +1,0 @@
-ALTER TABLE eg_works_calculation ADD COLUMN bill_amount double;

@@ -91,6 +91,10 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String urlShortnerEndpoint;
 
+	//kafka
+	@Value("${expense.calculator.error.topic}")
+	private String calculatorErrorTopic;
+
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
