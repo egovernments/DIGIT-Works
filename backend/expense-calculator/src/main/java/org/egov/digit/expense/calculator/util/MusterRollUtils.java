@@ -28,8 +28,13 @@ public class MusterRollUtils {
     @Autowired
     private ExpenseCalculatorConfiguration configs;
 
-    public List<String> fetchListOfMusterRollIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId) {
-        StringBuilder url = getMusterRollURI(tenantId, musterRollId);
+    public List<String> fetchListOfMusterRollIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId, boolean onlyApproved) {
+        StringBuilder url = null;
+        if(onlyApproved){
+            url = getApprovedMusterRollURI(tenantId,musterRollId);
+        } else {
+            url = getMusterRollURI(tenantId, musterRollId);
+        }
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         List<String> fetchedMusterRollIds = null;
@@ -41,8 +46,13 @@ public class MusterRollUtils {
         return fetchedMusterRollIds;
     }
 
-    public List<MusterRoll> fetchMusterRollByIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId) {
-        StringBuilder url = getMusterRollURI(tenantId, musterRollId);
+    public List<MusterRoll> fetchMusterRollByIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId, boolean onlyApproved) {
+        StringBuilder url = null;
+        if(onlyApproved){
+            url = getApprovedMusterRollURI(tenantId, musterRollId);
+        } else{
+            url = getMusterRollURI(tenantId, musterRollId);
+        }
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
