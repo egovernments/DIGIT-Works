@@ -224,15 +224,15 @@ const OverheadsTable = ({ control, watch, ...props }) => {
   };
 
   const cellContainerStyle = { display: "flex", flexDirection: "column" };
-  const errorCardStyle = { width: "100%", fontSize: "12px" };
-  const errorContainerStyles = { display: "block", height: "2rem", overflow: "hidden" };
+  const errorCardStyle = { width: "100%", fontSize: "12px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
+  const errorContainerStyles = { display: "block", height: "1rem", overflow: "hidden" };
   const renderBody = () => {
     let i = 0;
     return rows.map((row, index) => {
       if (row.isShow) i++;
       return (
         row.isShow && (
-          <tr key={index} style={{ height: "50%" }}>
+          <tr key={index}>
             <td style={getStyles(1)}>{i}</td>
 
             <td style={getStyles(2)}>
