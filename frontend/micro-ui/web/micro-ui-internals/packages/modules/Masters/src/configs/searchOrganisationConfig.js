@@ -23,7 +23,6 @@ const searchOrganisationConfig = () => {
       search: {
         uiConfig: {
           headerStyle: null,
-          formClassName: "custom-both-clear-search",
           primaryLabel: "ES_COMMON_SEARCH",
           secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
           minReqFields: 1,
@@ -89,33 +88,6 @@ const searchOrganisationConfig = () => {
                 name: "orgNumber",
                 error: `PROJECT_PATTERN_ERR_MSG`,
                 validation: { minlength: 2 },
-              },
-            },
-            {
-              label: "CORE_COMMON_STATUS",
-              type: "dropdown",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "applicationStatus",
-                optionsKey: "name",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
-                options: [
-                  {
-                    code: "ACTIVE",
-                    name: "MASTERS_ORG_STATUS_ACTIVE",
-                  },
-                  {
-                    code: "DEBARRED",
-                    name: "MASTERS_ORG_STATUS_DEBARRED",
-                  },
-                  {
-                    code: "INACTIVE",
-                    name: "MASTERS_ORG_STATUS_INACTIVE",
-                  },
-                ],
               },
             },
             {

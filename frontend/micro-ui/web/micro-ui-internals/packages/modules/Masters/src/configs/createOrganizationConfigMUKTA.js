@@ -318,14 +318,14 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_name",
                             error: "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
-                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 5}
+                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 64}
                         }
                     },
                     {
                         label: "CORE_COMMON_PROFILE_MOBILE_NUMBER",
                         isMandatory: true,
                         key: "contactDetails_mobile",
-                        type: "number",
+                        type: "mobileNumber",
                         disable: false,
                         populators: {
                             name: "contactDetails_mobile",
