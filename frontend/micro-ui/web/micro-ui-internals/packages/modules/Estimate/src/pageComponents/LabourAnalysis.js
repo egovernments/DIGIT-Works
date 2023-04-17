@@ -21,7 +21,7 @@ const LabourAnalysis = ({watch,formState,...props}) => {
     const { t, register, errors, setValue, getValues, formData } = props
     
     const formFieldName = "analysis" // this will be the key under which the data for this table will be present on onFormSubmit
-    const errorStyle = { marginBottom: "0px",width:"100%" };
+    const errorStyle = { marginBottom: "0px",width:"100%",fontSize:'12px' };
     // const inputStyle = { marginTop: "20px", marginBottom: "4px" };
     const inputStyle = {marginBottom:'0px'};
     
