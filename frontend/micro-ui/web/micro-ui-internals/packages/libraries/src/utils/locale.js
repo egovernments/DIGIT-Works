@@ -41,24 +41,24 @@ export const convertDotValues = (value = "") => {
 export const convertToLocale = (value = "", key = "") => {
   let convertedValue = convertDotValues(value)?.toUpperCase();
   if (convertedValue == "NA") {
-    return "COMMON_NA";
+    return "ES_COMMON_NA";
   }
   return `${key}_${convertedValue}`;
 };
-
+/* to transform tenant id ,ward/locality code  to ward/locality name locale */
 export const getMohallaLocale = (value = "", tenantId = "") => {
   let convertedValue = convertDotValues(tenantId);
   if (convertedValue == "NA" || !checkForNotNull(value)) {
-    return "COMMON_NA";
+    return "ES_COMMON_NA";
   }
   convertedValue = convertedValue.toUpperCase();
-  return convertToLocale(value, `${convertedValue}_REVENUE`);
+  return convertToLocale(value, `${convertedValue}_ADMIN`);
 };
-
+/* to transform tenant id to city name locale */
 export const getCityLocale = (value = "") => {
   let convertedValue = convertDotValues(value);
   if (convertedValue == "NA" || !checkForNotNull(value)) {
-    return "COMMON_NA";
+    return "ES_COMMON_NA";
   }
   convertedValue = convertedValue.toUpperCase();
   return convertToLocale(convertedValue, `TENANT_TENANTS`);

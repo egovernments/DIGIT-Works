@@ -1,0 +1,327 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Contracts Service
+  description: ''
+
+paths: 
+  /contract/v1/_create:
+    post:
+      tags:
+      - Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractRequest'
+      responses:
+        '202':
+          description: Accepted create contract request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+  
+  /contract/v1/_update:
+    post:
+      tags:
+      - Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractRequest'
+      responses:
+        '202':
+          description: Accepted create contract request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+  
+  /contract/v1/_search:
+    post:
+      tags:
+      - Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContractCriteria'
+      responses:
+        '200':
+          description: Successful response sorted by reverse chrnological order of creation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '400':
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml#/components/schemas/ErrorRes'
+
+components:
+  schemas:
+    Contract:
+      type: object
+      description: Contract details 
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the contract
+          readOnly: true
+          minLength: 1
+          maxLength: 64
+        contractNumber:
+          type: string
+          description:  Formatted unique identifier contract number
+          readOnly: true
+          minLength: 1
+          maxLength: 64
+        tenantId:
+          type: string
+          description: Tenant Identifier
+          example: pb.amritsar
+          minLength: 2
+          maxLength: 64
+        wfStatus:
+          type: string
+          description: The status of the contract in the workflow
+          minLength: 2
+          maxLength: 64
+        executingAuthority:
+          type: string
+          description: The executing authority of the given contract
+          enum: 
+          - DEPARTMENT
+          - CONTRACTOR
+        contractType:
+          type: string
+          description: Type of the contract. This will decide the other attributes of the contract and how it will be processed down the line. 
+          enum: 
+          - WORK_ORDER
+          - PURCHASE_ORDER
+        totalContractedamount:
+          type: number
+          description: applicable if contract amount is diffrent than estimate amount 
+        securityDeposit:
+          type: number
+          description: Capture the security deposit amount
+        agreementDate:
+          type: number
+          format: timestamp
+          description: The date of the agreement. Default to today's date. Cannot be a future date. 
+        defectLiabilityPeriod:
+          type: number
+          format: timestamp
+          description: The Date until which the contractor holds accountability for any issues
+        orgId:
+          type: string
+          description: Reference Id of the contractor who is signing the contract(From orgnisation service). 
+        startDate:
+          type: number
+          format: timestamp
+          description: Work start date 
+        endDate:
+          type: number
+          format: timestamp
+          description: Work completion date
+        lineItems:
+          type: array
+          description: Override estimate details line items 
+          items:
+            $ref: '#/components/schemas/LineItems'
+        documents:
+          type: array
+          description: Any attachments of the contract. 
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/Document'
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: Any additional key-value pair to be stored with the contract. 
+      required: [tenantId, executingAuthority, type, vendorId]
+
+    
+    LineItems:
+      type: object
+      description: Overide the negotiated amounts from line items of the estimate 
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier estimate details for contract
+          readOnly: true
+          minLength: 1
+          maxLength: 64
+        estimateId:
+          type: string
+          description: unique estimate uuid from estimate service
+          minLength: 1
+          maxLength: 64
+        estimateLineItemId:
+          type: string
+          description: 'Estimate detail id from estimate service'
+          minLength: 1
+          maxLength: 64
+        tenantId:
+          type: string
+          description: 'Tenant Identifier'
+          example: pb.amritsar
+          minLength: 2
+          maxLength: 64
+        unitRate:
+          type: number
+          description: 'Unit rate of non-sor item'
+        noOfunit:
+          type: number
+          description: 'total no of units for sor and non-sor item'
+        amountBreakups:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountBreakup'
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: Any additional key-value pair to be stored with the contract. 
+      required: [estimateId,tenantId]
+      
+    
+    ContractCriteria:
+      type: object
+      description: The object will contain all the search parameters for contract service. 
+      properties:
+        tenantId:
+          type: string
+          description: 'Tenant Identifier'
+          example: pb.amritsar
+          minLength: 2
+          maxLength: 64
+        ids:
+          type: array
+          description: Search by contract ids 
+          format: uuid
+          items:
+            type: string
+        estimateIds:
+          description: Search by estimate ids
+          type: array
+          format: uuid
+          items:
+            type: string
+        estimateLineItemIds:
+          type: array
+          description: Search by estimate line items ids
+          format: uuid
+          items:
+            type: string
+        
+      required: [tenantId]
+    
+    Pagination:
+      type: object
+      description: Pagination details 
+      properties:
+        limit:
+          type: number
+          format: integer
+          description: Limit for total no of records in single search
+            max limit should be defined as envirnment variable
+          default: 10
+          maximum: 100
+        offSet:
+          type: number
+          description: offset or page no
+          default: 0
+        totalCount:
+          type: number
+          description: Total count for a perticular criteria
+          readOnly: true
+        sortBy:
+          type: string
+          description: result sorting order
+        order:
+          type: string
+          description: Sorting order 
+          enum:
+            - asc
+            - desc
+
+    AmountBreakup:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Unique identifier of the amount breakups'
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+          readOnly: true
+        estimateAmountBreakupId:
+          type: string
+          description: 'Amount breakup id from estimate' 
+          format: uuid
+          example: '251c51eb-e970-4e01-a99a-70136c47a934'
+        amount:
+          type: number
+          description: 'Override the amount of estimate line item'
+        additionalDetails:
+          type: object
+          description: 'Any additional information that needs to be attached to the estimate. For attachments, fileStoreIds will also be stored here. '
+      required: [ estimateAmountBreakupId, amount ]
+    
+  
+    Workflow:
+      type: object
+      properties:
+        action:
+          type: string
+          description: 'Action of the workflow to be performned on the request'
+        comment:
+          type: string
+          description: 'comment for the workflow action to be performed'
+        assignees:
+          type: array
+          items:
+            type: string
+            description: ' uuid of the users in the system to assign workflow to the specific user intead of a all the users with the gien role.'
+        
+      required: [ estimateAmountBreakupId, amount ]
+    
+    ContractRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
+        contract:
+          $ref: '#/components/schemas/Contract'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
+    
+    ContractResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo'
+        contracts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contract'
+        pagination:
+          $ref: '#/components/schemas/Pagination'

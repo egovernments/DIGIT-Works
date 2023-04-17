@@ -4,7 +4,7 @@ export const ConvertTimestampToDate = (timestamp, dateFormat = "d-MMM-yyyy") => 
   return timestamp ? format(toDate(timestamp), dateFormat) : null;
 };
 
-export const ConvertEpochToDate = (dateEpoch) => {
+export const ConvertEpochToDate = (dateEpoch, format="dd/mm/yyyy") => {
   if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
     return "NA";
   }
@@ -14,7 +14,18 @@ export const ConvertEpochToDate = (dateEpoch) => {
   let year = dateFromApi.getFullYear();
   month = (month > 9 ? "" : "0") + month;
   day = (day > 9 ? "" : "0") + day;
-  return `${day}/${month}/${year}`;
+
+  switch(format) {
+    case "yyyy-mm-dd" : {
+      return `${year}-${month}-${day}`;
+    }
+    case "dd/mm/yyyy" : {
+      return `${day}/${month}/${year}`;
+    }
+    default : {
+      return `${day}/${month}/${year}`;
+    }
+  }
 };
 
 export const ConvertEpochToTimeInHours = (dateEpoch) => {
@@ -30,3 +41,16 @@ export const ConvertEpochToTimeInHours = (dateEpoch) => {
   min = (min > 9 ? "" : "0") + min;
   return `${hour}:${min} ${period}`;
 };
+
+export const getDayfromTimeStamp = (timestamp) => {
+  var a = new Date(timestamp);
+  var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var dayOfWeek = days[a.getDay()]
+  return dayOfWeek
+}
+
+export const getYearDifference = (date) => {
+  const timeDiff = Date.now() - new Date(date).getTime()
+  const ageDate = new Date(timeDiff)
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}

@@ -4,14 +4,15 @@ RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=7168"
+ENV NODE_OPTIONS "--max-old-space-size=4792"
 
 COPY ${WORK_DIR} .
 RUN ls -lah
 
 #RUN node web/envs.js
 RUN cd web/ \
-    && node envs.js \
+    && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))' \
+    && node -e 'console.log("Works with MUKTA")' \
     &&  ./install-deps.sh \
     && yarn install \
     && yarn build 

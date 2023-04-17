@@ -20,7 +20,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
                   </div>
                   <div>
                     {link ? (
-                      <Link to={link} className="employeeTotalLink">
+                      <Link to={{ pathname:link, state: {count} }} className="employeeTotalLink">
                         {label}
                       </Link>
                     ) : null}
@@ -32,11 +32,11 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
           <div className="links-wrapper" style={{ width: "80%" }}>
             {links.map(({ count, label, link }, index) => (
               <span className="link" key={index}>
-                {link ? <Link to={link}>{label}</Link> : null}
+                {link ? <Link to={{ pathname:link, state: {count} }}>{label}</Link> : null}
                 {count ? (
                   <>
                     <span className={"inbox-total"}>{count || "-"}</span>
-                    <Link to={link}>
+                    <Link to={{ pathname:link, state: {count} }}>
                       <ArrowRightInbox />
                     </Link>
                   </>
@@ -72,7 +72,7 @@ const ModuleCardFullWidth = ({ moduleName,  links = [], isCitizen = false, class
           <div className="links-wrapper" style={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
             {links.map(({ count, label, link }, index) => (
               <span className="link full-employee-card-link" key={index}>
-                {link ? (link?.includes('digit-ui/')?<Link to={link}>{label}</Link>:<a href={link}>{label}</a>) : null}
+                {link ? (link?.includes(`${window?.contextPath}/`)?<Link to={link}>{label}</Link>:<a href={link}>{label}</a>) : null}
               </span>
             ))}
           </div>

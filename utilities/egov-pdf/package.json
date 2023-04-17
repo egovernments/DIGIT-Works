@@ -1,0 +1,26 @@
+{
+  "name": "egov-pdf",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "author": "Jagankumar <jagan.kumar@egov.org.in>",
+  "description": "Backend For Frontend service which helps in generating pdf through pdf service",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "kafka-node": "^5.0.0",
+    "morgan": "~1.9.1",
+    "uuid": "^3.3.3",
+    "winston": "^3.2.1",
+    "pg": "^8.7.1",
+    "lodash.get": "^4.4.2"
+  }
+}

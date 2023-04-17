@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { LocateIcon } from "./svgindex";
 
 const TextInput = (props) => {
   const user_type = Digit.SessionStorage.get("userType");
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(props?.type==="date"&&props?.value);
   const data = props?.watch
     ? {
         fromDate: props?.watch("fromDate"),
@@ -24,9 +25,14 @@ const TextInput = (props) => {
             type={props?.validation && props.ValidationRequired ? props?.validation?.type : (props.type || "text")}
             name={props.name}
             id={props.id}
-            className={`${user_type ? "employee-card-input-error" : "card-input-error"} ${props.disable && "disabled"}`}
+            className={`${user_type ? "employee-card-input-error" : "card-input-error"} ${props.disable && "disabled"} ${props.customClass}`}
             placeholder={props.placeholder}
             onChange={(event) => {
+              if(props?.type === "number" && props?.maxlength) {
+                if(event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0,-1);
+                }
+              }
               if (props?.onChange) {
                 props?.onChange(event);
               }
@@ -56,9 +62,14 @@ const TextInput = (props) => {
             type={props?.validation && props.ValidationRequired ? props?.validation?.type : (props.type || "text")}
             name={props.name}
             id={props.id}
-            className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"}`}
+            className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"} ${props.customClass}`}
             placeholder={props.placeholder}
             onChange={(event) => {
+              if(props?.type === "number" && props?.maxlength) {
+                if(event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0,-1);
+                }
+              }
               if (props?.onChange) {
                 props?.onChange(event);
               }
@@ -86,8 +97,9 @@ const TextInput = (props) => {
             disabled={props.disabled}
           />
         )}
-        {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />}
+        {/* {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />} */}
         {props.signature ? props.signatureImg : null}
+        {props.customIcon ? props.customIcon === "geolocation" ? <LocateIcon className="text-input-customIcon" /> : null : null}
       </div>
     </React.Fragment>
   );

@@ -1,16 +1,18 @@
 {
-  "name": "@egovernments/digit-ui-css",
-  "version": "1.4.105",
+  "name": "@egovernments/digit-ui-works-css",
+  "version": "0.0.47",
   "license": "MIT",
+  "author": "Jagankumar <jagan.kumar@egov.org.in>",
   "main": "dist/index.css",
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "cssConfig": {
     "prefix": ""
   },
   "scripts": {
     "start": "gulp build",
+    "build": "yarn build:prod",
     "build:prod": "NODE_ENV=production gulp build",
     "prepublish": "yarn build:prod",
     "deploy": "gulp && cp -R svg example && cp -R img example && gh-pages -d example"
@@ -24,7 +26,7 @@
     "node-sass": "4.14.1",
     "normalize.css": "8.0.1",
     "postcss-scss": "3.0.5",
-    "tailwindcss": "1.9.6"
+    "tailwindcss": "2.2.19"
   },
   "devDependencies": {
     "autoprefixer": "10.4.4",

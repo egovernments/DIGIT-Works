@@ -1,4 +1,3 @@
-@import "./login.scss";
 /* TODO: convert using tailwind */
 .employee {
   .breadcrumb {
@@ -349,6 +348,12 @@
   }
 }
 
+.textoverflow{
+    overflow: hidden;
+    display: block;
+    max-width: var(--max-width);
+}
+
 .RightMostTopBarOptions {
   @apply flex;
   .EventNotificationWrapper {
@@ -373,7 +378,8 @@
 @media (min-width: 640px) {
   .employee {
     .ground-container {
-      @apply block ml-md;
+      @apply block;
+      margin-left: 0px;
     }
     .breadcrumb {
       @apply mb-lg;
@@ -393,9 +399,8 @@
     .main {
       display: flex;
       flex-direction: column;
-      padding-top: 80px;
-      margin-left: 72px;
-      width: calc(100%-83px);
+      margin-left: 55px;
+      width: calc(100%-55px);
     }
     .citizen-home-container {
       display: flex;
@@ -494,4 +499,30 @@
     margin-left: 16px;
     margin-right: 16px;
   }
+}
+
+.status-row-radio-wrapper {
+  margin-right: 1rem;
+  input[type="radio"] {
+    margin-right: 1rem;
+  }
+}
+.total-value-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.total-wrapper {
+  margin: 1rem 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-weight: bolder;
+}
+
+.total-wrapper .label {
+  text-align: left;
+}
+
+.total-wrapper .value {
+  text-align: right;
 }

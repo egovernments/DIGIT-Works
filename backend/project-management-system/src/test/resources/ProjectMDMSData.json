@@ -1,0 +1,37 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "works": {
+      "ProjectType": [
+        {
+          "id": 1,
+          "name": "Mini Park",
+          "code": "MP-CWS",
+          "group": "Capital Works",
+          "beneficiary": "Slum",
+          "active": true,
+          "projectSubType": ["MP001","MP002"]
+        }
+      ],
+      "NatureOfWork": [
+        {
+          "name": "Capital",
+          "code": "Capital",
+          "active": true
+        }
+      ]
+    },
+    "common-masters": {
+      "Department": [
+        {
+          "name": "Housing and Urban Development",
+          "code": "DEPT_11",
+          "active":true
+        }
+      ]
+    },
+    "tenant": {
+      "tenants": ["t1", "t2"]
+    }
+  }
+}

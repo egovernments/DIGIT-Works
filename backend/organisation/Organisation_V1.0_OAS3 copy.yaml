@@ -1,0 +1,450 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Organisation Service
+  description: Organisation service and registry
+paths:
+  /org-services/v1/_create:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgServiceRequest'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/v1/_update:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgServiceRequest'
+      responses:
+        '202':
+          description: Accepted update org request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/v1/_search:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgSearchCriteria'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_create:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgRequest'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_update:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgRequest'
+      responses:
+        '202':
+          description: Accepted update org request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_search:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgSearchCriteria'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+
+components:
+  schemas:
+    Organisation:
+      title: Organisation
+      description: Organisation registry
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the org
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        applicationNumber:
+          description: Application number for the org registration
+          readOnly: true
+          type: string
+        orgNumber:
+          description: Formatted organisation number issued after application is approved
+          readOnly: true
+          type: string
+          minLength: 1
+          maxLength: 64
+        applicationStatus:
+          description: The status of the org
+          type: string
+          minLength: 2
+          maxLength: 64
+        externalRefNumber:
+          description: ID or code assigned to vendor by department
+          type: string
+          minLength: 2
+          maxLength: 64
+        dateOfIncorporation:
+          description: Epoch time
+          type: number
+          format: double
+        orgAddress:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        contactDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactDetails'
+        identifiers:
+          description: The type of tax identifiers and their values
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+          minItems: 1
+        functions:
+          description: Functional areas the org works in
+          type: array
+          items:
+            $ref: '#/components/schemas/Function'
+          minItems: 1
+        jurisdiction:
+          type: array
+          items:
+            type: string
+            minLength: 2
+            maxLength: 64
+          minLength: 2
+          maxLength: 64
+        isActive:
+          type: boolean
+        documents:
+          description: Reference to documents related to the organisation that have been attached via file upload
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        additionalFields:
+          $ref: '#/components/schemas/additionalFields'
+        auditDetails:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
+      required:
+        - tenantId
+    Identifier:
+      title: Identifier
+      description: Object to capture tax identifiers for a organisation
+      type: object
+      properties:
+        type:
+          description: The type of tax identifier from MDMS data. Eg. PAN, GSTIN, TIN etc..Can be different for other countries
+          type: string
+          minLength: 2
+          maxLength: 64
+        value:
+          description: Actual value for the identifier.
+          type: string
+          minLength: 2
+          maxLength: 64
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+    ContactDetails:
+      title: ContactDetails
+      description: Captures details of a contact person
+      type: object
+      properties:
+        contactName:
+          type: string
+          minLength: 2
+          maxLength: 64
+        contactMobileNumber:
+          description: Mobile number of the user
+          type: string
+          maxLength: 20
+        contactEmail:
+          type: string
+          minLength: 5
+          maxLength: 200
+    Function:
+      title: Function
+      description: Represents the functions of an organisation
+      type: object
+      properties:
+        orgId:
+          description: Organisation UUID
+          readOnly: true
+          type: string
+        applicationNumber:
+          description: Application number for the function registration. Will be used in workflow.
+          readOnly: true
+          type: string
+        type:
+          description: Type of organisation.Namespaced masters to be defined.
+          type: string
+          minLength: 2
+          maxLength: 64
+        category:
+          description: Functional area that the org works with.Eg. Electrical, Civil, Mechanical, Stationery etc..
+          type: string
+          minLength: 2
+          maxLength: 64
+        class:
+          description: Organisation class
+          example: Class 1, Class 2, Class 3 etc..
+          type: string
+          minLength: 2
+          maxLength: 64
+        validFrom:
+          description: Validity from date of registration in epoch time
+          type: number
+          format: double
+        validTo:
+          description: Validity to date of registration in epoch time.
+          type: number
+          format: double
+        wfStatus:
+          type: string
+          minLength: 2
+          maxLength: 64
+        isActive:
+          type: boolean
+        documents:
+          description: Reference to documents specifically related to the type and category of work being registered for
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        additionalFields:
+          $ref: '#/components/schemas/additionalFields'
+        auditDetails:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
+    Pagination:
+      type: object
+      description: Pagination details
+      properties:
+        limit:
+          type: number
+          format: integer
+          description: >-
+            Limit for total no of records in single search max limit should be
+            defined as envirnment variable
+          default: 10
+          maximum: 100
+        offSet:
+          type: number
+          description: offset or page no
+          default: 0
+        totalCount:
+          type: number
+          description: Total count for a perticular criteria
+          readOnly: true
+        sortBy:
+          type: string
+          description: result sorting order
+        order:
+          type: string
+          description: Sorting order
+          enum:
+            - asc
+            - desc
+    Workflow:
+      type: object
+      properties:
+        action:
+          type: string
+          description: Action of the workflow to be performned on the request
+        comment:
+          type: string
+          description: comment for the workflow action to be performed
+        assignees:
+          type: array
+          items:
+            type: string
+            description: uuid of users
+      required:
+        - action
+    OrgServiceRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+        organisations:
+          $ref: '#/components/schemas/Organisation'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
+    OrgServiceResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+        organisations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
+    OrgSearchCriteria:
+      description: organisation search attributes
+      type: object
+      properties:
+        id:
+          $ref: >-
+            https://raw.githubusercontent.com/digit-egov/health-api-specs/main/contracts/common.yaml#/definitions/idForSearch
+        tenantId:
+          $ref: >-
+            https://raw.githubusercontent.com/digit-egov/health-api-specs/main/contracts/common.yaml#/definitions/tenantId
+        name:
+          type: string
+        applicationNumber:
+          type: string
+        orgNumber:
+          type: string
+        applicationStatus:
+          type: string
+        functions:
+          $ref: '#/components/schemas/Function'
+        createdFrom:
+          type: number
+          format: double
+        createdTo:
+          type: number
+          format: double
+        boundaryCode:
+          type: string
+        identifierType:
+          type: string
+        identifierValue:
+          type: string
+        includeDeleted:
+          description: >-
+            Used in search APIs to specify if (soft) deleted records should be
+            included in search results.
+          type: boolean
+          default: false
+    OrgRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+        organisations:
+          $ref: '#/components/schemas/Organisation'
+    OrgResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+        organisations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+        pagination:
+          $ref: '#/components/schemas/Pagination'

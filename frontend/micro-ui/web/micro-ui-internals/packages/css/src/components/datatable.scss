@@ -2,7 +2,7 @@
   @apply text-text-primary;
 
   .row {
-    @apply flex border-b border-border pb-sm mb-sm;
+    @apply flex border-black border-border pb-sm mb-sm;
 
     span {
       width: 70%;
@@ -32,6 +32,18 @@
   }
 }
 
+@screen sm {
+  .row {
+    @apply flex pb-sm mb-sm flex-col;
+    h2 {
+      width: 100% !important;
+    }
+    .value {
+      width: 100% !important;
+    }
+  }
+}
+
 .employee-data-table {
   .row {
     @apply flex pb-sm mb-sm;
@@ -47,8 +59,19 @@
     }
 
     .value {
-      width: 50%;
+      white-space: break-spaces !important;
+      word-break: break-all;
+      width: 60%;
       @apply text-heading-s;
+      &.status-row-radio {
+        div {
+          margin-right: 1rem;
+          width: 50%;
+        }
+        .mg-sm {
+          width: 30%;
+        }
+      }
     }
 
     .caption {
@@ -62,11 +85,30 @@
     padding: 0;
     margin: 0;
   }
+  &.status-radio-table {
+    margin-top: 1rem;
+    .row {  
+      span {
+        width: 24px;
+        display: block;
+        float: left;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &.view-header {
+   .row {
+    display: grid;
+    grid-template-columns: 1fr 68%;
+   }
+  }
 }
 
-
-
-.pt-citizen {.data-table {.row {
-  justify-content: space-between;
-
-}}}
+.pt-citizen {
+  .data-table {
+    .row {
+      justify-content: space-between;
+    }
+  }
+}

@@ -5,6 +5,7 @@ const Urls = {
   localization: `/localization/messages/v1/_search`,
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
+    wards: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Ward`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
   },
 
@@ -25,12 +26,33 @@ const Urls = {
   UserProfileUpdate: "/user/profile/_update",
   EmployeeSearch: "/egov-hrms/employees/_search",
 
-  InboxSearch: "/inbox/v1/_search",
+  InboxSearch: "/works-inbox-service/v2/_search",
 
   UserSearch: "/user/_search",
   UserLogout: "/user/_logout",
 
   Shortener: "/egov-url-shortening/shortener",
+
+  works: {
+    create:"/loi-service/v1/_create",
+    estimateSearch:"/estimate-service/estimate/v1/_search",
+    loiSearch:"/loi-service/v1/_search",
+    createEstimate:"/estimate-service/estimate/v1/_create",
+    approvedEstimateSearch:"/estimate-service/estimate/v1/_search",
+    searchEstimate:"/estimate-service/estimate/v1/_search",
+    updateLOI:"/loi-service/v1/_update",
+    updateEstimate:"/estimate-service/estimate/v1/_update",
+    download_pdf:"/egov-pdf/download/WORKSESTIMATE/estimatepdf",
+    createProject : "/pms/project/v1/_create",
+    searchProject : "/pms/project/v1/_search",
+    updateProject : "/pms/project/v1/_update",
+  },
+
+  contracts : {
+    createWO : "/contract-service/contract/v1/_create",
+    search: "/contract-service/contract/v1/_search",
+    update: "/contract-service/contract/v1/_update"
+  },
 
   fsm: {
     search: "/fsm/v1/_search",
@@ -187,6 +209,22 @@ const Urls = {
     },
   },
 
+  attendencemgmt: {
+    mustorRoll: {
+      estimate: "/muster-roll/v1/_estimate",
+      create: "/muster-roll/v1/_create",
+      update: "/muster-roll/v1/_update",
+      search: "/muster-roll/v1/_search"
+    }
+  },
+
+  wageseeker: {
+    create: "/individual/v1/_create",
+    search: "/individual/v1/_search",
+    update: "/individual/v1/_update",
+    delete: "/individual/v1/_delete"
+  },
+
   noc: {
     nocSearch: "/noc-services/v1/noc/_search",
   },
@@ -196,6 +234,19 @@ const Urls = {
   bills:{
     cancelBill:"/billing-service/bill/v2/_cancelbill"
   },
+
+  organisation : {
+    search: "/org-services/organisation/v1/_search",
+    create: "/org-services/organisation/v1/_create",
+    update: "/org-services/organisation/v1/_update"
+  },
+  
+  bankaccount : {
+    create: "/bankaccount-service/bankaccount/v1/_create",
+    search: "/bankaccount-service/bankaccount/v1/_search",
+    update: "/bankaccount-service/bankaccount/v1/_update"
+  },
+
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
 };
