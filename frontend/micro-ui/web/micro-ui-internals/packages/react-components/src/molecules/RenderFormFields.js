@@ -214,6 +214,7 @@ const RenderFormFields = ({data,...props}) => {
                         formData={formData}
                         inputRef={props.ref}
                         errors={errors}
+                        setValue={setValue}
                       />
                     </div>
                   );
