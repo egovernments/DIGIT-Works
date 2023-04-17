@@ -46,12 +46,11 @@ router.post(
             var organisation = resOrg.data
             if (contract && contract.contracts && contract.contracts.length > 0 && organisation && organisation.organisations && organisation.organisations.length > 0) {
                 var pdfResponse;
-                console.log(requestinfo.RequestInfo.msgId.split("|")[1])
-                if (requestinfo.RequestInfo.msgId.split("|")[1] == "en_IN") {
-                    var pdfkey = config.pdf.work_order_template;
+                if (requestinfo && requestinfo.RequestInfo && requestinfo.RequestInfo.msgId && requestinfo.RequestInfo.msgId.split("|")[1] == "hi_IN") {
+                    var pdfkey = config.pdf.work_order_template_hindi;
                 }
                 else {
-                    var pdfkey = config.pdf.work_order_template_hindi;
+                    var pdfkey = config.pdf.work_order_template;
                 }
                 contract.contracts[0].contactName = organisation.organisations[0].contactDetails[0].contactName
                 contract.contracts[0].nameOfCbo = organisation.organisations[0].name
