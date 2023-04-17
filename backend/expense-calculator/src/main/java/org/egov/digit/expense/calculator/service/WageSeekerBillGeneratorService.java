@@ -1,5 +1,8 @@
 package org.egov.digit.expense.calculator.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.util.CommonUtil;
@@ -13,9 +16,14 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorConstants.CONTRACT_ID_CONSTANT;
+
 @Slf4j
 @Component
 public class WageSeekerBillGeneratorService {
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
     private MusterRollUtils musterRollUtils;
@@ -74,6 +82,8 @@ public class WageSeekerBillGeneratorService {
 
                 }
                 Party payer = buildPayee(configs.getWagePayerId(),configs.getWagePayerType());
+                // Get and populate contractId
+                String contractId = getContractId(musterRoll);
                 // Build Bill
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
@@ -86,13 +96,37 @@ public class WageSeekerBillGeneratorService {
                         .paymentStatus("PENDING")
                         .status("ACTIVE")
                         .billDetails(billDetails)
+                        .additionalDetails(new Object())
                         .build();
 
+                populateBillAdditionalDetails(bill, CONTRACT_ID_CONSTANT, contractId);
                 bills.add(bill);
             }
 
             log.info("Bills created for provided musterRolls : "+musterRollNumbers);
             return bills;
+    }
+
+    private void populateBillAdditionalDetails(Bill bill, String key , String value) {
+        Object additionalDetails = bill.getAdditionalDetails();
+        try {
+            JsonNode node = mapper.readTree(mapper.writeValueAsString(additionalDetails));
+            ((ObjectNode)node).put(key,value);
+            bill.setAdditionalDetails(mapper.readValue(node.toString(), Object.class));
+        }
+        catch (Exception e){
+            log.error("Error while parsing additionalDetails object.");
+            throw new CustomException("PARSE_ERROR","Error while parsing additionalDetails object.");
+        }
+    }
+
+    private String getContractId(MusterRoll musterRoll) {
+        final Object additionalDetails = musterRoll.getAdditionalDetails();
+        final Optional<String> contractId = commonUtil.findValue(additionalDetails, CONTRACT_ID_CONSTANT);
+        if(contractId.isPresent())
+            return contractId.get();
+
+        return null;
     }
 
     private Calculation makeCalculation(List<CalcEstimate> calcEstimates, String tenantId) {
