@@ -55,6 +55,14 @@ const ModifyWageSeeker = () => {
         }
     }, [error])
    
+    useEffect(() => {
+        if(showDataError) {
+          setTimeout(()=>{
+            setShowDataError(false);
+          },3000);
+        }
+    },[showDataError]);
+    
     //session for Wage Seeker data
     const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = wageSeekerSession;
