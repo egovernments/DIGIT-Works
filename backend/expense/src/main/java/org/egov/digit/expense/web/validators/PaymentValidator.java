@@ -114,8 +114,8 @@ public class PaymentValidator {
 				.ids(billIds)
 				.build();
 		Pagination pagination = Pagination.builder()
-				.offSet(0l)
-				.limit(Long.valueOf(billIds.size()))
+				.offSet(0)
+				.limit(billIds.size())
 				.build();
 		
 		BillSearchRequest billSearchRequest = BillSearchRequest.builder()

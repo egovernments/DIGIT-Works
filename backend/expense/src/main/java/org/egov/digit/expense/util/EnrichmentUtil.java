@@ -2,24 +2,31 @@ package org.egov.digit.expense.util;
 
 import java.util.UUID;
 
+import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import digit.models.coremodels.AuditDetails;
 
 @Component
 public class EnrichmentUtil {
+
+	@Autowired
+	private Configuration config;
 	
-	public BillRequest encrichBillWithUuidAndAudit(BillRequest billRequest) {
+	public BillRequest encrichBillForCreate(BillRequest billRequest) {
 
 		Bill bill = billRequest.getBill();
 		String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
 		AuditDetails audit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
 
 		bill.setId(UUID.randomUUID().toString());
-		bill.getPayer().setId(UUID.randomUUID().toString());
 		bill.setAuditDetails(audit);
+
+		bill.getPayer().setId(UUID.randomUUID().toString());
 		bill.getPayer().setAuditDetails(audit);
+		bill.getPayer().setParentId(bill.getId());
 
 		for (BillDetail billDetail : bill.getBillDetails()) {
 
@@ -28,6 +35,7 @@ public class EnrichmentUtil {
 			billDetail.setAuditDetails(audit);
 
 			billDetail.getPayee().setId(UUID.randomUUID().toString());
+			billDetail.getPayee().setParentId(billDetail.getBillId());
 			billDetail.getPayee().setAuditDetails(audit);
 
 			for (LineItem lineItem : billDetail.getLineItems()) {
@@ -101,6 +109,30 @@ public class EnrichmentUtil {
 			}
 		}
 		return billRequest;
+	}
+
+
+	public void enrichSearchBillRequest(BillCriteria billCriteria) {
+
+		Pagination pagination= getPagination(billCriteria);
+
+		if (pagination.getLimit() == null)
+			pagination.setLimit(config.getDefaultLimit());
+
+		if (pagination.getOffSet() == null)
+			pagination.setOffSet(config.getDefaultOffset());
+
+		if (pagination.getLimit() != null && pagination.getLimit().compareTo(config.getMaxSearchLimit())>0)
+			pagination.setLimit(config.getMaxSearchLimit());
+	}
+
+	private Pagination getPagination(BillCriteria billCriteria) {
+		Pagination pagination = billCriteria.getPagination();
+		if(pagination == null){
+			pagination = Pagination.builder().build();
+			billCriteria.setPagination(pagination);
+		}
+		return pagination;
 	}
 	
 	public PaymentRequest encrichCreatePayment(PaymentRequest paymentRequest) {

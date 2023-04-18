@@ -34,6 +34,10 @@ public class LineItem {
 	@Valid
 	private String id;
 
+	@JsonProperty("billDetailId")
+	@Valid
+	private String billDetailId;
+
 	@JsonProperty("tenantId")
 	@NotNull
 	@Size(min = 2, max = 64)

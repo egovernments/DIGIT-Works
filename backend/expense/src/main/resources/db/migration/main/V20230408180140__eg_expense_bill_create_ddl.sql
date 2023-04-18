@@ -26,13 +26,13 @@ CONSTRAINT unique_eg_expense_bill UNIQUE (referenceId, businessservice, tenantid
 
 create table eg_expense_billdetail 
 (
-id character varying(64)   NOT NULL,	
-tenantid character varying(250)   NOT NULL,
+id character varying(64)   NOT NULL,
 referenceId character varying(250), -- unique id of an external entity referred by the bill detail
 billid character varying(64)   NOT NULL,
 paymentStatus character varying(64),
 fromperiod bigint,
 toperiod bigint,
+netLineItemAmount numeric(12,2),
 createdby character varying(64)   NOT NULL,
 createdtime bigint NOT NULL,
 lastmodifiedby character varying(64) NOT NULL,
@@ -71,7 +71,6 @@ CONSTRAINT fk_eg_expense_lineitem FOREIGN KEY (billdetailid) REFERENCES eg_expen
 CREATE TABLE IF NOT EXISTS eg_expense_party_payer
 (
 id character varying(64)   NOT NULL,
-tenantid character varying(250)   NOT NULL,
 type character varying(250)  NOT NULL,
 status character varying(64) NOT NULL,
 identifier character varying(250)  NOT NULL,
@@ -89,7 +88,6 @@ CONSTRAINT fk_eg_expense_party_payer FOREIGN KEY (parentid) REFERENCES eg_expens
 CREATE TABLE IF NOT EXISTS eg_expense_party_payee
 (
 id character varying(64)   NOT NULL,
-tenantid character varying(250)   NOT NULL,
 type character varying(250)  NOT NULL,
 status character varying(64) NOT NULL,
 identifier character varying(250)  NOT NULL,

@@ -47,9 +47,9 @@ public class QueryBuilderUtils {
 			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY b_lastmodifiedtime DESC, b_id) offset_ FROM " + "({})" + " result) result_offset "
 			+ "WHERE offset_ > ? AND offset_ <= ?";
 
-	public String addPaginationWrapper(String query, List<Object> preparedStmtList, Pagination pagination) {
-		
-		
+/*	public String addPaginationWrapper(String query, List<Object> preparedStmtList, Pagination pagination) {
+
+
 		Long limit = configs.getDefaultLimit();
 		Long offset = configs.getDefaultOffset();
 		String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
@@ -67,6 +67,6 @@ public class QueryBuilderUtils {
 		preparedStmtList.add(limit + offset);
 
 		return finalQuery;
-	}
+	}*/
 
 }

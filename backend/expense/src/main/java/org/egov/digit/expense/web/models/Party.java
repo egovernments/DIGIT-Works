@@ -31,10 +31,14 @@ public class Party {
 	@Valid
 	private String id;
 
-	@JsonProperty("tenantId")
+	@JsonProperty("parentId")
+	@Valid
+	private String parentId;
+
+/*	@JsonProperty("tenantId")
 	@NotNull
 	@Size(min = 2, max = 64)
-	private String tenantId;
+	private String tenantId;*/
 	
 	@JsonProperty("type")
 	@NotNull

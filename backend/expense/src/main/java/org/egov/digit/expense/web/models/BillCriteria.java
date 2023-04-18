@@ -44,6 +44,9 @@ public class BillCriteria {
 	@JsonProperty("status")
 	private String status;
 
+	@JsonProperty("pagination")
+	private Pagination pagination;
+
 	public BillCriteria addIdsItem(String idsItem) {
 		if (this.ids == null) {
 			this.ids = new HashSet<>();

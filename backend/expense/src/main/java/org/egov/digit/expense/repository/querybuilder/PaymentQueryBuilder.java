@@ -25,7 +25,7 @@ public class PaymentQueryBuilder {
 		PaymentCriteria paymentCriteria = paymentSearchRequest.getPaymentCriteria();
 		Pagination pagination = paymentSearchRequest.getPagination();
 		
-		StringBuilder paymentSearchQuery = new StringBuilder(Constants.BILL_QUERY);
+		StringBuilder paymentSearchQuery = null; //new StringBuilder(Constants.BILL_QUERY); //TODO
 
 		paymentSearchQuery.append(" payment.tenantId = ? ");
 		preparedStatementValues.add(paymentCriteria.getTenantId());
@@ -53,8 +53,10 @@ public class PaymentQueryBuilder {
 			builderUtils.addToPreparedStatement(preparedStatementValues, ids);
 		}
 
-		String finalQuery = builderUtils.addPaginationWrapper(paymentSearchQuery.toString(), preparedStatementValues, pagination);
+//		String finalQuery = builderUtils.addPaginationWrapper(paymentSearchQuery.toString(), preparedStatementValues, pagination);
 
-		return finalQuery;
+//		return finalQuery;
+
+		return null;
 	}
 }

@@ -101,14 +101,13 @@ public class Configuration {
 	private String smsNotificationTopic;
 	
 	// bill search configs
-	
     @Value("${expense.billing.default.limit}")
-    private Long defaultLimit;
+    private Integer defaultLimit;
 
     @Value("${expense.billing.default.offset}")
-    private Long defaultOffset;
+    private Integer defaultOffset;
     
     @Value("${expense.billing.search.max.limit}")
-    private Long maxSearchLimit;
+    private Integer maxSearchLimit;
 
 }

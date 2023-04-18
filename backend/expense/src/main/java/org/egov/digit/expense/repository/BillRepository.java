@@ -27,6 +27,7 @@ public class BillRepository {
 		
 		List<Object> preparedStatementValues = new ArrayList<>();
 		String queryStr = queryBuilder.getBillQuery(billSearchRequest, preparedStatementValues);
-		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+		List<Bill> bills= jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+		return bills;
 	}
 }

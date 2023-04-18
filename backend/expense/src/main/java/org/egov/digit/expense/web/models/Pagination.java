@@ -1,18 +1,17 @@
 package org.egov.digit.expense.web.models;
 
-import javax.validation.constraints.DecimalMax;
-
-import org.egov.digit.expense.web.models.enums.Order;
-import org.springframework.validation.annotation.Validated;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 /**
  * Pagination details
@@ -25,23 +24,54 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Pagination {
-	
-	@JsonProperty("limit")
-	@DecimalMax("100")
-	@Default
-	private Long limit = 10l;
 
-	@JsonProperty("offSet")
-	@Default
-	private Long offSet = 0l;
+    @JsonProperty("limit")
+    @Valid
+    private Integer limit;
 
-	@JsonProperty("totalCount")
-	private Long totalCount;
+    @JsonProperty("offSet")
+    @Valid
+    private Integer offSet;
 
-	@JsonProperty("sortBy")
-	private String sortBy;
+    @JsonProperty("totalCount")
+    @Valid
+    private Integer totalCount;
 
-	@JsonProperty("order")
-	private Order order;
+    @JsonProperty("sortBy")
+    private String sortBy;
+
+    @JsonProperty("order")
+    private OrderEnum order;
+
+    /**
+     * Sorting order
+     */
+    public enum OrderEnum {
+        ASC("asc"),
+
+        DESC("desc");
+
+        private String value;
+
+        OrderEnum(String value) {
+            this.value = value;
+        }
+
+        @JsonCreator
+        public static OrderEnum fromValue(String text) {
+            for (OrderEnum b : OrderEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
 
 }
