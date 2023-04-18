@@ -204,7 +204,7 @@ const inboxConfig = () => {
               key: "state",
             },
             {
-              label: "COMMON_SLA_DAYS",
+              label: "ATM_SLA",
               jsonPath: "businessObject.serviceSla",
               additionalCustomization: true,
             },
