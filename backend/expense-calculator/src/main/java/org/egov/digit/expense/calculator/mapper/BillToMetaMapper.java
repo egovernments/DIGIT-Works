@@ -55,7 +55,7 @@ public class BillToMetaMapper {
                         .build();
                 billMetas.add(billMeta);
             }
-        records.setBillMatas(billMetas);
+        records.setBillMeta(billMetas);
 
         return records;
     }

@@ -111,7 +111,14 @@ public class ExpenseCalculatorService {
     }
 
     private BillResponse postBills(RequestInfo requestInfo,List<Bill> wageSeekerBills){
-        return BillResponse.builder().bill(wageSeekerBills).responseInfo(ResponseInfo.builder().status(SUCCESSFUL_CONSTANT).build()).build();
+        for(Bill bill : wageSeekerBills){
+            bill.setId(UUID.randomUUID().toString());
+        }
+        return BillResponse.builder()
+                .bill(wageSeekerBills)
+                .responseInfo(ResponseInfo.builder().status(SUCCESSFUL_CONSTANT).build())
+                .build();
+
         //return billUtils.postBills(requestInfo, wageSeekerBills);
     }
 
