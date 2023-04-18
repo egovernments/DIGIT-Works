@@ -111,8 +111,7 @@ public class ExpenseCalculatorService {
     }
 
     private BillResponse postBills(RequestInfo requestInfo,List<Bill> wageSeekerBills){
-        return BillResponse.builder().bill(wageSeekerBills).responseInfo(ResponseInfo.builder().status(SUCCESSFUL_CONSTANT).build()).build();
-        //return billUtils.postBills(requestInfo, wageSeekerBills);
+        return billUtils.postBills(requestInfo, wageSeekerBills);
     }
 
     private Map<String,Double> fetchMDMSDataForWageSeekersSkills(RequestInfo requestInfo, String tenantId){
