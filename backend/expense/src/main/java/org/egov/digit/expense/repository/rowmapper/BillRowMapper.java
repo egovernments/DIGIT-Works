@@ -101,7 +101,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 		String id = rs.getString("bd_id");
 		String billId = rs.getString("bd_billid");
 		if (StringUtils.isNotBlank(id) && billId.equalsIgnoreCase(bill.getId())) {
-
+			String tenantId = rs.getString("bd_tenantId");
 			String referenceId = rs.getString("bd_referenceid");
 			String paymentStatus = rs.getString("bd_paymentstatus");
 			Long fromPeriod = rs.getLong("bd_fromperiod");
@@ -124,6 +124,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 									.paymentStatus(paymentStatus)
 									.fromPeriod(fromPeriod)
 									.toPeriod(toPeriod)
+									.tenantId(tenantId)
 									.auditDetails(auditDetails)
 									.additionalDetails(additionalDetails)
 									.build();
@@ -210,6 +211,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 		String parentId = rs.getString("payer_parentid");
 
 		if (StringUtils.isNotBlank(id) && parentId.equalsIgnoreCase(bill.getId())) {
+			String tenantId = rs.getString("payer_tenantId");
 			String type = rs.getString("payer_type");
 			String status = rs.getString("payer_status");
 			String identifier = rs.getString("payer_identifier");
@@ -230,6 +232,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.status(status)
 					.identifier(identifier)
 					.parentId(parentId)
+					.tenantId(tenantId)
 					.additionalDetails(additionalDetails)
 					.auditDetails(auditDetails)
 					.build();
@@ -245,6 +248,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 		String parentId = rs.getString("payee_parentid");
 
 		if (StringUtils.isNotBlank(id) && parentId.equalsIgnoreCase(billDetail.getBillId())) {
+			String tenantId = rs.getString("payee_tenantId");
 			String type = rs.getString("payee_type");
 			String status = rs.getString("payee_status");
 			String identifier = rs.getString("payee_identifier");
@@ -265,6 +269,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.status(status)
 					.identifier(identifier)
 					.parentId(parentId)
+					.tenantId(tenantId)
 					.additionalDetails(additionalDetails)
 					.auditDetails(auditDetails)
 					.build();

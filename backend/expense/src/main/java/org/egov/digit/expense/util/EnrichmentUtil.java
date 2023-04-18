@@ -41,11 +41,14 @@ public class EnrichmentUtil {
 			for (LineItem lineItem : billDetail.getLineItems()) {
 				lineItem.setId(UUID.randomUUID().toString());
 				lineItem.setAuditDetails(audit);
+				lineItem.setBillDetailId(billDetail.getId());
 			}
 
 			for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
 				payablelineItem.setId(UUID.randomUUID().toString());
 				payablelineItem.setAuditDetails(audit);
+				payablelineItem.setBillDetailId(billDetail.getId());
+
 			}
 		}
 		return billRequest;
