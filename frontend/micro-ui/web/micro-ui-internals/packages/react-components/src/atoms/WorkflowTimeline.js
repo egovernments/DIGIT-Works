@@ -16,17 +16,42 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
     // const { estimateNumber } = Digit.Hooks.useQueryParams();
     // applicationNo = applicationNo? applicationNo : estimateNumber 
     const { t } = useTranslation();
-    const getTimelineCaptions = (checkpoint) => {
-        
-        const caption = {
-            date: `${Digit.DateUtils?.ConvertTimestampToDate(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.ConvertEpochToTimeInHours(
+
+    const getTimelineCaptions = (checkpoint, index) => {
+
+        let captionDetails = {
+            name : '',
+            date : '',
+            mobileNumber : '',
+            wfComment : '',
+            additionalComment : '',
+            thumbnailsToShow : ''
+        }
+        if(index === -1) {
+            captionDetails.name = checkpoint?.assignes?.[0]?.name;
+            captionDetails.date = '';
+            captionDetails.mobileNumber = '';
+            captionDetails.wfComment = '';
+            captionDetails.additionalComment = '';
+            captionDetails.thumbnailsToShow = '';
+        }else {
+            captionDetails.name = checkpoint?.assigner?.name;
+            captionDetails.date = `${Digit.DateUtils?.ConvertTimestampToDate(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.ConvertEpochToTimeInHours(
                 checkpoint.auditDetails.lastModifiedEpoch
-            )} ${Digit.DateUtils?.getDayfromTimeStamp(checkpoint.auditDetails.lastModifiedEpoch)}`,
-            name: checkpoint?.assignes?.[0]?.name,
-            mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
-            wfComment: checkpoint?.comment ? [checkpoint?.comment] :[],
-            additionalComment: additionalComment && checkpoint?.performedAction === "APPROVE",
-            thumbnailsToShow: checkpoint?.thumbnailsToShow,
+            )} ${Digit.DateUtils?.getDayfromTimeStamp(checkpoint.auditDetails.lastModifiedEpoch)}`;
+            captionDetails.mobileNumber = checkpoint?.assignes?.[0]?.mobileNumber;
+            captionDetails.wfComment = checkpoint?.comment ? [checkpoint?.comment] : [];
+            captionDetails.additionalComment = additionalComment && checkpoint?.performedAction === "APPROVE",
+            captionDetails.thumbnailsToShow = checkpoint?.thumbnailsToShow;
+        }
+
+        const caption = {
+            date: captionDetails?.date,
+            name: captionDetails?.name,
+            mobileNumber: captionDetails?.mobileNumber,
+            wfComment: captionDetails?.wfComment,
+            additionalComment: captionDetails?.additionalComment,
+            thumbnailsToShow: checkpoint?.thumbnailsToShow
         };
 
         return <TLCaption data={caption} OpenImage={OpenImage} />;
@@ -49,6 +74,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
         if (workflowDetails?.data?.applicationBusinessService === "muster-roll-approval" && workflowDetails?.data?.actionState?.applicationStatus === "APPROVED") {
             setAdditionalComment(true)
         }
+        console.log("workflow details", workflowDetails);
     }, [workflowDetails])
     
 
@@ -64,47 +90,40 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                             <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
                                 {t("WORKS_WORKFLOW_TIMELINE")}
                             </CardSectionHeader>
-                            {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
-                                  <ConnectingCheckPoints>
-                                  <React.Fragment>
-                                  <CheckPoint
-                                    keyValue={0}
-                                    isCompleted={true}
-                                    //info={checkpoint.comment}
-                                    label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.[statusAttribute]}`)}
-                                    customChild={null}
-                                    />
-                                  </React.Fragment>
-                                    <React.Fragment key={1}>
-                                        <CheckPoint
-                                            isCompleted={false}
-                                            label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.["status"]}`)}
-                                            customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
-                                        />
-                                    </React.Fragment>         
-                              </ConnectingCheckPoints> 
-                            ) : (
+                            {workflowDetails?.data?.timeline && 
                                 <ConnectingCheckPoints>
                                     {workflowDetails?.data?.timeline &&
                                         workflowDetails?.data?.timeline.map((checkpoint, index, arr) => {
                                             return (
                                                 <React.Fragment key={index}>
+                                                    {
+                                                        index === 0 && !checkpoint?.isTerminateState &&
+                                                            <React.Fragment>
+                                                                <CheckPoint
+                                                                    keyValue={index}
+                                                                    isCompleted={index === 0}
+                                                                    label={t(
+                                                                        `${timelineStatusPrefix}${checkpoint?.["state"]}`
+                                                                    )}
+                                                                    customChild={getTimelineCaptions(checkpoint, -1)}
+                                                                    customClassName="checkpoint-connect-wrap"
+                                                                />
+                                                            </React.Fragment>
+                                                    }   
                                                     <CheckPoint
                                                         keyValue={index}
-                                                        isCompleted={index === 0}
-                                                        //info={checkpoint.comment}
+                                                        isCompleted={checkpoint?.isTerminateState && index === 0}
                                                         label={t(
-                                                            `${timelineStatusPrefix}${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.[index!=0?"status":statusAttribute]
+                                                            `${timelineStatusPrefix}${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.["status"]
                                                             }`
                                                         )}
-                                                        customChild={getTimelineCaptions(checkpoint)}
+                                                        customChild={getTimelineCaptions(checkpoint, index)}
                                                     />
-                                                    
                                                 </React.Fragment>
-                                            );
+                                            );  
                                         })}
                                 </ConnectingCheckPoints>
-                            )}
+                            }
                         </Fragment>
                     )}
                 </React.Fragment>
