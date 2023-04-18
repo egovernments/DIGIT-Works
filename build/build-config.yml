@@ -200,8 +200,8 @@ config:
         image-name: works-shg-app
 
 # utilities
-  - name: "builds/digit-works/utilities/egov-pdf"
+  - name: "builds/digit-works/utilities/works-pdf"
     build:
-      - work-dir: "utilities/egov-pdf"
-        image-name: "egov-pdf"  
+      - work-dir: "utilities/works-pdf"
+        image-name: "works-pdf"  
         
