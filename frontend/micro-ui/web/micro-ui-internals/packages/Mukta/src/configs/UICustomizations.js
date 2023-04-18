@@ -423,7 +423,7 @@ export const UICustomizations = {
        { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column?.maxlength}ch` }}>         
+            <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>         
               {String(t(value))}
             </span>
             {/* check condtion - if length greater than 20 */}
@@ -586,6 +586,11 @@ export const UICustomizations = {
         },
       };
     },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    }
   },
   ContractsInboxConfig: {
     preProcess: (data) => {
@@ -736,9 +741,9 @@ export const UICustomizations = {
     },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    },
+    }
   },
   SearchWageSeekerConfig: {
     preProcess: (data) => {
@@ -829,7 +834,7 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    },
+    }
   },
   SearchOrganisationConfig: {
     preProcess: (data) => {  
@@ -913,8 +918,8 @@ export const UICustomizations = {
     },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true;
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    },
+    }
   },
 };

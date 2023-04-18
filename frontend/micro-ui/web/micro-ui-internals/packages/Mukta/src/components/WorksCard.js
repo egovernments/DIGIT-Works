@@ -96,49 +96,49 @@ const WorksCard = () => {
 
   let links = [
     {
-      label: t("ACTION_TEST_PROJECT"),
+      label: t("ACTION_TEST_1PROJECT"),
       link: `/${window?.contextPath}/employee/project/search-project`,
       roles: ROLES.PROJECT,
     },
     {
-      label: t("WORKS_ESTIMATES"),
+      label: t("ACTION_TEST_2ESTIMATE"),
       link: `/${window?.contextPath}/employee/estimate/inbox`,
       roles: ROLES.ESTIMATE,
       count: isLoadingEstimate ? "-" : dataEstimate?.totalCount,
     },
     {
-      label: t("WORKS_CONTRACTS"),
+      label: t("ACTION_TEST_3CONTRACTS"),
       link: `/${window?.contextPath}/employee/contracts/inbox`,
       roles: ROLES.CONTRACT,
       count: isLoadingContract ? "-" : dataContract?.totalCount,
     },
     {
-      label: t("WORKS_MUSTERROLLS"),
+      label: t("ACTION_TEST_4ATTENDENCEMGMT"),
       link: `/${window?.contextPath}/employee/attendencemgmt/inbox`,
       roles: ROLES.MUSTERROLLS,
       count: isLoading ? "-" : data?.totalCount,
     },
     {
-      label: t("WORKS_WAGESEEKERS"),
-      link: `/${window?.contextPath}/employee/masters/search-wageseeker`,
-      roles: ROLES.MASTERS,
-    },
-    {
-      label: t("WORKS_MASTERS"),
-      link: `/${window?.contextPath}/employee/masters/search-organization`,
-      roles: ROLES.MASTERS,
-    },
-    {
-      label: t("ACTION_TEST_BILLS"),
+      label: t("ACTION_TEST_5BILLS"),
       link: `/${window?.contextPath}/employee/expenditure/billinbox`,
       roles: ROLES.BILLS,
       count: isLoading ? "-" : data?.totalCount,
     },
     {
-      label: t("WORKS_DASHBOARD"),
+      label: t("ACTION_TEST_6DASHBOARD"),
       link: `/${window?.contextPath}/employee/dss/dashboard/works`,
       roles: ROLES.DSS,
     },
+    {
+      label: t("ACTION_TEST_7MASTERS"),
+      link: `/${window?.contextPath}/employee/masters/search-organization`,
+      roles: ROLES.MASTERS,
+    },
+    {
+      label: t("ACTION_TEST_8WAGESEEKER"),
+      link: `/${window?.contextPath}/employee/masters/search-wageseeker`,
+      roles: ROLES.MASTERS,
+    }
   ];
 
   links = links.filter((link) => (link?.roles && link?.roles?.length > 0 ? Digit.Utils.didEmployeeHasAtleastOneRole(link?.roles) : true));

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import searchOrganisationConfig from "../../../configs/searchOrganisationConfig";
@@ -12,7 +12,7 @@ const SearchOrganisation = () => {
   const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
   const [sessionFormData, clearSessionFormData] = orgSession;
 
-  // const configs = searchOrganisationConfig();
+  //const orgConfigs = searchOrganisationConfig();
   const configModuleName = Digit.Utils.getConfigModuleName()
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -24,7 +24,22 @@ const SearchOrganisation = () => {
     },
   ]);
 
-  const configs = data?.[configModuleName]?.SearchOrganisationConfig?.[0]
+  const orgConfigs = data?.[configModuleName]?.SearchOrganisationConfig?.[0]
+
+  let configs = useMemo(
+    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, orgConfigs, "sections.search.uiConfig.fields",{
+      updateDependent : [
+        {
+          key : "createdFrom",
+          value : [new Date().toISOString().split("T")[0]]
+        },
+        {
+          key : "createdTo",
+          value : [new Date().toISOString().split("T")[0]]
+        }
+      ]
+    }
+    ),[orgConfigs]);
 
   useEffect(()=>{
       if (!window.location.href.includes("create-organization") && sessionFormData && Object.keys(sessionFormData) != 0) {

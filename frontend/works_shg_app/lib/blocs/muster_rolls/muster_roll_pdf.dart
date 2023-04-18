@@ -26,11 +26,12 @@ class MusterRollPDFBloc extends Bloc<MusterRollPDFEvent, MusterRollPDFState> {
     Client client = Client();
     try {
       await CommonRepository(client.init()).downloadPDF(
-        url: Urls.commonServices.pdfDownload,
+        url: '${Urls.commonServices.pdfDownload}/musterRoll/muster-roll',
         queryParameters: {
           "musterRollNumber": event.musterRollNumber.toString(),
           "tenantId": event.tenantId.toString(),
         },
+        fileName: 'MusterRoll.pdf',
         options: Options(extra: {
           "userInfo": GlobalVariables.userRequestModel,
           "accessToken": GlobalVariables.authToken

@@ -48,15 +48,20 @@ export const createOrganizationConfigMUKTA = {
                         label: "MASTERS_REGISTERED_BY_DEPT",
                         isMandatory: true,
                         key: "basicDetails_regDept",
-                        type: "text",
+                        type: "dropdown",
                         disable: false,
-                        preProcess : {
-                            convertStringToRegEx : ["populators.validation.pattern"]
-                        },
                         populators: {
                             name: "basicDetails_regDept",
-                            error: "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
-                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 64}
+                            optionsKey: "name",
+                            error: "WORKS_REQUIRED_ERR",
+                            optionsCustomStyle: {
+                                top: "2.3rem",
+                            },
+                            mdmsConfig: {
+                                masterName: "Department",
+                                moduleName: "common-masters",
+                                localePrefix: "COMMON_MASTERS_DEPARTMENT",
+                            }
                         }
                     },
                     {
@@ -275,7 +280,8 @@ export const createOrganizationConfigMUKTA = {
                         },
                         populators: { 
                             name: "locDetails_streetName", 
-                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 128 }
+                            error: "WORKS_PATTERN_ERR",
+                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 128 }
                         }
                     },
                     {
@@ -289,7 +295,8 @@ export const createOrganizationConfigMUKTA = {
                         },
                         populators: { 
                             name: "locDetails_houseName", 
-                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 8 }
+                            error: "WORKS_PATTERN_ERR",
+                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 8 }
                         }
                     }
                 ]
@@ -318,7 +325,7 @@ export const createOrganizationConfigMUKTA = {
                         label: "CORE_COMMON_PROFILE_MOBILE_NUMBER",
                         isMandatory: true,
                         key: "contactDetails_mobile",
-                        type: "number",
+                        type: "mobileNumber",
                         disable: false,
                         populators: {
                             name: "contactDetails_mobile",
@@ -338,7 +345,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_email",
                             error: "EMAIL_VALIDATION",
-                            validation: {pattern: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,})+$", minlength : 2}                         
+                            validation: {pattern: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,})+$", minlength : 2, maxlength: 128}                         
                         }
                     }
                 ]
@@ -400,7 +407,10 @@ export const createOrganizationConfigMUKTA = {
                         type: "component",
                         component: "TransferCodeTable",
                         withoutLabel: true,
-                        key: "transferCodes"
+                        key: "transferCodes",
+                        customProps : {
+                            isMandatory: true
+                        }
                     }, 
                     {
                         label: "MASTERS_BANK_NAME",
@@ -422,7 +432,10 @@ export const createOrganizationConfigMUKTA = {
                         type: "component",
                         component: "TransferCodeTable",
                         withoutLabel: true,
-                        key: "taxIdentifier"
+                        key: "taxIdentifier",
+                        customProps : {
+                            isMandatory: true
+                        }
                     }
                 ]
             }

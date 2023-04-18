@@ -128,7 +128,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     AttendanceIndividualProjectSearchState>(
                   listener: (context, registerState) {
                     registerState.maybeWhen(
-                        loading: () => shg_loader.Loaders.circularLoader(context),
+                        loading: () =>
+                            shg_loader.Loaders.circularLoader(context),
                         initial: () {
                           existingAttendeeList.clear();
                         },
@@ -164,7 +165,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       builder: (context, registerState) {
                     return registerState.maybeWhen(
                         orElse: () => Container(),
-                        loading: () => shg_loader.Loaders.circularLoader(context),
+                        loading: () =>
+                            shg_loader.Loaders.circularLoader(context),
                         loaded: (AttendanceRegistersModel?
                                 individualAttendanceRegisterModel) =>
                             WorkDetailsCard(registerDetails));
@@ -204,7 +206,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                         AttendanceIndividualProjectSearchState>(
                       listener: (context, registerState) {
                         registerState.maybeWhen(
-                            loading: () => shg_loader.Loaders.circularLoader(context),
+                            loading: () =>
+                                shg_loader.Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
                             },
@@ -279,35 +282,35 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       child: BlocBuilder<IndividualSearchBloc,
                           IndividualSearchState>(builder: (context, userState) {
                         return userState.maybeWhen(
-                            loading: () => shg_loader.Loaders.circularLoader(context),
+                            loading: () =>
+                                shg_loader.Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
                               return const EmptyImage(align: Alignment.center);
                             },
                             loaded: (IndividualListModel? individualListModel) {
-                              userList =
-                                  individualListModel!.Individual!.isNotEmpty
-                                      ? individualListModel!.Individual!
-                                          .map((e) => {
-                                                "name": e.name?.givenName,
-                                                "aadhaar": e.identifiers?.first
-                                                        .identifierId ??
-                                                    e.individualId,
-                                                "individualCode":
-                                                    e.individualId,
-                                                "skill": AppLocalizations.of(
-                                                        context)
-                                                    .translate(
-                                                        '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
-                                                "individualId": e.id,
-                                                "uuid": e.id,
-                                                "individualGaurdianName":
-                                                    e.fatherName,
-                                                "mobileNumber": e.mobileNumber,
-                                                "tenantId": e.tenantId
-                                              })
-                                          .toList()
-                                      : [];
+                              userList = individualListModel!
+                                      .Individual!.isNotEmpty
+                                  ? individualListModel.Individual!
+                                      .map((e) => {
+                                            "name": e.name?.givenName,
+                                            "aadhaar": e.identifiers?.first
+                                                    .identifierId ??
+                                                e.individualId,
+                                            "individualCode": e.individualId,
+                                            "skill": AppLocalizations.of(
+                                                    context)
+                                                .translate(
+                                                    '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
+                                            "individualId": e.id,
+                                            "uuid": e.id,
+                                            "individualGaurdianName":
+                                                e.fatherName ?? e.husbandName,
+                                            "mobileNumber": e.mobileNumber,
+                                            "tenantId": e.tenantId
+                                          })
+                                      .toList()
+                                  : [];
                               if (userList.isNotEmpty) {
                                 for (var user in userList) {
                                   var userToAdd = {
@@ -556,8 +559,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   void onSuggestionSelected(user) {
     setState(() {
       searchController.text = '';
-      bool hasDuplicate =
-          addToTableList.where((e) => e["uuid"] == user["uuid"]).isNotEmpty;
+      bool hasDuplicate = addToTableList
+              .where((e) => e["uuid"] == user["uuid"])
+              .isNotEmpty ||
+          attendeeTableList.where((e) => e['uuid'] == user['uuid']).isNotEmpty;
       if (!hasDuplicate) {
         addToTableList.add({
           "name": user["name"],
@@ -601,6 +606,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
             : [];
         deleteAttendeePayLoadList
             .removeWhere((e) => e["individualId"] == user["uuid"]);
+      } else {
+        Notifiers.getToastMessage(
+            context, i18.common.individualAlreadyAdded, 'ERROR');
       }
       searchUser = true;
     });

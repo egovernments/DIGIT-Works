@@ -17,7 +17,7 @@ class CommonServices {
   String get fileFetch => 'filestore/v1/files/url';
   String get fetchCities => 'egov-location/location/v11/boundarys/_search';
   String get bankDetails => 'https://ifsc.razorpay.com';
-  String get pdfDownload => 'egov-pdf/download/musterRoll/muster-roll';
+  String get pdfDownload => 'egov-pdf/download';
 }
 
 class ORGServices {
