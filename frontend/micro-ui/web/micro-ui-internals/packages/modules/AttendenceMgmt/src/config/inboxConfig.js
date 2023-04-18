@@ -204,12 +204,6 @@ const inboxConfig = () => {
               key: "state",
             },
             {
-              label: "ATM_AMOUNT_IN_RS",
-              jsonPath: "businessObject.additionalDetails.amount",
-              additionalCustomization: true,
-              key: "estimatedAmount",
-            },
-            {
               label: "COMMON_SLA_DAYS",
               jsonPath: "businessObject.serviceSla",
               additionalCustomization: true,
