@@ -70,6 +70,13 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
+	// Bill
+	@Value("${egov.bill.host}")
+	private String billHost;
+
+	@Value("${egov.bill.create.endpoint}")
+	private String billCreateEndPoint;
+
 	// HRMS
 	@Value("${egov.hrms.host}")
 	private String hrmsHost;
@@ -84,6 +91,13 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.url.shortner.endpoint}")
 	private String urlShortnerEndpoint;
 
+	//kafka
+	@Value("${expense.calculator.error.topic}")
+	private String calculatorErrorTopic;
+
+	@Value("${expense.calculator.create.bill.topic}")
+	private String calculatorCreateBillTopic;
+
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
@@ -91,6 +105,9 @@ public class ExpenseCalculatorConfiguration {
 	//Expense calculator Service specific
 	@Value("${egov.works.expense.wage.head.code}")
 	private String wageHeadCode;
+
+	@Value("${egov.works.expense.wage.bill.type}")
+	private String wageBillType;
 
 	@Value("${egov.works.expense.wage.payee.type}")
 	private String wagePayeeType;

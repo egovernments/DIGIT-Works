@@ -97,6 +97,7 @@ public class AttendanceUtils {
         registerAdditionalDetails.put(PROJECT_TYPE_CONSTANT,findValue(additionalDetails,PROJECT_TYPE_CONSTANT));
         registerAdditionalDetails.put(MDMS_WORKS_LOCALITY,findValue(additionalDetails,MDMS_WORKS_LOCALITY));
         registerAdditionalDetails.put(MDMS_WORKS_PROJECT_DESC,findValue(additionalDetails,MDMS_WORKS_PROJECT_DESC));
+        registerAdditionalDetails.put(EXECUTING_AUTHORITY_CONSTANT,contract.getExecutingAuthority());
 
         return registerAdditionalDetails;
     }
