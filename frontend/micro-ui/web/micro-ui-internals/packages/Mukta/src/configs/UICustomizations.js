@@ -783,7 +783,7 @@ export const UICustomizations = {
         wardCode: "wardCode[0].code",
         socialCategory: "socialCategory.code",
       };
-      const textConfig = ["givenName", "individualId"]
+      const textConfig = ["name", "individualId"]
       let Individual = Object.keys(requestBody)
         .map((key) => {
           if (selectConfig[key]) {
