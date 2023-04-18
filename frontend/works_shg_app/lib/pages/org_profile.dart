@@ -9,6 +9,7 @@ import '../blocs/organisation/org_financial_bloc.dart';
 import '../blocs/organisation/org_search_bloc.dart';
 import '../models/organisation/organisation_model.dart';
 import '../models/wage_seeker/banking_details_model.dart';
+import '../utils/common_methods.dart';
 import '../utils/global_variables.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
@@ -58,9 +59,9 @@ class _ORGProfilePage extends State<ORGProfilePage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child:
-                SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
+                SideBar(module: CommonMethods.getLocaleModules()))),
         body: SingleChildScrollView(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

@@ -15,7 +15,8 @@ import '../models/organisation/organisation_model.dart';
 
 class SideBar extends StatefulWidget {
   final String module;
-  const SideBar({super.key, this.module = 'rainmaker-common'});
+  const SideBar(
+      {super.key, this.module = 'rainmaker-common,rainmaker-attendencemgmt'});
   @override
   State<StatefulWidget> createState() {
     return _SideBar();

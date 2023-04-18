@@ -56,6 +56,7 @@ class AttendeesTrackList with _$AttendeesTrackList {
     @Default(-1) double? thursIndex,
     String? friEntryId,
     String? friExitId,
+    List<String>? skillCodeList,
     @Default(-1) double? friIndex,
     String? satEntryId,
     String? satExitId,

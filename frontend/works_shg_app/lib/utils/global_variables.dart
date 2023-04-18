@@ -102,4 +102,5 @@ class GlobalVariables {
   static OrganisationListModel? organisationListModel;
   static String? authToken;
   static Map<String, dynamic>? userRequestModel;
+  static Map<String, String> downloadUrl = {};
 }

@@ -152,7 +152,9 @@ class _LoginPage extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+        ),
         body: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 720) {
             return MobileView(
