@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-pdf service in your local system, clone the [works repository](https://github.com/egovernments/DIGIT-Works).
+To setup the works-pdf service in your local system, clone the [works repository](https://github.com/egovernments/DIGIT-Works).
 
 ## Dependencies
 
@@ -38,6 +38,6 @@ contract: process.env.EGOV_CONTRACT_HOST || HOST || 'http://localhost:8086',
 organisation: process.env.EGOV_ORGANISATION_HOST || 'http://localhost:8087'
 ```
 - Open the terminal and run the following command
-    - `cd [filepath to egov-pdf service]`
+    - `cd [filepath to works-pdf service]`
     - `npm install`
     - `npm start`
