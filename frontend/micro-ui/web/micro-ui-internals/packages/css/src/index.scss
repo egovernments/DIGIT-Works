@@ -957,17 +957,19 @@ input[type="number"] {
   width: max-content; 
   max-width: 64ch;
 }
-
-.dss-table-wrapper {
- table tr:first-child td span{
-          .tooltip {
-              .tooltiptext {
-                  top: 100% !important;
-                  bottom: 0% !important;
-                  background-color: rgb(219, 31, 31) !important;
-              }
+.table{
+  tr:nth-child(1) {
+    td:nth-child(2){
+      .tooltip {
+          .tooltiptext {
+              top: 100% !important;
+              bottom: 0% !important;
+              height: max-content;
           }
-}
+      }
+    }
+  }
+    
 }
 
 .employee-data-table  {
