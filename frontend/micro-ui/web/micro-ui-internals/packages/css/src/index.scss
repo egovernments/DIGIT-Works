@@ -942,10 +942,6 @@ input[type="number"] {
   padding: 0;
 }
 
-.label-field-pair {
-  align-items: flex-start !important;
-}
-
 .icon-wrapper {
   display: flex;
   justify-content: center;
@@ -953,10 +949,27 @@ input[type="number"] {
 
 .tooltiptext {
   white-space: break-spaces !important;
-  width: 20rem;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  max-height: 7.2em;
+  line-height: 1.8em;
+  width: max-content; 
+  max-width: 64ch;
 }
+
+.dss-table-wrapper {
+ table tr:first-child td span{
+          .tooltip {
+              .tooltiptext {
+                  top: 100% !important;
+                  bottom: 0% !important;
+                  background-color: rgb(219, 31, 31) !important;
+              }
+          }
+}
+}
+
 .employee-data-table  {
 .row {
   .value {
