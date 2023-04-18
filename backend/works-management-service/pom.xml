@@ -8,10 +8,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.egov</groupId>
-	<artifactId>wmsSearch</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
-	<name>wmsSearch-services</name>
-	<description>wmsSearch services</description>
+	<artifactId>wms</artifactId>
+	<version>0.1.0</version>
+	<name>Works Management Services</name>
+	<description>Works Management Services</description>
 
 	<properties>
 		<log4j2.version>2.17.1</log4j2.version>
