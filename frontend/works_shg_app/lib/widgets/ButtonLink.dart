@@ -14,8 +14,7 @@ class ButtonLink extends StatelessWidget {
     return GestureDetector(
       onTap: widgetFunction,
       child: Padding(
-          padding:
-              const EdgeInsets.only(left: 8, top: 10, bottom: 10, right: 25),
+          padding: const EdgeInsets.only(top: 10, bottom: 10, right: 25),
           child: Align(
               alignment: align,
               child: Text(
@@ -23,6 +22,7 @@ class ButtonLink extends StatelessWidget {
                 style: style ??
                     TextStyle(
                         fontSize: 16,
+                        fontWeight: FontWeight.w400,
                         color: DigitTheme
                             .instance.mobileTheme.colorScheme.secondary),
               ))),
