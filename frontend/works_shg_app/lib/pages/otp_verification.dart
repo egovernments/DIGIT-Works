@@ -54,7 +54,7 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
           Back(
             backLabel: AppLocalizations.of(context).translate(i18.common.back),
           ),
-          Card(
+          DigitCard(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

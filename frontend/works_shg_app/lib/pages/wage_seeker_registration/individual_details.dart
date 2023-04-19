@@ -148,7 +148,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                             ),
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.relationship),
                       menuItems: relationship.map((e) => e.toString()).toList(),
                       isRequired: true,
@@ -190,7 +190,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         },
                       );
                     }),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.socialCategory),
                       menuItems:
                           socialCategory.map((e) => e.toString()).toList(),
