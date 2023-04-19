@@ -8,6 +8,7 @@ import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
+import '../utils/common_methods.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
@@ -29,6 +30,18 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
   List<MusterRoll> musters = [];
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
+    super.initState();
+  }
+
+  afterViewBuild() {
+    context.read<MusterRollSearchBloc>().add(
+          const SearchMusterRollEvent(),
+        );
+  }
+
+  @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
     return Scaffold(
@@ -36,9 +49,9 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer:  DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: SingleChildScrollView(
             child: BlocListener<MusterRollSearchBloc, MusterRollSearchState>(

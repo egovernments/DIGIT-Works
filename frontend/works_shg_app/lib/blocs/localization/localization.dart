@@ -30,7 +30,6 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
     LocalizationEmitter emit,
   ) async {
     if (await GlobalVariables.isLocaleSelect(event.locale, event.module)) {
-      emit(state.copyWith(isLocalizationLoadCompleted: false));
       dynamic localLabelResponse;
       if (kIsWeb) {
         localLabelResponse = html.window.localStorage[event.locale ?? ''];
@@ -44,17 +43,15 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
                 (e) => LocalizationMessageModel.fromJson(e))
             .toList();
       }
-
-      emit(state.copyWith(localization: localizationMessages));
       await AppLocalizations(
         Locale(event.locale.split('_').first, event.locale.split('_').last),
       ).load();
-      emit(state.copyWith(isLocalizationLoadCompleted: true));
+      emit(LocalizationState.loaded(localizationMessages));
       await AppLocalizations(
         Locale(event.locale.split('_').first, event.locale.split('_').last),
       ).load();
     } else {
-      emit(state.copyWith(isLocalizationLoadCompleted: false));
+      emit(const LocalizationState.loading());
       LocalizationModel result = await localizationRepository.search(
         url: Urls.initServices.localizationSearch,
         queryParameters: {
@@ -105,13 +102,10 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
                 (e) => LocalizationMessageModel.fromJson(e))
             .toList();
       }
-
-      emit(state.copyWith(localization: localizationMessages));
-
       await AppLocalizations(Locale(
               event.locale.split('_').first, event.locale.split('_').last))
           .load();
-      emit(state.copyWith(isLocalizationLoadCompleted: true));
+      emit(LocalizationState.loaded(localizationMessages));
       await AppLocalizations(
         Locale(event.locale.split('_').first, event.locale.split('_').last),
       ).load();
@@ -130,8 +124,10 @@ class LocalizationEvent with _$LocalizationEvent {
 
 @freezed
 class LocalizationState with _$LocalizationState {
-  const factory LocalizationState({
-    List<LocalizationMessageModel>? localization,
-    @Default(false) bool isLocalizationLoadCompleted,
-  }) = _LocalizationState;
+  const LocalizationState._();
+  const factory LocalizationState.initial() = _Initial;
+  const factory LocalizationState.loading() = _Loading;
+  const factory LocalizationState.loaded(
+      List<LocalizationMessageModel>? localization) = _Loaded;
+  const factory LocalizationState.error(String? error) = _Error;
 }

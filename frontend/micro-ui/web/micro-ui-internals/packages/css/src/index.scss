@@ -952,8 +952,8 @@ input[type="number"] {
 }
 
 .tooltiptext {
-  white-space: nowrap;
-  width: 30rem;
+  white-space: break-spaces !important;
+  width: 20rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -964,4 +964,9 @@ input[type="number"] {
     word-break: break-all;
   }
 }
+}
+
+.text-wrap-overflow {
+  word-wrap: break-word;
+  word-break: break-all;
 }

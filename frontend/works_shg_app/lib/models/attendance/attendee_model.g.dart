@@ -49,6 +49,9 @@ _$_AttendeesTrackList _$$_AttendeesTrackListFromJson(
       thursIndex: (json['thursIndex'] as num?)?.toDouble() ?? -1,
       friEntryId: json['friEntryId'] as String?,
       friExitId: json['friExitId'] as String?,
+      skillCodeList: (json['skillCodeList'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       friIndex: (json['friIndex'] as num?)?.toDouble() ?? -1,
       satEntryId: json['satEntryId'] as String?,
       satExitId: json['satExitId'] as String?,
@@ -84,6 +87,7 @@ Map<String, dynamic> _$$_AttendeesTrackListToJson(
       'thursIndex': instance.thursIndex,
       'friEntryId': instance.friEntryId,
       'friExitId': instance.friExitId,
+      'skillCodeList': instance.skillCodeList,
       'friIndex': instance.friIndex,
       'satEntryId': instance.satEntryId,
       'satExitId': instance.satExitId,

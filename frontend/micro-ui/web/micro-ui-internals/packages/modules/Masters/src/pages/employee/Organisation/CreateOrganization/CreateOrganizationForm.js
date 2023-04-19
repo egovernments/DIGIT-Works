@@ -151,6 +151,14 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         }),
         [orgData, filteredOrgSubTypes, filteredOrgFunCategories, wardsAndLocalities, filteredLocalities, ULBOptions]);
 
+    useEffect(() => {
+        if(showDuplicateUserError) {
+            setTimeout(()=>{
+                setShowDuplicateUserError(false);
+            },3000);
+        }
+    },[showDuplicateUserError]);
+
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
@@ -162,16 +170,26 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             }
             if(formData.funDetails_orgType) {
                 setSelectedOrg(formData?.funDetails_orgType?.code)
+                if(formData?.funDetails_orgType?.code === "CBO") {
+                    setValue("funDetails_category", { code: 'NA' , name: `COMMON_MASTERS_FUNCATEGORY_NA`})
+                }
             }
             if (difference?.funDetails_orgType) {
                 setValue("funDetails_orgSubType", '');
-                setValue("funDetails_category", '');
+                if(formData?.funDetails_orgType?.code === "CBO") {
+                    setValue("funDetails_category", { code: 'NA' , name: `COMMON_MASTERS_FUNCATEGORY_NA`})
+                } else {
+                    setValue("funDetails_category", '');   
+                }             
             }
             if(formData?.transferCodesData?.[0]?.name?.code == 'IFSC' && formData?.transferCodesData?.[0]?.value ) {
                 if(formData?.transferCodesData?.[0]?.value.length > 10) {
                     setTimeout(() => {
                         fetchIFSCDetails(formData?.transferCodesData?.[0]?.value, 'financeDetails_branchName', 'financeDetails_bankName', setValue, setError, clearErrors);
                     }, 500);
+                } else {
+                    setValue("financeDetails_branchName", "")
+                    setValue("financeDetails_bankName", "")
                 }
             }
             setSessionFormData({ ...sessionFormData, ...formData });

@@ -94,8 +94,7 @@ class SkillDetailsState extends State<SkillDetailsPage> {
                   })
                 ]),
                 const SizedBox(height: 16),
-                DigitCard(
-                    child: Center(
+                Center(
                   child: DigitElevatedButton(
                       onPressed: selectedOptions != null &&
                               selectedOptions.isNotEmpty
@@ -129,7 +128,7 @@ class SkillDetailsState extends State<SkillDetailsPage> {
                       child: Center(
                         child: Text(t.translate(i18.common.next)),
                       )),
-                ))
+                )
               ],
             ),
           ),

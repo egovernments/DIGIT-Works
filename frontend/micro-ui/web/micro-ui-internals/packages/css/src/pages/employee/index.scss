@@ -349,12 +349,9 @@
 }
 
 .textoverflow{
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  overflow: hidden;
-  display: inline-block;
-  max-width: var(--max-width);
+    overflow: hidden;
+    display: block;
+    max-width: var(--max-width);
 }
 
 .RightMostTopBarOptions {

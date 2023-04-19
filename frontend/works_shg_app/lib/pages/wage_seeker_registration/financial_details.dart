@@ -189,8 +189,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         hintText: hintText),
                   ]),
                   const SizedBox(height: 16),
-                  DigitCard(
-                      child: Center(
+                  Center(
                     child: DigitElevatedButton(
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
@@ -223,7 +222,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         child: Center(
                           child: Text(t.translate(i18.common.next)),
                         )),
-                  ))
+                  )
                 ],
               ),
             ),

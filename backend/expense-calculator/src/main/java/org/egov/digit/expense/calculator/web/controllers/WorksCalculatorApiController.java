@@ -1,6 +1,7 @@
 package org.egov.digit.expense.calculator.web.controllers;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -8,10 +9,7 @@ import javax.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
-import org.egov.digit.expense.calculator.web.models.BillResponse;
-import org.egov.digit.expense.calculator.web.models.Calculation;
-import org.egov.digit.expense.calculator.web.models.CalculationRequest;
-import org.egov.digit.expense.calculator.web.models.CalculationResponse;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,14 +44,20 @@ public class WorksCalculatorApiController {
 		this.request = request;
 	}
 
-	@RequestMapping(value = "/works-calculator/v1/_calculate", method = RequestMethod.POST)
+	@RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
 	public ResponseEntity<BillResponse> worksCalculatorV1CalculatePost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest body) {
+			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
+		List<Bill> bills = expenseCalculatorService.createBills(calculationRequest);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
+		BillResponse billResponse = BillResponse.builder()
+				.responseInfo(responseInfo)
+				.bill(bills)
+				.build();
 
-		return null;
+		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/works-calculator/v1/_estimate", method = RequestMethod.POST)
+	@RequestMapping(value = "/v1/_estimate", method = RequestMethod.POST)
 	public ResponseEntity<CalculationResponse> worksCalculatorV1EstimatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
 

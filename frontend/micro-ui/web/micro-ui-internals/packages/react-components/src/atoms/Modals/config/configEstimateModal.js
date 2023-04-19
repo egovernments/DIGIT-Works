@@ -280,7 +280,13 @@ const configEstimateModal = (
                         isMandatory: fetchIsMandatory("comments"),
                         populators: {
                             name: "comments",
-                            hideInForm:!fetchIsShow("comments")
+                            hideInForm:!fetchIsShow("comments"),
+                            validation:{
+                                maxLength:{
+                                    value:1024,
+                                    message:t("WORKS_COMMENT_LENGTH_EXCEEDED_1024")
+                                }
+                            }
                         },
                     },
                     {

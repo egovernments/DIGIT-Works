@@ -294,7 +294,7 @@ packages:
     description:
       path: "packages/digit_components"
       ref: main-parallel
-      resolved-ref: "72c9ba92226eca40b54f2fb8524ec6bac100eb63"
+      resolved-ref: a8e120346299bf27a3f9b59ab90b0d75bc5a57b8
       url: "https://github.com/egovernments/health-campaign-field-worker-app"
     source: git
     version: "0.0.1"

@@ -186,4 +186,15 @@ export const WorksService = {
             params: {  },
         })
     },
+    fetchEstimateExpenseCalculator: (details) => {
+        return Request({
+            url: Urls.calculator.expenseBill,
+            useCache: false,
+            data: details,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: {  },
+        })
+    },
 }

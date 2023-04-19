@@ -23,7 +23,6 @@ const searchOrganisationConfig = () => {
       search: {
         uiConfig: {
           headerStyle: null,
-          formClassName: "custom-both-clear-search",
           primaryLabel: "ES_COMMON_SEARCH",
           secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
           minReqFields: 1,
@@ -92,39 +91,17 @@ const searchOrganisationConfig = () => {
               },
             },
             {
-              label: "CORE_COMMON_STATUS",
-              type: "dropdown",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "applicationStatus",
-                optionsKey: "name",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
-                options: [
-                  {
-                    code: "ACTIVE",
-                    name: "MASTERS_ORG_STATUS_ACTIVE",
-                  },
-                  {
-                    code: "DEBARRED",
-                    name: "MASTERS_ORG_STATUS_DEBARRED",
-                  },
-                  {
-                    code: "INACTIVE",
-                    name: "MASTERS_ORG_STATUS_INACTIVE",
-                  },
-                ],
-              },
-            },
-            {
               label: "CREATED_FROM_DATE",
               type: "date",
               isMandatory: false,
               disable: false,
+              key : "createdFrom",
+              preProcess : {
+                updateDependent : ["populators.max"]
+              },
               populators: {
                 name: "createdFrom",
+                max : "currentDate"
               },
             },
             {
@@ -132,9 +109,14 @@ const searchOrganisationConfig = () => {
               type: "date",
               isMandatory: false,
               disable: false,
+              key : "createdTo",
+              preProcess : {
+                updateDependent : ["populators.max"]
+              },
               populators: {
                 name: "createdTo",
                 error: "DATE_VALIDATION_MSG",
+                max : "currentDate"
               },
               additionalValidation: {
                 type: "date",
