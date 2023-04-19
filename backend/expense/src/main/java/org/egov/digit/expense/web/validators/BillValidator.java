@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.util.MdmsUtil;
@@ -26,6 +27,7 @@ import digit.models.coremodels.ProcessInstance;
 import net.minidev.json.JSONArray;
 
 @Service
+@Slf4j
 public class BillValidator {
 	
 	@Autowired
@@ -74,10 +76,6 @@ public class BillValidator {
 	}
 	
 	public void validateSearchRequest(BillCriteria billCriteria) {
-
-		System.out.println("BillCriteria Object : "+billCriteria.toString());
-		System.out.println("BusinessService : "+billCriteria.getBusinessService());
-		
 		if (StringUtils.isEmpty(billCriteria.getBusinessService())
 				&& CollectionUtils.isEmpty(billCriteria.getReferenceIds())
 				&& CollectionUtils.isEmpty(billCriteria.getIds()))

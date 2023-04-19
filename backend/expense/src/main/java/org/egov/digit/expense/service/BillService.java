@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.config.Configuration;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import digit.models.coremodels.State;
 
 @Service
+@Slf4j
 public class BillService {
 	
 	@Autowired
@@ -117,8 +119,14 @@ public class BillService {
 	public BillResponse search(BillSearchRequest billSearchRequest) {
 		BillCriteria billCriteria=billSearchRequest.getBillcriteria();
 
+		log.info("BillSearchRequest : "+billSearchRequest);
+		log.info("Validate billCriteria Parameters BillCriteria : "+billCriteria);
 		validator.validateSearchRequest(billCriteria);
+
+		log.info("Enrich billCriteria");
 		enrichmentUtil.enrichSearchBillRequest(billCriteria);
+
+		log.info("Search repository using billCriteria");
 		List<Bill> bills = billRepository.search(billSearchRequest);
 
 		//set pay lineitems and lineItems
@@ -128,12 +136,17 @@ public class BillService {
 			for(BillDetail billDetail:bill.getBillDetails()){
 				lineItems=billDetail.getLineItems().stream().filter(lineItem -> lineItem.getIsLineItemPayable().equals(false)).collect(Collectors.toList());
 				payableLineItems=billDetail.getLineItems().stream().filter(lineItem -> lineItem.getIsLineItemPayable().equals(true)).collect(Collectors.toList());
+
+				log.info("Set payableLineItems in the bill");
 				billDetail.setPayableLineItems(payableLineItems);
+
+				log.info("Set lineItems in the bill");
 				billDetail.setLineItems(lineItems);
 			}
 		}
 
 		//update pagination object
+		log.info("update pagination object for total count : "+bills.size());
 		billCriteria.getPagination().setTotalCount(bills.size());
 
 		ResponseInfo responseInfo = responseInfoFactory.
