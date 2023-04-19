@@ -927,7 +927,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           hide: false,
           widget: DropDownDialog(
             isDisabled: inWorkFlow,
-            options: skillDropDown,
+            options: tableDataModel.skillCodeList ?? [],
             label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {
