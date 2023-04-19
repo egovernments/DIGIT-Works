@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.egov.works.util.ContractServiceConstants.*;
 
@@ -58,7 +59,7 @@ public class AttendanceUtils {
         BigDecimal startDate = contract.getStartDate();
         BigDecimal endDate = contract.getEndDate();
         Object additionalDetails = contract.getAdditionalDetails();
-        String projectName = commonUtil.findValue(additionalDetails, PROJECT_NAME_CONSTANT).get();
+        String projectName = findValue(additionalDetails,PROJECT_NAME_CONSTANT);
         JSONObject registerAdditionalDetails = getRegisterAdditionalDetails(contractRequest);
 
         AttendanceRegister registerToCreate = null;
@@ -86,27 +87,27 @@ public class AttendanceUtils {
     private JSONObject getRegisterAdditionalDetails(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
         Object additionalDetails = contract.getAdditionalDetails();
-        String ward = commonUtil.findValue(additionalDetails, WARD_CONSTANT).get();
-        String orgName = commonUtil.findValue(additionalDetails, ORG_NAME_CONSTANT).get();
-        String projectId = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT).get();
-        String projectName = commonUtil.findValue(additionalDetails, PROJECT_NAME_CONSTANT).get();
-        String projectType = commonUtil.findValue(additionalDetails, PROJECT_TYPE_CONSTANT).get();
-        String officerInCharge = commonUtil.findValue(additionalDetails, OFFICER_IN_CHARGE_ID_CONSTANT).get();
-        String locality = commonUtil.findValue(additionalDetails, MDMS_WORKS_LOCALITY).get();
-        String projectDesc = commonUtil.findValue(additionalDetails, MDMS_WORKS_PROJECT_DESC).get();
-
         JSONObject registerAdditionalDetails = new JSONObject();
-        registerAdditionalDetails.put("contractId",contract.getContractNumber());
-        registerAdditionalDetails.put("orgName",orgName);
-        registerAdditionalDetails.put("officerInCharge",officerInCharge);
-        registerAdditionalDetails.put("ward",ward);
-        registerAdditionalDetails.put("projectId",projectId);
-        registerAdditionalDetails.put("projectName",projectName);
-        registerAdditionalDetails.put("projectType",projectType);
-        registerAdditionalDetails.put("locality",locality);
-        registerAdditionalDetails.put("projectDesc",projectDesc);
+        registerAdditionalDetails.put(CONTRACT_ID_CONSTANT,contract.getContractNumber());
+        registerAdditionalDetails.put(ORG_NAME_CONSTANT,findValue(additionalDetails,ORG_NAME_CONSTANT));
+        registerAdditionalDetails.put(OFFICER_IN_CHARGE_CONSTANT,findValue(additionalDetails,OFFICER_IN_CHARGE_ID_CONSTANT));
+        registerAdditionalDetails.put(WARD_CONSTANT,findValue(additionalDetails,WARD_CONSTANT));
+        registerAdditionalDetails.put(PROJECT_ID_CONSTANT,findValue(additionalDetails,PROJECT_ID_CONSTANT));
+        registerAdditionalDetails.put(PROJECT_NAME_CONSTANT,findValue(additionalDetails,PROJECT_NAME_CONSTANT));
+        registerAdditionalDetails.put(PROJECT_TYPE_CONSTANT,findValue(additionalDetails,PROJECT_TYPE_CONSTANT));
+        registerAdditionalDetails.put(MDMS_WORKS_LOCALITY,findValue(additionalDetails,MDMS_WORKS_LOCALITY));
+        registerAdditionalDetails.put(MDMS_WORKS_PROJECT_DESC,findValue(additionalDetails,MDMS_WORKS_PROJECT_DESC));
+        registerAdditionalDetails.put(EXECUTING_AUTHORITY_CONSTANT,contract.getExecutingAuthority());
 
         return registerAdditionalDetails;
     }
 
+    private String findValue( Object additionalDetails,String findValueOf){
+        Optional<String> valueOptional = commonUtil.findValue(additionalDetails, findValueOf);
+        if (valueOptional.isPresent()) {
+            return valueOptional.get();
+        } else {
+            return null;
+        }
+    }
 }

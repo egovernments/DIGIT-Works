@@ -16,6 +16,7 @@ import '../../models/wage_seeker/financial_details_model.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
 import '../../models/wage_seeker/skill_details_model.dart';
+import '../../utils/notifiers.dart';
 import '../../widgets/atoms/radio_button_list.dart';
 
 class FinancialDetailsPage extends StatefulWidget {
@@ -102,6 +103,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                       label: t.translate(i18.common.accountHolderName),
                       isRequired: true,
                       keyboardType: TextInputType.name,
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
+                      ],
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.accountHolderNameRequired,
@@ -144,11 +148,10 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         context,
                         labelText: t.translate(i18.common.accountType),
                         formControlName: accountTypeKey,
-                        options: accountTypeList
-                            .map((e) => t.translate(e).toString())
-                            .toList(),
+                        options:
+                            accountTypeList.map((e) => e.toString()).toList(),
                         isRequired: true,
-                        valueMapper: (value) => value,
+                        valueMapper: (value) => t.translate(value),
                         onValueChange: (value) {
                           setState(() {
                             accountType = value;
@@ -186,36 +189,40 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         hintText: hintText),
                   ]),
                   const SizedBox(height: 16),
-                  DigitCard(
-                      child: Center(
+                  Center(
                     child: DigitElevatedButton(
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
-                          final financeDetails = FinancialDetails(
-                              accountHolderName:
-                                  form.value[accountHolderKey].toString(),
-                              accountNumber:
-                                  form.value[accountNoKey].toString(),
-                              reAccountNumber:
-                                  form.value[reAccountNoKey].toString(),
-                              ifscCode: form.value[ifscCodeKey].toString(),
-                              accountType:
-                                  form.value[accountTypeKey].toString(),
-                              bankName: hintText);
-                          BlocProvider.of<WageSeekerBloc>(context).add(
-                            WageSeekerCreateEvent(
-                                individualDetails: individualDetails,
-                                skillDetails: skillDetails,
-                                locationDetails: locationDetails,
-                                financialDetails: financeDetails),
-                          );
-                          widget.onPressed();
+                          if (hintText.isEmpty) {
+                            Notifiers.getToastMessage(context,
+                                i18.wageSeeker.enterValidIFSC, 'ERROR');
+                          } else {
+                            final financeDetails = FinancialDetails(
+                                accountHolderName:
+                                    form.value[accountHolderKey].toString(),
+                                accountNumber:
+                                    form.value[accountNoKey].toString(),
+                                reAccountNumber:
+                                    form.value[reAccountNoKey].toString(),
+                                ifscCode: form.value[ifscCodeKey].toString(),
+                                accountType:
+                                    form.value[accountTypeKey].toString(),
+                                bankName: hintText);
+                            BlocProvider.of<WageSeekerBloc>(context).add(
+                              WageSeekerCreateEvent(
+                                  individualDetails: individualDetails,
+                                  skillDetails: skillDetails,
+                                  locationDetails: locationDetails,
+                                  financialDetails: financeDetails),
+                            );
+                            widget.onPressed();
+                          }
                         },
                         child: Center(
                           child: Text(t.translate(i18.common.next)),
                         )),
-                  ))
+                  )
                 ],
               ),
             ),

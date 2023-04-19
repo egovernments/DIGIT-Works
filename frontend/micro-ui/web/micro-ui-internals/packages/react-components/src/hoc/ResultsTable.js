@@ -174,6 +174,8 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                         style: {
                             padding: "20px 18px",
                             fontSize: "16px",
+                            wordBreak : "break-all",
+                            whiteSpace: "break-spaces",
                         },
                     };
                 }}

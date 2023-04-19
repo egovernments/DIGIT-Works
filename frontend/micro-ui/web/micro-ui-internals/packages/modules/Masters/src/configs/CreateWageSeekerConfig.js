@@ -139,7 +139,7 @@ export const CreateWageSeekerConfig = {
               label: "CORE_COMMON_MOBILE_NUMBER",
               isMandatory: true,
               key: "basicDetails_mobileNumber",
-              type: "number",
+              type: "mobileNumber",
               disable: false,
               populators: { 
                 name: "basicDetails_mobileNumber", 
@@ -281,7 +281,7 @@ export const CreateWageSeekerConfig = {
               populators: { 
                 name: "locDetails_streetName", 
                 error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 128 }
+                validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 128 }
               }
             },
             {
@@ -296,7 +296,7 @@ export const CreateWageSeekerConfig = {
               populators: { 
                 name: "locDetails_houseName", 
                 error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 8 }
+                validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 8 }
               }
             }
           ]
@@ -365,7 +365,7 @@ export const CreateWageSeekerConfig = {
               },
               populators: { 
                 name: "financeDetails_ifsc", 
-                error: "WORKS_REQUIRED_ERR", 
+                error: "ES_COMMON_IFSC_CODE_ERROR", 
                 validation: { pattern: "^[A-Z]{4}0[A-Z0-9]{6}$" }
               }
             },

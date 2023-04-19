@@ -44,7 +44,9 @@ class WageSeekerCreateBloc
               "address": [
                 {
                   "tenantId": event.locationDetails?.city,
-                  "pincode": event.locationDetails?.pinCode,
+                  "pincode": event.locationDetails?.pinCode != ''
+                      ? event.locationDetails?.pinCode
+                      : null,
                   "city": event.locationDetails?.city,
                   "street": event.locationDetails?.streetName != null &&
                           event.locationDetails?.streetName != ""

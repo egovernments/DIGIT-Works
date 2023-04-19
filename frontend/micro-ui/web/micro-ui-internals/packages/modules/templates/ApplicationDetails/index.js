@@ -24,6 +24,7 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
+  const [attendanceError, setAttendanceError] = useState({})
   
 
   const {
@@ -62,12 +63,11 @@ const ApplicationDetails = (props) => {
   
   useEffect(() => {
     if (showToast) {
-      workflowDetails.revalidate();
+      workflowDetails?.revalidate();
     }
   }, [showToast]);
 
   function onActionSelect(action) {
-    
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -176,7 +176,11 @@ const ApplicationDetails = (props) => {
   }
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-    
+    if(data?.musterRoll && Object.values(attendanceError)?.filter(item => item === true)?.length > 0) {
+      setShowToast({ key: "error", error: { message: t("ES_COMMON_DAYS_LESS_THAN_SEVEN_ERROR") } })
+      setTimeout(closeToast, 3000);
+      return
+    }
     const performedAction = data?.workflow?.action
     setIsEnableLoader(true);
     if (mutate) {
@@ -325,6 +329,7 @@ const ApplicationDetails = (props) => {
             tenantId={props.tenantId}
             businessService={businessService}
             customClass={customClass}
+            setAttendanceError={setAttendanceError}
           />
           {showModal ? (
             <ActionModal

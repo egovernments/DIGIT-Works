@@ -115,7 +115,10 @@ class _BankingDetailsModelCopyWithImpl<$R, $Out extends BankingDetailsModel>
 class BankAccountsMapper extends MapperBase<BankAccounts> {
   static MapperContainer container = MapperContainer(
     mappers: {BankAccountsMapper()},
-  )..linkAll({BankAccountDetailsMapper.container});
+  )..linkAll({
+      BankAccountDetailsMapper.container,
+      ContractAuditDetailsMapper.container
+    });
 
   @override
   BankAccountsMapperElement createElement(MapperContainer container) {
@@ -142,7 +145,8 @@ class BankAccountsMapperElement extends MapperElementBase<BankAccounts> {
       referenceId: container.$getOpt(map, 'referenceId'),
       serviceCode: container.$getOpt(map, 'serviceCode'),
       bankAccountDetails: container.$getOpt(map, 'bankAccountDetails'),
-      indID: container.$getOpt(map, 'indID'));
+      indID: container.$getOpt(map, 'indID'),
+      auditDetails: container.$getOpt(map, 'auditDetails'));
 
   @override
   Function get encoder => encode;
@@ -154,12 +158,13 @@ class BankAccountsMapperElement extends MapperElementBase<BankAccounts> {
         'serviceCode': container.$enc(b.serviceCode, 'serviceCode'),
         'bankAccountDetails':
             container.$enc(b.bankAccountDetails, 'bankAccountDetails'),
-        'indID': container.$enc(b.indID, 'indID')
+        'indID': container.$enc(b.indID, 'indID'),
+        'auditDetails': container.$enc(b.auditDetails, 'auditDetails')
       };
 
   @override
   String stringify(BankAccounts self) =>
-      'BankAccounts(serviceCode: ${container.asString(self.serviceCode)}, tenantId: ${container.asString(self.tenantId)}, referenceId: ${container.asString(self.referenceId)}, id: ${container.asString(self.id)}, indID: ${container.asString(self.indID)}, bankAccountDetails: ${container.asString(self.bankAccountDetails)})';
+      'BankAccounts(serviceCode: ${container.asString(self.serviceCode)}, tenantId: ${container.asString(self.tenantId)}, referenceId: ${container.asString(self.referenceId)}, id: ${container.asString(self.id)}, indID: ${container.asString(self.indID)}, auditDetails: ${container.asString(self.auditDetails)}, bankAccountDetails: ${container.asString(self.bankAccountDetails)})';
   @override
   int hash(BankAccounts self) =>
       container.hash(self.serviceCode) ^
@@ -167,6 +172,7 @@ class BankAccountsMapperElement extends MapperElementBase<BankAccounts> {
       container.hash(self.referenceId) ^
       container.hash(self.id) ^
       container.hash(self.indID) ^
+      container.hash(self.auditDetails) ^
       container.hash(self.bankAccountDetails);
   @override
   bool equals(BankAccounts self, BankAccounts other) =>
@@ -175,6 +181,7 @@ class BankAccountsMapperElement extends MapperElementBase<BankAccounts> {
       container.isEqual(self.referenceId, other.referenceId) &&
       container.isEqual(self.id, other.id) &&
       container.isEqual(self.indID, other.indID) &&
+      container.isEqual(self.auditDetails, other.auditDetails) &&
       container.isEqual(self.bankAccountDetails, other.bankAccountDetails);
 }
 
@@ -212,13 +219,16 @@ abstract class BankAccountsCopyWith<$R, $In extends BankAccounts,
       BankAccountDetails,
       BankAccountDetailsCopyWith<$R, BankAccountDetails,
           BankAccountDetails>>? get bankAccountDetails;
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails;
   $R call(
       {String? id,
       String? tenantId,
       String? referenceId,
       String? serviceCode,
       List<BankAccountDetails>? bankAccountDetails,
-      String? indID});
+      String? indID,
+      ContractAuditDetails? auditDetails});
 }
 
 class _BankAccountsCopyWithImpl<$R, $Out extends BankAccounts>
@@ -244,20 +254,26 @@ class _BankAccountsCopyWithImpl<$R, $Out extends BankAccounts>
               (v) => call(bankAccountDetails: v))
           : null;
   @override
+  ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
+      get auditDetails => $value.auditDetails?.copyWith
+          .chain($identity, (v) => call(auditDetails: v));
+  @override
   $R call(
           {Object? id = $none,
           Object? tenantId = $none,
           Object? referenceId = $none,
           Object? serviceCode = $none,
           Object? bankAccountDetails = $none,
-          Object? indID = $none}) =>
+          Object? indID = $none,
+          Object? auditDetails = $none}) =>
       $then(BankAccounts(
           id: or(id, $value.id),
           tenantId: or(tenantId, $value.tenantId),
           referenceId: or(referenceId, $value.referenceId),
           serviceCode: or(serviceCode, $value.serviceCode),
           bankAccountDetails: or(bankAccountDetails, $value.bankAccountDetails),
-          indID: or(indID, $value.indID)));
+          indID: or(indID, $value.indID),
+          auditDetails: or(auditDetails, $value.auditDetails)));
 }
 
 class BankAccountDetailsMapper extends MapperBase<BankAccountDetails> {
@@ -292,7 +308,8 @@ class BankAccountDetailsMapperElement
       accountNumber: container.$getOpt(map, 'accountNumber'),
       accountType: container.$getOpt(map, 'accountType'),
       bankBranchIdentifier: container.$getOpt(map, 'bankBranchIdentifier'),
-      isPrimary: container.$getOpt(map, 'isPrimary'));
+      isPrimary: container.$getOpt(map, 'isPrimary'),
+      isActive: container.$getOpt(map, 'isActive'));
 
   @override
   Function get encoder => encode;
@@ -306,12 +323,13 @@ class BankAccountDetailsMapperElement
         'accountType': container.$enc(b.accountType, 'accountType'),
         'bankBranchIdentifier':
             container.$enc(b.bankBranchIdentifier, 'bankBranchIdentifier'),
-        'isPrimary': container.$enc(b.isPrimary, 'isPrimary')
+        'isPrimary': container.$enc(b.isPrimary, 'isPrimary'),
+        'isActive': container.$enc(b.isActive, 'isActive')
       };
 
   @override
   String stringify(BankAccountDetails self) =>
-      'BankAccountDetails(accountHolderName: ${container.asString(self.accountHolderName)}, tenantId: ${container.asString(self.tenantId)}, accountNumber: ${container.asString(self.accountNumber)}, id: ${container.asString(self.id)}, accountType: ${container.asString(self.accountType)}, isPrimary: ${container.asString(self.isPrimary)}, bankBranchIdentifier: ${container.asString(self.bankBranchIdentifier)})';
+      'BankAccountDetails(accountHolderName: ${container.asString(self.accountHolderName)}, tenantId: ${container.asString(self.tenantId)}, accountNumber: ${container.asString(self.accountNumber)}, id: ${container.asString(self.id)}, accountType: ${container.asString(self.accountType)}, isActive: ${container.asString(self.isActive)}, isPrimary: ${container.asString(self.isPrimary)}, bankBranchIdentifier: ${container.asString(self.bankBranchIdentifier)})';
   @override
   int hash(BankAccountDetails self) =>
       container.hash(self.accountHolderName) ^
@@ -319,6 +337,7 @@ class BankAccountDetailsMapperElement
       container.hash(self.accountNumber) ^
       container.hash(self.id) ^
       container.hash(self.accountType) ^
+      container.hash(self.isActive) ^
       container.hash(self.isPrimary) ^
       container.hash(self.bankBranchIdentifier);
   @override
@@ -328,6 +347,7 @@ class BankAccountDetailsMapperElement
       container.isEqual(self.accountNumber, other.accountNumber) &&
       container.isEqual(self.id, other.id) &&
       container.isEqual(self.accountType, other.accountType) &&
+      container.isEqual(self.isActive, other.isActive) &&
       container.isEqual(self.isPrimary, other.isPrimary) &&
       container.isEqual(self.bankBranchIdentifier, other.bankBranchIdentifier);
 }
@@ -375,7 +395,8 @@ abstract class BankAccountDetailsCopyWith<$R, $In extends BankAccountDetails,
       String? accountNumber,
       String? accountType,
       BankBranchIdentifier? bankBranchIdentifier,
-      bool? isPrimary});
+      bool? isPrimary,
+      bool? isActive});
 }
 
 class _BankAccountDetailsCopyWithImpl<$R, $Out extends BankAccountDetails>
@@ -400,7 +421,8 @@ class _BankAccountDetailsCopyWithImpl<$R, $Out extends BankAccountDetails>
           Object? accountNumber = $none,
           Object? accountType = $none,
           Object? bankBranchIdentifier = $none,
-          Object? isPrimary = $none}) =>
+          Object? isPrimary = $none,
+          Object? isActive = $none}) =>
       $then(BankAccountDetails(
           id: or(id, $value.id),
           tenantId: or(tenantId, $value.tenantId),
@@ -409,7 +431,8 @@ class _BankAccountDetailsCopyWithImpl<$R, $Out extends BankAccountDetails>
           accountType: or(accountType, $value.accountType),
           bankBranchIdentifier:
               or(bankBranchIdentifier, $value.bankBranchIdentifier),
-          isPrimary: or(isPrimary, $value.isPrimary)));
+          isPrimary: or(isPrimary, $value.isPrimary),
+          isActive: or(isActive, $value.isActive)));
 }
 
 class BankBranchIdentifierMapper extends MapperBase<BankBranchIdentifier> {

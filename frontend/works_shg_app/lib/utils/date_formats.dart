@@ -104,9 +104,6 @@ class DateFormats {
     DaysInRange daysInRange = DaysInRange();
     int registerStartTime =
         registerStartDate - (registerStartDate % (24 * 60 * 60 * 1000));
-
-    ///Issue with register Start Date, Need to check
-    ///
     int registerEndTime = DateTime(
             DateTime.fromMillisecondsSinceEpoch(registerEndDate).year,
             DateTime.fromMillisecondsSinceEpoch(registerEndDate).month,
@@ -125,32 +122,32 @@ class DateFormats {
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 2:
-          daysInRange.tuesday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.tuesday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 3:
-          daysInRange.wednesday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.wednesday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 4:
-          daysInRange.thursday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.thursday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 5:
-          daysInRange.friday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.friday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 6:
-          daysInRange.saturday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.saturday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 7:
-          daysInRange.sunday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.sunday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;

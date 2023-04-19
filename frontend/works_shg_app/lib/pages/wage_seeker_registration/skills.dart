@@ -10,6 +10,7 @@ import '../../models/mdms/wage_seeker_mdms.dart';
 import '../../models/wage_seeker/financial_details_model.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
+import '../../utils/notifiers.dart';
 import '../../widgets/atoms/multiselect_checkbox.dart';
 
 class SkillDetailsPage extends StatefulWidget {
@@ -93,39 +94,69 @@ class SkillDetailsState extends State<SkillDetailsPage> {
                   })
                 ]),
                 const SizedBox(height: 16),
-                DigitCard(
-                    child: Center(
+                Center(
                   child: DigitElevatedButton(
                       onPressed: selectedOptions != null &&
                               selectedOptions.isNotEmpty
                           ? () {
-                              final skillList = SkillDetails(
-                                  individualSkills: selectedOptions
-                                      .map((e) => IndividualSkill(
-                                          type: e.toString().split('.').last,
-                                          // .replaceAll('_', '')
-                                          // .capitalize(),
-                                          level: e.toString().split('.').first))
-                                      .toList());
-                              BlocProvider.of<WageSeekerBloc>(context).add(
-                                WageSeekerCreateEvent(
-                                    individualDetails: individualDetails,
-                                    skillDetails: skillList,
-                                    locationDetails: locationDetails,
-                                    financialDetails: financialDetails),
-                              );
-                              widget.onPressed();
+                              if (!getSkillsValid()) {
+                                Notifiers.getToastMessage(
+                                    context,
+                                    i18.wageSeeker.selectSkillValidation,
+                                    'ERROR');
+                              } else {
+                                final skillList = SkillDetails(
+                                    individualSkills: selectedOptions
+                                        .map((e) => IndividualSkill(
+                                            type: e.toString().split('.').last,
+                                            // .replaceAll('_', '')
+                                            // .capitalize(),
+                                            level:
+                                                e.toString().split('.').first))
+                                        .toList());
+                                BlocProvider.of<WageSeekerBloc>(context).add(
+                                  WageSeekerCreateEvent(
+                                      individualDetails: individualDetails,
+                                      skillDetails: skillList,
+                                      locationDetails: locationDetails,
+                                      financialDetails: financialDetails),
+                                );
+                                widget.onPressed();
+                              }
                             }
                           : null,
                       child: Center(
                         child: Text(t.translate(i18.common.next)),
                       )),
-                ))
+                )
               ],
             ),
           ),
         ],
       );
     });
+  }
+
+  bool getSkillsValid() {
+    Map<String, int> beforeDotCount = {};
+    Map<String, int> afterDotCount = {};
+
+    for (String skill in selectedOptions) {
+      List<String> skillParts = skill.split(".");
+      String beforeDot = skillParts[0];
+      String afterDot = skillParts[1];
+
+      beforeDotCount[beforeDot] = (beforeDotCount[beforeDot] ?? 0) + 1;
+      afterDotCount[afterDot] = (afterDotCount[afterDot] ?? 0) + 1;
+    }
+
+    // int countBeforeDot =
+    //     beforeDotCount.values.where((count) => count > 1).length;
+    int countAfterDot = afterDotCount.values.where((count) => count > 1).length;
+
+    if (countAfterDot > 0) {
+      return false;
+    }
+    return true;
   }
 }

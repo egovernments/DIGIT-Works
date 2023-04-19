@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DrawerWrapper extends StatelessWidget {
-  final widget;
-  DrawerWrapper(this.widget);
+  final Widget widget;
+  const DrawerWrapper(this.widget, {super.key});
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {

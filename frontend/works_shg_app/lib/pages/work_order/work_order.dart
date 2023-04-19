@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -12,6 +12,7 @@ import '../../blocs/work_orders/accept_work_order.dart';
 import '../../blocs/work_orders/decline_work_order.dart';
 import '../../blocs/work_orders/search_my_works.dart';
 import '../../models/works/contracts_model.dart';
+import '../../utils/common_methods.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
@@ -64,9 +65,9 @@ class _WorkOrderPage extends State<WorkOrderPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child:
-                SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
+                SideBar(module: CommonMethods.getLocaleModules()))),
         body: SingleChildScrollView(
           child: BlocListener<SearchMyWorksBloc, SearchMyWorksState>(
             listener: (context, state) {
@@ -135,7 +136,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(
-                                      '${AppLocalizations.of(context).translate(i18.home.workOrder)} (${workOrderList.length})',
+                                      '${AppLocalizations.of(context).translate(i18.home.myWorks)} (${workOrderList.length})',
                                       style: Theme.of(context)
                                           .textTheme
                                           .displayMedium,
@@ -178,68 +179,51 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                           align: Alignment.center,
                                         ),
                                 ]),
-                            BlocBuilder<DeclineWorkOrderBloc,
-                                    DeclineWorkOrderState>(
-                                builder: (context, state) {
-                              SchedulerBinding.instance
-                                  .addPostFrameCallback((_) {
+                            BlocListener<DeclineWorkOrderBloc,
+                                DeclineWorkOrderState>(
+                              listener: (context, state) {
                                 state.maybeWhen(
                                     initial: () => Container(),
                                     loading: () => hasLoaded = false,
                                     error: (String? error) {
-                                      if (!hasLoaded) {
-                                        Notifiers.getToastMessage(
-                                            context, error.toString(), 'ERROR');
-                                        hasLoaded = true;
-                                      }
+                                      Notifiers.getToastMessage(
+                                          context, error.toString(), 'ERROR');
                                     },
-                                    loaded: (ContractsModel? contractsModel) {
-                                      if (!hasLoaded) {
-                                        Notifiers.getToastMessage(
-                                            context,
-                                            '${contractsModel?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderDeclineSuccess)}',
-                                            'SUCCESS');
-                                        context.read<SearchMyWorksBloc>().add(
-                                              const MyWorksSearchEvent(),
-                                            );
-                                        hasLoaded = true;
-                                      }
+                                    loaded: (ContractsModel? declinedContract) {
+                                      Notifiers.getToastMessage(
+                                          context,
+                                          '${declinedContract?.contracts?.first.contractNumber} ${AppLocalizations.of(context).translate(i18.workOrder.workOrderDeclineSuccess)}',
+                                          'SUCCESS');
+                                      context.router
+                                          .popAndPush(const WorkOrderRoute());
                                     },
                                     orElse: () => Container());
-                              });
-                              return Container();
-                            }),
-                            BlocBuilder<AcceptWorkOrderBloc,
-                                    AcceptWorkOrderState>(
-                                builder: (context, state) {
-                              SchedulerBinding.instance
-                                  .addPostFrameCallback((_) {
+                              },
+                              child: Container(),
+                            ),
+                            BlocListener<AcceptWorkOrderBloc,
+                                AcceptWorkOrderState>(
+                              listener: (context, state) {
                                 state.maybeWhen(
                                     initial: () => Container(),
-                                    loading: () => hasLoaded = false,
+                                    loading: () =>
+                                        Loaders.circularLoader(context),
                                     error: (String? error) {
-                                      if (!hasLoaded) {
-                                        Notifiers.getToastMessage(
-                                            context, error.toString(), 'ERROR');
-                                        hasLoaded = true;
-                                      }
+                                      Notifiers.getToastMessage(
+                                          context, error.toString(), 'ERROR');
                                     },
-                                    loaded: (ContractsModel? contractsModel) {
-                                      if (!hasLoaded) {
-                                        Notifiers.getToastMessage(
-                                            context,
-                                            '${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${contractsModel?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
-                                            'SUCCESS');
-                                        context.read<SearchMyWorksBloc>().add(
-                                              const MyWorksSearchEvent(),
-                                            );
-                                        hasLoaded = true;
-                                      }
+                                    loaded: (ContractsModel? acceptedContract) {
+                                      Notifiers.getToastMessage(
+                                          context,
+                                          '${AppLocalizations.of(context).translate(i18.workOrder.workOrderAcceptSuccess)}. ${acceptedContract?.contracts?.first.additionalDetails?.attendanceRegisterNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceCreateSuccess)}',
+                                          'SUCCESS');
+                                      context.router
+                                          .popAndPush(const WorkOrderRoute());
                                     },
-                                    orElse: () => Container());
-                              });
-                              return Container();
-                            }),
+                                    orElse: () => false);
+                              },
+                              child: Container(),
+                            ),
                           ]));
             }),
           ),

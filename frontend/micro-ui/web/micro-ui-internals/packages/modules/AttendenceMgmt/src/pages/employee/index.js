@@ -12,7 +12,7 @@ const AttendanceBreadCrumbs = ({ location }) => {
   const crumbs = [
     {
       path: `/${window?.contextPath}/employee`,
-      content: t("WORKS_WMS"),
+      content: t("WORKS_MUKTA"),
       show: true,
     },
     {

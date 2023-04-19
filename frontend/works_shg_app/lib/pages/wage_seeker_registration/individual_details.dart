@@ -105,6 +105,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       label: t.translate(i18.common.aadhaarNumber),
                       isRequired: true,
                       minLength: 12,
+                      maxLength: 12,
                       keyboardType: TextInputType.number,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
@@ -149,12 +150,10 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                     ),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.relationship),
-                      menuItems: relationship
-                          .map((e) => t.translate(e).toString())
-                          .toList(),
+                      menuItems: relationship.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: relationshipKey,
-                      valueMapper: (value) => value,
+                      valueMapper: (value) => t.translate('CORE_COMMON_$value'),
                       onChanged: (value) {},
                       validationMessages: {
                         'required': (_) => t.translate(
@@ -181,11 +180,9 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         context,
                         labelText: t.translate(i18.common.gender),
                         formControlName: genderKey,
-                        options: gender
-                            .map((e) => t.translate(e).toString())
-                            .toList(),
+                        options: gender.map((e) => e.toString()).toList(),
                         isRequired: true,
-                        valueMapper: (value) => value,
+                        valueMapper: (value) => t.translate(value),
                         onValueChange: (value) {
                           setState(() {
                             genderController = value;
@@ -195,11 +192,11 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                     }),
                     DigitDropdown<String>(
                       label: t.translate(i18.common.socialCategory),
-                      menuItems: socialCategory
-                          .map((e) => t.translate(e).toString())
-                          .toList(),
+                      menuItems:
+                          socialCategory.map((e) => e.toString()).toList(),
                       formControlName: socialCategoryKey,
-                      valueMapper: (value) => value,
+                      valueMapper: (value) =>
+                          t.translate('COMMON_MASTERS_SOCIAL_$value'),
                       onChanged: (value) {},
                     ),
                     DigitTextFormField(
@@ -208,6 +205,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       prefixText: '+91 - ',
                       isRequired: true,
                       minLength: 10,
+                      maxLength: 10,
                       keyboardType: TextInputType.phone,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
@@ -242,8 +240,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                     )
                   ]),
                   const SizedBox(height: 16),
-                  DigitCard(
-                      child: Center(
+                  Center(
                     child: DigitElevatedButton(
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
@@ -275,7 +272,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         child: Center(
                           child: Text(t.translate(i18.common.next)),
                         )),
-                  ))
+                  )
                 ],
               ),
             ),
@@ -303,8 +300,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
           value: null,
           validators: [
             Validators.required,
-            Validators.max(
-                DateTime.now().subtract(const Duration(days: 18 * 365)))
+            Validators.max(DateTime(DateTime.now().year - 18,
+                DateTime.now().month, DateTime.now().day))
           ],
         ),
         socialCategoryKey: FormControl<String>(value: null),

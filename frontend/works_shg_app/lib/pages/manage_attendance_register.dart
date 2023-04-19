@@ -8,6 +8,7 @@ import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import '../blocs/attendance/search_projects/search_projects.dart';
 import '../blocs/localization/app_localization.dart';
 import '../models/attendance/attendance_registry_model.dart';
+import '../utils/common_methods.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
@@ -25,9 +26,9 @@ class ManageAttendanceRegisterPage extends StatelessWidget {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: SingleChildScrollView(child: BlocBuilder<
             AttendanceProjectsSearchBloc,

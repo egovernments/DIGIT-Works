@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:works_shg_app/pages/org_profile.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/register_individual.dart';
 
-import '../models/attendance/attendance_registry_model.dart';
 import '../pages/attendance_register_table.dart';
 import '../pages/authenticated.dart';
 import '../pages/home.dart';
@@ -18,6 +17,7 @@ import '../pages/unauthenticated.dart';
 import '../pages/view_muster_rolls.dart';
 import '../pages/work_order/view_work_details.dart';
 import '../pages/work_order/work_order.dart';
+import '../widgets/molecules/success_page.dart';
 
 export 'package:auto_route/auto_route.dart';
 
@@ -59,7 +59,8 @@ part 'app_router.gr.dart';
         AutoRoute(
             page: TrackAttendancePage, path: 'track-attendance/:id/:tenantId'),
         AutoRoute(page: RegisterIndividualPage, path: 'register-individual'),
-        AutoRoute(page: ViewWorkDetailsPage, path: 'view-work-order')
+        AutoRoute(page: ViewWorkDetailsPage, path: 'view-work-order'),
+        AutoRoute(page: SuccessResponsePage, path: 'success')
       ],
     ),
   ],

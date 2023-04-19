@@ -18,7 +18,7 @@ const TLCaption = ({ data,OpenImage,privacy={}}) => {
       {data.source && <p>{t("ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_" + data.source.toUpperCase())}</p>}
       {data.comment && <Reason otherComment={data?.otherComment} headComment={data?.comment}></Reason>}
       {data?.wfComment ? <div>{data?.wfComment?.map( e => 
-      <div className="TLComments">
+      <div className="TLComments text-wrap-overflow">
         <h3>{t("WF_COMMON_COMMENTS")}</h3>
         <p>{e}</p>
       </div>
