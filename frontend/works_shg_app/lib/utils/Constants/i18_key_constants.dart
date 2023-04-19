@@ -48,7 +48,7 @@ class Common {
   String get language => 'CS_HOME_HEADER_LANGUAGE';
   String get decline => 'CORE_BUTTON_DECLINE';
   String get accept => 'CORE_BUTTON_ACCEPT';
-  String get termsAndConditions => 'COMMON_TERMS_&_CONDITIONS';
+  String get termsAndConditions => 'COMMON_TERMS_AND_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
   String get back => 'CORE_BACK_BUTTON';
   String get sendForApproval => 'SEND_FOR_APPROVAL';

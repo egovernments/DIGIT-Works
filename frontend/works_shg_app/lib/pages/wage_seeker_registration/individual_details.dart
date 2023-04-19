@@ -240,8 +240,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                     )
                   ]),
                   const SizedBox(height: 16),
-                  DigitCard(
-                      child: Center(
+                  Center(
                     child: DigitElevatedButton(
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
@@ -273,7 +272,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         child: Center(
                           child: Text(t.translate(i18.common.next)),
                         )),
-                  ))
+                  )
                 ],
               ),
             ),
