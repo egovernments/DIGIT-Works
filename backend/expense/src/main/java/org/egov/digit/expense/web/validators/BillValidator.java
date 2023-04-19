@@ -74,6 +74,9 @@ public class BillValidator {
 	}
 	
 	public void validateSearchRequest(BillCriteria billCriteria) {
+
+		System.out.println("BillCriteria Object : "+billCriteria.toString());
+		System.out.println("BusinessService : "+billCriteria.getBusinessService());
 		
 		if (StringUtils.isEmpty(billCriteria.getBusinessService())
 				&& CollectionUtils.isEmpty(billCriteria.getReferenceIds())
