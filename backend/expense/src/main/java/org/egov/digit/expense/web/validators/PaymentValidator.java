@@ -119,7 +119,7 @@ public class PaymentValidator {
 				.build();
 		
 		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
-				.billcriteria(billCriteria)
+				.billCriteria(billCriteria)
 				.pagination(pagination)
 				.requestInfo(paymentRequest.getRequestInfo())
 				.build();

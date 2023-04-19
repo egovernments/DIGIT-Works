@@ -98,7 +98,7 @@ public class BillQueryBuilder {
 
 
     public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
-        BillCriteria criteria=billSearchRequest.getBillcriteria();
+        BillCriteria criteria=billSearchRequest.getBillCriteria();
         StringBuilder query = new StringBuilder(BILL_SELECT_QUERY);
 
         List<String> ids = new ArrayList<>(criteria.getIds());

@@ -117,7 +117,7 @@ public class BillService {
 	 * @return
 	 */
 	public BillResponse search(BillSearchRequest billSearchRequest) {
-		BillCriteria billCriteria=billSearchRequest.getBillcriteria();
+		BillCriteria billCriteria=billSearchRequest.getBillCriteria();
 
 		log.info("BillSearchRequest : "+billSearchRequest);
 		log.info("Validate billCriteria Parameters BillCriteria : "+billCriteria);

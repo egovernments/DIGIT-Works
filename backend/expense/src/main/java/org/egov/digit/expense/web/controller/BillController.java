@@ -35,7 +35,7 @@ public class BillController {
 	@PostMapping(value = "_search")
 	public ResponseEntity<BillResponse> search(@Valid @RequestBody BillSearchRequest billSearchCriteria) {
 		RequestInfo requestInfo=billSearchCriteria.getRequestInfo();
-		BillCriteria billCriteria=billSearchCriteria.getBillcriteria();
+		BillCriteria billCriteria=billSearchCriteria.getBillCriteria();
 		BillResponse billResponse = service.search(billSearchCriteria);
 		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.ACCEPTED);
 	}
