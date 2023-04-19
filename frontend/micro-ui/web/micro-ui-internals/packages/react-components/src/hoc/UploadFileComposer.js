@@ -79,6 +79,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
               { item.code && (
                 <CardLabel
                   className="bolder"
+                  style={{ marginTop: item?.showTextInput? "10px":"" }}
                 >
                   { t(`${localePrefix}_${item?.code}`)} { item?.isMandatory ? " * " : null }
                 </CardLabel>) 
