@@ -163,7 +163,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       },
                     ),
                     DigitDateFormPicker(
-                      label: t.translate(i18.common.dateOfBirth) + '*',
+                      label: t.translate(i18.common.dateOfBirth),
                       isRequired: true,
                       formControlName: dobKey,
                       autoValidation: AutovalidateMode.always,
@@ -246,7 +246,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
-                          if (form.value[genderKey] != null &&
+                          if (form.value[genderKey] == null ||
                               form.value[genderKey].toString().isNotEmpty) {
                             Notifiers.getToastMessage(
                                 context,
