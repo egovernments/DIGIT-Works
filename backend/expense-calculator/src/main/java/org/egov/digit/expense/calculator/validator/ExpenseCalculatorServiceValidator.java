@@ -5,8 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.util.CommonUtil;
 import org.egov.digit.expense.calculator.util.MdmsUtils;
-import org.egov.digit.expense.calculator.util.MusterRollUtils;
+import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
 import org.egov.digit.expense.calculator.web.models.CalculationRequest;
+import org.egov.digit.expense.calculator.web.models.Contract;
 import org.egov.digit.expense.calculator.web.models.Criteria;
 import org.egov.digit.expense.calculator.web.models.MusterRoll;
 import org.egov.digit.expense.calculator.web.models.MusterRollRequest;
@@ -32,7 +33,7 @@ public class ExpenseCalculatorServiceValidator {
     private CommonUtil commonUtil;
 
     @Autowired
-    private MusterRollUtils musterRollUtils;
+    private ExpenseCalculatorUtil expenseCalculatorUtil;
     public void validateCalculatorEstimateRequest(CalculationRequest calculationRequest){
         // Validate the Request Info object
         validateRequestInfo(calculationRequest.getRequestInfo());
@@ -120,10 +121,15 @@ public class ExpenseCalculatorServiceValidator {
             //Validate requested musterRollId against musterroll service
             validateMusterRollId(calculationRequest);
             return;
+        } else if (StringUtils.isNotBlank(criteria.getContractId())) {
+            List<Contract> contracts = expenseCalculatorUtil.fetchContract(calculationRequest.getRequestInfo(), criteria.getTenantId(), criteria.getContractId());
+            if (CollectionUtils.isEmpty(contracts)) {
+               log.error("ExpenseCalculatorServiceValidator:No matched contract found for contractId - "+criteria.getContractId());
+               throw new CustomException("INVALID_CONTRACT_ID", "Contract not found");
+            }
         }
 
-        //TODO
-        // Supervision Service implementation : Validate contractId against contract service
+
     }
 
     private void validateRequestInfo(RequestInfo requestInfo) {
@@ -212,7 +218,7 @@ public class ExpenseCalculatorServiceValidator {
     }
 
     private void validateMusterRollId(RequestInfo requestInfo,String tenantId,List<String> musterRollIds) {
-        List<String> fetchedMusterRolls = musterRollUtils.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds);
+        List<String> fetchedMusterRolls = expenseCalculatorUtil.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds);
 
         for(String musterRollId : musterRollIds){
             if(!fetchedMusterRolls.contains(musterRollId)){

@@ -46,14 +46,21 @@ public class WorksCalculatorApiController {
 		this.request = request;
 	}
 
-	@RequestMapping(value = "/works-calculator/v1/_calculate", method = RequestMethod.POST)
-	public ResponseEntity<BillResponse> worksCalculatorV1CalculatePost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest body) {
+	@RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
+	public ResponseEntity<CalculationResponse> worksCalculatorV1CalculatePost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
 
-		return null;
+		Calculation calculation = expenseCalculatorService.calculate(calculationRequest);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
+		CalculationResponse calculationResponse = CalculationResponse.builder()
+				.responseInfo(responseInfo)
+				.calculation(calculation)
+				.build();
+
+		return new ResponseEntity<CalculationResponse>(calculationResponse, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/works-calculator/v1/_estimate", method = RequestMethod.POST)
+	@RequestMapping(value = "/v1/_estimate", method = RequestMethod.POST)
 	public ResponseEntity<CalculationResponse> worksCalculatorV1EstimatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
 
