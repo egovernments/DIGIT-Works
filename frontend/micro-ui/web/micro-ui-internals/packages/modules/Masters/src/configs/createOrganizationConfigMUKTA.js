@@ -318,7 +318,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_name",
                             error: "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
-                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 64}
+                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 1, maxlength: 50}
                         }
                     },
                     {
@@ -345,7 +345,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_email",
                             error: "EMAIL_VALIDATION",
-                            validation: {pattern: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,})+$", minlength : 2, maxlength: 128}                         
+                            validation: {pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?:[a-zA-Z]{2,6})$", minlength : 2, maxlength: 64}                         
                         }
                     }
                 ]

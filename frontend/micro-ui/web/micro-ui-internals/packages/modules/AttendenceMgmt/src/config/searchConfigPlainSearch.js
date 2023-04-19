@@ -174,12 +174,7 @@ const searchConfig = () => {
               label: "COMMON_WORKFLOW_STATES",
               jsonPath: "ProcessInstance.state.state",
               additionalCustomization: true,
-            },
-            {
-              label: "MUSTER_WAGE_AMOUNT",
-              jsonPath: "businessObject.additionalDetails.amount",
-              additionalCustomization: true,
-            },
+            }
           ],
           enableGlobalSearch: false,
           enableColumnSort: true,
