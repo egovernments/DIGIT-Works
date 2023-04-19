@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaymentSearchRequest {
 
-	@JsonProperty("requestInfo")
+	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
 
 	@JsonProperty("paymentCriteria")
