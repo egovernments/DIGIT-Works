@@ -34,7 +34,6 @@ const ViewPurchaseBill = ({props}) => {
                       businessService={""}
                       forcedActionPrefix={"WORKS"}
                       noBoxShadow={true}
-                      customClass="status-table-custom-class"
                     />
                     <ApplicationDetails
                       applicationDetails={data?.applicationDetails?.bill_details}
@@ -48,7 +47,6 @@ const ViewPurchaseBill = ({props}) => {
                       businessService={""}
                       forcedActionPrefix={"WORKS"}
                       noBoxShadow={true}
-                      customClass="status-table-custom-class"
                     />
                 </>
             }                
