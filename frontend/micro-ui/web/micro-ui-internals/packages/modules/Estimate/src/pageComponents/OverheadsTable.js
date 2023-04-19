@@ -297,7 +297,8 @@ const OverheadsTable = ({ control, watch, ...props }) => {
                 name={`${formFieldName}.${row.key}.amount`}
                 inputRef={register({
                   required: isInputDisabled(`${formFieldName}.${row.key}.name`) ? false : true,
-                  pattern: /^\d*\.?\d*$/,
+                  // pattern: /^\d*\.?\d*$/,
+                  pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                 })}
                 disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
               />

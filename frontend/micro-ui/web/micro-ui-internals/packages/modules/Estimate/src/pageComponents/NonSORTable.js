@@ -267,7 +267,8 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     inputRef={register({
                       required: true,
                       // pattern: /^\d*\.?\d*$/,
-                      pattern: /^\d*(\.\d{0,2})?$/,
+                      // pattern: /^\d*(\.\d{0,2})?$/,
+                      pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
                     })}
                     onChange={(e) => setAmountField(e, row)}
                   />
@@ -292,7 +293,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     inputRef={register({
                       required: true,
                       // pattern: /^[0-9]*$/,
-                      pattern: /^\d*(\.\d{0,2})?$/,
+                      pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
                     })}
                     onChange={(e) => setAmountField(e, row)}
                   />
@@ -317,6 +318,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     inputRef={register({
                       required: true,
                       pattern: /^\d*\.?\d*$/,
+                      // pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                     })}
                     disable={true}
                   />
