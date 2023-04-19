@@ -180,12 +180,7 @@ const searchConfig = () => {
                 label: "CORE_COMMON_STATUS",
                 jsonPath: "ProcessInstance.state.state",
                 additionalCustomization: true,
-              },
-              {
-                label: "MUSTER_WAGE_AMOUNT",
-                jsonPath: "businessObject.additionalDetails.amount",
-                additionalCustomization: true,
-              },
+              }
             ],
             enableGlobalSearch: false,
             enableColumnSort: true,
