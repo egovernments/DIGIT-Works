@@ -15,6 +15,7 @@ import '../../models/mdms/wage_seeker_mdms.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
 import '../../models/wage_seeker/skill_details_model.dart';
+import '../../utils/notifiers.dart';
 import '../../widgets/molecules/file_picker.dart';
 
 class IndividualDetailsPage extends StatefulWidget {
@@ -245,29 +246,38 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
-                          final individualDetails = IndividualDetails(
-                              name: form.value[nameKey].toString(),
-                              fatherName: form.value[fatherNameKey].toString(),
-                              aadhaarNo: form.value[aadhaarNoKey].toString(),
-                              relationship:
-                                  form.value[relationshipKey].toString(),
-                              socialCategory:
-                                  form.value[socialCategoryKey].toString(),
-                              dateOfBirth: form.value[dobKey] as DateTime,
-                              mobileNumber: form.value[mobileKey].toString(),
-                              gender: form.value[genderKey].toString(),
-                              imageFile: FilePickerData.imageFile,
-                              bytes: FilePickerData.bytes,
-                              photo: photo);
+                          if (form.value[genderKey] != null &&
+                              form.value[genderKey].toString().isNotEmpty) {
+                            Notifiers.getToastMessage(
+                                context,
+                                t.translate(i18.wageSeeker.genderRequired),
+                                'ERROR');
+                          } else {
+                            final individualDetails = IndividualDetails(
+                                name: form.value[nameKey].toString(),
+                                fatherName:
+                                    form.value[fatherNameKey].toString(),
+                                aadhaarNo: form.value[aadhaarNoKey].toString(),
+                                relationship:
+                                    form.value[relationshipKey].toString(),
+                                socialCategory:
+                                    form.value[socialCategoryKey].toString(),
+                                dateOfBirth: form.value[dobKey] as DateTime,
+                                mobileNumber: form.value[mobileKey].toString(),
+                                gender: form.value[genderKey].toString(),
+                                imageFile: FilePickerData.imageFile,
+                                bytes: FilePickerData.bytes,
+                                photo: photo);
 
-                          BlocProvider.of<WageSeekerBloc>(context).add(
-                            WageSeekerCreateEvent(
-                                individualDetails: individualDetails,
-                                skillDetails: skillDetails,
-                                locationDetails: locationDetails,
-                                financialDetails: financialDetails),
-                          );
-                          widget.onPressed();
+                            BlocProvider.of<WageSeekerBloc>(context).add(
+                              WageSeekerCreateEvent(
+                                  individualDetails: individualDetails,
+                                  skillDetails: skillDetails,
+                                  locationDetails: locationDetails,
+                                  financialDetails: financialDetails),
+                            );
+                            widget.onPressed();
+                          }
                         },
                         child: Center(
                           child: Text(t.translate(i18.common.next)),

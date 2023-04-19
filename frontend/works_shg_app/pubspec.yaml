@@ -126,6 +126,9 @@ flutter:
     - family: Hindhi
       fonts:
         - asset: assets/fonts/Roboto/Hind-Regular.ttf
+    - family: SHGIcons
+      fonts:
+        - asset: assets/icons/fonts/SHGIcons.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
