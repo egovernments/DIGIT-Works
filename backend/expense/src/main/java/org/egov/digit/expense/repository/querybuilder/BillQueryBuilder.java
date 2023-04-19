@@ -36,6 +36,7 @@ public class BillQueryBuilder {
 
             " bd.id as bd_id, "+
             "bd.referenceid as bd_referenceid, "+
+            "bd.tenantid as bd_tenantid, "+
             "bd.billid as bd_billid, "+
             "bd.paymentstatus as bd_paymentstatus, "+
             "bd.fromperiod as bd_fromperiod, "+
@@ -62,6 +63,7 @@ public class BillQueryBuilder {
             "li.additionaldetails as li_additionaldetails, "+ //-- line_items
 
             "payer.id as payer_id, "+
+            "payer.tenantid as payer_tenantid, "+
             "payer.type as payer_type, "+
             "payer.status as payer_status, "+
             "payer.identifier as payer_identifier, "+
@@ -73,6 +75,7 @@ public class BillQueryBuilder {
             "payer.additionaldetails as payer_additionaldetails, "+ //-- eg_expense_party_payer
 
             "payee.id as payee_id, "+
+            "payee.tenantid as payee_tenantid, "+
             "payee.type as payee_type, "+
             "payee.status as payee_status, "+
             "payee.identifier as payee_identifier, "+
