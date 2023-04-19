@@ -107,7 +107,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                       ],
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.city),
                       menuItems: city.map((e) => e.toString()).toList(),
                       isRequired: true,
@@ -121,7 +121,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                             ),
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.ward),
                       menuItems: ward.map((e) => e.toString()).toList(),
                       isRequired: true,
@@ -146,7 +146,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         });
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                         label: t.translate(i18.common.locality),
                         menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,
