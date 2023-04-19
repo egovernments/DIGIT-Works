@@ -7,15 +7,14 @@ import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/app_bar_logo.dart';
 
+import '../blocs/app_initilization/home_screen_bloc.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
-import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../blocs/organisation/org_search_bloc.dart';
-import '../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import '../models/organisation/organisation_model.dart';
+import '../models/screen_config/home_screen_config.dart';
 import '../utils/constants.dart';
 import '../utils/global_variables.dart';
-import '../utils/models/file_picker_data.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/drawer_wrapper.dart';
 import '../widgets/loaders.dart' as shg_loader;
@@ -30,16 +29,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
+  String? selectedLocale;
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
+    super.initState();
+  }
+
+  afterViewBuild() async {
     context.read<ORGSearchBloc>().add(
           SearchORGEvent(GlobalVariables.userRequestModel!['mobileNumber']),
         );
-    super.initState();
+    context.read<HomeScreenBloc>().add(
+          const GetHomeScreenConfigEvent(),
+        );
+    selectedLocale = await GlobalVariables.selectedLocale();
   }
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
           titleSpacing: 0,
@@ -59,8 +68,23 @@ class _HomePage extends State<HomePage> {
         ))),
         body: BlocBuilder<LocalizationBloc, LocalizationState>(
             builder: (context, localState) {
-          return BlocBuilder<ORGSearchBloc, ORGSearchState>(
-              builder: (context, state) {
+          return BlocListener<ORGSearchBloc, ORGSearchState>(
+              listener: (context, orgState) {
+            orgState.maybeWhen(
+                orElse: () => false,
+                loaded: (OrganisationListModel? organisationListModel) {
+                  context.read<LocalizationBloc>().add(
+                        LocalizationEvent.onLoadLocalization(
+                            module:
+                                'rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}',
+                            tenantId: GlobalVariables.globalConfigObject!
+                                .globalConfigs!.stateTenantId
+                                .toString(),
+                            locale: selectedLocale.toString()),
+                      );
+                });
+          }, child: BlocBuilder<ORGSearchBloc, ORGSearchState>(
+                  builder: (context, state) {
             return state.maybeWhen(
                 orElse: () => Container(),
                 loading: () => shg_loader.Loaders.circularLoader(context),
@@ -73,69 +97,85 @@ class _HomePage extends State<HomePage> {
                     children: [
                       DigitCard(
                         onPressed: null,
-                        padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                         child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  LabeledField(
-                                    label: AppLocalizations.of(context)
-                                        .translate(i18.home.mukta),
-                                    child: Column(
-                                      children: [
-                                        ButtonLink(
-                                            AppLocalizations.of(context)
-                                                .translate(i18.home.myWorks),
-                                            () => context.router
-                                                .push(const WorkOrderRoute())),
-                                      ],
-                                    ),
-                                  ),
-                                  SvgPicture.asset(Constants.muktaIcon)
-                                ],
-                              ),
-                              ButtonLink(
-                                  AppLocalizations.of(context)
-                                      .translate(i18.home.trackAttendance), () {
-                                context.router
-                                    .push(const TrackAttendanceInboxRoute());
-                              }),
-                              ButtonLink(
-                                  AppLocalizations.of(context)
-                                      .translate(i18.home.musterRolls), () {
-                                context.read<MusterRollSearchBloc>().add(
-                                      const SearchMusterRollEvent(),
-                                    );
-                                context.router
-                                    .push(const ViewMusterRollsRoute());
-                              }),
-                              ButtonLink(
-                                  AppLocalizations.of(context)
-                                      .translate(i18.home.registerWageSeeker),
-                                  () {
-                                context.read<WageSeekerBloc>().add(
-                                      const WageSeekerClearEvent(),
-                                    );
-                                FilePickerData.imageFile = null;
-                                FilePickerData.bytes = null;
-                                context.router
-                                    .push(const RegisterIndividualRoute());
-                              }),
-                            ],
-                          ),
-                        ),
+                            alignment: Alignment.topCenter,
+                            child: BlocBuilder<HomeScreenBloc,
+                                HomeScreenBlocState>(
+                              builder: (context, config) {
+                                return config.maybeWhen(
+                                    orElse: () => Container(),
+                                    loading: () =>
+                                        shg_loader.Loaders.circularLoader(
+                                            context),
+                                    loaded: (List<CBOHomeScreenConfigModel>?
+                                        cboHomeScreenConfig) {
+                                      return Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: cboHomeScreenConfig
+                                                  ?.map((e) {
+                                                if (e.order == 1) {
+                                                  return Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      LabeledField(
+                                                        label: t.translate(
+                                                            i18.home.mukta),
+                                                        child: Column(
+                                                          children: [
+                                                            ButtonLink(
+                                                                t.translate(
+                                                                    e.label ??
+                                                                        ''),
+                                                                getRoute(
+                                                                    e.key
+                                                                        .toString(),
+                                                                    context)),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SvgPicture.asset(
+                                                          Constants.muktaIcon)
+                                                    ],
+                                                  );
+                                                } else {
+                                                  return ButtonLink(
+                                                      t.translate(
+                                                          e.label ?? ''),
+                                                      getRoute(e.key.toString(),
+                                                          context));
+                                                }
+                                              }).toList() ??
+                                              []);
+                                    });
+                              },
+                            )),
                       )
                     ],
                   );
                 });
-          });
+          }));
         }));
+  }
+
+  void Function()? getRoute(String key, BuildContext context) {
+    switch (key) {
+      case 'HOME_MY_WORKS':
+        return () => context.router.push(const WorkOrderRoute());
+      case 'HOME_TRACK_ATTENDENCE':
+        return () => context.router.push(const TrackAttendanceInboxRoute());
+      case 'HOME_MUSTER_ROLLS':
+        return () => context.router.push(const ViewMusterRollsRoute());
+      case 'HOME_REGISTER_WAGE_SEEKER':
+        return () => context.router.push(const RegisterIndividualRoute());
+      default:
+        return null;
+    }
   }
 }

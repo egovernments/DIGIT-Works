@@ -15,6 +15,7 @@ import '../../blocs/work_orders/search_individual_work.dart';
 import '../../models/file_store/file_store_model.dart';
 import '../../models/works/contracts_model.dart';
 import '../../router/app_router.dart';
+import '../../utils/common_methods.dart';
 import '../../utils/common_widgets.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
@@ -91,8 +92,8 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
         titleSpacing: 0,
         title: const AppBarLogo(),
       ),
-      drawer: const DrawerWrapper(Drawer(
-          child: SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
+      drawer: DrawerWrapper(Drawer(
+          child: SideBar(module: CommonMethods.getLocaleModules()))),
       bottomNavigationBar:
           BlocBuilder<SearchIndividualWorkBloc, SearchIndividualWorkState>(
               builder: (context, workState) {

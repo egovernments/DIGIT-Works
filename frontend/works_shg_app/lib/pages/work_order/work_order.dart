@@ -12,6 +12,7 @@ import '../../blocs/work_orders/accept_work_order.dart';
 import '../../blocs/work_orders/decline_work_order.dart';
 import '../../blocs/work_orders/search_my_works.dart';
 import '../../models/works/contracts_model.dart';
+import '../../utils/common_methods.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
@@ -64,9 +65,9 @@ class _WorkOrderPage extends State<WorkOrderPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child:
-                SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
+                SideBar(module: CommonMethods.getLocaleModules()))),
         body: SingleChildScrollView(
           child: BlocListener<SearchMyWorksBloc, SearchMyWorksState>(
             listener: (context, state) {

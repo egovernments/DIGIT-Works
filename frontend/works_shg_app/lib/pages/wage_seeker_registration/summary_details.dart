@@ -371,17 +371,19 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                       error: (String? error) => Notifiers.getToastMessage(
                           context, error.toString(), 'ERROR'));
                 },
-                child: DigitElevatedButton(
-                  onPressed: () {
-                    context.read<WageSeekerCreateBloc>().add(
-                          CreateWageSeekerEvent(
-                              individualDetails: individualDetails,
-                              skillDetails: skillDetails,
-                              locationDetails: locationDetails,
-                              financialDetails: financialDetails),
-                        );
-                  },
-                  child: Center(child: Text(t.translate(i18.common.submit))),
+                child: Center(
+                  child: DigitElevatedButton(
+                    onPressed: () {
+                      context.read<WageSeekerCreateBloc>().add(
+                            CreateWageSeekerEvent(
+                                individualDetails: individualDetails,
+                                skillDetails: skillDetails,
+                                locationDetails: locationDetails,
+                                financialDetails: financialDetails),
+                          );
+                    },
+                    child: Center(child: Text(t.translate(i18.common.submit))),
+                  ),
                 ),
               ),
             ),
