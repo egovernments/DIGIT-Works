@@ -10,13 +10,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:works_shg_app/models/file_store/file_store_model.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../../Env/app_config.dart';
 import '../../../utils/common_methods.dart';
 import '../../../utils/models.dart';
-import '../../../utils/notifiers.dart';
 
 class CoreRepository {
   Future<List<FileStoreModel>> uploadFiles(
@@ -72,7 +70,6 @@ class CoreRepository {
   }
 
   Future<bool?> fileDownload(String url, [String? fileName]) async {
-    Map<String, String> downloadUrl = {};
     if (url.contains(',')) {
       url = url.split(',').first;
     }
@@ -104,13 +101,14 @@ class CoreRepository {
           openFileFromNotification: true,
           saveInPublicStorage: true);
       if (response != null) {
-        downloadUrl[response] = '$downloadPath/$fileName';
+        GlobalVariables.downloadUrl[response] = '$downloadPath/$fileName';
         return true;
       }
       return false;
     } catch (e, s) {
-      Notifiers.getToastMessage(
-          scaffoldMessengerKey.currentContext!, e.toString(), 'ERROR');
+      print(e);
+      // Notifiers.getToastMessage(
+      //     scaffoldMessengerKey.currentContext!, e.toString(), 'ERROR');
     }
     return false;
   }
