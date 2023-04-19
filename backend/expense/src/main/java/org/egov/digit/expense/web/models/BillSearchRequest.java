@@ -1,6 +1,8 @@
 package org.egov.digit.expense.web.models;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 /**
  * BillSearchRequest
@@ -25,6 +29,14 @@ public class BillSearchRequest {
 	
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
+
+	@JsonProperty("tenantId")
+	@NotNull
+	@Size(min = 2, max = 64)
+	private String tenantId;
+
+	@JsonProperty("ids")
+	private Set<String> ids;
 
 	@JsonProperty("billCriteria")
 	private BillCriteria billCriteria;
