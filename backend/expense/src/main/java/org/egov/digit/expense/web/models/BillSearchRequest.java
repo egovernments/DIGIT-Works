@@ -24,15 +24,12 @@ import lombok.NoArgsConstructor;
 public class BillSearchRequest {
 	
 	@JsonProperty("requestInfo")
-	@Valid
 	private RequestInfo requestInfo;
 
 	@JsonProperty("billCriteria")
-	@Valid
-	private BillCriteria billcriteria;
+	private BillCriteria billCriteria;
 
 	@JsonProperty("pagination")
-	@Valid
 	private Pagination pagination;
 
 }
