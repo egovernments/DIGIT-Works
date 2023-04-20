@@ -99,7 +99,6 @@ public class WageSeekerBillGeneratorService {
                 // Build Bill
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
-                        .billDate(BigDecimal.valueOf(Instant.now().toEpochMilli()))
                         .dueDate(BigDecimal.valueOf(Instant.now().toEpochMilli()))
                         .billType(configs.getWageBillType())
                         .netPayableAmount(netPayableAmount)

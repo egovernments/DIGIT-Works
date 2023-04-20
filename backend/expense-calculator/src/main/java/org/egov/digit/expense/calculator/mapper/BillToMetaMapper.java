@@ -60,7 +60,7 @@ public class BillToMetaMapper {
     }
 
     private String getReferenceId(String referenceId) {
-        final String[] split = referenceId.split("-");
+        final String[] split = referenceId.split("_");
         return split[0];
     }
 

@@ -136,9 +136,7 @@ public class ExpenseCalculatorService {
     }
 
     private BillResponse postBill(RequestInfo requestInfo, Bill bill){
-        BillResponse billResponse = billUtils.postBill(requestInfo, bill);
-        log.info("billResponse =====> "+billResponse);
-        return billResponse;
+        return billUtils.postBill(requestInfo, bill);
     }
 
     private Map<String,Double> fetchMDMSDataForWageSeekersSkills(RequestInfo requestInfo, String tenantId){
