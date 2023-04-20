@@ -16,8 +16,10 @@ import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_location_bloc.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
+import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import '../../models/mdms/location_mdms.dart';
 import '../../models/mdms/wage_seeker_mdms.dart';
+import '../../utils/models/file_picker_data.dart';
 import '../../widgets/SideBar.dart';
 import '../../widgets/atoms/app_bar_logo.dart';
 import '../../widgets/drawer_wrapper.dart';
@@ -42,6 +44,11 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
   }
 
   afterViewBuild() {
+    context.read<WageSeekerBloc>().add(
+          const WageSeekerClearEvent(),
+        );
+    FilePickerData.imageFile = null;
+    FilePickerData.bytes = null;
     context.read<WageSeekerMDMSBloc>().add(
           const WageSeekerMDMSEvent(),
         );
@@ -90,7 +97,7 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: const DrawerWrapper(Drawer(
             child: SideBar(
           module: 'rainmaker-common,rainmaker-attendencemgmt',
         ))),

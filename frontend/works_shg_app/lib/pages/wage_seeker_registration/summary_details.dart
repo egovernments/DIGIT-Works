@@ -69,15 +69,20 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
         ),
         DigitCard(
             child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  t.translate(i18.attendanceMgmt.individualDetails),
-                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-                      ?.apply(color: const DigitColors().black),
-                  textAlign: TextAlign.left,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    t.translate(i18.attendanceMgmt.individualDetails),
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.headlineLarge
+                        ?.apply(color: const DigitColors().black),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 GestureDetector(
                   child: Icon(
@@ -210,11 +215,15 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  t.translate(i18.common.locationDetails),
-                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-                      ?.apply(color: const DigitColors().black),
-                  textAlign: TextAlign.left,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    t.translate(i18.common.locationDetails),
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.headlineLarge
+                        ?.apply(color: const DigitColors().black),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 GestureDetector(
                   child: Icon(
@@ -276,11 +285,15 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  t.translate(i18.common.financialDetails),
-                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-                      ?.apply(color: const DigitColors().black),
-                  textAlign: TextAlign.left,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    t.translate(i18.common.financialDetails),
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.headlineLarge
+                        ?.apply(color: const DigitColors().black),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 GestureDetector(
                   child: Icon(
@@ -371,17 +384,19 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                       error: (String? error) => Notifiers.getToastMessage(
                           context, error.toString(), 'ERROR'));
                 },
-                child: DigitElevatedButton(
-                  onPressed: () {
-                    context.read<WageSeekerCreateBloc>().add(
-                          CreateWageSeekerEvent(
-                              individualDetails: individualDetails,
-                              skillDetails: skillDetails,
-                              locationDetails: locationDetails,
-                              financialDetails: financialDetails),
-                        );
-                  },
-                  child: Center(child: Text(t.translate(i18.common.submit))),
+                child: Center(
+                  child: DigitElevatedButton(
+                    onPressed: () {
+                      context.read<WageSeekerCreateBloc>().add(
+                            CreateWageSeekerEvent(
+                                individualDetails: individualDetails,
+                                skillDetails: skillDetails,
+                                locationDetails: locationDetails,
+                                financialDetails: financialDetails),
+                          );
+                    },
+                    child: Center(child: Text(t.translate(i18.common.submit))),
+                  ),
                 ),
               ),
             ),
@@ -399,12 +414,11 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                padding: const EdgeInsets.only(right: 16),
-                width: MediaQuery.of(context).size.width / 3.5,
+            SizedBox(
+                width: MediaQuery.of(context).size.width / 3,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,7 +442,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             Column(
               children: [
                 SizedBox(
-                    width: MediaQuery.of(context).size.width / 2,
+                    width: MediaQuery.of(context).size.width / 2.5,
                     child: Text(
                       description,
                       style: const TextStyle(
@@ -439,7 +453,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                     )),
                 subDescription.isNotEmpty
                     ? SizedBox(
-                        width: MediaQuery.of(context).size.width / 2,
+                        width: MediaQuery.of(context).size.width / 2.5,
                         child: Text(
                           subDescription,
                           style: TextStyle(
