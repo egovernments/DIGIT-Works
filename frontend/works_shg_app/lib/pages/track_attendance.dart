@@ -516,7 +516,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                 child: Text(
                                                                                                                   AppLocalizations.of(context)
                                                                                                                       .translate(i18.common.saveAsDraft),
-                                                                                                                  style: musterRollsSearch!= null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
+                                                                                                                  style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty
                                                                                                                       ? Theme.of(context).textTheme.titleSmall?.apply(
                                                                                                                       color: const Color.fromRGBO(
                                                                                                                           149, 148, 148, 1))

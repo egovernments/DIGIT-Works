@@ -52,7 +52,7 @@ const inboxConfigMukta = () => {
                             },
                             populators: {
                                 name: "workOrderNumber",
-                                error: `ESTIMATE_PATTERN_ERR_MSG`,
+                                error: `CONTRACT_PATTERN_ERR_MSG`,
                                 validation: { pattern: "WO\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+", minlength: 2 }
                             },
                         },

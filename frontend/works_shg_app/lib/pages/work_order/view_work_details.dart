@@ -175,7 +175,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                           workOrderList.first['payload']['wfStatus'] ==
                               'ACCEPTED'
                       ? SizedBox(
-                          height: 80,
+                          height: 90,
                           child: DigitCard(
                             child: DigitElevatedButton(
                               onPressed: () {
@@ -295,7 +295,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                   e.startDate ?? 0)
                                               .toString())
                                       : 'NA',
-                                  i18.workOrder.workEndDate: e.endDate != null
+                                  i18.workOrder.workEndDate: e.endDate != null && e.endDate != 0
                                       ? DateFormats.getFilteredDate(
                                           DateTime.fromMillisecondsSinceEpoch(
                                                   e.endDate ?? 0)

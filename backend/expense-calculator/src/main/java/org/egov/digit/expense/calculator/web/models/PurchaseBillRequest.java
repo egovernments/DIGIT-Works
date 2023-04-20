@@ -26,19 +26,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PurchaseBillRequest   {
         @JsonProperty("requestInfo")
-
-          @Valid
-                private RequestInfo requestInfo = null;
+        @Valid
+        private RequestInfo requestInfo = null;
 
         @JsonProperty("bill")
-
-          @Valid
-                private Bill bill = null;
+        @Valid
+        private Bill bill = null;
 
         @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
-
+        @Valid
+        private List<Document> documents = null;
 
         public PurchaseBillRequest addDocumentsItem(Document documentsItem) {
             if (this.documents == null) {
@@ -47,5 +44,4 @@ public class PurchaseBillRequest   {
         this.documents.add(documentsItem);
         return this;
         }
-
 }

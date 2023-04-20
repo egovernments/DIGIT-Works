@@ -125,8 +125,14 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         'required': (_) => t.translate(
                               i18.wageSeeker.accountNumberRequired,
                             ),
-                        'mustMatch': (_) => AppLocalizations.of(context)
-                            .translate(i18.wageSeeker.reEnterAccountNumber)
+                        'mustMatch': (_) =>
+                            t.translate(i18.wageSeeker.reEnterAccountNumber),
+                        'minLength': (_) => t.translate(
+                              i18.wageSeeker.minAccNoCharacters,
+                            ),
+                        'maxLength': (_) => t.translate(
+                              i18.wageSeeker.maxAccNoCharacters,
+                            ),
                       },
                     ),
                     DigitTextFormField(
@@ -237,7 +243,12 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
             value: finance.accountHolderName,
             validators: [Validators.required]),
         accountNoKey: FormControl<String>(
-            value: finance.accountNumber, validators: [Validators.required]),
+            value: finance.accountNumber,
+            validators: [
+              Validators.required,
+              Validators.minLength(9),
+              Validators.maxLength(18)
+            ]),
         reAccountNoKey: FormControl<String>(value: finance.reAccountNumber),
         accountTypeKey: FormControl<String>(
             value: finance.accountType, validators: [Validators.required]),

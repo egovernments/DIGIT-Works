@@ -146,8 +146,9 @@ class _MainApplicationState extends State<MainApplication> {
           }
         }
       }
+      setState(() {});
     });
-    FlutterDownloader.registerCallback(downloadCallback);
+    await FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
