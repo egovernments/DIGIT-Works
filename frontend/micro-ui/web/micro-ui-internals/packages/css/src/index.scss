@@ -925,11 +925,12 @@ input[type="number"] {
   border: none;
   display: flex;
   padding-top: 10px;
+  background-color: #fff;
 }
 
 .disabled-text-field {
   color: #000 !important;
-  background-color: #FAFAFA;
+  background-color: #EEEEEE;
 }
 
 .status-table-custom-class {
