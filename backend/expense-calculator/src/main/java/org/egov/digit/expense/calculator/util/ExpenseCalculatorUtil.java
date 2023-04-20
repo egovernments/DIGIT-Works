@@ -43,8 +43,13 @@ public class ExpenseCalculatorUtil {
     @Autowired
     private ExpenseCalculatorConfiguration configs;
 
-    public List<String> fetchListOfMusterRollIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId) {
-        StringBuilder url = getMusterRollURI(tenantId, musterRollId);
+    public List<String> fetchListOfMusterRollIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId, boolean onlyApproved) {
+        StringBuilder url = null;
+        if(onlyApproved){
+            url = getApprovedMusterRollURI(tenantId,musterRollId);
+        } else {
+            url = getMusterRollURI(tenantId, musterRollId);
+        }
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         List<String> fetchedMusterRollIds = null;
@@ -56,25 +61,20 @@ public class ExpenseCalculatorUtil {
         return fetchedMusterRollIds;
     }
 
-    public List<MusterRoll> fetchMusterRollByIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId) {
-        StringBuilder url = getMusterRollURI(tenantId, musterRollId);
+    public List<MusterRoll> fetchMusterRollByIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId, boolean onlyApproved) {
+        StringBuilder url = null;
+        if(onlyApproved){
+            url = getApprovedMusterRollURI(tenantId, musterRollId);
+        } else{
+            url = getMusterRollURI(tenantId, musterRollId);
+        }
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
         return response.getMusterRolls();
     }
 
-    public List<String> fetchMusterByContractId(RequestInfo requestInfo, String tenantId, String contractId) {
-        StringBuilder url = getMusterRollURI(tenantId, contractId);
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
-        MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
-        List<String> musterrollIds = new ArrayList<>();
-        if (response != null && !CollectionUtils.isEmpty(response.getMusterRolls())) {
-            musterrollIds = response.getMusterRolls().stream().map(muster -> muster.getId()).collect(Collectors.toList());
-        }
-        return musterrollIds;
-    }
+
 
     private StringBuilder getApprovedMusterRollURI(String tenantId, List<String> musterRollId) {
         StringBuilder builder = new StringBuilder(configs.getMusterRollHost());
@@ -111,6 +111,18 @@ public class ExpenseCalculatorUtil {
         return builder;
     }
 
+    public List<String> fetchMusterByContractId(RequestInfo requestInfo, String tenantId, String contractId) {
+        StringBuilder url = getMusterRollURI(tenantId, contractId);
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+        Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
+        MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
+        List<String> musterrollIds = new ArrayList<>();
+        if (response != null && !CollectionUtils.isEmpty(response.getMusterRolls())) {
+            musterrollIds = response.getMusterRolls().stream().map(muster -> muster.getId()).collect(Collectors.toList());
+        }
+        return musterrollIds;
+    }
+
     public List<Contract> fetchContract(RequestInfo requestInfo, String tenantId, String contractId) {
         StringBuilder url = searchURI(configs.getContractHost(), configs.getContractEndPoint());
         Pagination pagination = Pagination.builder().limit(100d).build();
@@ -122,7 +134,7 @@ public class ExpenseCalculatorUtil {
     }
 
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
-        StringBuilder url = searchURI(configs.getExpenseBillHost(), configs.getExpenseBillSearchEndPoint());
+        StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(100d).build();
         BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
                 .referenceIds(new HashSet<>(Arrays.asList(contractId))).build();
@@ -139,6 +151,7 @@ public class ExpenseCalculatorUtil {
         builder.append(endpoint);
         return builder;
     }
+
 
 
 }

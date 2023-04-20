@@ -14,11 +14,8 @@ import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValid
 import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
-import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
 
 
-import javax.xml.ws.Response;
 import java.util.*;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorConstants.SUCCESSFUL_CONSTANT;
@@ -56,7 +53,7 @@ public class ExpenseCalculatorService {
     private CommonUtil commonUtil;
 
     @Autowired
-    private MusterRollUtils musterRollUtils;
+    private ExpenseCalculatorUtil expenseCalculatorUtil;
 
     @Autowired
     private BillToMetaMapper billToMetaMapper;
@@ -68,16 +65,16 @@ public class ExpenseCalculatorService {
         RequestInfo requestInfo = calculationRequest.getRequestInfo();
         Criteria criteria = calculationRequest.getCriteria();
 
-        if(criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
+        if (criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
             // Fetch wage seeker skills from MDMS
             Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, criteria.getTenantId());
             // Fetch all the approved muster rolls for provided muster Ids
-            List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,false);
+            List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo, criteria, false);
             return wageSeekerBillGeneratorService.calculateEstimates(criteria.getTenantId(), musterRolls, wageSeekerSkillCodeAmountMapping);
-        }
-        else {
+        } else {
             return supervisionBillGeneratorService.calculateEstimate(requestInfo, criteria);
         }
+    }
 
     public Calculation calculate(CalculationRequest calculationRequest) {
         Calculation calculation = calculateEstimates(calculationRequest);
@@ -98,7 +95,7 @@ public class ExpenseCalculatorService {
             List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(musterRolls,wageSeekerSkillCodeAmountMapping);
             BillResponse billResponse = postBills(requestInfo, wageSeekerBills);
             persistMeta(billResponse);
-            return billResponse.getBill();
+            return billResponse.getBills();
         }
         else {
             //TODO
@@ -139,14 +136,14 @@ public class ExpenseCalculatorService {
     public List<MusterRoll> fetchApprovedMusterRolls(RequestInfo requestInfo, Criteria criteria, boolean onlyApproved) {
         List<String> musterRollIds = criteria.getMusterRollId();
         String tenantId = criteria.getTenantId();
-        return musterRollUtils.fetchMusterRollByIds(requestInfo,tenantId,musterRollIds,onlyApproved);
+        return expenseCalculatorUtil.fetchMusterRollByIds(requestInfo,tenantId,musterRollIds,onlyApproved);
     }
 
     private void persistMeta(BillResponse billResponse) {
         if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
         {
-            BillMetaRecords billMetaRecords = billToMetaMapper.map(billResponse.getBill());
-            producer.push(configs.getCalculatorCreateBillTopic(),billMetaRecords);
+            BillMetaRecords billMetaRecords = billToMetaMapper.map(billResponse.getBills());
+            expenseCalculatorProducer.push(config.getCalculatorCreateBillTopic(),billMetaRecords);
         }
     }
 }

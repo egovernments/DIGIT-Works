@@ -59,7 +59,11 @@ public class ExpenseCalculatorServiceValidator {
         final Criteria criteria = calculationRequest.getCriteria();
         // Validate contractId if given against contract service
         if(StringUtils.isNotBlank(criteria.getContractId())) {
-            //TODO validate against contract service
+            List<Contract> contracts = expenseCalculatorUtil.fetchContract(calculationRequest.getRequestInfo(), criteria.getTenantId(), criteria.getContractId());
+            if (CollectionUtils.isEmpty(contracts)) {
+                log.error("ExpenseCalculatorServiceValidator:No matched contract found for contractId - "+criteria.getContractId());
+                throw new CustomException("INVALID_CONTRACT_ID", "Contract not found");
+            }
         }
     }
 
@@ -68,13 +72,10 @@ public class ExpenseCalculatorServiceValidator {
         validateRequestInfo(calculationRequest.getRequestInfo());
 
         //Validate required parameters for calculator estimate
-        validateRequiredParametersForCalculatorEstimate(calculationRequest);
+        validateRequiredParametersForCalculatorRequest(calculationRequest);
 
         //Validate request against MDMS
         validateCalculatorEstimateReqeuestAgainstMDMS(calculationRequest);
-
-        //Validate musterRollIds or contractId against respective service
-        validateMusterRollIdOrContractIdAgainstService(calculationRequest);
 
     }
 
@@ -155,23 +156,6 @@ public class ExpenseCalculatorServiceValidator {
         }
 
 
-    private void validateMusterRollIdOrContractIdAgainstService(CalculationRequest calculationRequest) {
-        Criteria criteria = calculationRequest.getCriteria();
-        List<String> musterRollId = criteria.getMusterRollId();
-
-        if(musterRollId != null && !musterRollId.isEmpty()) {
-            //Validate requested musterRollId against musterroll service
-            validateMusterRollId(calculationRequest);
-            return;
-        } else if (StringUtils.isNotBlank(criteria.getContractId())) {
-            List<Contract> contracts = expenseCalculatorUtil.fetchContract(calculationRequest.getRequestInfo(), criteria.getTenantId(), criteria.getContractId());
-            if (CollectionUtils.isEmpty(contracts)) {
-                log.error("ExpenseCalculatorServiceValidator:No matched contract found for contractId - "+criteria.getContractId());
-                throw new CustomException("INVALID_CONTRACT_ID", "Contract not found");
-            }
-        }
-    }
-
     private void validateRequestInfo(RequestInfo requestInfo) {
         if (requestInfo == null) {
             log.error("Request info is mandatory");
@@ -247,7 +231,7 @@ public class ExpenseCalculatorServiceValidator {
     }
 
     private List<String> fetchListOfMusterRollIdsForGivenIds(RequestInfo requestInfo, String tenantId, List<String> musterRollIds, boolean onlyApproved){
-        return musterRollUtils.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds,onlyApproved);
+        return expenseCalculatorUtil.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds,onlyApproved);
     }
     private void validateMusterRollIds(List<String> musterRollIds, List<String> fetchedMusterRolls) {
         for(String musterRollId : musterRollIds){

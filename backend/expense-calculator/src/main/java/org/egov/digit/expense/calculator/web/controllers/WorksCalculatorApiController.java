@@ -1,6 +1,7 @@
 package org.egov.digit.expense.calculator.web.controllers;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -8,6 +9,7 @@ import javax.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
+import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillResponse;
 import org.egov.digit.expense.calculator.web.models.Calculation;
 import org.egov.digit.expense.calculator.web.models.CalculationRequest;
@@ -53,7 +55,7 @@ public class WorksCalculatorApiController {
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
 		BillResponse billResponse = BillResponse.builder()
 				.responseInfo(responseInfo)
-				.bill(bills)
+				.bills(bills)
 				.build();
 
 		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.OK);

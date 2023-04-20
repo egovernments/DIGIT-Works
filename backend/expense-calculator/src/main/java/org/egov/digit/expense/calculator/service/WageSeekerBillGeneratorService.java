@@ -40,9 +40,6 @@ public class WageSeekerBillGeneratorService {
     private CommonUtil commonUtil;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
     private ExpenseCalculatorConfiguration configs;
 
     public Calculation calculateEstimates(String tenantId, List<MusterRoll> musterRolls,Map<String, Double> wageSeekerSkillCodeAmountMapping) {
