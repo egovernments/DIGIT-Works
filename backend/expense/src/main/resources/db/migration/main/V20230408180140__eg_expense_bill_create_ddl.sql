@@ -41,7 +41,6 @@ lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
 CONSTRAINT pk_eg_expense_billdetail PRIMARY KEY (id),
-CONSTRAINT unique_eg_expense_billdetail UNIQUE (billid),
 CONSTRAINT fk_eg_expense_billdetail FOREIGN KEY (billid) REFERENCES eg_expense_bill (id)
 
 );
