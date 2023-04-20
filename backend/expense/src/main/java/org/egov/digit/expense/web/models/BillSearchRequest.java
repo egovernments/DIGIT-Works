@@ -30,14 +30,6 @@ public class BillSearchRequest {
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
 
-	@JsonProperty("tenantId")
-	@NotNull
-	@Size(min = 2, max = 64)
-	private String tenantId;
-
-	@JsonProperty("ids")
-	private Set<String> ids;
-
 	@JsonProperty("billCriteria")
 	private BillCriteria billCriteria;
 

@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS eg_expense_bill
 id character varying(64)   NOT NULL,
 tenantid character varying(250) NOT NULL,
 billdate bigint NOT NULL,
-duedate bigint NOT NULL,
+duedate bigint,
 netPayableAmount numeric(12,2),
 netPaidAmount numeric(12,2),
 businessservice character varying(250)   NOT NULL,
