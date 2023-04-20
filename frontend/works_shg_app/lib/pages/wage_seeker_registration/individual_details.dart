@@ -134,6 +134,12 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         'required': (_) => t.translate(
                               i18.wageSeeker.nameRequired,
                             ),
+                        'minLength': (_) => t.translate(
+                              i18.wageSeeker.minNameCharacters,
+                            ),
+                        'maxLength': (_) => t.translate(
+                              i18.wageSeeker.maxNameCharacters,
+                            ),
                       },
                     ),
                     DigitTextFormField(
@@ -146,6 +152,12 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.fatherNameRequired,
+                            ),
+                        'minLength': (_) => t.translate(
+                              i18.wageSeeker.minFatherNameCharacters,
+                            ),
+                        'maxLength': (_) => t.translate(
+                              i18.wageSeeker.maxFatherNameCharacters,
                             ),
                       },
                     ),
@@ -247,7 +259,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
                           if (form.value[genderKey] == null ||
-                              form.value[genderKey].toString().isNotEmpty) {
+                              form.value[genderKey].toString().isEmpty) {
                             Notifiers.getToastMessage(
                                 context,
                                 t.translate(i18.wageSeeker.genderRequired),
@@ -298,12 +310,17 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
           Validators.minLength(12),
           Validators.maxLength(12)
         ]),
-        nameKey:
-            FormControl<String>(value: '', validators: [Validators.required]),
-        genderKey:
-            FormControl<String>(value: null, validators: [Validators.required]),
-        fatherNameKey:
-            FormControl<String>(value: '', validators: [Validators.required]),
+        nameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(128)
+        ]),
+        genderKey: FormControl<String>(value: null),
+        fatherNameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(128)
+        ]),
         relationshipKey:
             FormControl<String>(value: null, validators: [Validators.required]),
         dobKey: FormControl<DateTime>(

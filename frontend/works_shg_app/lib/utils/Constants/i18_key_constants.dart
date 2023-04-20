@@ -209,6 +209,12 @@ class WageSeeker {
   String get wageSeekerSuccessSubText => 'CREATE_INDIVIDUAL_SUCCESS_SUB_TEXT';
   String get selectSkillValidation => 'CANNOT_HAVE_SAME_SKILL_TYPE';
   String get enterValidIFSC => 'ENTER_VALID_IFSC_CODE';
+  String get minAccNoCharacters => 'MIN_ACCOUNT_NO_CHARACTERS_REQUIRED';
+  String get maxAccNoCharacters => 'MAX_ACCOUNT_NO_CHARACTERS_REQUIRED';
+  String get minNameCharacters => 'MIN_NAME_CHARCTERS_REQUIRED';
+  String get minFatherNameCharacters => 'MIN_FATHER_CHARCTERS_REQUIRED';
+  String get maxNameCharacters => 'MAX_NAME_CHARCTERS_REQUIRED';
+  String get maxFatherNameCharacters => 'MAX_FATHER_CHARCTERS_REQUIRED';
 }
 
 class AttendanceMgmt {
