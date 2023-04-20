@@ -17,8 +17,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-import static org.egov.digit.expense.config.Constants.HEADCODE_CODE_FILTER;
-import static org.egov.digit.expense.config.Constants.HEADCODE_MASTERNAME;
+import static org.egov.digit.expense.config.Constants.*;
 
 @Service
 @Slf4j
@@ -53,6 +52,7 @@ public class BillValidator {
 
         }
 
+        validateTenantId(billRequest);
         validateMasterData(billRequest, errorMap);
 
         if (!CollectionUtils.isEmpty(errorMap))
@@ -63,7 +63,8 @@ public class BillValidator {
     public void validateUpdateRequest(BillRequest billRequest) {
 
         Map<String, String> errorMap = new HashMap<>();
-		validateMasterData(billRequest, errorMap);
+        validateTenantId(billRequest);
+        validateMasterData(billRequest, errorMap);
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
@@ -107,6 +108,27 @@ public class BillValidator {
 
         if (!CollectionUtils.isEmpty(missingHeadCodes))
             errorMap.put("EG_EXPENSE_INVALID_HEADCODES", "The following head codes are invalid : " + missingHeadCodes);
+    }
+
+    private void validateTenantId(BillRequest billRequest) {
+
+        Bill bill = billRequest.getBill();
+        String rootTenantId = bill.getTenantId().split("\\.")[0];
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
+                rootTenantId, Constants.TENANT_MODULE_NAME, Constants.TENANT_MDMS_MASTER_NAMES);
+
+
+        List<String> tenantIdList=null;
+        try {
+            /* validating head code master data */
+            tenantIdList = JsonPath.read(mdmsData.get(Constants.TENANT_MODULE_NAME).get(TENANT_MASTERNAME), HEADCODE_CODE_FILTER);
+        } catch (Exception e) {
+            throw new CustomException("INVALID_TENANT", "Invalid tenantId [" + bill.getTenantId() + "]");
+        }
+
+        if (!tenantIdList.contains(bill.getTenantId())){
+            throw new CustomException("INVALID_TENANT", "Invalid tenantId [" + bill.getTenantId() + "]");
+        }
     }
 
 

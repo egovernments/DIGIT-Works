@@ -5,6 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class Constants {
+
+	public static final String TENANT_MODULE_NAME = "tenant";
+
+	public static final String TENANT_CODE_FILTER = "$.*.code";
+
+	public static final String TENANT_MASTERNAME = "tenants";
 	
 	
 	public static final String MODULE_NAME = "works";
@@ -15,7 +21,9 @@ public class Constants {
 	
 	public static final List<String> MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME));
-	
+
+	public static final List<String> TENANT_MDMS_MASTER_NAMES = Collections
+			.unmodifiableList(Arrays.asList(TENANT_MASTERNAME));
 	private static final String INNER_JOIN = "INNER JOIN";
 	private static final String WHERE = " WHERE ";
 	
