@@ -20,6 +20,8 @@ import java.util.List;
  */
 @ApiModel(description = "The object will contain all the search parameters for contract service.")
 @Validated
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

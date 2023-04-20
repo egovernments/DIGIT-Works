@@ -219,20 +219,16 @@ const configEstimateModal = (
     const fetchIsMandatory = (field) => {
         
         if(configMap?.[businessService]?.[actionString]){
-            console.log(configMap?.[businessService]?.[actionString]?.[field]?.isMandatory);
             return configMap?.[businessService]?.[actionString]?.[field]?.isMandatory ? configMap?.[businessService]?.[actionString]?.[field]?.isMandatory : false
         }else{
-            console.log(configMap?.[businessService]?.default?.[field]?.isMandatory);
             return configMap?.[businessService]?.default?.[field]?.isMandatory ? configMap?.[businessService]?.default?.[field]?.isMandatory: false
         }
     }
     const fetchIsShow = (field) => {
         
         if (configMap?.[businessService]?.[actionString]) {
-            console.log(configMap?.[businessService]?.[actionString]?.[field]?.show);
            return configMap?.[businessService]?.[actionString]?.[field]?.show ? configMap?.[businessService]?.[actionString]?.[field]?.show : false
         } else {
-            console.log(configMap?.[businessService]?.default?.[field]?.show);
             return configMap?.[businessService]?.default?.[field]?.show ? configMap?.[businessService]?.default?.[field]?.show:false
         }
         

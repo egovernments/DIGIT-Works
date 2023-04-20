@@ -1,43 +1,39 @@
 package org.egov.digit.expense.calculator.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.egov.common.contract.response.ResponseInfo;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.response.ResponseInfo;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * BillResponse
  */
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-11T13:19:59.852+05:30[Asia/Kolkata]")
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class BillResponse {
-	@JsonProperty("responseInfo")
 
+	@JsonProperty("responseInfo")
 	@Valid
-	private ResponseInfo responseInfo = null;
+	private ResponseInfo responseInfo;
 
 	@JsonProperty("bills")
 	@Valid
-	private List<Bill> bills = null;
+	private List<Bill> bills;
 
 	@JsonProperty("pagination")
-
 	@Valid
-	private Pagination pagination = null;
+	private Pagination pagination;
 
 	public BillResponse addBillItem(Bill billItem) {
 		if (this.bills == null) {

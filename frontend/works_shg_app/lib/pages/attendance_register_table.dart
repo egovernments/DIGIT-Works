@@ -20,6 +20,7 @@ import '../blocs/attendance/search_projects/search_individual_project.dart';
 import '../blocs/localization/app_localization.dart';
 import '../models/attendance/individual_list_model.dart';
 import '../router/app_router.dart';
+import '../utils/common_methods.dart';
 import '../utils/models.dart';
 import '../utils/notifiers.dart';
 import '../widgets/SideBar.dart';
@@ -108,9 +109,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: Stack(children: [
           Container(

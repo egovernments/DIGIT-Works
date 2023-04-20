@@ -43,7 +43,7 @@ dependencies:
   flutter_bloc: ^8.1.1
   auto_route: ^5.0.2
   freezed_annotation: ^2.2.0
-  json_annotation: ^4.7.0
+  json_annotation: ^4.8.0
   faker: ^2.0.0 # Library can be removed when no longer needed for fake data
   google_fonts: ^3.0.1
   location: ^4.4.0
@@ -67,7 +67,7 @@ dependencies:
   mime: ^1.0.4
   http_parser: ^4.0.2
   http: ^0.13.5
-  path_provider: ^2.0.13
+  path_provider: ^2.0.14
   charset_converter: ^2.1.1
   path: ^1.8.2
   flutter_svg: ^2.0.3
@@ -126,6 +126,9 @@ flutter:
     - family: Hindhi
       fonts:
         - asset: assets/fonts/Roboto/Hind-Regular.ttf
+    - family: SHGIcons
+      fonts:
+        - asset: assets/icons/fonts/SHGIcons.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

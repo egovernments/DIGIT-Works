@@ -7,6 +7,12 @@ import org.egov.digit.expense.calculator.util.CommonUtil;
 import org.egov.digit.expense.calculator.util.MdmsUtils;
 import org.egov.digit.expense.calculator.util.MusterRollUtils;
 import org.egov.digit.expense.calculator.web.models.*;
+import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
+import org.egov.digit.expense.calculator.web.models.CalculationRequest;
+import org.egov.digit.expense.calculator.web.models.Contract;
+import org.egov.digit.expense.calculator.web.models.Criteria;
+import org.egov.digit.expense.calculator.web.models.MusterRoll;
+import org.egov.digit.expense.calculator.web.models.MusterRollRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,7 +35,7 @@ public class ExpenseCalculatorServiceValidator {
     private CommonUtil commonUtil;
 
     @Autowired
-    private MusterRollUtils musterRollUtils;
+    private ExpenseCalculatorUtil expenseCalculatorUtil;
     public void validateCalculatorEstimateRequest(CalculationRequest calculationRequest){
         validateCommonCalculatorRequest(calculationRequest);
 
@@ -38,6 +44,7 @@ public class ExpenseCalculatorServiceValidator {
 
         // Validate contractId if given against contract service
         validateContractIdAgainstService(calculationRequest);
+
     }
 
     public void validateCalculatorCalculateRequest(CalculationRequest calculationRequest){
@@ -78,7 +85,11 @@ public class ExpenseCalculatorServiceValidator {
         final Criteria criteria = calculationRequest.getCriteria();
         // Validate contractId if given against contract service
         if(StringUtils.isNotBlank(criteria.getContractId())) {
-            //TODO validate against contract service
+            List<Contract> contracts = expenseCalculatorUtil.fetchContract(calculationRequest.getRequestInfo(), criteria.getTenantId(), criteria.getContractId());
+            if (CollectionUtils.isEmpty(contracts)) {
+                log.error("ExpenseCalculatorServiceValidator:No matched contract found for contractId - "+criteria.getContractId());
+                throw new CustomException("INVALID_CONTRACT_ID", "Contract not found");
+            }
         }
     }
 
@@ -116,6 +127,18 @@ public class ExpenseCalculatorServiceValidator {
         List<String> fetchedMusterRollIds = fetchListOfMusterRollIdsForGivenIds(requestInfo, tenantId, Collections.singletonList(musterRollId), true);
         validateMusterRollIds( Collections.singletonList(musterRollId),fetchedMusterRollIds);
         log.info("Muster roll validated against muster roll service ["+musterRollId+"]");
+    }
+
+    private void validateMusterRollRequestAgainstMDMS(MusterRollRequest musterRollRequest) {
+        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+        String tenantId = musterRoll.getTenantId();
+        RequestInfo requestInfo = musterRollRequest.getRequestInfo();
+        //Fetch MDMS data
+        Object mdmsData = fetchMDMSDataForValidation(requestInfo,tenantId);
+        // Validate tenantId against MDMS data
+        validateTenantIdAgainstMDMS(mdmsData, tenantId);
+
+        log.info("MDMD validation done");
     }
 
     private void validateRequiredParametersForMusterRollRequest(MusterRollRequest musterRollRequest) {
@@ -217,7 +240,7 @@ public class ExpenseCalculatorServiceValidator {
     }
 
     private List<String> fetchListOfMusterRollIdsForGivenIds(RequestInfo requestInfo, String tenantId, List<String> musterRollIds, boolean onlyApproved){
-        return musterRollUtils.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds,onlyApproved);
+        return expenseCalculatorUtil.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds,onlyApproved);
     }
     private void validateMusterRollIds(List<String> musterRollIds, List<String> fetchedMusterRolls) {
         for(String musterRollId : musterRollIds){

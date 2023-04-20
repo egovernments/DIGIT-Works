@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import digit.models.coremodels.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,78 +32,94 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Bill {
 	@JsonProperty("id")
+
 	@Valid
-	private String id = null;
+	private String id;
 
 	@JsonProperty("tenantId")
 	@NotNull
+
 	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
 	@JsonProperty("billDate")
+
 	@Valid
-	private BigDecimal billDate = null;
+	private Long billDate;
 
 	@JsonProperty("dueDate")
+
 	@Valid
-	private BigDecimal dueDate = null;
+	private Long dueDate;
 
 	@JsonProperty("netPayableAmount")
+
 	@Valid
 	private BigDecimal netPayableAmount = null;
 
 	@JsonProperty("netPaidAmount")
+
 	@Valid
 	private BigDecimal netPaidAmount = null;
 
 	@JsonProperty("businessservice")
 	@NotNull
+
 	@Size(min = 2, max = 64)
 	private String businessService = null;
 
 	@JsonProperty("referenceId")
-	@Size(min = 2, max = 64)
-	private String referenceId = null;
 
-	@JsonProperty("billType")
-	@Valid
-	private String billType = null;
+	@Size(min = 2, max = 64)
+	private String referenceId;
 
 	@JsonProperty("fromPeriod")
+
 	@Valid
-	private BigDecimal fromPeriod = null;
+	private Long fromPeriod;
 
 	@JsonProperty("toPeriod")
+
 	@Valid
-	private BigDecimal toPeriod = null;
+	private Long toPeriod;
 
 	@JsonProperty("paymentStatus")
+
 	@Size(min = 2, max = 64)
-	private String paymentStatus = null;
+	private String paymentStatus;
 
 	@JsonProperty("status")
+
 	@Size(min = 2, max = 64)
-	private String status = null;
+	private String status;
 
 	@JsonProperty("payer")
 	@NotNull
+
 	@Valid
-	private Party payer = null;
+	private Party payer;
 
 	@JsonProperty("billDetails")
 	@NotNull
 	@Valid
-	private List<BillDetail> billDetails = new ArrayList<>();
+	private List<BillDetail> billDetails;
 
 	@JsonProperty("additionalDetails")
-	@Valid
-	private Object additionalDetails = null;
+	private Object additionalDetails;
 
 	@JsonProperty("auditDetails")
+
 	@Valid
-	private AuditDetails auditDetails = null;
+	private AuditDetails auditDetails;
+
+	@JsonProperty("workflow")
+	private ProcessInstance workflow;
 
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
+
+		if(null == this.billDetails)
+			this.billDetails = new ArrayList<>();
+
 		this.billDetails.add(billDetailsItem);
 		return this;
 	}

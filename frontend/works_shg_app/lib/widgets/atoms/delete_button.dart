@@ -11,8 +11,8 @@ class DeleteButton extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: const Icon(
-          IconData(0xe1b9, fontFamily: 'MaterialIcons'),
-          color: Colors.grey,
+          Icons.delete_outline_outlined,
+          color: Color.fromRGBO(80, 90, 95, 1),
         ),
       ),
     );

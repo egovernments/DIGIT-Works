@@ -2,7 +2,9 @@ package org.egov.digit.expense.calculator.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.enrichment.ExpenseCalculatorEnrichment;
 import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
@@ -12,6 +14,7 @@ import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValid
 import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.*;
 
@@ -27,8 +30,17 @@ public class ExpenseCalculatorService {
 
     @Autowired
     private ExpenseCalculatorEnrichment expenseCalculatorEnrichment;
+
     @Autowired
     private WageSeekerBillGeneratorService wageSeekerBillGeneratorService;
+    @Autowired
+    private SupervisionBillGeneratorService supervisionBillGeneratorService;
+    @Autowired
+    private ExpenseCalculatorProducer expenseCalculatorProducer;
+    @Autowired
+    private ExpenseCalculatorConfiguration config;
+
+
     @Autowired
     private PurchaseBillGeneratorService purchaseBillGeneratorService;
 
@@ -45,35 +57,30 @@ public class ExpenseCalculatorService {
     private CommonUtil commonUtil;
 
     @Autowired
-    private MusterRollUtils musterRollUtils;
+    private ExpenseCalculatorUtil expenseCalculatorUtil;
 
     @Autowired
     private BillToMetaMapper billToMetaMapper;
-
-    @Autowired
-    private ExpenseCalculatorProducer producer;
-
-    @Autowired
-    private ExpenseCalculatorConfiguration configs;
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
         expenseCalculatorServiceValidator.validateCalculatorEstimateRequest(calculationRequest);
         RequestInfo requestInfo = calculationRequest.getRequestInfo();
         Criteria criteria = calculationRequest.getCriteria();
 
-        if(criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
+        if (criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
             // Fetch wage seeker skills from MDMS
             Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, criteria.getTenantId());
             // Fetch all the approved muster rolls for provided muster Ids
-            List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,false);
-            return wageSeekerBillGeneratorService.calculateEstimates(requestInfo , criteria.getTenantId(), musterRolls, wageSeekerSkillCodeAmountMapping);
+            List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo, criteria, false);
+            return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, wageSeekerSkillCodeAmountMapping);
+        } else {
+            return supervisionBillGeneratorService.calculateEstimate(requestInfo, criteria);
         }
-       else {
-            //TODO
-            // Supervision service implementation : for now returning empty calculation
-            return Calculation.builder().build();
-        }
-
+    }
+    public Calculation calculate(CalculationRequest calculationRequest) {
+        Calculation calculation = calculateEstimates(calculationRequest);
+        expenseCalculatorProducer.push(config.getCalculatorCreateTopic(),calculation);
+        return calculation;
     }
 
     public List<Bill> createPurchaseBill(PurchaseBillRequest purchaseBillRequest){
@@ -156,7 +163,7 @@ public class ExpenseCalculatorService {
     public List<MusterRoll> fetchApprovedMusterRolls(RequestInfo requestInfo, Criteria criteria, boolean onlyApproved) {
         List<String> musterRollIds = criteria.getMusterRollId();
         String tenantId = criteria.getTenantId();
-        return musterRollUtils.fetchMusterRollByIds(requestInfo,tenantId,musterRollIds,onlyApproved);
+        return expenseCalculatorUtil.fetchMusterRollByIds(requestInfo,tenantId,musterRollIds,onlyApproved);
     }
 
     private void persistMeta(List<Bill> bills) {

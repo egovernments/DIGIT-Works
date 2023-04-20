@@ -16,6 +16,8 @@ import java.util.List;
  * ContractResponse
  */
 @Validated
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

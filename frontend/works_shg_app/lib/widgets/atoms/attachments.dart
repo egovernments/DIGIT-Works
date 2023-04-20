@@ -25,7 +25,7 @@ class Attachments extends StatelessWidget {
                   child: Text(
                     label,
                     style: DigitTheme
-                        .instance.mobileTheme.textTheme.displayMedium
+                        .instance.mobileTheme.textTheme.headlineLarge
                         ?.apply(color: const DigitColors().black),
                     textAlign: TextAlign.left,
                   ),

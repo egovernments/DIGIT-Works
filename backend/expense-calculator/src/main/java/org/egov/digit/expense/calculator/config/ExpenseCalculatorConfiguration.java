@@ -70,19 +70,22 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
-	// Bill
+	// Contract service
+	@Value("${egov.contract.service.host}")
+	private String contractHost;
+
+	@Value("${egov.contract.service.search.endpoint}")
+	private String contractSearchEndPoint;
+
+	// Expense bill service
 	@Value("${egov.bill.host}")
 	private String billHost;
 
 	@Value("${egov.bill.create.endpoint}")
 	private String billCreateEndPoint;
 
-	// Contract
-	@Value("${egov.contract.host}")
-	private String contractHost;
-
-	@Value("${egov.contract.search.endpoint}")
-	private String contractSearchEndPoint;
+	@Value("${egov.expense.bill.service.search.endpoint}")
+	private String expenseBillSearchEndPoint;
 
 	// HRMS
 	@Value("${egov.hrms.host}")
@@ -130,5 +133,9 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${egov.works.expense.wage.payer.id}")
 	private String wagePayerId;
+
+	//KAFKA topic
+	@Value("${expense.calculator.create.topic}")
+	private String calculatorCreateTopic;
 
 }

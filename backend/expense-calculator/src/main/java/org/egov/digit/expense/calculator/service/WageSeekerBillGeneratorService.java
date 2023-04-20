@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.util.CommonUtil;
 import org.egov.digit.expense.calculator.util.ContractUtils;
@@ -26,7 +25,10 @@ public class WageSeekerBillGeneratorService {
     private ObjectMapper mapper;
 
     @Autowired
-    private MusterRollUtils musterRollUtils;
+    private ExpenseCalculatorUtil expenseCalculatorUtil;
+
+    @Autowired
+    private MdmsUtils mdmsUtils;
 
     @Autowired
     private CommonUtil commonUtil;
@@ -83,8 +85,8 @@ public class WageSeekerBillGeneratorService {
                                                 .referenceId(cboId)
                                                 .tenantId(tenantId)
                                                 .paymentStatus("PENDING")
-                                                .fromPeriod(musterRoll.getStartDate())
-                                                .toPeriod(musterRoll.getEndDate())
+                                                .fromPeriod(musterRoll.getStartDate().longValue())
+                                                .toPeriod(musterRoll.getEndDate().longValue())
                                                 .payee(payee)
                                                 .lineItems(Collections.singletonList(lineItem))
                                                 .payableLineItems(Collections.singletonList(lineItem))
@@ -99,18 +101,17 @@ public class WageSeekerBillGeneratorService {
                 // Build Bill
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
-                        .dueDate(BigDecimal.valueOf(Instant.now().toEpochMilli()))
-                        .billType(configs.getWageBillType())
+                        .billDate(Instant.now().toEpochMilli())
                         .netPayableAmount(netPayableAmount)
                         .referenceId(referenceId +"_"+musterRoll.getMusterRollNumber())
                         .businessService(configs.getWageBusinessService())
-                        .fromPeriod(musterRoll.getStartDate())
-                        .toPeriod(musterRoll.getEndDate())
+                        .fromPeriod(musterRoll.getStartDate().longValue())
+                        .toPeriod(musterRoll.getEndDate().longValue())
                         .payer(payer)
                         .paymentStatus("PENDING")
                         .status("ACTIVE")
                         .billDetails(billDetails)
-                        //.additionalDetails(new Object())
+                        .additionalDetails(new Object())
                         .build();
 
                 bills.add(bill);
@@ -221,7 +222,7 @@ public class WageSeekerBillGeneratorService {
                 .identifier(individualId)
                 .type(type)
                 .tenantId(tenantId)
-               .status("STATUS")
+                .status("STATUS")
                 .build();
     }
 
