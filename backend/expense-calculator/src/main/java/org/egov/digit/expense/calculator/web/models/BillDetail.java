@@ -34,6 +34,10 @@ public class BillDetail {
 	@Valid
 	private String id = null;
 
+	@JsonProperty("billId")
+	@Valid
+	private String billId = null;
+
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 

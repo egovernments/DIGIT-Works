@@ -37,4 +37,9 @@ public class Party {
 	@Size(min = 2, max = 64)
 	private String identifier = null;
 
+	@JsonProperty("status")
+	@NotNull
+	@Size(min = 2, max = 64)
+	private String status = null;
+
 }

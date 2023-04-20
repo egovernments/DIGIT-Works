@@ -81,7 +81,7 @@ public class ExpenseCalculatorService {
         purchaseBillRequest.getDocuments();
         Bill purchaseBill = purchaseBillGeneratorService.createPurchaseBill(purchaseBillRequest);
         BillResponse billResponse = postBill(purchaseBillRequest.getRequestInfo(), purchaseBill);
-        List<Bill> bills = billResponse.getBill();
+        List<Bill> bills = billResponse.getBills();
         persistMeta(bills);
         return bills;
     }
@@ -103,7 +103,7 @@ public class ExpenseCalculatorService {
                 billResponse = postBill(requestInfo, bill);
                 if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
                 {
-                    List<Bill> bills = billResponse.getBill();
+                    List<Bill> bills = billResponse.getBills();
                     persistMeta(bills);
                     submittedBills.addAll(bills);
                 }
@@ -129,14 +129,16 @@ public class ExpenseCalculatorService {
             billResponse = postBill(requestInfo, bill);
             if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
             {
-                List<Bill> bills = billResponse.getBill();
+                List<Bill> bills = billResponse.getBills();
                 persistMeta(bills);
             }
         }
     }
 
     private BillResponse postBill(RequestInfo requestInfo, Bill bill){
-        return billUtils.postBill(requestInfo, bill);
+        BillResponse billResponse = billUtils.postBill(requestInfo, bill);
+        log.info("billResponse =====> "+billResponse);
+        return billResponse;
     }
 
     private Map<String,Double> fetchMDMSDataForWageSeekersSkills(RequestInfo requestInfo, String tenantId){

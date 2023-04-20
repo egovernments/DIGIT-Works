@@ -56,7 +56,7 @@ public class PurchaseBillApiController {
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(purchaseBillRequest.getRequestInfo(), true);
 		BillResponse billResponse = BillResponse.builder()
 				.responseInfo(responseInfo)
-				.bill(purchaseBills)
+				.bills(purchaseBills)
 				.build();
 
 		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.OK);

@@ -79,6 +79,7 @@ public class WageSeekerBillGeneratorService {
                     // Build BillDetail
                     BillDetail billDetail = BillDetail.builder()
                                                 //.referenceId(individualId)
+                                                .billId(null)
                                                 .referenceId(cboId)
                                                 .tenantId(tenantId)
                                                 .paymentStatus("PENDING")
@@ -99,6 +100,7 @@ public class WageSeekerBillGeneratorService {
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
                         .billDate(BigDecimal.valueOf(Instant.now().toEpochMilli()))
+                        .dueDate(BigDecimal.valueOf(Instant.now().toEpochMilli()))
                         .billType(configs.getWageBillType())
                         .netPayableAmount(netPayableAmount)
                         .referenceId(referenceId +"_"+musterRoll.getMusterRollNumber())
@@ -219,7 +221,8 @@ public class WageSeekerBillGeneratorService {
        return Party.builder()
                 .identifier(individualId)
                 .type(type)
-               .tenantId(tenantId)
+                .tenantId(tenantId)
+               .status("STATUS")
                 .build();
     }
 

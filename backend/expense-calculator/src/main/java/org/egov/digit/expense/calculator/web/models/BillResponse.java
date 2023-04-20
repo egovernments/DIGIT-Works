@@ -30,9 +30,9 @@ public class BillResponse {
 	@Valid
 	private ResponseInfo responseInfo = null;
 
-	@JsonProperty("bill")
+	@JsonProperty("bills")
 	@Valid
-	private List<Bill> bill = null;
+	private List<Bill> bills = null;
 
 	@JsonProperty("pagination")
 
@@ -40,10 +40,10 @@ public class BillResponse {
 	private Pagination pagination = null;
 
 	public BillResponse addBillItem(Bill billItem) {
-		if (this.bill == null) {
-			this.bill = new ArrayList<>();
+		if (this.bills == null) {
+			this.bills = new ArrayList<>();
 		}
-		this.bill.add(billItem);
+		this.bills.add(billItem);
 		return this;
 	}
 
