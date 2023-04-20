@@ -37,7 +37,7 @@ public class BillToMetaMapper {
 //                String billType = getValueFromAdditionalDetails(bill, BILL_TYPE_CONSTANT);
                 String contractId = getReferenceId(bill.getReferenceId());
                 String billId = bill.getReferenceId();
-                String musterRollId = getMusterRollId(bill,null);
+                String musterRollId = getMusterRollId(bill,bill.getBusinessService());
                 AuditDetails billAuditDetails = bill.getAuditDetails();
                 BillMeta billMeta = BillMeta.builder()
                         .id(id)
@@ -64,9 +64,13 @@ public class BillToMetaMapper {
     }
 
     private String getMusterRollId(Bill bill, String billType) {
-        if(configs.getWageBillType().equalsIgnoreCase(billType))
-            return bill.getReferenceId();
-
+        if(configs.getWageBusinessService().equalsIgnoreCase(billType)) {
+            String[] split  = bill.getReferenceId().split("_");
+            if(split.length > 0)
+                return split[1];
+            else
+                return null;
+        }
         return null;
     }
 

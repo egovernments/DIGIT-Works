@@ -116,9 +116,6 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.wage.head.code}")
 	private String wageHeadCode;
 
-	@Value("${egov.works.expense.wage.bill.type}")
-	private String wageBillType;
-
 	@Value("${egov.works.expense.wage.payee.type}")
 	private String wagePayeeType;
 

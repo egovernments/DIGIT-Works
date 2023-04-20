@@ -113,7 +113,7 @@ public class WageSeekerBillGeneratorService {
                         .paymentStatus("PENDING")
                         .status("ACTIVE")
                         .billDetails(billDetails)
-                        .additionalDetails(new Object())
+                        //.additionalDetails(new Object())
                         .build();
 
                 bills.add(bill);
