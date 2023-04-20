@@ -101,7 +101,7 @@ lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
 CONSTRAINT pk_eg_expense_party_payee PRIMARY KEY (id),
-CONSTRAINT fk_eg_expense_party_payee FOREIGN KEY (parentid) REFERENCES eg_expense_billdetail (billid)
+CONSTRAINT fk_eg_expense_party_payee FOREIGN KEY (parentid) REFERENCES eg_expense_bill (id)
 );
 
    
