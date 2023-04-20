@@ -46,6 +46,8 @@ public class MdmsUtil {
             log.error("Exception occurred while fetching category lists from mdms: ",e);
         }
 
+
+		log.info(mdmsResponse.toString());
         return mdmsResponse.getMdmsRes();
         //log.info(ulbToCategoryListMap.toString());
     }
@@ -56,7 +58,6 @@ public class MdmsUtil {
 	 * @param tenantId
 	 * @param moduleName
 	 * @param masterNames
-	 * @param filter
 	 * @param requestInfo
 	 * @return
 	 */

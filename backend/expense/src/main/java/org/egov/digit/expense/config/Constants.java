@@ -7,11 +7,11 @@ import java.util.List;
 public class Constants {
 	
 	
-	public static final String MODULE_NAME = "ExpenseService";
+	public static final String MODULE_NAME = "works";
 	
-	public static final String HEADCODE_CODE_FILTER = "$.MdmsRes.ExpenseService.HeadCodeMaster.*.code";
+	public static final String HEADCODE_CODE_FILTER = "$.*.code";
 	
-	public static final String HEADCODE_MASTERNAME = "HeadCodeMaster";
+	public static final String HEADCODE_MASTERNAME = "ExpenseHeads";
 	
 	public static final List<String> MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME));

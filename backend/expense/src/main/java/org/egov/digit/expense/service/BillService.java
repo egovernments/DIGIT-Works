@@ -58,7 +58,10 @@ public class BillService {
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
 
+		log.info("Validate billRequest");
 		validator.validateCreateRequest(billRequest);
+
+		log.info("Enrich billRequest");
 		enrichmentUtil.encrichBillForCreate(billRequest);
 		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
