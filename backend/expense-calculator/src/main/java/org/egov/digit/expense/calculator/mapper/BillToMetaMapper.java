@@ -36,7 +36,6 @@ public class BillToMetaMapper {
 //                String contractId = getValueFromAdditionalDetails(bill,CONTRACT_ID_CONSTANT);
 //                String billType = getValueFromAdditionalDetails(bill, BILL_TYPE_CONSTANT);
                 String contractId = getReferenceId(bill.getReferenceId());
-                String billType = bill.getBillType();
                 String billId = bill.getReferenceId();
                 String musterRollId = getMusterRollId(bill,null);
                 AuditDetails billAuditDetails = bill.getAuditDetails();
@@ -45,7 +44,7 @@ public class BillToMetaMapper {
                         .tenantId(tenantId)
                         .serviceCode(serviceCode)
                         .contractId(contractId)
-                        .billType(billType)
+                        .billType(bill.getBusinessService())
                         .billId(billId)
                         .musterrollId(musterRollId)
                         .auditDetails(billAuditDetails)

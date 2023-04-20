@@ -168,6 +168,6 @@ public class ExpenseCalculatorService {
 
     private void persistMeta(List<Bill> bills) {
         BillMetaRecords billMetaRecords = billToMetaMapper.map(bills);
-        producer.push(configs.getCalculatorCreateBillTopic(),billMetaRecords);
+        expenseCalculatorProducer.push(config.getCalculatorCreateBillTopic(),billMetaRecords);
     }
 }
