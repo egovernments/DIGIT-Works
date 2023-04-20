@@ -187,6 +187,7 @@
 .disabled {
   @apply border-grey-dark text-grey-dark !important;
   pointer-events: none !important;
+  background-color: #EEEEEE;
 }
 
 .card-date-input {
