@@ -102,6 +102,11 @@
                   "isMandatory": true,
                   "type": "dropdown",
                   "disable": false,
+                  "preProcess": {
+                    "updateDependent": [
+                      "populators.options"
+                    ]
+                  },
                   "populators": {
                       "name": "invoiceDetails_vendor",
                       "optionsKey": "name",
@@ -166,7 +171,7 @@
                   "type": "number",
                   "disable": false,
                   "populators": {
-                    "name": "materialCost",
+                    "name": "invoiceDetails_materialCost",
                     "error": "WORKS_REQUIRED_ERR",
                     "validation": {
                       "min": 0
@@ -175,7 +180,7 @@
                 },
                 {
                   "label": "EXP_GST_RS",
-                  "isMandatory": false,
+                  "isMandatory": true,
                   "key": "invoiceDetails_gst",
                   "type": "number",
                   "disable": false,
@@ -199,9 +204,13 @@
                   "key": "billDetails_billDate",
                   "type": "date",
                   "disable": true,
+                  "preProcess" : {
+                    "updateDependent" : ["populators.max"]
+                  },
                   "populators": { 
                     "name": "billDetails_billDate",
-                    "error": "WORKS_REQUIRED_ERR"
+                    "error": "WORKS_REQUIRED_ERR",
+                    "max" : "currentDate"
                   }
                 },
                 {
@@ -211,9 +220,13 @@
                   "key": "billDetails_billAmt",
                   "type": "text",
                   "disable": true,
+                  "preProcess" : {
+                    "updateDependent" : ["populators.customStyle.error"]
+                  },
                   "populators": {
                     "name": "billDetails_billAmt",
-                    "customClass": "fc-header-texts"
+                    "customClass": "fc-header-texts",
+                    "error": "EXP_BILL_AMOUNT_ERR"
                   }
                 }
               ]
@@ -255,7 +268,7 @@
                       "error": "WORKS_REQUIRED_ERR",
                       "name": "uploadedDocs",
                       "customClass": "",
-                      "localePrefix": "PURCHASE_BILL_DOC"
+                      "localePrefix": "EXPENDITURE"
                   }
                ]
             }

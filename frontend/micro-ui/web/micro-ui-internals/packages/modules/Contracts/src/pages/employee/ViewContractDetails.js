@@ -1,12 +1,15 @@
-import React, { useState, useEffect, Fragment }from 'react';
+import React, { useState, useEffect, Fragment, useRef }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast, MultiLink } from '@egovernments/digit-ui-react-components';
+import { Menu, Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast, MultiLink } from '@egovernments/digit-ui-react-components';
 
 
 const ViewContractDetails = () => {
     const { t } = useTranslation();
+    const history = useHistory();
+    const [showActions, setShowActions] = useState(false);
     const [showToast, setShowToast] = useState(null);
+    const menuRef = useRef();
     const queryStrings = Digit.Hooks.useQueryParams();
     const contractId = queryStrings?.workOrderNumber;
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -14,6 +17,14 @@ const ViewContractDetails = () => {
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
+
+    const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
+    const [actionsMenu, setActionsMenu] = useState([]);
+
+    const closeMenu = () => {
+        setShowActions(false);
+    }
+    Digit.Hooks.useClickOutside(menuRef, closeMenu, showActions);
 
     const payload = {
         tenantId : queryStrings?.tenantId || tenantId,
@@ -72,8 +83,24 @@ const ViewContractDetails = () => {
         }
     },[isProjectError]);
 
+    useEffect(() => {
+        let isUserBillCreator = loggedInUserRoles?.includes("BILL_CREATOR");
+        if (data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" && isUserBillCreator){
+            setActionsMenu((prevState => [...prevState,{
+                name:"CREATE_PURCHASE_BILL"
+            }]))
+        }
+
+    }, [data])
+
     const HandleDownloadPdf = () => {
         Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`workOrder-${contractId}.pdf`)
+    }
+
+    const handleActionBar = (option) => {
+        if (option?.name === "CREATE_PURCHASE_BILL") {
+            history.push(`/${window.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&workOrderNumber=${contractId}`);
+        }
     }
 
     const handleToastClose = () => {
@@ -127,6 +154,20 @@ const ViewContractDetails = () => {
                         url={Digit.Utils.Urls.contracts.update}
                         moduleCode="Contract"
                     />
+                    {data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" ?
+                        <ActionBar>
+
+                            {showActions ? <Menu
+                                localeKeyPrefix={`WF_CONTRACT_ACTION`}
+                                options={actionsMenu}
+                                optionKey={"name"}
+                                t={t}
+                                onSelect={handleActionBar}
+                            />:null} 
+                            <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)} />
+                        </ActionBar>
+                        : null
+                    }
                 </>
           }
         </div>

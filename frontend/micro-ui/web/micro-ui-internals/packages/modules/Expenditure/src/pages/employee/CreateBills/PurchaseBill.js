@@ -10,8 +10,6 @@ const PurchaseBill = () => {
     const queryStrings = Digit.Hooks.useQueryParams();
     const [contractNumber, setContractNumber] = useState(queryStrings?.workOrderNumber ? queryStrings?.workOrderNumber : "");
     const tenantId = queryStrings?.tenantId;
-    const [documents, setDocuments] = useState([]);
-
     const isModify = queryStrings?.workOrderNumber ? false : true;
     const [nameOfVendor, setNameOfVendor] = useState([]);
     const [isFormReady, setIsFormReady] = useState(false);
@@ -57,6 +55,14 @@ const PurchaseBill = () => {
     })
     console.log("CONTRACT :", contract);
 
+    const findCurrentDate = () => {
+        var date = new Date();
+        var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+                      .toISOString()
+                      .split("T")[0];
+        return dateString;
+    } 
+
     //session data
     const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = PurchaseBillSession;
@@ -87,28 +93,10 @@ const PurchaseBill = () => {
         return vendorOptions?.organisations?.map(vendorOption => ( {code : vendorOption?.id, name : vendorOption?.name, applicationNumber : vendorOption?.applicationNumber, orgNumber : vendorOption?.orgNumber } ))
     }
 
-    // const handleWorkOrderAmount = ({contract, deductionMasterData}) => {
-    //     deductionMasterData = deductionMasterData?.works?.Deductions;
-    //     let totalAmount = contract?.totalContractedAmount;
-
-    //     //loop through the contract Details and filter with DEDUCTION
-    //     bill?.contractDetails?.forEach((contractDetail)=>{
-    //         if(contractDetail?.category !== "DEDUCTION") return;
-    //         let amountDetails = contractDetail?.amountDetail?.[0];
-
-    //         let deductionCode = amountDetails?.type;
-    //         let shouldSubtract = !((deductionMasterData?.filter(deduction=>deduction?.code === deductionCode)?.[0])?.isWorkOrderValue);  //change accordingly
-
-    //         if(shouldSubtract) {
-    //             totalAmount -= amountDetails?.amount;
-    //         }
-    //     })
-    //     return totalAmount;
-    // }
-
     useEffect(()=>{
         if((contract && configs && !isOrgSearchLoading && !isDeductionsMasterDataLoading && !isContractLoading)) {
-            updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, contract, t});
+            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract});
+
 
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
 

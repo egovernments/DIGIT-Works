@@ -4,6 +4,8 @@ import { Controller } from 'react-hook-form';
 import _ from "lodash"
 
 const DeductionsTable = ({control,watch,...props}) => {
+    const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE",{});
+    const [sessionFormData] = PurchaseBillSession;
     
     const [totalAmount,setTotalAmount] = useState(0)
     const [sorTotal, setSorTotal] = useState(0)
@@ -11,30 +13,33 @@ const DeductionsTable = ({control,watch,...props}) => {
     
     const errorCardStyle = {width:"100%",fontSize:"12px"}
 
-    const initialState = [
-        {
-            key: 1,
-            isShow: true,
-        },
-    ];
+    //update deduction table with session data
+    const renderDeductionsFromSession = () => {
+        if(!sessionFormData?.deductionDetails) {
+            return [{
+                key: 1,
+                isShow: true,
+            }];
+        }
+        let tableState = [];
+        for(let i = 1; i<sessionFormData?.deductionDetails?.length; i++) {
+          if(sessionFormData?.deductionDetails[i]) {
+            tableState.push({
+              key: i,
+              isShow: true,
+          })
+          }
+        }
+        return tableState;
+      }
+      //const initialState = renderDeductionsFromSession();
+      const [rows, setRows] = useState(renderDeductionsFromSession());
+
     
 
     const { t, register, errors, setValue, getValues, formData } = props
 
-   const [rows, setRows] = useState(
-    formData?.[formFieldName]?.length > 1
-      ? formData?.[formFieldName]
-          ?.map((row, index) => {
-            return row ?
-                {
-                  key: index,
-                  isShow: row?.isActive ? row?.isActive : false,
-                }
-              : undefined;
-          })
-          ?.filter((row) => row)
-      : initialState
-  );
+
 
     const setTotal = (formData) => {
         const tableData = formData?.[formFieldName]
@@ -86,13 +91,13 @@ const DeductionsTable = ({control,watch,...props}) => {
                 obj = { "width": "1rem" }
                 break;
             case 2:
-                obj = { "width": "50%" }
+                obj = { "width": "30%" }
                 break;
             case 3:
-                obj = { "width": "30rem" }
+                obj = { "width": "30%" }
                 break;
             case 4:
-                obj = { "width": "60rem" }
+                obj = { "width": "20%" }
                 break;
             case 5:
                 obj = { "width": "3%" }
@@ -103,7 +108,7 @@ const DeductionsTable = ({control,watch,...props}) => {
         }
         return obj
     }
-    const columns = [t('WORKS_SNO'), t('WORKS_DEDUCTION'), t('WORKS_PERCENTAGE'),t('WORKS_AMOUNT'), t('WORKS_COMMENTS'), t('WORKS_ACTIONS')]
+    const columns = [t('WORKS_SNO'), t('EXP_DEDUCTION_NAME'), t('EXP_PERCENTAGE_OR_FIXED'),t('WORKS_AMOUNT'), t('WORKS_COMMENTS'), t('WORKS_ACTIONS')]
     const renderHeader = () => {
         return columns?.map((key, index) => {
             return <th key={index} style={getStyles(index+1)} > {key} </th>
@@ -111,29 +116,41 @@ const DeductionsTable = ({control,watch,...props}) => {
     }
 
     const showDelete = () => {
-        let countIsShow = 0
-        rows.map(row => row.isShow && countIsShow++)
+        let countIsShow = 1
+        rows?.map(row => row.isShow && countIsShow++)
         if (countIsShow === 1) {
             return false
         }
         return true
     }
     const removeRow = (row) => {
-        //make a new state here which doesn't have this key
-        const updatedState = rows.map(e => {
-            if (e.key === row.key) {
-                return {
-                    key: e.key,
-                    isShow: false
-                }
-            }
-            return e
-        })
-
-        setValue(`${formFieldName}.${row.key}.amount`,0)
-
-        setRows(prev => updatedState)
+        //check if only one row is present
+        let totalRows = 0;
+        for(let keys of Object.keys(formData?.[formFieldName])) {
+          totalRows += 1;
+        }
+        console.log("totalRows :", totalRows);
+        if(totalRows === 1) {
+            setValue(`${formFieldName}.${row.key}.name`,undefined)
+            setValue(`${formFieldName}.${row.key}.percentage`,``)
+            setValue(`${formFieldName}.${row.key}.amount`,``)
+            setValue(`${formFieldName}.${row.key}.comments`,``)
+        }else {
+          //make a new state here which doesn’t have this key
+          const updatedState = rows?.map(e => {
+          if (e.key === row.key) {
+              return {
+              key: e.key,
+              isShow: false
+              }
+          }
+          return e
+          })
+          setValue(`${formFieldName}.${row.key}.amount`,0)
+          setRows(prev => updatedState)
+        }
     }
+
     const addRow = () => {
         const obj = {
             key: null,
@@ -245,7 +262,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                                     mdmsConfig: {
                                         masterName: "Deductions",
                                         moduleName: "works",
-                                        localePrefix: "ES_COMMON_DEDUCTIONS",
+                                        localePrefix: "COMMON_MASTERS_DEDUCTIONS",
                                     }
                                 })
                             )}
@@ -301,7 +318,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                 {renderBody()}
                 <tr>
                     <td colSpan={3} style={{textAlign:"right",fontWeight:"600"}}>{t("TOTAL_DEDUCTIONS")}</td>
-                    <td colSpan={1}>{Digit.Utils.dss.formatterWithoutRound(totalAmount, 'number')}</td>
+                    <td colSpan={1}>{Digit.Utils.dss.formatterWithoutRound(totalAmount? totalAmount: 0, 'number')}</td>
                     <td colSpan={1}></td>
                     <td colSpan={1}></td>
                 </tr>

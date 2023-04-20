@@ -24,10 +24,8 @@ const CreatePurchaseBillForm = ({
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
-    const [showModal, setShowModal] = useState(false);
-    const [createPBModalConfig, setCreatePBModalConfig] = useState({});
+
     const rolesForThisAction = "BILL_CREATOR" //hardcoded for now
-    const [inputFormdata, setInputFormData] = useState([]);
     const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
 
@@ -51,12 +49,20 @@ const CreatePurchaseBillForm = ({
         () => Digit.Utils.preProcessMDMSConfig(t, createPurchaseBillConfig, {
             updateDependent : [
               {
-                  key : 'nameOfVendor',
+                  key : 'invoiceDetails_vendor',
                   value : [preProcessData?.nameOfVendor]
               },
               {
                 key : 'basicDetails_purchaseBillNumber',
                 value : [!isModify ? "none" : "flex"]
+              },
+              {
+                key : 'basicDetails_purchaseBillDate',
+                value : [!isModify ? "none" : "flex"]
+              },
+              {
+                key : 'billDetails_billDate',
+                value : [new Date().toISOString().split("T")[0]]
               },
             ]
           }),
@@ -65,22 +71,36 @@ const CreatePurchaseBillForm = ({
     //session storage rendering infinitely
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
-            //const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
+            const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
-            if(formData.nameOfVender) {
-                setValue("vendorID", formData.nameOfVendor?.orgNumber);
+            if(formData.invoiceDetails_vendor) {
+                setValue("invoiceDetails_vendorId", formData.invoiceDetails_vendor?.orgNumber);
             }
 
-            //setSessionFormData({ ...sessionFormData, ...formData });
+            if(formData.invoiceDetails_materialCost && formData.invoiceDetails_gst) {
+                setValue("billDetails_billAmt", parseInt(formData.invoiceDetails_materialCost)+parseInt(formData.invoiceDetails_gst));
+            }
+
+            if(formData.billDetails_billAmt) {
+                let value = parseFloat(formData.invoiceDetails_materialCost)+ parseFloat(formData.invoiceDetails_gst);
+                if(value > contract?.totalContractedAmount){
+                    setValue("billDetails_billAmt", Digit.Utils.dss.formatterWithoutRound(value, "number"));
+                    setError("billDetails_billAmt",{ type: "custom" }, { shouldFocus: true })
+                }
+                else{
+                    setValue("billDetails_billAmt", Digit.Utils.dss.formatterWithoutRound(value, "number"));
+                    clearErrors("billDetails_billAmt")
+                }
+
+            }
+
+            setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
 
     const handleToastClose = () => {
         setToast({show : false, label : "", error : false});
     }
-
-    //const { mutate: CreatePBMutation } = Digit.Hooks.bills.useCreatePB();
-    //const { mutate: UpdatePBMutation } = Digit.Hooks.bills.useUpdatePB();
 
     //remove Toast after 3s
     useEffect(()=>{
@@ -91,100 +111,22 @@ const CreatePurchaseBillForm = ({
         }
     },[toast?.show]);
 
-    // useEffect(() => {
-    //     setCreatePBModalConfig(
-    //         getBillModalConfig({
-    //             t,
-    //             approvers,
-    //             selectedApprover,
-    //             setSelectedApprover,
-    //             approverLoading
-    //         })
-    //     )
-    // }, [approvers]);
 
     const onFormSubmit = (_data) => {
         console.log("Form data :", _data);
-        setInputFormData(_data);
-        setShowModal(true);
     }
-
-    // const modifyParams = {
-    //         contractID,
-    //         contractNumber,
-    //         lineItems,
-    //         contractAuditDetails,
-    //         updateAction : isModify ? "EDIT" : "",
-    // }
     
-
-    // const sendDataToResponsePage = (billNumber, isSuccess, message, showID) => {
-    //     history.push({
-    //       pathname: `/${window?.contextPath}/employee/expenditure/create-purchase-bill-response`,
-    //       search: `?billNumber=${billNumber}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
-    //       state : {
-    //         message : message,
-    //         showID : showID
-    //       }
-    //     }); 
-    // }
-
-    // const handleResponseForUpdatePB = async(payload) => {
-    //     await UpdatePBMutation(payload, {
-    //         onError: async (error, variables) => {
-    //             sendDataToResponsePage(billNumber, false, "PURCHASE_BILL_MODIFICATION_FAILURE", true); //change here based on response data
-    //         },
-    //         onSuccess: async (responseData, variables) => {
-    //             if(responseData?.ResponseInfo?.Errors) {
-    //                     setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PURCHASE_BILL"), error : true}));
-    //                 }else if(responseData?.ResponseInfo?.status){
-    //                     sendDataToResponsePage(billNumber, true, "PURCHASE_BILL_MODIFIED", true); //change here based on response data
-    //                     clearSessionFormData();
-    //                 }else{
-    //                     setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PURCHASE_BILL"), error : true}));
-    //                 }
-    //         },
-    //     });
-    // }
-
-    // const handleResponseForCreateWO = async(payload) => {
-    //     await CreatePBMutation(payload, {
-    //         onError: async (error, variables) => {
-    //             sendDataToResponsePage("", false, "PURCHASE_BILL_FAILED", false);
-    //         },
-    //         onSuccess: async (responseData, variables) => {
-    //             if(responseData?.ResponseInfo?.Errors) {
-    //                     setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PURCHASE_BILL"), error : true}));
-    //                 }else if(responseData?.ResponseInfo?.status){
-    //                     sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, true, "PURCHASE_BILL_CREATED_FORWARDED", true); //change here based on response data
-    //                     clearSessionFormData();
-    //                 }else{
-    //                     setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PURCHASE_BILL"), error : true}));
-    //                 }
-    //         },
-    //     });
-    // }
-
-    // const onModalSubmit = async (modalData) => {
-    //     const payload = createPurchaseBillUtils({tenantId, contract, inputFormdata, selectedApprover, modalData, createPurchaseBillConfig, modifyParams});
-    //     if(isModify) {
-    //         handleResponseForUpdatePB(payload);
-    //     }else {
-    //         handleResponseForCreateWO(payload);
-    //     }
-    // }
+    useEffect(() => {
+        return () => {
+            if (!window.location.href.includes("create-purchase-bill") && Object.keys(sessionFormData) != 0) {
+                clearSessionFormData();
+            }
+        };
+    });
 
     return (
         <React.Fragment>
-            {
-                showModal && 
-                <WorkflowModal
-                    closeModal={() => setShowModal(false)}
-                    //onSubmit={onModalSubmit}
-                    onSubmit={[]}
-                    config={createPBModalConfig}
-                />
-            }
+
                 {
                     createPurchaseBillConfig && 
                     (<FormComposer
