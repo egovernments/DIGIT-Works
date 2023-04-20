@@ -169,7 +169,7 @@ const TransferCodeTable = (props) => {
                             control={control}
                             name={`${formFieldName}.${row.key}.name`}
                             defaultValue={formData?.[`${formFieldName}.${row.key}.name`]}
-                            rules={{ required: true }}
+                            rules={{ required: isMandatory }}
                             render={(props) => (
                                 getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
                                     mdmsConfig: {
@@ -192,7 +192,7 @@ const TransferCodeTable = (props) => {
                             style={{ "marginBottom": "0px" }} 
                             name={`${formFieldName}.${row.key}.value`} 
                             selected={formData && formData[formFieldName] ? formData[formFieldName][`${formFieldName}.${row.key}.value`] : undefined}
-                            inputRef={register({ required: true, pattern: getPatterns(row.key)})}
+                            inputRef={register({ required: isMandatory, pattern: getPatterns(row.key)})}
                             onChange={onChange}
                         />
                     </div>
