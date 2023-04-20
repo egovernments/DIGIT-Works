@@ -120,7 +120,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
           <div>
             {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t(uiConfig?.showFormInstruction)}</p>}
-            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.formClassName?uiConfig?.formClassName:""}`} style={{"gap":"1rem"}}>
+            <div className={`search-field-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.formClassName?uiConfig?.formClassName:""}`}>
               <RenderFormFields 
                 fields={uiConfig?.fields} 
                 control={control} 
@@ -133,6 +133,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
                 clearErrors={clearErrors}
                 labelStyle={{fontSize: "16px"}}
                 apiDetails={apiDetails}
+                data={data}
               />  
               <div className={`search-button-wrapper ${screenType} ${uiConfig?.type}`}>
                 { uiConfig?.secondaryLabel && <LinkLabel style={{marginBottom: 0, whiteSpace: 'nowrap'}} onClick={clearSearch}>{t(uiConfig?.secondaryLabel)}</LinkLabel> }

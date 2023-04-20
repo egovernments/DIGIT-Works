@@ -52,8 +52,8 @@ const inboxConfigMukta = () => {
                             },
                             populators: {
                                 name: "workOrderNumber",
-                                error: `ESTIMATE_PATTERN_ERR_MSG`,
-                                validation: { pattern: "^[a-zA-Z0-9\\/-]*$", minlength: 2 }
+                                error: `CONTRACT_PATTERN_ERR_MSG`,
+                                validation: { pattern: "WO\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+", minlength: 2 }
                             },
                         },
                         {
@@ -67,7 +67,7 @@ const inboxConfigMukta = () => {
                             populators: {
                                 name: "projectId",
                                 error: `PROJECT_PATTERN_ERR_MSG`,
-                                validation: { pattern: "^[a-zA-Z0-9\\/-]*$", minlength: 2 }
+                                validation: { pattern: "PJ\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+", minlength: 2 }
                             },
                         },
                         {
@@ -115,8 +115,6 @@ const inboxConfigMukta = () => {
                         {
                             label: "ES_COMMON_CBO_NAME",
                             jsonPath: "businessObject.additionalDetails.orgName",
-                            //translate: true,
-                            //prefix: "COMMON_MASTERS_DEPARTMENT_",
                         },
                         {
                             label: "COMMON_ASSIGNEE",
@@ -165,13 +163,13 @@ const inboxConfigMukta = () => {
                         },
                     ],
                     label: "MUKTA",
-                    logoIcon: { //Pass the name of the Icon Component as String here and map it in the InboxSearchLinks Component   
+                    logoIcon: {   
                         component: "PropertyHouse",
                         customClass: "inbox-search-icon--projects"
                     }
                 },
                 children: {},
-                show: true //by default true. 
+                show: true  
             },
             filter: {
                 uiConfig: {
@@ -179,7 +177,7 @@ const inboxConfigMukta = () => {
                     headerStyle: null,
                     primaryLabel: 'Filter',
                     secondaryLabel: '',
-                    minReqFields: 1,
+                    minReqFields: 0,
                     defaultValues: {
                         state: "",
                         ward: [],

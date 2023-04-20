@@ -1,0 +1,10 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "common-masters": {
+      "OrgTaxIdentifier": [
+        "TI1", "TI2"
+      ]
+    }
+  }
+}

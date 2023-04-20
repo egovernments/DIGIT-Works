@@ -1,22 +1,25 @@
 import React, { useState, useEffect, Fragment }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast } from '@egovernments/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast, MultiLink } from '@egovernments/digit-ui-react-components';
 
 
 const ViewContractDetails = () => {
     const { t } = useTranslation();
     const [showToast, setShowToast] = useState(null);
     const queryStrings = Digit.Hooks.useQueryParams();
+    const contractId = queryStrings?.workOrderNumber;
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts")
     const [toast, setToast] = useState({show : false, label : "", error : false});
+    const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
+    const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const payload = {
         tenantId : queryStrings?.tenantId || tenantId,
         contractNumber : queryStrings?.workOrderNumber
     }
-    const [cardState,setCardState] = useState({})
+    const [cardState,setCardState] = useState([])
     const [activeLink, setActiveLink] = useState("Work_Order");
     const configNavItems = [
         {
@@ -32,7 +35,7 @@ const ViewContractDetails = () => {
     ]
     const ContractDetails = Digit.ComponentRegistryService.getComponent("ContractDetails");
     const TermsAndConditions = Digit.ComponentRegistryService.getComponent("TermsAndConditions");
-    const {isLoading : isContractLoading, data, isError : isContractError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
+    const {isLoading : isContractLoading, data, isError : isContractError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {}, {cacheTime : 0})
     //const {isLoading : isContractLoading, data } = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
 
     //fetching project data
@@ -51,6 +54,12 @@ const ViewContractDetails = () => {
         }
     })
 
+    useEffect(() => {
+        if (!window.location.href.includes("create-contract") && sessionFormData && Object.keys(sessionFormData) != 0) {
+          clearSessionFormData();
+        }
+    }, [location]);
+
     useEffect(()=>{
         if(isContractError || (!isContractLoading && data?.isNoDataFound)) {
             setToast({show : true, label : t("COMMON_WO_NOT_FOUND"), error : true});
@@ -63,19 +72,28 @@ const ViewContractDetails = () => {
         }
     },[isProjectError]);
 
+    const HandleDownloadPdf = () => {
+        Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`workOrder-${contractId}.pdf`)
+    }
+
     const handleToastClose = () => {
         setToast({show : false, label : "", error : false});
     }
 
     useEffect(() => {
         //here set cardstate when contract and project is available
-          setCardState({
-              "WORKS_ORDER_ID": payload?.contractNumber,
-              "WORKS_PROJECT_ID": project?.projectNumber,            
-              "ES_COMMON_PROPOSAL_DATE": Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
-              "ES_COMMON_PROJECT_NAME": project?.name,
-              "PROJECTS_DESCRIPTION": project?.description
-          }) 
+        setCardState([
+            {
+                title: '',
+                values: [
+                  { title: "WORKS_ORDER_ID", value: payload?.contractNumber },
+                  { title: "WORKS_PROJECT_ID", value: project?.projectNumber, },
+                  { title: "ES_COMMON_PROPOSAL_DATE", value: Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal) },
+                  { title: "ES_COMMON_PROJECT_NAME", value: project?.name },
+                  { title: "PROJECTS_DESCRIPTION", value: project?.description }
+                ]
+              }
+        ]) 
       }, [project])
 
 
@@ -86,6 +104,11 @@ const ViewContractDetails = () => {
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
+            <MultiLink
+                   onHeadClick={() => HandleDownloadPdf()}
+                   downloadBtnClassName={"employee-download-btn-className"}
+                   label={t("CS_COMMON_DOWNLOAD")}
+            />
           </div>
           {project && <ViewDetailsCard cardState={cardState} t={t} />}
           {
@@ -98,7 +121,7 @@ const ViewContractDetails = () => {
                     <WorkflowActions
                         forcedActionPrefix={"WF_CONTRACT_ACTION"}
                         businessService={businessService}
-                        applicationNo={payload?.contractNumber}
+                        applicationNo={queryStrings?.workOrderNumber}
                         tenantId={tenantId}
                         applicationDetails={data?.applicationData}
                         url={Digit.Utils.Urls.contracts.update}

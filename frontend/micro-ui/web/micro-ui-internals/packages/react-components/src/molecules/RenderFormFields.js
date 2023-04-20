@@ -13,7 +13,9 @@ import MultiUploadWrapper from "./MultiUploadWrapper";
 import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
 import LocationDropdownWrapper from './LocationDropdownWrapper';
 import WorkflowStatusFilter from './WorkflowStatusFilter';
-const RenderFormFields = (props) => {
+import ApiDropdown from './ApiDropdown';
+const RenderFormFields = ({data,...props}) => {
+  
     const { t } = useTranslation();
     const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
     
@@ -212,12 +214,37 @@ const RenderFormFields = (props) => {
                         formData={formData}
                         inputRef={props.ref}
                         errors={errors}
+                        setValue={setValue}
                       />
                     </div>
                   );
                 }}
               />
             );
+
+            case "apidropdown":
+            return (
+              <Controller
+                name={`${populators.name}`}
+                control={control}
+                defaultValue={formData?.[populators.name]}
+                rules={{ required: populators?.isMandatory, ...populators.validation }}
+                render={(props) => {
+                  return (
+                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                      <ApiDropdown
+                        props={props}
+                        populators={populators}
+                        formData={formData}
+                        inputRef={props.ref}
+                        errors={errors}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            );
+
 
             case "workflowstatesfilter":
             return (
@@ -230,6 +257,7 @@ const RenderFormFields = (props) => {
                   return (
                     <div style={{ display: "grid", gridAutoFlow: "row" }}>
                       <WorkflowStatusFilter
+                        inboxResponse={data}
                         props={props}
                         populators={populators}
                         t={t}

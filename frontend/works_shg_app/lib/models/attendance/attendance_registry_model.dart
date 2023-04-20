@@ -24,6 +24,8 @@ class AttendanceRegister with _$AttendanceRegister {
     String? id,
     String? tenantId,
     String? registerNumber,
+    String? serviceCode,
+    String? referenceId,
     String? name,
     int? startDate,
     int? endDate,
@@ -45,16 +47,18 @@ class AttendanceRegister with _$AttendanceRegister {
 @freezed
 class AttendanceRegisterAdditionalDetails
     with _$AttendanceRegisterAdditionalDetails {
-  const factory AttendanceRegisterAdditionalDetails({
-    String? contractId,
-    String? orgName,
-    String? officerInCharge,
-    String? executingAuthority,
-    String? projectId,
-    String? projectName,
-    String? projectType,
-    int? amount
-  }) = _AttendanceRegisterAdditionalDetails;
+  const factory AttendanceRegisterAdditionalDetails(
+      {String? contractId,
+      String? orgName,
+      String? officerInCharge,
+      String? executingAuthority,
+      String? projectId,
+      String? projectName,
+      String? projectType,
+      String? projectDesc,
+      String? locality,
+      String? ward,
+      int? amount}) = _AttendanceRegisterAdditionalDetails;
 
   factory AttendanceRegisterAdditionalDetails.fromJson(
     Map<String, dynamic> json,

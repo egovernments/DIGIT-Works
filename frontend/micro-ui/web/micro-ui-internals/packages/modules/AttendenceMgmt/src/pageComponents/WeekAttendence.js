@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Table } from "@egovernments/digit-ui-react-components";
+import { Table, CardLabelError} from "@egovernments/digit-ui-react-components";
 
-const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekDates, workflowDetails}) => {
+const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekDates, workflowDetails, setAttendanceError}) => {
   const { t } = useTranslation();
   const [editable, setEditable] = useState(false)
   const [showFullTableReadOnly, setShowFullTableReadOnly] = useState(false)
@@ -81,9 +81,13 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
   };
 
   const handleModifiedWorkingDays = (e, row) => {
-    let val = parseFloat(e.target.value);
+    let val = parseFloat(e.target.value)
+    setPrevAttendanceTotal(prevState => ({
+      ...prevState,
+      [row.id] : val
+    }))
     let prevVal = parseFloat(prevAttendanceTotal[row.id])
-    if (val) {
+    if (val >= 0 && val <= 7) {
       setSaveAttendanceState(prevState => 
                     ({...prevState, 
                       displaySave: true, 
@@ -103,6 +107,13 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
           val
         },
       });
+      setAttendanceError(prev => ({
+        ...prev, [row.id] : false
+      }))
+    } else {
+      setAttendanceError(prev => ({
+        ...prev, [row.id] : true
+      }))
     }
   };
 
@@ -116,7 +127,20 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
   };
 
   const renderInputBoxSelector = (value, row) => {
-    return <input type="number" name="amount" className="modified-amount" step={0.5} defaultValue={value} onChange={(e) => handleModifiedWorkingDays(e, row)}/>
+    let val = prevAttendanceTotal[row.id]
+    return <React.Fragment>
+      <input
+        className="modified-amount"
+        type="number"
+        defaultValue={value}
+        onBlur={(e) => handleModifiedWorkingDays(e, row)}
+      />
+       { ( val === NaN || val < 0 || val > 7 ) ? (
+          <CardLabelError style={{ fontSize: "12px"}}>
+            {t("ES_COMMON_VALID_DAY")}
+          </CardLabelError> ) : null
+        }
+    </React.Fragment>
   };
 
   const tableColumns = useMemo(() => {
@@ -138,7 +162,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
       },
     },
     {
-      Header: () => <p>{t("ATM_NAME_OF_THE_INDIVIDUAL")}</p>,
+      Header: () => <p>{t("WORKS_NAME")}</p>,
       accessor: "nameOfIndividual",
       Cell: ({ value, column, row }) => {
         return String(t(value));
@@ -150,6 +174,13 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
       Cell: ({ value, column, row }) => {
         return String(t(value));
       },
+    },
+    {
+        Header: () => <p>{t("ATM_SKILL")}</p>,
+        accessor: "skill",
+        Cell: ({ value, column, row }) => {
+          return String(t(value));
+        },
     },
     {
       Header: () => (
@@ -258,38 +289,38 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
     }]
     const colsOthers = [
       {
-        Header: () => <p>{t("ATM_SKILL")}</p>,
-        accessor: "skill",
-        Cell: ({ value, column, row }) => {
-          return String(t(value));
-        },
-      },
-      {
-        Header: () => <p>{t("ATM_ACTUAL_WORKING_DAYS")}</p>,
+        Header: () => <p>{t("ATM_DAYS_WORKED")}</p>,
         accessor: "actualWorkingDays",
         Cell: ({ value, column, row }) => {
           return String(t(value));
         },
       },
       {
-        Header: () => <p>{t("ATM_AMOUNT_IN_RS")}</p>,
-        accessor: "amount",
-        Cell: ({ value, column, row }) => {
-          return Digit.Utils.dss.formatterWithoutRound(value, 'number');
-        },
-      },
-      {
-        Header: () => <p>{t("ATM_MODIFIED_WORKING_DAYS")}</p>,
+        Header: () => <p>{t("ATM_DAYS_MEASURED")}</p>,
         accessor: "modifiedWorkingDays",
         Cell: ({ value, column, row }) => {
           if (row.original.type === "total" || !editable) {
             return String(t(value));
           }
-          return renderInputBoxSelector(value, row.original);
+          return renderInputBoxSelector(prevAttendanceTotal[row.original.id], row.original);
         },
       },
       {
-        Header: () => <p>{t("ATM_MODIFIED_AMOUNT_IN_RS")}</p>,
+        Header: () => <p>{t("ATM_PER_DAY_WAGE")}</p>,
+        accessor: "perDayWage",
+        Cell: ({ value, column, row }) => {
+          return Digit.Utils.dss.formatterWithoutRound(value, 'number');
+        },
+      },
+      // {
+      //   Header: () => <p>{t("ATM_AMOUNT_IN_RS")}</p>,
+      //   accessor: "amount",
+      //   Cell: ({ value, column, row }) => {
+      //     return Digit.Utils.dss.formatterWithoutRound(value, 'number');
+      //   },
+      // },
+      {
+        Header: () => <p>{t("ATM_TOTAL_WAGE")}</p>,
         accessor: "modifiedAmount",
         Cell: ({ value, column, row }) => {
           return Digit.Utils.dss.formatterWithoutRound(value, 'number');
@@ -318,7 +349,7 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
     // }
     colsToReturn = [...colsReadOnly, ...colsOthers]
     return colsToReturn
-  }, [state, editable, showFullTableReadOnly]);
+  }, [state, editable, showFullTableReadOnly, modify, prevAttendanceTotal]);
 
   return (
     <React.Fragment>

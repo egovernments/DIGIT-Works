@@ -1,12 +1,12 @@
 import { AddIcon, CardLabelError, DeleteIcon, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 const WOTermsAndConditions = (props) => {
     const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE",{});
     const [sessionFormData] = ContractSession;
 
     const formFieldName = "WOTermsAndConditions" // this will be the key under which the data for this table will be present on onFormSubmit
-    const { t, register, errors , setValue, getValues, formData} = props
+    const { t, register, unregister, errors , setValue, getValues, formData} = props
 
     //update sub project table with session data
     const renderWOTermsAndConditionsFromSession = () => {
@@ -18,10 +18,12 @@ const WOTermsAndConditions = (props) => {
       }
       let tableState = [];
       for(let i = 1; i<sessionFormData?.WOTermsAndConditions?.length; i++) {
+        if(sessionFormData?.WOTermsAndConditions[i]) {
           tableState.push({
-              key: i,
-              isShow: true,
-          })
+            key: i,
+            isShow: true,
+        })
+        }
       }
       return tableState;
     }
@@ -73,6 +75,7 @@ const WOTermsAndConditions = (props) => {
         return e
         })
 
+        unregister(`${formFieldName}.${row.key}.description`)
         setRows(prev => updatedState)
     }
 
@@ -98,7 +101,7 @@ const WOTermsAndConditions = (props) => {
             }
             />
             </div></td>
-            <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
+            <td style={getStyles(8)} >{showDelete() && <span className="icon-wrapper" onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} /></span>}</td>
         </tr>
         })
     }

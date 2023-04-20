@@ -1,11 +1,12 @@
 package org.egov.works.enrichment;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.util.*;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -160,11 +164,12 @@ public class ContractEnrichment {
         }
         if("ACCEPT".equalsIgnoreCase(workflow.getAction())){
             log.info("Update :: Enriching contract startDate endDate on workflow 'ACCEPT' action. ContractId: ["+contract.getId()+"]");
-            long currentTime=System.currentTimeMillis();
-            //covert days to millisec and add to start date for end date
-            long completionDays=TimeUnit.DAYS.toMillis(contract.getCompletionPeriod());
-            long endDate=currentTime+TimeUnit.DAYS.toMillis(contract.getCompletionPeriod());
-            contract.setStartDate(new BigDecimal(currentTime));
+            LocalDate localDate = LocalDate.now();
+            // Contract start date will be MID time of today's date
+            long startTime = localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            long localDateTimeMIN = localDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            long endDate=localDateTimeMIN+TimeUnit.DAYS.toMillis(contract.getCompletionPeriod());
+            contract.setStartDate(new BigDecimal(startTime));
             contract.setEndDate(new BigDecimal(endDate));
         }
     }

@@ -4,6 +4,7 @@ Login login = const Login();
 Common common = const Common();
 Home home = const Home();
 WorkOrder workOrder = const WorkOrder();
+WageSeeker wageSeeker = const WageSeeker();
 AttendanceMgmt attendanceMgmt = const AttendanceMgmt();
 
 class Login {
@@ -31,6 +32,7 @@ class Common {
   String get continueToLogin => 'CONTINUE_TO_LOGIN';
   String get mobileNumber => 'CORE_COMMON_MOBILE_NUMBER';
   String get logOut => 'CORE_COMMON_LOGOUT';
+  String get orgProfile => 'ORG_PROFILE';
   String get oK => 'CORE_CHANGE_TENANT_OK';
   String get email => 'CORE_COMMON_EMAIL';
   String get save => 'CORE_COMMON_SAVE';
@@ -46,9 +48,9 @@ class Common {
   String get language => 'CS_HOME_HEADER_LANGUAGE';
   String get decline => 'CORE_BUTTON_DECLINE';
   String get accept => 'CORE_BUTTON_ACCEPT';
-  String get termsAndConditions => 'COMMON_TERMS_&_CONDITIONS';
+  String get termsAndConditions => 'COMMON_TERMS_AND_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
-  String get back => 'CORE_BUTTON_BACK';
+  String get back => 'CORE_BACK_BUTTON';
   String get sendForApproval => 'SEND_FOR_APPROVAL';
   String get saveAsDraft => 'SAVE_AS_DRAFT';
   String get warning => 'CORE_MSG_WARNING';
@@ -82,6 +84,7 @@ class Common {
   String get attachments => 'CS_COMMON_ATTACHMENTS';
   String get apply => 'ES_COMMON_APPLY';
   String get cancel => 'CS_ACTION_CANCEL';
+  String get close => 'CS_ACTION_CLOSE';
   String get startDate => 'EVENTS_START_DATE_LABEL';
   String get endDate => 'EVENTS_END_DATE_LABEL';
   String get invalidCredentials => 'INVALID_LOGIN_CREDENTIALS';
@@ -104,12 +107,35 @@ class Common {
   String get accountType => 'CORE_COMMON_ACCOUNT_TYPE';
   String get ifscCode => 'COMMON_IFSC_CODE';
   String get bankHint => 'HINT_BANK_DETAILS';
+  String get branchName => 'COMMON_BRANCH_NAME';
   String get photoGraph => 'COMMON_PHOTOGRAPH';
   String get inProgress => 'IN_PROGRESS_LABEL';
   String get completed => 'COMPLETED_LABEL';
   String get info => 'ES_COMMON_INFO';
   String get workOrderInfo => 'WORK_ORDER_INFO';
   String get days => 'COMMON_DAYS';
+  String get orgId => 'COMMON_ORG_ID';
+  String get orgName => 'COMMON_ORG_NAME';
+  String get registeredDept => 'REGISTERED_WITH_DEPT';
+  String get deptRegNo => 'DEPT_REG_NO';
+  String get dateOfIncorporation => 'DATE_OF_INCORP';
+  String get orgType => 'ORG_TYPE';
+  String get orgSubType => 'ORG_SUB_TYPE';
+  String get funcCat => 'ORG_FUNC_CAT';
+  String get functionalDetails => 'ORG_FUNC_DETAILS';
+  String get contactDetails => 'ORG_CONTACT_DETAILS';
+  String get classOrRank => 'ORG_CLASS_OR_RANK';
+  String get validFrom => 'ORG_VALID_FROM';
+  String get validTo => 'ORG_VALID_TO';
+  String get contactPersonName => 'ORG_CONTACT_PERSON_NAME';
+  String get download => "COMMON_DOWNLOAD";
+  String get showWorkflowTimeline => 'SHOW_WORKFLOW_TIMELINE';
+  String get hideWorkflowTimeline => 'HIDE_WORKFLOW_TIMELINE';
+  String get workflowTimeline => 'WORKS_WORKFLOW_TIMELINE';
+  String get effectiveFrom => 'MASTERS_EFFECTIVE_FROM';
+  String get effectiveTo => 'MASTERS_EFFECTIVE_TO';
+  String get validPhotoGraph => 'PHOTOGRAPH_VALID_SIZE';
+  String get individualAlreadyAdded => 'IND_ALREADY_ADDED_TO_THE_TABLE';
 }
 
 class Home {
@@ -147,6 +173,48 @@ class WorkOrder {
   String get contractDetails => 'WORK_ORDER_CONTRACT_DETAILS';
   String get timeLineDetails => 'WORK_ORDER_TIMELINE_DETAILS';
   String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
+  String get workStartDate => 'WORKS_START_DATE';
+  String get workEndDate => 'WORKS_END_DATE';
+}
+
+class WageSeeker {
+  const WageSeeker();
+  String get aadhaarRequired => 'AADHAAR_IS_REQUIRED';
+  String get nameRequired => 'NAME_IS_REQUIRED';
+  String get fatherNameRequired => 'FATHER_NAME_IS_REQUIRED';
+  String get dobRequired => 'DOB_IS_REQUIRED';
+  String get relationshipRequired => 'RELATIONSHIP_IS_REQUIRED';
+  String get socialCatRequired => 'SOCIAL_CATEGORY_IS_REQUIRED';
+  String get genderRequired => 'GENDER_IS_REQUIRED';
+  String get mobileRequired => 'MOBILE_NUMBER_IS_REQUIRED';
+  String get minMobileCharacters => 'MIN_MOBILE_CHARCTERS_REQUIRED';
+  String get minAadhaarCharacters => 'MIN_AADHAAR_CHARCTERS_REQUIRED';
+  String get maxMobileCharacters => 'MAX_MOBILE_CHARCTERS_REQUIRED';
+  String get maxAadhaarCharacters => 'MAX_AADHAAR_CHARCTERS_REQUIRED';
+  String get pinCodeRequired => 'PINCODE_IS_REQUIRED';
+  String get localityRequired => 'LOCALITY_IS_REQUIRED';
+  String get wardRequired => 'WARD_IS_REQUIRED';
+  String get cityRequired => 'CITY_IS_REQUIRED';
+  String get accountHolderNameRequired => 'ACCOUNT_HOLDER_NAME_IS_REQUIRED';
+  String get accountNumberRequired => 'ACCOUNT_NUMBER_IS_REQUIRED';
+  String get reEnterAccountNumber => 'RE_ENTER_ACCOUNT_NUMBER';
+  String get accountTypeRequired => 'ACCOUNT_TYPE_IS_REQUIRED';
+  String get ifscCodeRequired => 'IFSC_CODE_IS_REQUIRED';
+  String get summaryDetails => 'SUMMARY_DETAILS';
+  String get nameOfWageSeeker => 'NAME_OF_WAGE_SEEKER';
+  String get skillCategory => 'WAGE_SEEKER_SKILL_CAT';
+  String get skill => 'WAGE_SEEKER_SKILL';
+  String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
+  String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
+  String get wageSeekerSuccessSubText => 'CREATE_INDIVIDUAL_SUCCESS_SUB_TEXT';
+  String get selectSkillValidation => 'CANNOT_HAVE_SAME_SKILL_TYPE';
+  String get enterValidIFSC => 'ENTER_VALID_IFSC_CODE';
+  String get minAccNoCharacters => 'MIN_ACCOUNT_NO_CHARACTERS_REQUIRED';
+  String get maxAccNoCharacters => 'MAX_ACCOUNT_NO_CHARACTERS_REQUIRED';
+  String get minNameCharacters => 'MIN_NAME_CHARCTERS_REQUIRED';
+  String get minFatherNameCharacters => 'MIN_FATHER_CHARCTERS_REQUIRED';
+  String get maxNameCharacters => 'MAX_NAME_CHARCTERS_REQUIRED';
+  String get maxFatherNameCharacters => 'MAX_FATHER_CHARCTERS_REQUIRED';
 }
 
 class AttendanceMgmt {
@@ -154,7 +222,7 @@ class AttendanceMgmt {
   String get registerId => 'REGISTER_ID';
   String get attendanceRegisters => 'ATTENDANCE_REGISTERS';
   String get cboRole => 'CBO_ROLE';
-  String get officeInCharge => 'OFFICER_IN_CHARGE';
+  String get officeInCharge => 'COMMON_DESGN_OF_OFFICER_IN_CHARGE';
   String get projectId => 'WORKS_PROJECT_ID';
   String get projectType => 'WORKS_PROJECT_TYPE';
   String get projectDesc => 'WORKS_PROJECT_DESCRIPTION';

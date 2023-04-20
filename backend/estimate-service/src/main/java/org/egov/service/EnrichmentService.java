@@ -1,6 +1,7 @@
 package org.egov.service;
 
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.IdGenerationResponse;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -97,11 +98,16 @@ public class EnrichmentService {
     private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
                                    String idformat, int count) {
         log.info("EnrichmentService::getIdList");
-        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count) != null
-                ? idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses() : new ArrayList<>();
+        List<IdResponse> idResponses = new ArrayList<>();
+        IdGenerationResponse idGenerationResponse = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count);
 
-        if (CollectionUtils.isEmpty(idResponses))
+        if (idGenerationResponse != null && CollectionUtils.isEmpty(idGenerationResponse.getIdResponses())) {
             throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+        }
+
+        if (idGenerationResponse != null && !CollectionUtils.isEmpty(idGenerationResponse.getIdResponses())) {
+            idResponses = idGenerationResponse.getIdResponses();
+        }
 
         return idResponses.stream()
                 .map(IdResponse::getId).collect(Collectors.toList());

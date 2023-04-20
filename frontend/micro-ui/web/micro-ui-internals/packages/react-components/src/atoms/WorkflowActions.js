@@ -7,9 +7,8 @@ import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
 import { useHistory } from "react-router-dom";
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber }) => {
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback }) => {
   const history = useHistory()
-  
   const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
 
@@ -53,10 +52,15 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     setDisplayMenu(false);
   }
   
+  const closeToast = () => {
+    setTimeout(() => {
+      setShowToast(null)
+    }, 5000);
+  }
  
   setTimeout(() => {
     setShowToast(null);
-  }, 10000);
+  }, 20000);
     
   
   
@@ -70,12 +74,14 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   const closeModal = () => {
     setSelectedAction(null);
     setShowModal(false);
+    setShowToast({ warning:true,label:`WF_ACTION_CANCELLED`})
+    closeToast()
   };
 
   const onActionSelect = (action) => {
-    
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
-
+    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
     setDisplayMenu(false)
     setSelectedAction(action)
 
@@ -83,6 +89,15 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     //send appropriate states over
     if(bsEstimate === businessService && action?.action === "RE-SUBMITTED"){
         history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
+        return 
+    }
+
+    if(bsContract === businessService && action?.action === "EDIT"){
+      history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
+      return 
+  }
+    if(bsAttendance === businessService && action?.action === "EDIT"){
+        editCallback()
         return 
     }
 

@@ -25,7 +25,19 @@ const ProjectSearch = () => {
     )
 
   let configs = useMemo(
-    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{}));
+    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
+      updateDependent : [
+        {
+          key : "createdFrom",
+          value : [new Date().toISOString().split("T")[0]]
+        },
+        {
+          key : "createdTo",
+          value : [new Date().toISOString().split("T")[0]]
+        }
+      ]
+    }
+    ),[data]);
 
     //remove session form data if user navigates away from the project create screen
     useEffect(()=>{

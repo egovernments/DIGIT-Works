@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
@@ -24,12 +25,16 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isManageAttendance;
   final bool isWorkOrderInbox;
   final bool viewWorkOrder;
+  final bool orgProfile;
   final bool isSHGInbox;
   final String? cardTitle;
   final bool isTrackAttendance;
   final List<AttendanceRegister>? attendanceRegistersModel;
   final List<MusterRoll>? musterRollsModel;
   final ContractsModel? contractModel;
+  final bool? showButtonLink;
+  final String? linkLabel;
+  final void Function()? onLinkPressed;
 
   const WorkDetailsCard(this.detailsList,
       {this.isAttendanceInbox = false,
@@ -38,12 +43,16 @@ class WorkDetailsCard extends StatelessWidget {
       this.isTrackAttendance = false,
       this.isSHGInbox = false,
       this.viewWorkOrder = false,
+      this.showButtonLink = false,
+      this.linkLabel = '',
+      this.onLinkPressed,
       this.elevatedButtonLabel = '',
       this.outlinedButtonLabel = '',
       this.cardTitle,
       this.attendanceRegistersModel,
       this.musterRollsModel,
       this.contractModel,
+      this.orgProfile = false,
       super.key});
 
   @override
@@ -100,13 +109,23 @@ class WorkDetailsCard extends StatelessWidget {
       String? contractNumber,
       String? registerNumber}) {
     var labelList = <Widget>[];
-    if (viewWorkOrder && cardTitle != null) {
+    if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
-        child: Text(
-          cardTitle ?? '',
-          style: Theme.of(context).textTheme.displayMedium,
-          textAlign: TextAlign.left,
+        child: SvgPicture.asset('assets/svg/new_tag.svg'),
+      ));
+    }
+    if ((viewWorkOrder || orgProfile) && cardTitle != null) {
+      labelList.add(Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            cardTitle ?? '',
+            style: DigitTheme.instance.mobileTheme.textTheme.headlineLarge
+                ?.apply(color: const DigitColors().black),
+            textAlign: TextAlign.left,
+          ),
         ),
       ));
     }
@@ -145,28 +164,32 @@ class WorkDetailsCard extends StatelessWidget {
                 ButtonGroup(
                   outlinedButtonLabel,
                   elevatedButtonLabel,
-                  outLinedCallBack: () => DigitDialog.show(
-                    context,
-                    title: AppLocalizations.of(context)
-                        .translate(i18.common.warning),
-                    content: AppLocalizations.of(context)
-                        .translate(i18.workOrder.warningMsg),
-                    primaryActionLabel: AppLocalizations.of(context)
-                        .translate(i18.common.confirm),
-                    primaryAction: () {
-                      context.read<DeclineWorkOrderBloc>().add(
-                            WorkOrderDeclineEvent(
-                                contractsModel: payload,
-                                action: 'DECLINE',
-                                comments: 'DECLINE contract'),
-                          );
-                      Navigator.of(context, rootNavigator: true).pop();
-                    },
-                    secondaryActionLabel:
-                        AppLocalizations.of(context).translate(i18.common.back),
-                    secondaryAction: () =>
-                        Navigator.of(context, rootNavigator: true).pop(),
-                  ),
+                  outLinedCallBack: () => DigitDialog.show(context,
+                      options: DigitDialogOptions(
+                          titleText: AppLocalizations.of(context)
+                              .translate(i18.common.warning),
+                          contentText: AppLocalizations.of(context)
+                              .translate(i18.workOrder.warningMsg),
+                          primaryAction: DigitDialogActions(
+                            label: AppLocalizations.of(context)
+                                .translate(i18.common.confirm),
+                            action: (BuildContext context) {
+                              context.read<DeclineWorkOrderBloc>().add(
+                                    WorkOrderDeclineEvent(
+                                        contractsModel: payload,
+                                        action: 'DECLINE',
+                                        comments: 'DECLINE contract'),
+                                  );
+                              Navigator.of(context, rootNavigator: true).pop();
+                            },
+                          ),
+                          secondaryAction: DigitDialogActions(
+                            label: AppLocalizations.of(context)
+                                .translate(i18.common.back),
+                            action: (BuildContext context) =>
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop(),
+                          ))),
                   elevatedCallBack: () {
                     context.read<AcceptWorkOrderBloc>().add(
                           WorkOrderAcceptEvent(
@@ -201,7 +224,7 @@ class WorkDetailsCard extends StatelessWidget {
                     registerId: payload!['additionalDetails']
                             ['attendanceRegisterNumber']
                         .toString(),
-                    tenantId: payload!['tenantId'].toString()));
+                    tenantId: payload['tenantId'].toString()));
               },
               child: Center(
                 child: Text(
@@ -227,10 +250,9 @@ class WorkDetailsCard extends StatelessWidget {
                   tenantId: attendanceRegister!.tenantId.toString()));
             } else {
               context.router.push(TrackAttendanceRoute(
-                  id: attendanceRegisterId.toString(),
-                  tenantId: attendanceRegister!.tenantId.toString(),
-                  projectDetails: [cardDetails],
-                  attendanceRegister: attendanceRegister));
+                id: attendanceRegisterId.toString(),
+                tenantId: attendanceRegister!.tenantId.toString(),
+              ));
             }
           },
           child: Center(
@@ -253,7 +275,6 @@ class WorkDetailsCard extends StatelessWidget {
                       tenantId: musterRoll!.tenantId.toString()),
                 );
             context.router.push(SHGInboxRoute(
-                projectDetails: [cardDetails],
                 tenantId: musterRoll.tenantId.toString(),
                 musterRollNo: musterRoll.musterRollNumber.toString()));
             context.read<MusterRollEstimateBloc>().add(
@@ -275,6 +296,12 @@ class WorkDetailsCard extends StatelessWidget {
         ),
       ));
     }
+    if (showButtonLink! && linkLabel!.isNotEmpty) {
+      labelList.add(Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: ButtonLink(linkLabel ?? '', onLinkPressed),
+      ));
+    }
     return Column(
       children: labelList,
     );
@@ -289,13 +316,11 @@ class WorkDetailsCard extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                padding: const EdgeInsets.only(right: 16),
-                width: MediaQuery.of(context).size.width > 720
-                    ? MediaQuery.of(context).size.width / 3.5
-                    : MediaQuery.of(context).size.width / 3.5,
+            SizedBox(
+                width: MediaQuery.of(context).size.width / 3,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +342,7 @@ class WorkDetailsCard extends StatelessWidget {
                           : const Text('')
                     ])),
             SizedBox(
-                width: MediaQuery.of(context).size.width / 2,
+                width: MediaQuery.of(context).size.width / 2.5,
                 child: Text(
                   description,
                   style: TextStyle(

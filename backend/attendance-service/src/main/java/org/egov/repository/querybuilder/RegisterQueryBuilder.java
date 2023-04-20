@@ -32,7 +32,9 @@ public class RegisterQueryBuilder {
             "reg.createdby, " +
             "reg.lastmodifiedby, " +
             "reg.createdtime, " +
-            "reg.lastmodifiedtime " +
+            "reg.lastmodifiedtime, " +
+            "reg.referenceid, " +
+            "reg.servicecode " +
             "FROM eg_wms_attendance_register reg ";
 
 
@@ -65,6 +67,20 @@ public class RegisterQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.registernumber = ? ");
             preparedStmtList.add(registerNumber);
+        }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getReferenceId())) {
+            String referenceId = searchCriteria.getReferenceId();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.referenceid = ? ");
+            preparedStmtList.add(referenceId);
+        }
+
+        if (!ObjectUtils.isEmpty(searchCriteria.getServiceCode())) {
+            String serviceCode = searchCriteria.getServiceCode();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.servicecode = ? ");
+            preparedStmtList.add(serviceCode);
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getName())) {

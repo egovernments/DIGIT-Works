@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
@@ -7,12 +8,13 @@ import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
+import '../utils/common_methods.dart';
 import '../utils/date_formats.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../widgets/loaders.dart' as shg_loader;
 
 class ViewMusterRollsPage extends StatefulWidget {
   const ViewMusterRollsPage({Key? key}) : super(key: key);
@@ -28,6 +30,18 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
   List<MusterRoll> musters = [];
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
+    super.initState();
+  }
+
+  afterViewBuild() {
+    context.read<MusterRollSearchBloc>().add(
+          const SearchMusterRollEvent(),
+        );
+  }
+
+  @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
     return Scaffold(
@@ -35,15 +49,15 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer:  DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: SingleChildScrollView(
             child: BlocListener<MusterRollSearchBloc, MusterRollSearchState>(
           listener: (context, state) {
             state.maybeWhen(
-                loading: () => Loaders.circularLoader(context),
+                loading: () => shg_loader.Loaders.circularLoader(context),
                 loaded: (MusterRollsModel? musterRoll) {
                   if (musterRoll?.musterRoll != null) {
                     musters = List<MusterRoll>.from(musterRoll!.musterRoll!);
@@ -73,7 +87,7 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
           child: BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
               builder: (context, state) {
             return state.maybeWhen(
-                loading: () => Loaders.circularLoader(context),
+                loading: () => shg_loader.Loaders.circularLoader(context),
                 loaded: (MusterRollsModel? musterRollsModel) {
                   return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +100,9 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
                             '${t.translate(i18.attendanceMgmt.musterRolls)}(${musterList.length})',
-                            style: Theme.of(context).textTheme.displayMedium,
+                            style: DigitTheme
+                                .instance.mobileTheme.textTheme.displayMedium
+                                ?.apply(color: const DigitColors().black),
                             textAlign: TextAlign.left,
                           ),
                         ),

@@ -203,13 +203,13 @@ export const WorksSearch = {
             return [
                 index+1,
                 row?.description,
-                row?.uom,
+                t(`ES_COMMON_UOM_${row?.uom}`),
                 Digit.Utils.dss.formatterWithoutRound(row?.unitRate, 'number'),
                 row?.noOfunit,
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail[0]?.amount?.toFixed(2), 'number')
             ]
         })
-        const totalAmountNonSor = nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
+        const totalAmountNonSor = Math.round(nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0))
         tableRowsNonSor?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountNonSor, 'number')])
         
         const tableRowsOverheads = overheads?.map((row, index) => {
@@ -220,7 +220,7 @@ export const WorksSearch = {
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail?.[0]?.amount?.toFixed(2), 'number')
             ]
         })
-        const totalAmountOverheads = overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
+        const totalAmountOverheads = Math.round(overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0))
         tableRowsOverheads?.push(["","", t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountOverheads, 'number')])
         const nonSorItems = {
             title: "WORKS_NON_SOR",
@@ -231,7 +231,8 @@ export const WorksSearch = {
             state: estimate,
             tableStyles:{
                 rowStyle:{},
-                cellStyle: [{}, { "width": "40vw" }, {}, {}, {  },{"textAlign":"right"}]
+                cellStyle: [{}, { "width": "40vw",whiteSpace: 'break-spaces',
+                wordBreak: 'break-all' }, {}, {"textAlign":"right"}, {"textAlign":"right"},{"textAlign":"right"}]
             }
         }
         const overheadItems = {
@@ -243,7 +244,8 @@ export const WorksSearch = {
             state: estimate,
             tableStyles: {
                 rowStyle: {},
-                cellStyle: [{}, { "width": "50vw" }, {  }, { "textAlign": "right" }]
+                cellStyle: [{}, { "width": "50vw", whiteSpace: 'break-spaces',
+                wordBreak: 'break-all' }, {"textAlign":"right"}, { "textAlign": "right" }]
             }
         }
         
@@ -272,7 +274,7 @@ export const WorksSearch = {
             "title": " ",
             "asSectionHeader": true,
             "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
-            "value": Digit.Utils.dss.formatterWithoutRound(estimate?.additionalDetails?.totalEstimatedAmount, 'number')|| t("NA")
+            "value": Digit.Utils.dss.formatterWithoutRound(Math.round(estimate?.additionalDetails?.totalEstimatedAmount), 'number')|| t("NA")
         }
 
         const labourDetails = {

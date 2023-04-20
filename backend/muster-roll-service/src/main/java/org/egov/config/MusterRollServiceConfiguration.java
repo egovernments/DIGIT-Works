@@ -56,6 +56,8 @@ public class MusterRollServiceConfiguration {
     private String saveMusterRollTopic;
     @Value("${musterroll.kafka.update.topic}")
     private String updateMusterRollTopic;
+    @Value("${musterroll.kafka.calculate.topic}")
+    private String calculateMusterRollTopic;
 
     //search config
     @Value("${musterroll.default.offset}")
@@ -89,6 +91,10 @@ public class MusterRollServiceConfiguration {
     private String bankaccountsHost;
     @Value("${works.bankaccounts.search.endpoint}")
     private String bankaccountsSearchEndpoint;
+
+    //contract service code
+    @Value("${works.contract.service.code}")
+    private String contractServiceCode;
 
     @PostConstruct
     public void initialize() {

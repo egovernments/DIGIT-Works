@@ -12,7 +12,11 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     const bankDetails = await BankAccountService.search(bankDetailPayload, {});
     const bankAccounts = bankDetails?.bankAccounts?.[0]?.bankAccountDetails
 
-    const thumbnails = await getThumbnails([individual?.photo], tenantId)
+    let thumbnails = ''
+    try {
+      thumbnails = individual?.photo && await getThumbnails([individual?.photo], tenantId)
+    } catch (error) {}
+    
     const socialCategory = individual?.additionalFields?.fields?.find(item => item?.key === "SOCIAL_CATEGORY")
     const adhaar = individual?.identifiers?.find(item => item?.identifierType === 'AADHAAR')
 
@@ -45,9 +49,9 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
         title: "ES_COMMON_LOCATION_DETAILS",
         asSectionHeader: true,
         values: [
-            { title: "CORE_COMMON_PROFILE_CITY", value: individual?.address?.[0]?.city || t("NA")},
-            { title: "COMMON_WARD", value: individual?.address?.[0]?.ward?.code ? `${headerLocale}_ADMIN_${individual?.address?.[0]?.ward?.code }` : t("NA")},
-            { title: "COMMON_LOCALITY", value: individual?.address?.[0]?.locality?.code ? `${headerLocale}_ADMIN_${individual?.address?.[0]?.locality?.code}` : t("NA")},
+            { title: "CORE_COMMON_PROFILE_CITY", value: individual?.address?.[0]?.tenantId ? Digit.Utils.locale.getCityLocale(individual?.address?.[0]?.tenantId) : t("NA")},
+            { title: "COMMON_WARD", value: individual?.address?.[0]?.ward?.code ? Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.ward?.code, tenantId) : t("NA")},
+            { title: "COMMON_LOCALITY", value: individual?.address?.[0]?.locality?.code ? Digit.Utils.locale.getMohallaLocale(individual?.address?.[0]?.locality?.code, tenantId) : t("NA")},
             { title: "ES_COMMON_STREET", value: individual?.address?.[0]?.street || t("NA")},
             { title: "ES_COMMON_DOOR_NO", value: individual?.address?.[0]?.doorNo || t("NA")},
         ]
@@ -79,6 +83,19 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   }
 }
 
+const fetchBankDetails = async (data, tenantId) => {
+  if(data?.Individual?.length === 0) throw new Error('No data found');
+
+  const individual = data.Individual[0]
+  const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "IND", referenceId: [individual?.id] } }
+  const bankDetails = await BankAccountService.search(bankDetailPayload, {});
+  
+  return {
+    individual,
+    bankDetails: bankDetails?.bankAccounts
+  }
+}
+
 export const View = {
     fetchWageSeekerDetails: async (t, tenantId, data, searchParams) => {
       try {
@@ -88,5 +105,15 @@ export const View = {
           console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }  
+    },
+
+    fetchWageSeekerWithBankDetails : async (tenantId, data, searchParams) => {
+      try {
+        const response = await WageSeekerService.search(tenantId, data, searchParams);
+        return fetchBankDetails(response, tenantId)
+      } catch (error) {
+        console.log('error', error)
+        throw new Error(error?.response?.data?.Errors?.[0]?.message)
+      }
     }
 }

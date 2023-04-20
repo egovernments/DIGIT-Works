@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/common_methods.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/date_range_picker.dart';
@@ -39,19 +40,15 @@ import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/table_dropdown.dart';
 import '../widgets/drawer_wrapper.dart';
-import '../widgets/loaders.dart';
+import '../widgets/loaders.dart' as shg_loader;
 
 class TrackAttendancePage extends StatefulWidget {
   final String id;
   final String tenantId;
-  final List<Map<String, dynamic>> projectDetails;
-  final AttendanceRegister? attendanceRegister;
 
   const TrackAttendancePage(
       @PathParam('id') this.id,
       @PathParam('tenantId') this.tenantId,
-      this.projectDetails,
-      this.attendanceRegister,
       {Key? key})
       : super(key: key);
 
@@ -72,6 +69,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   DateRange? selectedDateRange;
   var dateController = TextEditingController();
   var searchController = TextEditingController();
+  List<Map<String, dynamic>> cardDetails = [];
   List<TrackAttendanceTableData> newList = [];
   List<Map<String, dynamic>> updateAttendeePayload = [];
   List<Map<String, dynamic>> createAttendeePayload = [];
@@ -79,13 +77,16 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   List<TableDataRow> tableData = [];
   bool hasLoaded = true;
   bool createMusterLoaded = true;
+  bool hide = true;
   List<EntryExitModel>? entryExitList;
   List<IndividualSkills> existingSkills = [];
   List<Skill> skillList = [];
   List<String> skillDropDown = [];
   DaysInRange? daysInRange;
-  bool isInWorkFlow = true;
+  List<String> dates = [];
+  bool isInWorkFlow = false;
   bool skillsDisable = true;
+  bool allowEdit = true;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
@@ -134,17 +135,17 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body:BlocBuilder<SkillsBloc, SkillsBlocState>(
               builder: (context, skillsState) {
                 return skillsState.maybeWhen(orElse: () => Container(),
-                    loading: () => Loaders.circularLoader(context),
+                    loading: () => shg_loader.Loaders.circularLoader(context),
                     error: (String? error) => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(error.toString()), 'ERROR'),
                     loaded: (SkillsList? skillsList) {
-                  skillList = skillsList!.wageSeekerSkills?.where((obj) => obj.active == true).map((e) => Skill(code: e.code,)).toList() ?? [];
+                  skillList = skillsList!.wageSeekerSkills?.where((obj) => obj.active == true).map((e) => Skill(code: e.code)).toList() ?? [];
                   for (Skill skill in skillList) {
                       skillDropDown.add(skill.code);
                   }
@@ -158,7 +159,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                       return BlocBuilder<AttendanceIndividualProjectSearchBloc,
                           AttendanceIndividualProjectSearchState>(builder: (context, state) {
                             return state.maybeWhen(
-                                loading: () => Loaders.circularLoader(context),
+                                loading: () => shg_loader.Loaders.circularLoader(context),
                                 error: (String? error) => Notifiers.getToastMessage(context, error.toString(), 'ERROR') ,
                                 loaded: (AttendanceRegistersModel? individualAttendanceRegisterModel) {
                                   registerId = individualAttendanceRegisterModel!.attendanceRegister!.first.id;
@@ -166,6 +167,39 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                       .attendanceRegister!.first.startDate;
                                   registerEndDate = individualAttendanceRegisterModel
                                       .attendanceRegister!.first.endDate;
+                                  cardDetails = individualAttendanceRegisterModel.attendanceRegister
+                                      !.map((e) => {
+                                    i18.workOrder.workOrderNo: e
+                                        .attendanceRegisterAdditionalDetails
+                                        ?.contractId ??
+                                        'NA',
+                                    i18.attendanceMgmt.registerId: e.registerNumber,
+                                    i18.attendanceMgmt.projectId: e
+                                        .attendanceRegisterAdditionalDetails
+                                        ?.projectId ??
+                                        'NA',
+                                    i18.attendanceMgmt.projectDesc: e
+                                        .attendanceRegisterAdditionalDetails
+                                        ?.projectName ??
+                                        'NA',
+                                    i18.attendanceMgmt.individualsCount:
+                                    e.attendeesEntries != null
+                                        ? e.attendeesEntries
+                                        ?.where((att) =>
+                                    att.denrollmentDate == null ||
+                                        !(att.denrollmentDate! <=
+                                            e.endDate!.toInt()))
+                                        .toList()
+                                        .length
+                                        : 0,
+                                    i18.common.startDate: DateFormats.timeStampToDate(
+                                        e.startDate,
+                                        format: "dd/MM/yyyy"),
+                                    i18.common.endDate: DateFormats.timeStampToDate(
+                                        e.endDate,
+                                        format: "dd/MM/yyyy"),
+                                  })
+                                      .toList();
                                   return Stack(children: [
                                     Container(
                                       color: const Color.fromRGBO(238, 238, 238, 1),
@@ -175,7 +209,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                           delegate: SliverChildListDelegate([Back(
                                             backLabel: AppLocalizations.of(context).translate(i18.common.back),
                                       ),
-                                            WorkDetailsCard(widget.projectDetails,),])),
+                                            WorkDetailsCard(cardDetails),])),
                                         SliverToBoxAdapter(
                                             child: Column(crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [const SizedBox(height: 20,),
@@ -236,9 +270,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                       ? BlocListener<MusterRollFromToDateSearchBloc, MusterRollFromToDateSearchState>(
                                                           listener: (context, musterSearch) {
                                                             musterSearch.maybeWhen(orElse: () => Container(),
-                                                            loading: () => Loaders.circularLoader(context),
+                                                            loading: () => shg_loader.Loaders.circularLoader(context),
                                                             loaded: (MusterRollsModel? musterRollsSearch) {
-                                                              if(musterRollsSearch!.musterRoll!.isNotEmpty){
+                                                              if(musterRollsSearch!.musterRoll != null && musterRollsSearch.musterRoll!.isNotEmpty){
                                                                 existingSkills = musterRollsSearch.musterRoll!.first.individualEntries!.map((e) =>
                                                               IndividualSkills(individualId: e.individualId, skillCode: e.musterIndividualAdditionalDetails?.skillCode ?? '',
                                                               name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId ?? '',
@@ -246,6 +280,12 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                               individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName ?? '',
                                                               id: e.id,
                                                               )).toList();
+                                                                  context.read<MusterGetWorkflowBloc>().add(
+                                                                    GetMusterWorkflowEvent(
+                                                                        tenantId: widget.tenantId,
+                                                                        musterRollNumber: musterRollsSearch.musterRoll!
+                                                                            .first.musterRollNumber.toString()),
+                                                                  );
                                                               }
                                                               else{
                                                                 existingSkills.clear();
@@ -254,19 +294,20 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                           child:  BlocBuilder<MusterRollEstimateBloc, MusterRollEstimateState>(
                                                           builder: (context, musterState) {
                                                              return musterState.maybeWhen(orElse: () => Container(),
-                                                              loading: () => Loaders.circularLoader(context),
+                                                              loading: () => shg_loader.Loaders.circularLoader(context),
                                                               loaded: (EstimateMusterRollsModel? musterRollsModel) {
                                                                 List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries!.where((e) => e.denrollmentDate == null || !(e.denrollmentDate! <= individualAttendanceRegisterModel.attendanceRegister!.first.endDate!.toInt())).toList().map((e) =>
                                                                     AttendeesTrackList(name: e.additionalDetails?.individualName, aadhaar: e.additionalDetails?.identifierId, individualId: e.individualId,
                                                                         individualGaurdianName: e.additionalDetails?.individualGaurdianName)).toList();
                                                               if (attendeeList != null && attendeeList.isNotEmpty) {
                                                                 if (musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.isNotEmpty && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
-                                                                  attendeeList = musterRollsModel!.musterRoll!.first.individualEntries!.map((e) =>
+                                                                  attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
                                                                       AttendeesTrackList(
                                                                           name: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name : e.musterIndividualAdditionalDetails?.userName,
                                                                           aadhaar: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).aadhaar : e.musterIndividualAdditionalDetails?.aadharNumber ?? e.musterIndividualAdditionalDetails?.userId,
                                                                           individualGaurdianName: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).individualGaurdianName : e.musterIndividualAdditionalDetails?.fatherName ?? e.musterIndividualAdditionalDetails?.userId,
                                                                           individualId: e.individualId,
+                                                                          skillCodeList: e.musterIndividualAdditionalDetails?.skillCode ?? [],
                                                                           id: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id : e.id ?? '',
                                                                           skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
                                                                           monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
@@ -301,6 +342,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id ?? '';
                                                                       data.skill = item1.skill ?? '';
+                                                                      data.skillCodeList = item1.skillCodeList ?? [];
                                                                       data.monIndex = item1.monIndex;
                                                                       data.monEntryId = item1.monEntryId;
                                                                       data.monExitId = item1.monExitId;
@@ -336,6 +378,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id;
                                                                       data.skill = item1.skill ?? '';
+                                                                      data.skillCodeList = item1.skillCodeList ?? [];
                                                                       data.monIndex = item1.monIndex;
                                                                       data.tueIndex = item1.tueIndex;
                                                                       data.wedIndex = item1.wedIndex;
@@ -354,7 +397,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                           headerList: headerList,
                                                                           tableData: tableData,
                                                                           leftColumnWidth: width,
-                                                                          rightColumnWidth: width * 10,
+                                                                          rightColumnWidth: skillsDisable ? width * 9 : width * 10,
                                                                           height: 58 + (52.0 * (tableData.length + 1)),
                                                                           scrollPhysics: const NeverScrollableScrollPhysics(),
                                                                         ),),
@@ -363,21 +406,13 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                         child: Padding(
                                                                           padding: const EdgeInsets.only(left: 8.0, right: 8.0,),
                                                                           child: SizedBox(
-                                                                              height: 100,
+                                                                              height: isInWorkFlow ? 0 : 100,
                                                                               child: BlocBuilder<MusterRollFromToDateSearchBloc, MusterRollFromToDateSearchState>(
                                                                                   builder: (context, musterSearchState) {
                                                                                     return musterSearchState.maybeWhen(
                                                                                         orElse: () => Container(),
-                                                                                        loading: () => Loaders.circularLoader(context),
+                                                                                        loading: () => shg_loader.Loaders.circularLoader(context),
                                                                                         loaded: (MusterRollsModel? musterRollsSearch) {
-                                                                                          if (musterRollsSearch?.musterRoll != null &&
-                                                                                              musterRollsSearch!.musterRoll!.isNotEmpty) {
-                                                                                            context.read<MusterGetWorkflowBloc>().add(
-                                                                                              GetMusterWorkflowEvent(
-                                                                                                  tenantId: widget.tenantId,
-                                                                                                  musterRollNumber: musterRollsSearch.musterRoll!
-                                                                                                      .first.musterRollNumber.toString()),
-                                                                                            );}
                                                                                           return BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
                                                                                             listener: (context, workflowState) {
                                                                                               workflowState.maybeWhen(
@@ -386,21 +421,27 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                         AppLocalizations.of(context).translate(i18.attendanceMgmt.unableToCheckWorkflowStatus),
                                                                                                         'ERROR');
                                                                                                   },
+                                                                                                  loading: () => shg_loader.Loaders.circularLoader(context),
                                                                                                   loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool inWorkFlow) {
                                                                                                     if (!inWorkFlow) {
-                                                                                                      isInWorkFlow = false;
+                                                                                                      if(isInWorkFlow != false){
+                                                                                                        setState(() {
+                                                                                                          isInWorkFlow = false;
+                                                                                                        });
+                                                                                                      }
                                                                                                     } else {
                                                                                                       if (musterRollsSearch!.musterRoll!.isNotEmpty && selectedDateRange != null) {
-                                                                                                        if(musterRollsSearch.musterRoll!.first.musterRollStatus == 'APPROVED'){
-                                                                                                          Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.notModifyApprovedApplication), 'ERROR');
+                                                                                                        if(skillsDisable != false) {
+                                                                                                          setState(() {
+                                                                                                            skillsDisable = false;
+                                                                                                          });
                                                                                                         }
-                                                                                                        else{
-                                                                                                          Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(
-                                                                                                              i18.attendanceMgmt.applicationInWorkFlow), 'ERROR');
+                                                                                                        if(isInWorkFlow != true) {
+                                                                                                          setState(() {
+                                                                                                            isInWorkFlow = true;
+                                                                                                          });
                                                                                                         }
-                                                                                                        isInWorkFlow = true;
                                                                                                       }
-                                                                                                      isInWorkFlow = true;
                                                                                                     }
                                                                                                     return Container();
                                                                                                   },
@@ -409,7 +450,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                             },
                                                                                             child: BlocBuilder<MusterGetWorkflowBloc, MusterGetWorkflowState>(
                                                                                                 builder: (context, workflowState) {
-                                                                                                  return Column(
+                                                                                                  return isInWorkFlow ? Container() : Column(
                                                                                                     children: [
                                                                                                       BlocListener<AttendanceLogCreateBloc, AttendanceLogCreateState>(
                                                                                                         listener: (context, logState) {
@@ -426,6 +467,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                     hasLoaded = true;
                                                                                                                   }
                                                                                                                 },
+                                                                                                                loading: () => shg_loader.Loaders.circularLoader(context),
                                                                                                                 loaded: () {
                                                                                                                   if (!hasLoaded && selectedDateRange != null) {
                                                                                                                     Notifiers.getToastMessage(context,
@@ -474,7 +516,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                 child: Text(
                                                                                                                   AppLocalizations.of(context)
                                                                                                                       .translate(i18.common.saveAsDraft),
-                                                                                                                  style: musterRollsSearch!= null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
+                                                                                                                  style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty
                                                                                                                       ? Theme.of(context).textTheme.titleSmall?.apply(
                                                                                                                       color: const Color.fromRGBO(
                                                                                                                           149, 148, 148, 1))
@@ -490,8 +532,15 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                       AppLocalizations.of(context)
                                                                                                                           .translate(i18.attendanceMgmt.musterCreateFailed),
                                                                                                                       'ERROR');
-                                                                                                                  onSubmit(registerId.toString());
+                                                                                                                  // onSubmit(registerId.toString());
                                                                                                                   createMusterLoaded = true;
+                                                                                                                  context.router.popAndPush(
+                                                                                                                      TrackAttendanceRoute(
+                                                                                                                        tenantId: widget
+                                                                                                                            .tenantId
+                                                                                                                            .toString(), id: widget
+                                                                                                                          .id
+                                                                                                                          .toString(),));
                                                                                                                 }},
                                                                                                               loaded: (MusterRollsModel? createdMuster) {
                                                                                                                 if (!createMusterLoaded && selectedDateRange != null) {
@@ -500,7 +549,14 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                           .translate(i18.attendanceMgmt.musterSentForApproval)}',
                                                                                                                       'SUCCESS');
                                                                                                                   createMusterLoaded = true;
-                                                                                                                  onSubmit(registerId.toString());
+                                                                                                                  // onSubmit(registerId.toString());
+                                                                                                                  context.router.popAndPush(
+                                                                                                                      TrackAttendanceRoute(
+                                                                                                                        tenantId: widget!
+                                                                                                                            .tenantId
+                                                                                                                            .toString(), id: widget
+                                                                                                                          .id
+                                                                                                                          .toString(),));
                                                                                                                 }},
                                                                                                               orElse: () => Container());
                                                                                                         },
@@ -559,13 +615,21 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                   tenantId: widget.tenantId,
                                                                                                                   registerId: widget.id,
                                                                                                                   startDate: selectedDateRange!.startDate,
+                                                                                                                  serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode,
+                                                                                                                  referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId,
                                                                                                                   orgName: individualAttendanceRegisterModel.attendanceRegister
                                                                                                                       ?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA',
                                                                                                                   contractId: individualAttendanceRegisterModel.attendanceRegister
                                                                                                                       ?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA',
+                                                                                                                  executingAuthority: individualAttendanceRegisterModel.attendanceRegister
+                                                                                                                      ?.first.attendanceRegisterAdditionalDetails?.executingAuthority,
                                                                                                                   registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                                                   registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                                                   projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
+                                                                                                                  projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '',
+                                                                                                                  projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '',
+                                                                                                                  locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '',
+                                                                                                                  ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '',
                                                                                                                   amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500,
                                                                                                                   skillsList: skillsPayLoad));
                                                                                                             }} : null,
@@ -618,7 +682,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                 orElse: () =>Container());
                           });
                       },
-                        loading: () => Loaders.circularLoader(context) );
+                        loading: () => shg_loader.Loaders.circularLoader(context) );
                   });
                 });
               }));
@@ -660,9 +724,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   void onTextSearch() {
     if (searchController.text.isNotEmpty) {
       setState(() {
-        // newList.retainWhere((e) =>
-        // e.name!.toLowerCase().contains(searchController.text) ||
-        //     e.aadhaar!.contains(searchController.text));
         newList.retainWhere((e) =>
             e.name!.toLowerCase().contains(searchController.text.toLowerCase()));
       });
@@ -691,8 +752,12 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
               endDate: selectedDateRange!.endDate,
             ),
           );
+      dates = DateFormats.getFormattedDatesOfAWeek(selectedDateRange!.startDate, selectedDateRange!.endDate);
       daysInRange = DateFormats.checkDaysInRange(selectedDateRange!.startDate,
           selectedDateRange!.endDate, registerStartDate!, registerEndDate!);
+      isInWorkFlow = false;
+      skillsDisable = true;
+
     } else {
       Notifiers.getToastMessage(
           context,
@@ -720,34 +785,42 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     TableHeader(
       '${AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.attendanceMgmt.skill)}*',
+      hide: skillsDisable
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.common.mon),
+      subLabel: dates.isNotEmpty ? dates[0] : ''
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.common.tue),
+        subLabel: dates.isNotEmpty ? dates[1] : ''
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.common.wed),
+        subLabel: dates.isNotEmpty ? dates[2] : ''
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.common.thu),
+        subLabel: dates.isNotEmpty ? dates[3] : ''
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.common.fri),
+        subLabel: dates.isNotEmpty ? dates[4] : ''
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.common.sat),
+        subLabel: dates.isNotEmpty ? dates[5] : ''
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.common.sun),
+        subLabel: dates.isNotEmpty ? dates[6] : ''
     ),
     TableHeader(
       AppLocalizations.of(scaffoldMessengerKey.currentContext!)
@@ -760,10 +833,11 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
       TableData(label: tableDataModel.name, apiKey: tableDataModel.name),
       TableData(label: tableDataModel.individualGaurdianName, apiKey: tableDataModel.individualGaurdianName),
       TableData(
+        hide: skillsDisable && !isInWorkFlow,
           apiKey: tableDataModel.skill,
           widget: DropDownDialog(
-            isDisabled: skillsDisable,
-            options: skillDropDown,
+            isDisabled: isInWorkFlow,
+            options: tableDataModel.skillCodeList ?? [],
             label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {
@@ -976,12 +1050,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
             .toString(),
       )
     ]);
-  }
-
-  void changeWorkFlow() {
-    setState(() {
-      isInWorkFlow = false;
-    });
   }
 
   double convertedValue(double tableVal) {

@@ -1,6 +1,7 @@
 package org.egov.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -23,6 +24,19 @@ public class ContactDetailsQueryBuilder {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" c.org_id IN (").append(createQuery(organisationIds)).append(")");
             addToPreparedStatement(preparedStmtList, organisationIds);
+        }
+
+        return queryBuilder.toString();
+    }
+
+    public String getContactDetailsSearchQueryBasedOnCriteria(String contactMobileNumber, List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = null;
+        queryBuilder = new StringBuilder(FETCH_CONTACT_DETAILS_QUERY);
+
+        if (StringUtils.isNotBlank(contactMobileNumber)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" c.contact_mobile_number=? ");
+            preparedStmtList.add(contactMobileNumber);
         }
 
         return queryBuilder.toString();

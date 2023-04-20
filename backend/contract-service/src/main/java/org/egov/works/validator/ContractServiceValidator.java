@@ -1,16 +1,15 @@
 package org.egov.works.validator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
-import org.egov.works.repository.ContractRepository;
 import org.egov.works.repository.LineItemsRepository;
-import org.egov.works.util.EstimateServiceUtil;
-import org.egov.works.util.HRMSUtils;
-import org.egov.works.util.CommonUtil;
-import org.egov.works.util.MDMSUtils;
+import org.egov.works.service.ContractService;
+import org.egov.works.util.*;
+import org.egov.works.repository.ContractRepository;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,10 +40,22 @@ public class ContractServiceValidator {
     private LineItemsRepository lineItemsRepository;
 
     @Autowired
+    private ContractService contractService;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private MDMSDataParser mdmsDataParser;
+
+    @Autowired
     private ContractRepository contractRepository;
 
     @Autowired
     private CommonUtil commonUtil;
+
+    @Autowired
+    private OrgUtils orgUtils;
 
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
@@ -323,12 +334,19 @@ public class ContractServiceValidator {
     }
 
     private void validateOrganizationIdAgainstOrgService(ContractRequest contractRequest) {
-        if ("TRUE".equalsIgnoreCase(config.getOrgIdVerificationRequired())) {
-            //TODO
-            // For now throwing exception. Later implementation will be done
-            log.error("Org service not integrated yet");
-            throw new CustomException("SERVICE_UNAVAILABLE", "Org service not integrated yet");
+        RequestInfo requestInfo = contractRequest.getRequestInfo();
+        Contract contract = contractRequest.getContract();
+        String tenantId = contract.getTenantId();
+        String orgId = contract.getOrgId();
+
+        Object fetchedOrg = orgUtils.fetchOrg(requestInfo,tenantId,Collections.singletonList(orgId));
+        List<Object> orgRes = commonUtil.readJSONPathValue(fetchedOrg,ORG_ORGANISATIONS_VALIDATION_PATH);
+
+        if (CollectionUtils.isEmpty(orgRes) ){
+            log.error("Org ["+orgId+"] is not present");
+            throw new CustomException("INVALID_ORGID","Org ["+orgId+"] is not present");
         }
+        log.info("Org ["+orgId+"] is validated successfully");
     }
 
     private Map<String, Set<String>> validateRequestedEstimateIdsAgainstEstimateService(ContractRequest contractRequest) {
@@ -469,41 +487,41 @@ public class ContractServiceValidator {
             errorMap.put("CONTRACT.COMPLETION_PERIOD", "Completion Period is mandatory and its min value is one day");
         }
 
-        Object additionalDetails = contract.getAdditionalDetails();
-        if(additionalDetails == null){
-            log.error("Additional Details object is mandatory");
-            errorMap.put("CONTRACT.ADDITIONAL_DETAILS", "Additional Details object is mandatory");
-        }
-
-        Optional<String> projectName = commonUtil.findValue(additionalDetails, PROJECT_NAME_CONSTANT);
-        if (!projectName.isPresent()) {
-            log.error("Project Name is mandatory");
-            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_NAME", "Project Name is mandatory");
-        }
-
-        Optional<String> projectType = commonUtil.findValue(additionalDetails, PROJECT_TYPE_CONSTANT);
-        if (!projectType.isPresent()) {
-            log.error("Project Type is mandatory");
-            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_TYPE", "Project Type is mandatory");
-        }
-
-        Optional<String> projectId = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
-        if (!projectId.isPresent()) {
-            log.error("Project Id is mandatory");
-            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_ID", "Project ID is mandatory");
-        }
-
-        Optional<String> ward = commonUtil.findValue(additionalDetails, WARD_CONSTANT);
-        if (!ward.isPresent()) {
-            log.error("Ward is mandatory");
-            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.WARD", "Ward is mandatory");
-        }
-
-        Optional<String> orgName = commonUtil.findValue(additionalDetails, ORG_NAME_CONSTANT);
-        if (!orgName.isPresent()) {
-            log.error("Org Name is mandatory");
-            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.ORG_NAME", "Org Name is mandatory");
-        }
+//        Object additionalDetails = contract.getAdditionalDetails();
+//        if(additionalDetails == null){
+//            log.error("Additional Details object is mandatory");
+//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS", "Additional Details object is mandatory");
+//        }
+//
+//        Optional<String> projectName = commonUtil.findValue(additionalDetails, PROJECT_NAME_CONSTANT);
+//        if (!projectName.isPresent()) {
+//            log.error("Project Name is mandatory");
+//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_NAME", "Project Name is mandatory");
+//        }
+//
+//        Optional<String> projectType = commonUtil.findValue(additionalDetails, PROJECT_TYPE_CONSTANT);
+//        if (!projectType.isPresent()) {
+//            log.error("Project Type is mandatory");
+//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_TYPE", "Project Type is mandatory");
+//        }
+//
+//        Optional<String> projectId = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
+//        if (!projectId.isPresent()) {
+//            log.error("Project Id is mandatory");
+//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.PROJECT_ID", "Project ID is mandatory");
+//        }
+//
+//        Optional<String> ward = commonUtil.findValue(additionalDetails, WARD_CONSTANT);
+//        if (!ward.isPresent()) {
+//            log.error("Ward is mandatory");
+//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.WARD", "Ward is mandatory");
+//        }
+//
+//        Optional<String> orgName = commonUtil.findValue(additionalDetails, ORG_NAME_CONSTANT);
+//        if (!orgName.isPresent()) {
+//            log.error("Org Name is mandatory");
+//            errorMap.put("CONTRACT.ADDITIONAL_DETAILS.ORG_NAME", "Org Name is mandatory");
+//        }
 
         List<LineItems> lineItems = contract.getLineItems();
 

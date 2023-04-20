@@ -5,11 +5,10 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.helper.AttendanceLogRequestTestBuilder;
 import org.egov.helper.AttendanceRegisterRequestBuilderTest;
 import org.egov.helper.AttendeeRequestBuilderTest;
+import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
-import org.egov.web.models.AttendanceLogRequest;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendanceRegisterRequest;
+import org.egov.web.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +27,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +38,9 @@ public class AttendanceServiceValidatorTest {
 
     @Mock
     private MDMSUtils mdmsUtils;
+
+    @Mock
+    private RegisterRepository registerRepository;
 
     @DisplayName("Method validateRequestInfo: With good request")
     @Test
@@ -145,6 +148,22 @@ public class AttendanceServiceValidatorTest {
         Object mdmsResponse = AttendeeRequestBuilderTest.getMdmsResponseForValidTenant();
         lenient().when(mdmsUtils.mDMSCall(any(RequestInfo.class),
                 any(String.class))).thenReturn(mdmsResponse);
+        List<AttendanceRegister> registers = new ArrayList<>();
+        AttendanceRegister register = AttendanceRegister.builder().build();
+        registers.add(register);
+        when(registerRepository.getRegister(any(AttendanceRegisterSearchCriteria.class))).thenReturn(registers);
+        CustomException exception = assertThrows(CustomException.class, ()->attendanceServiceValidator.validateCreateAttendanceRegister(attendanceRegisterRequest));
+        assertTrue(exception.getCode().equals("REGISTER_ALREADY_EXISTS"));
+    }
+
+    @Test
+    public void validateCreateAttendanceRegister_validateCreateAttendanceRegister_3(){
+        AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().addGoodRegister().build();
+        Object mdmsResponse = AttendeeRequestBuilderTest.getMdmsResponseForValidTenant();
+        lenient().when(mdmsUtils.mDMSCall(any(RequestInfo.class),
+                any(String.class))).thenReturn(mdmsResponse);
+        List<AttendanceRegister> registers = new ArrayList<>();
+        when(registerRepository.getRegister(any(AttendanceRegisterSearchCriteria.class))).thenReturn(registers);
         attendanceServiceValidator.validateCreateAttendanceRegister(attendanceRegisterRequest);
     }
 

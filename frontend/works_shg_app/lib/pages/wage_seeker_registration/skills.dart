@@ -1,16 +1,23 @@
-import 'package:digit_components/widgets/atoms/digit_dropdown.dart';
-import 'package:digit_components/widgets/digit_card.dart';
-import 'package:digit_components/widgets/digit_elevated_button.dart';
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
-import 'package:reactive_forms/reactive_forms.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/models/wage_seeker/skill_details_model.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
-import 'package:works_shg_app/utils/constants.dart';
 
 import '../../blocs/localization/app_localization.dart';
+import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
+import '../../models/mdms/wage_seeker_mdms.dart';
+import '../../models/wage_seeker/financial_details_model.dart';
+import '../../models/wage_seeker/individual_details_model.dart';
+import '../../models/wage_seeker/location_details_model.dart';
+import '../../utils/notifiers.dart';
+import '../../widgets/atoms/multiselect_checkbox.dart';
 
-class SkillDetails extends StatefulWidget {
+class SkillDetailsPage extends StatefulWidget {
   final void Function() onPressed;
-  const SkillDetails({required this.onPressed, super.key});
+  final WageSeekerMDMS? wageSeekerMDMS;
+  const SkillDetailsPage(
+      {required this.onPressed, this.wageSeekerMDMS, super.key});
 
   @override
   SkillDetailsState createState() {
@@ -18,87 +25,138 @@ class SkillDetails extends StatefulWidget {
   }
 }
 
-class SkillDetailsState extends State<SkillDetails> {
-  List<MenuItemModel> skills = [
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('UNSKILLED_MULIA'),
-        'UNSKILLED_MULIA'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('UNSKILLED_PLUMBER'),
-        'UNSKILLED_PLUMBER'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('SKILLED_MULIA'),
-        'SKILLED_MULIA'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('SKILLED_MASON'),
-        'SKILLED_MASON'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('SEMISKILLED_WELDER'),
-        'SEMISKILLED_WELDER'),
-    MenuItemModel(
-        AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-            .translate('SEMISKILLED_ELECTRICIAN'),
-        'SEMISKILLED_ELECTRICIAN'),
-  ];
+class SkillDetailsState extends State<SkillDetailsPage> {
+  bool stateChange = false;
+  List<String> selectedOptions = [];
+  IndividualDetails? individualDetails = IndividualDetails();
+  LocationDetails? locationDetails = LocationDetails();
+  SkillDetails? skillDetails = SkillDetails();
+  FinancialDetails? financialDetails = FinancialDetails();
+
+  @override
+  void initState() {
+    super.initState();
+    final registrationState = BlocProvider.of<WageSeekerBloc>(context).state;
+    skillDetails = registrationState.skillDetails;
+    individualDetails = registrationState.individualDetails;
+    locationDetails = registrationState.locationDetails;
+    financialDetails = registrationState.financialDetails;
+    if (registrationState.skillDetails != null &&
+        registrationState.skillDetails?.individualSkills != null) {
+      selectedOptions = registrationState.skillDetails!.individualSkills!
+              .any((a) => a.type == null)
+          ? []
+          : registrationState.skillDetails!.individualSkills!
+              .where((e) => e.type != null)
+              .map((e) => '${e.level}.${e.type}')
+              .toList();
+    }
+  }
+
+  void _onSelectedOptionsChanged(List<String> options) {
+    setState(() {
+      selectedOptions = options;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
-    return ReactiveFormBuilder(
-      form: buildForm,
-      builder: (context, form, child) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            DigitCard(
-              margin: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    t.translate(i18.attendanceMgmt.skillDetails),
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                  Column(children: [
-                    DigitDropdown(
-                      label: t.translate(i18.attendanceMgmt.skill),
-                      menuItems: skills,
-                      formControlName: 'skills',
-                      onChanged: (String? value) {},
-                    ),
-                  ]),
-                  const SizedBox(height: 16),
-                  DigitCard(
+    List<String> skills = widget.wageSeekerMDMS!.commonMDMS!.wageSeekerSkills!
+        .map((e) => e.code)
+        .toList();
+
+    return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          DigitCard(
+            margin: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  t.translate(i18.attendanceMgmt.skillDetails),
+                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+                      ?.apply(color: const DigitColors().black),
+                ),
+                Column(children: [
+                  StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                    return MultiSelectSearchCheckBox(
+                      label: t.translate(i18.attendanceMgmt.skill) + '*',
+                      onChange: _onSelectedOptionsChanged,
+                      options: skills,
+                      selectedOptions: selectedOptions,
+                    );
+                  })
+                ]),
+                const SizedBox(height: 16),
+                Center(
+                  child: DigitElevatedButton(
+                      onPressed: selectedOptions != null &&
+                              selectedOptions.isNotEmpty
+                          ? () {
+                              if (!getSkillsValid()) {
+                                Notifiers.getToastMessage(
+                                    context,
+                                    i18.wageSeeker.selectSkillValidation,
+                                    'ERROR');
+                              } else {
+                                final skillList = SkillDetails(
+                                    individualSkills: selectedOptions
+                                        .map((e) => IndividualSkill(
+                                            type: e.toString().split('.').last,
+                                            // .replaceAll('_', '')
+                                            // .capitalize(),
+                                            level:
+                                                e.toString().split('.').first))
+                                        .toList());
+                                BlocProvider.of<WageSeekerBloc>(context).add(
+                                  WageSeekerCreateEvent(
+                                      individualDetails: individualDetails,
+                                      skillDetails: skillList,
+                                      locationDetails: locationDetails,
+                                      financialDetails: financialDetails),
+                                );
+                                widget.onPressed();
+                              }
+                            }
+                          : null,
                       child: Center(
-                    child: DigitElevatedButton(
-                        onPressed: () {
-                          widget.onPressed();
-                          if (form.valid) {
-                            print(form.value);
-                          } else {
-                            form.markAllAsTouched();
-                          }
-                        },
-                        child: Center(
-                          child: Text(t.translate(i18.common.next)),
-                        )),
-                  ))
-                ],
-              ),
+                        child: Text(t.translate(i18.common.next)),
+                      )),
+                )
+              ],
             ),
-          ],
-        );
-      },
-    );
+          ),
+        ],
+      );
+    });
   }
 
-  FormGroup buildForm() => fb.group(<String, Object>{
-        'skills': FormControl<String>(value: ''),
-      });
+  bool getSkillsValid() {
+    Map<String, int> beforeDotCount = {};
+    Map<String, int> afterDotCount = {};
+
+    for (String skill in selectedOptions) {
+      List<String> skillParts = skill.split(".");
+      String beforeDot = skillParts[0];
+      String afterDot = skillParts[1];
+
+      beforeDotCount[beforeDot] = (beforeDotCount[beforeDot] ?? 0) + 1;
+      afterDotCount[afterDot] = (afterDotCount[afterDot] ?? 0) + 1;
+    }
+
+    // int countBeforeDot =
+    //     beforeDotCount.values.where((count) => count > 1).length;
+    int countAfterDot = afterDotCount.values.where((count) => count > 1).length;
+
+    if (countAfterDot > 0) {
+      return false;
+    }
+    return true;
+  }
 }

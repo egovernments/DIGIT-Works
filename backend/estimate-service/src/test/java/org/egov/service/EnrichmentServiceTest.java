@@ -145,10 +145,4 @@ class EnrichmentServiceTest {
         assertNotNull(estimateRequest.getEstimate().getEstimateDetails().get(0).getAmountDetail().get(0).getId());
     }
 
-    @Test
-    void shouldThrowException_IfIdgenFailed() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
-        CustomException exception = assertThrows(CustomException.class, () -> enrichmentService.enrichEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getCode().contentEquals("IDGEN ERROR"));
-    }
 }

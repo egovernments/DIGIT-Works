@@ -141,6 +141,17 @@ export const WorksService = {
             params: {},
             auth: true,
         }),
+    updateWO: (details) =>
+        Request({
+            url: Urls?.contracts?.update,
+            data: details,
+            useCache: false,
+            setTimeParam: false,
+            userService: true,
+            method: "POST",
+            params: {},
+            auth: true,
+        }),
     searchOrg :(details) =>
         Request({
             url: Urls?.organisation?.search,
@@ -169,6 +180,17 @@ export const WorksService = {
             url: "/expensebilling/demand/v1/_create",
             useCache: false,
             data: body,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: {  },
+        })
+    },
+    fetchEstimateExpenseCalculator: (details) => {
+        return Request({
+            url: Urls.calculator.expenseBill,
+            useCache: false,
+            data: details,
             method: "POST",
             auth: true,
             userService: false,

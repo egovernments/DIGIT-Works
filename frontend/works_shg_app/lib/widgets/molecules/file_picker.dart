@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:digit_components/theme/colors.dart';
 import 'package:digit_components/theme/digit_theme.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -11,18 +12,19 @@ import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/file_store/file_store_model.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/utils/models/file_picker_data.dart';
 
 import '../../data/repositories/core_repo/core_repository.dart';
 import '../../utils/common_methods.dart';
 import '../../utils/notifiers.dart';
 
-class FilePickerDemo extends StatefulWidget {
+class SHGFilePicker extends StatefulWidget {
   final Function(List<FileStoreModel>?) callBack;
   final String moduleName;
   final String label;
   final List<String>? extensions;
 
-  const FilePickerDemo(
+  const SHGFilePicker(
       {Key? key,
       required this.callBack,
       required this.moduleName,
@@ -30,15 +32,13 @@ class FilePickerDemo extends StatefulWidget {
       required this.label})
       : super(key: key);
   @override
-  FilePickerDemoState createState() => FilePickerDemoState();
+  SHGFilePickerState createState() => SHGFilePickerState();
 }
 
-class FilePickerDemoState extends State<FilePickerDemo> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class SHGFilePickerState extends State<SHGFilePicker> {
   List<dynamic> _selectedFiles = <dynamic>[];
   List<FileStoreModel> fileStoreList = <FileStoreModel>[];
   String? _directoryPath;
-  File? _imageFile;
   String? _extension;
   bool _loadingPath = false;
   bool multiPick = false;
@@ -68,10 +68,9 @@ class FilePickerDemoState extends State<FilePickerDemo> {
           ?.files;
 
       if (paths != null) {
+        print('path');
         var isNotValidSize = false;
-        setState(() {
-          _imageFile = File(paths.single.path!);
-        });
+
         for (var path in paths) {
           if (!(await CommonMethods.isValidFileSize(path.size))) {
             isNotValidSize = true;
@@ -92,7 +91,14 @@ class FilePickerDemoState extends State<FilePickerDemo> {
         List<dynamic> files = paths;
         if (!kIsWeb) {
           files = paths.map((e) => File(e.path ?? '')).toList();
+          setState(() {
+            FilePickerData.imageFile = File(paths.single.path!);
+          });
         }
+
+        setState(() {
+          FilePickerData.bytes = paths.single.bytes;
+        });
 
         uploadFiles(files);
       }
@@ -134,75 +140,59 @@ class FilePickerDemoState extends State<FilePickerDemo> {
                       fontSize: 16,
                       color: DigitTheme.instance.colorScheme.onSurface)))),
       Container(
-          width: constraints.maxWidth > 760
-              ? MediaQuery.of(context).size.width / 2.5
-              : MediaQuery.of(context).size.width,
-          // height: 50,
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                  margin: const EdgeInsets.only(
-                      left: 4.0, right: 16.0, top: 4.0, bottom: 4.0),
-                  alignment: Alignment.centerLeft,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                            const EdgeInsets.symmetric(horizontal: 15)),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0XFFD6D5D4)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                        )),
-                    onPressed: () => selectDocumentOrImage(),
-                    child: Text(
-                      "${AppLocalizations.of(context).translate(i18.common.chooseFile)}",
-                      style: TextStyle(
-                          color: DigitTheme.instance.colorScheme.onSurface,
-                          fontSize: 16),
-                    ),
-                  )),
-              _selectedFiles.isNotEmpty
-                  ? Expanded(
-                      child: SingleChildScrollView(
-                        child: Wrap(
-                            direction: Axis.horizontal,
-                            spacing: 3,
-                            children: List.generate(
-                                _selectedFiles.length,
-                                (index) => Wrap(
-                                      direction: Axis.horizontal,
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      spacing: 2,
-                                      children: [
-                                        Text(
-                                          _selectedFiles[index] is File
-                                              ? (path.basename(
-                                                  _selectedFiles[index].path))
-                                              : _selectedFiles[index].name,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        IconButton(
-                                            padding: EdgeInsets.all(5),
-                                            onPressed: () =>
-                                                onClickOfClear(index),
-                                            icon: const Icon(Icons.cancel))
-                                      ],
-                                    )).toList()),
+        width: constraints.maxWidth > 760
+            ? MediaQuery.of(context).size.width / 2.5
+            : MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.width / 3,
+        decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+        child: Align(
+          alignment: Alignment.center,
+          child: kIsWeb && FilePickerData.bytes != null
+              ? Wrap(children: [
+                  Image.memory(
+                    FilePickerData.bytes!,
+                    fit: BoxFit.cover,
+                    width: 90,
+                    height: 90,
+                  ),
+                  IconButton(
+                      padding: const EdgeInsets.all(5),
+                      onPressed: () => onClickOfClear(0),
+                      icon: const Icon(Icons.cancel))
+                ])
+              : !kIsWeb && FilePickerData.imageFile != null
+                  ? Wrap(children: [
+                      Image.file(
+                        FilePickerData.imageFile!,
+                        fit: BoxFit.cover,
+                        width: 90,
+                        height: 90,
                       ),
-                    )
-                  : Text(
-                      "${AppLocalizations.of(context).translate(i18.common.noFileUploaded)}",
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                    )
-            ],
-          ))
+                      IconButton(
+                          padding: const EdgeInsets.all(5),
+                          onPressed: () => onClickOfClear(0),
+                          icon: const Icon(Icons.cancel))
+                    ])
+                  : GestureDetector(
+                      onTap: () => selectDocumentOrImage(),
+                      child: Icon(
+                        Icons.camera_enhance,
+                        color: DigitTheme.instance.colorScheme.primary,
+                        size: 50,
+                      ),
+                    ),
+        ),
+      ),
+      Container(
+        padding: const EdgeInsets.only(top: 2.0),
+        alignment: Alignment.centerLeft,
+        child: Text(
+            AppLocalizations.of(context).translate(i18.common.validPhotoGraph),
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: const DigitColors().cloudGray)),
+      )
     ];
   }
 
@@ -210,6 +200,8 @@ class FilePickerDemoState extends State<FilePickerDemo> {
     setState(() {
       _selectedFiles.removeAt(index);
       if (index < fileStoreList.length) fileStoreList.removeAt(index);
+      FilePickerData.imageFile = null;
+      FilePickerData.bytes = null;
     });
     widget.callBack(fileStoreList);
   }
@@ -243,7 +235,7 @@ class FilePickerDemoState extends State<FilePickerDemo> {
   Future<void> selectDocumentOrImage() async {
     FocusScope.of(context).unfocus();
     var list = [
-      {"label": i18.common.camera, 'icon': Icons.camera_alt},
+      {"label": i18.common.camera, 'icon': Icons.camera_enhance},
       {"label": i18.common.fileManager, 'icon': Icons.drive_folder_upload},
     ];
 
@@ -324,6 +316,9 @@ class FilePickerDemoState extends State<FilePickerDemo> {
             } else {
               _selectedFiles = [file];
             }
+            setState(() {
+              FilePickerData.imageFile = _selectedFiles.first;
+            });
             uploadFiles(<File>[file]);
             return;
           } else {
@@ -348,11 +343,16 @@ class FilePickerDemoState extends State<FilePickerDemo> {
       spacing: 8,
       children: [
         IconButton(
-            onPressed: () => callBack(label), iconSize: 45, icon: Icon(icon)),
+            onPressed: () => callBack(label),
+            iconSize: 45,
+            icon: Icon(
+              icon,
+              color: DigitTheme.instance.colorScheme.primary,
+            )),
         Text(
           label,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 15),
+          style: const TextStyle(fontSize: 16),
         )
       ],
     );

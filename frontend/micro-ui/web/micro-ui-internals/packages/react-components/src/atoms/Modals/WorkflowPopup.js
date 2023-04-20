@@ -39,13 +39,20 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     const enableAssignee = Digit?.Customizations?.["commonUiConfig"]?.enableHrmsSearch(businessService,action)
     // const [approvers,setApprovers] = useState([])
     const [config,setConfig] = useState(null)
-
+    const [modalSubmit,setModalSubmit] = useState(true)
     //hrms user search
     let { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch({ roles: action?.assigneeRoles?.toString(), isActive: true }, tenantId, null, null, { enabled: action?.assigneeRoles?.length > 0 && enableAssignee });
     
     assigneeOptions = assigneeOptions?.Employees
     assigneeOptions?.map(emp => emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA"))
     
+    useEffect(() => {
+      if(businessService==="muster-roll-approval" && action.action==="APPROVE"){
+        setModalSubmit(false)
+      }
+    }, [businessService])
+    
+
     useEffect(() => {
       if(assigneeOptions?.length >=0){
       setConfig(
@@ -61,12 +68,15 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     }, [assigneeOptions])
     
     const _submit = (data) => {
-        
         //here call an UICustomizaton fn to update the payload for update call(businessService based)
         const updatePayload = Digit?.Customizations?.["commonUiConfig"]?.updatePayload(applicationDetails, data, action, businessService)
         //calling submitAction 
         submitAction(updatePayload, action)
 
+    }
+
+    const modalCallBack = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+        Digit?.Customizations?.["commonUiConfig"]?.enableModalSubmit(businessService,action,setModalSubmit,formData)
     }
 
     if(isLoadingHrmsSearch) return <Loader />
@@ -80,8 +90,8 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
             actionSaveLabel={t(config.label.submit)}
             actionSaveOnSubmit={() => { }}
             formId="modal-action"
+            isDisabled = {!modalSubmit}
         >
-
             <FormComposer
                 config={config.form}
                 noBoxShadow
@@ -90,6 +100,7 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
                 onSubmit={_submit}
                 defaultValues={{}}
                 formId="modal-action"
+                onFormValueChange={modalCallBack}
             />
 
         </Modal>

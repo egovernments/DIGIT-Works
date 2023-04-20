@@ -1,20 +1,73 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA";
 import CreateWorkOrderForm from "./CreateWorkOrderForm";
+// import createWorkOrderConfigMUKTA from "../../../configs/createWorkOrderConfigMUKTA.json";
+import { useTranslation } from "react-i18next";
+import { Loader } from "@egovernments/digit-ui-react-components";
+import { updateDefaultValues } from "../../../../utils/modifyWorkOrderUtils";
 
 const CreateWorkOrder = () => {
-
+    const {t} = useTranslation();
     const queryStrings = Digit.Hooks.useQueryParams();
-    const estimateNumber = queryStrings?.estimateNumber;
+    const isModify = queryStrings?.workOrderNumber ? true : false;
+    const [estimateNumber, setEsimateNumber] = useState(queryStrings?.estimateNumber ? queryStrings?.estimateNumber : "");
+    const contractNumber = queryStrings?.workOrderNumber;
     const tenantId = queryStrings?.tenantId;
-    const [config, setConfig] = useState({});
+    const stateTenant = Digit.ULBService.getStateId();
+    const [documents, setDocuments] = useState([]);
+    const [officerInCharge, setOfficerInCharge] = useState([]);
+    const [nameOfCBO, setNameOfCBO] = useState([]);
+    const [isFormReady, setIsFormReady] = useState(false);
 
-     //fetching estimate data
-     const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+    const { isLoading : isConfigLoading, data : createWorkOrderConfigMUKTA} = Digit.Hooks.useCustomMDMS( //change to data
+    stateTenant,
+    Digit.Utils.getConfigModuleName(),
+    [
+        {
+            "name": "CreateWorkOrderConfig"
+        }
+    ],
+    {
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.CreateWorkOrderConfig[0];
+      },
+    }
+    );
+
+    // const configs = createWorkOrderConfigMUKTA?.CreateWorkOrderConfig[0];
+
+    //fetching contract data -- modify
+    const { isLoading: isContractLoading,data:contract } = Digit.Hooks.contracts.useContractSearch({
         tenantId,
-        filters: { estimateNumber }
+        filters: { contractNumber, tenantId },
+        config:{
+            enabled: isModify,
+            cacheTime : 0
+        }
     })
+
+    useEffect(()=>{
+        //if session WO# is diff from queryString WO#, reset sessionFormData
+        if(sessionFormData?.basicDetails_workOrdernumber !== queryStrings?.workOrderNumber) {
+            clearSessionFormData();
+        }
+    },[])
+
+    useEffect(()=>{
+        if(!isContractLoading && isModify) {
+            setEsimateNumber(contract?.additionalDetails?.estimateNumber)
+        }
+    },[contract])
+
+    //fetching estimate data
+    const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+        tenantId,
+        filters: { estimateNumber },
+        config:{
+            enabled: !!(estimateNumber)
+        }
+    })
+
     //fetching project data
     const { isLoading: isProjectLoading, data: project } = Digit.Hooks.project.useProjectSearch({
         tenantId,
@@ -31,14 +84,7 @@ const CreateWorkOrder = () => {
         }
     })
 
-    const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {
-        basicDetails_projectID : "",
-        basicDetails_dateOfProposal : "",
-        basicDetails_projectName : "",
-        basicDetails_projectDesc : "",
-        cboID : "",
-        designationOfOfficerInCharge : "",
-    });
+    const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const createDocumentObject = (documents) => {
@@ -62,7 +108,10 @@ const CreateWorkOrder = () => {
 
     const searchOrgPayload = {
         "SearchCriteria": {
-            "tenantId": "pg.citya"
+            "tenantId": tenantId,
+            "functions" : {
+                "type" : "CBO"
+            }
         }
     }
 
@@ -73,38 +122,64 @@ const CreateWorkOrder = () => {
     //organisation search
     const { isLoading : isOrgSearchLoading, data : organisationOptions } = Digit.Hooks.organisation.useSearchOrg(searchOrgPayload);
     
-    const createOfficerInChargeObject = () => {
+    //Overheads Search
+    const { isLoading : isOverHeadsMasterDataLoading, data : overHeadMasterData } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getStateId(),
+        "works",
+        [{ "name": "Overheads" }]
+    );
+
+     //Contract Roles Search
+     const { isLoading : isRoleOfCBOLoading, data : roleOfCBO } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getStateId(),
+        "works",
+        [{ "name": "CBORoles" }]
+    );
+
+    const createOfficerInChargeObject = (assigneeOptions) => {
         return assigneeOptions?.Employees?.filter(employees=>employees?.isActive).map((employee=>( { code : employee?.code, name : employee?.user?.name, data : employee} )))
     }
 
-    const createNameOfCBOObject = () => {
-        return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber } ))
+    const createNameOfCBOObject = (organisationOptions) => {
+        return organisationOptions?.organisations?.map(organisationOption => ( {code : organisationOption?.id, name : organisationOption?.name, applicationNumber : organisationOption?.applicationNumber, orgNumber : organisationOption?.orgNumber } ))
+    }
+
+    const handleWorkOrderAmount = ({estimate, overHeadMasterData}) => {
+        overHeadMasterData = overHeadMasterData?.works?.Overheads;
+        let totalAmount = estimate?.additionalDetails?.totalEstimatedAmount;
+
+        //loop through the estimate Details and filter with OVERHEAD
+        estimate?.estimateDetails?.forEach((estimateDetail)=>{
+            if(estimateDetail?.category !== "OVERHEAD") return;
+            let amountDetails = estimateDetail?.amountDetail?.[0];
+
+            let overHeadCode = amountDetails?.type;
+            let shouldSubtract = !((overHeadMasterData?.filter(overHead=>overHead?.code === overHeadCode)?.[0])?.isWorkOrderValue);
+
+            if(shouldSubtract) {
+                totalAmount -= amountDetails?.amount;
+            }
+        })
+        return totalAmount;
     }
 
     useEffect(()=>{
-        if((!isEstimateLoading && !isProjectLoading && !isLoadingHrmsSearch && !isOrgSearchLoading)) {
-            //set default values
-            let defaultValues = {
-                basicDetails_projectID :  project?.projectNumber,
-                basicDetails_dateOfProposal : Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal),
-                basicDetails_projectName : project?.name,
-                basicDetails_projectDesc : project?.description,
-                workOrderAmountRs : estimate?.additionalDetails?.totalEstimatedAmount
-            };
+        if((estimate && project && createWorkOrderConfigMUKTA && !isLoadingHrmsSearch && !isOrgSearchLoading && !isOverHeadsMasterDataLoading && !isContractLoading)) {
+            updateDefaultValues({ createWorkOrderConfigMUKTA, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO});
 
-            //set document object
-            let documents =  createDocumentObject(estimate?.additionalDetails?.documents);
-            let officerInCharge = createOfficerInChargeObject();
-            let nameOfCBO = createNameOfCBOObject();
-            setSessionFormData({...sessionFormData, ...defaultValues});
-            setConfig(createWorkOrderConfigMUKTA({defaultValues, documents, officerInCharge, nameOfCBO}));
+            setDocuments(createDocumentObject(estimate?.additionalDetails?.documents));
+            setOfficerInCharge(createOfficerInChargeObject(assigneeOptions));
+            setNameOfCBO(createNameOfCBOObject(organisationOptions));
+
+            setIsFormReady(true);
         }
-    },[isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading])
+    },[isConfigLoading, isEstimateLoading, isProjectLoading, isLoadingHrmsSearch, isOrgSearchLoading, isOverHeadsMasterDataLoading, isContractLoading, estimate, isRoleOfCBOLoading]);
 
+    if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             {
-                config && <CreateWorkOrderForm createWorkOrderConfig={config?.CreateWorkOrderConfig?.[0]} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project}></CreateWorkOrderForm>
+                isFormReady && <CreateWorkOrderForm createWorkOrderConfig={createWorkOrderConfigMUKTA} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} tenantId={tenantId} estimate={estimate} project={project} preProcessData={{documents : documents, nameOfCBO : nameOfCBO, officerInCharge : officerInCharge}} isModify={isModify} contractID={contract?.id} contractNumber={contract?.contractNumber} lineItems={contract?.lineItems} contractAuditDetails={contract?.auditDetails} roleOfCBOOptions={roleOfCBO?.works?.CBORoles}></CreateWorkOrderForm>
             }
         </React.Fragment>
     )

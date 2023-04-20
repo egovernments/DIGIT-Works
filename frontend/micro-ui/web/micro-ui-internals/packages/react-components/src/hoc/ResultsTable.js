@@ -50,7 +50,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                     Header: t(column?.label) || t("ES_COMMON_NA"),
                     accessor:column.jsonPath,
                     Cell: ({ value, col, row }) => {
-                        return  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original,column,col,value,t, searchResult, headerLocale) 
+                        return  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original,column?.label,column, value,t, searchResult);
                     }
                 }
             }
@@ -174,6 +174,8 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                         style: {
                             padding: "20px 18px",
                             fontSize: "16px",
+                            wordBreak : "break-all",
+                            whiteSpace: "break-spaces",
                         },
                     };
                 }}

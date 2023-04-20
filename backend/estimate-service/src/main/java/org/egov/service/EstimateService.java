@@ -40,6 +40,9 @@ public class EstimateService {
     @Autowired
     private CalculationService calculationService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     /**
      * Create Estimate by validating the details, enriched , update the workflow
      * and finally pushed to kafka to persist in postgres DB.
@@ -103,6 +106,7 @@ public class EstimateService {
         workflowService.updateWorkflowStatus(estimateRequest);
         //calculationService.calculateEstimate(estimateRequest);
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
+        notificationService.sendNotification(estimateRequest);
         return estimateRequest;
     }
 }

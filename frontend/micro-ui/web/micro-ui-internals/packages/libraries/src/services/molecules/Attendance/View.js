@@ -1,4 +1,5 @@
 import AttendanceService from "../../elements/Attendance";
+import { WorksService } from "../../elements/Works";
 
 const attendanceTypes = {
   0 : 'zero',
@@ -27,8 +28,9 @@ const getWeekAttendance = (data) => {
   return weekAttendance
 }
 
-const getAttendanceTableData = (data, skills, t) => {
+const getAttendanceTableData = async(data, skills, t, expenseCalculations) => {
   let tableData = {}
+
   if(data?.individualEntries?.length > 0) {
     data?.individualEntries.forEach((item, index) => {
       let tableRow = {}
@@ -40,7 +42,7 @@ const getAttendanceTableData = (data, skills, t) => {
       tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
       tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || t("NA")
       tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || 0
-      tableRow.modifiedAmount = (item?.modifiedTotalAttendance ? (skills[item?.additionalDetails?.skillCode]?.amount * item?.modifiedTotalAttendance) : tableRow?.amount) || 0
+      tableRow.modifiedAmount = expenseCalculations?.filter(data=>data?.referenceId === item?.individualId)?.[0]?.lineItems?.[0]?.amount || 0;
       tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
       tableRow.bankAccountDetails = {
         accountNo : item?.additionalDetails?.bankDetails || t("NA"),
@@ -48,6 +50,7 @@ const getAttendanceTableData = (data, skills, t) => {
       }
       tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || t("NA")
       tableRow.attendence = getWeekAttendance(item?.attendanceEntries)
+      tableRow.perDayWage = skills[item?.additionalDetails?.skillCode]?.amount
       tableData[item.id] = tableRow
     });
 
@@ -72,22 +75,27 @@ const getAttendanceTableData = (data, skills, t) => {
   return tableData
 }
 
-const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills) => {
+const transformViewDataToApplicationDetails = async (t, data, skills) => {
+
+  const expenseCalculatorPayload = {
+    criteria : {
+      "tenantId": "pg.citya",
+      "musterRollId": [ data?.musterRolls?.[0]?.id ]
+    }
+  }
+
+  let expenseCalculationsResponse  =  await WorksService.fetchEstimateExpenseCalculator(expenseCalculatorPayload);
+  let expenseCalculations = expenseCalculationsResponse?.calculation?.estimates?.[0]?.calcDetails;
+
   if(data?.musterRolls?.length === 0) throw new Error('No data found');
   
   const musterRoll = data.musterRolls[0]
-  const attendanceTableData = getAttendanceTableData(musterRoll, skills, t)
+  const attendanceTableData = await getAttendanceTableData(musterRoll, skills, t, expenseCalculations)
+  
+  const totalAmount = expenseCalculationsResponse?.calculation?.totalAmount;
   const weekDates = getWeekDates(musterRoll)
   const registrationDetails = {
-    title: "ATM_REGISTRATION_DETAILS",
     applicationData: musterRoll,
-    asSectionHeader: true,
-    values: [
-      { title: "ES_COMMON_ORG_NAME", value: musterRoll?.additionalDetails?.orgName || t("NA") },
-      { title: "ATM_REGISTER_ID", value: musterRoll?.additionalDetails?.attendanceRegisterNo || t("NA")},
-      { title: "ATM_REGISTER_NAME", value: musterRoll?.additionalDetails?.attendanceRegisterName || t("NA") },
-      { title: "ATM_ATTENDENCE_FOR_WEEK", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("NA") },
-    ],
     additionalDetails: {
       table: {
         weekTable: {
@@ -103,9 +111,7 @@ const transformViewDataToApplicationDetails = (t, data, workflowDetails, skills)
 
   return {
     applicationDetails,
-    applicationData: musterRoll,
-    processInstancesDetails: workflowDetails?.ProcessInstances,
-    workflowDetails
+    applicationData: {totalAmount,...musterRoll},
   }
 };
 
@@ -124,9 +130,10 @@ const getWageSeekerSkills = async () => {
 export const fetchAttendanceDetails = async (t, tenantId, searchParams) => {
   try {
     const response = await AttendanceService.search(tenantId, searchParams);
-    const workflowDetails = await workflowDataDetails(tenantId, searchParams.musterRollNumber);
+    // const workflowDetails = await workflowDataDetails(tenantId, searchParams.musterRollNumber);
     const skills = await getWageSeekerSkills()
-    return transformViewDataToApplicationDetails(t, response, workflowDetails, skills)
+    
+    return transformViewDataToApplicationDetails(t, response, skills)
   } catch (error) {
       console.log('error', error);
       throw new Error(error?.response?.data?.Errors[0].message);

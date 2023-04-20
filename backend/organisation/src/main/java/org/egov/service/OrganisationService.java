@@ -33,23 +33,48 @@ public class OrganisationService {
     @Autowired
     private Configuration configuration;
 
+    @Autowired
+    private UserService userService;
 
+    @Autowired
+    private NotificationService notificationService;
+
+
+    /**
+     *
+     * @param orgRequest
+     * @return
+     */
     public OrgRequest createOrganisationWithoutWorkFlow(OrgRequest orgRequest) {
         log.info("OrganisationService::createOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateCreateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
+        userService.createUser(orgRequest);
         producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
+        notificationService.sendNotification(orgRequest,true);
         return orgRequest;
     }
 
+    /**
+     *
+     * @param orgRequest
+     * @return
+     */
     public OrgRequest updateOrganisationWithoutWorkFlow(OrgRequest orgRequest) {
         log.info("OrganisationService::updateOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
+        userService.updateUser(orgRequest);
         producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
+        notificationService.sendNotification(orgRequest,false);
         return orgRequest;
     }
 
+    /**
+     *
+     * @param orgSearchRequest
+     * @return
+     */
     public List<Organisation> searchOrganisation(OrgSearchRequest orgSearchRequest) {
         log.info("OrganisationService::searchOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateSearchOrganisationRequest(orgSearchRequest);
@@ -57,6 +82,11 @@ public class OrganisationService {
         return organisations;
     }
 
+    /**
+     *
+     * @param orgSearchRequest
+     * @return
+     */
     public Integer countAllOrganisations(OrgSearchRequest orgSearchRequest) {
         return organisationRepository.getOrganisationsCount(orgSearchRequest);
     }

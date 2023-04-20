@@ -5,7 +5,7 @@ import * as locale from "./locale";
 import * as obps from "./obps";
 import * as pt from "./pt";
 import * as privacy from "./privacy";
-import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";
+import PDFUtil, { downloadReceipt, downloadPDFFromLink, downloadBill, getFileUrl, downloadEgovPDF, getDocumentName } from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 import preProcessMDMSConfig from "./preProcessMDMSConfig";
 import preProcessMDMSConfigInboxSearch from "./preProcessMDMSConfigInboxSearch";
@@ -88,14 +88,22 @@ const getPattern = (type) => {
     case "bankAccountNo":
       return /^\d{9,18}$/;
     case "IFSC":
-      return /^[A-Z]{4}0[A-Z0-9]{6}$/;
+      return /^[A-Za-z]{4}0[A-Za-z0-9]{6}$/;
     case "ApplicationNo":
       return /^[a-zA-z0-9\s\\/\-]$/i;
   }
 };
-/*  get unique elements from an array */
+/*  
+Digit.Utils.getUnique()
+get unique elements from an array */
 const getUnique = (arr) => {
   return arr.filter((value, index, self) => self.indexOf(value) === index);
+};
+/*  
+Digit.Utils.createFunction()
+get function from a string */
+const createFunction = (functionAsString) => {
+  return Function("return " + functionAsString)();
 };
 
 const getStaticMapUrl = (latitude, longitude) => {
@@ -120,19 +128,19 @@ const routeSubscription = (pathname) => {
 };
 
 /* to check the employee (loggedin user ) has given role  */
-const didEmployeeHasRole = (role="") => {
+const didEmployeeHasRole = (role = "") => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser();
   const rolearray = userInfo?.info?.roles.filter((item) => {
     if (item.code === role && item.tenantId === tenantId) return true;
   });
-  return rolearray?.length>0;
+  return rolearray?.length > 0;
 };
 
 /* to check the employee (loggedin user ) has given roles  */
-const didEmployeeHasAtleastOneRole = (roles=[])=>{
-  return roles.some(role=>didEmployeeHasRole(role));
-}
+const didEmployeeHasAtleastOneRole = (roles = []) => {
+  return roles.some((role) => didEmployeeHasRole(role));
+};
 
 const pgrAccess = () => {
   const userInfo = Digit.UserService.getUser();
@@ -169,9 +177,7 @@ const NOCAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
 
-  const NOC_ROLES = [
-    "FIRE_NOC_APPROVER"
-  ]
+  const NOC_ROLES = ["FIRE_NOC_APPROVER"];
 
   const NOC_ACCESS = userRoles?.filter((role) => NOC_ROLES?.includes(role));
 
@@ -265,7 +271,7 @@ const hrmsAccess = () => {
 const wsAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const waterRoles = ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER","WS_CLERK"];
+  const waterRoles = ["WS_CEMP", "WS_APPROVER", "WS_FIELD_INSPECTOR", "WS_DOC_VERIFIER", "WS_CLERK"];
 
   const WS_ACCESS = userRoles?.filter((role) => waterRoles?.includes(role));
 
@@ -275,7 +281,7 @@ const wsAccess = () => {
 const swAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const sewerageRoles = ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER","SW_CLERK"];
+  const sewerageRoles = ["SW_CEMP", "SW_APPROVER", "SW_FIELD_INSPECTOR", "SW_DOC_VERIFIER", "SW_CLERK"];
 
   const SW_ACCESS = userRoles?.filter((role) => sewerageRoles?.includes(role));
 
@@ -283,10 +289,9 @@ const swAccess = () => {
 };
 
 /* to get the MDMS config module name */
-const getConfigModuleName = ()=>{
-  return  window?.globalConfigs?.getConfig("UICONFIG_MODULENAME") || "commonUiConfig";
-}
-
+const getConfigModuleName = () => {
+  return window?.globalConfigs?.getConfig("UICONFIG_MODULENAME") || "commonUiConfig";
+};
 
 export default {
   pdf: PDFUtil,
@@ -295,6 +300,8 @@ export default {
   downloadPDFFromLink,
   downloadBill,
   getFileUrl,
+  getDocumentName,
+  downloadEgovPDF,
   getFileTypeFromFileStoreURL,
   browser: BrowserUtil,
   locale,
@@ -328,5 +335,6 @@ export default {
   Urls,
   getLoggedInUserDetails,
   ...privacy,
-  getConfigModuleName
+  getConfigModuleName,
+  createFunction,
 };

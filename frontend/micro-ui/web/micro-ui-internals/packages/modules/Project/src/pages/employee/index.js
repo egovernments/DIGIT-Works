@@ -11,7 +11,7 @@ const ProjectBreadCrumb = ({ location }) => {
   const crumbs = [
     {
         path: `/${window?.contextPath}/employee`,
-        content: t("WORKS_WMS"),
+        content: t("WORKS_MUKTA"),
         show: true,
     },
     {
@@ -52,11 +52,21 @@ const App = ({ path }) => {
   const [sessionFormData, clearSessionFormData] = projectSession;
   const location = useLocation();
 
+  const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", {});
+  const [sessionFormDataEst, clearSessionFormDataEst] = EstimateSession;
+
   //remove session form data if user navigates away from the project create screen
   useEffect(()=>{
       if (!window.location.href.includes("create-project") && sessionFormData && Object.keys(sessionFormData) != 0) {
         clearSessionFormData();
       }
+  },[location]);
+
+  //remove session form data if user navigates away from the estimate create screen
+  useEffect(()=>{
+    if (!window.location.href.includes("create-estimate") && sessionFormDataEst && Object.keys(sessionFormDataEst) != 0) {
+      clearSessionFormDataEst();
+    }
   },[location]);
 
   return (

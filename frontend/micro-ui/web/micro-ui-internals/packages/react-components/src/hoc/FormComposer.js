@@ -25,6 +25,8 @@ import HorizontalNav  from "../atoms/HorizontalNav"
 import Toast from "../atoms/Toast";
 import UploadFileComposer from "./UploadFileComposer";
 import CheckBox from "../atoms/CheckBox";
+import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
+
 const wrapperStyles = {
   // "display":"flex",
   // "flexDirection":"column",
@@ -156,6 +158,7 @@ export const FormComposer = (props) => {
                   inputRef={ref}
                   errorStyle={errors?.[populators.name]}
                   max={populators.max}
+                  min={populators.min}
                   disable={disable}
                   style={type === "date" ? { paddingRight: "3px" } : ""}
                   maxlength={populators?.validation?.maxlength}
@@ -285,7 +288,7 @@ export const FormComposer = (props) => {
                   tenantId={Digit.ULBService.getCurrentTenantId()}
                   getFormState={getFileStoreData}
                   showHintBelow={populators?.showHintBelow ? true : false}
-                  setuploadedstate={value}
+                  setuploadedstate={value || []}
                   allowedFileTypesRegex={populators.allowedFileTypes}
                   allowedMaxSizeInMB={populators.allowedMaxSizeInMB}
                   hintText={populators.hintText}
@@ -389,6 +392,34 @@ export const FormComposer = (props) => {
               control={control}
             />
           </form>
+        ); 
+      case "multiselectdropdown":
+        return (
+          <Controller
+            name={`${populators.name}`}
+            control={control}
+            defaultValue={formData?.[populators.name]}
+            rules={{ required: isMandatory }}
+            render={(props) => {
+              return (
+                <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                  <MultiSelectDropdown
+                    options={populators?.options}
+                    optionsKey={populators?.optionsKey}
+                    props={props}
+                    isPropsNeeded={true}
+                    onSelect={(e) => {
+                      props.onChange(e?.map(row=>{return row?.[1] ? row[1] : null}).filter(e=>e))
+                    }}
+                    selected={props?.value || []}
+                    defaultLabel={t(populators?.defaultText)}
+                    defaultUnit={t(populators?.selectedText)}
+                    config={populators}
+                  />
+                </div>
+              );
+            }}
+          />
         );
       default:
         return populators?.dependency !== false ? populators : null;
@@ -488,7 +519,7 @@ export const FormComposer = (props) => {
                   {!field.withoutLabel && (
                     <CardLabel
                       style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
-                      className={field?.disable ? "disabled" : ""}
+                      className={field?.disable ? `disabled ${props?.labelBold ? 'bolder' : ""}` : `${props?.labelBold ? 'bolder' : ""}`}
                     >
                       {t(field.label)}
                       {field.isMandatory ? " * " : null}
@@ -509,6 +540,7 @@ export const FormComposer = (props) => {
                           color: "#505A5F",
                           ...field?.descriptionStyles,
                         }}
+                        className="bolder"
                       >
                         {t(field.description)}
                       </CardLabel>
@@ -534,6 +566,7 @@ export const FormComposer = (props) => {
                       marginBottom: props.inline ? "8px" : "revert",
                       fontWeight: props.isDescriptionBold ? "600" : null,
                     }}
+                    className="bolder"
                   >
                     {t(field.label)}
                     {field?.appendColon ? ' : ' : null}

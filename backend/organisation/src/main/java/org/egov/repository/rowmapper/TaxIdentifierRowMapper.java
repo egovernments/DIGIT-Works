@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class TaxIdentifierRowMapper  implements ResultSetExtractor<List<Identifier>> {
+public class TaxIdentifierRowMapper implements ResultSetExtractor<List<Identifier>> {
 
     @Autowired
     private ObjectMapper mapper;
@@ -35,6 +35,7 @@ public class TaxIdentifierRowMapper  implements ResultSetExtractor<List<Identifi
             String taxIdentifier_orgId = rs.getString("taxIdentifier_orgId");
             String taxIdentifier_type = rs.getString("taxIdentifier_type");
             String taxIdentifier_value = rs.getString("taxIdentifier_value");
+            boolean taxIdentifier_active = rs.getBoolean("taxIdentifier_active");
             JsonNode taxIdentifier_additionalDetails = getAdditionalDetail("taxIdentifier_additionalDetails", rs);
 
             Identifier identifier = Identifier.builder()
@@ -42,6 +43,7 @@ public class TaxIdentifierRowMapper  implements ResultSetExtractor<List<Identifi
                     .orgId(taxIdentifier_orgId)
                     .type(taxIdentifier_type)
                     .value(taxIdentifier_value)
+                    .isActive(taxIdentifier_active)
                     .additionalDetails(taxIdentifier_additionalDetails)
                     .build();
 

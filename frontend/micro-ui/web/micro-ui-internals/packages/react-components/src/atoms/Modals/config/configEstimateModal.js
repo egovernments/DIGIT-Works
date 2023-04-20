@@ -10,6 +10,7 @@ const configEstimateModal = (
     moduleCode
 ) => {
     const {action:actionString} = action
+    
     const configMap = {
         "mukta-estimate": {
             "default":{
@@ -168,26 +169,66 @@ const configEstimateModal = (
                     show: true
                 }
             },
+        },
+        "muster-roll-approval":{
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "APPROVE": {
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:true,
+                    show:true
+                }
+            },
+            "REJECT": {
+                comments: {
+                    isMandatory: true,
+                    show: true,
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+            }
         }
     }
 //field can have (comments,assignee,upload)
     const fetchIsMandatory = (field) => {
         
         if(configMap?.[businessService]?.[actionString]){
-            console.log(configMap?.[businessService]?.[actionString]?.[field]?.isMandatory);
             return configMap?.[businessService]?.[actionString]?.[field]?.isMandatory ? configMap?.[businessService]?.[actionString]?.[field]?.isMandatory : false
         }else{
-            console.log(configMap?.[businessService]?.default?.[field]?.isMandatory);
             return configMap?.[businessService]?.default?.[field]?.isMandatory ? configMap?.[businessService]?.default?.[field]?.isMandatory: false
         }
     }
     const fetchIsShow = (field) => {
         
         if (configMap?.[businessService]?.[actionString]) {
-            console.log(configMap?.[businessService]?.[actionString]?.[field]?.show);
            return configMap?.[businessService]?.[actionString]?.[field]?.show ? configMap?.[businessService]?.[actionString]?.[field]?.show : false
         } else {
-            console.log(configMap?.[businessService]?.default?.[field]?.show);
             return configMap?.[businessService]?.default?.[field]?.show ? configMap?.[businessService]?.default?.[field]?.show:false
         }
         
@@ -203,9 +244,22 @@ const configEstimateModal = (
             {
                 body: [
                     {
+                        label: " ",
+                        type: "checkbox",
+                        disable: false,
+                        isMandatory:false,
+                        populators: {
+                            name: "acceptTerms",
+                            title: "MUSTOR_APPROVAL_CHECKBOX",
+                            isMandatory: false,
+                            labelStyles: {marginLeft:"40px"},
+                            customLabelMarkup: true,
+                            hideInForm: !fetchIsShow("acceptTerms")
+                        }
+                    },
+                    {
                         label: t("WF_MODAL_APPROVER"),
                         type: "dropdown",
-                        // isMandatory: true,
                         isMandatory: fetchIsMandatory("assignee"),
                         disable: false,
                         key:"assignees",
@@ -213,7 +267,6 @@ const configEstimateModal = (
                             name: "assignee",
                             optionsKey: "nameOfEmp",
                             options: approvers,
-                            // hideInForm:approvers ? false : true
                             hideInForm: !fetchIsShow("assignee")
                         },
                     },
@@ -223,7 +276,13 @@ const configEstimateModal = (
                         isMandatory: fetchIsMandatory("comments"),
                         populators: {
                             name: "comments",
-                            hideInForm:!fetchIsShow("comments")
+                            hideInForm:!fetchIsShow("comments"),
+                            validation:{
+                                maxLength:{
+                                    value:1024,
+                                    message:t("WORKS_COMMENT_LENGTH_EXCEEDED_1024")
+                                }
+                            }
                         },
                     },
                     {
@@ -232,12 +291,10 @@ const configEstimateModal = (
                         populators: {
                             name: "documents",
                             allowedMaxSizeInMB: 5,
-                            maxFilesAllowed: 2,
-                            allowedFileTypes: /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
+                            maxFilesAllowed: 1,
+                            allowedFileTypes: /(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv)$/i,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
-                            hintText: "WORKFLOW_MODAL_UPLOAD_HINT_TEXT",
-                            showHintBelow: true,
                             hideInForm:!fetchIsShow("upload")
                         }
                     }

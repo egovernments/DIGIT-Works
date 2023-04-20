@@ -1,18 +1,18 @@
-import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
+import 'package:digit_components/widgets/molecules/digit_language_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
 import 'package:works_shg_app/widgets/atoms/app_logo.dart';
-import 'package:works_shg_app/widgets/loaders.dart';
 import 'package:works_shg_app/widgets/molecules/desktop_view.dart';
 import 'package:works_shg_app/widgets/molecules/mobile_view.dart';
 
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/localization.dart';
 import '../router/app_router.dart';
+import '../widgets/loaders.dart' as shg_app;
 
 class LanguageSelectionPage extends StatefulWidget {
   const LanguageSelectionPage({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class _LanguageSelectionPage extends State<LanguageSelectionPage> {
       builder: (context, state) {
         return state.isInitializationCompleted == false &&
                 state.stateInfoListModel == null
-            ? Loaders.circularLoader(context)
+            ? shg_app.Loaders.circularLoader(context)
             : Column(
                 children: [
                   state.digitRowCardItems != null &&
@@ -68,7 +68,8 @@ class _LanguageSelectionPage extends State<LanguageSelectionPage> {
                             ).load();
                             context.read<LocalizationBloc>().add(
                                 OnLoadLocalizationEvent(
-                                    module: 'rainmaker-common',
+                                    module:
+                                        'rainmaker-common,rainmaker-attendencemgmt',
                                     tenantId: state.stateInfoListModel!.code
                                         .toString(),
                                     locale: data.value));

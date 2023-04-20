@@ -1,8 +1,8 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
+import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
 import 'package:works_shg_app/widgets/atoms/digit_otp_builder.dart';
@@ -55,7 +55,7 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
           Back(
             backLabel: AppLocalizations.of(context).translate(i18.common.back),
           ),
-          Card(
+          DigitCard(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -115,22 +115,26 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
                     ),
                   ),
                 ),
-                BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                BlocListener<AuthBloc, AuthState>(
+                  listener: (context, state) {
                     state.maybeWhen(
-                        error: () => Notifiers.getToastMessage(
-                            context,
-                            AppLocalizations.of(context)
-                                .translate(i18.login.invalidOTP),
-                            'ERROR'),
+                        error: () {
+                          Notifiers.getToastMessage(
+                              context,
+                              AppLocalizations.of(context)
+                                  .translate(i18.login.invalidOTP),
+                              'ERROR');
+                          context.router.popAndPush(OTPVerificationRoute(
+                              mobileNumber: widget.mobileNumber));
+                        },
                         orElse: () => Container());
-                  });
-                  return Container();
-                }),
+                  },
+                  child: Container(),
+                ),
               ],
             ),
           ),
-          Align(
+          const Align(
             alignment: Alignment.bottomCenter,
             child: PoweredByDigit(),
           )

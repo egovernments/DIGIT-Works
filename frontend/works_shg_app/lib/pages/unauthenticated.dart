@@ -6,6 +6,7 @@ import 'package:works_shg_app/blocs/localization/localization.dart';
 import '../blocs/app_initilization/app_initilization.dart';
 import '../data/remote_client.dart';
 import '../data/repositories/remote/mdms.dart';
+import '../models/localization/localization_model.dart';
 import '../widgets/loaders.dart';
 
 class UnauthenticatedPageWrapper extends StatelessWidget {
@@ -31,10 +32,12 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
                 appInitState.digitRowCardItems!.isNotEmpty)
             ? BlocBuilder<LocalizationBloc, LocalizationState>(
                 builder: (context, localeState) {
-                return localeState.isLocalizationLoadCompleted &&
-                        localeState.localization != null
-                    ? const AutoRouter()
-                    : Loaders.circularLoader(context);
+                return localeState.maybeWhen(
+                    orElse: () => Container(),
+                    loading: () => Loaders.circularLoader(context),
+                    loaded: (List<LocalizationMessageModel>? localization) {
+                      return const AutoRouter();
+                    });
               })
             : Loaders.circularLoader(context);
       }),

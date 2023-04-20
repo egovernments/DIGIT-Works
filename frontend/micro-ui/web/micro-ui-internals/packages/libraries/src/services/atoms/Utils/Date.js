@@ -48,3 +48,9 @@ export const getDayfromTimeStamp = (timestamp) => {
   var dayOfWeek = days[a.getDay()]
   return dayOfWeek
 }
+
+export const getYearDifference = (date) => {
+  const timeDiff = Date.now() - new Date(date).getTime()
+  const ageDate = new Date(timeDiff)
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}

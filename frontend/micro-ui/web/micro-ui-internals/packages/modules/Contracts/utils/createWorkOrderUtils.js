@@ -1,83 +1,139 @@
+//form data input name (with cropped prefix) mapping with file category Name
 const documentType = {
     "doc_boq" : "BOQ",
     "doc_others" : "Others",
     "doc_terms_and_conditions" : "Terms And Conditions",
   }
-
-const createDocumentsPayload = (documents, otherDocFileName) => {
+  
+  //This handler will return the payload for doc according to API spec. 
+  //This object will be later pushed to an array
+  const createDocObject = (document, docType, otherDocFileName="Others", isActive) =>{
+  
+    //handle empty Category Name in File Type
+    if((otherDocFileName.trim()).length === 0) {
+      otherDocFileName = "";
+    }
+  
+    let payload_modal = {};
+    payload_modal.documentType = documentType?.[docType];
+    payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
+    payload_modal.documentUid = "";
+    payload_modal.status = isActive;
+    payload_modal.id = document?.[1]?.['file']?.['id'];
+    payload_modal.key = docType;
+    payload_modal.additionalDetails = {
+      fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] : documentType?.[docType],
+      otherCategoryName : otherDocFileName
+    }
+    return payload_modal;
+  }
+  
+  //documents - all uploaded docs in the current screen ( create / modify )
+  //configs - previously uploaded docs -- defaultValues
+  //otherDocFileName - filename filled in the text field for files -- Others
+  const createDocumentsPayload = (documents, otherDocFileName, configs) => {
     let documents_payload_list = [];
-
+    let documentDefaultValue = configs?.defaultValues?.documents;
+    //new uploaded docs
     for(let docType of Object.keys(documents)) {
       for(let document of documents[docType]) {
-        let payload_modal = {};
-        payload_modal.documentType = (docType === "others" && otherDocFileName) ? otherDocFileName : documentType[docType];
-        payload_modal.fileStore = document[1]['fileStoreId']['fileStoreId'];
-        payload_modal.documentUid = "";
-        payload_modal.status = "ACTIVE";
-        payload_modal.additionalDetails = {
-          fileName :  docType === "others" ? otherDocFileName : document[1]['file']['name']
-        }
+        let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE"); 
         documents_payload_list.push(payload_modal);
       }
     }
+
+    // compare with existing docs
+    // if existing docs exists
+    if(documentDefaultValue) {
+      for(let defaultDocKey of Object.keys(documentDefaultValue)) {
+        let isExist = false;
+        for(let uploadedDocObject of documents_payload_list) {
+          //checks if default and new file exist for same file category
+          if(defaultDocKey === uploadedDocObject?.key && defaultDocKey !== "doc_others_name") {
+  
+            //new file being uploaded, if ID is undefined ( Update Case )
+            if(!uploadedDocObject?.id) {
+              //if old file exists, make old file as inactive
+              let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
+              documents_payload_list.push(payload_modal);
+            }
+            isExist = true;
+          }
+        }
+        //if previous file does not exist in new formData ( Delete Case ), mark it as InActive
+        if(!isExist && defaultDocKey !== "doc_others_name") {
+          let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
+          documents_payload_list.push(payload_modal);
+        }
+      }
+    }
+  
     return documents_payload_list;
 }
 
-export const createWorkOrderUtils = ({tenantId, estimate, project, data}) => {
+export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams}) => {
     return {
         contract : {
+            "id" : modifyParams?.contractID,
+            "contractNumber" : modifyParams?.contractNumber,
             "tenantId": tenantId,
             "wfStatus": "string",
-            "executingAuthority": data?.roleOfCBO?.code,
+            "executingAuthority": inputFormdata?.roleOfCBO?.code,
             "contractType": "CON-01",
-            "totalContractedAmount": estimate?.additionalDetails?.totalEstimatedAmount,
+            "totalContractedAmount": inputFormdata?.workOrderAmountRs,
             "securityDeposit": 0,
             "agreementDate": 0,
             "defectLiabilityPeriod": 0, 
-            "orgId": data?.cboID,
+            "orgId": inputFormdata?.nameOfCBO?.code,
             "startDate": 0,
             "endDate": 0,
             "status" : "ACTIVE",
-            "completionPeriod": data?.projectCompletionPeriodInDays,
+            "completionPeriod": inputFormdata?.projectCompletionPeriodInDays,
             "lineItems": [
                 {
+                    "id" : modifyParams?.lineItems?.[0]?.id,
                     "estimateId": estimate?.id,
                     "tenantId": tenantId,
                     "status" : "ACTIVE",
                     "additionalDetails": {
-                    }
+                    },
+                    "auditDetails" : modifyParams?.lineItems?.[0]?.auditDetails
                 }
             ],
             "documents": createDocumentsPayload({
-                doc_boq : data?.documents?.doc_boq,
-                doc_others : data?.documents?.doc_others,
-                doc_terms_and_conditions : data?.documents?.doc_terms_and_conditions
+                doc_boq : inputFormdata?.documents?.doc_boq,
+                doc_others : inputFormdata?.documents?.doc_others,
+                doc_terms_and_conditions : inputFormdata?.documents?.doc_terms_and_conditions
             },
-                data?.documents?.doc_others_name
+                inputFormdata?.documents?.doc_others_name,
+                createWorkOrderConfig
             ),
+            "auditDetails" : modifyParams?.contractAuditDetails,
+            "processInstance" : null,
             "additionalDetails": {
-                "officerInChargeId": data?.nameOfOfficerInCharge?.code,
+                "officerInChargeId": inputFormdata?.nameOfOfficerInCharge?.code,
                 "projectType": project?.projectType,
-                "ward": project?.additionalDetails?.ward,
+                "ward": project?.address?.boundary,
                 "projectName": project?.name,
-                "orgName": data?.nameOfCBO?.name,
+                "orgName": inputFormdata?.nameOfCBO?.name,
                 "projectId": project?.projectNumber,
                 "estimateDocs" : estimate?.additionalDetails?.documents,
-                "cboName" : data?.nameOfCBO?.name,
-                "cboCode" : data?.nameOfCBO?.code,
+                "cboName" : inputFormdata?.nameOfCBO?.name,
+                "cboCode" : inputFormdata?.nameOfCBO?.code,
                 "totalEstimatedAmount" : estimate?.additionalDetails?.totalEstimatedAmount,
-                "termsAndConditions" : data?.WOTermsAndConditions,
-                "locality" : project?.address?.boundary,
+                "termsAndConditions" : inputFormdata?.WOTermsAndConditions,
+                "locality" : project?.additionalDetails?.locality,
                 "estimateNumber" : estimate?.estimateNumber,
-                "officerInChargeDesgn" : data?.designationOfOfficerInCharge,
-                "officerInChargeName" : data?.nameOfOfficerInCharge,
+                "officerInChargeDesgn" : inputFormdata?.designationOfOfficerInCharge,
+                "officerInChargeName" : {code : inputFormdata?.nameOfOfficerInCharge?.code, name : inputFormdata?.nameOfOfficerInCharge?.name},
+                "projectDesc" : project?.description,
+                "cboOrgNumber" : inputFormdata?.nameOfCBO?.orgNumber
             }
         },
         workflow : {
-            "action": "CREATE",
-            "comment": "",
-            "assignees": [
-            ]
+            "action": modifyParams?.updateAction ? modifyParams?.updateAction : "CREATE",
+            "comment": modalData?.comments,
+            "assignees": selectedApprover?.user?.uuid ? [selectedApprover?.user?.uuid] : []
         }
     }
 }

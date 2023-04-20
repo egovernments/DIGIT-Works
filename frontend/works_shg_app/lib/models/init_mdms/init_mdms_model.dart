@@ -90,15 +90,3 @@ class CityModuleModel with _$CityModuleModel {
   factory CityModuleModel.fromJson(Map<String, dynamic> json) =>
       _$CityModuleModelFromJson(json);
 }
-//
-// class TodoListNotifier extends StateNotifier<TodoList> {
-//   TodoListNotifier() : super( TodoList(titles: ["first", "second"]) );
-//
-//   void addTodoList(String newTitle) {
-//     state.maybeWhen(
-//             (items) => setState(TodoList(titles: [...items, newTitle]),
-//             orElse: () { /* TODO */ }
-//         );
-//     }
-//
-// }

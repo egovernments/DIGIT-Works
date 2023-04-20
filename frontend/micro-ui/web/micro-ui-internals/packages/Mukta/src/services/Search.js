@@ -38,19 +38,19 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
                 { title: "WORKS_CITY",value: currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "NA" }, //will check with Backend
                 { title: "WORKS_WARD", value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA"  }, ///backend to update this
-                { title: "WORKS_LOCALITY",value: currentProject?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.locality?.code}`) : "NA" },
+                { title: "WORKS_LOCALITY",value: currentProject?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.locality}`) : "NA" },
             ]
         };
 
-        const financialDetails = {
-            title: "WORKS_FINANCIAL_DETAILS",
-            asSectionHeader: false,
-            values: [
-                { title: "WORKS_HEAD_OF_ACCOUNTS", value: currentProject?.additionalDetails?.fund ? t(`COMMON_MASTERS_FUND_${currentProject?.additionalDetails?.fund}`) : "NA" },
-            ],
-          };
+        // const financialDetails = {
+        //     title: "WORKS_FINANCIAL_DETAILS",
+        //     asSectionHeader: false,
+        //     values: [
+        //         { title: "WORKS_HEAD_OF_ACCOUNTS", value: currentProject?.additionalDetails?.fund ? t(`COMMON_MASTERS_FUND_${currentProject?.additionalDetails?.fund}`) : "NA" },
+        //     ],
+        //   };
 
-        const documentDetails = {
+        let documentDetails = {
             title: "",
             asSectionHeader: true,
             additionalDetails: {
@@ -60,7 +60,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     values: currentProject?.documents?.map((document) => {
                         if(document?.status !== "INACTIVE") {
                             return {
-                                title: document?.documentType,
+                                title: document?.documentType === "Other" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
                                 documentType: document?.documentType,
                                 documentUid: document?.fileStore,
                                 fileStoreId: document?.fileStore,
@@ -73,6 +73,13 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             }
         }
 
+        //filter any empty object
+        documentDetails.additionalDetails.documents[0].values =documentDetails?.additionalDetails?.documents?.[0]?.values?.filter(value=>{
+            if(value?.title){
+                return value;
+            }
+        });
+
         // if(currentProject?.projectNumber === searchParams?.Projects?.[0]?.projectNumber) {
             basicDetails = {
                 projectID : currentProject?.projectNumber,
@@ -83,14 +90,14 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                 projectParentProjectID : currentProject?.ancestors?.[0]?.projectNumber || "NA",
                 uuid:currentProject?.id,
                 address:currentProject?.address,
-                ward: currentProject?.additionalDetails?.ward
+                ward: currentProject?.address?.boundary,
+                locality:currentProject?.additionalDetails?.locality
             }
             totalProjects.searchedProject = {
                 basicDetails,
                 headerDetails, 
                 projectDetails, 
                 locationDetails, 
-                financialDetails,
                 documentDetails
             }
         // }
@@ -116,7 +123,7 @@ export const Search = {
         
             //searched Project details
             projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
-            projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails,projects?.searchedProject?.financialDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
+            projectDetails.searchedProject['details']['projectDetails'] = {applicationDetails : [projects?.searchedProject?.headerDetails, projects?.searchedProject?.projectDetails, projects?.searchedProject?.locationDetails, projects?.searchedProject?.documentDetails]}; //rest categories will come here
     
         }
 

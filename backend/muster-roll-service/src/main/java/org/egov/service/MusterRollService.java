@@ -17,7 +17,14 @@ import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.util.ResponseInfoCreator;
 import org.egov.validator.MusterRollValidator;
-import org.egov.web.models.*;
+
+import org.egov.web.models.AttendanceRegister;
+import org.egov.web.models.AttendanceRegisterResponse;
+import org.egov.web.models.MusterRoll;
+import org.egov.web.models.MusterRollRequest;
+import org.egov.web.models.MusterRollResponse;
+import org.egov.web.models.MusterRollSearchCriteria;
+import org.egov.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -31,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.egov.util.MusterRollServiceConstants.STATUS_APPROVED;
 
 @Service
 @Slf4j
@@ -194,8 +203,13 @@ public class MusterRollService {
             calculationService.updateAttendance(musterRollRequest,mdmsData);
         }
         workflowService.updateWorkflowStatus(musterRollRequest);
-
         producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
+
+        //If the musterroll is in 'APPROVED' status, push the musterRoll to calculate topic to be processed by expense-calculator service
+        if (StringUtils.isNotBlank(musterRollRequest.getMusterRoll().getMusterRollStatus()) && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {
+            producer.push(serviceConfiguration.getCalculateMusterRollTopic(), musterRollRequest);
+        }
+
         return musterRollRequest;
     }
 

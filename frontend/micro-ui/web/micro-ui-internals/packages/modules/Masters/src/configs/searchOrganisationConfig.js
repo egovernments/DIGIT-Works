@@ -15,7 +15,7 @@ const searchOrganisationConfig = () => {
       minParametersForSearchForm: 1,
       masterName: "commonUiConfig",
       moduleName: "SearchOrganisationConfig",
-      tableFormJsonPath: "requestParam",
+      tableFormJsonPath: "requestBody.Pagination",
       filterFormJsonPath: "requestBody.SearchCriteria",
       searchFormJsonPath: "requestBody.SearchCriteria",
     },
@@ -23,34 +23,36 @@ const searchOrganisationConfig = () => {
       search: {
         uiConfig: {
           headerStyle: null,
-          formClassName:"custom-both-clear-search",
           primaryLabel: "ES_COMMON_SEARCH",
           secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
           minReqFields: 1,
           defaultValues: {
             boundaryCode: "",
-            applicationNumber: "",
+            orgNumber: "",
             name: "",
             type: "",
             applicationStatus: "",
-            startDate: "",
-            endDate: "",
+            createdFrom: "",
+            createdTo: "",
           },
           fields: [
             {
-              "label": "COMMON_WARD",
-              "type": "locationdropdown",
-              "isMandatory": false,
-              "disable": false,
-              "populators": {
-                  "name": "boundaryCode",
-                  "type": "ward",
-                "optionsKey": "i18nKey",
-                  "defaultText": "COMMON_SELECT_WARD",
-                  "selectedText": "COMMON_SELECTED",
-                  "allowMultiSelect": false
-              }
-          },
+              label: "COMMON_WARD",
+              type: "locationdropdown",
+              isMandatory: false,
+              disable: false,
+              populators: {
+                name: "boundaryCode",
+                type: "ward",
+                optionsKey: "i18nKey",
+                optionsCustomStyle: {
+                  top: "2.3rem",
+                },
+                defaultText: "COMMON_SELECT_WARD",
+                selectedText: "COMMON_SELECTED",
+                allowMultiSelect: false,
+              },
+            },
             {
               label: "MASTERS_ORGANISATION_TYPE",
               type: "dropdown",
@@ -58,14 +60,17 @@ const searchOrganisationConfig = () => {
               disable: false,
               populators: {
                 name: "type",
-                optionsKey: "code",
+                optionsKey: "name",
                 optionsCustomStyle: {
                   top: "2.3rem",
                 },
                 mdmsConfig: {
-                  masterName: "OrganisationType",
-                  moduleName: "works",
-                  localePrefix: "MASTERS",
+                  masterName: "OrgType",
+                  moduleName: "common-masters",
+                  filter: "[?(@.active==true)].parent",
+                  localePrefix: "COMMON_MASTERS_ORG",
+                  select:
+                    "(data)=>{ return Array.isArray(data['common-masters'].OrgType) && Digit.Utils.getUnique(data['common-masters'].OrgType).map(ele=>({code:ele,name:'COMMON_MASTERS_ORG_'+ele}))}",
                 },
               },
             },
@@ -83,27 +88,9 @@ const searchOrganisationConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                name: "applicationNumber",
+                name: "orgNumber",
                 error: `PROJECT_PATTERN_ERR_MSG`,
-                validation: { pattern: /^[a-z0-9\/-@# ]*$/i, minlength: 2 },
-              },
-            },
-            {
-              label: "CORE_COMMON_STATUS",
-              type: "dropdown",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "applicationStatus",
-                optionsKey: "code",
-                optionsCustomStyle: {
-                  top: "2.3rem",
-                },
-                mdmsConfig: {
-                  masterName: "SocialCategory",
-                  moduleName: "common-masters",
-                  localePrefix: "MASTERS",
-                },
+                validation: { minlength: 2 },
               },
             },
             {
@@ -111,8 +98,13 @@ const searchOrganisationConfig = () => {
               type: "date",
               isMandatory: false,
               disable: false,
+              key : "createdFrom",
+              preProcess : {
+                updateDependent : ["populators.max"]
+              },
               populators: {
                 name: "createdFrom",
+                max : "currentDate"
               },
             },
             {
@@ -120,9 +112,14 @@ const searchOrganisationConfig = () => {
               type: "date",
               isMandatory: false,
               disable: false,
+              key : "createdTo",
+              preProcess : {
+                updateDependent : ["populators.max"]
+              },
               populators: {
                 name: "createdTo",
                 error: "DATE_VALIDATION_MSG",
+                max : "currentDate"
               },
               additionalValidation: {
                 type: "date",
@@ -141,7 +138,7 @@ const searchOrganisationConfig = () => {
           columns: [
             {
               label: "MASTERS_ORGANISATION_ID",
-              jsonPath: "applicationNumber",
+              jsonPath: "orgNumber",
               additionalCustomization: true,
             },
             {
@@ -159,7 +156,7 @@ const searchOrganisationConfig = () => {
               additionalCustomization: true,
             },
             {
-              label: "MASTERS_LOCATION",
+              label: "MASTERS_ADDRESS",
               jsonPath: "orgAddress[0].boundaryCode",
               additionalCustomization: true,
             },

@@ -57,6 +57,12 @@ class _$AppRouter extends RootStackRouter {
         child: const HomePage(),
       );
     },
+    ORGProfileRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ORGProfilePage(),
+      );
+    },
     AttendanceRegisterTableRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<AttendanceRegisterTableRouteArgs>(
@@ -86,13 +92,17 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     SHGInboxRoute.name: (routeData) {
-      final args = routeData.argsAs<SHGInboxRouteArgs>();
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<SHGInboxRouteArgs>(
+          orElse: () => SHGInboxRouteArgs(
+                tenantId: pathParams.getString('tenantId'),
+                musterRollNo: pathParams.getString('musterRollNo'),
+              ));
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: SHGInboxPage(
           args.tenantId,
           args.musterRollNo,
-          args.projectDetails,
           key: args.key,
         ),
       );
@@ -110,14 +120,17 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     TrackAttendanceRoute.name: (routeData) {
-      final args = routeData.argsAs<TrackAttendanceRouteArgs>();
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<TrackAttendanceRouteArgs>(
+          orElse: () => TrackAttendanceRouteArgs(
+                id: pathParams.getString('id'),
+                tenantId: pathParams.getString('tenantId'),
+              ));
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: TrackAttendancePage(
           args.id,
           args.tenantId,
-          args.projectDetails,
-          args.attendanceRegister,
           key: args.key,
         ),
       );
@@ -141,6 +154,30 @@ class _$AppRouter extends RootStackRouter {
         child: ViewWorkDetailsPage(
           key: args.key,
           contractNumber: args.contractNumber,
+        ),
+      );
+    },
+    SuccessResponseRoute.name: (routeData) {
+      final args = routeData.argsAs<SuccessResponseRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: SuccessResponsePage(
+          key: args.key,
+          header: args.header,
+          subHeader: args.subHeader,
+          subText: args.subText,
+          subTitle: args.subTitle,
+          callBack: args.callBack,
+          callBackWhatsapp: args.callBackWhatsapp,
+          callBackDownload: args.callBackDownload,
+          callBackPrint: args.callBackPrint,
+          backButton: args.backButton,
+          buttonLabel: args.buttonLabel,
+          isWithoutLogin: args.isWithoutLogin,
+          downloadLabel: args.downloadLabel,
+          printLabel: args.printLabel,
+          whatsAppLabel: args.whatsAppLabel,
+          backButtonLabel: args.backButtonLabel,
         ),
       );
     },
@@ -186,6 +223,11 @@ class _$AppRouter extends RootStackRouter {
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
+              ORGProfileRoute.name,
+              path: 'orgProfile',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
               AttendanceRegisterTableRoute.name,
               path: 'manageAttendanceTable/:registerId/:tenantId',
               parent: AuthenticatedRouteWrapper.name,
@@ -228,6 +270,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               ViewWorkDetailsRoute.name,
               path: 'view-work-order',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              SuccessResponseRoute.name,
+              path: 'success',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -332,6 +379,18 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [ORGProfilePage]
+class ORGProfileRoute extends PageRouteInfo<void> {
+  const ORGProfileRoute()
+      : super(
+          ORGProfileRoute.name,
+          path: 'orgProfile',
+        );
+
+  static const String name = 'ORGProfileRoute';
+}
+
+/// generated route for
 /// [AttendanceRegisterTablePage]
 class AttendanceRegisterTableRoute
     extends PageRouteInfo<AttendanceRegisterTableRouteArgs> {
@@ -405,7 +464,6 @@ class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
   SHGInboxRoute({
     required String tenantId,
     required String musterRollNo,
-    required List<Map<String, dynamic>> projectDetails,
     Key? key,
   }) : super(
           SHGInboxRoute.name,
@@ -413,7 +471,6 @@ class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
           args: SHGInboxRouteArgs(
             tenantId: tenantId,
             musterRollNo: musterRollNo,
-            projectDetails: projectDetails,
             key: key,
           ),
           rawPathParams: {
@@ -429,7 +486,6 @@ class SHGInboxRouteArgs {
   const SHGInboxRouteArgs({
     required this.tenantId,
     required this.musterRollNo,
-    required this.projectDetails,
     this.key,
   });
 
@@ -437,13 +493,11 @@ class SHGInboxRouteArgs {
 
   final String musterRollNo;
 
-  final List<Map<String, dynamic>> projectDetails;
-
   final Key? key;
 
   @override
   String toString() {
-    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, projectDetails: $projectDetails, key: $key}';
+    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, key: $key}';
   }
 }
 
@@ -477,8 +531,6 @@ class TrackAttendanceRoute extends PageRouteInfo<TrackAttendanceRouteArgs> {
   TrackAttendanceRoute({
     required String id,
     required String tenantId,
-    required List<Map<String, dynamic>> projectDetails,
-    required AttendanceRegister? attendanceRegister,
     Key? key,
   }) : super(
           TrackAttendanceRoute.name,
@@ -486,8 +538,6 @@ class TrackAttendanceRoute extends PageRouteInfo<TrackAttendanceRouteArgs> {
           args: TrackAttendanceRouteArgs(
             id: id,
             tenantId: tenantId,
-            projectDetails: projectDetails,
-            attendanceRegister: attendanceRegister,
             key: key,
           ),
           rawPathParams: {
@@ -503,8 +553,6 @@ class TrackAttendanceRouteArgs {
   const TrackAttendanceRouteArgs({
     required this.id,
     required this.tenantId,
-    required this.projectDetails,
-    required this.attendanceRegister,
     this.key,
   });
 
@@ -512,15 +560,11 @@ class TrackAttendanceRouteArgs {
 
   final String tenantId;
 
-  final List<Map<String, dynamic>> projectDetails;
-
-  final AttendanceRegister? attendanceRegister;
-
   final Key? key;
 
   @override
   String toString() {
-    return 'TrackAttendanceRouteArgs{id: $id, tenantId: $tenantId, projectDetails: $projectDetails, attendanceRegister: $attendanceRegister, key: $key}';
+    return 'TrackAttendanceRouteArgs{id: $id, tenantId: $tenantId, key: $key}';
   }
 }
 
@@ -568,5 +612,109 @@ class ViewWorkDetailsRouteArgs {
   @override
   String toString() {
     return 'ViewWorkDetailsRouteArgs{key: $key, contractNumber: $contractNumber}';
+  }
+}
+
+/// generated route for
+/// [SuccessResponsePage]
+class SuccessResponseRoute extends PageRouteInfo<SuccessResponseRouteArgs> {
+  SuccessResponseRoute({
+    Key? key,
+    required String header,
+    String? subHeader,
+    String? subText,
+    String? subTitle,
+    void Function()? callBack,
+    void Function()? callBackWhatsapp,
+    void Function()? callBackDownload,
+    void Function()? callBackPrint,
+    bool? backButton,
+    String? buttonLabel,
+    bool isWithoutLogin = false,
+    String? downloadLabel,
+    String? printLabel,
+    String? whatsAppLabel,
+    String? backButtonLabel,
+  }) : super(
+          SuccessResponseRoute.name,
+          path: 'success',
+          args: SuccessResponseRouteArgs(
+            key: key,
+            header: header,
+            subHeader: subHeader,
+            subText: subText,
+            subTitle: subTitle,
+            callBack: callBack,
+            callBackWhatsapp: callBackWhatsapp,
+            callBackDownload: callBackDownload,
+            callBackPrint: callBackPrint,
+            backButton: backButton,
+            buttonLabel: buttonLabel,
+            isWithoutLogin: isWithoutLogin,
+            downloadLabel: downloadLabel,
+            printLabel: printLabel,
+            whatsAppLabel: whatsAppLabel,
+            backButtonLabel: backButtonLabel,
+          ),
+        );
+
+  static const String name = 'SuccessResponseRoute';
+}
+
+class SuccessResponseRouteArgs {
+  const SuccessResponseRouteArgs({
+    this.key,
+    required this.header,
+    this.subHeader,
+    this.subText,
+    this.subTitle,
+    this.callBack,
+    this.callBackWhatsapp,
+    this.callBackDownload,
+    this.callBackPrint,
+    this.backButton,
+    this.buttonLabel,
+    this.isWithoutLogin = false,
+    this.downloadLabel,
+    this.printLabel,
+    this.whatsAppLabel,
+    this.backButtonLabel,
+  });
+
+  final Key? key;
+
+  final String header;
+
+  final String? subHeader;
+
+  final String? subText;
+
+  final String? subTitle;
+
+  final void Function()? callBack;
+
+  final void Function()? callBackWhatsapp;
+
+  final void Function()? callBackDownload;
+
+  final void Function()? callBackPrint;
+
+  final bool? backButton;
+
+  final String? buttonLabel;
+
+  final bool isWithoutLogin;
+
+  final String? downloadLabel;
+
+  final String? printLabel;
+
+  final String? whatsAppLabel;
+
+  final String? backButtonLabel;
+
+  @override
+  String toString() {
+    return 'SuccessResponseRouteArgs{key: $key, header: $header, subHeader: $subHeader, subText: $subText, subTitle: $subTitle, callBack: $callBack, callBackWhatsapp: $callBackWhatsapp, callBackDownload: $callBackDownload, callBackPrint: $callBackPrint, backButton: $backButton, buttonLabel: $buttonLabel, isWithoutLogin: $isWithoutLogin, downloadLabel: $downloadLabel, printLabel: $printLabel, whatsAppLabel: $whatsAppLabel, backButtonLabel: $backButtonLabel}';
   }
 }

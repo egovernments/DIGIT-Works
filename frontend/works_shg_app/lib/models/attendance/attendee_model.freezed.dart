@@ -1,7 +1,7 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'attendee_model.dart';
 
@@ -117,6 +117,8 @@ class _$_AttendeeModel implements _AttendeeModel {
   List<AttendanceRegister>? get attendanceRegister {
     final value = _attendanceRegister;
     if (value == null) return null;
+    if (_attendanceRegister is EqualUnmodifiableListView)
+      return _attendanceRegister;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -274,6 +276,7 @@ class _$_AttendeeTrackListModel implements _AttendeeTrackListModel {
   List<AttendeesTrackList>? get attendeeList {
     final value = _attendeeList;
     if (value == null) return null;
+    if (_attendeeList is EqualUnmodifiableListView) return _attendeeList;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -356,6 +359,7 @@ mixin _$AttendeesTrackList {
   double? get thursIndex => throw _privateConstructorUsedError;
   String? get friEntryId => throw _privateConstructorUsedError;
   String? get friExitId => throw _privateConstructorUsedError;
+  List<String>? get skillCodeList => throw _privateConstructorUsedError;
   double? get friIndex => throw _privateConstructorUsedError;
   String? get satEntryId => throw _privateConstructorUsedError;
   String? get satExitId => throw _privateConstructorUsedError;
@@ -399,6 +403,7 @@ abstract class $AttendeesTrackListCopyWith<$Res> {
       double? thursIndex,
       String? friEntryId,
       String? friExitId,
+      List<String>? skillCodeList,
       double? friIndex,
       String? satEntryId,
       String? satExitId,
@@ -444,6 +449,7 @@ class _$AttendeesTrackListCopyWithImpl<$Res, $Val extends AttendeesTrackList>
     Object? thursIndex = freezed,
     Object? friEntryId = freezed,
     Object? friExitId = freezed,
+    Object? skillCodeList = freezed,
     Object? friIndex = freezed,
     Object? satEntryId = freezed,
     Object? satExitId = freezed,
@@ -534,6 +540,10 @@ class _$AttendeesTrackListCopyWithImpl<$Res, $Val extends AttendeesTrackList>
           ? _value.friExitId
           : friExitId // ignore: cast_nullable_to_non_nullable
               as String?,
+      skillCodeList: freezed == skillCodeList
+          ? _value.skillCodeList
+          : skillCodeList // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       friIndex: freezed == friIndex
           ? _value.friIndex
           : friIndex // ignore: cast_nullable_to_non_nullable
@@ -611,6 +621,7 @@ abstract class _$$_AttendeesTrackListCopyWith<$Res>
       double? thursIndex,
       String? friEntryId,
       String? friExitId,
+      List<String>? skillCodeList,
       double? friIndex,
       String? satEntryId,
       String? satExitId,
@@ -655,6 +666,7 @@ class __$$_AttendeesTrackListCopyWithImpl<$Res>
     Object? thursIndex = freezed,
     Object? friEntryId = freezed,
     Object? friExitId = freezed,
+    Object? skillCodeList = freezed,
     Object? friIndex = freezed,
     Object? satEntryId = freezed,
     Object? satExitId = freezed,
@@ -745,6 +757,10 @@ class __$$_AttendeesTrackListCopyWithImpl<$Res>
           ? _value.friExitId
           : friExitId // ignore: cast_nullable_to_non_nullable
               as String?,
+      skillCodeList: freezed == skillCodeList
+          ? _value._skillCodeList
+          : skillCodeList // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       friIndex: freezed == friIndex
           ? _value.friIndex
           : friIndex // ignore: cast_nullable_to_non_nullable
@@ -805,6 +821,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
       this.thursIndex = -1,
       this.friEntryId,
       this.friExitId,
+      final List<String>? skillCodeList,
       this.friIndex = -1,
       this.satEntryId,
       this.satExitId,
@@ -812,7 +829,8 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
       this.sunEntryId,
       this.sunExitId,
       this.sunIndex = -1,
-      @JsonKey(name: 'auditDetails') this.auditDetails});
+      @JsonKey(name: 'auditDetails') this.auditDetails})
+      : _skillCodeList = skillCodeList;
 
   factory _$_AttendeesTrackList.fromJson(Map<String, dynamic> json) =>
       _$$_AttendeesTrackListFromJson(json);
@@ -861,6 +879,16 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
   final String? friEntryId;
   @override
   final String? friExitId;
+  final List<String>? _skillCodeList;
+  @override
+  List<String>? get skillCodeList {
+    final value = _skillCodeList;
+    if (value == null) return null;
+    if (_skillCodeList is EqualUnmodifiableListView) return _skillCodeList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey()
   final double? friIndex;
@@ -884,7 +912,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
 
   @override
   String toString() {
-    return 'AttendeesTrackList(name: $name, aadhaar: $aadhaar, individualGaurdianName: $individualGaurdianName, individualId: $individualId, id: $id, skill: $skill, monEntryId: $monEntryId, monExitId: $monExitId, monIndex: $monIndex, tueEntryId: $tueEntryId, tueExitId: $tueExitId, tueIndex: $tueIndex, wedEntryId: $wedEntryId, wedExitId: $wedExitId, wedIndex: $wedIndex, thuEntryId: $thuEntryId, thuExitId: $thuExitId, thursIndex: $thursIndex, friEntryId: $friEntryId, friExitId: $friExitId, friIndex: $friIndex, satEntryId: $satEntryId, satExitId: $satExitId, satIndex: $satIndex, sunEntryId: $sunEntryId, sunExitId: $sunExitId, sunIndex: $sunIndex, auditDetails: $auditDetails)';
+    return 'AttendeesTrackList(name: $name, aadhaar: $aadhaar, individualGaurdianName: $individualGaurdianName, individualId: $individualId, id: $id, skill: $skill, monEntryId: $monEntryId, monExitId: $monExitId, monIndex: $monIndex, tueEntryId: $tueEntryId, tueExitId: $tueExitId, tueIndex: $tueIndex, wedEntryId: $wedEntryId, wedExitId: $wedExitId, wedIndex: $wedIndex, thuEntryId: $thuEntryId, thuExitId: $thuExitId, thursIndex: $thursIndex, friEntryId: $friEntryId, friExitId: $friExitId, skillCodeList: $skillCodeList, friIndex: $friIndex, satEntryId: $satEntryId, satExitId: $satExitId, satIndex: $satIndex, sunEntryId: $sunEntryId, sunExitId: $sunExitId, sunIndex: $sunIndex, auditDetails: $auditDetails)';
   }
 
   @override
@@ -928,6 +956,8 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
                 other.friEntryId == friEntryId) &&
             (identical(other.friExitId, friExitId) ||
                 other.friExitId == friExitId) &&
+            const DeepCollectionEquality()
+                .equals(other._skillCodeList, _skillCodeList) &&
             (identical(other.friIndex, friIndex) ||
                 other.friIndex == friIndex) &&
             (identical(other.satEntryId, satEntryId) ||
@@ -970,6 +1000,7 @@ class _$_AttendeesTrackList implements _AttendeesTrackList {
         thursIndex,
         friEntryId,
         friExitId,
+        const DeepCollectionEquality().hash(_skillCodeList),
         friIndex,
         satEntryId,
         satExitId,
@@ -1017,6 +1048,7 @@ abstract class _AttendeesTrackList implements AttendeesTrackList {
           final double? thursIndex,
           final String? friEntryId,
           final String? friExitId,
+          final List<String>? skillCodeList,
           final double? friIndex,
           final String? satEntryId,
           final String? satExitId,
@@ -1070,6 +1102,8 @@ abstract class _AttendeesTrackList implements AttendeesTrackList {
   String? get friEntryId;
   @override
   String? get friExitId;
+  @override
+  List<String>? get skillCodeList;
   @override
   double? get friIndex;
   @override

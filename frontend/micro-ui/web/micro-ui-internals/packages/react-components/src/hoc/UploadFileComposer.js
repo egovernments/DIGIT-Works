@@ -25,25 +25,51 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
       ]
   );
 
+
+
   const docConfig = data?.works?.DocumentConfig?.[0]
+
+  let documentFileTypeMappings = {
+    docx : "vnd.openxmlformats-officedocument.wordprocessingml.document",
+    doc : "msword",
+    png : "png",
+    pdf : "pdf",
+    jpeg : "jpeg",
+    jpg : "jpeg",
+    xls : "vnd.ms-excel", 
+    xlsx : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    csv : "csv"
+  }
   
   const getRegex = (allowedFormats) => {
+    // console.log(allowedFormats);
+    // if(allowedFormats?.length) {
+    //   const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
+    //   const stringified = JSON.stringify(obj);
+    //   console.log(new RegExp(JSON.parse(stringified).expression.slice(1, -1)));
+    //   return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
+    // } else if(docConfig?.allowedFileTypes?.length) {
+    //   const obj = { "expression" : `/(.*?)(${docConfig?.allowedFileTypes?.join('|')})$/`}
+    //   const stringified = JSON.stringify(obj);
+    //   console.log(new RegExp(JSON.parse(stringified).expression.slice(1, -1)))
+    //   return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
+    // } 
+    // return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
     if(allowedFormats?.length) {
-      const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
-      const stringified = JSON.stringify(obj);
-      return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
-    } else if(docConfig?.allowedFileTypes?.length) {
-      const obj = { "expression" : `/(.*?)(${docConfig?.allowedFileTypes?.join('|')})$/`}
-      const stringified = JSON.stringify(obj);
-      return new RegExp(JSON.parse(stringified).expression.slice(1, -1));
-    } 
+      let exceptedFileTypes = [];
+      allowedFormats?.forEach(allowedFormat=>{
+        exceptedFileTypes.push(documentFileTypeMappings[allowedFormat]);
+      });
+      exceptedFileTypes = exceptedFileTypes.join("|");
+      return new RegExp(`(.*?)(${exceptedFileTypes})$`)
+    }
     return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/
   }
 
   // if(isLoading) return <Loader />
   return (
     <React.Fragment>
-      <Header styles={{fontSize: "24px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>
+      <Header styles={{fontSize: "24px", marginTop : "40px"}}>{t('WORKS_RELEVANT_DOCUMENTS')}</Header>
       <CitizenInfoLabel info={t("ES_COMMON_INFO")} text={t(docConfig?.bannerLabel)} className="doc-banner"></CitizenInfoLabel>
       {
         docConfig?.documents?.map((item, index) => {
@@ -51,7 +77,9 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
           return ( 
             <LabelFieldPair key={index}>
               { item.code && (
-                <CardLabel>
+                <CardLabel
+                  className="bolder"
+                >
                   { t(`${localePrefix}_${item?.code}`)} { item?.isMandatory ? " * " : null }
                 </CardLabel>) 
               }
@@ -88,7 +116,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
                           t={t}
                           module="works"
                           getFormState={getFileStoreData}
-                          setuploadedstate={value}
+                          setuploadedstate={value || []}
                           showHintBelow={item?.hintText ? true : false}
                           hintText={item?.hintText}
                           allowedFileTypesRegex={getRegex(item?.allowedFileTypes)}

@@ -10,8 +10,14 @@ const MastersBreadCrumb = ({ location }) => {
   const crumbs = [
     {
         path: `/${window?.contextPath}/employee`,
-        content: t("WORKS_WMS"),
+        content: t("WORKS_MUKTA"),
         show: true,
+    },
+    {
+      path: `/${window.contextPath}/employee/masters/response`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("ES_COMMON_RESPONSE")}` : t("ES_COMMON_RESPONSE"),
+      show: location.pathname.includes("/masters/response") ? true : false,
+      isBack: fromScreen && true,
     },
     {
         path: `/${window.contextPath}/employee/masters/search-organization`,
@@ -21,7 +27,7 @@ const MastersBreadCrumb = ({ location }) => {
     },
     {
         path: `/${window.contextPath}/employee/masters/create-organization`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_CREATE_ORGANISATION")}` : t("MASTERS_CREATE_ORGANISATION"),
+        content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_MASTERS")}` : t("WORKS_MASTERS"),
         show: location.pathname.includes("/masters/create-organization") ? true : false,
         isBack: fromScreen && true,
     },
@@ -33,8 +39,20 @@ const MastersBreadCrumb = ({ location }) => {
     },
     {
       path: `/${window.contextPath}/employee/masters/view-organization`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_COMMUNITY_ORG")}` : `${t("MASTERS_VIEW_COMMUNITY_ORG")}`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_ORG")}` : `${t("MASTERS_VIEW_ORG")}`,
       show: location.pathname.includes("/masters/view-organization") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/masters/search-wageseeker`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("ACTION_TEST_MASTERS_SEARCH_WAGESEEKER")}` : t("ACTION_TEST_MASTERS_SEARCH_WAGESEEKER"),
+      show: location.pathname.includes("/masters/search-wageseeker") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/masters/modify-wageseeker`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_MODIFY_WAGESEEKER")}` : `${t("MASTERS_MODIFY_WAGESEEKER")}`,
+      show: location.pathname.includes("/masters/modify-wageseeker") ? true : false,
       isBack: fromScreen && true,
     },
     {
@@ -52,21 +70,31 @@ const App = ({ path }) => {
   const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
   const [sessionFormData, setSessionFormData, clearSessionFormData] = orgSession;
 
+  const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
+  const [wsSesionFormData, setWsSessionFormData, clearWsSessionFormData] = wageSeekerSession;
+
   const SearchMasters = Digit?.ComponentRegistryService?.getComponent("SearchMasters");
   const CreateMasters = Digit?.ComponentRegistryService?.getComponent("CreateMasters");
-  const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
-  const RegisterWageSeekerComponent = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
-  const ViewOrganisationComponent = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
+  const ViewMasters = Digit?.ComponentRegistryService?.getComponent("ViewMasters");
+
+  const CreateOrganisation = Digit?.ComponentRegistryService?.getComponent("CreateOrganisation");
   const SearchOrganisation =  Digit?.ComponentRegistryService?.getComponent("SearchOrganisation");
+  const ViewOrganisation = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
+  
+  const RegisterWageSeeker = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
+  const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
   const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
   const ModifyWageSeeker = Digit?.ComponentRegistryService?.getComponent("ModifyWageSeeker");
-  const CreateOrganization = Digit?.ComponentRegistryService?.getComponent("CreateOrganisation");
+
+  const MastersResponse = Digit?.ComponentRegistryService?.getComponent("MastersResponse");
+
   useEffect(() => {
-    return () => {
-      if (!window.location.href.includes("create-organization") && Object.keys(sessionFormData) != 0) {
-        clearSessionFormData();
-      }
-    };
+    if (!window.location.href.includes("create-organization") && sessionFormData && Object.keys(sessionFormData) != 0) {
+      clearSessionFormData();
+    }
+    if (!window.location.href.includes("modify-wageseeker") && wsSesionFormData && Object.keys(wsSesionFormData) != 0) {
+      clearWsSessionFormData();
+    }
   }, [location]);
 
   return (
@@ -77,17 +105,20 @@ const App = ({ path }) => {
         </React.Fragment>
         <PrivateRoute path={`${path}/search-masters`} component={() => <SearchMasters parentRoute={path}/>} />
         <PrivateRoute path={`${path}/create-masters`} component={() => <CreateMasters parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/view-masters`} component={() => <ViewMasters parentRoute={path}/>} />
         
          {/* Organisation Masters  */}
-        <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganization parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/create-organization`} component={() => <CreateOrganisation parentRoute={path}/>} />
         <PrivateRoute path={`${path}/search-organization`} component={() => <SearchOrganisation parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/view-organization`} component={ViewOrganisationComponent} />
+        <PrivateRoute path={`${path}/view-organization`} component={() => <ViewOrganisation  parentRoute={path}/>} />
        
         {/* WageSeekers Masters*/}
         <PrivateRoute path={`${path}/search-wageseeker`} component={() => <SearchWageSeeker parentRoute={path}/>} />
-        <PrivateRoute path={`${path}/create-wageseeker`} component={RegisterWageSeekerComponent} />
+        <PrivateRoute path={`${path}/create-wageseeker`} component={() => <RegisterWageSeeker parentRoute={path}/>} />
         <PrivateRoute path={`${path}/view-wageseeker`} component={()=> <ViewWageSeeker parentRoute={path}/>} />
         <PrivateRoute path={`${path}/modify-wageseeker`} component={()=> <ModifyWageSeeker parentRoute={path}/>} />
+
+        <PrivateRoute path={`${path}/response`} component={() => <MastersResponse parentRoute={path}/>} />
       </AppContainer>
     </Switch>
   );

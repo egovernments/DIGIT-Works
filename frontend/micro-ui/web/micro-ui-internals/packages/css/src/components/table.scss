@@ -176,6 +176,7 @@
                 margin-left: -60px;
                 opacity: 0;
                 transition: opacity 0.3s;
+                width: 30rem;
               }
           }
     
@@ -207,9 +208,7 @@
     border: 1px solid #ddd;
     padding: 12px;
   }
-  tr:hover {
-    background-color: #efefef;
-  }
+  
   th {
     padding: 10px;
     text-align: center;
@@ -277,7 +276,7 @@
         border: none;
         background-color: #EEEEEE;
       }
-      tbody tr td:nth-child(11) {
+      tbody tr td:nth-child(12) {
         border: none;
         border-right: 1px solid #A6A6A6;
       }
@@ -292,9 +291,12 @@
         border: none;
         background-color: #EEEEEE;
       }
-      tbody tr td[data-last-row-cell=last-row]:nth-child(1), :nth-child(11) {
+      tbody tr td[data-last-row-cell=last-row]:nth-child(1),:nth-child(5),:nth-child(12),:nth-child(13),:nth-child(14) {
         border-right: 1px solid #ddd !important;
       }
+
+      
+
       .modified-amount {
         border: 1px solid;
         padding: 5px;
@@ -308,9 +310,6 @@
       padding: 12px;
     }
   
-    tr:hover {
-      background-color: #efefef;
-    }
   
     th {
       padding: 10px;
@@ -376,7 +375,6 @@
 }
 
 .day-attendence {
-  margin-left: 0.3rem;
   font-weight: 550;
 }
 

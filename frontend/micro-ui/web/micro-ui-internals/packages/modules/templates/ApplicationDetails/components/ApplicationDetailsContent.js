@@ -65,12 +65,13 @@ function ApplicationDetailsContent({
   applicationNo,
   tenantId,
   businessService,
-  customClass
+  customClass,
+  setAttendanceError
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
   
-  const attendanceData = applicationDetails?.applicationDetails[0]?.additionalDetails?.table?.weekTable?.tableData
+  const attendanceData = applicationDetails?.applicationDetails?.[0]?.additionalDetails?.table?.weekTable?.tableData
   const [state, dispatch] = useReducer(reducer, attendanceData);
 
   const handleDateRangeChange = useCallback((data) => {
@@ -144,7 +145,6 @@ function ApplicationDetailsContent({
     window.location.href.includes("employee/tl") || window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc");
   const isNocLocation = window.location.href.includes("employee/noc");
   const isBPALocation = window.location.href.includes("employee/obps");
-  let isWS = window.location.href.includes("employee/ws") || window.location.href.includes("employee/works")|| window.location.href.includes("employee/project") || window.location.href.includes("employee/estimate") ;
 
   
 
@@ -353,7 +353,7 @@ function ApplicationDetailsContent({
                   return (
                     <Row
                       key={t(value.title)}
-                      label={isWS ? `${t(value.title)}:` : t(value.title)}
+                      label={t(value.title)}
                       text={value?.isImages ? <ViewImages fileStoreIds={value?.fileStoreIds}
                         tenantId={value?.tenant}
                         onClick={() => { }} />: getTextValue(value)}
@@ -391,7 +391,7 @@ function ApplicationDetailsContent({
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
                     {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
                   </CardSectionHeader>
-                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} setSaveAttendanceState={setSaveAttendanceState} weekDates={detail?.additionalDetails?.table.weekTable.weekDates} workflowDetails={workflowDetails}/>}
+                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} setSaveAttendanceState={setSaveAttendanceState} weekDates={detail?.additionalDetails?.table.weekTable.weekDates} workflowDetails={workflowDetails} setAttendanceError={setAttendanceError}/>}
                 </>
               )
             : null}

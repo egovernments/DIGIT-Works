@@ -1,0 +1,927 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Organisation Service
+  description: Organisation service and registry
+paths:
+  /org-services/v1/_create:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgServiceRequest'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/v1/_update:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgServiceRequest'
+      responses:
+        '202':
+          description: Accepted update org request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/v1/_search:
+    post:
+      tags:
+        - OrgServices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgSearchCriteria'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_create:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgRequest'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_update:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgRequest'
+      responses:
+        '202':
+          description: Accepted update org request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+  /org-services/organisation/v1/_search:
+    post:
+      tags:
+        - Organisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrgSearchCriteria'
+      responses:
+        '202':
+          description: Accepted create organisation request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrgServiceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/components/schemas/ErrorRes
+
+components:
+  schemas:
+    Organisation:
+      title: Organisation
+      description: Organisation registry
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the org
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        name:
+          description: Name of the org
+          type: string
+          minLength: 2
+          maxLength: 128
+        applicationNumber:
+          description: Application number for the org registration
+          readOnly: true
+          type: string
+        orgNumber:
+          description: Formatted organisation number issued after application is approved
+          readOnly: true
+          type: string
+          minLength: 1
+          maxLength: 64
+        applicationStatus:
+          description: The status of the org
+          type: string
+          minLength: 2
+          maxLength: 64
+        externalRefNumber:
+          description: ID or code assigned to vendor by department
+          type: string
+          minLength: 2
+          maxLength: 64
+        dateOfIncorporation:
+          description: Epoch time
+          type: number
+          format: double
+        orgAddress:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        contactDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactDetails'
+        identifiers:
+          description: The type of tax identifiers and their values
+          type: array
+          items:
+            $ref: '#/components/schemas/Identifier'
+          minItems: 1
+        functions:
+          description: Functional areas the org works in
+          type: array
+          items:
+            $ref: '#/components/schemas/Function'
+          minItems: 1
+        jurisdiction:
+          description: jurisdiction code
+          type: array
+          items:
+            $ref: '#/components/schemas/Jurisdiction'
+        isActive:
+          type: boolean
+        documents:
+          description: Reference to documents related to the organisation that have been attached via file upload
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object
+        auditDetails:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
+      required:
+        - tenantId
+        - name
+    Identifier:
+      title: Identifier
+      description: Object to capture tax identifiers for a organisation
+      type: object
+      properties:
+        type:
+          description: The type of tax identifier from MDMS data. Eg. PAN, GSTIN, TIN etc..Can be different for other countries
+          type: string
+          minLength: 2
+          maxLength: 64
+        value:
+          description: Actual value for the identifier.
+          type: string
+          minLength: 2
+          maxLength: 64
+        isActive:
+          type: boolean
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+    Jurisdiction:
+      title: Jurisdiction
+      description: Object to capture Jurisdictions for an organisation
+      type: object
+      properties:
+        code:
+          description: Jurisdiction code
+          type: string
+        id:
+          description: Jurisdiction id
+          type: string
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+    ContactDetails:
+      title: ContactDetails
+      description: Captures details of a contact person
+      type: object
+      properties:
+        contactName:
+          type: string
+          minLength: 2
+          maxLength: 64
+        contactMobileNumber:
+          description: Mobile number of the user
+          type: string
+          maxLength: 20
+        contactEmail:
+          type: string
+          minLength: 5
+          maxLength: 200
+    Function:
+      title: Function
+      description: Represents the functions of an organisation
+      type: object
+      properties:
+        orgId:
+          description: Organisation UUID
+          readOnly: true
+          type: string
+        applicationNumber:
+          description: Application number for the function registration. Will be used in workflow.
+          readOnly: true
+          type: string
+        type:
+          description: Type of organisation.Namespaced masters to be defined.
+          type: string
+          minLength: 2
+          maxLength: 64
+        category:
+          description: Functional area that the org works with.Eg. Electrical, Civil, Mechanical, Stationery etc..
+          type: string
+          minLength: 2
+          maxLength: 64
+        class:
+          description: Organisation class
+          example: Class 1, Class 2, Class 3 etc..
+          type: string
+          minLength: 2
+          maxLength: 64
+        validFrom:
+          description: Validity from date of registration in epoch time
+          type: number
+          format: double
+        validTo:
+          description: Validity to date of registration in epoch time.
+          type: number
+          format: double
+        wfStatus:
+          type: string
+          minLength: 2
+          maxLength: 64
+        isActive:
+          type: boolean
+        documents:
+          description: Reference to documents specifically related to the type and category of work being registered for
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object
+        auditDetails:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/AuditDetails'
+            - description: Collection of audit related fields used by most models
+              readOnly: true
+    OrgServiceRequest:
+      title: OrgServiceRequest
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/RequestInfo'
+            - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+        organisations:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Organisation'
+            - description: Organisation registry
+        workflow:
+          $ref: '#/components/schemas/Workflow'
+    OrgServiceResponse:
+      title: OrgServiceResponse
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/ResponseInfo'
+            - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+              readOnly: true
+        organisations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+        pagination:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Pagination'
+            - description: Pagination details
+        workflow:
+          $ref: '#/components/schemas/Workflow'
+    OrgSearchCriteria:
+      title: OrgSearchCriteria
+      description: organisation search attributes
+      type: object
+      properties:
+        id:
+          type: array
+          items:
+            type: string
+            minLength: 2
+            maxLength: 64
+          minLength: 2
+          maxLength: 64
+        tenantId:
+          description: Unique tenant of the system
+          example: tenantA
+          type: string
+          minLength: 2
+          maxLength: 1000
+        name:
+          type: string
+        applicationNumber:
+          type: string
+        orgNumber:
+          type: string
+        applicationStatus:
+          type: string
+        contactMobileNumber:
+          description: Represents Contact Mobile Number
+          type: string
+        functions:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Function'
+            - description: Represents the functions of an organisation
+        createdFrom:
+          type: number
+          format: double
+        createdTo:
+          type: number
+          format: double
+        boundaryCode:
+          type: string
+        identifierType:
+          type: string
+        identifierValue:
+          type: string
+        includeDeleted:
+          description: Used in search APIs to specify if (soft) deleted records should be included in search results.
+          type: boolean
+          default: false
+    OrgRequest:
+      title: OrgRequest
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/RequestInfo'
+            - description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+        organisations:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Organisation'
+            - description: Organisation registry
+    OrgResponse:
+      title: OrgResponse
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/ResponseInfo'
+            - description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+              readOnly: true
+        organisations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organisation'
+        pagination:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Pagination'
+            - description: Pagination details
+    Address:
+      title: Address
+      description: Representation of a address. Indiavidual APIs may choose to extend from this using allOf if more details needed to be added in their case.
+      type: object
+      properties:
+        tenantId:
+          description: Unique Identifier of the tenant to which user primarily belongs
+          type: string
+        doorNo:
+          description: House number or door number.
+          type: string
+        plotNo:
+          description: Plot number of the house.
+          type: string
+        id:
+          description: System generated id for the address
+          readOnly: true
+          type: string
+        landmark:
+          description: additional landmark to help locate the address
+          type: string
+        city:
+          description: City of the address. Can be represented by the tenantid itself
+          type: string
+        district:
+          description: The district in which the property is located
+          type: string
+        region:
+          description: The Region in which the property is located
+          type: string
+        state:
+          description: The State in which the property is located
+          type: string
+        country:
+          description: The country in which the property is located
+          type: string
+        pincode:
+          description: PIN code of the address. Indian pincodes will usually be all numbers.
+          type: string
+        additionDetails:
+          description: more address detail as may be needed
+          type: string
+        buildingName:
+          description: Name of the building
+          type: string
+          minLength: 2
+          maxLength: 64
+        street:
+          description: Street Name
+          type: string
+          minLength: 2
+          maxLength: 64
+        boundaryType:
+          description: The boundary type in which the property is located. This refers to the "label" field in boundary-data MDMS eg. Ward, Locality etc.
+          type: string
+        boundaryCode:
+          description: This refers to the boundary code. It can be found in boundary-data MDMS.
+          type: string
+        geoLocation:
+          $ref: '#/components/schemas/GeoLocation'
+      required:
+        - tenantId
+        - locality
+    AuditDetails:
+      title: AuditDetails
+      description: Collection of audit related fields used by most models
+      type: object
+      properties:
+        createdBy:
+          description: username (preferred) or userid of the user that created the object
+          type: string
+        lastModifiedBy:
+          description: username (preferred) or userid of the user that last modified the object
+          type: string
+        createdTime:
+          description: epoch of the time object is created
+          type: integer
+          format: int64
+        lastModifiedTime:
+          description: epoch of the time object is last modified
+          type: integer
+          format: int64
+    Boundary:
+      title: Boundary
+      type: object
+      properties:
+        code:
+          description: code of the boundary.
+          type: string
+        name:
+          description: name of the boundary.
+          type: string
+        label:
+          description: localized label for the boundry.
+          type: string
+        latitude:
+          description: latitude of the boundary.
+          type: string
+        longitude:
+          description: longitude of the boundary.
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Boundary'
+        materializedPath:
+          description: materialized path of the boundary - this would be of the format tenantid.[code] from parentt till teh current boundary
+          readOnly: true
+          type: string
+      required:
+        - code
+        - name
+    Document:
+      title: Document
+      description: This object holds list of documents attached during the transaciton for a property
+      type: object
+      properties:
+        id:
+          description: system id of the Document.
+          type: string
+          maxLength: 64
+        documentType:
+          description: unique document type code, should be validated with document type master
+          type: string
+        fileStore:
+          description: File store reference key.
+          type: string
+        documentUid:
+          description: The unique id(Pancard Number,Adhar etc.) of the given Document.
+          type: string
+          maxLength: 64
+        isActive:
+          type: boolean
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object
+    Error:
+      title: Error
+      description: Error object will be returned as a part of reponse body in conjunction with ResponseHeader as part of ErrorResponse whenever the request processing status in the ResponseHeader is FAILED. HTTP return in this scenario will usually be HTTP 400.
+      type: object
+      properties:
+        code:
+          description: Error Code will be module specific error label/code to identiffy the error. All modules should also publish the Error codes with their specific localized values in localization service to ensure clients can print locale specific error messages. Example for error code would be User.NotFound to indicate User Not Found by User/Authentication service. All services must declare their possible Error Codes with brief description in the error response section of their API path.
+          type: string
+        message:
+          description: English locale message of the error code. Clients should make a separate call to get the other locale description if configured with the service. Clients may choose to cache these locale specific messages to enhance performance with a reasonable TTL (May be defined by the localization service based on tenant + module combination).
+          type: string
+        description:
+          description: Optional long description of the error to help clients take remedial action. This will not be available as part of localization service.
+          type: string
+        params:
+          description: Some error messages may carry replaceable fields (say $1, $2) to provide more context to the message. E.g. Format related errors may want to indicate the actual field for which the format is invalid. Client's should use the values in the param array to replace those fields.
+          type: array
+          items:
+            type: string
+      required:
+        - code
+        - message
+    ErrorRes1:
+      title: ErrorRes1
+      description: All APIs will return ErrorRes in case of failure which will carry ResponseHeader as metadata and Error object as actual representation of error. In case of bulk apis, some apis may chose to return the array of Error objects to indicate individual failure.
+      type: object
+      properties:
+        ResponseHeader:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/ResponseHeader'
+            - description: ResponseHeader should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseHeader should always correspond to the same values in respective request's RequestHeader.
+              readOnly: true
+        Errors:
+          description: Error response array corresponding to Request Object array. In case of single object submission or _search related paths this may be an array of one error element
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+      required:
+        - ResponseHeader
+    GeoLocation:
+      title: GeoLocation
+      type: object
+      properties:
+        latitude:
+          description: latitude of the address
+          type: number
+          format: double
+        longitude:
+          description: longitude of the address
+          type: number
+          format: double
+        additionalDetails:
+          description: Json object to capture any extra information which is not accommodated by model
+          type: object
+    Order:
+      title: Order
+      description: Sorting order
+      type: string
+      enum:
+        - asc
+        - desc
+    RequestInfo:
+      title: RequestInfo
+      description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+      type: object
+      properties:
+        apiId:
+          description: unique API ID
+          type: string
+          maxLength: 128
+        ver:
+          description: API version - for HTTP based request this will be same as used in path
+          type: string
+          maxLength: 32
+        ts:
+          description: time in epoch
+          type: integer
+          format: int64
+        action:
+          description: API action to be performed like _create, _update, _search (denoting POST, PUT, GET) or _oauth etc
+          type: string
+          maxLength: 32
+        did:
+          description: Device ID from which the API is called
+          type: string
+          maxLength: 1024
+        key:
+          description: API key (API key provided to the caller in case of server to server communication)
+          type: string
+          maxLength: 256
+        msgId:
+          description: Unique request message id from the caller
+          type: string
+          maxLength: 256
+        requesterId:
+          description: UserId of the user calling
+          type: string
+          maxLength: 256
+        authToken:
+          description: //session/jwt/saml token/oauth token - the usual value that would go into HTTP bearer token
+          type: string
+        userInfo:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/UserInfo'
+            - description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
+              readOnly: true
+        correlationId:
+          readOnly: true
+          type: string
+      required:
+        - apiId
+        - ver
+        - ts
+        - action
+        - msgId
+    ResponseHeader:
+      title: ResponseHeader
+      description: ResponseHeader should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseHeader should always correspond to the same values in respective request's RequestHeader.
+      type: object
+      properties:
+        ts:
+          description: response time in epoch
+          type: integer
+          format: int64
+        resMsgId:
+          description: unique response message id (UUID) - will usually be the correlation id from the server
+          type: string
+          maxLength: 256
+        msgId:
+          description: message id of the request
+          type: string
+          maxLength: 256
+        status:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Status1'
+            - description: status of request processing
+        signature:
+          description: Hash describing the current ResponseHeader
+          type: string
+        error:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Error'
+            - description: Error object will be returned as a part of reponse body in conjunction with ResponseHeader as part of ErrorResponse whenever the request processing status in the ResponseHeader is FAILED. HTTP return in this scenario will usually be HTTP 400.
+        information:
+          description: Additional information from API
+          type: object
+        debug:
+          description: Debug information when requested
+          type: object
+        additionalInfo:
+          description: Any additional information if required e.g. status url (to find out the current status of an asynchronous processing response), additional links to perform special functions like file uploads etc.
+          type: object
+      required:
+        - resMsgId
+        - msgId
+        - status
+    ResponseInfo:
+      title: ResponseInfo
+      description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+      type: object
+      properties:
+        apiId:
+          description: unique API ID
+          type: string
+          maxLength: 128
+        ver:
+          description: API version
+          type: string
+          maxLength: 32
+        ts:
+          description: response time in epoch
+          type: integer
+          format: int64
+        resMsgId:
+          description: unique response message id (UUID) - will usually be the correlation id from the server
+          type: string
+          maxLength: 256
+        msgId:
+          description: message id of the request
+          type: string
+          maxLength: 256
+        status:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Status'
+            - description: status of request processing - to be enhanced in futuer to include INPROGRESS
+      required:
+        - apiId
+        - ver
+        - ts
+        - status
+
+    Role:
+      title: Role
+      description: minimal representation of the Roles in the system to be carried along in UserInfo with RequestInfo meta data. Actual authorization service to extend this to have more role related attributes
+      type: object
+      properties:
+        name:
+          description: Unique name of the role
+          type: string
+          maxLength: 64
+        description:
+          description: brief description of the role
+          type: string
+      required:
+        - name
+
+    Status:
+      title: Status
+      description: status of request processing - to be enhanced in futuer to include INPROGRESS
+      type: string
+      enum:
+        - SUCCESSFUL
+        - FAILED
+    Status1:
+      title: Status1
+      description: status of request processing
+      type: string
+      enum:
+        - COMPLETED
+        - ACCEPTED
+        - FAILED
+    TenantRole:
+      title: TenantRole
+      description: User role carries the tenant related role information for the user. A user can have multiple roles per tenant based on the need of the tenant. A user may also have multiple roles for multiple tenants.
+      type: object
+      properties:
+        tenantId:
+          description: tenantid for the tenant
+          type: string
+        roles:
+          description: Roles assigned for a particular tenant - array of role codes/names
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+      required:
+        - tenantId
+        - roles
+    UserInfo:
+      title: UserInfo
+      description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
+      type: object
+      properties:
+        tenantId:
+          description: Unique Identifier of the tenant to which user primarily belongs
+          type: string
+        id:
+          description: User id of the authenticated user. Will be deprecated in future
+          type: integer
+          format: int32
+        userName:
+          description: Unique user name of the authenticated user
+          type: string
+        mobile:
+          description: mobile number of the autheticated user
+          type: string
+        email:
+          description: email address of the authenticated user
+          type: string
+        primaryrole:
+          description: List of all the roles for the primary tenant
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        additionalroles:
+          description: array of additional tenantids authorized for the authenticated user
+          type: array
+          items:
+            $ref: '#/components/schemas/TenantRole'
+      required:
+        - tenantId
+        - userName
+        - primaryrole
+    Pagination:
+      title: Pagination
+      description: Pagination details
+      type: object
+      properties:
+        limit:
+          description: Limit for total no of records in single search max limit should be defined as envirnment variable
+          type: number
+          default: 10
+          maximum: 100
+          format: double
+        offSet:
+          description: offset or page no
+          type: number
+          default: 0
+          format: double
+        totalCount:
+          description: Total count for a perticular criteria
+          readOnly: true
+          type: number
+          format: double
+        sortBy:
+          description: result sorting order
+          type: string
+        order:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/Order'
+            - description: Sorting order
+    Workflow:
+      title: Workflow
+      type: object
+      properties:
+        action:
+          description: Action of the workflow to be performned on the request
+          type: string
+        comment:
+          description: comment for the workflow action to be performed
+          type: string
+        assignees:
+          type: array
+          items:
+            type: string
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+      required:
+        - action

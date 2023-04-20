@@ -67,6 +67,12 @@ public class Configuration {
     @Value("${egov.idgen.organisation.application.number.format}")
     private String orgApplicationNumberFormat;
 
+    @Value("${egov.idgen.organisation.number.name}")
+    private String orgNumberName;
+
+    @Value("${egov.idgen.organisation.number.format}")
+    private String orgNumberFormat;
+
     @Value("${egov.idgen.function.application.number.name}")
     private String functionApplicationNumberName;
 
@@ -125,5 +131,46 @@ public class Configuration {
     private Integer defaultOffset;
     @Value("${org.default.limit}")
     private Integer defaultLimit;
+
+    //Location
+    @Value("${egov.location.host}")
+    private String locationHost;
+
+    @Value("${egov.location.context.path}")
+    private String locationContextPath;
+
+    @Value("${egov.location.endpoint}")
+    private String locationEndpoint;
+
+    @Value("${egov.location.hierarchy.type}")
+    private String locationHierarchyType;
+
+    //Notification
+    @Value("${notification.sms.enabled}")
+    private Boolean isSMSEnabled;
+
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotifTopic;
+
+    //CBO url for message tenplate
+    @Value("${works.cbo.url.host}")
+    private String cboUrlHost;
+
+    @Value("${works.cbo.url.endpoint}")
+    private String cboUrlEndpoint;
+
+    //localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.localization.statelevel}")
+    private Boolean isLocalizationStateLevel;
+
 
 }

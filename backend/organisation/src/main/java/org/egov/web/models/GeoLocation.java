@@ -26,7 +26,7 @@ public class GeoLocation {
     @JsonProperty("longitude")
     private Double longitude = null;
 
-    @JsonProperty("additionDetails")
-    private Object additionDetails = null;
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
 }

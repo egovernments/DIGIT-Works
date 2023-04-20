@@ -219,7 +219,10 @@ const Urls = {
   },
 
   wageseeker: {
-    search: "/individual/v1/_search"
+    create: "/individual/v1/_create",
+    search: "/individual/v1/_search",
+    update: "/individual/v1/_update",
+    delete: "/individual/v1/_delete"
   },
 
   noc: {
@@ -233,7 +236,9 @@ const Urls = {
   },
 
   organisation : {
-    search : "/org-services/organisation/v1/_search"
+    search: "/org-services/organisation/v1/_search",
+    create: "/org-services/organisation/v1/_create",
+    update: "/org-services/organisation/v1/_update"
   },
   
   bankaccount : {
@@ -244,6 +249,10 @@ const Urls = {
 
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
+
+  calculator : {
+    expenseBill : "/expense-calculator/v1/_estimate"
+  }
 };
 
 export default Urls;

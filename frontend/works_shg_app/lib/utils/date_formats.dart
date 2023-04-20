@@ -74,6 +74,29 @@ class DateFormats {
     }
   }
 
+  static List<String> getFormattedDatesOfAWeek(
+      int selectedStartDate, int selectedEndDate) {
+    final DateTime startDate =
+        DateTime.fromMillisecondsSinceEpoch(selectedStartDate);
+    final DateTime endDate =
+        DateTime.fromMillisecondsSinceEpoch(selectedEndDate);
+    final DateFormat formatter = DateFormat('dd MMM');
+
+    // Calculate the start of the week (Monday)
+    final DateTime startOfWeek =
+        startDate.subtract(Duration(days: startDate.weekday - 1));
+
+    // Calculate the end of the week (Sunday)
+    final DateTime endOfWeek = endDate.add(Duration(days: 7 - endDate.weekday));
+    final List<DateTime> dates = [];
+    for (var i = startOfWeek;
+        i.isBefore(endOfWeek) || i == endOfWeek;
+        i = i.add(const Duration(days: 1))) {
+      dates.add(i);
+    }
+    return dates.map((date) => formatter.format(date)).toList();
+  }
+
   static DaysInRange checkDaysInRange(int selectedStartDate,
       int selectedEndDate, int registerStartDate, int registerEndDate) {
     DateTime start = DateTime.fromMillisecondsSinceEpoch(selectedStartDate);
@@ -81,9 +104,6 @@ class DateFormats {
     DaysInRange daysInRange = DaysInRange();
     int registerStartTime =
         registerStartDate - (registerStartDate % (24 * 60 * 60 * 1000));
-
-    ///Issue with register Start Date, Need to check
-    ///
     int registerEndTime = DateTime(
             DateTime.fromMillisecondsSinceEpoch(registerEndDate).year,
             DateTime.fromMillisecondsSinceEpoch(registerEndDate).month,
@@ -102,32 +122,32 @@ class DateFormats {
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 2:
-          daysInRange.tuesday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.tuesday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 3:
-          daysInRange.wednesday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.wednesday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 4:
-          daysInRange.thursday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.thursday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 5:
-          daysInRange.friday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.friday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 6:
-          daysInRange.saturday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.saturday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
         case 7:
-          daysInRange.sunday = currentDayTimestamp >= registerStartDate &&
+          daysInRange.sunday = currentDayTimestamp >= registerStartTime &&
               currentDayTimestamp <= registerEndTime &&
               currentDayTimestamp < DateTime.now().millisecondsSinceEpoch;
           break;
@@ -209,6 +229,17 @@ class DateFormats {
     try {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(timeInMillis);
       return DateFormat.E().format(date);
+    } catch (e) {
+      return '';
+    }
+  }
+
+  static getTimeLineDate(int timeInMillis) {
+    try {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(timeInMillis);
+      String formattedDate = DateFormat('dd-MMM-yyyy, hh:mm a').format(date);
+      String formattedDay = getDay(timeInMillis);
+      return '$formattedDate $formattedDay';
     } catch (e) {
       return '';
     }

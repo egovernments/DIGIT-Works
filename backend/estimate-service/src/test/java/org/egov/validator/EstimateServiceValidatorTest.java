@@ -39,6 +39,7 @@ public class EstimateServiceValidatorTest {
     void setUp() throws Exception {
         Object mdmsResponse = EstimateRequestBuilderTest.getMdmsResponse();
         lenient().when(mdmsUtils.mDMSCall(any(EstimateRequest.class),any(String.class))).thenReturn(mdmsResponse);
+        lenient().when(mdmsUtils.mDMSCallForOverHeadCategory(any(EstimateRequest.class),any(String.class))).thenReturn(mdmsResponse);
 
         Object projectResponse = EstimateRequestBuilderTest.getProjectSearchResponse();
         lenient().when(projectUtil.getProjectDetails(any(EstimateRequest.class))).thenReturn(projectResponse);
