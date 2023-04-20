@@ -85,7 +85,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
           ),
           content: SizedBox(
-            height: 180,
+            height: widget.options.length * 40,
             width: 200,
             child: Scrollbar(
               controller: _scrollController,

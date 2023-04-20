@@ -156,18 +156,16 @@ class SuccessResponsePage extends StatelessWidget {
                         ),
                         Visibility(
                           visible: !isWithoutLogin,
-                          child: DigitCard(
-                            child: DigitElevatedButton(
-                              onPressed: () {
-                                context.router.push(const HomeRoute());
-                              },
-                              child: Center(
-                                child: Text(buttonLabel ?? '',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .apply(color: Colors.white)),
-                              ),
+                          child: DigitElevatedButton(
+                            onPressed: () {
+                              context.router.push(const HomeRoute());
+                            },
+                            child: Center(
+                              child: Text(buttonLabel ?? '',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .apply(color: Colors.white)),
                             ),
                           ),
                         ),

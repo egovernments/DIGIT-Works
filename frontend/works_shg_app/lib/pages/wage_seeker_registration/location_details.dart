@@ -107,13 +107,13 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                       ],
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.city),
                       menuItems: city.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: cityKey,
-                      valueMapper: (value) =>
-                          t.translate('PG_${value.toUpperCase()}'),
+                      valueMapper: (value) => t.translate(
+                          'TENANT_TENANTS_${value.replaceAll('.', '_').toUpperCase()}'),
                       onChanged: (value) {},
                       validationMessages: {
                         'required': (_) => t.translate(
@@ -121,7 +121,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                             ),
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.ward),
                       menuItems: ward.map((e) => e.toString()).toList(),
                       isRequired: true,
@@ -146,7 +146,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         });
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                         label: t.translate(i18.common.locality),
                         menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,
@@ -169,34 +169,30 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                   ]),
                   const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Center(
-                      child: DigitElevatedButton(
-                          onPressed: () {
-                            form.markAllAsTouched(updateParent: false);
-                            if (!form.valid) return;
-                            final locationDetails = LocationDetails(
-                                pinCode: form.value[pinCodeKey].toString(),
-                                city: form.value[cityKey].toString(),
-                                locality: form.value[localityKey].toString(),
-                                ward: form.value[wardKey].toString(),
-                                streetName:
-                                    form.value[streetNameKey].toString(),
-                                doorNo: form.value[doorNoKey].toString());
-                            BlocProvider.of<WageSeekerBloc>(context).add(
-                              WageSeekerCreateEvent(
-                                  individualDetails: individualDetails,
-                                  skillDetails: skillDetails,
-                                  locationDetails: locationDetails,
-                                  financialDetails: financialDetails),
-                            );
-                            widget.onPressed();
-                          },
-                          child: Center(
-                            child: Text(t.translate(i18.common.next)),
-                          )),
-                    ),
+                  Center(
+                    child: DigitElevatedButton(
+                        onPressed: () {
+                          form.markAllAsTouched(updateParent: false);
+                          if (!form.valid) return;
+                          final locationDetails = LocationDetails(
+                              pinCode: form.value[pinCodeKey].toString(),
+                              city: form.value[cityKey].toString(),
+                              locality: form.value[localityKey].toString(),
+                              ward: form.value[wardKey].toString(),
+                              streetName: form.value[streetNameKey].toString(),
+                              doorNo: form.value[doorNoKey].toString());
+                          BlocProvider.of<WageSeekerBloc>(context).add(
+                            WageSeekerCreateEvent(
+                                individualDetails: individualDetails,
+                                skillDetails: skillDetails,
+                                locationDetails: locationDetails,
+                                financialDetails: financialDetails),
+                          );
+                          widget.onPressed();
+                        },
+                        child: Center(
+                          child: Text(t.translate(i18.common.next)),
+                        )),
                   )
                 ],
               ),

@@ -9,7 +9,9 @@ const TransferCodeTable = (props) => {
     const orgSession = Digit.Hooks.useSessionStorage("ORG_CREATE", {});
     const [sessionFormData] = orgSession;
 
-    const columns = [t('WORKS_SNO'), t("MASTERS_IDENTIFIER_TYPE"), t("MASTERS_IDENTIFIER_VALUE"), '']
+    const columns = props?.config?.key === "transferCodes" ? 
+        [t('WORKS_SNO'), t("MASTERS_IDENTIFIER_TYPE"), t("MASTERS_IDENTIFIER_VALUE")] :
+        [t('WORKS_SNO'), t("MASTERS_IDENTIFIER_TYPE"), t("MASTERS_IDENTIFIER_VALUE"), t("CS_COMMON_ACTION")]
     const formFieldName = props?.config?.key === "transferCodes" ? 'transferCodesData' : 'taxIdentifierData'
 
     const module = props?.config?.key
@@ -46,18 +48,23 @@ const TransferCodeTable = (props) => {
         let obj = {}
         switch (index) {
           case 1:
-            obj = { "width": "1rem" }
+            obj = { width: "7%", textAlign: "center"}
             break;
           case 2:
-            obj = { "width": "30rem" }
+            obj = { width: "30rem" }
+            break;
+          case 3:
+            obj = { width: "20rem" };
+            break;
+          case 4:
+            obj = { width: "5%" };
             break;
           default:
-            obj = { "width": "1rem" }
+            obj = { width: "1rem" }
             break;
         }
         return obj
     }
-    const errorCardStyle = {width:"100%"}
 
     const getPatterns = (rowKey) => {
         if(isTranferCodeTable) return Digit.Utils.getPattern('IFSC')
@@ -146,6 +153,10 @@ const TransferCodeTable = (props) => {
         }
     }
 
+    const cellContainerStyle = { display: "flex", flexDirection: "column" };
+    const errorCardStyle = { width: "20rem", fontSize: "12px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
+    const errorContainerStyles = { display: "block", height: "1rem", overflow: "hidden" };
+
     const renderBody = () => {
         let i = 0
         return rows.map((row, index) => {
@@ -153,12 +164,12 @@ const TransferCodeTable = (props) => {
             return row.isShow && <tr key={index} style={{ "height": "50%" }}>
                 <td style={getStyles(1)}>{i}</td>
                 <td style={getStyles(2)} >
-                    <div>
+                    <div style={cellContainerStyle}>
                         <Controller
                             control={control}
                             name={`${formFieldName}.${row.key}.name`}
                             defaultValue={formData?.[`${formFieldName}.${row.key}.name`]}
-                            rules={{ required: true }}
+                            rules={{ required: isMandatory }}
                             render={(props) => (
                                 getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
                                     mdmsConfig: {
@@ -169,26 +180,38 @@ const TransferCodeTable = (props) => {
                                 })
                             )}
                         />
+                    </div>
+                    <div style={errorContainerStyles}>
                         {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
                             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                     </div>
                 </td>
                 <td style={getStyles(3)}>
-                    <div >
+                    <div style={cellContainerStyle}>
                         <TextInput 
                             style={{ "marginBottom": "0px" }} 
                             name={`${formFieldName}.${row.key}.value`} 
                             selected={formData && formData[formFieldName] ? formData[formFieldName][`${formFieldName}.${row.key}.value`] : undefined}
-                            inputRef={register({ required: true, pattern: getPatterns(row.key)})}
+                            inputRef={register({ required: isMandatory, pattern: getPatterns(row.key)})}
                             onChange={onChange}
                         />
+                    </div>
+                    <div style={errorContainerStyles}>
                         {errors && errors?.[formFieldName]?.[row.key]?.value?.type === "required" && (
                             <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
                         {errors && (errors?.[formFieldName]?.[row.key]?.value?.type === "pattern" || errors?.[formFieldName]?.type === "custom") && (
                             <CardLabelError style={errorCardStyle}>{isTranferCodeTable ? t('ES_COMMON_IFSC_CODE_ERROR') : t('WORKS_PATTERN_ERR')}</CardLabelError>)}
                     </div>
                 </td>
-                <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row) } className="icon-wrapper"><DeleteIcon fill={"#B1B4B6"}/></span>}</td>
+                {
+                    !isTranferCodeTable && (
+                        <td style={getStyles(4)}>
+                        <div style={cellContainerStyle}>
+                            {showDelete() && <span onClick={() => removeRow(row) } className="icon-wrapper"><DeleteIcon fill={"#B1B4B6"}/></span>}
+                        </div>
+                        <div style={errorContainerStyles}></div>
+                    </td>)
+                }
             </tr>
         })
     }

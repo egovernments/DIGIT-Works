@@ -1,13 +1,14 @@
 import React, { useState, useEffect, Fragment }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast } from '@egovernments/digit-ui-react-components';
+import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast, MultiLink } from '@egovernments/digit-ui-react-components';
 
 
 const ViewContractDetails = () => {
     const { t } = useTranslation();
     const [showToast, setShowToast] = useState(null);
     const queryStrings = Digit.Hooks.useQueryParams();
+    const contractId = queryStrings?.workOrderNumber;
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts")
     const [toast, setToast] = useState({show : false, label : "", error : false});
@@ -71,6 +72,10 @@ const ViewContractDetails = () => {
         }
     },[isProjectError]);
 
+    const HandleDownloadPdf = () => {
+        Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`workOrder-${contractId}.pdf`)
+    }
+
     const handleToastClose = () => {
         setToast({show : false, label : "", error : false});
     }
@@ -99,6 +104,11 @@ const ViewContractDetails = () => {
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
+            <MultiLink
+                   onHeadClick={() => HandleDownloadPdf()}
+                   downloadBtnClassName={"employee-download-btn-className"}
+                   label={t("CS_COMMON_DOWNLOAD")}
+            />
           </div>
           {project && <ViewDetailsCard cardState={cardState} t={t} />}
           {

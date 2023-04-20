@@ -36,6 +36,15 @@ const EstimateResponse = (props) => {
     const { t } = useTranslation()
     const tenantId = Digit.ULBService.getCurrentTenantId();
 
+    const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", {});
+    const [sessionFormData, clearSessionFormData] = EstimateSession;
+     // remove session form data if user navigates away from the estimate create screen
+     useEffect(()=>{
+        if (!window.location.href.includes("create-estimate") && sessionFormData && Object.keys(sessionFormData) != 0) {
+        clearSessionFormData();
+        }
+    },[location]);
+
     //we have two types of icon currently -> add,inbox(CreateEstimateIcon,Inbox Icon)
     const renderIcon = (type, link) => {
 

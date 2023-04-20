@@ -48,20 +48,15 @@ export const createOrganizationConfigMUKTA = {
                         label: "MASTERS_REGISTERED_BY_DEPT",
                         isMandatory: true,
                         key: "basicDetails_regDept",
-                        type: "dropdown",
+                        type: "text",
                         disable: false,
+                        preProcess : {
+                            convertStringToRegEx : ["populators.validation.pattern"]
+                        },
                         populators: {
                             name: "basicDetails_regDept",
-                            optionsKey: "name",
                             error: "WORKS_REQUIRED_ERR",
-                            optionsCustomStyle: {
-                                top: "2.3rem",
-                            },
-                            mdmsConfig: {
-                                masterName: "Department",
-                                moduleName: "common-masters",
-                                localePrefix: "COMMON_MASTERS_DEPARTMENT",
-                            }
+                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 64}
                         }
                     },
                     {
@@ -281,7 +276,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: { 
                             name: "locDetails_streetName", 
                             error: "WORKS_PATTERN_ERR",
-                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 128 }
+                            validation: { pattern: "^[a-zA-Z0-9 .,\\/\\-_@#\\']*$", minlength : 2, maxlength: 64 }
                         }
                     },
                     {
@@ -296,7 +291,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: { 
                             name: "locDetails_houseName", 
                             error: "WORKS_PATTERN_ERR",
-                            validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 8 }
+                            validation: { pattern: "^[a-zA-Z0-9 .,\\/\\-_@#\\']*$", minlength : 2, maxlength: 8 }
                         }
                     }
                 ]
@@ -318,14 +313,14 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_name",
                             error: "MASTERS_PATTERN_ERR_MSG_ORG_DETAILS",
-                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 2, maxlength: 5}
+                            validation: {pattern: "^[a-zA-Z0-9 .\\-_@\\']*$", minlength : 1, maxlength: 50}
                         }
                     },
                     {
                         label: "CORE_COMMON_PROFILE_MOBILE_NUMBER",
                         isMandatory: true,
                         key: "contactDetails_mobile",
-                        type: "number",
+                        type: "mobileNumber",
                         disable: false,
                         populators: {
                             name: "contactDetails_mobile",
@@ -345,7 +340,7 @@ export const createOrganizationConfigMUKTA = {
                         populators: {
                             name: "contactDetails_email",
                             error: "EMAIL_VALIDATION",
-                            validation: {pattern: "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,})+$", minlength : 2, maxlength: 128}                         
+                            validation: {pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(?:[a-zA-Z]{2,6})$", minlength : 2, maxlength: 64}                         
                         }
                     }
                 ]
@@ -400,8 +395,8 @@ export const createOrganizationConfigMUKTA = {
                         },
                         populators: { 
                             name: "financeDetails_accountNumber", 
-                            error: "WORKS_REQUIRED_ERR", 
-                            validation: { pattern: "^[0-9]{9,18}$" } }
+                            error: "BANK_ACCOUNT_VALIDATION", 
+                            validation: { pattern: "^[0-9]{9,18}$", minlength : 9, maxlength: 18 } }
                     },
                     {
                         type: "component",
