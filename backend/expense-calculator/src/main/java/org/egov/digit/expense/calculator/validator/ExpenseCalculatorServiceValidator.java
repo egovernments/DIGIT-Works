@@ -5,8 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.util.CommonUtil;
 import org.egov.digit.expense.calculator.util.MdmsUtils;
-import org.egov.digit.expense.calculator.util.MusterRollUtils;
+import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
 import org.egov.digit.expense.calculator.web.models.CalculationRequest;
+import org.egov.digit.expense.calculator.web.models.Contract;
 import org.egov.digit.expense.calculator.web.models.Criteria;
 import org.egov.digit.expense.calculator.web.models.MusterRoll;
 import org.egov.digit.expense.calculator.web.models.MusterRollRequest;
@@ -32,7 +33,7 @@ public class ExpenseCalculatorServiceValidator {
     private CommonUtil commonUtil;
 
     @Autowired
-    private MusterRollUtils musterRollUtils;
+    private ExpenseCalculatorUtil expenseCalculatorUtil;
     public void validateCalculatorEstimateRequest(CalculationRequest calculationRequest){
         validateCommonCalculatorRequest(calculationRequest);
 
@@ -58,7 +59,11 @@ public class ExpenseCalculatorServiceValidator {
         final Criteria criteria = calculationRequest.getCriteria();
         // Validate contractId if given against contract service
         if(StringUtils.isNotBlank(criteria.getContractId())) {
-            //TODO validate against contract service
+            List<Contract> contracts = expenseCalculatorUtil.fetchContract(calculationRequest.getRequestInfo(), criteria.getTenantId(), criteria.getContractId());
+            if (CollectionUtils.isEmpty(contracts)) {
+                log.error("ExpenseCalculatorServiceValidator:No matched contract found for contractId - "+criteria.getContractId());
+                throw new CustomException("INVALID_CONTRACT_ID", "Contract not found");
+            }
         }
     }
 
@@ -71,6 +76,7 @@ public class ExpenseCalculatorServiceValidator {
 
         //Validate request against MDMS
         validateCalculatorEstimateReqeuestAgainstMDMS(calculationRequest);
+
     }
 
     public void validateWageBillCreateForMusterRollRequest(MusterRollRequest musterRollRequest){
@@ -124,30 +130,32 @@ public class ExpenseCalculatorServiceValidator {
          MusterRoll musterRoll = musterRollRequest.getMusterRoll();
          Map<String, String> errorMap = new HashMap<>();
 
-         if (musterRoll == null) {
-            log.error("MusterRoll is mandatory");
-            throw new CustomException("MUSTERROLL","MusterRoll is mandatory");
-         }
+            if (musterRoll == null) {
+                log.error("MusterRoll is mandatory");
+                throw new CustomException("MUSTERROLL","MusterRoll is mandatory");
+            }
 
-        if (StringUtils.isBlank(musterRoll.getTenantId())) {
-            log.error("TenantId is mandatory");
-            errorMap.put("MUSTERROLL.TENANTID", "TenantId is mandatory");
+            if (StringUtils.isBlank(musterRoll.getTenantId())) {
+                log.error("TenantId is mandatory");
+                errorMap.put("MUSTERROLL.TENANTID", "TenantId is mandatory");
+            }
+
+            String musterRollId = musterRoll.getId();
+
+
+            if(StringUtils.isBlank(musterRollId)) {
+                log.error("musterRollId is mandatory");
+                errorMap.put("MUSTERROLL.MUSTER_ROLL_ID", "MusterRollId is mandatory");
+            }
+
+            if (!errorMap.isEmpty()) {
+                log.error("Calculator Estimate validation failed");
+                throw new CustomException(errorMap);
+            }
+            log.info("Required request parameter validation done for Calculator calculate service");
         }
 
-        String musterRollId = musterRoll.getId();
 
-
-        if(StringUtils.isBlank(musterRollId)) {
-            log.error("musterRollId is mandatory");
-            errorMap.put("MUSTERROLL.MUSTER_ROLL_ID", "MusterRollId is mandatory");
-        }
-
-        if (!errorMap.isEmpty()) {
-            log.error("Calculator Estimate validation failed");
-            throw new CustomException(errorMap);
-        }
-        log.info("Required request parameter validation done for Calculator calculate service");
-    }
     private void validateRequestInfo(RequestInfo requestInfo) {
         if (requestInfo == null) {
             log.error("Request info is mandatory");
@@ -223,7 +231,7 @@ public class ExpenseCalculatorServiceValidator {
     }
 
     private List<String> fetchListOfMusterRollIdsForGivenIds(RequestInfo requestInfo, String tenantId, List<String> musterRollIds, boolean onlyApproved){
-        return musterRollUtils.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds,onlyApproved);
+        return expenseCalculatorUtil.fetchListOfMusterRollIds(requestInfo, tenantId, musterRollIds,onlyApproved);
     }
     private void validateMusterRollIds(List<String> musterRollIds, List<String> fetchedMusterRolls) {
         for(String musterRollId : musterRollIds){

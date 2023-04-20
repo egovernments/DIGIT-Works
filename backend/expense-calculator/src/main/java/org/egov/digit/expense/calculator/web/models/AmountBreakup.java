@@ -3,7 +3,6 @@ package org.egov.digit.expense.calculator.web.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,12 +10,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 
 /**
- * This object holds list of documents attached during the transaciton for a property
+ * AmountBreakup
  */
-@ApiModel(description = "This object holds list of documents attached during the transaciton for a property")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
 
@@ -24,34 +22,33 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Document {
+public class AmountBreakup {
     @JsonProperty("id")
-    @Size(max = 64)
+    @Valid
     private String id = null;
 
-    @JsonProperty("documentType")
-    private String documentType = null;
+    @JsonProperty("estimateAmountBreakupId")
+    @NotNull
+    @Valid
+    private String estimateAmountBreakupId = null;
 
-    @JsonProperty("fileStore")
-    private String fileStore = null;
-
-    @JsonProperty("documentUid")
-    @Size(max = 64)
-    private String documentUid = null;
+    @JsonProperty("amount")
+    @NotNull
+    @Valid
+    private Double amount = null;
 
     @JsonProperty("status")
     @Valid
     private Status status = null;
 
-    @Size(max = 64)
-    private String contractId = null;
+    @JsonIgnore
+    private String lineItemId = null;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
     @JsonIgnore
-    private AuditDetails auditDetails = null;
-
+    private AuditDetails auditDetails;
 
 }
 
