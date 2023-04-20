@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillMeta {
+public class BillMetaCalculation {
 
     @JsonProperty("id")
     private String id;
@@ -27,20 +26,38 @@ public class BillMeta {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
-    @JsonProperty("serviceCode")
-    private String serviceCode = null;
-
-    @JsonProperty("contractId")
-    private String contractId = null;
-
-    @JsonProperty("musterrollId")
-    private String musterrollId = null;
-
     @JsonProperty("billType")
     private String billType = null;
 
     @JsonProperty("billId")
     private String billId = null;
+
+    @JsonProperty("billNumber")
+    private String billNumber = null;
+
+    @JsonProperty("billReference")
+    private String billReference = null;
+
+    @JsonProperty("contractId")
+    private String contractId = null;
+
+    @JsonProperty("contractNumber")
+    private String contractNumber = null;
+
+    @JsonProperty("musterrollId")
+    private String musterrollId = null;
+
+    @JsonProperty("musterrollNumber")
+    private String musterrollNumber = null;
+
+    @JsonProperty("projectName")
+    private String projectName = null;
+
+    @JsonProperty("boundaryCode")
+    private String boundaryCode = null;
+
+    @JsonProperty("boundaryType")
+    private String boundaryType = null;
 
     @JsonProperty("isActive")
     private Boolean isActive = null;
@@ -48,23 +65,19 @@ public class BillMeta {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-    @JsonProperty("billAmount")
-    @Valid
-    private BigDecimal billAmount = null;
-
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
 
-    @JsonProperty("documents")
+    @JsonProperty("billMetaCalcDetails")
     @Valid
-    private List<Document> documents = null;
+    private List<BillMetaCalcDetails> billMetaCalcDetails = null;
 
-    public BillMeta addDocumentsItem(Document documentsItem) {
-        if (this.documents == null) {
-            this.documents = new ArrayList<>();
+    public BillMetaCalculation addDocumentsItem(BillMetaCalcDetails item) {
+        if (this.billMetaCalcDetails == null) {
+            this.billMetaCalcDetails = new ArrayList<>();
         }
-        this.documents.add(documentsItem);
+        this.billMetaCalcDetails.add(item);
         return this;
     }
 }

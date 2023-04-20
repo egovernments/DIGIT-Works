@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.SKILL_CODE_CONSTANT;
+
 @Slf4j
 @Component
 public class WageSeekerBillGeneratorService {
@@ -241,7 +243,7 @@ public class WageSeekerBillGeneratorService {
     private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, Map<String, Double> wageSeekerSkillCodeAmountMapping) {
         String individualId = individualEntry.getIndividualId();
         Object additionalDetails = individualEntry.getAdditionalDetails();
-        Optional<String> skillCodeOptional = commonUtil.findValue(additionalDetails, "skillCode");
+        Optional<String> skillCodeOptional = commonUtil.findValue(additionalDetails, SKILL_CODE_CONSTANT);
         if(!skillCodeOptional.isPresent()){
             log.error("SKILL_CODE_MISSING_FOR_INDIVIDUAL","Skill code is missing for individual ["+individualId+"]");
             throw new CustomException("SKILL_CODE_MISSING_FOR_INDIVIDUAL","Skill code is missing for individual ["+individualId+"]");
