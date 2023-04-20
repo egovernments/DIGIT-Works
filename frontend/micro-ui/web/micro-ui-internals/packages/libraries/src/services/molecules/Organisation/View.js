@@ -19,7 +19,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       values: [
         { title: "MASTERS_ORG_ID", value: organisation?.orgNumber || t("NA")},
         { title: "MASTERS_NAME_OF_THE_ORG", value: organisation?.name || t("NA")},
-        { title: "MASTERS_REGISTERED_BY_DEPT", value: organisation?.additionalDetails?.registeredByDept ? t(`COMMON_MASTERS_DEPARTMENT_${organisation?.additionalDetails?.registeredByDept}`) : t("NA")},
+        { title: "MASTERS_REGISTERED_BY_DEPT", value: organisation?.additionalDetails?.registeredByDept || t("NA")},
         { title: "MASTERS_REGISTRATION_NUMBER", value: organisation?.additionalDetails?.deptRegistrationNum || t("NA")},
         { title: "MASTERS_DATE_OF_INCORPORATION", value: Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'dd/MM/yyyy') || t("NA")},
         { title: "CORE_COMMON_STATUS", value: t(`MASTERS_ORG_STATUS_${organisation?.applicationStatus}`) || t("NA")}
