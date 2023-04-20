@@ -3,7 +3,6 @@ import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useHistory } from "react-router-dom";
-import getBillModalConfig from "../../../configs/getBillModalConfig";
 
 const navConfig =  [
     {
