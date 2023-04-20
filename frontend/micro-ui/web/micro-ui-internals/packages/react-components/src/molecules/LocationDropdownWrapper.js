@@ -3,7 +3,7 @@ import MultiSelectDropdown from '../atoms/MultiSelectDropdown'
 import Dropdown from '../atoms/Dropdown'
 import { Loader } from '../atoms/Loader'
 import { useTranslation } from 'react-i18next'
-const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors}) => {
+const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors,setValue}) => {
     //based on type (ward/locality) we will render dropdowns respectively
     //here we will render two types of dropdown based on allowMultiSelect boolean 
     // for singleSelect render <Dropdown/> 
@@ -32,8 +32,6 @@ const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors}) =>
         });
 
     
-
-
     useEffect(() => {
     if(wardsAndLocalities) {
         if(populators.type==="ward"){
@@ -63,6 +61,9 @@ const LocationDropdownWrapper = ({populators,formData,props,inputRef,errors}) =>
                   props={props} //these are props from Controller
                   isPropsNeeded={true}
                   onSelect={(e) => {
+                      if(populators.type === "ward"){
+                        setValue('locality',[])
+                      }
                       props.onChange(e?.map(row => { return row?.[1] ? row[1] : null }).filter(e => e))
                   }}
                   selected={props?.value}

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/common_methods.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/date_range_picker.dart';
@@ -134,9 +135,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body:BlocBuilder<SkillsBloc, SkillsBlocState>(
               builder: (context, skillsState) {
@@ -144,7 +145,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                     loading: () => shg_loader.Loaders.circularLoader(context),
                     error: (String? error) => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(error.toString()), 'ERROR'),
                     loaded: (SkillsList? skillsList) {
-                  skillList = skillsList!.wageSeekerSkills?.where((obj) => obj.active == true).map((e) => Skill(code: e.code,)).toList() ?? [];
+                  skillList = skillsList!.wageSeekerSkills?.where((obj) => obj.active == true).map((e) => Skill(code: e.code)).toList() ?? [];
                   for (Skill skill in skillList) {
                       skillDropDown.add(skill.code);
                   }
@@ -271,7 +272,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                             musterSearch.maybeWhen(orElse: () => Container(),
                                                             loading: () => shg_loader.Loaders.circularLoader(context),
                                                             loaded: (MusterRollsModel? musterRollsSearch) {
-                                                              if(musterRollsSearch!.musterRoll != null && musterRollsSearch!.musterRoll!.isNotEmpty){
+                                                              if(musterRollsSearch!.musterRoll != null && musterRollsSearch.musterRoll!.isNotEmpty){
                                                                 existingSkills = musterRollsSearch.musterRoll!.first.individualEntries!.map((e) =>
                                                               IndividualSkills(individualId: e.individualId, skillCode: e.musterIndividualAdditionalDetails?.skillCode ?? '',
                                                               name: e.musterIndividualAdditionalDetails?.userName ?? e.individualId ?? '',
@@ -300,12 +301,13 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                         individualGaurdianName: e.additionalDetails?.individualGaurdianName)).toList();
                                                               if (attendeeList != null && attendeeList.isNotEmpty) {
                                                                 if (musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.isNotEmpty && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
-                                                                  attendeeList = musterRollsModel!.musterRoll!.first.individualEntries!.map((e) =>
+                                                                  attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
                                                                       AttendeesTrackList(
                                                                           name: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name : e.musterIndividualAdditionalDetails?.userName,
                                                                           aadhaar: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).aadhaar : e.musterIndividualAdditionalDetails?.aadharNumber ?? e.musterIndividualAdditionalDetails?.userId,
                                                                           individualGaurdianName: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).individualGaurdianName : e.musterIndividualAdditionalDetails?.fatherName ?? e.musterIndividualAdditionalDetails?.userId,
                                                                           individualId: e.individualId,
+                                                                          skillCodeList: e.musterIndividualAdditionalDetails?.skillCode ?? [],
                                                                           id: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id : e.id ?? '',
                                                                           skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
                                                                           monEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
@@ -340,6 +342,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id ?? '';
                                                                       data.skill = item1.skill ?? '';
+                                                                      data.skillCodeList = item1.skillCodeList ?? [];
                                                                       data.monIndex = item1.monIndex;
                                                                       data.monEntryId = item1.monEntryId;
                                                                       data.monExitId = item1.monExitId;
@@ -375,6 +378,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id;
                                                                       data.skill = item1.skill ?? '';
+                                                                      data.skillCodeList = item1.skillCodeList ?? [];
                                                                       data.monIndex = item1.monIndex;
                                                                       data.tueIndex = item1.tueIndex;
                                                                       data.wedIndex = item1.wedIndex;
@@ -393,7 +397,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                           headerList: headerList,
                                                                           tableData: tableData,
                                                                           leftColumnWidth: width,
-                                                                          rightColumnWidth: width * 10,
+                                                                          rightColumnWidth: skillsDisable ? width * 9 : width * 10,
                                                                           height: 58 + (52.0 * (tableData.length + 1)),
                                                                           scrollPhysics: const NeverScrollableScrollPhysics(),
                                                                         ),),
@@ -512,7 +516,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                 child: Text(
                                                                                                                   AppLocalizations.of(context)
                                                                                                                       .translate(i18.common.saveAsDraft),
-                                                                                                                  style: musterRollsSearch!= null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
+                                                                                                                  style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty
                                                                                                                       ? Theme.of(context).textTheme.titleSmall?.apply(
                                                                                                                       color: const Color.fromRGBO(
                                                                                                                           149, 148, 148, 1))
@@ -617,10 +621,13 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                       ?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA',
                                                                                                                   contractId: individualAttendanceRegisterModel.attendanceRegister
                                                                                                                       ?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA',
+                                                                                                                  executingAuthority: individualAttendanceRegisterModel.attendanceRegister
+                                                                                                                      ?.first.attendanceRegisterAdditionalDetails?.executingAuthority,
                                                                                                                   registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                                                   registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                                                   projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
                                                                                                                   projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '',
+                                                                                                                  projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '',
                                                                                                                   locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '',
                                                                                                                   ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '',
                                                                                                                   amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500,
@@ -822,10 +829,6 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   ];
 
   TableDataRow getAttendanceRow(TrackAttendanceTableData tableDataModel) {
-    print('workflow');
-    print(isInWorkFlow);
-    print('skills');
-    print(skillsDisable);
     return TableDataRow([
       TableData(label: tableDataModel.name, apiKey: tableDataModel.name),
       TableData(label: tableDataModel.individualGaurdianName, apiKey: tableDataModel.individualGaurdianName),
@@ -834,7 +837,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           apiKey: tableDataModel.skill,
           widget: DropDownDialog(
             isDisabled: isInWorkFlow,
-            options: skillDropDown,
+            options: tableDataModel.skillCodeList ?? [],
             label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {

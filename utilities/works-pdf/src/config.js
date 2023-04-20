@@ -29,6 +29,8 @@ module.exports = {
       process.env.NOMINAL_MUSTER_ROLL_TEMPLATE || "nominal-muster-roll",
     work_order_template:
       process.env.WORK_ORDER_TEMPLATE || "work-order",
+    work_order_template_hindi:
+      process.env.WORK_ORDER_TEMPLATE_HINDI || "work-order-hindi",
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,

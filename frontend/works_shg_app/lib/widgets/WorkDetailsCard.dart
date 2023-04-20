@@ -119,10 +119,10 @@ class WorkDetailsCard extends StatelessWidget {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: const EdgeInsets.all(8.0),
           child: Text(
             cardTitle ?? '',
-            style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+            style: DigitTheme.instance.mobileTheme.textTheme.headlineLarge
                 ?.apply(color: const DigitColors().black),
             textAlign: TextAlign.left,
           ),

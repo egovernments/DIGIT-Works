@@ -7,6 +7,7 @@ import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import '../../blocs/attendance/search_projects/search_projects.dart';
 import '../../blocs/localization/app_localization.dart';
 import '../../models/attendance/attendance_registry_model.dart';
+import '../../utils/common_methods.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
@@ -48,9 +49,9 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper( Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: SingleChildScrollView(
             child: BlocListener<AttendanceProjectsSearchBloc,

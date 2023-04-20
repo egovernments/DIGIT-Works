@@ -27,6 +27,7 @@ import '../models/muster_rolls/muster_roll_model.dart';
 import '../models/muster_rolls/muster_workflow_model.dart';
 import '../models/skills/skills.dart';
 import '../router/app_router.dart';
+import '../utils/common_methods.dart';
 import '../utils/constants.dart';
 import '../utils/date_formats.dart';
 import '../utils/models.dart';
@@ -103,6 +104,17 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         );
   }
 
+
+  @override
+  void deactivate() {
+    context.read<MusterRollEstimateBloc>().add(
+      const DisposeEstimateMusterRollEvent(),
+    );
+    context.read<MusterGetWorkflowBloc>().add(
+      const DisposeMusterRollWorkflowEvent(),
+    ); // Change the state of the widget when it is no longer visible
+    super.deactivate();
+  }
   @override
   void dispose() {
     // Clear the data when the widget is disposed
@@ -122,9 +134,9 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: BlocBuilder<SkillsBloc, SkillsBlocState>(
             builder: (context, skillsState) {
@@ -251,7 +263,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                 if(musterWorkFlowModel?.processInstances != null && musterWorkFlowModel!.processInstances!.isNotEmpty){
                                                   timeLineAttributes = musterWorkFlowModel.processInstances!.mapIndexed((i, e) =>
                                                       DigitTimelineOptions(
-                                                        title: t.translate('WF_MUSTOR_${e.action}'),
+                                                        title: t.translate('WF_MUSTOR_${e.workflowState?.applicationStatus}'),
                                                         subTitle: DateFormats.getTimeLineDate(e.auditDetails?.lastModifiedTime ?? 0),
                                                         isCurrentState: i == 0,
                                                         assignee: e.assignes?.first.name,
@@ -371,6 +383,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                     .individualId,
                                                                             individualId: e
                                                                                 .individualId,
+                                                                            skillCodeList: e.musterIndividualAdditionalDetails?.skillCode ?? [],
                                                                             individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName,
                                                                             id: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                             skill: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
@@ -412,6 +425,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         data.individualId = item1.individualId ?? '';
                                                                         data.id = item1.id ?? '';
                                                                         data.skill = item1.skill;
+                                                                        data.skillCodeList = item1.skillCodeList ?? [];
                                                                         data.monIndex = item1.monIndex;
                                                                         data.monEntryId = item1.monEntryId;
                                                                         data.monExitId = item1.monExitId;
@@ -447,6 +461,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         data.individualId = item1.individualId ?? '';
                                                                         data.id = item1.id ?? '';
                                                                         data.skill = item1.skill;
+                                                                        data.skillCodeList = item1.skillCodeList;
                                                                         data.monIndex = item1.monIndex;
                                                                         data.tueIndex = item1.tueIndex;
                                                                         data.wedIndex = item1.wedIndex;
@@ -912,7 +927,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           hide: false,
           widget: DropDownDialog(
             isDisabled: inWorkFlow,
-            options: skillDropDown,
+            options: tableDataModel.skillCodeList ?? [],
             label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
             onChanged: (val) {

@@ -187,6 +187,7 @@ export const WorkflowService = {
               lastModified: Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.lastModifiedTime),
               lastModifiedEpoch: instance.auditDetails.lastModifiedTime,
             },
+            isTerminateState : instance?.state?.isTerminateState
           };
           return checkPoint;
         });

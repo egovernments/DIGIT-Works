@@ -1,6 +1,6 @@
-# Egov-pdf service
+# works-pdf service
 
-Egov-pdf service work in between pdf-service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. 
+works-pdf service work in between pdf-service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. 
 ### DB UML Diagram
 
 - NA
@@ -19,17 +19,18 @@ Egov-pdf service work in between pdf-service and client requesting pdfs. Earlier
 
 ### Swagger API Contract
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-Works/develop/utilities/egov-pdf/docs/egov-pdf_contract.yml#!/
+http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-Works/master/utilities/works-pdf/docs/works-pdf_contract.yml#!/
 
 ## Service Details
 
-Egov-pdf service is new service being added which can work in between existing pdf-service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. The egov-pdf service will take responsibility of getting application data from concerned service and also will do any enrichment if required and then with the data call pdf service to get pdf directly . The service will return pdf binary as response which can be directly downloaded by the client. With this service the existing pdf service endpoints need not be exposed to frontend.
+works-pdf service is new service being added which can work in between existing pdf-service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. The works-pdf service will take responsibility of getting application data from concerned service and also will do any enrichment if required and then with the data call pdf service to get pdf directly . The service will return pdf binary as response which can be directly downloaded by the client. With this service the existing pdf service endpoints need not be exposed to frontend.
 
-For any new pdf requirement one new endpoint with validations and logic for getting data for pdf has to be added in the code. With separate endpoint for each pdf we can define access rules per pdf basis. Currently egov-pdf service has endpoint for following pdfs used in our system:-
+For any new pdf requirement one new endpoint with validations and logic for getting data for pdf has to be added in the code. With separate endpoint for each pdf we can define access rules per pdf basis. Currently works-pdf service has endpoint for following pdfs used in our system:-
 
 - ProjectDetail pdf
 - Estimate pdf
 - Nominal Muster Roll pdf
+- Workorder pdf
 
 
 #### Configurations
@@ -38,7 +39,7 @@ For any new pdf requirement one new endpoint with validations and logic for gett
 
 - Make sure the config for pdf is added in the PDF-Service.Refer the PDF service [documentatiom](https://digit-discuss.atlassian.net/l/c/f3APeZPF )
 
-- Follow code of [existing supported PDFs](https://github.com/egovernments/DIGIT-Works/tree/develop/utilities/egov-pdf/src/routes) and create new endpoint with suitable search parameters for each PDF
+- Follow code of [existing supported PDFs](https://github.com/egovernments/DIGIT-Works/tree/master/utilities/works-pdf/src/routes) and create new endpoint with suitable search parameters for each PDF
 
 - Put parameters validations, module level validations ex:- application status,applicationtype and api error responses with proper error messages and error codes
 

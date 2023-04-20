@@ -249,6 +249,10 @@ const Urls = {
 
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
+
+  calculator : {
+    expenseBill : "/expense-calculator/v1/_estimate"
+  }
 };
 
 export default Urls;

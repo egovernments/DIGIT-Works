@@ -3,6 +3,7 @@ import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/auth/auth.dart';
+import 'package:works_shg_app/icons/shg_icons.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
@@ -15,7 +16,8 @@ import '../models/organisation/organisation_model.dart';
 
 class SideBar extends StatefulWidget {
   final String module;
-  const SideBar({super.key, this.module = 'rainmaker-common'});
+  const SideBar(
+      {super.key, this.module = 'rainmaker-common,rainmaker-attendencemgmt'});
   @override
   State<StatefulWidget> createState() {
     return _SideBar();
@@ -95,7 +97,7 @@ class _SideBar extends State<SideBar> {
           ),
           DigitIconTile(
             title: AppLocalizations.of(context).translate(i18.common.language),
-            icon: Icons.translate,
+            icon: SHGIcons.language,
             content: Padding(
               padding: const EdgeInsets.all(16),
               child: BlocBuilder<AppInitializationBloc, AppInitializationState>(

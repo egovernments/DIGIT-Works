@@ -115,7 +115,6 @@ class DateFormats {
       DateTime currentDay =
           DateTime(start.year, start.month, start.day, 5, 30, 0);
       int currentDayTimestamp = currentDay.millisecondsSinceEpoch;
-      print(currentDayTimestamp);
       switch (start.weekday) {
         case 1:
           daysInRange.monday = currentDayTimestamp >= registerStartTime &&
