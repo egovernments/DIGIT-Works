@@ -55,7 +55,7 @@ public class Bill {
 	@Valid
 	private BigDecimal netPaidAmount = null;
 
-	@JsonProperty("businessService")
+	@JsonProperty("businessservice")
 	@NotNull
 	@Size(min = 2, max = 64)
 	private String businessService = null;
@@ -63,6 +63,10 @@ public class Bill {
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 64)
 	private String referenceId = null;
+
+	@JsonProperty("billType")
+	@Valid
+	private String billType = null;
 
 	@JsonProperty("fromPeriod")
 	@Valid
@@ -91,6 +95,7 @@ public class Bill {
 	private List<BillDetail> billDetails = new ArrayList<>();
 
 	@JsonProperty("additionalDetails")
+	@Valid
 	private Object additionalDetails = null;
 
 	@JsonProperty("auditDetails")

@@ -77,6 +77,13 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.bill.create.endpoint}")
 	private String billCreateEndPoint;
 
+	// Contract
+	@Value("${egov.contract.host}")
+	private String contractHost;
+
+	@Value("${egov.contract.search.endpoint}")
+	private String contractSearchEndPoint;
+
 	// HRMS
 	@Value("${egov.hrms.host}")
 	private String hrmsHost;

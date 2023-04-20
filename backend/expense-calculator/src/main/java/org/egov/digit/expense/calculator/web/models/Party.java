@@ -26,13 +26,14 @@ import lombok.NoArgsConstructor;
 public class Party {
 	@JsonProperty("type")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String type = null;
 
+	@JsonProperty("tenantId")
+	private String tenantId = null;
+
 	@JsonProperty("identifier")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String identifier = null;
 

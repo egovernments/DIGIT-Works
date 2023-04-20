@@ -3,7 +3,6 @@ package org.egov.digit.expense.calculator.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.enrichment.ExpenseCalculatorEnrichment;
 import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
@@ -14,7 +13,6 @@ import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.ws.Response;
 import java.util.*;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorConstants.SUCCESSFUL_CONSTANT;
@@ -29,9 +27,10 @@ public class ExpenseCalculatorService {
 
     @Autowired
     private ExpenseCalculatorEnrichment expenseCalculatorEnrichment;
-
     @Autowired
     private WageSeekerBillGeneratorService wageSeekerBillGeneratorService;
+    @Autowired
+    private PurchaseBillGeneratorService purchaseBillGeneratorService;
 
     @Autowired
     private MdmsUtils mdmsUtils;
@@ -67,7 +66,7 @@ public class ExpenseCalculatorService {
             Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, criteria.getTenantId());
             // Fetch all the approved muster rolls for provided muster Ids
             List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,false);
-            return wageSeekerBillGeneratorService.calculateEstimates(criteria.getTenantId(), musterRolls, wageSeekerSkillCodeAmountMapping);
+            return wageSeekerBillGeneratorService.calculateEstimates(requestInfo , criteria.getTenantId(), musterRolls, wageSeekerSkillCodeAmountMapping);
         }
        else {
             //TODO
@@ -75,6 +74,16 @@ public class ExpenseCalculatorService {
             return Calculation.builder().build();
         }
 
+    }
+
+    public List<Bill> createPurchaseBill(PurchaseBillRequest purchaseBillRequest){
+        expenseCalculatorServiceValidator.validatePurchaseRequest(purchaseBillRequest);
+        purchaseBillRequest.getDocuments();
+        Bill purchaseBill = purchaseBillGeneratorService.createPurchaseBill(purchaseBillRequest);
+        BillResponse billResponse = postBill(purchaseBillRequest.getRequestInfo(), purchaseBill);
+        List<Bill> bills = billResponse.getBill();
+        persistMeta(bills);
+        return bills;
     }
 
     public List<Bill> createBills(CalculationRequest calculationRequest){
@@ -87,10 +96,19 @@ public class ExpenseCalculatorService {
             Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, criteria.getTenantId());
             // Fetch musterRolls for given muster roll IDs
             List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,true);
-            List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(musterRolls,wageSeekerSkillCodeAmountMapping);
-            BillResponse billResponse = postBills(requestInfo, wageSeekerBills);
-            persistMeta(billResponse);
-            return billResponse.getBill();
+            List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,musterRolls,wageSeekerSkillCodeAmountMapping);
+            BillResponse billResponse = null;
+            List<Bill> submittedBills = new ArrayList<>();
+            for(Bill bill : wageSeekerBills) {
+                billResponse = postBill(requestInfo, bill);
+                if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
+                {
+                    List<Bill> bills = billResponse.getBill();
+                    persistMeta(bills);
+                    submittedBills.addAll(bills);
+                }
+            }
+            return submittedBills;
         }
         else {
             //TODO
@@ -105,13 +123,20 @@ public class ExpenseCalculatorService {
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         // Fetch wage seeker skills from MDMS
         Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, musterRoll.getTenantId());
-        List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(Collections.singletonList(musterRoll),wageSeekerSkillCodeAmountMapping);
-        BillResponse billResponse = postBills(requestInfo, wageSeekerBills);
-        persistMeta(billResponse);
+        List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,Collections.singletonList(musterRoll),wageSeekerSkillCodeAmountMapping);
+        BillResponse billResponse = null;
+        for(Bill bill : wageSeekerBills) {
+            billResponse = postBill(requestInfo, bill);
+            if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
+            {
+                List<Bill> bills = billResponse.getBill();
+                persistMeta(bills);
+            }
+        }
     }
 
-    private BillResponse postBills(RequestInfo requestInfo,List<Bill> wageSeekerBills){
-        return billUtils.postBills(requestInfo, wageSeekerBills);
+    private BillResponse postBill(RequestInfo requestInfo, Bill bill){
+        return billUtils.postBill(requestInfo, bill);
     }
 
     private Map<String,Double> fetchMDMSDataForWageSeekersSkills(RequestInfo requestInfo, String tenantId){
@@ -134,11 +159,8 @@ public class ExpenseCalculatorService {
         return musterRollUtils.fetchMusterRollByIds(requestInfo,tenantId,musterRollIds,onlyApproved);
     }
 
-    private void persistMeta(BillResponse billResponse) {
-        if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
-        {
-            BillMetaRecords billMetaRecords = billToMetaMapper.map(billResponse.getBill());
-            producer.push(configs.getCalculatorCreateBillTopic(),billMetaRecords);
-        }
+    private void persistMeta(List<Bill> bills) {
+        BillMetaRecords billMetaRecords = billToMetaMapper.map(bills);
+        producer.push(configs.getCalculatorCreateBillTopic(),billMetaRecords);
     }
 }

@@ -67,7 +67,6 @@ public class WorksCalculatorApiController {
 																	 .responseInfo(responseInfo)
 				                                                     .calculation(calculation)
 				                                                     .build();
-
 		return new ResponseEntity<CalculationResponse>(calculationResponse, HttpStatus.OK);
 	}
 

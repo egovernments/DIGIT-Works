@@ -31,12 +31,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BillDetail {
 	@JsonProperty("id")
-
 	@Valid
-	private UUID id = null;
+	private String id = null;
+
+	@JsonProperty("tenantId")
+	private String tenantId = null;
 
 	@JsonProperty("referenceId")
-
 	@Size(min = 2, max = 64)
 	private String referenceId = null;
 
