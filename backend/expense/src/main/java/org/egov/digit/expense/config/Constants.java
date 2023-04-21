@@ -26,6 +26,10 @@ public class Constants {
 			.unmodifiableList(Arrays.asList(TENANT_MASTERNAME));
 	private static final String INNER_JOIN = "INNER JOIN";
 	private static final String WHERE = " WHERE ";
+
+	public static final String BUSINESS_SERVICE_WAGE = "works.wage";
+	public static final String BUSINESS_SERVICE_PURCHASE = "works.purchase";
+	public static final String BUSINESS_SERVICE_SUPERVISION = "works.supervision";
 	
 	public static final String PAYMENT_QUERY = "SELECT "
 			

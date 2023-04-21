@@ -51,6 +51,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 			Long toPeriod = rs.getLong("bill_toperiod");
 			String billStatus = rs.getString("bill_status");
 			String paymentStatus = rs.getString("bill_paymentstatus");
+			String billNumber = rs.getString("bill_billnumber");
 			String createdby = rs.getString("bill_createdby");
 			String lastmodifiedby = rs.getString("bill_lastModifiedBy");
 			Long createdtime = rs.getLong("bill_createdTime");
@@ -76,6 +77,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.toPeriod(toPeriod)
 					.status(billStatus)
 					.paymentStatus(paymentStatus)
+					.billNumber(billNumber)
 					.additionalDetails(additionalDetails)
 					.auditDetails(auditDetails)
 					.build();

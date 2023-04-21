@@ -28,6 +28,7 @@ public class BillQueryBuilder {
             "bill.toperiod as bill_toperiod, "+
             "bill.status as bill_status, "+
             "bill.paymentstatus as bill_paymentstatus, "+
+            "bill.billNumber as bill_billnumber, "+
             "bill.createdby as bill_createdby, "+
             "bill.createdtime as bill_createdtime, "+
             "bill.lastmodifiedby as bill_lastmodifiedby, "+
