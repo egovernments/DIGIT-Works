@@ -429,7 +429,7 @@ export const createOrganizationConfigMUKTA = {
                         withoutLabel: true,
                         key: "taxIdentifier",
                         customProps : {
-                            isMandatory: true
+                            isMandatory: false
                         }
                     }
                 ]

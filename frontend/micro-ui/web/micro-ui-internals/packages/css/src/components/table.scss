@@ -1,6 +1,11 @@
 .table {
   @apply bg-white w-full;
 
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.16);
+  border-inline-width: 24px;
+  border-inline-color: white;
+
   thead {
     th {
       padding: 20px 18px;
@@ -30,6 +35,11 @@
   padding: 20px 40px 20px 0px;
   color: rgb(80, 90, 95);
 
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.16);
+  border-inline-width: 24px;
+  border-inline-color: white;
+
   svg {
     fill: #505a5f;
     @apply ml-md;
@@ -52,7 +62,7 @@
 
   th,
   td {
-    text-align: left;
+    text-align: right;
     border-bottom: 1px solid #b1b4b6;
     padding: 15px 10px;
   }
