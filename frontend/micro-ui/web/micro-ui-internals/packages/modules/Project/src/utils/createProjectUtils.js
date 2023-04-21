@@ -139,18 +139,18 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
           "address": {
             "id" : modifyParams?.modify_addressID,
             "tenantId": tenantId,
-            "doorNo": "1", //Not being captured on UI
-            "latitude": 90, //Not being captured on UI
-            "longitude": 180, //Not being captured on UI
-            "locationAccuracy": 10000, //Not being captured on UI
-            "type": "Home", //Not being captured on UI
+            // "doorNo": "1", //Not being captured on UI
+            // "latitude": 90, //Not being captured on UI
+            // "longitude": 180, //Not being captured on UI
+            // "locationAccuracy": 10000, //Not being captured on UI
+            // "type": "Home", //Not being captured on UI
             "addressLine1": project_details?.geoLocation,
-            "addressLine2": "Address Line 2", //Not being captured on UI
-            "landmark": "Area1", //Not being captured on UI
+            // "addressLine2": "Address Line 2", //Not being captured on UI
+            // "landmark": "Area1", //Not being captured on UI
             "city": project_details?.ulb?.code,
-            "pincode": "999999", //Not being captured on UI
-            "buildingName": "Test_Building", //Not being captured on UI
-            "street": "Test_Street", //Not being captured on UI
+            // "pincode": "999999", //Not being captured on UI
+            // "buildingName": "Test_Building", //Not being captured on UI
+            // "street": "Test_Street", //Not being captured on UI
             "boundary": project_details?.ward?.code, //ward code
             "boundaryType" : "Ward"
           },
