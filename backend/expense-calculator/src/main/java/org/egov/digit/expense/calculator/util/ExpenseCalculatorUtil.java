@@ -118,7 +118,7 @@ public class ExpenseCalculatorUtil {
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
         List<String> musterrollIds = new ArrayList<>();
         if (response != null && !CollectionUtils.isEmpty(response.getMusterRolls())) {
-            musterrollIds = response.getMusterRolls().stream().map(muster -> muster.getId()).collect(Collectors.toList());
+            musterrollIds = response.getMusterRolls().stream().map(muster -> muster.getMusterRollNumber()).collect(Collectors.toList());
         }
         return musterrollIds;
     }
@@ -127,7 +127,7 @@ public class ExpenseCalculatorUtil {
         StringBuilder url = searchURI(configs.getContractHost(), configs.getContractSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(100d).build();
         ContractCriteria searchCriteria = ContractCriteria.builder().requestInfo(requestInfo).tenantId(tenantId)
-                .ids(Collections.singletonList(contractId)).pagination(pagination).build();
+                .contractNumber(contractId).pagination(pagination).build();
         Object responseObj = restRepo.fetchResult(url, searchCriteria);
         ContractResponse response = mapper.convertValue(responseObj, ContractResponse.class);
         return response != null ? response.getContracts() : null;

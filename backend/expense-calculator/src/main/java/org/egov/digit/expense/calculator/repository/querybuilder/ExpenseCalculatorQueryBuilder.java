@@ -10,7 +10,7 @@ import java.util.List;
 public class ExpenseCalculatorQueryBuilder {
 
 
-    private static final String FETCH_CALCULATE_QUERY = "SELECT musterroll_id FROM eg_works_calculation ";
+    private static final String FETCH_CALCULATE_QUERY = "SELECT musterroll_num FROM eg_works_calculation ";
 
 
     public String getMusterRollsOfContract(String contractId, String billType, List<String> billIds, List<Object> preparedStmtList) {
@@ -30,7 +30,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (billIds != null && !billIds.isEmpty()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" muster.id IN (").append(createQuery(billIds)).append(")");
+            queryBuilder.append("bill_id IN (").append(createQuery(billIds)).append(")");
             addToPreparedStatement(preparedStmtList, billIds);
         }
 
