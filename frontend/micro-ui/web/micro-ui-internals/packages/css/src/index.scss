@@ -896,6 +896,9 @@ input[type="number"] {
 
 .search-instruction-header {
   margin-bottom: 1rem;
+  font-size: 16px;
+  font-weight: 700;
+  color: theme(colors.text.secondary);
 }
 
 .skill-details-wrapper {

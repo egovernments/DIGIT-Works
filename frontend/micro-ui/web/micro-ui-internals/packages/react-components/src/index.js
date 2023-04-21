@@ -264,6 +264,7 @@ import InboxSearchLinks from "./atoms/InboxSearchLinks";
 import UploadFileComposer from "./hoc/UploadFileComposer";
 import WorkflowTimeline from "./atoms/WorkflowTimeline";
 import WorkflowActions from "./atoms/WorkflowActions";
+import Amount from "./atoms/Amount";
 export {
   Button,
   ViewImages,
@@ -357,6 +358,7 @@ export {
   CollapseAndExpandGroups,
   HorizontalNav,
   NoResultsFound,
+  Amount,
   // Icons
   GetApp,
   ArrowLeft,

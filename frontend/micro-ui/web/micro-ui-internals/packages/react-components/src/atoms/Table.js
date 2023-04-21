@@ -101,7 +101,7 @@ const Table = ({
                   </th>
                 )}
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())} style={{ verticalAlign: "top" }}>
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())} style={{ verticalAlign: "top", textAlign: `${column?.headerAlign ? column?.headerAlign : "left"}` }}>
                     {column.render("Header")}
                     <span>{column.isSorted ? column.isSortedDesc ? <SortDown /> : <SortUp /> : ""}</span>
                   </th>

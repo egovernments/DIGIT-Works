@@ -132,7 +132,8 @@ const inboxConfigMukta = () => {
                             label: "ES_COMMON_AMOUNT",
                             jsonPath: "businessObject.totalContractedAmount",
                             additionalCustomization: true,
-                            "key": "estimatedAmount"
+                            "key": "estimatedAmount",
+                            headerAlign: "right"
                         },
                         {
                             "label": "COMMON_SLA_DAYS",
