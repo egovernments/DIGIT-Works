@@ -13,36 +13,25 @@ const PurchaseBill = () => {
     const isModify = queryStrings?.workOrderNumber ? false : true;
     const [nameOfVendor, setNameOfVendor] = useState([]);
     const [isFormReady, setIsFormReady] = useState(false);
+    const stateTenant = Digit.ULBService.getStateId();
 
-    // const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
-    // Digit.ULBService.getCurrentTenantId(),
-    // Digit.Utils.getConfigModuleName(),
-    // [
-    //     {
-    //         "name": "CreatePurchaseBillConfig"
-    //     }
-    // ],
-    // {
-    //   select: (data) => {
-    //       return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
-    //   },
-    // }
-    // );
+    const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
+    stateTenant,
+    Digit.Utils.getConfigModuleName(),
+    [
+        {
+            "name": "CreatePurchaseBillConfig"
+        }
+    ],
+    {
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
+      },
+    }
+    );
 
-    let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
-
-    // useEffect(()=>{
-    //     //if session PB# is diff from queryString PB#, reset sessionFormData
-    //     if(sessionFormData?.basicDetails_purchaseBillNumber !== queryStrings?.purchaseBillNumber) {
-    //         clearSessionFormData();
-    //     }
-    // },[])
-
-    // useEffect(()=>{
-    //     if(!isBillLoading && isModify) {
-    //         setContractNumber(bill?.additionalDetails?.contractNumber)
-    //     }
-    // },[bill])
+    //local config
+    //let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
 
     //fetching contract data
     const { isLoading: isContractLoading,data:contract } = Digit.Hooks.contracts.useContractSearch({
@@ -105,7 +94,7 @@ const PurchaseBill = () => {
     },[isContractLoading, isOrgSearchLoading, isDeductionsMasterDataLoading, contract]);
 
     
-    // if(isConfigLoading) return <Loader></Loader>
+    if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             <Header styles={{fontSize: "32px"}}>{isModify ? t("EXP_MODIFY_PB") : t("ACTION_TEST_CREATE_PB")}</Header>
