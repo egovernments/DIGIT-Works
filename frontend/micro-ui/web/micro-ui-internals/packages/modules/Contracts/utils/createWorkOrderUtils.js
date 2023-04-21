@@ -71,6 +71,11 @@ const documentType = {
     return documents_payload_list;
 }
 
+const handleTermsAndConditions = (data) => {
+  data.WOTermsAndConditions = data?.WOTermsAndConditions?.filter(WOTermsAndCondition=>WOTermsAndCondition);
+  return data.WOTermsAndConditions;
+}
+
 export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams}) => {
     return {
         contract : {
@@ -121,7 +126,7 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
                 "cboName" : inputFormdata?.nameOfCBO?.name,
                 "cboCode" : inputFormdata?.nameOfCBO?.code,
                 "totalEstimatedAmount" : estimate?.additionalDetails?.totalEstimatedAmount,
-                "termsAndConditions" : inputFormdata?.WOTermsAndConditions,
+                "termsAndConditions" : handleTermsAndConditions(inputFormdata),
                 "locality" : project?.additionalDetails?.locality,
                 "estimateNumber" : estimate?.estimateNumber,
                 "officerInChargeDesgn" : inputFormdata?.designationOfOfficerInCharge,
