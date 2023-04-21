@@ -43,7 +43,7 @@ class MusterGetWorkflowBloc
           isInWorkflow: !(musterWorkFlowModel.processInstances!.isNotEmpty &&
               musterWorkFlowModel.processInstances?.first.workflowState
                       ?.applicationStatus ==
-                  'REJECTED')));
+                  'SENTBACK')));
     } on DioError catch (e) {
       emit(const MusterGetWorkflowState.error());
     }
