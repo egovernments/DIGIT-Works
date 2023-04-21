@@ -86,7 +86,7 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
               "individualEntries": event.skillsList ?? []
             },
             "workflow": {
-              "action": "RESUBMIT",
+              "action": "RE-SUBMIT",
               "comments": "Resubmit muster roll",
               "assignees": []
             }

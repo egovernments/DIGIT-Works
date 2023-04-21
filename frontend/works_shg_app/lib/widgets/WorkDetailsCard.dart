@@ -133,16 +133,21 @@ class WorkDetailsCard extends StatelessWidget {
       labelList.add(getItemWidget(context,
           title: AppLocalizations.of(context)
               .translate(cardDetails.keys.elementAt(j).toString()),
-          description:
-              cardDetails.keys.elementAt(j).toString() == i18.common.status
-                  ? AppLocalizations.of(context)
-                      .translate(cardDetails.values.elementAt(j).toString())
-                  : cardDetails.values.elementAt(j).toString(),
-          isActiveStatus: cardDetails.keys.elementAt(j).toString() ==
-                  i18.common.status &&
-              cardDetails.values.elementAt(j).toString() != Constants.rejected,
+          description: cardDetails.keys.elementAt(j).toString() ==
+                  i18.common.status
+              ? AppLocalizations.of(context)
+                  .translate(cardDetails.values.elementAt(j).toString())
+              : cardDetails.values.elementAt(j).toString(),
+          isActiveStatus:
+              cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+                  (cardDetails.values.elementAt(j).toString() !=
+                          Constants.rejected ||
+                      cardDetails.values.elementAt(j).toString() !=
+                          Constants.sentBack),
           isRejectStatus: cardDetails.values.elementAt(j).toString() ==
-              Constants.rejected));
+                  Constants.rejected ||
+              cardDetails.values.elementAt(j).toString() ==
+                  Constants.sentBack));
     }
     if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Column(
@@ -348,7 +353,7 @@ class WorkDetailsCard extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: isActiveStatus
+                      color: isActiveStatus && !isRejectStatus
                           ? DigitTheme.instance.colorScheme.onSurfaceVariant
                           : isRejectStatus
                               ? DigitTheme.instance.colorScheme.error
