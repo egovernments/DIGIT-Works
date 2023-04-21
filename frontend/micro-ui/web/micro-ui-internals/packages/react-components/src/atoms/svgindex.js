@@ -842,7 +842,6 @@ const DeleteIcon = ({ style, fill }) => (
   </svg>
 );
 
-
 const CreateLoiIcon = ({ style, fill = "#F47738" }) => (
   <svg style={style} width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -1065,8 +1064,11 @@ const ValidityTimeIcon = ({ className, styles }) => (
 );
 
 const AddIcon = ({ styles, className, fill = "white" }) => (
-  <svg width="12" height="14" className={className} style={{ ...styles }} viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M11.8125 5.49609V8.4375H0.117188V5.49609H11.8125ZM7.57031 0.867188V13.2891H4.37109V0.867188H7.57031Z" fill={fill} />
+  <svg width="14" height="14" className={className} style={{ ...styles }} viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M11.7896 2.58402C9.24786 0.0490554 5.13886 0.0490554 2.59717 2.58402C0.0554699 5.11898 0.0554701 9.21709 2.59717 11.752C5.13886 14.287 9.24786 14.287 11.7896 11.752C14.3312 9.21709 14.3312 5.11898 11.7896 2.58402ZM7.84142 11.1057H6.5453V7.81438H3.24523L3.24523 6.52169H6.5453V3.23036H7.84142V6.52169H11.1415L11.1415 7.81438H7.84142V11.1057Z"
+      fill={fill}
+    />
   </svg>
 );
 

@@ -232,7 +232,7 @@ export const WorksSearch = {
             tableStyles:{
                 rowStyle:{},
                 cellStyle: [{}, { "width": "40vw",whiteSpace: 'break-spaces',
-                wordBreak: 'break-all' }, {}, {"textAlign":"right"}, {"textAlign":"right"},{"textAlign":"right"}]
+                wordBreak: 'break-all' }, {}, {"textAlign":"right"}, {"textAlign":"left"},{"textAlign":"right"}]
             }
         }
         const overheadItems = {
@@ -245,7 +245,7 @@ export const WorksSearch = {
             tableStyles: {
                 rowStyle: {},
                 cellStyle: [{}, { "width": "50vw", whiteSpace: 'break-spaces',
-                wordBreak: 'break-all' }, {"textAlign":"right"}, { "textAlign": "right" }]
+                wordBreak: 'break-all' }, {"textAlign":"left"}, { "textAlign": "right" }]
             }
         }
         
