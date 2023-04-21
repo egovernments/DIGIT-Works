@@ -190,6 +190,8 @@ export const FormComposer = (props) => {
                 disable={disable}
                 errorStyle={errors?.[populators.name]}
                 style={{marginTop: 0}}
+                maxlength={populators?.validation?.maxlength}
+                minlength={populators?.validation?.minlength}
               />
             )}
             name={populators.name}

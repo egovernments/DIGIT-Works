@@ -28,7 +28,9 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
+        if (FocusScope.of(context).hasFocus) {
+          FocusScope.of(context).unfocus();
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(16),

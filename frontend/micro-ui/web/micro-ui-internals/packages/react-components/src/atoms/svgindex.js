@@ -283,7 +283,7 @@ const PDFSvg = ({
   className,
   width = 80,
   height = 80,
-  style = { background: "#f6f6f6", padding: "8px", boxShadow: "0px 2px 0px #d6d5d3", borderRadius: "2px" },
+  style = { background: "#f6f6f6", padding: "8px", boxShadow: "0px 2px 0px #d6d5d3", borderRadius: "4px" },
   viewBox = "0 0 80 80",
 }) => (
   <svg {...{ className, width, height, style, viewBox }} fill="none" xmlns="http://www.w3.org/2000/svg">

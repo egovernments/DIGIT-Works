@@ -75,10 +75,11 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
         docConfig?.documents?.map((item, index) => {
           if(!item?.active) return
           return ( 
-            <LabelFieldPair key={index}>
+            <LabelFieldPair key={index} style={{ alignItems: item?.showTextInput? "flex-start":"center"}}>
               { item.code && (
                 <CardLabel
                   className="bolder"
+                  style={{ marginTop: item?.showTextInput? "10px":"" }}
                 >
                   { t(`${localePrefix}_${item?.code}`)} { item?.isMandatory ? " * " : null }
                 </CardLabel>) 
