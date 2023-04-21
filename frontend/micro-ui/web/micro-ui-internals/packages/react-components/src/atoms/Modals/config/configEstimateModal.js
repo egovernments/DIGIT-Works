@@ -212,6 +212,42 @@ const configEstimateModal = (
                     isMandatory: false,
                     show: true
                 },
+            },
+            "SENDBACK":{
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:false,
+                    show:false
+                }
+            },
+            "SENDBACKTOCBO":{
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:false,
+                    show:false
+                }
             }
         }
     }
