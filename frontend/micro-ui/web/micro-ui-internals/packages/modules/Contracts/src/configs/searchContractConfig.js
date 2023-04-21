@@ -222,6 +222,7 @@ return {
             label: "ES_COMMON_AMOUNT",
             jsonPath: "businessObject.totalContractedAmount",
             additionalCustomization: true,
+            headerAlign: "right"
           },
         ],
         enableGlobalSearch: false,

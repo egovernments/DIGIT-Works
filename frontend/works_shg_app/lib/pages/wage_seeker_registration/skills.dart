@@ -66,75 +66,86 @@ class SkillDetailsState extends State<SkillDetailsPage> {
         .map((e) => e.code)
         .toList();
 
-    return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          DigitCard(
-            margin: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  t.translate(i18.attendanceMgmt.skillDetails),
-                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-                      ?.apply(color: const DigitColors().black),
-                ),
-                Column(children: [
-                  StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setState) {
-                    return MultiSelectSearchCheckBox(
-                      label: t.translate(i18.attendanceMgmt.skill) + '*',
-                      onChange: _onSelectedOptionsChanged,
-                      options: skills,
-                      selectedOptions: selectedOptions,
-                    );
-                  })
-                ]),
-                const SizedBox(height: 16),
-                Center(
-                  child: DigitElevatedButton(
-                      onPressed: selectedOptions != null &&
-                              selectedOptions.isNotEmpty
-                          ? () {
-                              if (!getSkillsValid()) {
-                                Notifiers.getToastMessage(
-                                    context,
-                                    i18.wageSeeker.selectSkillValidation,
-                                    'ERROR');
-                              } else {
-                                final skillList = SkillDetails(
-                                    individualSkills: selectedOptions
-                                        .map((e) => IndividualSkill(
-                                            type: e.toString().split('.').last,
-                                            // .replaceAll('_', '')
-                                            // .capitalize(),
-                                            level:
-                                                e.toString().split('.').first))
-                                        .toList());
-                                BlocProvider.of<WageSeekerBloc>(context).add(
-                                  WageSeekerCreateEvent(
-                                      individualDetails: individualDetails,
-                                      skillDetails: skillList,
-                                      locationDetails: locationDetails,
-                                      financialDetails: financialDetails),
-                                );
-                                widget.onPressed();
+    return GestureDetector(
+      onTap: () {
+        if (FocusScope.of(context).hasFocus) {
+          FocusScope.of(context).unfocus();
+        }
+      },
+      child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            DigitCard(
+              margin: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    t.translate(i18.attendanceMgmt.skillDetails),
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.displayMedium
+                        ?.apply(color: const DigitColors().black),
+                  ),
+                  Column(children: [
+                    StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                      return MultiSelectSearchCheckBox(
+                        label: t.translate(i18.attendanceMgmt.skill) + '*',
+                        onChange: _onSelectedOptionsChanged,
+                        options: skills,
+                        selectedOptions: selectedOptions,
+                      );
+                    })
+                  ]),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: DigitElevatedButton(
+                        onPressed: selectedOptions != null &&
+                                selectedOptions.isNotEmpty
+                            ? () {
+                                if (!getSkillsValid()) {
+                                  Notifiers.getToastMessage(
+                                      context,
+                                      i18.wageSeeker.selectSkillValidation,
+                                      'ERROR');
+                                } else {
+                                  final skillList = SkillDetails(
+                                      individualSkills: selectedOptions
+                                          .map((e) => IndividualSkill(
+                                              type:
+                                                  e.toString().split('.').last,
+                                              // .replaceAll('_', '')
+                                              // .capitalize(),
+                                              level: e
+                                                  .toString()
+                                                  .split('.')
+                                                  .first))
+                                          .toList());
+                                  BlocProvider.of<WageSeekerBloc>(context).add(
+                                    WageSeekerCreateEvent(
+                                        individualDetails: individualDetails,
+                                        skillDetails: skillList,
+                                        locationDetails: locationDetails,
+                                        financialDetails: financialDetails),
+                                  );
+                                  widget.onPressed();
+                                }
                               }
-                            }
-                          : null,
-                      child: Center(
-                        child: Text(t.translate(i18.common.next)),
-                      )),
-                )
-              ],
+                            : null,
+                        child: Center(
+                          child: Text(t.translate(i18.common.next)),
+                        )),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      }),
+    );
   }
 
   bool getSkillsValid() {
