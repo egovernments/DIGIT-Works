@@ -187,6 +187,7 @@
 .disabled {
   @apply border-grey-dark text-grey-dark !important;
   pointer-events: none !important;
+  background-color: #EEEEEE;
 }
 
 .card-date-input {
@@ -927,11 +928,12 @@ input[type="number"] {
   border: none;
   display: flex;
   padding-top: 10px;
+  background-color: #fff;
 }
 
 .disabled-text-field {
   color: #000 !important;
-  background-color: #FAFAFA;
+  background-color: #EEEEEE;
 }
 
 .status-table-custom-class {
@@ -945,10 +947,6 @@ input[type="number"] {
   padding: 0;
 }
 
-.label-field-pair {
-  align-items: flex-start !important;
-}
-
 .icon-wrapper {
   display: flex;
   justify-content: center;
@@ -956,10 +954,29 @@ input[type="number"] {
 
 .tooltiptext {
   white-space: break-spaces !important;
-  width: 20rem;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  max-height: 7.2em;
+  line-height: 1.8em;
+  width: max-content; 
+  max-width: 64ch;
 }
+.table{
+  tr:nth-child(1) {
+    td:nth-child(2){
+      .tooltip {
+          .tooltiptext {
+              top: 100% !important;
+              bottom: 0% !important;
+              height: max-content;
+          }
+      }
+    }
+  }
+    
+}
+
 .employee-data-table  {
 .row {
   .value {

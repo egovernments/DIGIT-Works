@@ -30,12 +30,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LineItem {
 	@JsonProperty("id")
-
 	private String id = null;
+
+	@JsonProperty("billDetailId")
+	@Valid
+	private String billDetailId;
 
 	@JsonProperty("tenantId")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
@@ -47,7 +49,6 @@ public class LineItem {
 
 	@JsonProperty("amount")
 	@NotNull
-
 	@Valid
 	private BigDecimal amount = null;
 
@@ -84,24 +85,22 @@ public class LineItem {
 
 	@JsonProperty("type")
 	@NotNull
-
 	private TypeEnum type = null;
 
 	@JsonProperty("paidAmount")
-
 	@Valid
 	private BigDecimal paidAmount = null;
 
 	@JsonProperty("status")
-
 	private String status = null;
 
-	@JsonProperty("additionalDetails")
+	@JsonProperty("isLineItemPayable")
+	private Boolean isLineItemPayable;
 
+	@JsonProperty("additionalDetails")
 	private Object additionalDetails = null;
 
 	@JsonProperty("auditDetails")
-
 	@Valid
 	private AuditDetails auditDetails = null;
 

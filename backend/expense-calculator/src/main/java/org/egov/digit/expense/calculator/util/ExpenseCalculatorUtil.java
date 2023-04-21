@@ -124,7 +124,7 @@ public class ExpenseCalculatorUtil {
     }
 
     public List<Contract> fetchContract(RequestInfo requestInfo, String tenantId, String contractId) {
-        StringBuilder url = searchURI(configs.getContractHost(), configs.getContractEndPoint());
+        StringBuilder url = searchURI(configs.getContractHost(), configs.getContractSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(100d).build();
         ContractCriteria searchCriteria = ContractCriteria.builder().requestInfo(requestInfo).tenantId(tenantId)
                 .ids(Collections.singletonList(contractId)).pagination(pagination).build();
