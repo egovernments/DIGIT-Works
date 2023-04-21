@@ -896,6 +896,9 @@ input[type="number"] {
 
 .search-instruction-header {
   margin-bottom: 1rem;
+  font-size: 16px;
+  font-weight: 700;
+  color: theme(colors.text.secondary);
 }
 
 .skill-details-wrapper {
@@ -942,6 +945,7 @@ input[type="number"] {
   border: none;
   color: black !important;
   padding: 0;
+  background-color: white;
 }
 
 .icon-wrapper {
