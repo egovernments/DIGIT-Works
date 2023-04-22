@@ -754,7 +754,7 @@ input[type="number"] {
     padding: 0px !important;
   }
   .card-label.bolder{
-    font-weight: 700 !important;
+     @apply font-medium !important;
   }
 }
 
@@ -1008,4 +1008,14 @@ input[type="number"] {
   .employee-search-input{
       margin-left:16px !important;
   }
+}
+.h1 {&.works-header-search{
+font-size: 30px;
+}
+&.works-header-create{
+  font-size: 30px;
+}
+&.works-header-view{
+  font-size: 30px;
+}
 }

@@ -27,7 +27,7 @@ const SearchAttendance = () => {
 
   return (
     <React.Fragment>
-      <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}</Header>
+      <Header className="works-header-search">{t(updatedConfig?.label)}</Header>
       <div className="inbox-search-wrapper">
         <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
       </div>
