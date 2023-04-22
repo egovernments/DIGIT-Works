@@ -16,7 +16,7 @@
   "BusinessServices": [
     {
       "tenantId": "pg",
-      "businessService": "contract-approval-mukta",
+      "businessService": "contract-approval-for-mukta",
       "business": "contract-service",
       "businessServiceSla": 604800000,
       "states": [
@@ -31,32 +31,7 @@
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "CREATED",
-              "roles": [
-                "WORK_ORDER_CREATOR"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": null,
-          "state": "CREATED",
-          "applicationStatus": "CREATED",
-          "docUploadRequired": false,
-          "isStartState": true,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
-            {
-              "action": "SUBMIT",
               "nextState": "PENDING_FOR_VERIFICATION",
-              "roles": [
-                "WORK_ORDER_CREATOR"
-              ]
-            },
-            {
-              "action": "REJECT",
-              "nextState": "REJECTED",
               "roles": [
                 "WORK_ORDER_CREATOR"
               ]
@@ -113,7 +88,7 @@
             },
             {
               "action": "SEND_BACK",
-              "nextState": "PENDING_FOR_VERIFICATION",
+              "nextState": "PENDING_FOR_VERIFICATION_SENT_BACK",
               "roles": [
                 "WORK_ORDER_APPROVER"
               ]
@@ -212,6 +187,38 @@
               "nextState": "REJECTED",
               "roles": [
                 "WORK_ORDER_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "PENDING_FOR_VERIFICATION_SENT_BACK",
+          "applicationStatus": "SENT_BACK",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "VERIFY_AND_FORWARD",
+              "nextState": "PENDING_FOR_APPROVAL",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
+              ]
+            },
+            {
+              "action": "SEND_BACK",
+              "nextState": "PENDING_FOR_CORRECTION",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
               ]
             }
           ]

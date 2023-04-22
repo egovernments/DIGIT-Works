@@ -26,7 +26,7 @@ const LabourAnalysis = ({watch,formState,...props}) => {
     const inputStyle = {marginBottom:'0px'};
     
   return (
-      <Card style={{ backgroundColor: "#FAFAFA",marginTop:"2rem" }}>
+      <Card style={{ backgroundColor: "#FAFAFA",marginTop:"2rem",boxShadow:'none',border:'1px solid #D6D5D4' }}>
           <CardSectionHeader style={{ marginTop: "14px",marginBottom:"1rem" }}>{t(`ESTIMATE_LABOUR_ANALYSIS`)}</CardSectionHeader>
           <LabelFieldPair style={{marginBottom:'2rem'}}>
               <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600",marginBottom:"-10px" }}>{`${t(`ESTIMATE_LABOUR_COST`)}*`}</CardLabel>

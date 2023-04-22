@@ -10,6 +10,7 @@ const useProjectSearch = ({ tenantId, searchParams, filters = { limit: 10, offse
         () => WorksService.searchProject(tenantId, searchParams, filters),
         {
             ...config,
+            cacheTime:0,
             select: (data) => {
                 return data?.Projects?.[0]
             }

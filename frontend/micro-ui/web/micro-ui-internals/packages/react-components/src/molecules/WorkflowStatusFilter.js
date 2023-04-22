@@ -11,7 +11,7 @@ const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse }) 
 
   useEffect(() => {
     if(inboxResponse) {
-      setStatusMap(inboxResponse.statusMap.map(row => {
+      setStatusMap(inboxResponse.statusMap?.map(row => {
        return {
          uuid:row.statusid,
          state: row.applicationstatus
@@ -21,7 +21,7 @@ const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse }) 
   }, [inboxResponse])
   
 
-  if (!statusMap) return <Loader />;
+  if (!statusMap && !inboxResponse) return <Loader />;
 
   return (
     <>
