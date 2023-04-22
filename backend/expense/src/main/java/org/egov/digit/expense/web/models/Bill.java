@@ -82,6 +82,9 @@ public class Bill {
 	@Size(min = 2, max = 64)
 	private String status;
 
+	@JsonProperty("billNumber")
+	private String billNumber;
+
 	@JsonProperty("payer")
 	@NotNull
 	@Valid
