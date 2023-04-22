@@ -136,7 +136,8 @@ public class NotificationService {
 
         //get location name from boundary type
         String boundaryCode = projectDetails.get("boundary");
-        Map<String, String> locationName = locationServiceUtil.getLocationName(tenantId, requestInfo, boundaryCode);
+        String boundaryType = projectDetails.get("boundaryType");
+        Map<String, String> locationName = locationServiceUtil.getLocationName(tenantId, requestInfo, boundaryCode,boundaryType);
 
         smsDetails.putAll(userDetailsForSMS);
         smsDetails.putAll(projectDetails);
