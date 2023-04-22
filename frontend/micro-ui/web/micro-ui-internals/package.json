@@ -9,7 +9,7 @@
     "packages/react-components",
     "packages/modules/Contracts",
     "packages/modules/Estimate",
-    "packages/modules/*",
+    "packages/modules/AttendenceMgmt",
     "packages/Mukta"
   ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",

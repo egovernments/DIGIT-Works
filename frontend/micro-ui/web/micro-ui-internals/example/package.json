@@ -20,7 +20,6 @@
     "@egovernments/digit-ui-module-project": "0.1.3",
     "@egovernments/digit-ui-module-expenditure": "0.1.0",
     "@egovernments/digit-ui-customisation-mukta": "0.1.0",
-    "@egovernments/digit-ui-works-css":"0.1.3",
     "http-proxy-middleware": "^1.0.5",
     "react": "17.0.2",
     "react-dom": "17.0.2",

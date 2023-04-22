@@ -22,7 +22,6 @@ import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukt
 // import * as comps from "@egovernments/digit-ui-react-components";
 
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";
-import "@egovernments/digit-ui-works-css/dist/index.css";
 
 import { pgrCustomizations  } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
