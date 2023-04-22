@@ -1,0 +1,12 @@
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_id ON eg_wms_loi (id);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_tenantId ON eg_wms_loi (tenantId);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_loi_number ON eg_wms_loi (loi_number);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_work_pkg_number ON eg_wms_loi (work_pkg_number);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_work_identification_number ON eg_wms_loi (work_identification_number);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_file_number ON eg_wms_loi (file_number);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_file_date ON eg_wms_loi (file_date);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_contractor_id ON eg_wms_loi (contractor_id);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_oic_id ON eg_wms_loi (oic_id);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_status ON eg_wms_loi (status);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_letter_status ON eg_wms_loi (letter_status);
+CREATE INDEX IF NOT EXISTS index_eg_wms_loi_created_time ON eg_wms_loi (createdtime);
