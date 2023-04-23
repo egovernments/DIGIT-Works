@@ -123,6 +123,23 @@ const OverheadsTable = ({ control, watch, ...props }) => {
     return true;
   };
   const removeRow = (row) => {
+
+    const countRows = rows.reduce((acc,row)=> {
+      return row.isShow ? acc+1 : acc
+    },0)
+    if(countRows === 1) {
+      //clear the 1st rows data
+      
+      formData?.[formFieldName]?.map((row,index) => {
+        if(row) {
+          setValue(`${formFieldName}.${index}.name`,'')
+          setValue(`${formFieldName}.${index}.percentage`,'')
+          setValue(`${formFieldName}.${index}.amount`,'')
+        }
+      })
+      
+      return 
+    }
     //make a new state here which doesn't have this key
     const updatedState = rows.map((e) => {
       if (e.key === row.key) {
@@ -315,7 +332,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
 
           <td style={getStyles(5)}>
             <div style={cellContainerStyle}>
-              {showDelete() && (
+              {(
                 <span onClick={() => removeRow(row)} className="icon-wrapper">
                   <DeleteIcon fill={"#B1B4B6"} />
                 </span>
@@ -328,6 +345,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
     )
     });
   }, [rows,sorTotal,formData])
+
 
   return (
     <table className="table reports-table sub-work-table" style={{ marginTop: "-2rem" }}>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import _ from "lodash";
 import React from "react";
+import { Amount } from "@egovernments/digit-ui-react-components";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -70,7 +71,7 @@ export const UICustomizations = {
           return <span>{t(`WF_EST_${value}`)}</span>;
 
          case "WORKS_ESTIMATED_AMOUNT":
-          return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+          return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
 
          case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
@@ -299,8 +300,7 @@ export const UICustomizations = {
         );
       }
       if (key === "WORKS_ESTIMATED_AMOUNT") {
-        // const amt = row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0);
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
       }
       if(key === "CORE_COMMON_STATUS"){
         return t(`WF_ESTIMATE_STATUS_${value}`)
@@ -446,7 +446,7 @@ export const UICustomizations = {
          ); }
 
       case "PROJECT_ESTIMATED_COST_IN_RS":
-        return value? <p>{`${Digit.Utils.dss.formatterWithoutRound(value, "number")}`}</p> : <p>{"NA"}</p>;
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
 
       case "ES_COMMON_LOCATION":    
       { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
@@ -664,7 +664,7 @@ export const UICustomizations = {
           return <span>{t(`WF_WO_${value}`)}</span>;
 
         case "ES_COMMON_AMOUNT":
-          return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
+          return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
 
         case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
@@ -732,8 +732,7 @@ export const UICustomizations = {
           </span>
         );
       case "ES_COMMON_AMOUNT":
-        return Digit.Utils.dss.formatterWithoutRound(value, "number");
-
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
       case "COMMON_ROLE_OF_CBO": 
         return <span>{t(`COMMON_MASTERS_${value}`)}</span>;
 

@@ -175,7 +175,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                           workOrderList.first['payload']['wfStatus'] ==
                               'ACCEPTED'
                       ? SizedBox(
-                          height: 80,
+                          height: 90,
                           child: DigitCard(
                             child: DigitElevatedButton(
                               onPressed: () {

@@ -154,7 +154,8 @@ const searchConfigMUKTA = {
                             {
                                 label: "PROJECT_ESTIMATED_COST_IN_RS",
                                 jsonPath: "additionalDetails.estimatedCostInRs",
-                                additionalCustomization:true
+                                additionalCustomization:true,
+                                headerAlign: "right"
                             }
                         ],
                         enableGlobalSearch: false,

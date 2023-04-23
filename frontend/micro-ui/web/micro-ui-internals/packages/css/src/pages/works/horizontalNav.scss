@@ -50,8 +50,10 @@
             padding-left: 30px;
             background-color: #EEEEEE;
             border: 1px solid #DDDDDD;
+            border-radius: 8px 8px 0px 0px;
 
             &.active {
+                font-weight: 600;
                 border-bottom: 3px solid #f47738;
 
                 background-color: #FFFFFF;

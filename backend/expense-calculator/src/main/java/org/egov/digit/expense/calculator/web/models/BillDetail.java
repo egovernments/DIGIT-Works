@@ -36,15 +36,15 @@ public class BillDetail {
 	@NotNull
 	@Size(min = 2, max = 64)
 	private String tenantId;
-	
+
 	@JsonProperty("billId")
 	@Valid
 	private String billId;
-	
+
 	@JsonProperty("netLineItemAmount")
 	@Valid
 	private BigDecimal netLineItemAmount;
-	
+
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 64)
 	private String referenceId;
@@ -69,16 +69,16 @@ public class BillDetail {
 	@JsonProperty("lineItems")
 	@Valid
 	private List<LineItem> lineItems;
-	
+
 	@JsonProperty("payableLineItems")
 	@NotNull
 	@Valid
 	private List<LineItem> payableLineItems;
-	
+
 	@JsonProperty("auditDetails")
 	@Valid
 	private AuditDetails auditDetails;
-	
+
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 
@@ -92,7 +92,7 @@ public class BillDetail {
 	}
 
 	public BillDetail addPayableLineItems(LineItem payableLineItem) {
-		
+
 		if (this.payableLineItems == null) {
 			this.payableLineItems = new ArrayList<>();
 		}

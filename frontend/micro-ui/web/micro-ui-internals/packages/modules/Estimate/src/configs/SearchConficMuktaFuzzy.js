@@ -176,6 +176,7 @@ const searchConfigMuktaFuzzy = () => {
               label: "WORKS_ESTIMATED_AMOUNT",
               jsonPath: "businessObject.additionalDetails.totalEstimatedAmount",
               additionalCustomization: true,
+              headerAlign: "right"
             },
           ],
           enableGlobalSearch: false,
