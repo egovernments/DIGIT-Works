@@ -3,13 +3,13 @@ import { useQuery } from 'react-query';
 import { useTranslation } from "react-i18next";
 import { View } from '../../services/molecules/Expenditure/Bills/View';
 
-const useViewBill = (tenantId, data, searchParams, config = {}) => {
+const useViewWageBill = ({tenantId, data, config = {}}) => {
     const { t } = useTranslation();
     return useQuery(
-        ["BILL_DETAILS", tenantId, searchParams], 
-        () => View.fetchBillDetails(t, tenantId, data, searchParams), 
+        ["BILL_DETAILS", tenantId], 
+        () => View.fetchBillDetails(t, tenantId, data), 
         config
     );
 }
 
-export default useViewBill;
+export default useViewWageBill;
