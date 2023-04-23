@@ -43,7 +43,7 @@
             white-space: nowrap;
         }
     }
-
+   
     @media (min-width: 780px) {
         .sidebar-list {
             padding-right: 30px;
@@ -54,16 +54,16 @@
 
             &.active {
                 font-weight: 600;
-                border-bottom: 3px solid #f47738;
+                border-bottom: 3px solid theme(colors.primary.main);
 
                 background-color: #FFFFFF;
 
                 .menu-label {
-                    color: #f47738;
+                    color: theme(colors.primary.main);
                 }
 
                 .icon {
-                    fill: #f47738;
+                    fill: theme(colors.primary.main);
                 }
             }
 
@@ -76,10 +76,11 @@
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-
+                    padding: 15px!important;
+                    padding-top: 20px!important;
                     svg {
-                        width: 21px;
-                        height: 21px;
+                        width: 24px !important;
+                        height: 24px !important;
                         color: rgb(117, 117, 117);
                         fill: rgb(117, 117, 117);
                     }
@@ -106,6 +107,12 @@
                     }
                 }
             }
+            .submenu-container:first-child {
+                margin-top:5px;
+                .employee-search-input{
+                    margin-left:16px !important;
+                }
+              }
         }
 
         .dropdown-link {
@@ -125,5 +132,18 @@
                 }
             }
         }
+    }
+}
+.sidebar-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px!important;
+    padding-top: 20px!important;
+    svg {
+        width: 24px !important;
+        height: 26px !important;
+        color: rgb(117, 117, 117);
+        fill: rgb(117, 117, 117);
     }
 }
