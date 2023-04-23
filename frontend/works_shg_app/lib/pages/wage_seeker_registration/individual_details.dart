@@ -177,6 +177,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                     DigitDateFormPicker(
                       label: t.translate(i18.common.dateOfBirth),
                       isRequired: true,
+                      icon: Icons.info_outline_rounded,
+                      toolTipMsg: t.translate(i18.wageSeeker.ageValidation),
                       formControlName: dobKey,
                       autoValidation: AutovalidateMode.always,
                       requiredMessage: t.translate(i18.wageSeeker.dobRequired),

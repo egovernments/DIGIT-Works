@@ -1,5 +1,6 @@
 package org.egov.digit.expense.calculator.web.models;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,16 +25,38 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Party {
+	@JsonProperty("id")
+	@Valid
+	private String id;
+
+	@JsonProperty("parentId")
+	@Valid
+	private String parentId;
+
+	@JsonProperty("tenantId")
+	@NotNull
+	@Size(min = 2, max = 64)
+	private String tenantId;
+
 	@JsonProperty("type")
 	@NotNull
-
 	@Size(min = 2, max = 64)
-	private String type = null;
+	private String type;
 
 	@JsonProperty("identifier")
 	@NotNull
-
 	@Size(min = 2, max = 64)
-	private String identifier = null;
+	private String identifier;
+
+	@JsonProperty("status")
+	@Size(min = 2, max = 64)
+	private String status;
+
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
+
+	@JsonProperty("auditDetails")
+	@Valid
+	private AuditDetails auditDetails;
 
 }

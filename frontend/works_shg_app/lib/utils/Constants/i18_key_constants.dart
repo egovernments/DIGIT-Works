@@ -206,6 +206,7 @@ class WageSeeker {
   String get skill => 'WAGE_SEEKER_SKILL';
   String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
   String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
+  String get ageInfo => 'AGE_SHOULD_BE_18_OR_ABOVE';
   String get wageSeekerSuccessSubText => 'CREATE_INDIVIDUAL_SUCCESS_SUB_TEXT';
   String get selectSkillValidation => 'CANNOT_HAVE_SAME_SKILL_TYPE';
   String get enterValidIFSC => 'ENTER_VALID_IFSC_CODE';

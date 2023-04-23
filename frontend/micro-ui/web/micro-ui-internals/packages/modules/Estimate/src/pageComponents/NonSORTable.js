@@ -68,7 +68,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
         obj = { width: "30rem" };
         break;
       case 3:
-        obj = { width: "10rem" };
+        obj = { width: "12rem" };
         break;
       case 4:
         obj = { width: "10rem" };
@@ -120,6 +120,25 @@ const NonSORTable = ({ control, watch, ...props }) => {
     return true;
   };
   const removeRow = (row) => {
+    const countRows = rows.reduce((acc,row)=> {
+      return row.isShow ? acc+1 : acc
+    },0)
+    if(countRows === 1) {
+      //clear the 1st rows data
+     
+      formData?.[formFieldName]?.map((row,index) => {
+        if(row) {
+          setValue(`${formFieldName}.${index}.description`,'')
+          setValue(`${formFieldName}.${index}.rate`,'')
+          setValue(`${formFieldName}.${index}.uom`,'')
+          setValue(`${formFieldName}.${index}.estimatedQuantity`,'')
+          setValue(`${formFieldName}.${index}.estimatedAmount`,'')
+        }
+      })
+      
+      return 
+    }
+    
     //make a new state here which doesn't have this key
     const updatedState = rows.map((e) => {
       if (e.key === row.key) {
@@ -288,7 +307,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
               <div style={cellContainerStyle}>
                 <div>
                   <TextInput
-                    style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                    style={{ marginBottom: "0px", textAlign: "left", paddingRight: "1rem" }}
                     name={`${formFieldName}.${row.key}.estimatedQuantity`}
                     inputRef={register({
                       required: true,
@@ -333,7 +352,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
             </td>
             <td style={getStyles(8)}>
               <div style={cellContainerStyle}>
-                {showDelete() && (
+                { (
                   <span onClick={() => removeRow(row)} className="icon-wrapper">
                     <DeleteIcon fill={"#B1B4B6"} />
                   </span>
@@ -347,6 +366,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
     });
   }, [rows,formData])
 
+  
   return (
     <table className="table reports-table sub-work-table" style={{ marginTop: "-2rem" }}>
       <thead>
