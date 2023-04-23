@@ -334,20 +334,18 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         validTo: formData?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)
     }]
     organisation.identifiers = formData?.taxIdentifierData?.map(item => {
-        if(item?.name) {
-            if(item?.name?.code === "PAN"){
-                return {
-                    type: item?.name?.code,
-                    value: item?.value ? item?.value : "XXXXX0123X", //if PAN value is empty, assign junk value
-                    isActive: true
-                }       
-            }
-            else 
+        if(item?.name && item?.value) {
             return {
                 type: item?.name?.code,
                 value: item?.value,
                 isActive: true
             }
+        } else {
+            return {
+                type: "PAN",
+                value: item?.value ? item?.value : "XXXXX0123X", //if nothing is entered, pass default type PAN and junk value
+                isActive: true
+            }  
         }
     })
 
