@@ -5,6 +5,8 @@ import { WorksService } from "../../elements/Works";
 
 export const BillsSearch = {
   viewSupervisionBill: async ({ t }) => {
+
+    
     const billDetails = {
       title: " ",
       asSectionHeader: false,
