@@ -86,7 +86,7 @@ const ViewEstimate = (props) => {
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ESTIMATE_VIEW_ESTIMATE")}</Header>
+                <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px" }}>{t("ESTIMATE_VIEW_ESTIMATE")}</Header>
                 <MultiLink
                    onHeadClick={() => HandleDownloadPdf()}
                    downloadBtnClassName={"employee-download-btn-className"}
