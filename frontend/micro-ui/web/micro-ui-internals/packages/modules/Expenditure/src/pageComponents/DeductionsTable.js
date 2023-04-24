@@ -148,7 +148,7 @@ const DeductionsTable = ({control,watch,...props}) => {
             {
                 select: (data) => {
                     const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
-                    return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+                    return optionsData.filter((opt) => opt?.active && opt?.service === "works.purchase").map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
                 },
                 enabled: options?.mdmsConfig ? true : false,
             }
@@ -188,9 +188,12 @@ const DeductionsTable = ({control,watch,...props}) => {
         //here there are multiple cases that we need to handle
         //1-> if autoCalculated field is true, populate the percentage/lumpsum(type field) , amount field and disable both of them
         //2-> if autocal is false,then let user enter the percentage/lumpsum(type field), amount field
+        
+        if(!e){
+          return; 
+        }
 
-        if (e?.isAutoCalculated) {
-            if(e.type==="percentage"){
+        if(e.calculationType==="percentage" ){
                 //set the percentage field
                 //set the amount field
                 //disable both the fields
@@ -198,23 +201,20 @@ const DeductionsTable = ({control,watch,...props}) => {
                 setValue(`deductionDetails.${row.key}.percentage`,`${e.value} ${t("WORKS_PERCENT")}`)
                 setValue(`deductionDetails.${row.key}.amount`,amount)
 
-            }else if(e.type === "lumpsum"){
+        }else if(e.calculationType === "lumpsum" && e.value !== null){
                 //set both lumpsum and amount field
                 setValue(`deductionDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)
                 setValue(`deductionDetails.${row.key}.amount`, e.value)
-            }
-        }
-        else if(!e){
-            return 
         }
         else {
             setValue(`deductionDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)
+            setValue(`deductionDetails.${row.key}.amount`, '')
         }
     }
 
     const isInputDisabled = (inputKey) => {
        const value = watch(inputKey)
-       if(value?.isAutoCalculated) return true
+       if(!!(value?.value)) return true
        else if (!value) return true
        return false
     }
@@ -242,8 +242,8 @@ const DeductionsTable = ({control,watch,...props}) => {
                 render={(props) =>
                   getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
                     mdmsConfig: {
-                      masterName: "Deductions",
-                      moduleName: "works",
+                      masterName: "ApplicableCharges",
+                      moduleName: "expense",
                       localePrefix: "COMMON_MASTERS_DEDUCTIONS",
                     },
                   })

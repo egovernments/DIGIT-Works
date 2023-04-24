@@ -74,8 +74,8 @@ const PurchaseBill = () => {
     //Deductions Search
     const { isLoading : isDeductionsMasterDataLoading, data : deductionMasterData } = Digit.Hooks.useCustomMDMS(
         Digit.ULBService.getStateId(),
-        "works",
-        [{ "name": "Deductions" }]
+        "expense",
+        [{ "name": "ApplicableCharges"}]
     );
 
     const createNameOfVendorObject = (vendorOptions) => {
