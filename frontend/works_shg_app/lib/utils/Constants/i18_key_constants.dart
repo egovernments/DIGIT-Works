@@ -265,4 +265,5 @@ class AttendanceMgmt {
   String get skillDetails => 'ATM_SKILLS_DETAILS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
   String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
+  String get editMusterRoll => 'ATM_EDIT_MUSTERROLL';
 }

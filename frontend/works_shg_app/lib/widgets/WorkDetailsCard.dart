@@ -298,7 +298,11 @@ class WorkDetailsCard extends StatelessWidget {
                 );
           },
           child: Center(
-            child: Text(elevatedButtonLabel,
+            child: Text(
+                musterRoll!.musterRollStatus!.contains('BACKTOCBO')
+                    ? AppLocalizations.of(context)
+                        .translate(i18.attendanceMgmt.editMusterRoll)
+                    : elevatedButtonLabel,
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium!
