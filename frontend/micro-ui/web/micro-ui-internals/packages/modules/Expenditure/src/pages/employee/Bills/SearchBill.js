@@ -60,7 +60,7 @@ const SearchBill = () => {
   //if(isLoading) return <Loader />
   return (
     <React.Fragment>
-      <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
+      <Header className="works-header-search">{t(configs?.label)}</Header>
       <div className="inbox-search-wrapper">
           <InboxSearchComposer configs={configs}></InboxSearchComposer>
       </div>

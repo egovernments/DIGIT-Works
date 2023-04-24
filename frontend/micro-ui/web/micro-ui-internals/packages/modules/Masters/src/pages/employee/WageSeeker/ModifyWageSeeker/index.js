@@ -82,7 +82,7 @@ const ModifyWageSeeker = () => {
     if(isLoading || wageSeekerDataFetching) return <Loader />
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{isModify ? t("MASTERS_MODIFY_WAGESEEKER") : t("ACTION_TEST_MASTERS_CREATE_WAGESEEKER")}</Header>
+            <Header className="works-header-create">{isModify ? t("MASTERS_MODIFY_WAGESEEKER") : t("ACTION_TEST_MASTERS_CREATE_WAGESEEKER")}</Header>
             {
                 showDataError === null && isFormReady && (
                     <ModifyWageSeekerForm 

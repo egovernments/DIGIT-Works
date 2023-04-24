@@ -28,7 +28,7 @@ class ToastUtils {
       BuildContext context, String message, String type) {
     return OverlayEntry(
         builder: ((context) => Positioned(
-              bottom: 50.0,
+              bottom: 20.0,
               width: MediaQuery.of(context).size.width > 720
                   ? MediaQuery.of(context).size.width / 3
                   : MediaQuery.of(context).size.width,
@@ -48,7 +48,7 @@ class ToastUtils {
                               ? Colors.orangeAccent
                               : Colors.green[900]),
                   child: Align(
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     child: SlideInToastMessageAnimation(Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -66,7 +66,7 @@ class ToastUtils {
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: Color(0xFFFFFFFF),
                             ),
                           ),

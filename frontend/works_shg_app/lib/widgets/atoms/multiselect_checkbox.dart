@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
@@ -33,16 +34,13 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
         }
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(2.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               widget.label,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: DigitTheme.instance.mobileTypography.textTheme.labelSmall,
             ),
             const SizedBox(height: 8),
             TypeAheadFormField<String>(
@@ -50,6 +48,15 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: widget.hintText ?? 'Skills',
+                  suffixIconConstraints:
+                      const BoxConstraints(minWidth: 0, minHeight: 0),
+                  suffixStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).primaryColorDark),
+                  suffixIcon: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.search_sharp)),
                 ),
               ),
               suggestionsBoxVerticalOffset: -10,
@@ -63,8 +70,8 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                 return StatefulBuilder(
                   builder: (BuildContext context, StateSetter set) {
                     return CheckboxListTile(
-                      title: Text(
-                          AppLocalizations.of(context).translate(optionData)),
+                      title: Text(AppLocalizations.of(context)
+                          .translate('COMMON_MASTERS_SKILLS_$optionData')),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: widget.selectedOptions.contains(optionData),
                       onChanged: (selected) {

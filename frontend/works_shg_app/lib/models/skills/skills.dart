@@ -18,9 +18,8 @@ class SkillsList with _$SkillsList {
 @freezed
 class WageSeekerSkills with _$WageSeekerSkills {
   const factory WageSeekerSkills({
-    required String name,
     required String code,
-    required int amount,
+    int? amount,
     required bool active,
   }) = _WageSeekerSkills;
 

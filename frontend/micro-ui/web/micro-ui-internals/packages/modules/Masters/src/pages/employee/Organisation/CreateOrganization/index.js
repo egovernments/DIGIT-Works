@@ -81,7 +81,7 @@ const CreateOrganisation = () => {
     if(isLoading || orgDataFetching) return <Loader />
     return (
         <React.Fragment>
-            <Header styles={{fontSize: "32px"}}>{isModify ? t("MASTERS_MODIFY_VENDOR_ORG") : t("ACTION_TEST_MASTERS_CREATE_ORGANISATION")}</Header>
+            <Header className="works-header-create">{isModify ? t("MASTERS_MODIFY_VENDOR_ORG") : t("ACTION_TEST_MASTERS_CREATE_ORGANISATION")}</Header>
             {
                 showDataError === null && isFormReady && (
                     <CreateOrganizationForm 
