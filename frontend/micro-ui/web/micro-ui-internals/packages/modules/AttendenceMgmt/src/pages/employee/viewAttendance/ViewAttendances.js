@@ -24,7 +24,7 @@ const ViewAttendance = () => {
   const { mutate } = Digit.Hooks.attendance.useUpdateAttendance();
 
   const HandleDownloadPdf = () => {
-    Digit.Utils.downloadEgovPDF('musterRoll/muster-roll',{musterRollNumber,tenantId},`muster-roll-${musterRollNumber}.pdf`)
+    Digit.Utils.downloadEgovPDF('musterRoll/muster-roll',{musterRollNumber,tenantId},`Muster-roll-${musterRollNumber}.pdf`)
   }
 
   useEffect(() => {
