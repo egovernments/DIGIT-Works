@@ -33,7 +33,8 @@ module.exports = function (app) {
     "/contract-service",
     "/expensebilling",
     "/bankaccount-service",
-    "/expense-calculator/v1/_estimate"
+    "/expense-calculator/v1/_estimate",
+    "/expense/bill"
   ].forEach((location) =>
     app.use(location, createProxy)
   );

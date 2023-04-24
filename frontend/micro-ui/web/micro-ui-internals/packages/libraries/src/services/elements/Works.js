@@ -177,7 +177,7 @@ export const WorksService = {
     },
     createBill: (body) => {
         return Request({
-            url: "/expensebilling/demand/v1/_create",
+            url: Urls.bills.createBill,
             useCache: false,
             data: body,
             method: "POST",
@@ -189,6 +189,17 @@ export const WorksService = {
     fetchEstimateExpenseCalculator: (details) => {
         return Request({
             url: Urls.calculator.expenseBill,
+            useCache: false,
+            data: details,
+            method: "POST",
+            auth: true,
+            userService: false,
+            params: {  },
+        })
+    },
+    searchBill: (details) => {
+        return Request({
+            url: Urls.bills.searchBill,
             useCache: false,
             data: details,
             method: "POST",
