@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -5,7 +6,7 @@ import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
-import 'package:works_shg_app/widgets/loaders.dart';
+import 'package:works_shg_app/widgets/loaders.dart' as shg_loader;
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
@@ -73,7 +74,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
             listener: (context, state) {
               state.maybeWhen(
                   orElse: () => false,
-                  loading: () => Loaders.circularLoader(context),
+                  loading: () => shg_loader.Loaders.circularLoader(context),
                   error: (String? error) => Notifiers.getToastMessage(
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
@@ -121,7 +122,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                 builder: (context, searchState) {
               return searchState.maybeWhen(
                   orElse: () => Container(),
-                  loading: () => Loaders.circularLoader(context),
+                  loading: () => shg_loader.Loaders.circularLoader(context),
                   loaded: (ContractsModel? contractsModel) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -178,6 +179,9 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                   .noWorkOrderAssigned),
                                           align: Alignment.center,
                                         ),
+                                  const SizedBox(height: 16.0,),
+                                  const Align(alignment: Alignment.bottomCenter,
+                                  child: PoweredByDigit(),)
                                 ]),
                             BlocListener<DeclineWorkOrderBloc,
                                 DeclineWorkOrderState>(
@@ -207,7 +211,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                 state.maybeWhen(
                                     initial: () => Container(),
                                     loading: () =>
-                                        Loaders.circularLoader(context),
+                                        shg_loader.Loaders.circularLoader(context),
                                     error: (String? error) {
                                       Notifiers.getToastMessage(
                                           context, error.toString(), 'ERROR');

@@ -346,7 +346,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.only(left: 8.0, right: 16.0, top: 16.9, bottom: 16.0),
                                     child: Text(
                                       '${AppLocalizations.of(context).translate(i18.workOrder.workOrderDetails)}',
                                       style: DigitTheme.instance.mobileTheme
@@ -412,10 +412,10 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                             )),
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(4.0),
+                                                  const EdgeInsets.all(8.0),
                                               child: ButtonLink(
                                                 t.translate(i18
-                                                    .common.termsAndConditions),
+                                                    .common.viewTermsAndConditions),
                                                 () => DigitDialog.show(context,
                                                     options: DigitDialogOptions(
                                                         title: Text(t.translate(i18.common.termsAndConditions),
@@ -423,7 +423,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w700,
-                                                                fontSize: 16,
+                                                                fontSize: 24,
                                                                 fontFamily:
                                                                     'Roboto Condensed',
                                                                 fontStyle: FontStyle
@@ -486,6 +486,9 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .workOrder.noWorkOrderAssigned),
                                           align: Alignment.center,
                                         ),
+                                  const SizedBox(height: 16.0,),
+                                  const Align(alignment: Alignment.bottomCenter,
+                                    child: PoweredByDigit(),)
                                 ]),
                           ]);
                     } else {

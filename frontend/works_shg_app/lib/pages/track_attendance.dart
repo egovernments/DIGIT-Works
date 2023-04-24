@@ -297,8 +297,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                               loading: () => shg_loader.Loaders.circularLoader(context),
                                                               loaded: (EstimateMusterRollsModel? musterRollsModel) {
                                                                 List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries!.where((e) => e.denrollmentDate == null || !(e.denrollmentDate! <= individualAttendanceRegisterModel.attendanceRegister!.first.endDate!.toInt())).toList().map((e) =>
-                                                                    AttendeesTrackList(name: e.additionalDetails?.individualName, aadhaar: e.additionalDetails?.identifierId, individualId: e.individualId,
-                                                                        individualGaurdianName: e.additionalDetails?.individualGaurdianName)).toList();
+                                                                    AttendeesTrackList(name: e.additionalDetails?.individualName ?? '', aadhaar: e.additionalDetails?.identifierId ?? '' , individualId: e.individualId ,
+                                                                        individualGaurdianName: e.additionalDetails?.individualGaurdianName ?? '')).toList();
                                                               if (attendeeList != null && attendeeList.isNotEmpty) {
                                                                 if (musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.isNotEmpty && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
                                                                   attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
