@@ -3,6 +3,8 @@ const getValidDateObject = (dateString) => {
     return new Date(+year, +month - 1, +day)
 }
 
+const ORG_VALIDTO_DATE = '2099-03-31'
+
 export const getTomorrowsDate = () => {
     let today = new Date()
     let tomorrow = new Date()
@@ -234,7 +236,7 @@ export const updateOrganisationFormDefaultValues = ({configs, isModify, sessionF
         }
 
         configs.defaultValues.basicDetails_orgName = organisation?.name ? organisation?.name : ""
-        configs.defaultValues.basicDetails_regDept = organisation?.additionalDetails?.registeredByDept ? { code: organisation?.additionalDetails?.registeredByDept, name: `COMMON_MASTERS_DEPARTMENT_${organisation?.additionalDetails?.registeredByDept}`, active: true } : ""
+        configs.defaultValues.basicDetails_regDept = organisation?.additionalDetails?.registeredByDept ? organisation?.additionalDetails?.registeredByDept : ""
         configs.defaultValues.basicDetails_regDeptNo = organisation?.additionalDetails?.deptRegistrationNum ? organisation?.additionalDetails?.deptRegistrationNum : ""
         configs.defaultValues.basicDetails_dateOfIncorporation = organisation?.dateOfIncorporation ? Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'yyyy-MM-dd') : ""
         
@@ -316,7 +318,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
     }]
     organisation.additionalDetails = {
         locality: formData?.locDetails_locality?.code,
-        registeredByDept: formData?.basicDetails_regDept?.code,
+        registeredByDept: formData?.basicDetails_regDept,
         deptRegistrationNum: formData?.basicDetails_regDeptNo
     }
     organisation.contactDetails = [{
@@ -329,15 +331,29 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         category: `${formData?.funDetails_orgType?.code}.${formData?.funDetails_category?.code}`,
         class: formData?.funDetails_classRank?.code,
         validFrom: Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validFrom),
-        validTo: Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validTo)
+        validTo: formData?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(formData?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)
     }]
     organisation.identifiers = formData?.taxIdentifierData?.map(item => {
-        if(item?.name && item?.value) {
+        if(item?.name) {
+            if(item?.name?.code === "PAN"){
+                return {
+                    type: item?.name?.code,
+                    value: item?.value ? item?.value : "XXXXX0123X", //if PAN value is empty, assign junk value
+                    isActive: true
+                }       
+            }
+            else 
             return {
                 type: item?.name?.code,
                 value: item?.value,
                 isActive: true
             }
+        } else {
+            return {
+                type: "PAN",
+                value: item?.value ? item?.value : "XXXXX0123X", //if nothing is entered, pass default type PAN and junk value
+                isActive: true
+            }  
         }
     })
 

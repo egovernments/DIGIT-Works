@@ -153,15 +153,15 @@ class _LoginPage extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
         ),
         body: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 720) {
             return MobileView(
               getLoginCard(context),
               GlobalVariables.stateInfoListModel!.bannerUrl.toString(),
-              logoBottomPosition: constraints.maxWidth / 3,
-              cardBottomPosition: constraints.maxWidth / 1.5,
+              logoBottomPosition: constraints.maxHeight / 4,
+              cardBottomPosition: constraints.maxHeight / 3,
             );
           } else {
             return DesktopView(getLoginCard(context),

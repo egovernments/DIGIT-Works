@@ -119,10 +119,10 @@ class WorkDetailsCard extends StatelessWidget {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: const EdgeInsets.all(8.0),
           child: Text(
             cardTitle ?? '',
-            style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+            style: DigitTheme.instance.mobileTheme.textTheme.headlineLarge
                 ?.apply(color: const DigitColors().black),
             textAlign: TextAlign.left,
           ),
@@ -133,28 +133,36 @@ class WorkDetailsCard extends StatelessWidget {
       labelList.add(getItemWidget(context,
           title: AppLocalizations.of(context)
               .translate(cardDetails.keys.elementAt(j).toString()),
-          description:
-              cardDetails.keys.elementAt(j).toString() == i18.common.status
-                  ? AppLocalizations.of(context)
-                      .translate(cardDetails.values.elementAt(j).toString())
-                  : cardDetails.values.elementAt(j).toString(),
-          isActiveStatus: cardDetails.keys.elementAt(j).toString() ==
-                  i18.common.status &&
-              cardDetails.values.elementAt(j).toString() != Constants.rejected,
+          description: cardDetails.keys.elementAt(j).toString() ==
+                  i18.common.status
+              ? AppLocalizations.of(context)
+                  .translate(cardDetails.values.elementAt(j).toString())
+              : cardDetails.values.elementAt(j).toString(),
+          isActiveStatus:
+              cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+                  (cardDetails.values.elementAt(j).toString() !=
+                          Constants.rejected ||
+                      cardDetails.values.elementAt(j).toString() !=
+                          Constants.sentBack),
           isRejectStatus: cardDetails.values.elementAt(j).toString() ==
-              Constants.rejected));
+                  Constants.rejected ||
+              cardDetails.values.elementAt(j).toString() ==
+                  Constants.sentBack));
     }
     if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Column(
         children: [
-          ButtonLink(
-            AppLocalizations.of(context).translate(i18.common.viewDetails),
-            () => context.router.push(ViewWorkDetailsRoute(
-                contractNumber: contractNumber.toString())),
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: DigitTheme.instance.colorScheme.primary),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ButtonLink(
+              AppLocalizations.of(context).translate(i18.common.viewDetails),
+              () => context.router.push(ViewWorkDetailsRoute(
+                  contractNumber: contractNumber.toString())),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: DigitTheme.instance.colorScheme.primary),
+            ),
           ),
           Container(
             padding: const EdgeInsets.all(8.0),
@@ -207,14 +215,17 @@ class WorkDetailsCard extends StatelessWidget {
     } else if (isWorkOrderInbox && isAccept!) {
       labelList.add(Column(
         children: [
-          ButtonLink(
-            AppLocalizations.of(context).translate(i18.common.viewDetails),
-            () => context.router.push(ViewWorkDetailsRoute(
-                contractNumber: contractNumber.toString())),
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: DigitTheme.instance.colorScheme.primary),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ButtonLink(
+              AppLocalizations.of(context).translate(i18.common.viewDetails),
+              () => context.router.push(ViewWorkDetailsRoute(
+                  contractNumber: contractNumber.toString())),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: DigitTheme.instance.colorScheme.primary),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
@@ -287,7 +298,11 @@ class WorkDetailsCard extends StatelessWidget {
                 );
           },
           child: Center(
-            child: Text(elevatedButtonLabel,
+            child: Text(
+                musterRoll!.musterRollStatus!.contains('BACKTOCBO')
+                    ? AppLocalizations.of(context)
+                        .translate(i18.attendanceMgmt.editMusterRoll)
+                    : elevatedButtonLabel,
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium!
@@ -298,7 +313,7 @@ class WorkDetailsCard extends StatelessWidget {
     }
     if (showButtonLink! && linkLabel!.isNotEmpty) {
       labelList.add(Padding(
-        padding: const EdgeInsets.all(2.0),
+        padding: const EdgeInsets.all(4.0),
         child: ButtonLink(linkLabel ?? '', onLinkPressed),
       ));
     }
@@ -316,7 +331,7 @@ class WorkDetailsCard extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
@@ -342,13 +357,13 @@ class WorkDetailsCard extends StatelessWidget {
                           : const Text('')
                     ])),
             SizedBox(
-                width: MediaQuery.of(context).size.width / 2.5,
+                width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   description,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: isActiveStatus
+                      color: isActiveStatus && !isRejectStatus
                           ? DigitTheme.instance.colorScheme.onSurfaceVariant
                           : isRejectStatus
                               ? DigitTheme.instance.colorScheme.error

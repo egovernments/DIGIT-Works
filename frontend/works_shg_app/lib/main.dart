@@ -146,8 +146,9 @@ class _MainApplicationState extends State<MainApplication> {
           }
         }
       }
+      setState(() {});
     });
-    FlutterDownloader.registerCallback(downloadCallback);
+    await FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
@@ -235,7 +236,8 @@ class _MainApplicationState extends State<MainApplication> {
                               const LocalizationState.initial(),
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
-                                module: 'rainmaker-common',
+                                module:
+                                    'rainmaker-common,rainmaker-common-masters',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),

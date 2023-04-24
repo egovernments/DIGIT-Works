@@ -72,7 +72,9 @@ class ResendOTPState extends State<ResendOTP> {
             : localizationText,
         textAlign: TextAlign.left,
         style: TextStyle(
-          color: const DigitColors().burningOrange,
+          color: _canResendOTP
+              ? const DigitColors().burningOrange
+              : DigitTheme.instance.colorScheme.shadow,
         ),
       ),
     );

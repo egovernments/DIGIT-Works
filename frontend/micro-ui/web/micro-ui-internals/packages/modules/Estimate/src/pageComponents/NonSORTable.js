@@ -18,20 +18,24 @@ const NonSORTable = ({ control, watch, ...props }) => {
 
   // const [rows, setRows] = useState(initialState);
   const [rows, setRows] = useState(
-    formData?.[formFieldName]?.length > 1
+    formData?.[formFieldName]?.length > 2
       ? formData?.[formFieldName]
           ?.map((row, index) => {
             return row
               ? {
                   key: index,
-                  isShow: row?.isActive ? row?.isActive : false,
+                  isShow:row?.isActive ? row?.isActive : !(row?.estimatedAmount==="0"),
                 }
-              : undefined;
+              : {
+                key: index + 1000,
+                isShow: false,
+              };
           })
           ?.filter((row) => row)
       : initialState
   );
-
+  
+  
   const setTotal = (formData) => {
     const tableData = formData?.[formFieldName];
 
@@ -64,7 +68,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
         obj = { width: "30rem" };
         break;
       case 3:
-        obj = { width: "10rem" };
+        obj = { width: "12rem" };
         break;
       case 4:
         obj = { width: "10rem" };
@@ -116,6 +120,25 @@ const NonSORTable = ({ control, watch, ...props }) => {
     return true;
   };
   const removeRow = (row) => {
+    const countRows = rows.reduce((acc,row)=> {
+      return row.isShow ? acc+1 : acc
+    },0)
+    if(countRows === 1) {
+      //clear the 1st rows data
+     
+      formData?.[formFieldName]?.map((row,index) => {
+        if(row) {
+          setValue(`${formFieldName}.${index}.description`,'')
+          setValue(`${formFieldName}.${index}.rate`,'')
+          setValue(`${formFieldName}.${index}.uom`,'')
+          setValue(`${formFieldName}.${index}.estimatedQuantity`,'')
+          setValue(`${formFieldName}.${index}.estimatedAmount`,'')
+        }
+      })
+      
+      return 
+    }
+    
     //make a new state here which doesn't have this key
     const updatedState = rows.map((e) => {
       if (e.key === row.key) {
@@ -188,13 +211,12 @@ const NonSORTable = ({ control, watch, ...props }) => {
   const cellContainerStyle = { display: "flex", flexDirection: "column" };
   const errorCardStyle = { width: "100%", fontSize: "12px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
   const errorContainerStyles = { display: "block", height: "1rem", overflow: "hidden" };
-  const renderBody = () => {
+  const renderBody = useMemo(() => {
     let i = 0;
     return rows.map((row, index) => {
       if (row.isShow) i++;
-      return (
-        row.isShow && (
-          <tr key={index}>
+      return row.isShow && (
+          <tr key={index} style={!row?.isShow ? {display:'none'}: {}}>
             <td style={getStyles(1)}>{i}</td>
 
             <td style={getStyles(2)}>
@@ -264,7 +286,8 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     inputRef={register({
                       required: true,
                       // pattern: /^\d*\.?\d*$/,
-                      pattern: /^\d*(\.\d{0,2})?$/,
+                      // pattern: /^\d*(\.\d{0,2})?$/,
+                      pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
                     })}
                     onChange={(e) => setAmountField(e, row)}
                   />
@@ -284,12 +307,12 @@ const NonSORTable = ({ control, watch, ...props }) => {
               <div style={cellContainerStyle}>
                 <div>
                   <TextInput
-                    style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                    style={{ marginBottom: "0px", textAlign: "left", paddingRight: "1rem" }}
                     name={`${formFieldName}.${row.key}.estimatedQuantity`}
                     inputRef={register({
                       required: true,
                       // pattern: /^[0-9]*$/,
-                      pattern: /^\d*(\.\d{0,2})?$/,
+                      pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
                     })}
                     onChange={(e) => setAmountField(e, row)}
                   />
@@ -314,6 +337,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     inputRef={register({
                       required: true,
                       pattern: /^\d*\.?\d*$/,
+                      // pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                     })}
                     disable={true}
                   />
@@ -328,7 +352,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
             </td>
             <td style={getStyles(8)}>
               <div style={cellContainerStyle}>
-                {showDelete() && (
+                { (
                   <span onClick={() => removeRow(row)} className="icon-wrapper">
                     <DeleteIcon fill={"#B1B4B6"} />
                   </span>
@@ -337,18 +361,19 @@ const NonSORTable = ({ control, watch, ...props }) => {
               <div style={errorContainerStyles}></div>
             </td>
           </tr>
-        )
+        
       );
     });
-  };
+  }, [rows,formData])
 
+  
   return (
     <table className="table reports-table sub-work-table" style={{ marginTop: "-2rem" }}>
       <thead>
         <tr>{renderHeader()}</tr>
       </thead>
       <tbody>
-        {renderBody()}
+        {renderBody}
         <tr>
           <td colSpan={1}></td>
           <td colSpan={4} style={{ textAlign: "right", fontWeight: "600" }}>

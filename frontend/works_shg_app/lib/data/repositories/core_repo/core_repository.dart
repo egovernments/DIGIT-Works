@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,6 +14,7 @@ import 'package:works_shg_app/utils/global_variables.dart';
 import '../../../Env/app_config.dart';
 import '../../../utils/common_methods.dart';
 import '../../../utils/models.dart';
+import '../../../utils/save_file_mobile.dart';
 
 class CoreRepository {
   Future<List<FileStoreModel>> uploadFiles(
@@ -92,19 +92,9 @@ class CoreRepository {
       if (!status.isGranted) {
         await Permission.storage.request();
       }
-
-      final response = await FlutterDownloader.enqueue(
-          url: url,
-          savedDir: downloadPath.toString(),
-          fileName: fileName,
-          showNotification: true,
-          openFileFromNotification: true,
-          saveInPublicStorage: true);
-      if (response != null) {
-        GlobalVariables.downloadUrl[response] = '$downloadPath/$fileName';
-        return true;
-      }
-      return false;
+      final response = await http.get(Uri.parse(url));
+      final bytes = response.bodyBytes;
+      await saveAndLaunchFile(bytes, fileName ?? 'Common.pdf');
     } catch (e, s) {
       print(e);
       // Notifiers.getToastMessage(
@@ -120,10 +110,6 @@ class CoreRepository {
 
     var res = await http.get(Uri.parse(
         '$apiBaseUrl${Urls.commonServices.fileFetch}?tenantId=$tenantId&fileStoreIds=${storeId.join(',')}'));
-    // await makeRequest(
-    //     url:
-    //         '${Urls.commonServices.fileFetch}?tenantId=${commonProvider.userDetails!.selectedtenant!.code!}&fileStoreIds=${storeId.join(',')}',
-    //     method: RequestType.GET);
 
     if (res != null) {
       fileStoreListModel = FileStoreListModelMapper.fromMap(

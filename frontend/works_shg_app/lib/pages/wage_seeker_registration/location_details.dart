@@ -103,11 +103,12 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                       formControlName: pinCodeKey,
                       label: t.translate(i18.common.pinCode),
                       keyboardType: TextInputType.number,
+                      maxLength: 6,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                       ],
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.city),
                       menuItems: city.map((e) => e.toString()).toList(),
                       isRequired: true,
@@ -121,7 +122,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                             ),
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.ward),
                       menuItems: ward.map((e) => e.toString()).toList(),
                       isRequired: true,
@@ -146,7 +147,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         });
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                         label: t.translate(i18.common.locality),
                         menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,

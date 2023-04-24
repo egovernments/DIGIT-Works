@@ -297,8 +297,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                               loading: () => shg_loader.Loaders.circularLoader(context),
                                                               loaded: (EstimateMusterRollsModel? musterRollsModel) {
                                                                 List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel.attendanceRegister!.first.attendeesEntries!.where((e) => e.denrollmentDate == null || !(e.denrollmentDate! <= individualAttendanceRegisterModel.attendanceRegister!.first.endDate!.toInt())).toList().map((e) =>
-                                                                    AttendeesTrackList(name: e.additionalDetails?.individualName, aadhaar: e.additionalDetails?.identifierId, individualId: e.individualId,
-                                                                        individualGaurdianName: e.additionalDetails?.individualGaurdianName)).toList();
+                                                                    AttendeesTrackList(name: e.additionalDetails?.individualName ?? '', aadhaar: e.additionalDetails?.identifierId ?? '' , individualId: e.individualId ,
+                                                                        individualGaurdianName: e.additionalDetails?.individualGaurdianName ?? '')).toList();
                                                               if (attendeeList != null && attendeeList.isNotEmpty) {
                                                                 if (musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.isNotEmpty && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty) {
                                                                   attendeeList = musterRollsModel.musterRoll!.first.individualEntries!.map((e) =>
@@ -516,7 +516,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                 child: Text(
                                                                                                                   AppLocalizations.of(context)
                                                                                                                       .translate(i18.common.saveAsDraft),
-                                                                                                                  style: musterRollsSearch!= null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
+                                                                                                                  style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty
                                                                                                                       ? Theme.of(context).textTheme.titleSmall?.apply(
                                                                                                                       color: const Color.fromRGBO(
                                                                                                                           149, 148, 148, 1))
@@ -626,6 +626,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                   registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                                                   registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                                                   projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
+                                                                                                                  projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '',
                                                                                                                   projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '',
                                                                                                                   projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '',
                                                                                                                   locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '',
@@ -657,7 +658,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                   ButtonLink(
                                                                     AppLocalizations.of(context).translate(
                                                                         i18.attendanceMgmt.addNewWageSeeker),
-                                                                        () {},
+                                                                        () {
+                                                                      context.router.push(const RegisterIndividualRoute());
+                                                                        },
                                                                     align: Alignment.center,
                                                                   ),
                                                                 ],);

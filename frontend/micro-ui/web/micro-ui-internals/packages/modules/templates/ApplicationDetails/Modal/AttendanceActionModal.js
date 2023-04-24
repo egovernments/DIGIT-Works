@@ -86,7 +86,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     switch(selectedAction) {
       case "SAVE":
         musterRoll.individualEntries = saveAttendanceState?.updatePayload
-        workflow.action = 'VERIFY'
+        workflow.action = 'VERIFYANDFORWARD'
         break;
       case "RESUBMIT":
         musterRoll.additionalDetails = { computeAttendance : true } 

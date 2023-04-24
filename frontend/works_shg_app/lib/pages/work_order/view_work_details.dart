@@ -92,8 +92,8 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
         titleSpacing: 0,
         title: const AppBarLogo(),
       ),
-      drawer: DrawerWrapper(Drawer(
-          child: SideBar(module: CommonMethods.getLocaleModules()))),
+      drawer: DrawerWrapper(
+          Drawer(child: SideBar(module: CommonMethods.getLocaleModules()))),
       bottomNavigationBar:
           BlocBuilder<SearchIndividualWorkBloc, SearchIndividualWorkState>(
               builder: (context, workState) {
@@ -175,7 +175,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                           workOrderList.first['payload']['wfStatus'] ==
                               'ACCEPTED'
                       ? SizedBox(
-                          height: 80,
+                          height: 90,
                           child: DigitCard(
                             child: DigitElevatedButton(
                               onPressed: () {
@@ -289,13 +289,16 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .toString())
                                       : 'NA',
                                   i18.workOrder.workStartDate: e.startDate !=
-                                          null && e.startDate != 0
+                                              null &&
+                                          e.startDate != 0
                                       ? DateFormats.getFilteredDate(
                                           DateTime.fromMillisecondsSinceEpoch(
                                                   e.startDate ?? 0)
                                               .toString())
                                       : 'NA',
-                                  i18.workOrder.workEndDate: e.endDate != null
+                                  i18.workOrder.workEndDate: e.endDate !=
+                                              null &&
+                                          e.endDate != 0
                                       ? DateFormats.getFilteredDate(
                                           DateTime.fromMillisecondsSinceEpoch(
                                                   e.endDate ?? 0)
@@ -346,7 +349,11 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.only(
+                                        left: 8.0,
+                                        right: 16.0,
+                                        top: 16.0,
+                                        bottom: 16.0),
                                     child: Text(
                                       '${AppLocalizations.of(context).translate(i18.workOrder.workOrderDetails)}',
                                       style: DigitTheme.instance.mobileTheme
@@ -412,68 +419,63 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                             )),
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(4.0),
+                                                  const EdgeInsets.all(8.0),
                                               child: ButtonLink(
-                                                t.translate(i18
-                                                    .common.termsAndConditions),
+                                                t.translate(i18.common
+                                                    .viewTermsAndConditions),
                                                 () => DigitDialog.show(context,
                                                     options: DigitDialogOptions(
                                                         title: Text(t.translate(i18.common.termsAndConditions),
                                                             style: const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontSize: 16,
+                                                                fontWeight: FontWeight
+                                                                    .w700,
+                                                                fontSize: 24,
                                                                 fontFamily:
                                                                     'Roboto Condensed',
                                                                 fontStyle: FontStyle
                                                                     .normal,
                                                                 color: Color.fromRGBO(
-                                                                    11,
-                                                                    12,
-                                                                    12,
-                                                                    1))),
-                                                        content: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            for (var i = 0;
-                                                                i <
-                                                                    termsNCond
-                                                                        .length;
-                                                                i++)
-                                                              Align(
-                                                                alignment: Alignment
-                                                                    .centerLeft,
-                                                                child: Text(
-                                                                  '${i + 1}. ${termsNCond[i]}',
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              )
-                                                          ],
-                                                        ),
-                                                        titlePadding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
-                                                        contentPadding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
+                                                                    11, 12, 12, 1))),
+                                                        content:
+                                                            termsNCond
+                                                                    .isNotEmpty
+                                                                ? Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      for (var i =
+                                                                              0;
+                                                                          i < termsNCond.length;
+                                                                          i++)
+                                                                        Align(
+                                                                          alignment:
+                                                                              Alignment.centerLeft,
+                                                                          child:
+                                                                              Text(
+                                                                            '${i + 1}. ${termsNCond[i]}',
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontSize: 16,
+                                                                              fontWeight: FontWeight.w700,
+                                                                            ),
+                                                                            textAlign:
+                                                                                TextAlign.start,
+                                                                          ),
+                                                                        )
+                                                                    ],
+                                                                  )
+                                                                : const EmptyImage(
+                                                                    align: Alignment
+                                                                        .center),
+                                                        titlePadding: const EdgeInsets.all(
+                                                            8.0),
+                                                        contentPadding: const EdgeInsets.all(
+                                                            8.0),
                                                         barrierDismissible:
                                                             true,
                                                         primaryAction: DigitDialogActions(
-                                                            label: t.translate(
-                                                                i18.common.close),
+                                                            label: t.translate(i18.common.close),
                                                             action: (context) => Navigator.of(context, rootNavigator: true).pop()),
                                                         isScrollable: true)),
                                                 align: Alignment.centerLeft,
@@ -486,6 +488,13 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .workOrder.noWorkOrderAssigned),
                                           align: Alignment.center,
                                         ),
+                                  const SizedBox(
+                                    height: 16.0,
+                                  ),
+                                  const Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: PoweredByDigit(),
+                                  )
                                 ]),
                           ]);
                     } else {

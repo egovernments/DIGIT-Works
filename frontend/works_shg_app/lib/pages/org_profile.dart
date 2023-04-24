@@ -59,9 +59,8 @@ class _ORGProfilePage extends State<ORGProfilePage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(Drawer(
-            child:
-                SideBar(module: CommonMethods.getLocaleModules()))),
+        drawer: DrawerWrapper(
+            Drawer(child: SideBar(module: CommonMethods.getLocaleModules()))),
         body: SingleChildScrollView(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -99,8 +98,8 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                     'NA',
                                 i18.common.funcCat: t.translate(
                                     e.functions?.first.category ?? 'NA'),
-                                i18.common.classOrRank:
-                                    'COMMON_MASTERS_${t.translate(e.functions?.first.orgClass ?? 'NA')}',
+                                i18.common.classOrRank: t.translate(
+                                    'COMMON_MASTERS_${e.functions?.first.orgClass ?? 'NA'}'),
                                 i18.common.validFrom:
                                     DateFormats.timeStampToDate(
                                         e.functions?.first.validFrom),

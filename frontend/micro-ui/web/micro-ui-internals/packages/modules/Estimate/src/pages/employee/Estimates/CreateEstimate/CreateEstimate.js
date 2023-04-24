@@ -18,7 +18,7 @@ const configNavItems = [
         code: "WORKS_WORK_DETAILS"
     },
 ]
-const CreateEstimate = ({ EstimateSession }) => {
+const CreateEstimate = () => {
     const tenant = Digit.ULBService.getStateId();
     const { t } = useTranslation()
     const [showToast, setShowToast] = useState(null)
@@ -26,10 +26,13 @@ const CreateEstimate = ({ EstimateSession }) => {
     // const [ isFormReady,setIsFormReady ] = useState(isEdit ? false : true) 
     const [ isFormReady,setIsFormReady ] = useState(true) 
     
-    // const { state } = useLocation()
+    const history = useHistory()
+    
+    // const {state} = useLocation()
+    
     //if estimateNumber is there and isEdit is true then search estimate
     //fetching estimate data
-     const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
+    const { isLoading: isEstimateLoading,data:estimate } = Digit.Hooks.estimates.useEstimateSearch({
         tenantId,
         filters: { estimateNumber },
         config:{
@@ -95,10 +98,8 @@ const CreateEstimate = ({ EstimateSession }) => {
     }
     
    
-    const history = useHistory()
-
-    const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
-
+    
+    
     //for creating estimates
     const { mutate: EstimateMutation } = Digit.Hooks.works.useCreateEstimateNew("WORKS");
 
@@ -119,7 +120,7 @@ const CreateEstimate = ({ EstimateSession }) => {
     // const [designation, setDesignation] = useState([]);
     // const [selectedDesignation, setSelectedDesignation] = useState({})
 
-    const [inputFormData,setInputFormData] = useState(sessionFormData)
+    const [inputFormData,setInputFormData] = useState({})
 
 
     //getting uom and overheads masters from mdms
@@ -153,9 +154,7 @@ const CreateEstimate = ({ EstimateSession }) => {
         }
     );
 
-    const initialDefaultValues = editEstimateUtil(estimate,uom,overheads)
-
-    // const estimateFormConfig = createEstimateConfig()
+    
     const moduleName = Digit.Utils.getConfigModuleName()
     let { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
         tenant,
@@ -177,8 +176,43 @@ const CreateEstimate = ({ EstimateSession }) => {
             setShowToast(null)
         }, 7000);
     }
-
+    //to use local config
     // estimateFormConfig = createEstimateConfig()
+
+    const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", {});
+    const [sessionFormData,setSessionFormData, clearSessionFormData] = EstimateSession;
+    
+    const initialDefaultValues = editEstimateUtil(estimate,uom,overheads)
+
+    // useEffect(() => {
+        
+    // }, [])
+    
+    
+    
+
+    useEffect(() => {
+        if(uom && estimate && overheads && isEdit){
+        setSessionFormData(initialDefaultValues)
+        }
+    }, [estimate,uom,overheads])
+    
+    
+
+    const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+        if (!_.isEqual(sessionFormData, formData)) {
+            // if(isEdit) {
+            //     setSessionFormData({...initialDefaultValues,...formData,...sessionFormData})
+            // }
+            // else{
+            //     setSessionFormData({ ...sessionFormData, ...formData });
+            // }
+            setSessionFormData({ ...sessionFormData, ...formData });
+        }
+
+    }
+
+
     const onFormSubmit = async (_data) => {
         
         //added this totalEst amount logic here because setValues in pageComponents don't work
@@ -222,7 +256,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             // selectedDept,
             // selectedDesignation
         }
-        // setSessionFormData(completeFormData)
+       
         
 
         const payload = createEstimatePayload(completeFormData, projectData,isEdit,estimate)
@@ -360,17 +394,16 @@ const CreateEstimate = ({ EstimateSession }) => {
     if(isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading){
         return <Loader />
     }
+    if(isEdit && Object.keys(sessionFormData).length ===0) return <Loader />
   return (
     <Fragment>
           {showModal && <WorkflowModal
               closeModal={() => setShowModal(false)}
               onSubmit={onModalSubmit}
               config={config}
-              sessionFormData={sessionFormData}
-              setSessionFormData={setSessionFormData}
           />
           }
-        <Header styles={{ marginLeft: "14px" }}>{isEdit ? t("ACTION_TEST_EDIT_ESTIMATE") :t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
+        <Header className="works-header-create" styles={{ marginLeft: "14px" }}>{isEdit ? t("ACTION_TEST_EDIT_ESTIMATE") :t("ACTION_TEST_CREATE_ESTIMATE")}</Header>
         {/* Will fetch projectId from url params and do a search for project to show the below data in card while integrating with the API  */}
         {isLoading?<Loader /> : <ViewDetailsCard cardState={cardState} t={t} createScreen={true}/>}
         {/* {isLoading? <Loader/>: <ViewDetailsCard cardState={cardState} t={t} />} */}
@@ -387,8 +420,8 @@ const CreateEstimate = ({ EstimateSession }) => {
             fieldStyle={{ marginRight: 0 }}
             inline={false}
             // className="card-no-margin"
-            defaultValues={(isEdit && estimateNumber) ? initialDefaultValues : {}}
-            // defaultValues = {tempDefault}
+            // defaultValues={(isEdit && estimateNumber) ? initialDefaultValues : sessionFormData}
+            defaultValues = {sessionFormData}
             showWrapperContainers={false}
             isDescriptionBold={false}
             noBreakLine={true}
@@ -399,6 +432,7 @@ const CreateEstimate = ({ EstimateSession }) => {
             showNavs={true}
             sectionHeadStyle={{marginTop:"2rem"}} 
             labelBold={true} 
+            onFormValueChange={onFormValueChange}
         />:null}
           {showToast && (
               <Toast

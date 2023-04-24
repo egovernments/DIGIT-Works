@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorConstants.BILL_TYPE_CONSTANT;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorConstants.CONTRACT_ID_CONSTANT;
-
 @Component
 @Slf4j
 public class BillToMetaMapper {
@@ -36,17 +33,18 @@ public class BillToMetaMapper {
                 String id = bill.getId();
                 String tenantId = bill.getTenantId();
                 String serviceCode = bill.getBusinessService();
-                String contractId = getValueFromAdditionalDetails(bill,CONTRACT_ID_CONSTANT);
-                String billType = getValueFromAdditionalDetails(bill, BILL_TYPE_CONSTANT);
+//                String contractId = getValueFromAdditionalDetails(bill,CONTRACT_ID_CONSTANT);
+//                String billType = getValueFromAdditionalDetails(bill, BILL_TYPE_CONSTANT);
+                String contractId = getReferenceId(bill.getReferenceId());
                 String billId = bill.getReferenceId();
-                String musterRollId = getMusterRollId(bill,billType);
+                String musterRollId = getMusterRollId(bill,bill.getBusinessService());
                 AuditDetails billAuditDetails = bill.getAuditDetails();
                 BillMeta billMeta = BillMeta.builder()
                         .id(id)
                         .tenantId(tenantId)
                         .serviceCode(serviceCode)
                         .contractId(contractId)
-                        .billType(billType)
+                        .billType(bill.getBusinessService())
                         .billId(billId)
                         .musterrollId(musterRollId)
                         .auditDetails(billAuditDetails)
@@ -60,10 +58,19 @@ public class BillToMetaMapper {
         return records;
     }
 
-    private String getMusterRollId(Bill bill, String billType) {
-        if(configs.getWageBillType().equalsIgnoreCase(billType))
-            return bill.getReferenceId();
+    private String getReferenceId(String referenceId) {
+        final String[] split = referenceId.split("_");
+        return split[0];
+    }
 
+    private String getMusterRollId(Bill bill, String billType) {
+        if(configs.getWageBusinessService().equalsIgnoreCase(billType)) {
+            String[] split  = bill.getReferenceId().split("_");
+            if(split.length > 0)
+                return split[1];
+            else
+                return null;
+        }
         return null;
     }
 

@@ -8,6 +8,7 @@ const useEstimateSearch = ({ tenantId, filters, config = {} }) => useQuery(
     () => WorksService.estimateSearch({ tenantId, filters }),
     {
         ...config,
+        cacheTime:0,
         select:(data)=>{
             return data?.estimates?.[0]
         }

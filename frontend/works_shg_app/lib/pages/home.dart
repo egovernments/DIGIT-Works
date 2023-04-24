@@ -119,29 +119,33 @@ class _HomePage extends State<HomePage> {
                                           children: cboHomeScreenConfig
                                                   ?.map((e) {
                                                 if (e.order == 1) {
-                                                  return Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                  return Column(
                                                     children: [
-                                                      LabeledField(
-                                                        label: t.translate(
-                                                            i18.home.mukta),
-                                                        child: Column(
-                                                          children: [
-                                                            ButtonLink(
-                                                                t.translate(
-                                                                    e.label ??
-                                                                        ''),
-                                                                getRoute(
-                                                                    e.key
-                                                                        .toString(),
-                                                                    context)),
-                                                          ],
-                                                        ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            t.translate(
+                                                                i18.home.mukta),
+                                                            style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 24),
+                                                          ),
+                                                          SvgPicture.asset(
+                                                              Constants
+                                                                  .muktaIcon)
+                                                        ],
                                                       ),
-                                                      SvgPicture.asset(
-                                                          Constants.muktaIcon)
+                                                      ButtonLink(
+                                                          t.translate(
+                                                              e.label ?? ''),
+                                                          getRoute(
+                                                              e.key.toString(),
+                                                              context))
                                                     ],
                                                   );
                                                 } else {

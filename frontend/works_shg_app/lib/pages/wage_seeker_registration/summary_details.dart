@@ -69,15 +69,20 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
         ),
         DigitCard(
             child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  t.translate(i18.attendanceMgmt.individualDetails),
-                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-                      ?.apply(color: const DigitColors().black),
-                  textAlign: TextAlign.left,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    t.translate(i18.attendanceMgmt.individualDetails),
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.headlineLarge
+                        ?.apply(color: const DigitColors().black),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 GestureDetector(
                   child: Icon(
@@ -156,6 +161,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             kIsWeb && FilePickerData.bytes != null
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         t.translate(i18.common.photoGraph),
@@ -180,6 +186,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                 : !kIsWeb && FilePickerData.imageFile != null
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             t.translate(i18.common.photoGraph),
@@ -210,11 +217,15 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  t.translate(i18.common.locationDetails),
-                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-                      ?.apply(color: const DigitColors().black),
-                  textAlign: TextAlign.left,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    t.translate(i18.common.locationDetails),
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.headlineLarge
+                        ?.apply(color: const DigitColors().black),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 GestureDetector(
                   child: Icon(
@@ -276,11 +287,15 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  t.translate(i18.common.financialDetails),
-                  style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-                      ?.apply(color: const DigitColors().black),
-                  textAlign: TextAlign.left,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    t.translate(i18.common.financialDetails),
+                    style: DigitTheme
+                        .instance.mobileTheme.textTheme.headlineLarge
+                        ?.apply(color: const DigitColors().black),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 GestureDetector(
                   child: Icon(
@@ -404,9 +419,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                padding: const EdgeInsets.only(right: 16),
-                width: MediaQuery.of(context).size.width / 3.5,
+            SizedBox(
+                width: MediaQuery.of(context).size.width / 3,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

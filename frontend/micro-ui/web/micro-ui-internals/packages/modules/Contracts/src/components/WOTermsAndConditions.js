@@ -55,15 +55,25 @@ const WOTermsAndConditions = (props) => {
     const showDelete = () => {
         let countIsShow = 0
         rows?.map(row => row.isShow && countIsShow++)
-        if (countIsShow === 1) {
-        return false
-        }
+        // if (countIsShow === 1) {
+        // return false
+        // }
         return true
     }
 
     const errorCardStyle = {width:"100%"}
 
     const removeRow = (row) => {
+      
+      //check if only one row is present
+      let totalRows = 0;
+      for(let keys of Object.keys(formData?.[formFieldName])) {
+        totalRows += 1;
+      }
+      if(totalRows === 1) {
+        setValue(`${formFieldName}.${row.key}.description`, '');
+      }else {
+
         //make a new state here which doesn't have this key
         const updatedState = rows?.map(e => {
         if (e.key === row.key) {
@@ -74,9 +84,10 @@ const WOTermsAndConditions = (props) => {
         }
         return e
         })
-
+  
         unregister(`${formFieldName}.${row.key}.description`)
         setRows(prev => updatedState)
+      }
     }
 
     const addRow = () => {

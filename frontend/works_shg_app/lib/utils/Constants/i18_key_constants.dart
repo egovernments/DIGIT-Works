@@ -48,7 +48,8 @@ class Common {
   String get language => 'CS_HOME_HEADER_LANGUAGE';
   String get decline => 'CORE_BUTTON_DECLINE';
   String get accept => 'CORE_BUTTON_ACCEPT';
-  String get termsAndConditions => 'COMMON_TERMS_AND_CONDITIONS';
+  String get viewTermsAndConditions => 'COMMON_TERMS_AND_CONDITIONS';
+  String get termsAndConditions => 'WORK_ORDER_TERMS_AND_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
   String get back => 'CORE_BACK_BUTTON';
   String get sendForApproval => 'SEND_FOR_APPROVAL';
@@ -206,9 +207,17 @@ class WageSeeker {
   String get skill => 'WAGE_SEEKER_SKILL';
   String get createIndSuccess => 'CREATE_INDIVIDUAL_SUCCESS';
   String get ageValidation => 'AGE_LESS_THAN_18_YEARS';
+  String get ageInfo => 'AGE_SHOULD_BE_18_OR_ABOVE';
   String get wageSeekerSuccessSubText => 'CREATE_INDIVIDUAL_SUCCESS_SUB_TEXT';
   String get selectSkillValidation => 'CANNOT_HAVE_SAME_SKILL_TYPE';
   String get enterValidIFSC => 'ENTER_VALID_IFSC_CODE';
+  String get minAccNoCharacters => 'MIN_ACCOUNT_NO_CHARACTERS_REQUIRED';
+  String get maxAccNoCharacters => 'MAX_ACCOUNT_NO_CHARACTERS_REQUIRED';
+  String get minNameCharacters => 'MIN_NAME_CHARCTERS_REQUIRED';
+  String get minFatherNameCharacters => 'MIN_FATHER_CHARCTERS_REQUIRED';
+  String get maxNameCharacters => 'MAX_NAME_CHARCTERS_REQUIRED';
+  String get maxFatherNameCharacters => 'MAX_FATHER_CHARCTERS_REQUIRED';
+  String get skillsRequired => 'SKILLS_IS_REQUIRED';
 }
 
 class AttendanceMgmt {
@@ -256,4 +265,5 @@ class AttendanceMgmt {
   String get skillDetails => 'ATM_SKILLS_DETAILS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
   String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
+  String get editMusterRoll => 'ATM_EDIT_MUSTERROLL';
 }

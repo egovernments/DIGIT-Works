@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import _ from "lodash";
 import React from "react";
+import { Amount } from "@egovernments/digit-ui-react-components";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -14,6 +15,11 @@ export const UICustomizations = {
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
+      const estimateNumber = data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.trim()
+      if(estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber
+
+      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim()
+      if(projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId
       // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
 
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
@@ -65,7 +71,7 @@ export const UICustomizations = {
           return <span>{t(`WF_EST_${value}`)}</span>;
 
          case "WORKS_ESTIMATED_AMOUNT":
-          return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+          return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
 
          case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
@@ -89,19 +95,21 @@ export const UICustomizations = {
     preProcess: (data) => {
       
       //set tenantId
-
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
-      // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
+      const musterRollNumber = data?.body?.inbox?.moduleSearchCriteria?.musterRollNumber?.trim();
+      if(musterRollNumber) data.body.inbox.moduleSearchCriteria.musterRollNumber = musterRollNumber
 
+      const attendanceRegisterName = data?.body?.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
+      if(attendanceRegisterName) data.body.inbox.moduleSearchCriteria.attendanceRegisterName = attendanceRegisterName
+
+      // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
       delete data.body.inbox.moduleSearchCriteria.assignee;
       if (assignee?.code === "ASSIGNED_TO_ME") {
         data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
       }
-
-      
 
       //cloning locality and workflow states to format them
       // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
@@ -112,7 +120,6 @@ export const UICustomizations = {
          data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.applicationNumber;
       }
 
-      
       // let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
       // delete data.body.inbox.moduleSearchCriteria.ward;
       // if(selectedWard) {
@@ -259,7 +266,13 @@ export const UICustomizations = {
       const ward = data?.body?.inbox?.moduleSearchCriteria?.ward?.[0]?.code
       delete data.body.inbox.moduleSearchCriteria.ward
       if(ward) data.body.inbox.moduleSearchCriteria.ward = ward
+
+      const estimateId = data?.body?.inbox?.moduleSearchCriteria?.estimateId?.trim()
+      if(estimateId) data.body.inbox.moduleSearchCriteria.estimateId = estimateId
     
+      const projectName = data?.body?.inbox?.moduleSearchCriteria?.projectName?.trim()
+      if(projectName) data.body.inbox.moduleSearchCriteria.projectName = projectName
+
       //set tenantId 
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
@@ -287,8 +300,7 @@ export const UICustomizations = {
         );
       }
       if (key === "WORKS_ESTIMATED_AMOUNT") {
-        // const amt = row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0);
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
       }
       if(key === "CORE_COMMON_STATUS"){
         return t(`WF_ESTIMATE_STATUS_${value}`)
@@ -345,11 +357,11 @@ export const UICustomizations = {
       const projectType = data.body.Projects[0]?.projectType?.code;
       const ward = data.body.Projects[0]?.ward?.[0]?.code;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true, createdFrom, createdTo };
-      let name = data.body.Projects[0]?.name;
-      name = name?.trim();
+      let name = data.body.Projects[0]?.name?.trim();
+      let projectNumber = data.body.Projects[0]?.projectNumber?.trim()
       delete data.body.Projects[0]?.createdFrom;
       delete data.body.Projects[0]?.createdTo;
-      data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(), projectType, name, address : { boundary : ward}  };
+      data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(),projectNumber, projectType, name, address : { boundary : ward}  };
 
       return data;
     },
@@ -434,7 +446,7 @@ export const UICustomizations = {
          ); }
 
       case "PROJECT_ESTIMATED_COST_IN_RS":
-        return value? <p>{`${Digit.Utils.dss.formatterWithoutRound(value, "number")}`}</p> : <p>{"NA"}</p>;
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
 
       case "ES_COMMON_LOCATION":    
       { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
@@ -485,13 +497,17 @@ export const UICustomizations = {
       delete data.body.inbox.moduleSearchCriteria.ward
       if(ward) data.body.inbox.moduleSearchCriteria.ward = ward
     
-      
       const status = data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus?.[0]?.wfStatus
       delete data?.body?.inbox?.moduleSearchCriteria?.musterRollStatus
       if(status){
         data.body.inbox.moduleSearchCriteria.musterRollStatus = status
       }
 
+      const musterRollNumber = data?.body?.inbox?.moduleSearchCriteria?.musterRollNumber?.trim();
+      if(musterRollNumber) data.body.inbox.moduleSearchCriteria.musterRollNumber = musterRollNumber
+
+      const attendanceRegisterName = data?.body?.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
+      if(attendanceRegisterName) data.body.inbox.moduleSearchCriteria.attendanceRegisterName = attendanceRegisterName
       //set tenantId 
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
@@ -599,6 +615,12 @@ export const UICustomizations = {
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
+      const workOrderNumber = data?.body?.inbox?.moduleSearchCriteria?.workOrderNumber?.trim()
+      if(workOrderNumber) data.body.inbox.moduleSearchCriteria.workOrderNumber = workOrderNumber
+
+      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim()
+      if(projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId
+
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
       delete data.body.inbox.moduleSearchCriteria.assignee;
       if (assignee?.code === "ASSIGNED_TO_ME") {
@@ -642,7 +664,7 @@ export const UICustomizations = {
           return <span>{t(`WF_WO_${value}`)}</span>;
 
         case "ES_COMMON_AMOUNT":
-          return value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA");
+          return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
 
         case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
@@ -664,10 +686,10 @@ export const UICustomizations = {
     preProcess: (data) => {
       const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom);
       const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo);
-      const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber;
+      const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
       const status = data.body.inbox?.moduleSearchCriteria?.contractStatus?.code;
       const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
-      const projectName = data.body.inbox?.moduleSearchCriteria?.projectName;
+      const projectName = data.body.inbox?.moduleSearchCriteria?.projectName?.trim();
       const ward = data.body.inbox?.moduleSearchCriteria?.ward;
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
@@ -710,8 +732,7 @@ export const UICustomizations = {
           </span>
         );
       case "ES_COMMON_AMOUNT":
-        return Digit.Utils.dss.formatterWithoutRound(value, "number");
-
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
       case "COMMON_ROLE_OF_CBO": 
         return <span>{t(`COMMON_MASTERS_${value}`)}</span>;
 
@@ -761,12 +782,15 @@ export const UICustomizations = {
         wardCode: "wardCode[0].code",
         socialCategory: "socialCategory.code",
       };
+      const textConfig = ["name", "individualId"]
       let Individual = Object.keys(requestBody)
         .map((key) => {
           if (selectConfig[key]) {
             requestBody[key] = _.get(requestBody, selectConfig[key], null);
           } else if (typeof requestBody[key] == "object") {
             requestBody[key] = requestBody[key]?.code;
+          } else if (textConfig?.includes(key)) {
+            requestBody[key] = requestBody[key]?.trim()
           }
           return key;
         })
@@ -851,12 +875,16 @@ export const UICustomizations = {
           type:"type.code",
           applicationStatus: "applicationStatus.code",
         };
+        const textConfig = ["name", "orgNumber"]
+
         let SearchCriteria = Object.keys(requestBody)
           .map((key) => {
             if (selectConfig[key]) {
               requestBody[key] = _.get(requestBody, selectConfig[key], null);
             } else if (typeof requestBody[key] == "object") {
               requestBody[key] = requestBody[key]?.code;
+            } else if (textConfig?.includes(key)) {
+              requestBody[key] = requestBody[key]?.trim()
             }
             return key;
           })

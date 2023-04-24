@@ -43,6 +43,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
+	@Value("${egov.idgen.supervision.bill.number}")
+	private String idGenSupervisionBillFormat;
+
 	// Workflow Config
 	@Value("${egov.workflow.host}")
 	private String wfHost;
@@ -70,12 +73,22 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
-	// Bill
+	// Contract service
+	@Value("${egov.contract.service.host}")
+	private String contractHost;
+
+	@Value("${egov.contract.service.search.endpoint}")
+	private String contractSearchEndPoint;
+
+	// Expense bill service
 	@Value("${egov.bill.host}")
 	private String billHost;
 
 	@Value("${egov.bill.create.endpoint}")
 	private String billCreateEndPoint;
+
+	@Value("${egov.expense.bill.service.search.endpoint}")
+	private String expenseBillSearchEndPoint;
 
 	// HRMS
 	@Value("${egov.hrms.host}")
@@ -106,9 +119,6 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.wage.head.code}")
 	private String wageHeadCode;
 
-	@Value("${egov.works.expense.wage.bill.type}")
-	private String wageBillType;
-
 	@Value("${egov.works.expense.wage.payee.type}")
 	private String wagePayeeType;
 
@@ -123,5 +133,9 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${egov.works.expense.wage.payer.id}")
 	private String wagePayerId;
+
+	//KAFKA topic
+	@Value("${expense.calculator.create.topic}")
+	private String calculatorCreateTopic;
 
 }
