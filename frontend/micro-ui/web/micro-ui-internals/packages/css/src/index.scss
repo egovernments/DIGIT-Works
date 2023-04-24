@@ -898,7 +898,7 @@ input[type="number"] {
 .search-instruction-header {
   margin-bottom: 1rem;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   color: theme(colors.text.secondary);
 }
 
@@ -1010,12 +1010,15 @@ input[type="number"] {
   }
 }
 .h1 {&.works-header-search{
-font-size: 30px;
+font-size: 36px;
 }
 &.works-header-create{
-  font-size: 30px;
+  font-size: 36px;
 }
 &.works-header-view{
-  font-size: 30px;
+  font-size: 36px;
 }
+}
+.submit-bar header{
+  font-family: Roboto;
 }
