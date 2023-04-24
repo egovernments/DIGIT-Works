@@ -13,11 +13,11 @@ public class Constants {
 	public static final String TENANT_MASTERNAME = "tenants";
 	
 	
-	public static final String MODULE_NAME = "works";
+	public static final String HEADCODES_MODULE_NAME = "expense";
 	
 	public static final String HEADCODE_CODE_FILTER = "$.*.code";
 	
-	public static final String HEADCODE_MASTERNAME = "ExpenseHeads";
+	public static final String HEADCODE_MASTERNAME = "HeadCodes";
 	
 	public static final List<String> MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME));
@@ -27,7 +27,7 @@ public class Constants {
 	private static final String INNER_JOIN = "INNER JOIN";
 	private static final String WHERE = " WHERE ";
 
-	public static final String BUSINESS_SERVICE_WAGE = "works.wage";
+	public static final String BUSINESS_SERVICE_WAGE = "works.wages";
 	public static final String BUSINESS_SERVICE_PURCHASE = "works.purchase";
 	public static final String BUSINESS_SERVICE_SUPERVISION = "works.supervision";
 	
