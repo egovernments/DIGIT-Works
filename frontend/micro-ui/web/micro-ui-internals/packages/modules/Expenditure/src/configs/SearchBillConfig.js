@@ -12,9 +12,9 @@ export const SearchBillConfig = {
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
                 moduleName:"SearchBillConfig",
-                tableFormJsonPath:"requestParam",
-                filterFormJsonPath:"rrequestParam",
-                searchFormJsonPath:"requestParam",
+                tableFormJsonPath:"requestBody.inbox",
+                filterFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
+                searchFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
             },
             sections : {
                 search : {
@@ -27,13 +27,9 @@ export const SearchBillConfig = {
                         formClassName:"custom-both-clear-search",
                         defaultValues : {
                             ward: "",
-                            billType: {
-                                name: "COMMON_MASTERS_BILL_WORK_ORDER",
-                                code: "WORK_ORDER",
-                                active: true
-                            },
+                            billType: "",
                             projectName: "",
-                            musterRollNumber: "",
+                            musterRollNumber: "", //make it bill number
                             status: "",
                             createdFrom: "",
                             createdTo: ""
@@ -112,15 +108,20 @@ export const SearchBillConfig = {
                                   masterName: "commonUiConfig",
                                   moduleName: "SearchBillConfig",
                                   customfn: "populateReqCriteria",
-                                },
+                                }
                             },
                             {
                                 label: "ES_COMMON_CREATED_FROM",
                                 type: "date",
                                 isMandatory: false,
                                 disable: false,
+                                key : "createdFrom",
+                                preProcess : {
+                                    updateDependent : ["populators.max"]
+                                },
                                 populators: {
-                                    name: "createdFrom"
+                                    name: "createdFrom",
+                                    max : "currentDate"
                                 },
                             },
                             {
@@ -128,9 +129,14 @@ export const SearchBillConfig = {
                                 type: "date",
                                 isMandatory: false,
                                 disable: false,
+                                key : "createdTo",
+                                preProcess : {
+                                    updateDependent : ["populators.max"]
+                                },
                                 populators: { 
                                     name: "createdTo",
-                                    error: 'DATE_VALIDATION_MSG'
+                                    error: 'DATE_VALIDATION_MSG',
+                                    max : "currentDate"
                                 },
                                 additionalValidation: {
                                     type: 'date',
