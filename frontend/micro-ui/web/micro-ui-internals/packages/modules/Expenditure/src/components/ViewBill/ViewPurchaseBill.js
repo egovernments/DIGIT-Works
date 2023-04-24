@@ -10,18 +10,15 @@ const ViewPurchaseBill = ({props}) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    
     const billCriteria = { //update this
         "tenantId": "pg.citya",
-        "ids": [
-          
-        ],
-        "businessService": "WORKS-MUSTERROLE",
-        "referenceIds": [
-          
-        ],
+        "ids": [],
+        "businessService": "works.wage",
+        "referenceIds": [],
         "status": ""
     }
-    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(t, billCriteria, {});
+    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {});
     
     const handleActionBar = (option) => {
 

@@ -1,4 +1,6 @@
 import _ from "lodash";
+import { ContractService } from "../../elements/Contracts";
+import { OrganisationService } from "../../elements/Organisation";
 import { WorksService } from "../../elements/Works";
 
 export const BillsSearch = {
@@ -124,22 +126,53 @@ export const BillsSearch = {
       isNoDataFound: false,
     };
   },
-  viewPurchaseBillDetails: async ({t, billCriteria, pagination}) => {
+  viewPurchaseBillDetails: async ({tenantId, t, billCriteria, pagination, headerLocale}) => {
 
-    let billData = await WorksService?.searchBill({billCriteria, pagination});
-    console.log(billData);
+    //Bill search
+    const billResponse = await WorksService?.searchBill({billCriteria, pagination});
+    const billData = billResponse?.bills?.[1]; //TODO: Index with update once API is done.
+    const WONumber = billData?.referenceId.split("_")[0];
+
+    const WOSearchPayload = {
+      tenantId : tenantId,
+      contractNumber : WONumber
+    }
+
+    //Work order search
+    const WOResponse = await ContractService?.search(tenantId, WOSearchPayload, {});
+    const WOData = WOResponse?.contracts?.[0];
+
+    const orgPayload = {
+      SearchCriteria: {
+        id: [billData?.billDetails?.[0]?.payee?.identifier], //b9838d9c-b079-4cdb-b061-3d9addac9d40
+        tenantId
+      }
+    }
+
+    //Org Search
+    const orgResponse = await OrganisationService?.search(orgPayload);
+    const orgData = orgResponse?.organisations?.[0];
+
+    //PayableLineItems
+    const lineItems = billData?.billDetails?.[0]?.lineItems;
+
+    let mcDetails = {};
+    let gstDetails = {};
+
+    mcDetails.amount = lineItems?.filter(lineItem=>lineItem?.headCode === "MC")?.[0]?.amount;
+    gstDetails.amount = lineItems?.filter(lineItem=>lineItem?.headCode === "GST")?.[0]?.amount;
 
     let currentProject = {};
     const headerDetails = {
         title: " ",
         asSectionHeader: true,
         values: [
-            { title: "WORKS_BILL_NUMBER", value: currentProject?.projectNumber || "NA"},
-            { title: "WORKS_BILL_DATE", value: Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA"},
-            { title: "WORKS_ORDER_NO", value: currentProject?.name || "NA"},
-            { title: "WORKS_PROJECT_ID", value: currentProject?.description || "NA"},
-            { title: "PROJECTS_DESCRIPTION", value: currentProject?.description || "NA"},
-            { title: "ES_COMMON_LOCATION", value: currentProject?.description || "NA"}
+            { title: "WORKS_BILL_NUMBER", value: billData?.billNumber || "NA"},
+            { title: "WORKS_BILL_DATE", value: Digit.Utils.pt.convertEpochToDate(billData?.billDate) || "NA"},
+            { title: "WORKS_ORDER_NO", value: WOData?.contractNumber || "NA"},
+            { title: "WORKS_PROJECT_ID", value: WOData?.additionalDetails?.projectId || "NA"},
+            { title: "PROJECTS_DESCRIPTION", value: WOData?.additionalDetails?.projectDesc || "NA"}, 
+            { title: "ES_COMMON_LOCATION", value:  WOData?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${WOData?.additionalDetails?.locality}`) : "NA" },
         ]
     };
 
@@ -147,12 +180,12 @@ export const BillsSearch = {
         title: "EXP_INVOICE_DETAILS",
         asSectionHeader: true,
         values: [
-            { title: "EXP_VENDOR_NAME", value: currentProject?.referenceID || "NA" },
-            { title: "EXP_VENDOR_ID", value: currentProject?.referenceID || "NA" },
-            { title: "EXP_INVOICE_NUMBER", value: currentProject?.referenceID || "NA" },
-            { title: "EXP_INVOICE_DATE", value: Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA"},
-            { title: "EXP_MATERIALCOST_RS", value: currentProject?.referenceID || "NA" },
-            { title: "EXP_GST_RS", value: currentProject?.referenceID || "NA" },
+            { title: "EXP_VENDOR_NAME", value: orgData?.name || "NA" },
+            { title: "EXP_VENDOR_ID", value: orgData?.orgNumber || "NA" },
+            { title: "EXP_INVOICE_NUMBER", value: billData?.additionalDetails?.invoiceNumber || "NA" },
+            { title: "EXP_INVOICE_DATE", value: Digit.Utils.pt.convertEpochToDate(billData?.additionalDetails?.invoiceDate ) || "NA"}, 
+            { title: "EXP_MATERIALCOST_RS", value: mcDetails.amount || "NA" }, 
+            { title: "EXP_GST_RS", value: gstDetails.amount || "NA" },
         ]
     };
 
@@ -160,14 +193,24 @@ export const BillsSearch = {
         title: "EXP_INVOICE_DETAILS",
         asSectionHeader: true,
         values: [
-            { title: "EXP_BILL_DETAILS", value: currentProject?.referenceID || "NA" },
+            { title: "EXP_BILL_AMOUNT", value: (mcDetails.amount + gstDetails.amount) || "NA" },
         ]
     };
 
+    //headCode filteration 
+    //EXP_DEDUCTION_NAME
+    //EXP_PERCENTAGE_OR_FIXED
+    //ES_COMMON_AMOUNT - payableLineItems.amount / payableLineItems.paidAmount
+    //WF_COMMON_COMMENTS - WF_COMMON_COMMENTS
+
     const deductionsTableRows = [t("WORKS_SNO"), t("EXP_DEDUCTION_NAME"), t("EXP_PERCENTAGE_OR_FIXED"), t("ES_COMMON_AMOUNT"), t("WF_COMMON_COMMENTS")] 
-    const deductionsTableData = [];
+    const deductionsTableData = lineItems?.map((lineItem, index)=>[
+      index + 1,
+
+    ])
     const deductionsTableTotalAmount = "";
-    deductionsTableData?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(deductionsTableTotalAmount, 'number')])
+    deductionsTableData?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(deductionsTableTotalAmount, 'number')]);
+
     const deductionsTable = {
         title: "WORKS_NON_SOR",
         asSectionHeader: true,
@@ -185,7 +228,7 @@ export const BillsSearch = {
         "title": " ",
         "asSectionHeader": true,
         "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
-        "value": Digit.Utils.dss.formatterWithoutRound(t("NA"))
+        "value": Digit.Utils.dss.formatterWithoutRound(t(billData?.netPayableAmount))
     }
 
     const documentDetails = {
