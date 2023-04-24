@@ -1,5 +1,5 @@
-import React, { Fragment, useState,useEffect,useMemo } from 'react'
-import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError,Loader,Dropdown } from '@egovernments/digit-ui-react-components'
+import React, { useState,useEffect,useMemo } from 'react'
+import { AddIcon, DeleteIcon,TextInput, CardLabelError,Loader,Dropdown } from '@egovernments/digit-ui-react-components'
 import { Controller } from 'react-hook-form';
 import _ from "lodash"
 
@@ -303,10 +303,28 @@ const DeductionsTable = ({control,watch,...props}) => {
               )}
             </div>
           </td>
-
           <td style={getStyles(5)}>
             <div style={cellContainerStyle}>
-              {showDelete() && (
+              <TextInput
+                style={{ marginBottom: "0px" }}
+                name={`${formFieldName}.${row.key}.comments`}
+                inputRef={register({
+                  required: true,
+                  pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/,
+                })}
+                disable={false}
+              />
+            </div>
+            <div style={errorContainerStyles}>
+              {/* {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "pattern" && (
+                      <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                  {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "required" && (
+                      <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
+            </div>
+          </td>
+          <td style={getStyles(6)}>
+            <div style={cellContainerStyle}>
+              {(
                 <span onClick={() => removeRow(row)} className="icon-wrapper">
                   <DeleteIcon fill={"#B1B4B6"} />
                 </span>
