@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Component
@@ -229,8 +228,8 @@ public class OrganisationFunctionQueryBuilder {
                 limit = config.getMaxLimit();
         }
 
-        if (pagination != null && pagination.getOffSet() != null)
-            offset = pagination.getOffSet();
+        if (pagination != null && pagination.getOffset() != null)
+            offset = pagination.getOffset();
 
         preparedStmtList.add(offset);
         preparedStmtList.add(limit + offset);
