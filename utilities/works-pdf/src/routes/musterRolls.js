@@ -36,10 +36,11 @@ router.post(
             }
             catch (ex) {
                 if (ex.response && ex.response.data) console.log(ex.response.data);
+
                 return renderError(res, "Failed to query details of the muster roll", 500);
             }
             try {
-                var contractId = resMuster.data.musterRolls[0].additionalDetails.contractId
+                var contractId = resMuster.data.musterRolls[0].referenceId
                 resContract = await search_contract(tenantId, requestinfo, contractId);
             }
             catch (ex) {
@@ -58,14 +59,27 @@ router.post(
             var muster = resMuster.data;
             var contract = resContract.data;
             var mdms = resMdms.data.MdmsRes['common-masters'].WageSeekerSkills
-            if (muster && muster.musterRolls && muster.musterRolls.length > 0 && contract && contract.contracts && contract.contracts.length > 0 && mdms && mdms.length > 0) {
+
+            if (muster && muster.musterRolls && muster.musterRolls.length > 0 && contract && contract.contracts && mdms && mdms.length > 0) {
 
                 var pdfResponse;
                 var pdfkey = config.pdf.nominal_muster_roll_template;
-                muster.musterRolls[0].additionalDetails['rollOfCbo'] = contract.contracts[0].executingAuthority;
-                muster.musterRolls[0].additionalDetails['projectDesc'] = contract.contracts[0].additionalDetails.projectDesc;
-                muster.musterRolls[0].additionalDetails["cboName"] = contract.contracts[0].additionalDetails.cboName;
-                muster.musterRolls[0].additionalDetails["projectId"] = contract.contracts[0].additionalDetails.projectId;
+                if (contract.contracts.length > 0) {
+                    muster.musterRolls[0].rollOfCbo = contract.contracts[0].executingAuthority;
+                    muster.musterRolls[0].projectDesc = contract.contracts[0].additionalDetails.projectDesc;
+                    muster.musterRolls[0].cboName = contract.contracts[0].additionalDetails.cboName;
+                    muster.musterRolls[0].projectId = contract.contracts[0].additionalDetails.projectId;
+                }
+                else {
+                    muster.musterRolls[0].rollOfCbo = 'NA';
+                    muster.musterRolls[0].projectDesc = 'NA';
+                    muster.musterRolls[0].cboName = 'NA';
+                    muster.musterRolls[0].projectId = 'NA';
+
+
+
+                }
+
                 var mdms = mdms.reduce((modified, actual) => {
                     modified[actual.code] = actual.amount;
                     return modified;
@@ -74,6 +88,7 @@ router.post(
                     ...individualEntrie, perDayWage: mdms[individualEntrie.additionalDetails.skillCode],
                     totalWage: individualEntrie.actualTotalAttendance * mdms[individualEntrie.additionalDetails.skillCode]
                 }))
+
                 try {
 
                     pdfResponse = await create_pdf(
@@ -84,7 +99,7 @@ router.post(
                     )
                 }
                 catch (ex) {
-                    if (ex.response && ex.response.data) console.log(ex.response.data);
+                    if (ex.response && ex.response.data);
 
                     return renderError(res, "Failed to generate PDF for muster roll", 500);
                 }
