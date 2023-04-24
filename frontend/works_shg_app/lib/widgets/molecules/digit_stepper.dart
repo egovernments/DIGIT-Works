@@ -103,7 +103,7 @@ class DigitStepper extends StatelessWidget {
     this.stepReachedAnimationEffect = Curves.bounceOut,
     this.stepReachedAnimationDuration = const Duration(seconds: 1),
     this.steppingEnabled = true,
-    this.scrollingDisabled = false,
+    this.scrollingDisabled = true,
     this.activeStep = 0,
     this.alignment = Alignment.center,
   });
@@ -153,11 +153,14 @@ class DigitStepper extends StatelessWidget {
     return List.generate(headers!.length, (index) {
       return FittedBox(
           alignment: Alignment.centerLeft,
-          child: Text(
-            headers![index],
-            style: headerStyle.copyWith(fontSize: stepRadius),
-            softWrap: true,
-            maxLines: 2,
+          child: SizedBox(
+            width: 55,
+            child: Text(
+              headers![index],
+              style: headerStyle.copyWith(fontSize: stepRadius),
+              softWrap: true,
+              maxLines: 4,
+            ),
           ));
     });
   }
