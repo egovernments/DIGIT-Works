@@ -267,7 +267,7 @@ const CreateContractForm = ({ onFormSubmit, estimateNumber, task, subEstimate, s
 
   return (
     <React.Fragment>
-      <Header styles={{fontSize: "32px"}}>{t("WORKS_CREATE_CONTRACT")}</Header>
+      <Header className="works-header-create">{t("WORKS_CREATE_CONTRACT")}</Header>
       <FormComposer
         label={t("WORKS_PROCEED_FORWARD")}
         config={configs.map((config) => {

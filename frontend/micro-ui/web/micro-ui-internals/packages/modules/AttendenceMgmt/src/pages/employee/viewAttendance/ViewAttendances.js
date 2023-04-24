@@ -60,7 +60,7 @@ const ViewAttendance = () => {
   return (
     <React.Fragment>
       <div className={"employee-application-details"} >
-        <Header>{showEditTitle ? t('ATM_EDIT_ATTENDENCE') : t("ATM_VIEW_ATTENDENCE")}</Header>
+        <Header className="works-header-view">{showEditTitle ? t('ATM_EDIT_ATTENDENCE') : t("ATM_VIEW_ATTENDENCE")}</Header>
         <MultiLink
          onHeadClick={() => HandleDownloadPdf()}
          downloadBtnClassName={"employee-download-btn-className"}
