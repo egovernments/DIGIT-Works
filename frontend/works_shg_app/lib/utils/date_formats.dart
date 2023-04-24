@@ -103,7 +103,7 @@ class DateFormats {
     DateTime end = DateTime.fromMillisecondsSinceEpoch(selectedEndDate);
     DaysInRange daysInRange = DaysInRange();
     int registerStartTime =
-        registerStartDate - (registerStartDate % (24 * 60 * 60 * 1000));
+        dateToTimeStamp(getDateFromTimestamp(registerStartDate));
     int registerEndTime = DateTime(
             DateTime.fromMillisecondsSinceEpoch(registerEndDate).year,
             DateTime.fromMillisecondsSinceEpoch(registerEndDate).month,
@@ -112,8 +112,7 @@ class DateFormats {
         .millisecondsSinceEpoch;
 
     while (start.isBefore(end) || start.isAtSameMomentAs(end)) {
-      DateTime currentDay =
-          DateTime(start.year, start.month, start.day, 5, 30, 0);
+      DateTime currentDay = DateTime(start.year, start.month, start.day);
       int currentDayTimestamp = currentDay.millisecondsSinceEpoch;
       switch (start.weekday) {
         case 1:

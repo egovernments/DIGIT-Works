@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 
 import '../skills/skills.dart';
 

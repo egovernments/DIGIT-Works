@@ -49,7 +49,7 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper( Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
           module: CommonMethods.getLocaleModules(),
         ))),
@@ -141,7 +141,14 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
                                       AppLocalizations.of(context).translate(
                                           i18.attendanceMgmt.updateAttendance),
                                   attendanceRegistersModel: attendanceRegisters,
-                                )
+                                ),
+                          const SizedBox(
+                            height: 16.0,
+                          ),
+                          const Align(
+                            alignment: Alignment.bottomCenter,
+                            child: PoweredByDigit(),
+                          )
                         ]);
                   });
             },

@@ -55,7 +55,6 @@ class SHGFilePickerState extends State<SHGFilePicker> {
   void _openFileExplorer() async {
     setState(() => _loadingPath = true);
     try {
-      print('open File Exp');
       _directoryPath = null;
       var paths = (await FilePicker.platform.pickFiles(
         type: pickingType,
@@ -68,7 +67,6 @@ class SHGFilePickerState extends State<SHGFilePicker> {
           ?.files;
 
       if (paths != null) {
-        print('path');
         var isNotValidSize = false;
 
         for (var path in paths) {
@@ -216,17 +214,12 @@ class SHGFilePickerState extends State<SHGFilePicker> {
     return LayoutBuilder(builder: (context, constraints) {
       return Center(
           child: Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              padding: const EdgeInsets.only(left: 4.0, right: 4.0),
               child: SingleChildScrollView(
                 child: Container(
-                  margin: constraints.maxWidth > 760
-                      ? const EdgeInsets.only(
-                          top: 5.0, bottom: 5, right: 10, left: 10)
-                      : const EdgeInsets.only(
-                          top: 5.0, bottom: 5, right: 0, left: 0),
-                  child: constraints.maxWidth > 760
-                      ? Row(children: _getContainer(constraints, context))
-                      : Column(children: _getContainer(constraints, context)),
+                  margin: const EdgeInsets.only(
+                      top: 5.0, bottom: 5, right: 0, left: 0),
+                  child: Column(children: _getContainer(constraints, context)),
                 ),
               )));
     });

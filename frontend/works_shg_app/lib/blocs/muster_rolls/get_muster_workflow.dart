@@ -37,13 +37,14 @@ class MusterGetWorkflowBloc
             "businessServices": "muster-roll-approval",
             "businessIds": event.musterRollNumber,
           });
+      WorkflowState? state =
+          musterWorkFlowModel.processInstances?.first.workflowState;
       await Future.delayed(const Duration(seconds: 2));
+
       emit(MusterGetWorkflowState.loaded(
           musterWorkFlowModel: musterWorkFlowModel,
           isInWorkflow: !(musterWorkFlowModel.processInstances!.isNotEmpty &&
-              musterWorkFlowModel.processInstances?.first.workflowState
-                      ?.applicationStatus ==
-                  'SENTBACK')));
+              state!.applicationStatus!.contains('BACKTOCBO'))));
     } on DioError catch (e) {
       emit(const MusterGetWorkflowState.error());
     }
