@@ -17,13 +17,14 @@
 @import "./components/filters.scss";
 @import "./components/button.scss";
 @import "./components/attendencetable.scss";
-@import "./pages/works/horizontalNav.scss";
 
 @import "./pages/employee/index.scss";
 @import "./components/uploadcomponents.scss";
 @import "./pages/works/inboxSearchComposer.scss";
 @import "./pages/works/InboxLinks.scss";
 @import "./pages/works/inboxSearch.scss";
+@import "./pages/works/horizontalNav.scss";
+
 
 
 .display-none {
@@ -753,7 +754,7 @@ input[type="number"] {
     padding: 0px !important;
   }
   .card-label.bolder{
-    font-weight: 700 !important;
+     @apply font-medium !important;
   }
 }
 
@@ -990,4 +991,31 @@ input[type="number"] {
 .text-wrap-overflow {
   word-wrap: break-word;
   word-break: break-all;
+}
+
+.submenu-container:first-child {
+  .sidebar-link {
+
+    padding: 18px!important;
+    padding-top: 20px!important;
+    svg {
+      width: 21px!important;
+      height: 21px!important;
+    }
+}
+
+
+  .employee-search-input{
+      margin-left:16px !important;
+  }
+}
+.h1 {&.works-header-search{
+font-size: 30px;
+}
+&.works-header-create{
+  font-size: 30px;
+}
+&.works-header-view{
+  font-size: 30px;
+}
 }
