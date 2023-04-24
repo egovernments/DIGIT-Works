@@ -1,22 +1,24 @@
-export const SearchBillConfig = {
+export const SearchBillWMSConfig = {
     "tenantId": "pg",
     "moduleName": "commonMuktaUiConfig",
-    "SearchBillConfig":[
+    "SearchBillWMSConfig":[
         {
-            label : "EXP_SEARCH_BILL",
+            label : "EXP_SEARCH_BILLSSS",
             type: 'search',
             apiDetails: {
-                serviceName: "/expense/bill/v1/_search",
+                serviceName: "/wms/expense/_search",
                 requestParam: {},
                 requestBody: {
-                    billCriteria: {}
+                    inbox: {
+                        moduleSearchCriteria: {}
+                    }
                 },
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
                 moduleName:"SearchBillConfig",
-                tableFormJsonPath:"requestBody.pagination",
-                filterFormJsonPath:"requestBody.billCriteria",
-                searchFormJsonPath:"requestBody.billCriteria",
+                tableFormJsonPath:"requestBody.inbox",
+                filterFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
+                searchFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
             },
             sections : {
                 search : {
@@ -58,7 +60,7 @@ export const SearchBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                  name: "businessService",
+                                  name: "billType",
                                   optionsKey: "name",
                                   optionsCustomStyle : {
                                     top : "2.3rem"
