@@ -12,8 +12,8 @@ const ViewWageBill = () => {
     billCriteria: {
       tenantId,
       ids: [],
-      businessService: "WORKS-MUSTERROLE",
-      referenceIds: [ "MUSTERROLE-WAGE"]
+      businessService: "works.wages",
+      referenceIds: []
     },
     pagination: { limit: 10, offSet: 0, sortBy: "ASC", order: "ASC"}
   }
