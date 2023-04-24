@@ -348,6 +348,12 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
                 value: item?.value,
                 isActive: true
             }
+        } else {
+            return {
+                type: "PAN",
+                value: item?.value ? item?.value : "XXXXX0123X", //if nothing is entered, pass default type PAN and junk value
+                isActive: true
+            }  
         }
     })
 
