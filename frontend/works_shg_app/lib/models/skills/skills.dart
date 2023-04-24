@@ -6,7 +6,7 @@ part 'skills.g.dart';
 @freezed
 class SkillsList with _$SkillsList {
   const factory SkillsList({
-    @JsonKey(name: 'WageSeekerSkills') List<WageSeekerSkills>? wageSeekerSkills,
+    @JsonKey(name: 'LabourCharges') List<WageSeekerSkills>? wageSeekerSkills,
   }) = _SkillsList;
 
   factory SkillsList.fromJson(

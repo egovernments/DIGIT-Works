@@ -26,6 +26,8 @@ mixin _$WageSeekerMDMS {
   WageSeekerWorksMDMS? get worksMDMS => throw _privateConstructorUsedError;
   @JsonKey(name: 'tenant')
   TenantMDMS? get tenantMDMS => throw _privateConstructorUsedError;
+  @JsonKey(name: 'expense')
+  WageSeekerExpenseMDMS? get expenseMDMS => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -42,11 +44,13 @@ abstract class $WageSeekerMDMSCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'common-masters') WageSeekerCommonMDMS? commonMDMS,
       @JsonKey(name: 'works') WageSeekerWorksMDMS? worksMDMS,
-      @JsonKey(name: 'tenant') TenantMDMS? tenantMDMS});
+      @JsonKey(name: 'tenant') TenantMDMS? tenantMDMS,
+      @JsonKey(name: 'expense') WageSeekerExpenseMDMS? expenseMDMS});
 
   $WageSeekerCommonMDMSCopyWith<$Res>? get commonMDMS;
   $WageSeekerWorksMDMSCopyWith<$Res>? get worksMDMS;
   $TenantMDMSCopyWith<$Res>? get tenantMDMS;
+  $WageSeekerExpenseMDMSCopyWith<$Res>? get expenseMDMS;
 }
 
 /// @nodoc
@@ -65,6 +69,7 @@ class _$WageSeekerMDMSCopyWithImpl<$Res, $Val extends WageSeekerMDMS>
     Object? commonMDMS = freezed,
     Object? worksMDMS = freezed,
     Object? tenantMDMS = freezed,
+    Object? expenseMDMS = freezed,
   }) {
     return _then(_value.copyWith(
       commonMDMS: freezed == commonMDMS
@@ -79,6 +84,10 @@ class _$WageSeekerMDMSCopyWithImpl<$Res, $Val extends WageSeekerMDMS>
           ? _value.tenantMDMS
           : tenantMDMS // ignore: cast_nullable_to_non_nullable
               as TenantMDMS?,
+      expenseMDMS: freezed == expenseMDMS
+          ? _value.expenseMDMS
+          : expenseMDMS // ignore: cast_nullable_to_non_nullable
+              as WageSeekerExpenseMDMS?,
     ) as $Val);
   }
 
@@ -117,6 +126,18 @@ class _$WageSeekerMDMSCopyWithImpl<$Res, $Val extends WageSeekerMDMS>
       return _then(_value.copyWith(tenantMDMS: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $WageSeekerExpenseMDMSCopyWith<$Res>? get expenseMDMS {
+    if (_value.expenseMDMS == null) {
+      return null;
+    }
+
+    return $WageSeekerExpenseMDMSCopyWith<$Res>(_value.expenseMDMS!, (value) {
+      return _then(_value.copyWith(expenseMDMS: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -130,7 +151,8 @@ abstract class _$$_WageSeekerMDMSCopyWith<$Res>
   $Res call(
       {@JsonKey(name: 'common-masters') WageSeekerCommonMDMS? commonMDMS,
       @JsonKey(name: 'works') WageSeekerWorksMDMS? worksMDMS,
-      @JsonKey(name: 'tenant') TenantMDMS? tenantMDMS});
+      @JsonKey(name: 'tenant') TenantMDMS? tenantMDMS,
+      @JsonKey(name: 'expense') WageSeekerExpenseMDMS? expenseMDMS});
 
   @override
   $WageSeekerCommonMDMSCopyWith<$Res>? get commonMDMS;
@@ -138,6 +160,8 @@ abstract class _$$_WageSeekerMDMSCopyWith<$Res>
   $WageSeekerWorksMDMSCopyWith<$Res>? get worksMDMS;
   @override
   $TenantMDMSCopyWith<$Res>? get tenantMDMS;
+  @override
+  $WageSeekerExpenseMDMSCopyWith<$Res>? get expenseMDMS;
 }
 
 /// @nodoc
@@ -154,6 +178,7 @@ class __$$_WageSeekerMDMSCopyWithImpl<$Res>
     Object? commonMDMS = freezed,
     Object? worksMDMS = freezed,
     Object? tenantMDMS = freezed,
+    Object? expenseMDMS = freezed,
   }) {
     return _then(_$_WageSeekerMDMS(
       commonMDMS: freezed == commonMDMS
@@ -168,6 +193,10 @@ class __$$_WageSeekerMDMSCopyWithImpl<$Res>
           ? _value.tenantMDMS
           : tenantMDMS // ignore: cast_nullable_to_non_nullable
               as TenantMDMS?,
+      expenseMDMS: freezed == expenseMDMS
+          ? _value.expenseMDMS
+          : expenseMDMS // ignore: cast_nullable_to_non_nullable
+              as WageSeekerExpenseMDMS?,
     ));
   }
 }
@@ -178,7 +207,8 @@ class _$_WageSeekerMDMS implements _WageSeekerMDMS {
   const _$_WageSeekerMDMS(
       {@JsonKey(name: 'common-masters') this.commonMDMS,
       @JsonKey(name: 'works') this.worksMDMS,
-      @JsonKey(name: 'tenant') this.tenantMDMS});
+      @JsonKey(name: 'tenant') this.tenantMDMS,
+      @JsonKey(name: 'expense') this.expenseMDMS});
 
   factory _$_WageSeekerMDMS.fromJson(Map<String, dynamic> json) =>
       _$$_WageSeekerMDMSFromJson(json);
@@ -192,10 +222,13 @@ class _$_WageSeekerMDMS implements _WageSeekerMDMS {
   @override
   @JsonKey(name: 'tenant')
   final TenantMDMS? tenantMDMS;
+  @override
+  @JsonKey(name: 'expense')
+  final WageSeekerExpenseMDMS? expenseMDMS;
 
   @override
   String toString() {
-    return 'WageSeekerMDMS(commonMDMS: $commonMDMS, worksMDMS: $worksMDMS, tenantMDMS: $tenantMDMS)';
+    return 'WageSeekerMDMS(commonMDMS: $commonMDMS, worksMDMS: $worksMDMS, tenantMDMS: $tenantMDMS, expenseMDMS: $expenseMDMS)';
   }
 
   @override
@@ -208,13 +241,15 @@ class _$_WageSeekerMDMS implements _WageSeekerMDMS {
             (identical(other.worksMDMS, worksMDMS) ||
                 other.worksMDMS == worksMDMS) &&
             (identical(other.tenantMDMS, tenantMDMS) ||
-                other.tenantMDMS == tenantMDMS));
+                other.tenantMDMS == tenantMDMS) &&
+            (identical(other.expenseMDMS, expenseMDMS) ||
+                other.expenseMDMS == expenseMDMS));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, commonMDMS, worksMDMS, tenantMDMS);
+      Object.hash(runtimeType, commonMDMS, worksMDMS, tenantMDMS, expenseMDMS);
 
   @JsonKey(ignore: true)
   @override
@@ -237,7 +272,9 @@ abstract class _WageSeekerMDMS implements WageSeekerMDMS {
       @JsonKey(name: 'works')
           final WageSeekerWorksMDMS? worksMDMS,
       @JsonKey(name: 'tenant')
-          final TenantMDMS? tenantMDMS}) = _$_WageSeekerMDMS;
+          final TenantMDMS? tenantMDMS,
+      @JsonKey(name: 'expense')
+          final WageSeekerExpenseMDMS? expenseMDMS}) = _$_WageSeekerMDMS;
 
   factory _WageSeekerMDMS.fromJson(Map<String, dynamic> json) =
       _$_WageSeekerMDMS.fromJson;
@@ -251,6 +288,9 @@ abstract class _WageSeekerMDMS implements WageSeekerMDMS {
   @override
   @JsonKey(name: 'tenant')
   TenantMDMS? get tenantMDMS;
+  @override
+  @JsonKey(name: 'expense')
+  WageSeekerExpenseMDMS? get expenseMDMS;
   @override
   @JsonKey(ignore: true)
   _$$_WageSeekerMDMSCopyWith<_$_WageSeekerMDMS> get copyWith =>
@@ -931,6 +971,169 @@ abstract class _TenantList implements TenantList {
       throw _privateConstructorUsedError;
 }
 
+WageSeekerExpenseMDMS _$WageSeekerExpenseMDMSFromJson(
+    Map<String, dynamic> json) {
+  return _WageSeekerExpenseMDMS.fromJson(json);
+}
+
+/// @nodoc
+mixin _$WageSeekerExpenseMDMS {
+  @JsonKey(name: 'LabourCharges')
+  List<WageSeekerSkills>? get wageSeekerSkills =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WageSeekerExpenseMDMSCopyWith<WageSeekerExpenseMDMS> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WageSeekerExpenseMDMSCopyWith<$Res> {
+  factory $WageSeekerExpenseMDMSCopyWith(WageSeekerExpenseMDMS value,
+          $Res Function(WageSeekerExpenseMDMS) then) =
+      _$WageSeekerExpenseMDMSCopyWithImpl<$Res, WageSeekerExpenseMDMS>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'LabourCharges')
+          List<WageSeekerSkills>? wageSeekerSkills});
+}
+
+/// @nodoc
+class _$WageSeekerExpenseMDMSCopyWithImpl<$Res,
+        $Val extends WageSeekerExpenseMDMS>
+    implements $WageSeekerExpenseMDMSCopyWith<$Res> {
+  _$WageSeekerExpenseMDMSCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? wageSeekerSkills = freezed,
+  }) {
+    return _then(_value.copyWith(
+      wageSeekerSkills: freezed == wageSeekerSkills
+          ? _value.wageSeekerSkills
+          : wageSeekerSkills // ignore: cast_nullable_to_non_nullable
+              as List<WageSeekerSkills>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_WageSeekerExpenseMDMSCopyWith<$Res>
+    implements $WageSeekerExpenseMDMSCopyWith<$Res> {
+  factory _$$_WageSeekerExpenseMDMSCopyWith(_$_WageSeekerExpenseMDMS value,
+          $Res Function(_$_WageSeekerExpenseMDMS) then) =
+      __$$_WageSeekerExpenseMDMSCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'LabourCharges')
+          List<WageSeekerSkills>? wageSeekerSkills});
+}
+
+/// @nodoc
+class __$$_WageSeekerExpenseMDMSCopyWithImpl<$Res>
+    extends _$WageSeekerExpenseMDMSCopyWithImpl<$Res, _$_WageSeekerExpenseMDMS>
+    implements _$$_WageSeekerExpenseMDMSCopyWith<$Res> {
+  __$$_WageSeekerExpenseMDMSCopyWithImpl(_$_WageSeekerExpenseMDMS _value,
+      $Res Function(_$_WageSeekerExpenseMDMS) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? wageSeekerSkills = freezed,
+  }) {
+    return _then(_$_WageSeekerExpenseMDMS(
+      wageSeekerSkills: freezed == wageSeekerSkills
+          ? _value._wageSeekerSkills
+          : wageSeekerSkills // ignore: cast_nullable_to_non_nullable
+              as List<WageSeekerSkills>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_WageSeekerExpenseMDMS implements _WageSeekerExpenseMDMS {
+  const _$_WageSeekerExpenseMDMS(
+      {@JsonKey(name: 'LabourCharges')
+          final List<WageSeekerSkills>? wageSeekerSkills})
+      : _wageSeekerSkills = wageSeekerSkills;
+
+  factory _$_WageSeekerExpenseMDMS.fromJson(Map<String, dynamic> json) =>
+      _$$_WageSeekerExpenseMDMSFromJson(json);
+
+  final List<WageSeekerSkills>? _wageSeekerSkills;
+  @override
+  @JsonKey(name: 'LabourCharges')
+  List<WageSeekerSkills>? get wageSeekerSkills {
+    final value = _wageSeekerSkills;
+    if (value == null) return null;
+    if (_wageSeekerSkills is EqualUnmodifiableListView)
+      return _wageSeekerSkills;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'WageSeekerExpenseMDMS(wageSeekerSkills: $wageSeekerSkills)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_WageSeekerExpenseMDMS &&
+            const DeepCollectionEquality()
+                .equals(other._wageSeekerSkills, _wageSeekerSkills));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_wageSeekerSkills));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_WageSeekerExpenseMDMSCopyWith<_$_WageSeekerExpenseMDMS> get copyWith =>
+      __$$_WageSeekerExpenseMDMSCopyWithImpl<_$_WageSeekerExpenseMDMS>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_WageSeekerExpenseMDMSToJson(
+      this,
+    );
+  }
+}
+
+abstract class _WageSeekerExpenseMDMS implements WageSeekerExpenseMDMS {
+  const factory _WageSeekerExpenseMDMS(
+          {@JsonKey(name: 'LabourCharges')
+              final List<WageSeekerSkills>? wageSeekerSkills}) =
+      _$_WageSeekerExpenseMDMS;
+
+  factory _WageSeekerExpenseMDMS.fromJson(Map<String, dynamic> json) =
+      _$_WageSeekerExpenseMDMS.fromJson;
+
+  @override
+  @JsonKey(name: 'LabourCharges')
+  List<WageSeekerSkills>? get wageSeekerSkills;
+  @override
+  @JsonKey(ignore: true)
+  _$$_WageSeekerExpenseMDMSCopyWith<_$_WageSeekerExpenseMDMS> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 WageSeekerCommonMDMS _$WageSeekerCommonMDMSFromJson(Map<String, dynamic> json) {
   return _WageSeekerCommonMDMS.fromJson(json);
 }
@@ -939,9 +1142,6 @@ WageSeekerCommonMDMS _$WageSeekerCommonMDMSFromJson(Map<String, dynamic> json) {
 mixin _$WageSeekerCommonMDMS {
   @JsonKey(name: 'GenderType')
   List<GenderType>? get genderType => throw _privateConstructorUsedError;
-  @JsonKey(name: 'WageSeekerSkills')
-  List<WageSeekerSkills>? get wageSeekerSkills =>
-      throw _privateConstructorUsedError;
   @JsonKey(name: 'Relationship')
   List<Relationship>? get relationship => throw _privateConstructorUsedError;
   @JsonKey(name: 'SocialCategory')
@@ -961,14 +1161,9 @@ abstract class $WageSeekerCommonMDMSCopyWith<$Res> {
       _$WageSeekerCommonMDMSCopyWithImpl<$Res, WageSeekerCommonMDMS>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'GenderType')
-          List<GenderType>? genderType,
-      @JsonKey(name: 'WageSeekerSkills')
-          List<WageSeekerSkills>? wageSeekerSkills,
-      @JsonKey(name: 'Relationship')
-          List<Relationship>? relationship,
-      @JsonKey(name: 'SocialCategory')
-          List<SocialCategory>? socialCategory});
+      {@JsonKey(name: 'GenderType') List<GenderType>? genderType,
+      @JsonKey(name: 'Relationship') List<Relationship>? relationship,
+      @JsonKey(name: 'SocialCategory') List<SocialCategory>? socialCategory});
 }
 
 /// @nodoc
@@ -986,7 +1181,6 @@ class _$WageSeekerCommonMDMSCopyWithImpl<$Res,
   @override
   $Res call({
     Object? genderType = freezed,
-    Object? wageSeekerSkills = freezed,
     Object? relationship = freezed,
     Object? socialCategory = freezed,
   }) {
@@ -995,10 +1189,6 @@ class _$WageSeekerCommonMDMSCopyWithImpl<$Res,
           ? _value.genderType
           : genderType // ignore: cast_nullable_to_non_nullable
               as List<GenderType>?,
-      wageSeekerSkills: freezed == wageSeekerSkills
-          ? _value.wageSeekerSkills
-          : wageSeekerSkills // ignore: cast_nullable_to_non_nullable
-              as List<WageSeekerSkills>?,
       relationship: freezed == relationship
           ? _value.relationship
           : relationship // ignore: cast_nullable_to_non_nullable
@@ -1020,14 +1210,9 @@ abstract class _$$_WageSeekerCommonMDMSCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'GenderType')
-          List<GenderType>? genderType,
-      @JsonKey(name: 'WageSeekerSkills')
-          List<WageSeekerSkills>? wageSeekerSkills,
-      @JsonKey(name: 'Relationship')
-          List<Relationship>? relationship,
-      @JsonKey(name: 'SocialCategory')
-          List<SocialCategory>? socialCategory});
+      {@JsonKey(name: 'GenderType') List<GenderType>? genderType,
+      @JsonKey(name: 'Relationship') List<Relationship>? relationship,
+      @JsonKey(name: 'SocialCategory') List<SocialCategory>? socialCategory});
 }
 
 /// @nodoc
@@ -1042,7 +1227,6 @@ class __$$_WageSeekerCommonMDMSCopyWithImpl<$Res>
   @override
   $Res call({
     Object? genderType = freezed,
-    Object? wageSeekerSkills = freezed,
     Object? relationship = freezed,
     Object? socialCategory = freezed,
   }) {
@@ -1051,10 +1235,6 @@ class __$$_WageSeekerCommonMDMSCopyWithImpl<$Res>
           ? _value._genderType
           : genderType // ignore: cast_nullable_to_non_nullable
               as List<GenderType>?,
-      wageSeekerSkills: freezed == wageSeekerSkills
-          ? _value._wageSeekerSkills
-          : wageSeekerSkills // ignore: cast_nullable_to_non_nullable
-              as List<WageSeekerSkills>?,
       relationship: freezed == relationship
           ? _value._relationship
           : relationship // ignore: cast_nullable_to_non_nullable
@@ -1073,14 +1253,11 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
   const _$_WageSeekerCommonMDMS(
       {@JsonKey(name: 'GenderType')
           final List<GenderType>? genderType,
-      @JsonKey(name: 'WageSeekerSkills')
-          final List<WageSeekerSkills>? wageSeekerSkills,
       @JsonKey(name: 'Relationship')
           final List<Relationship>? relationship,
       @JsonKey(name: 'SocialCategory')
           final List<SocialCategory>? socialCategory})
       : _genderType = genderType,
-        _wageSeekerSkills = wageSeekerSkills,
         _relationship = relationship,
         _socialCategory = socialCategory;
 
@@ -1094,18 +1271,6 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
     final value = _genderType;
     if (value == null) return null;
     if (_genderType is EqualUnmodifiableListView) return _genderType;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  final List<WageSeekerSkills>? _wageSeekerSkills;
-  @override
-  @JsonKey(name: 'WageSeekerSkills')
-  List<WageSeekerSkills>? get wageSeekerSkills {
-    final value = _wageSeekerSkills;
-    if (value == null) return null;
-    if (_wageSeekerSkills is EqualUnmodifiableListView)
-      return _wageSeekerSkills;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -1134,7 +1299,7 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
 
   @override
   String toString() {
-    return 'WageSeekerCommonMDMS(genderType: $genderType, wageSeekerSkills: $wageSeekerSkills, relationship: $relationship, socialCategory: $socialCategory)';
+    return 'WageSeekerCommonMDMS(genderType: $genderType, relationship: $relationship, socialCategory: $socialCategory)';
   }
 
   @override
@@ -1144,8 +1309,6 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
             other is _$_WageSeekerCommonMDMS &&
             const DeepCollectionEquality()
                 .equals(other._genderType, _genderType) &&
-            const DeepCollectionEquality()
-                .equals(other._wageSeekerSkills, _wageSeekerSkills) &&
             const DeepCollectionEquality()
                 .equals(other._relationship, _relationship) &&
             const DeepCollectionEquality()
@@ -1157,7 +1320,6 @@ class _$_WageSeekerCommonMDMS implements _WageSeekerCommonMDMS {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_genderType),
-      const DeepCollectionEquality().hash(_wageSeekerSkills),
       const DeepCollectionEquality().hash(_relationship),
       const DeepCollectionEquality().hash(_socialCategory));
 
@@ -1180,8 +1342,6 @@ abstract class _WageSeekerCommonMDMS implements WageSeekerCommonMDMS {
   const factory _WageSeekerCommonMDMS(
           {@JsonKey(name: 'GenderType')
               final List<GenderType>? genderType,
-          @JsonKey(name: 'WageSeekerSkills')
-              final List<WageSeekerSkills>? wageSeekerSkills,
           @JsonKey(name: 'Relationship')
               final List<Relationship>? relationship,
           @JsonKey(name: 'SocialCategory')
@@ -1194,9 +1354,6 @@ abstract class _WageSeekerCommonMDMS implements WageSeekerCommonMDMS {
   @override
   @JsonKey(name: 'GenderType')
   List<GenderType>? get genderType;
-  @override
-  @JsonKey(name: 'WageSeekerSkills')
-  List<WageSeekerSkills>? get wageSeekerSkills;
   @override
   @JsonKey(name: 'Relationship')
   List<Relationship>? get relationship;

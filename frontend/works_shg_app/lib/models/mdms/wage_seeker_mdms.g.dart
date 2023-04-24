@@ -18,6 +18,10 @@ _$_WageSeekerMDMS _$$_WageSeekerMDMSFromJson(Map<String, dynamic> json) =>
       tenantMDMS: json['tenant'] == null
           ? null
           : TenantMDMS.fromJson(json['tenant'] as Map<String, dynamic>),
+      expenseMDMS: json['expense'] == null
+          ? null
+          : WageSeekerExpenseMDMS.fromJson(
+              json['expense'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_WageSeekerMDMSToJson(_$_WageSeekerMDMS instance) =>
@@ -25,6 +29,7 @@ Map<String, dynamic> _$$_WageSeekerMDMSToJson(_$_WageSeekerMDMS instance) =>
       'common-masters': instance.commonMDMS,
       'works': instance.worksMDMS,
       'tenant': instance.tenantMDMS,
+      'expense': instance.expenseMDMS,
     };
 
 _$_WageSeekerWorksMDMS _$$_WageSeekerWorksMDMSFromJson(
@@ -83,14 +88,25 @@ Map<String, dynamic> _$$_TenantListToJson(_$_TenantList instance) =>
       'code': instance.code,
     };
 
+_$_WageSeekerExpenseMDMS _$$_WageSeekerExpenseMDMSFromJson(
+        Map<String, dynamic> json) =>
+    _$_WageSeekerExpenseMDMS(
+      wageSeekerSkills: (json['LabourCharges'] as List<dynamic>?)
+          ?.map((e) => WageSeekerSkills.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$_WageSeekerExpenseMDMSToJson(
+        _$_WageSeekerExpenseMDMS instance) =>
+    <String, dynamic>{
+      'LabourCharges': instance.wageSeekerSkills,
+    };
+
 _$_WageSeekerCommonMDMS _$$_WageSeekerCommonMDMSFromJson(
         Map<String, dynamic> json) =>
     _$_WageSeekerCommonMDMS(
       genderType: (json['GenderType'] as List<dynamic>?)
           ?.map((e) => GenderType.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      wageSeekerSkills: (json['WageSeekerSkills'] as List<dynamic>?)
-          ?.map((e) => WageSeekerSkills.fromJson(e as Map<String, dynamic>))
           .toList(),
       relationship: (json['Relationship'] as List<dynamic>?)
           ?.map((e) => Relationship.fromJson(e as Map<String, dynamic>))
@@ -104,7 +120,6 @@ Map<String, dynamic> _$$_WageSeekerCommonMDMSToJson(
         _$_WageSeekerCommonMDMS instance) =>
     <String, dynamic>{
       'GenderType': instance.genderType,
-      'WageSeekerSkills': instance.wageSeekerSkills,
       'Relationship': instance.relationship,
       'SocialCategory': instance.socialCategory,
     };

@@ -20,7 +20,7 @@ SkillsList _$SkillsListFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SkillsList {
-  @JsonKey(name: 'WageSeekerSkills')
+  @JsonKey(name: 'LabourCharges')
   List<WageSeekerSkills>? get wageSeekerSkills =>
       throw _privateConstructorUsedError;
 
@@ -37,7 +37,7 @@ abstract class $SkillsListCopyWith<$Res> {
       _$SkillsListCopyWithImpl<$Res, SkillsList>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'WageSeekerSkills')
+      {@JsonKey(name: 'LabourCharges')
           List<WageSeekerSkills>? wageSeekerSkills});
 }
 
@@ -74,7 +74,7 @@ abstract class _$$_SkillsListCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'WageSeekerSkills')
+      {@JsonKey(name: 'LabourCharges')
           List<WageSeekerSkills>? wageSeekerSkills});
 }
 
@@ -104,7 +104,7 @@ class __$$_SkillsListCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_SkillsList implements _SkillsList {
   const _$_SkillsList(
-      {@JsonKey(name: 'WageSeekerSkills')
+      {@JsonKey(name: 'LabourCharges')
           final List<WageSeekerSkills>? wageSeekerSkills})
       : _wageSeekerSkills = wageSeekerSkills;
 
@@ -113,7 +113,7 @@ class _$_SkillsList implements _SkillsList {
 
   final List<WageSeekerSkills>? _wageSeekerSkills;
   @override
-  @JsonKey(name: 'WageSeekerSkills')
+  @JsonKey(name: 'LabourCharges')
   List<WageSeekerSkills>? get wageSeekerSkills {
     final value = _wageSeekerSkills;
     if (value == null) return null;
@@ -158,14 +158,14 @@ class _$_SkillsList implements _SkillsList {
 
 abstract class _SkillsList implements SkillsList {
   const factory _SkillsList(
-      {@JsonKey(name: 'WageSeekerSkills')
+      {@JsonKey(name: 'LabourCharges')
           final List<WageSeekerSkills>? wageSeekerSkills}) = _$_SkillsList;
 
   factory _SkillsList.fromJson(Map<String, dynamic> json) =
       _$_SkillsList.fromJson;
 
   @override
-  @JsonKey(name: 'WageSeekerSkills')
+  @JsonKey(name: 'LabourCharges')
   List<WageSeekerSkills>? get wageSeekerSkills;
   @override
   @JsonKey(ignore: true)

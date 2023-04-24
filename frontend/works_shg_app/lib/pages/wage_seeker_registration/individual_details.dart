@@ -88,7 +88,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
     List<String> gender = widget.wageSeekerMDMS!.commonMDMS!.genderType!
         .map((e) => (e.code))
         .toList();
-    List<String> skills = widget.wageSeekerMDMS!.commonMDMS!.wageSeekerSkills!
+    List<String> skills = widget.wageSeekerMDMS!.expenseMDMS!.wageSeekerSkills!
         .map((e) => e.code)
         .toList();
 
