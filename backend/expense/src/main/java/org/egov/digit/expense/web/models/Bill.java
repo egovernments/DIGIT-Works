@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Bill {
-	
+
 	@JsonProperty("id")
 	@Valid
 	private String id;
@@ -73,7 +73,7 @@ public class Bill {
 	@JsonProperty("toPeriod")
 	@Valid
 	private Long toPeriod;
-	
+
 	@JsonProperty("paymentStatus")
 	@Size(min = 2, max = 64)
 	private String paymentStatus;
@@ -101,15 +101,22 @@ public class Bill {
 	@JsonProperty("auditDetails")
 	@Valid
 	private AuditDetails auditDetails;
-	
+
 	@JsonProperty("workflow")
 	private ProcessInstance workflow;
 
+	@JsonProperty("wfStatus")
+	@Size(min = 2, max = 64)
+	private String wfStatus = null;
+	
+	@JsonProperty("processInstance")
+	private ProcessInstance processInstance = null;
+
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
-		
-		if(null == this.billDetails)
+
+		if (null == this.billDetails)
 			this.billDetails = new ArrayList<>();
-		
+
 		this.billDetails.add(billDetailsItem);
 		return this;
 	}

@@ -84,10 +84,10 @@ public class BillValidator {
         Bill bill = billRequest.getBill();
 		String rootTenantId=bill.getTenantId().split("\\.")[0];
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-                rootTenantId, Constants.MODULE_NAME, Constants.MDMS_MASTER_NAMES);
+                rootTenantId, Constants.HEADCODES_MODULE_NAME, Constants.MDMS_MASTER_NAMES);
 
         /* validating head code master data */
-		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.MODULE_NAME).get(HEADCODE_MASTERNAME),HEADCODE_CODE_FILTER);
+		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.HEADCODES_MODULE_NAME).get(HEADCODE_MASTERNAME),HEADCODE_CODE_FILTER);
 
         Set<String> missingHeadCodes = new HashSet<>();
 
