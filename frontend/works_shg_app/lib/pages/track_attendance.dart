@@ -626,6 +626,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                   registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
                                                                                                                   registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
                                                                                                                   projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
+                                                                                                                  projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '',
                                                                                                                   projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '',
                                                                                                                   projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '',
                                                                                                                   locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '',
@@ -657,7 +658,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                   ButtonLink(
                                                                     AppLocalizations.of(context).translate(
                                                                         i18.attendanceMgmt.addNewWageSeeker),
-                                                                        () {},
+                                                                        () {
+                                                                      context.router.push(const RegisterIndividualRoute());
+                                                                        },
                                                                     align: Alignment.center,
                                                                   ),
                                                                 ],);

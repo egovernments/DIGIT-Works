@@ -88,9 +88,12 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
     List<String> gender = widget.wageSeekerMDMS!.commonMDMS!.genderType!
         .map((e) => (e.code))
         .toList();
-    List<String> skills = widget.wageSeekerMDMS!.expenseMDMS!.wageSeekerSkills!
-        .map((e) => e.code)
-        .toList();
+    List<String> skills =
+        widget.wageSeekerMDMS!.commonMDMS!.wageSeekerSkills != null
+            ? widget.wageSeekerMDMS!.commonMDMS!.wageSeekerSkills!
+                .map((e) => e.code)
+                .toList()
+            : [];
 
     return ReactiveFormBuilder(
       form: buildForm,
@@ -313,12 +316,14 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                                   context,
                                   t.translate(i18.wageSeeker.genderRequired),
                                   'ERROR');
-                            } else if (!getSkillsValid() ||
-                                selectedOptions.isEmpty) {
+                            } else if (!getSkillsValid()) {
                               Notifiers.getToastMessage(
                                   context,
                                   i18.wageSeeker.selectSkillValidation,
                                   'ERROR');
+                            } else if (selectedOptions.isEmpty) {
+                              Notifiers.getToastMessage(context,
+                                  i18.wageSeeker.skillsRequired, 'ERROR');
                             } else {
                               final individualDetails = IndividualDetails(
                                   name: form.value[nameKey].toString(),

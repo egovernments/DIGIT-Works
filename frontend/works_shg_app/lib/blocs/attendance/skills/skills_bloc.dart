@@ -32,9 +32,9 @@ class SkillsBloc extends Bloc<SkillsBlocEvent, SkillsBlocState> {
               .toString(),
           moduleDetails: [
             {
-              "moduleName": "expense",
+              "moduleName": "common-masters",
               "masterDetails": [
-                {"name": "LabourCharges", "filter": "[?(@.active==true)]"},
+                {"name": "WageSeekerSkills", "filter": "[?(@.active==true)]"},
               ],
             }
           ]);

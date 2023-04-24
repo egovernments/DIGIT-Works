@@ -20,7 +20,7 @@ SkillsList _$SkillsListFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SkillsList {
-  @JsonKey(name: 'LabourCharges')
+  @JsonKey(name: 'WageSeekerSkills')
   List<WageSeekerSkills>? get wageSeekerSkills =>
       throw _privateConstructorUsedError;
 
@@ -37,7 +37,7 @@ abstract class $SkillsListCopyWith<$Res> {
       _$SkillsListCopyWithImpl<$Res, SkillsList>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'LabourCharges')
+      {@JsonKey(name: 'WageSeekerSkills')
           List<WageSeekerSkills>? wageSeekerSkills});
 }
 
@@ -74,7 +74,7 @@ abstract class _$$_SkillsListCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'LabourCharges')
+      {@JsonKey(name: 'WageSeekerSkills')
           List<WageSeekerSkills>? wageSeekerSkills});
 }
 
@@ -104,7 +104,7 @@ class __$$_SkillsListCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_SkillsList implements _SkillsList {
   const _$_SkillsList(
-      {@JsonKey(name: 'LabourCharges')
+      {@JsonKey(name: 'WageSeekerSkills')
           final List<WageSeekerSkills>? wageSeekerSkills})
       : _wageSeekerSkills = wageSeekerSkills;
 
@@ -113,7 +113,7 @@ class _$_SkillsList implements _SkillsList {
 
   final List<WageSeekerSkills>? _wageSeekerSkills;
   @override
-  @JsonKey(name: 'LabourCharges')
+  @JsonKey(name: 'WageSeekerSkills')
   List<WageSeekerSkills>? get wageSeekerSkills {
     final value = _wageSeekerSkills;
     if (value == null) return null;
@@ -158,14 +158,14 @@ class _$_SkillsList implements _SkillsList {
 
 abstract class _SkillsList implements SkillsList {
   const factory _SkillsList(
-      {@JsonKey(name: 'LabourCharges')
+      {@JsonKey(name: 'WageSeekerSkills')
           final List<WageSeekerSkills>? wageSeekerSkills}) = _$_SkillsList;
 
   factory _SkillsList.fromJson(Map<String, dynamic> json) =
       _$_SkillsList.fromJson;
 
   @override
-  @JsonKey(name: 'LabourCharges')
+  @JsonKey(name: 'WageSeekerSkills')
   List<WageSeekerSkills>? get wageSeekerSkills;
   @override
   @JsonKey(ignore: true)
@@ -179,9 +179,8 @@ WageSeekerSkills _$WageSeekerSkillsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$WageSeekerSkills {
-  String get name => throw _privateConstructorUsedError;
   String get code => throw _privateConstructorUsedError;
-  int get amount => throw _privateConstructorUsedError;
+  int? get amount => throw _privateConstructorUsedError;
   bool get active => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -196,7 +195,7 @@ abstract class $WageSeekerSkillsCopyWith<$Res> {
           WageSeekerSkills value, $Res Function(WageSeekerSkills) then) =
       _$WageSeekerSkillsCopyWithImpl<$Res, WageSeekerSkills>;
   @useResult
-  $Res call({String name, String code, int amount, bool active});
+  $Res call({String code, int? amount, bool active});
 }
 
 /// @nodoc
@@ -212,24 +211,19 @@ class _$WageSeekerSkillsCopyWithImpl<$Res, $Val extends WageSeekerSkills>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
     Object? code = null,
-    Object? amount = null,
+    Object? amount = freezed,
     Object? active = null,
   }) {
     return _then(_value.copyWith(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
               as String,
-      amount: null == amount
+      amount: freezed == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       active: null == active
           ? _value.active
           : active // ignore: cast_nullable_to_non_nullable
@@ -246,7 +240,7 @@ abstract class _$$_WageSeekerSkillsCopyWith<$Res>
       __$$_WageSeekerSkillsCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String code, int amount, bool active});
+  $Res call({String code, int? amount, bool active});
 }
 
 /// @nodoc
@@ -260,24 +254,19 @@ class __$$_WageSeekerSkillsCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
     Object? code = null,
-    Object? amount = null,
+    Object? amount = freezed,
     Object? active = null,
   }) {
     return _then(_$_WageSeekerSkills(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
               as String,
-      amount: null == amount
+      amount: freezed == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       active: null == active
           ? _value.active
           : active // ignore: cast_nullable_to_non_nullable
@@ -290,26 +279,21 @@ class __$$_WageSeekerSkillsCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_WageSeekerSkills implements _WageSeekerSkills {
   const _$_WageSeekerSkills(
-      {required this.name,
-      required this.code,
-      required this.amount,
-      required this.active});
+      {required this.code, this.amount, required this.active});
 
   factory _$_WageSeekerSkills.fromJson(Map<String, dynamic> json) =>
       _$$_WageSeekerSkillsFromJson(json);
 
   @override
-  final String name;
-  @override
   final String code;
   @override
-  final int amount;
+  final int? amount;
   @override
   final bool active;
 
   @override
   String toString() {
-    return 'WageSeekerSkills(name: $name, code: $code, amount: $amount, active: $active)';
+    return 'WageSeekerSkills(code: $code, amount: $amount, active: $active)';
   }
 
   @override
@@ -317,7 +301,6 @@ class _$_WageSeekerSkills implements _WageSeekerSkills {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_WageSeekerSkills &&
-            (identical(other.name, name) || other.name == name) &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.active, active) || other.active == active));
@@ -325,7 +308,7 @@ class _$_WageSeekerSkills implements _WageSeekerSkills {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, name, code, amount, active);
+  int get hashCode => Object.hash(runtimeType, code, amount, active);
 
   @JsonKey(ignore: true)
   @override
@@ -343,20 +326,17 @@ class _$_WageSeekerSkills implements _WageSeekerSkills {
 
 abstract class _WageSeekerSkills implements WageSeekerSkills {
   const factory _WageSeekerSkills(
-      {required final String name,
-      required final String code,
-      required final int amount,
+      {required final String code,
+      final int? amount,
       required final bool active}) = _$_WageSeekerSkills;
 
   factory _WageSeekerSkills.fromJson(Map<String, dynamic> json) =
       _$_WageSeekerSkills.fromJson;
 
   @override
-  String get name;
-  @override
   String get code;
   @override
-  int get amount;
+  int? get amount;
   @override
   bool get active;
   @override

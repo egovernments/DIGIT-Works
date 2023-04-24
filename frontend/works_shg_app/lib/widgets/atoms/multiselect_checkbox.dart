@@ -70,8 +70,8 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                 return StatefulBuilder(
                   builder: (BuildContext context, StateSetter set) {
                     return CheckboxListTile(
-                      title: Text(
-                          AppLocalizations.of(context).translate(optionData)),
+                      title: Text(AppLocalizations.of(context)
+                          .translate('COMMON_MASTERS_SKILLS_$optionData')),
                       controlAffinity: ListTileControlAffinity.leading,
                       value: widget.selectedOptions.contains(optionData),
                       onChanged: (selected) {

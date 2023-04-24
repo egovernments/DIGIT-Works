@@ -39,14 +39,9 @@ class WageSeekerMDMSBloc
               "moduleName": "common-masters",
               "masterDetails": [
                 {"name": "GenderType", "filter": "[?(@.active==true)]"},
+                {"name": "WageSeekerSkills", "filter": "[?(@.active==true)]"},
                 {"name": "Relationship", "filter": "[?(@.active==true)]"},
                 {"name": "SocialCategory", "filter": "[?(@.active==true)]"},
-              ],
-            },
-            {
-              "moduleName": "expense",
-              "masterDetails": [
-                {"name": "LabourCharges", "filter": "[?(@.active==true)]"},
               ],
             },
             {

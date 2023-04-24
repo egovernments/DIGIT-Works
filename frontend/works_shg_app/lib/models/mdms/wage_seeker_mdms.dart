@@ -11,7 +11,6 @@ class WageSeekerMDMS with _$WageSeekerMDMS {
     @JsonKey(name: 'common-masters') WageSeekerCommonMDMS? commonMDMS,
     @JsonKey(name: 'works') WageSeekerWorksMDMS? worksMDMS,
     @JsonKey(name: 'tenant') TenantMDMS? tenantMDMS,
-    @JsonKey(name: 'expense') WageSeekerExpenseMDMS? expenseMDMS,
   }) = _WageSeekerMDMS;
 
   factory WageSeekerMDMS.fromJson(
@@ -71,21 +70,10 @@ class TenantList with _$TenantList {
 }
 
 @freezed
-class WageSeekerExpenseMDMS with _$WageSeekerExpenseMDMS {
-  const factory WageSeekerExpenseMDMS({
-    @JsonKey(name: 'LabourCharges') List<WageSeekerSkills>? wageSeekerSkills,
-  }) = _WageSeekerExpenseMDMS;
-
-  factory WageSeekerExpenseMDMS.fromJson(
-    Map<String, dynamic> json,
-  ) =>
-      _$WageSeekerExpenseMDMSFromJson(json);
-}
-
-@freezed
 class WageSeekerCommonMDMS with _$WageSeekerCommonMDMS {
   const factory WageSeekerCommonMDMS({
     @JsonKey(name: 'GenderType') List<GenderType>? genderType,
+    @JsonKey(name: 'WageSeekerSkills') List<WageSeekerSkills>? wageSeekerSkills,
     @JsonKey(name: 'Relationship') List<Relationship>? relationship,
     @JsonKey(name: 'SocialCategory') List<SocialCategory>? socialCategory,
   }) = _WageSeekerCommonMDMS;

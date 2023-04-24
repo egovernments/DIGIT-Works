@@ -543,11 +543,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                         ])
                                   : const EmptyImage(align: Alignment.center);
                             },
-                            error: (String? error) => Notifiers.getToastMessage(
-                                context,
-                                AppLocalizations.of(context)
-                                    .translate(error.toString()),
-                                'ERROR'),
+                            error: (String? error) => Container(),
                             orElse: () => Container());
                       }),
                     )

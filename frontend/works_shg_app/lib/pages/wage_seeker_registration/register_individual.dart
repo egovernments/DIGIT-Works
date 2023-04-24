@@ -18,6 +18,7 @@ import '../../blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import '../../models/mdms/location_mdms.dart';
 import '../../models/mdms/wage_seeker_mdms.dart';
+import '../../utils/common_methods.dart';
 import '../../utils/models/file_picker_data.dart';
 import '../../widgets/SideBar.dart';
 import '../../widgets/atoms/app_bar_logo.dart';
@@ -96,9 +97,9 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: const DrawerWrapper(Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: SingleChildScrollView(
           child: Column(
@@ -111,7 +112,7 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
                   activeStepColor: const DigitColors().burningOrange,
                   numberStyle: TextStyle(color: const DigitColors().white),
                   lineDotRadius: 2.0,
-                  lineLength: 50,
+                  lineLength: MediaQuery.of(context).size.width / 11,
                   activeStepBorderPadding: 0.0,
                   lineColor: const DigitColors().regalBlue,
                   activeStepBorderColor: const DigitColors().burningOrange,
@@ -175,7 +176,8 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
       case 1:
         return LocationDetailsPage(
           onPressed: updateCurrentStep,
-          city: 'pg.citya',
+          city: GlobalVariables
+              .organisationListModel?.organisations?.first.tenantId,
           location: location,
           wageSeekerMDMS: wageSeekerMDMS,
         );

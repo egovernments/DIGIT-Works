@@ -66,7 +66,7 @@ class ToastUtils {
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: Color(0xFFFFFFFF),
                             ),
                           ),

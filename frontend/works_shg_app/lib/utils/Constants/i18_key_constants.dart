@@ -217,6 +217,7 @@ class WageSeeker {
   String get minFatherNameCharacters => 'MIN_FATHER_CHARCTERS_REQUIRED';
   String get maxNameCharacters => 'MAX_NAME_CHARCTERS_REQUIRED';
   String get maxFatherNameCharacters => 'MAX_FATHER_CHARCTERS_REQUIRED';
+  String get skillsRequired => 'SKILLS_IS_REQUIRED';
 }
 
 class AttendanceMgmt {
