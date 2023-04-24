@@ -73,7 +73,7 @@ const ViewContractDetails = () => {
     },[isProjectError]);
 
     const HandleDownloadPdf = () => {
-        Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`workOrder-${contractId}.pdf`)
+        Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`WorkOrder-${contractId}.pdf`)
     }
 
     const handleToastClose = () => {
@@ -103,7 +103,7 @@ const ViewContractDetails = () => {
       <React.Fragment>
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-            <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
+            <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
             <MultiLink
                    onHeadClick={() => HandleDownloadPdf()}
                    downloadBtnClassName={"employee-download-btn-className"}

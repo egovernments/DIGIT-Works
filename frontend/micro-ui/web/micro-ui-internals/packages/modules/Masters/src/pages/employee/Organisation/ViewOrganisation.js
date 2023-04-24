@@ -62,7 +62,7 @@ const ViewOrganisation = () => {
 
   return (
     <React.Fragment>
-      <Header>{t("MASTERS_VIEW_VENDOR_ORG")}</Header>
+      <Header className="works-header-view">{t("MASTERS_VIEW_VENDOR_ORG")}</Header>
       {
         showDataError === null && ( <React.Fragment>
           {

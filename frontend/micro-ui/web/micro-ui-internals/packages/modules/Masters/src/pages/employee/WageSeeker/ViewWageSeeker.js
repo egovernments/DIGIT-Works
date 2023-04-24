@@ -45,7 +45,7 @@ const ViewWageSeeker = () => {
  
   return (
     <React.Fragment>
-      <Header>{t("MASTERS_VIEW_WAGESEEKER")}</Header>
+      <Header className="works-header-view">{t("MASTERS_VIEW_WAGESEEKER")}</Header>
       {
         showDataError === null && <React.Fragment>
           <ApplicationDetails
