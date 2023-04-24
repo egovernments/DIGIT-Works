@@ -107,7 +107,7 @@ const MultiSelectDropdown = ({ options, optionsKey, selected = [], onSelect, def
   return (
     <div className="multi-select-dropdown-wrap" ref={dropdownRef} style={{marginBottom: '24px'}}>
       <div className={`master${active ? `-active` : ``}`}>
-        <input className="cursorPointer" type="text" onKeyDown={keyChange} onFocus={() => setActive(true)} value={searchQuery} onChange={onSearch} />
+        <input className="cursorPointer"  style={{opacity: 0}} type="text" onKeyDown={keyChange} onFocus={() => setActive(true)} value={searchQuery} onChange={onSearch} />
         <div className="label">
           <p>{alreadyQueuedSelectedState.length > 0 ? `${alreadyQueuedSelectedState.length} ${defaultUnit}` : defaultLabel}</p>
           <ArrowDown />
