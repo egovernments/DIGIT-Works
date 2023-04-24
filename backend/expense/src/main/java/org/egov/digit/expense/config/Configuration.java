@@ -59,6 +59,24 @@ public class Configuration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
+	@Value("${egov.idgen.works.wage.bill.number.name}")
+	private String wageBillNumberName;
+
+	@Value("${egov.idgen.works.wage.bill.number.format}")
+	private String wageBillNumberFormat;
+
+	@Value("${egov.idgen.works.purchase.bill.number.name}")
+	private String purchaseBillNumberName;
+
+	@Value("${egov.idgen.works.purchase.bill.number.format}")
+	private String purchaseBillNumberFormat;
+
+	@Value("${egov.idgen.works.supervision.bill.number.name}")
+	private String supervisionBillNumberName;
+
+	@Value("${egov.idgen.works.supervision.bill.number.format}")
+	private String supervisionBillNumberFormat;
+
 	// Workflow Config
 	@Value("${egov.workflow.host}")
 	private String wfHost;

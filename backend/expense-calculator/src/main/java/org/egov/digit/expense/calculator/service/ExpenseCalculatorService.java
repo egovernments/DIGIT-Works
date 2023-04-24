@@ -74,14 +74,11 @@ public class ExpenseCalculatorService {
             List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo, criteria, false);
             return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, wageSeekerSkillCodeAmountMapping);
         } else {
-            return supervisionBillGeneratorService.calculateEstimate(requestInfo, criteria);
+            List<Bill> bills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
+            return supervisionBillGeneratorService.calculateEstimate(requestInfo, criteria, bills);
         }
     }
-    public Calculation calculate(CalculationRequest calculationRequest) {
-        Calculation calculation = calculateEstimates(calculationRequest);
-        expenseCalculatorProducer.push(config.getCalculatorCreateTopic(),calculation);
-        return calculation;
-    }
+
 
     public List<Bill> createPurchaseBill(PurchaseBillRequest purchaseBillRequest){
         expenseCalculatorServiceValidator.validatePurchaseRequest(purchaseBillRequest);
@@ -97,31 +94,33 @@ public class ExpenseCalculatorService {
         expenseCalculatorServiceValidator.validateCalculatorCalculateRequest(calculationRequest);
         RequestInfo requestInfo = calculationRequest.getRequestInfo();
         Criteria criteria = calculationRequest.getCriteria();
+        List<Bill> bills = new ArrayList<>();
 
         if(criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
             // Fetch wage seeker skills from MDMS
             Map<String, Double> wageSeekerSkillCodeAmountMapping = fetchMDMSDataForWageSeekersSkills(requestInfo, criteria.getTenantId());
             // Fetch musterRolls for given muster roll IDs
             List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo,criteria,true);
-            List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,musterRolls,wageSeekerSkillCodeAmountMapping);
-            BillResponse billResponse = null;
-            List<Bill> submittedBills = new ArrayList<>();
-            for(Bill bill : wageSeekerBills) {
-                billResponse = postBill(requestInfo, bill);
-                if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
-                {
-                    List<Bill> bills = billResponse.getBills();
-                    persistMeta(bills);
-                    submittedBills.addAll(bills);
-                }
+            bills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,musterRolls,wageSeekerSkillCodeAmountMapping);
+
+        } else {
+            List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
+            Calculation calculation = supervisionBillGeneratorService.calculateEstimate(requestInfo, criteria, expenseBills);
+            bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
+            //expenseCalculatorProducer.push(config.getCalculatorCreateTopic(),calculation);
+        }
+
+        BillResponse billResponse = null;
+        List<Bill> submittedBills = new ArrayList<>();
+        for(Bill bill : bills) {
+            billResponse = postBill(requestInfo, bill);
+            if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
+            {
+                submittedBills = billResponse.getBills();
+                persistMeta(submittedBills);
             }
-            return submittedBills;
         }
-        else {
-            //TODO
-            // Supervision service implementation : for now returning empty list of bills
-            return new ArrayList<Bill>();
-        }
+        return submittedBills;
     }
 
     public void createAndPostWageSeekerBill(MusterRollRequest musterRollRequest){
@@ -169,5 +168,17 @@ public class ExpenseCalculatorService {
     private void persistMeta(List<Bill> bills) {
         BillMetaRecords billMetaRecords = billToMetaMapper.map(bills);
         expenseCalculatorProducer.push(config.getCalculatorCreateBillTopic(),billMetaRecords);
+    }
+
+    /**
+     * Fetches the bills for the provided contract
+     * @param requestInfo
+     * @param tenantId
+     * @param contractId
+     * @return
+     */
+    private List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
+        List<Bill> bills = expenseCalculatorUtil.fetchBills(requestInfo, tenantId, contractId);
+        return bills;
     }
 }

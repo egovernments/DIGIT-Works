@@ -28,6 +28,7 @@ public class BillQueryBuilder {
             "bill.toperiod as bill_toperiod, "+
             "bill.status as bill_status, "+
             "bill.paymentstatus as bill_paymentstatus, "+
+            "bill.billNumber as bill_billnumber, "+
             "bill.createdby as bill_createdby, "+
             "bill.createdtime as bill_createdtime, "+
             "bill.lastmodifiedby as bill_lastmodifiedby, "+
@@ -179,6 +180,19 @@ public class BillQueryBuilder {
 
     }
 
+    private String createQuery2(Collection<String> ids) {
+    	//select referenceId from table where referenceId like 'id%'
+        StringBuilder builder = new StringBuilder();
+        builder.append("SELECT referenceId FROM eg_expense_bill WHERE referenceid ");        
+        int length = ids.size();
+        String[] referenceIds = (String[]) ids.toArray();
+        for (int i = 0; i < length; i++) {
+        	builder.append("LIKE " + referenceIds[i] + "%");
+        	if (i != length - 1) builder.append(" OR referenceid ");
+        }
+        return builder.toString();
+    }
+    
     private String createQuery(Collection<String> ids) {
         StringBuilder builder = new StringBuilder();
         int length = ids.size();
