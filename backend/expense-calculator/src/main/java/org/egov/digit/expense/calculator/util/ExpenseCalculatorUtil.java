@@ -16,6 +16,7 @@ import org.egov.digit.expense.calculator.web.models.ContractCriteria;
 import org.egov.digit.expense.calculator.web.models.ContractResponse;
 import org.egov.digit.expense.calculator.web.models.MusterRoll;
 import org.egov.digit.expense.calculator.web.models.MusterRollResponse;
+import org.egov.digit.expense.calculator.web.models.Order;
 import org.egov.digit.expense.calculator.web.models.Pagination;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +137,7 @@ public class ExpenseCalculatorUtil {
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(100d).build();
+        pagination.setOrder(Order.ASC);
         BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
                 .referenceIds(new HashSet<>(Arrays.asList(contractId))).build();
         BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
