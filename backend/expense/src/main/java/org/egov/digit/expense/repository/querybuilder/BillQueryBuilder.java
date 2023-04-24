@@ -18,6 +18,7 @@ public class BillQueryBuilder {
 
     private static final String BILL_SELECT_QUERY = "SELECT bill.id as bill_id, "+
             "bill.tenantid as bill_tenantid, "+
+            "bill.billNumber as bill_billNumber, "+
             "bill.billdate as bill_billdate, " +
             "bill.duedate as bill_duedate, " +
             "bill.netpayableamount as bill_netpayableamount, "+
@@ -102,23 +103,37 @@ public class BillQueryBuilder {
         BillCriteria criteria=billSearchRequest.getBillCriteria();
         StringBuilder query = new StringBuilder(BILL_SELECT_QUERY);
 
-        List<String> ids = new ArrayList<>(criteria.getIds());
-        if (ids != null && !ids.isEmpty()) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.id IN (").append(createQuery(ids)).append(")");
-            addToPreparedStatement(preparedStmtList, ids);
+        if(criteria.getIds()!=null) {
+            List<String> ids = new ArrayList<>(criteria.getIds());
+            if (ids != null && !ids.isEmpty()) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" bill.id IN (").append(createQuery(ids)).append(")");
+                addToPreparedStatement(preparedStmtList, ids);
+            }
         }
 
-        List<String> referenceIds = new ArrayList<>(criteria.getReferenceIds());
-        if (referenceIds != null && !referenceIds.isEmpty()) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.referenceid IN (").append(createQuery(referenceIds)).append(")");
-            addToPreparedStatement(preparedStmtList, referenceIds);
+        if(criteria.getBillNumbers()!=null) {
+            List<String> billNumbers = new ArrayList<>(criteria.getBillNumbers());
+            if (billNumbers != null && !billNumbers.isEmpty()) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" bill.billNumber IN (").append(createQuery(billNumbers)).append(")");
+                addToPreparedStatement(preparedStmtList, billNumbers);
+            }
         }
+
+        if(criteria.getReferenceIds()!=null) {
+            List<String> referenceIds = new ArrayList<>(criteria.getReferenceIds());
+            if (referenceIds != null && !referenceIds.isEmpty()) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" bill.referenceid IN (").append(createQueryForReferenceIds(referenceIds)).append(")");
+//            addToPreparedStatement(preparedStmtList, referenceIds);
+            }
+        }
+
 
         if (StringUtils.isNotBlank(criteria.getTenantId()) && criteria.getTenantId()!=null) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.tenantid=? ");
+//            addClauseIfRequired(query, preparedStmtList);
+            query.append(" AND bill.tenantid=? ");
             preparedStmtList.add(criteria.getTenantId());
         }
 
@@ -180,14 +195,14 @@ public class BillQueryBuilder {
 
     }
 
-    private String createQuery2(Collection<String> ids) {
+    private String createQueryForReferenceIds(Collection<String> ids) {
     	//select referenceId from table where referenceId like 'id%'
         StringBuilder builder = new StringBuilder();
-        builder.append("SELECT referenceId FROM eg_expense_bill WHERE referenceid ");        
+        builder.append("SELECT referenceid FROM eg_expense_bill  WHERE referenceid ");
         int length = ids.size();
-        String[] referenceIds = (String[]) ids.toArray();
+        String[] referenceIds = ids.toArray(new String[ids.size()]);
         for (int i = 0; i < length; i++) {
-        	builder.append("LIKE " + referenceIds[i] + "%");
+        	builder.append("LIKE '" + referenceIds[i] + "%'");
         	if (i != length - 1) builder.append(" OR referenceid ");
         }
         return builder.toString();
