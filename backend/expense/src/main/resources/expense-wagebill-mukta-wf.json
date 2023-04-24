@@ -16,7 +16,7 @@
   "BusinessServices": [
     {
       "tenantId": "pg",
-      "businessService": "expense-wagebill-mukta",
+      "businessService": "works.wages",
       "business": "expense-service",
       "businessServiceSla": 604800000,
       "states": [

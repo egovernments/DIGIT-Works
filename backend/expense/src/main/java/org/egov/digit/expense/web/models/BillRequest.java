@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class BillRequest {
-	
+
 	@JsonProperty("RequestInfo")
 	@Valid
 	private RequestInfo requestInfo;
@@ -30,5 +30,9 @@ public class BillRequest {
 	@JsonProperty("bill")
 	@Valid
 	private Bill bill;
+
+	@JsonProperty("workflow")
+	@Valid
+	private digit.models.coremodels.Workflow workflow = null;
 
 }

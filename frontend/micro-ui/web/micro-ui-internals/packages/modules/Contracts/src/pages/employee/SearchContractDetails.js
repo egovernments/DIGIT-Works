@@ -25,7 +25,7 @@ const SearchContractDetails = () => {
   
   return (
     <React.Fragment>
-      <Header styles={{ fontSize: "32px" }}>{t("SEARCH_WORK_ORDER")}</Header>
+      <Header className="works-header-search">{t("SEARCH_WORK_ORDER")}</Header>
       <div className="inbox-search-wrapper">
         <InboxSearchComposer configs={configs}></InboxSearchComposer>
       </div>

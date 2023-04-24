@@ -66,6 +66,7 @@ public class BillService {
 		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
+			//workflowSvc.updateWorkflowStatus(billRequest);
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
 			bill.setStatus(wfState.getApplicationStatus());
 		} else {
