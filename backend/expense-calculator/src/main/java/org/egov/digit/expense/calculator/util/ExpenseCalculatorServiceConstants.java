@@ -8,9 +8,12 @@ public class ExpenseCalculatorServiceConstants {
     public static final String JSON_PATH_FOR_TENANTS_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
     public static final String MUSTER_ROLL_ID_JSON_PATH = "$.musterRolls.*.id";
     public static final String WAGE_SEEKER_SKILLS = "WageSeekerSkills";
+    public static final String PAYER_MASTER = "PayerList";
+    public static final String EXPENSE_MODULE = "expense";
     public static final String MDMS_COMMON_ACTIVE_FILTER ="$.*.[?(@.active==true)]";
     public static final String MDMS_COMMON_MASTERS ="common-masters";
     public static final String JSON_PATH_FOR_WAGE_SEEKERS_SKILLS = MDMS_RESP_CONSTANT+MDMS_COMMON_MASTERS + "." + WAGE_SEEKER_SKILLS;
+    public static final String JSON_PATH_FOR_PAYER_LIST = MDMS_RESP_CONSTANT+EXPENSE_MODULE + "." + PAYER_MASTER;
     public static final String BUSINESS_SERVICE_SUPERVISION = "works.supervision";
     public static final String BUSINESS_SERVICE_PURCHASE = "works.purchase";
     public static final String BILL_TYPE_WAGE = "works.wage";

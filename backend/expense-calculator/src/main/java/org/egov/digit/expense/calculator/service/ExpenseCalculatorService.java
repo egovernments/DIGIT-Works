@@ -82,7 +82,7 @@ public class ExpenseCalculatorService {
 
     public List<Bill> createPurchaseBill(PurchaseBillRequest purchaseBillRequest){
         expenseCalculatorServiceValidator.validatePurchaseRequest(purchaseBillRequest);
-        purchaseBillRequest.getDocuments();
+        //purchaseBillRequest.getDocuments();
         Bill purchaseBill = purchaseBillGeneratorService.createPurchaseBill(purchaseBillRequest);
         BillResponse billResponse = postBill(purchaseBillRequest.getRequestInfo(), purchaseBill);
         List<Bill> bills = billResponse.getBills();

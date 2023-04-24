@@ -126,7 +126,7 @@ public class ExpenseCalculatorUtil {
 
     public List<Contract> fetchContract(RequestInfo requestInfo, String tenantId, String contractId) {
         StringBuilder url = searchURI(configs.getContractHost(), configs.getContractSearchEndPoint());
-        Pagination pagination = Pagination.builder().limit(100d).build();
+        Pagination pagination = Pagination.builder().limit(100).build();
         ContractCriteria searchCriteria = ContractCriteria.builder().requestInfo(requestInfo).tenantId(tenantId)
                 .contractNumber(contractId).pagination(pagination).build();
         Object responseObj = restRepo.fetchResult(url, searchCriteria);
@@ -136,12 +136,11 @@ public class ExpenseCalculatorUtil {
 
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
-        Pagination pagination = Pagination.builder().limit(100d).build();
-        pagination.setOrder(Order.ASC);
+        //Pagination pagination = Pagination.builder().limit(100).offSet(0).order(Order.ASC).build();
         BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
                 .referenceIds(new HashSet<>(Arrays.asList(contractId))).build();
         BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
-                .billCriteria(billCriteria).tenantId(tenantId).pagination(pagination).build();
+                .billCriteria(billCriteria).tenantId(tenantId).build();
         Object responseObj = restRepo.fetchResult(url, billSearchRequest);
         BillResponse response = mapper.convertValue(responseObj, BillResponse.class);
         return response != null ? response.getBills() : null;

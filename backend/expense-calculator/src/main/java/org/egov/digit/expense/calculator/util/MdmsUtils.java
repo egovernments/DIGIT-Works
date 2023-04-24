@@ -72,6 +72,18 @@ public class MdmsUtils {
                             .moduleName(MDMS_COMMON_MASTERS)
                             .build();
     }
+    
+    //TODO: This doesn't filter based on type. Need to add that in.
+    private ModuleDetail getPayerListModuleDetails() {
+        List<MasterDetail> masterDetails = new ArrayList<>();
+        MasterDetail payerListMasterDetail = getMasterDetailForSubModule(PAYER_MASTER, MDMS_COMMON_ACTIVE_FILTER);
+        masterDetails.add(payerListMasterDetail);
+
+        return ModuleDetail.builder()
+                            .masterDetails(masterDetails)
+                            .moduleName(EXPENSE_MODULE)
+                            .build();
+    }
 
     public StringBuilder getMDMSSearchUrl() {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
@@ -82,11 +94,24 @@ public class MdmsUtils {
         Object result = serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
         return result;
     }
+    
+    public Object fetchMDMSDataForPayerList(RequestInfo requestInfo, String rootTenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForPayerList(requestInfo, rootTenantId);
+        Object result = serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
 
     private MdmsCriteriaReq getMDMSRequestForWageSeekersSkills(RequestInfo requestInfo, String tenantId) {
         ModuleDetail wageSeekerSkillsModuleDetail = getWageSeekerSkillsModuleDetails();
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(wageSeekerSkillsModuleDetail);
+        return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
+    }
+    
+    private MdmsCriteriaReq getMDMSRequestForPayerList(RequestInfo requestInfo, String tenantId) {
+        ModuleDetail payerListModuleDetails = getPayerListModuleDetails();
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(payerListModuleDetails);
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
     }
 }

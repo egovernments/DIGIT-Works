@@ -31,17 +31,10 @@ public class PurchaseBillRequest   {
 
         @JsonProperty("bill")
         @Valid
-        private Bill bill = null;
+        private PurchaseBill bill = null;
+        
+        @JsonProperty("workflow")
+    	private Workflow workflow;
 
-        @JsonProperty("documents")
-        @Valid
-        private List<Document> documents = null;
-
-        public PurchaseBillRequest addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
+       
 }
