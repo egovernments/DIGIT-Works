@@ -43,6 +43,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
+	@Value("${egov.idgen.supervision.bill.number}")
+	private String idGenSupervisionBillFormat;
+
 	// Workflow Config
 	@Value("${egov.workflow.host}")
 	private String wfHost;
