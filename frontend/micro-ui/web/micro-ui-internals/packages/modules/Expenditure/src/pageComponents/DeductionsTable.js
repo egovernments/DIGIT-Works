@@ -8,10 +8,7 @@ const DeductionsTable = ({control,watch,...props}) => {
     const [sessionFormData] = PurchaseBillSession;
     
     const [totalAmount,setTotalAmount] = useState(0)
-    const [sorTotal, setSorTotal] = useState(0)
     const formFieldName = "deductionDetails" // this will be the key under which the data for this table will be present on onFormSubmit
-    
-    const errorCardStyle = {width:"100%",fontSize:"12px"}
 
     //update deduction table with session data
     const renderDeductionsFromSession = () => {
@@ -63,26 +60,6 @@ const DeductionsTable = ({control,watch,...props}) => {
         setTotal(formData)
     }, [formData,rows]);
 
-    useEffect(() => {
-        setSorTotal(formData?.nonSORTablev1?.reduce((acc, row) => row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc : acc, 0))
-    }, [formData]);
-
-    
-    useEffect(() => {
-        //we have to iterate over all the existing overheads and change them
-        //get the filtered rows , match the index and change the amount if amount is there in formData.overheads.row
-        
-        formData?.[formFieldName]?.map((row,index)=> {
-            if(row?.amount){
-                //find corresponding row from rows
-                
-                const correspondingRow = rows?.filter(r=>r.key === index)?.[0]
-                handleDropdownChange(row?.name, undefined, correspondingRow,undefined)
-            }
-        })
-       
-        
-    }, [sorTotal]);
 
     const getStyles = (index) => {
         let obj = {}
@@ -111,7 +88,10 @@ const DeductionsTable = ({control,watch,...props}) => {
     const columns = [t('WORKS_SNO'), t('EXP_DEDUCTION_NAME'), t('EXP_PERCENTAGE_OR_FIXED'),t('WORKS_AMOUNT'), t('WORKS_COMMENTS'), t('WORKS_ACTIONS')]
     const renderHeader = () => {
         return columns?.map((key, index) => {
-            return <th key={index} style={getStyles(index+1)} > {key} </th>
+            return <th key={index} style={getStyles(index+1)} >
+                 {" "}
+                {key}{" "}
+            </th>
         })
     }
 
@@ -204,7 +184,6 @@ const DeductionsTable = ({control,watch,...props}) => {
     }
 
     const handleDropdownChange = (e, props, row, inputName) => {
-        // const sorTotal = formData?.nonSORTablev1?.reduce((acc, row) => row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc:acc,0)
 
         //here there are multiple cases that we need to handle
         //1-> if autoCalculated field is true, populate the percentage/lumpsum(type field) , amount field and disable both of them
@@ -240,73 +219,106 @@ const DeductionsTable = ({control,watch,...props}) => {
        return false
     }
 
-    const renderBody = () => {
-        let i = 0
-        return rows.map((row, index) => {
-            
-            if (row.isShow) i++
-            return row.isShow && <tr key={index} style={{ "height": "50%" }}>
-                <td style={getStyles(1)}>{i}</td>
-                
-                <td style={getStyles(2)} >
-                    <div>
-                        <Controller
-                            control={control}
-                            name={`${formFieldName}.${row.key}.name`}
-                            rules={{
-                                required: true,
-                                pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/
-                            }}
-                            render={(props) => (
-                                getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
-                                    mdmsConfig: {
-                                        masterName: "Deductions",
-                                        moduleName: "works",
-                                        localePrefix: "COMMON_MASTERS_DEDUCTIONS",
-                                    }
-                                })
-                            )}
-                        />
-                        {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "pattern" && (
-                        <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                        {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
-                        <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
-                    </div>
-                </td>
-                
-                <td style={getStyles(3)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.percentage`} inputRef={register({
-                    required: true,
-                    pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/
+    const cellContainerStyle = { display: "flex", flexDirection: "column" };
+  const errorCardStyle = { width: "100%", fontSize: "12px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
+  const errorContainerStyles = { display: "block", height: "1rem", overflow: "hidden" };
+  const renderBody = useMemo(() => {
+    let i = 0;
+    return rows.map((row, index) => {
+      if (row.isShow) i++;
+      return  row.isShow &&  (
+        <tr key={index} style={!row?.isShow ? {display:'none'}: {}}>
+          <td style={getStyles(1)}>{i}</td>
+
+          <td style={getStyles(2)}>
+            <div style={cellContainerStyle}>
+              <Controller
+                control={control}
+                name={`${formFieldName}.${row.key}.name`}
+                rules={{
+                  required: true,
+                  pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/,
+                }}
+                render={(props) =>
+                  getDropDownDataFromMDMS(t, row, "name", props, register, "name", {
+                    mdmsConfig: {
+                      masterName: "Deductions",
+                      moduleName: "works",
+                      localePrefix: "COMMON_MASTERS_DEDUCTIONS",
+                    },
+                  })
+                }
+              />
+            </div>
+            <div style={errorContainerStyles}>
+              {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "pattern" && (
+                <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>
+              )}
+              {errors && errors?.[formFieldName]?.[row.key]?.name?.type === "required" && (
+                <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
+              )}
+            </div>
+          </td>
+
+          <td style={getStyles(3)}>
+            <div style={cellContainerStyle}>
+              <TextInput
+                style={{ marginBottom: "0px" }}
+                name={`${formFieldName}.${row.key}.percentage`}
+                inputRef={register({
+                  required: true,
+                  pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/,
                 })}
                 // disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
                 disable={true}
-                />
-                </div></td>
+              />
+            </div>
+            <div style={errorContainerStyles}>
+              {/* {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "pattern" && (
+                      <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
+                  {errors && errors?.[formFieldName]?.[row.key]?.percentage?.type === "required" && (
+                      <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)} */}
+            </div>
+          </td>
 
-                <td style={getStyles(4)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.amount`} inputRef={register({
-                    required: isInputDisabled(`${formFieldName}.${row.key}.name`)? false : true,
-                    pattern: /^\d*\.?\d*$/
+          <td style={getStyles(4)}>
+            <div style={cellContainerStyle}>
+              <TextInput
+                style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                name={`${formFieldName}.${row.key}.amount`}
+                inputRef={register({
+                  required: isInputDisabled(`${formFieldName}.${row.key}.name`) ? false : true,
+                  // pattern: /^\d*\.?\d*$/,
+                  pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                 })}
                 disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
-                />
-                {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
-                    <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>)}
-                {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
-                    <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>)}
-                </div></td>
+              />
+            </div>
+            <div style={errorContainerStyles}>
+              {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (
+                <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>
+              )}
+              {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "required" && (
+                <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
+              )}
+            </div>
+          </td>
 
-                <td style={getStyles(5)}><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.comments`} inputRef={register({
-                    required: false,
-                    pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/
-                })}
-                disable={false}
-                />
-                </div></td>
-                
-                <td style={getStyles(6)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
-            </tr>
-        })
-    }
+          <td style={getStyles(5)}>
+            <div style={cellContainerStyle}>
+              {showDelete() && (
+                <span onClick={() => removeRow(row)} className="icon-wrapper">
+                  <DeleteIcon fill={"#B1B4B6"} />
+                </span>
+              )}
+            </div>
+            <div style={errorContainerStyles}></div>
+          </td>
+        </tr>
+      
+    )
+    });
+  }, [rows,totalAmount,formData])
 
 
     return (
@@ -315,7 +327,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                 <tr>{renderHeader()}</tr>
             </thead>
             <tbody>
-                {renderBody()}
+                {renderBody}
                 <tr>
                     <td colSpan={3} style={{textAlign:"right",fontWeight:"600"}}>{t("TOTAL_DEDUCTIONS")}</td>
                     <td colSpan={1}>{Digit.Utils.dss.formatterWithoutRound(totalAmount? totalAmount: 0, 'number')}</td>
