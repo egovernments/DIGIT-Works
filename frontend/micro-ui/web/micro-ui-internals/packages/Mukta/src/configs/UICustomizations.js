@@ -952,11 +952,41 @@ export const UICustomizations = {
   },
   SearchBillConfig: {
     preProcess: (data) => {
-      const fromDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.fromDate);
-      const toDate = Digit.Utils.pt.convertDateToEpoch(data?.params?.toDate);
-      const musterRollStatus = data?.params?.musterRollStatus?.code;
-      delete data.params.billType;
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus };
+      let requestBody = { ...data.body.inbox.moduleSearchCriteria };
+      const dateConfig = {
+        createdFrom: "daystart",
+        createdTo: "dayend",
+      };
+      const selectConfig = {
+        billType: "billType.code",
+        ward: "ward[0].code",
+        status: "status[0].code",
+      };
+      const textConfig = ["projectName", "billNumber"]
+
+      let SearchCriteria = Object.keys(requestBody)
+      .map((key) => {
+        if (selectConfig[key]) {
+          requestBody[key] = _.get(requestBody, selectConfig[key], null);
+        } else if (typeof requestBody[key] == "object") {
+          requestBody[key] = requestBody[key]?.code;
+        } else if (textConfig?.includes(key)) {
+          requestBody[key] = requestBody[key]?.trim()
+        }
+        return key;
+      })
+      .filter((key) => requestBody[key])
+      .reduce((acc, curr) => {
+        if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+          _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+        } else {
+          _.set(acc, curr, requestBody[curr]);
+        }
+        return acc;
+      }, {});
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+      //data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), fromDate, toDate, musterRollStatus };
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
@@ -1009,6 +1039,7 @@ export const UICustomizations = {
           select: (data) => {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
               return {
+                "code": state?.applicationStatus,
                 "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
                 "wfStatus":state?.applicationStatus
               }

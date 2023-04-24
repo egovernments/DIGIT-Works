@@ -6,9 +6,13 @@ export const SearchBillConfig = {
             label : "EXP_SEARCH_BILL",
             type: 'search',
             apiDetails: {
-                serviceName: "/muster-roll/v1/_search",
+                serviceName: "/wms/expense/_search",
                 requestParam: {},
-                requestBody: {},
+                requestBody: {
+                    inbox: {
+                        moduleSearchCriteria: {}
+                    }
+                },
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
                 moduleName:"SearchBillConfig",
@@ -29,7 +33,7 @@ export const SearchBillConfig = {
                             ward: "",
                             billType: "",
                             projectName: "",
-                            musterRollNumber: "", //make it bill number
+                            billNumber: "",
                             status: "",
                             createdFrom: "",
                             createdTo: ""
@@ -88,7 +92,7 @@ export const SearchBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: { 
-                                    name: "musterRollNumber",
+                                    name: "billNumber",
                                     error: "ES_COMMON_BILL_PATTERN_ERR_MSG",
                                     validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
                                 }
@@ -102,7 +106,7 @@ export const SearchBillConfig = {
                                   optionsCustomStyle: {
                                     top: "2.3rem",
                                   },
-                                  name: "musterRollStatus",
+                                  name: "status",
                                   optionsKey: "i18nKey",
                                   allowMultiSelect: false,
                                   masterName: "commonUiConfig",
