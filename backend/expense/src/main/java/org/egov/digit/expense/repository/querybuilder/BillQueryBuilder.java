@@ -99,6 +99,13 @@ public class BillQueryBuilder {
             "LEFT JOIN eg_expense_party_payee as payee ON bd.billid = payee.parentid ";
 
 
+    private String paginationWrapper = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy} , bill_id) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
+
+
     public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
         BillCriteria criteria=billSearchRequest.getBillCriteria();
         StringBuilder query = new StringBuilder(BILL_SELECT_QUERY);
@@ -149,16 +156,14 @@ public class BillQueryBuilder {
             preparedStmtList.add(criteria.getTenantId());
         }
 
-        addOrderByClause(query, criteria, preparedStmtList);
+        addOrderByClause(billSearchRequest);
 
-        addLimitAndOffset(query, criteria, preparedStmtList);
-
-        return query.toString();
+        return addPaginationWrapper(query,billSearchRequest,preparedStmtList);
     }
 
-    private void addOrderByClause(StringBuilder queryBuilder, BillCriteria criteria, List<Object> preparedStmtList) {
+    private void addOrderByClause(BillSearchRequest billSearchRequest) {
 
-        Pagination pagination = criteria.getPagination();
+        Pagination pagination = billSearchRequest.getPagination();
 
 
         Set<String> sortableColumns=new HashSet<>(Arrays.asList("bill_id","bill_billdate","bill_duedate","bill_paymentstatus"
@@ -166,33 +171,34 @@ public class BillQueryBuilder {
 
 
         if (pagination.getSortBy() != null && !pagination.getSortBy().isEmpty() && sortableColumns.contains(pagination.getSortBy())) {
-            queryBuilder.append(" ORDER BY ");
-            queryBuilder.append(pagination.getSortBy()).append(" ");
+            paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
         }
         else{
-            queryBuilder.append(" ORDER BY bill_billdate ");
+            paginationWrapper=paginationWrapper.replace("{sortBy}", "bill_billdate");
         }
 
         if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {
-            queryBuilder.append(pagination.getOrder().name());
+            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
+
         }
         else{
-            criteria.getPagination().setOrder(Pagination.OrderEnum.ASC);
-            queryBuilder.append(Pagination.OrderEnum.ASC);
+            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.ASC.name());
+
         }
     }
 
-    private void addLimitAndOffset(StringBuilder queryBuilder, BillCriteria criteria, List<Object> preparedStmtList) {
+    private String addPaginationWrapper(StringBuilder query,BillSearchRequest billSearchRequest,List<Object> preparedStmtList){
 
-        int limit = criteria.getPagination().getLimit();
-        int offset = criteria.getPagination().getOffSet();
+        int limit = billSearchRequest.getPagination().getLimit();
+        int offset = billSearchRequest.getPagination().getOffSet();
 
-        queryBuilder.append(" LIMIT ?");
-        preparedStmtList.add(limit);
+        String finalQuery = paginationWrapper.replace("{}", query);
 
-        queryBuilder.append(" OFFSET ? ");
+
         preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
 
+        return finalQuery;
     }
 
     private String createQueryForReferenceIds(Collection<String> ids) {

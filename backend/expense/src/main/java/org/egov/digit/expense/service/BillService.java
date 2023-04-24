@@ -127,7 +127,7 @@ public class BillService {
 		validator.validateSearchRequest(billCriteria);
 
 		log.info("Enrich billCriteria");
-		enrichmentUtil.enrichSearchBillRequest(billCriteria);
+		enrichmentUtil.enrichSearchBillRequest(billSearchRequest);
 
 		log.info("Search repository using billCriteria");
 		List<Bill> bills = billRepository.search(billSearchRequest);
@@ -150,14 +150,14 @@ public class BillService {
 
 		//update pagination object
 		log.info("update pagination object for total count : "+bills.size());
-		billCriteria.getPagination().setTotalCount(bills.size());
+		billSearchRequest.getPagination().setTotalCount(bills.size());
 
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
 		
 		BillResponse response = BillResponse.builder()
 				.bills(bills)
-				.pagination(billCriteria.getPagination())
+				.pagination(billSearchRequest.getPagination())
 				.responseInfo(responseInfo)
 				.build();
 		return response;
