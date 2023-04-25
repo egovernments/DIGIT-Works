@@ -94,11 +94,26 @@ class _SideBar extends State<SideBar> {
                   });
             });
           }),
-          DigitIconTile(
-            title: AppLocalizations.of(context).translate(i18.common.home),
-            selected: context.router.currentPath == '/',
-            icon: Icons.home,
-            onPressed: () => context.router.replace(const HomeRoute()),
+          Row(
+            children: [
+              context.router.currentPath == '/'
+                  ? Container(
+                      alignment: Alignment.centerLeft,
+                      height: 50,
+                      width: 9,
+                      color: const DigitColors().burningOrange,
+                    )
+                  : const SizedBox.shrink(),
+              Expanded(
+                child: DigitIconTile(
+                  title:
+                      AppLocalizations.of(context).translate(i18.common.home),
+                  selected: context.router.currentPath == '/',
+                  icon: Icons.home,
+                  onPressed: () => context.router.replace(const HomeRoute()),
+                ),
+              ),
+            ],
           ),
           DigitIconTile(
             title: AppLocalizations.of(context).translate(i18.common.language),
@@ -149,14 +164,28 @@ class _SideBar extends State<SideBar> {
             ),
             onPressed: () {},
           ),
-          DigitIconTile(
-              title:
-                  AppLocalizations.of(context).translate(i18.common.orgProfile),
-              selected: context.router.currentPath.contains('orgProfile'),
-              icon: Icons.perm_contact_cal_sharp,
-              onPressed: () {
-                context.router.push(const ORGProfileRoute());
-              }),
+          Row(
+            children: [
+              context.router.currentPath.contains('orgProfile')
+                  ? Container(
+                      alignment: Alignment.centerLeft,
+                      height: 50,
+                      width: 9,
+                      color: const DigitColors().burningOrange,
+                    )
+                  : const SizedBox.shrink(),
+              Expanded(
+                child: DigitIconTile(
+                    title: AppLocalizations.of(context)
+                        .translate(i18.common.orgProfile),
+                    selected: context.router.currentPath.contains('orgProfile'),
+                    icon: Icons.perm_contact_cal_sharp,
+                    onPressed: () {
+                      context.router.push(const ORGProfileRoute());
+                    }),
+              ),
+            ],
+          ),
           DigitIconTile(
               title: AppLocalizations.of(context).translate(i18.common.logOut),
               icon: Icons.logout,
