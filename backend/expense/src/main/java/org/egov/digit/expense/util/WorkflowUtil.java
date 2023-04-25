@@ -21,6 +21,7 @@ import digit.models.coremodels.ProcessInstanceRequest;
 import digit.models.coremodels.ProcessInstanceResponse;
 import digit.models.coremodels.RequestInfoWrapper;
 import digit.models.coremodels.State;
+import digit.models.coremodels.Workflow;
 
 @Service
 public class WorkflowUtil {
@@ -95,12 +96,19 @@ public class WorkflowUtil {
     public ProcessInstanceRequest prepareWorkflowRequestForBill(BillRequest billRequest) {
     	
     	Bill bill = billRequest.getBill();
-    	ProcessInstance workflow = bill.getWorkflow();
-    	workflow.setBusinessId(null); // TODO FIXME what is the business ID since muster role id is not unique
-    	workflow.setTenantId(bill.getTenantId());
+    	Workflow workflowFromRequest = billRequest.getWorkflow();
+    	ProcessInstance processInstance = ProcessInstance.builder()
+    			.tenantId(bill.getTenantId())
+    			.action(workflowFromRequest.getAction())
+    			.businessService("")
+    			.moduleName("")
+    			.businessId(null)
+    			.comment(workflowFromRequest.getComments())
+    			.assignes(null) //workflowFromRequest.getAssignes() TODO FIXME
+    			.build();
     	
     	return ProcessInstanceRequest.builder()
-    			.processInstances(Arrays.asList(workflow))
+    			.processInstances(Arrays.asList(processInstance))
     			.requestInfo(billRequest.getRequestInfo())
     			.build();
     }
