@@ -96,6 +96,7 @@ class _SideBar extends State<SideBar> {
           }),
           DigitIconTile(
             title: AppLocalizations.of(context).translate(i18.common.home),
+            selected: context.router.currentPath == '/',
             icon: Icons.home,
             onPressed: () => context.router.replace(const HomeRoute()),
           ),
@@ -151,6 +152,7 @@ class _SideBar extends State<SideBar> {
           DigitIconTile(
               title:
                   AppLocalizations.of(context).translate(i18.common.orgProfile),
+              selected: context.router.currentPath.contains('orgProfile'),
               icon: Icons.perm_contact_cal_sharp,
               onPressed: () {
                 context.router.push(const ORGProfileRoute());

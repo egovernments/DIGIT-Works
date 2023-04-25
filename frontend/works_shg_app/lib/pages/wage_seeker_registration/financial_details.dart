@@ -110,6 +110,12 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         'required': (_) => t.translate(
                               i18.wageSeeker.accountHolderNameRequired,
                             ),
+                        'minLength': (_) => t.translate(
+                              i18.wageSeeker.minNameCharacters,
+                            ),
+                        'maxLength': (_) => t.translate(
+                              i18.wageSeeker.maxNameCharacters,
+                            ),
                       },
                     ),
                     DigitTextFormField(
@@ -241,7 +247,11 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   FormGroup buildForm(FinancialDetails finance) => fb.group(<String, Object>{
         accountHolderKey: FormControl<String>(
             value: finance.accountHolderName,
-            validators: [Validators.required]),
+            validators: [
+              Validators.required,
+              Validators.minLength(2),
+              Validators.maxLength(128)
+            ]),
         accountNoKey: FormControl<String>(
             value: finance.accountNumber,
             validators: [
