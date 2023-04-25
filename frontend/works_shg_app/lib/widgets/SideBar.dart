@@ -46,7 +46,6 @@ class _SideBar extends State<SideBar> {
 
   @override
   Widget build(BuildContext buildContext) {
-    print(context.router.currentPath);
     final theme = DigitTheme.instance;
 
     return BlocBuilder<LocalizationBloc, LocalizationState>(
