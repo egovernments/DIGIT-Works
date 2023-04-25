@@ -473,7 +473,7 @@ components:
           type: array
           format: uuid
           items:
-            $ref: '#/components/schemas/Bill'
+            $ref: '#/components/schemas/PaymentBill'
         status:
           type: string
           example: PROCESSING
@@ -515,6 +515,65 @@ components:
             $ref: '#/components/schemas/Payment'
         pagination:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-  
+    PaymentBill:
+      description: A Object which holds the info about the expense details
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the record
+          readOnly: true
+          type: string
+          format: uuid
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        netBillAmount:
+          description: Net paid amount for a bill
+          type: number
+          format: BigDecimal
+        billDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentBillDetail'
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
+      required:
+        - tenantId
+        - netBillAmount
+        - billDetails
+    PaymentBillDetail:
+      description: Bill details of the individual payees
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the record
+          readOnly: true
+          type: string
+          format: uuid
+        netLineItemAmount:
+          description: Amount being paid for the particular bill-detail during payment  
+          type: number
+          format: int64
+          example: 1682899199000
+        payableLineItems:
+          type: array
+          description: Bill line items
+          items:
+            $ref: '#/components/schemas/LineItem'
+        additionalDetails:
+          description: Any additional details that need to be captured
+          type: object
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
+      required:
+        -netLineItemAmount
+        -payableLineItems
+   
  
     
