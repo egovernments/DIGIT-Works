@@ -3,6 +3,7 @@ package org.egov.digit.expense.calculator.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.util.CommonUtil;
 import org.egov.digit.expense.calculator.util.MdmsUtils;
 import org.egov.digit.expense.calculator.web.models.*;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_TENANTS_VERIFICATION;
 
 @Component
@@ -35,6 +37,11 @@ public class ExpenseCalculatorServiceValidator {
 
     @Autowired
     private ExpenseCalculatorUtil expenseCalculatorUtil;
+
+    @Autowired
+    private ExpenseCalculatorConfiguration configs;
+
+
     public void validateCalculatorEstimateRequest(CalculationRequest calculationRequest){
         validateCommonCalculatorRequest(calculationRequest);
 
@@ -64,7 +71,7 @@ public class ExpenseCalculatorServiceValidator {
         // Validate the required params
         validateRequiredParametersForMusterRollRequest(musterRollRequest);
         //Validate request against MDMS
-        validateRequestAgainstMDMS(requestInfo,musterRoll.getTenantId());
+        validateRequestAgainstMDMS(requestInfo,musterRoll.getTenantId(), configs.getWageBusinessService());
         //Validate musterRollId against service
         validateMusterRollIdAgainstService(musterRollRequest);
         log.info("Validation done for muster roll number ["+musterRoll.getMusterRollNumber()+"]");
@@ -77,7 +84,7 @@ public class ExpenseCalculatorServiceValidator {
         // Validate the Request Info object
         validateRequestInfo(requestInfo);
         //Validate request against MDMS
-        validateRequestAgainstMDMS(requestInfo,bill.getTenantId());
+        validateRequestAgainstMDMS(requestInfo,bill.getTenantId() , configs.getPurchaseBusinessService());
     }
 
     private void validateContractIdAgainstService(CalculationRequest calculationRequest) {
@@ -97,12 +104,16 @@ public class ExpenseCalculatorServiceValidator {
         Criteria criteria = calculationRequest.getCriteria();
         // Validate the Request Info object
         validateRequestInfo(requestInfo);
-
         //Validate required parameters for calculator estimate
         validateRequiredParametersForCalculatorRequest(calculationRequest);
 
-        //Validate request against MDMS
-        validateRequestAgainstMDMS(requestInfo,criteria.getTenantId());
+        String businessServiceToValidate = null;
+        if(criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty())
+            businessServiceToValidate = configs.getWageBusinessService();
+        else
+            businessServiceToValidate = configs.getSupervisionBusinessService();
+
+        validateRequestAgainstMDMS(requestInfo,criteria.getTenantId(),businessServiceToValidate);
     }
 
     private void validateMusterRollIdAgainstService(CalculationRequest calculationRequest, boolean onlyApproved) {
@@ -128,17 +139,17 @@ public class ExpenseCalculatorServiceValidator {
         log.info("Muster roll validated against muster roll service ["+musterRollId+"]");
     }
 
-    private void validateMusterRollRequestAgainstMDMS(MusterRollRequest musterRollRequest) {
-        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
-        String tenantId = musterRoll.getTenantId();
-        RequestInfo requestInfo = musterRollRequest.getRequestInfo();
-        //Fetch MDMS data
-        Object mdmsData = fetchMDMSDataForValidation(requestInfo,tenantId);
-        // Validate tenantId against MDMS data
-        validateTenantIdAgainstMDMS(mdmsData, tenantId);
-
-        log.info("MDMD validation done");
-    }
+//    private void validateMusterRollRequestAgainstMDMS(MusterRollRequest musterRollRequest) {
+//        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
+//        String tenantId = musterRoll.getTenantId();
+//        RequestInfo requestInfo = musterRollRequest.getRequestInfo();
+//        //Fetch MDMS data
+//        Object mdmsData = fetchMDMSDataForValidation(requestInfo,tenantId);
+//        // Validate tenantId against MDMS data
+//        validateTenantIdAgainstMDMS(mdmsData, tenantId);
+//
+//        log.info("MDMD validation done");
+//    }
 
     private void validateRequiredParametersForMusterRollRequest(MusterRollRequest musterRollRequest) {
          MusterRoll musterRoll = musterRollRequest.getMusterRoll();
@@ -216,12 +227,35 @@ public class ExpenseCalculatorServiceValidator {
         log.info("Required request parameter validation done for Calculator Estimate service");
     }
 
-    private void validateRequestAgainstMDMS(RequestInfo requestInfo, String tenantId) {
+    private void validateRequestAgainstMDMS(RequestInfo requestInfo, String tenantId, String businessService) {
         //Fetch MDMS data
         Object mdmsData = fetchMDMSDataForValidation(requestInfo,tenantId);
         // Validate tenantId against MDMS data
         validateTenantIdAgainstMDMS(mdmsData, tenantId);
+        // Validate head code against MDMS data
+        //validateHeadCodeAgainstMDMS(mdmsData, businessService);
+        // Validate business service against MDMS data
+        validateBusinessServiceAgainstMDMS(mdmsData, businessService);
     }
+
+    private void validateBusinessServiceAgainstMDMS(Object mdmsData, String businessService) {
+        List<Object> businessServiceRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION);
+        if (CollectionUtils.isEmpty(businessServiceRes) || !businessServiceRes.contains(businessService)){
+            log.error("The businessService: " + businessService + " is not present in MDMS");
+            throw new CustomException("INVALID_BUSINESS_SERVICE","Invalid businessService [" + businessService + "]");
+        }
+        log.info("BusinessService data validated against MDMS");
+
+    }
+
+//    private void validateHeadCodeAgainstMDMS(Object mdmsData, String businessService) {
+//        List<Object> businessServiceRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION);
+//        if (CollectionUtils.isEmpty(businessServiceRes) || !businessServiceRes.contains(businessService)){
+//            log.error("The businessService: " + businessService + " is not present in MDMS");
+//            throw new CustomException("INVALID_BUSINESS_SERVICE","Invalid businessService [" + businessService + "]");
+//        }
+//        log.info("BusinessService data validated against MDMS");
+//    }
 
     private Object fetchMDMSDataForValidation(RequestInfo requestInfo, String tenantId){
         String rootTenantId = tenantId.split("\\.")[0];
