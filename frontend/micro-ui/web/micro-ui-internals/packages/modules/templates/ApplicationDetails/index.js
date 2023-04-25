@@ -37,7 +37,6 @@ const ApplicationDetails = (props) => {
     mutate,
     nocMutation,
     workflowDetails,
-    businessService,
     closeToast,
     moduleCode,
     timelineStatusPrefix,
@@ -60,7 +59,25 @@ const ApplicationDetails = (props) => {
     saveAttendanceState,
     setSaveAttendanceState
   } = props;
-  
+
+  let {
+    businessService,
+  } = props;
+
+
+  //getting the bussiness service from MDMS file using the bussiness code
+  const { isLoading: bussinessServiceLoading, data: bussinessServiceData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "expense",
+    [
+        {
+            "name": "BusinessService",
+            "filter":`[?(@.code=="${businessService}")]`
+        }
+    ],
+  );
+  businessService = bussinessServiceData?.expense?.BusinessService?.[0]?.businessService;
+
   
   useEffect(() => {
     if (showToast) {
@@ -303,7 +320,7 @@ const ApplicationDetails = (props) => {
     closeModal();
   };
 
-  if (isLoading || isEnableLoader) {
+  if (isLoading || isEnableLoader || bussinessServiceLoading) {
     return <Loader />;
   }
 

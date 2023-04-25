@@ -18,7 +18,7 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
     const { t } = useTranslation()
 
     const { tenantId, estimateNumber } = Digit.Hooks.useQueryParams();
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessServiceV1("estimate");
     const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
