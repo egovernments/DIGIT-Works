@@ -153,7 +153,7 @@ class _LoginPage extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
         ),
         body: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 720) {

@@ -11,9 +11,9 @@ public class ExpenseCalculatorServiceConstants {
     public static final String MDMS_COMMON_ACTIVE_FILTER ="$.*.[?(@.active==true)]";
     public static final String MDMS_COMMON_MASTERS ="common-masters";
     public static final String JSON_PATH_FOR_WAGE_SEEKERS_SKILLS = MDMS_RESP_CONSTANT+MDMS_COMMON_MASTERS + "." + WAGE_SEEKER_SKILLS;
-    public static final String BUSINESS_SERVICE_SUPERVISION = "WORKS-SUPERVISION";
-    public static final String BUSINESS_SERVICE_PURCHASE = "WORKS-PURCHASE";
-    public static final String BILL_TYPE_WAGE = "WAGE";
+    public static final String BUSINESS_SERVICE_SUPERVISION = "works.supervision";
+    public static final String BUSINESS_SERVICE_PURCHASE = "works.purchase";
+    public static final String BILL_TYPE_WAGE = "works.wage";
     public static final String PAYEE_TYPE_SUPERVISIONBILL = "ORGANIZATION";
     public static final String CBO_IMPLEMENTATION_AGENCY = "IA";
     public static final String CBO_IMPLEMENTATION_PARTNER = "IP";

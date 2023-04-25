@@ -48,7 +48,7 @@ class _LanguageSelectionPage extends State<LanguageSelectionPage> {
                   state.digitRowCardItems != null &&
                           state.isInitializationCompleted
                       ? DigitLanguageCard(
-                          appLogo: AppLogo(),
+                          appLogo: const AppLogo(),
                           digitRowCardItems: state.digitRowCardItems
                               ?.map(
                                   (e) => DigitRowCardModel.fromJson(e.toJson()))

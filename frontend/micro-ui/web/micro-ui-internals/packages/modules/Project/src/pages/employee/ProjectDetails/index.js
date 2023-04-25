@@ -181,7 +181,7 @@ const ProjectDetails = () => {
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_DETAILS")}</Header>
+                <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{t("WORKS_PROJECT_DETAILS")}</Header>
             <MultiLink
               onHeadClick={() => HandleDownloadPdf()}
               downloadBtnClassName={"employee-download-btn-className"}

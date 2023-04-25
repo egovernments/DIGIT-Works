@@ -152,14 +152,17 @@ class WorkDetailsCard extends StatelessWidget {
     if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Column(
         children: [
-          ButtonLink(
-            AppLocalizations.of(context).translate(i18.common.viewDetails),
-            () => context.router.push(ViewWorkDetailsRoute(
-                contractNumber: contractNumber.toString())),
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: DigitTheme.instance.colorScheme.primary),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ButtonLink(
+              AppLocalizations.of(context).translate(i18.common.viewDetails),
+              () => context.router.push(ViewWorkDetailsRoute(
+                  contractNumber: contractNumber.toString())),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: DigitTheme.instance.colorScheme.primary),
+            ),
           ),
           Container(
             padding: const EdgeInsets.all(8.0),
@@ -212,14 +215,17 @@ class WorkDetailsCard extends StatelessWidget {
     } else if (isWorkOrderInbox && isAccept!) {
       labelList.add(Column(
         children: [
-          ButtonLink(
-            AppLocalizations.of(context).translate(i18.common.viewDetails),
-            () => context.router.push(ViewWorkDetailsRoute(
-                contractNumber: contractNumber.toString())),
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: DigitTheme.instance.colorScheme.primary),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ButtonLink(
+              AppLocalizations.of(context).translate(i18.common.viewDetails),
+              () => context.router.push(ViewWorkDetailsRoute(
+                  contractNumber: contractNumber.toString())),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: DigitTheme.instance.colorScheme.primary),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
@@ -292,7 +298,11 @@ class WorkDetailsCard extends StatelessWidget {
                 );
           },
           child: Center(
-            child: Text(elevatedButtonLabel,
+            child: Text(
+                musterRoll!.musterRollStatus!.contains('BACKTOCBO')
+                    ? AppLocalizations.of(context)
+                        .translate(i18.attendanceMgmt.editMusterRoll)
+                    : elevatedButtonLabel,
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium!
@@ -303,7 +313,7 @@ class WorkDetailsCard extends StatelessWidget {
     }
     if (showButtonLink! && linkLabel!.isNotEmpty) {
       labelList.add(Padding(
-        padding: const EdgeInsets.all(2.0),
+        padding: const EdgeInsets.all(4.0),
         child: ButtonLink(linkLabel ?? '', onLinkPressed),
       ));
     }
@@ -321,7 +331,7 @@ class WorkDetailsCard extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
@@ -347,7 +357,7 @@ class WorkDetailsCard extends StatelessWidget {
                           : const Text('')
                     ])),
             SizedBox(
-                width: MediaQuery.of(context).size.width / 2.5,
+                width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   description,
                   style: TextStyle(

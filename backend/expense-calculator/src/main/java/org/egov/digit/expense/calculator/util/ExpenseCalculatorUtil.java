@@ -16,6 +16,7 @@ import org.egov.digit.expense.calculator.web.models.ContractCriteria;
 import org.egov.digit.expense.calculator.web.models.ContractResponse;
 import org.egov.digit.expense.calculator.web.models.MusterRoll;
 import org.egov.digit.expense.calculator.web.models.MusterRollResponse;
+import org.egov.digit.expense.calculator.web.models.Order;
 import org.egov.digit.expense.calculator.web.models.Pagination;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +119,7 @@ public class ExpenseCalculatorUtil {
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
         List<String> musterrollIds = new ArrayList<>();
         if (response != null && !CollectionUtils.isEmpty(response.getMusterRolls())) {
-            musterrollIds = response.getMusterRolls().stream().map(muster -> muster.getId()).collect(Collectors.toList());
+            musterrollIds = response.getMusterRolls().stream().map(muster -> muster.getMusterRollNumber()).collect(Collectors.toList());
         }
         return musterrollIds;
     }
@@ -127,7 +128,7 @@ public class ExpenseCalculatorUtil {
         StringBuilder url = searchURI(configs.getContractHost(), configs.getContractSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(100d).build();
         ContractCriteria searchCriteria = ContractCriteria.builder().requestInfo(requestInfo).tenantId(tenantId)
-                .ids(Collections.singletonList(contractId)).pagination(pagination).build();
+                .contractNumber(contractId).pagination(pagination).build();
         Object responseObj = restRepo.fetchResult(url, searchCriteria);
         ContractResponse response = mapper.convertValue(responseObj, ContractResponse.class);
         return response != null ? response.getContracts() : null;
@@ -136,6 +137,7 @@ public class ExpenseCalculatorUtil {
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(100d).build();
+        pagination.setOrder(Order.ASC);
         BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
                 .referenceIds(new HashSet<>(Arrays.asList(contractId))).build();
         BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)

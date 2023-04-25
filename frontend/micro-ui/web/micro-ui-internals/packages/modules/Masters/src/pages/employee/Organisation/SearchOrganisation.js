@@ -51,7 +51,7 @@ const SearchOrganisation = () => {
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">
-        <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
+        <Header className="works-header-search">{t(configs?.label)}</Header>
         {Digit.Utils.didEmployeeHasRole(configs?.actionRole) && (
           <Button
             label={t(configs?.actionLabel)}

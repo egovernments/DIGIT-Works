@@ -49,7 +49,7 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer:  DrawerWrapper(Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
           module: CommonMethods.getLocaleModules(),
         ))),
@@ -118,7 +118,14 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                 musterRollsModel: musters,
                                 elevatedButtonLabel:
                                     t.translate(i18.common.viewDetails),
-                              )
+                              ),
+                        const SizedBox(
+                          height: 16.0,
+                        ),
+                        const Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        )
                       ]);
                 },
                 orElse: () => Container());
