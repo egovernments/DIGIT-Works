@@ -1,23 +1,34 @@
 package org.egov.digit.expense.web.validators;
 
-import com.jayway.jsonpath.JsonPath;
-import digit.models.coremodels.ProcessInstance;
-import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
-import org.egov.common.contract.request.RequestInfo;
+import static org.egov.digit.expense.config.Constants.HEADCODE_CODE_FILTER;
+import static org.egov.digit.expense.config.Constants.HEADCODE_MASTERNAME;
+import static org.egov.digit.expense.config.Constants.TENANT_MASTERNAME;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.util.MdmsUtil;
-import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillCriteria;
+import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.LineItem;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import com.jayway.jsonpath.JsonPath;
 
-import static org.egov.digit.expense.config.Constants.*;
+import digit.models.coremodels.Workflow;
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 
 @Service
 @Slf4j
@@ -40,16 +51,11 @@ public class BillValidator {
 
         if (isWorkflowActiveForBusinessService) {
 
-            ProcessInstance workflow = bill.getWorkflow();
+            Workflow workflow = billRequest.getWorkflow();
 
-            if (null == workflow.getBusinessService())
+            if (null == workflow.getAction())
                 errorMap.put("EG_BILL_WF_FIELDS_ERROR",
-                        "workflow business name is mandatory when worflow is active");
-
-            if (null == workflow.getModuleName())
-                errorMap.put("EG_BILL_WF_FIELDS_ERROR",
-                        "workflow module name is mandatory when worflow is active");
-
+                        "workflow action is mandatory when worflow is active");
         }
 
         validateTenantId(billRequest);

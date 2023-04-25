@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.ProcessInstance;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +39,7 @@ public class Bill {
 	@NotNull
 	@Size(min = 2, max = 64)
 	private String tenantId;
-
+	
 	@JsonProperty("billDate")
 	@Valid
 	private Long billDate;
@@ -48,7 +47,7 @@ public class Bill {
 	@JsonProperty("dueDate")
 	@Valid
 	private Long dueDate;
-
+	
 	@JsonProperty("netPayableAmount")
 	@Valid
 	private BigDecimal netPayableAmount;
@@ -57,7 +56,7 @@ public class Bill {
 	@Valid
 	private BigDecimal netPaidAmount;
 
-	@JsonProperty("businessservice")
+	@JsonProperty("businessService")
 	@NotNull
 	@Size(min = 2, max = 64)
 	private String businessService;
@@ -102,16 +101,10 @@ public class Bill {
 	@Valid
 	private AuditDetails auditDetails;
 
-	@JsonProperty("workflow")
-	private ProcessInstance workflow;
-
 	@JsonProperty("wfStatus")
 	@Size(min = 2, max = 64)
-	private String wfStatus = null;
+	private String wfStatus;
 	
-	@JsonProperty("processInstance")
-	private ProcessInstance processInstance = null;
-
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
 
 		if (null == this.billDetails)

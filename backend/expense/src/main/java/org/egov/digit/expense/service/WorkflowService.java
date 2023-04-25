@@ -49,10 +49,11 @@ public class WorkflowService {
         ProcessInstance processInstance = getProcessInstanceForContract(contractRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(contractRequest.getRequestInfo(), Collections.singletonList(processInstance));
         ProcessInstance processInstanceResponse = callWorkFlow(workflowRequest,contract.getId());
+
         //contract workflow Status
         contract.setWfStatus(processInstanceResponse.getState().getApplicationStatus());
+        
         // Fetch currentProcessInstance from workflow process search for inbox config
-        contract.setProcessInstance(processInstanceResponse);
         log.info("Work flow status updated. ContractId ["+contract.getId()+"]");
         return processInstanceResponse.getState().getApplicationStatus();
     }
