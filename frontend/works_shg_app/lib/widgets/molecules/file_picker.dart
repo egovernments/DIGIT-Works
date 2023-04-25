@@ -13,6 +13,7 @@ import 'package:works_shg_app/models/file_store/file_store_model.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/models/file_picker_data.dart';
+import 'package:works_shg_app/widgets/ButtonLink.dart';
 
 import '../../data/repositories/core_repo/core_repository.dart';
 import '../../utils/common_methods.dart';
@@ -141,42 +142,64 @@ class SHGFilePickerState extends State<SHGFilePicker> {
         width: constraints.maxWidth > 760
             ? MediaQuery.of(context).size.width / 2.5
             : MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width / 3,
+        height: MediaQuery.of(context).size.width / 2.5,
         decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
         child: Align(
           alignment: Alignment.center,
           child: kIsWeb && FilePickerData.bytes != null
-              ? Wrap(children: [
-                  Image.memory(
-                    FilePickerData.bytes!,
-                    fit: BoxFit.cover,
-                    width: 90,
-                    height: 90,
-                  ),
-                  IconButton(
-                      padding: const EdgeInsets.all(5),
-                      onPressed: () => onClickOfClear(0),
-                      icon: const Icon(Icons.cancel))
-                ])
-              : !kIsWeb && FilePickerData.imageFile != null
-                  ? Wrap(children: [
-                      Image.file(
-                        FilePickerData.imageFile!,
-                        fit: BoxFit.cover,
-                        width: 90,
-                        height: 90,
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                      Image.memory(
+                        FilePickerData.bytes!,
+                        fit: BoxFit.fitHeight,
+                        width: constraints.maxWidth > 760
+                            ? MediaQuery.of(context).size.width / 3
+                            : MediaQuery.of(context).size.width / 1.5,
+                        height: MediaQuery.of(context).size.width / 2.8,
                       ),
                       IconButton(
-                          padding: const EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(2),
                           onPressed: () => onClickOfClear(0),
                           icon: const Icon(Icons.cancel))
                     ])
+              : !kIsWeb && FilePickerData.imageFile != null
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                          Image.file(
+                            FilePickerData.imageFile!,
+                            fit: BoxFit.fitHeight,
+                            width: constraints.maxWidth > 760
+                                ? MediaQuery.of(context).size.width / 3
+                                : MediaQuery.of(context).size.width / 1.5,
+                            height: MediaQuery.of(context).size.width / 2.8,
+                          ),
+                          IconButton(
+                              padding: const EdgeInsets.all(2),
+                              onPressed: () => onClickOfClear(0),
+                              icon: const Icon(Icons.cancel))
+                        ])
                   : GestureDetector(
                       onTap: () => selectDocumentOrImage(),
-                      child: Icon(
-                        Icons.camera_enhance,
-                        color: DigitTheme.instance.colorScheme.primary,
-                        size: 50,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.camera_enhance,
+                            color: DigitTheme.instance.colorScheme.primary,
+                            size: 50,
+                          ),
+                          ButtonLink(
+                            AppLocalizations.of(context)
+                                .translate(i18.common.clickToAddPhoto),
+                            null,
+                            align: Alignment.center,
+                            fontSize: 12,
+                          )
+                        ],
                       ),
                     ),
         ),
@@ -343,7 +366,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
               color: DigitTheme.instance.colorScheme.primary,
             )),
         Text(
-          label,
+          AppLocalizations.of(context).translate(label),
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 16),
         )

@@ -174,6 +174,10 @@ class WorkDetailsCard extends StatelessWidget {
                   elevatedButtonLabel,
                   outLinedCallBack: () => DigitDialog.show(context,
                       options: DigitDialogOptions(
+                          titleIcon: const Icon(
+                            Icons.warning,
+                            color: Colors.red,
+                          ),
                           titleText: AppLocalizations.of(context)
                               .translate(i18.common.warning),
                           contentText: AppLocalizations.of(context)
