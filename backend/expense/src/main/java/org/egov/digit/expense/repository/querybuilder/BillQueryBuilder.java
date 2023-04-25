@@ -18,6 +18,7 @@ public class BillQueryBuilder {
 
     private static final String BILL_SELECT_QUERY = "SELECT bill.id as bill_id, "+
             "bill.tenantid as bill_tenantid, "+
+            "bill.billNumber as bill_billNumber, "+
             "bill.billdate as bill_billdate, " +
             "bill.duedate as bill_duedate, " +
             "bill.netpayableamount as bill_netpayableamount, "+
@@ -98,27 +99,48 @@ public class BillQueryBuilder {
             "LEFT JOIN eg_expense_party_payee as payee ON bd.billid = payee.parentid ";
 
 
+    private String paginationWrapper = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy} , bill_id) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
+
+
     public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
         BillCriteria criteria=billSearchRequest.getBillCriteria();
         StringBuilder query = new StringBuilder(BILL_SELECT_QUERY);
 
-        List<String> ids = new ArrayList<>(criteria.getIds());
-        if (ids != null && !ids.isEmpty()) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.id IN (").append(createQuery(ids)).append(")");
-            addToPreparedStatement(preparedStmtList, ids);
+        if(criteria.getIds()!=null) {
+            List<String> ids = new ArrayList<>(criteria.getIds());
+            if (ids != null && !ids.isEmpty()) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" bill.id IN (").append(createQuery(ids)).append(")");
+                addToPreparedStatement(preparedStmtList, ids);
+            }
         }
 
-        List<String> referenceIds = new ArrayList<>(criteria.getReferenceIds());
-        if (referenceIds != null && !referenceIds.isEmpty()) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.referenceid IN (").append(createQuery(referenceIds)).append(")");
-            addToPreparedStatement(preparedStmtList, referenceIds);
+        if(criteria.getBillNumbers()!=null) {
+            List<String> billNumbers = new ArrayList<>(criteria.getBillNumbers());
+            if (billNumbers != null && !billNumbers.isEmpty()) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" bill.billNumber IN (").append(createQuery(billNumbers)).append(")");
+                addToPreparedStatement(preparedStmtList, billNumbers);
+            }
         }
+
+        if(criteria.getReferenceIds()!=null) {
+            List<String> referenceIds = new ArrayList<>(criteria.getReferenceIds());
+            if (referenceIds != null && !referenceIds.isEmpty()) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" bill.referenceid IN (").append(createQueryForReferenceIds(referenceIds)).append(")");
+//            addToPreparedStatement(preparedStmtList, referenceIds);
+            }
+        }
+
 
         if (StringUtils.isNotBlank(criteria.getTenantId()) && criteria.getTenantId()!=null) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.tenantid=? ");
+//            addClauseIfRequired(query, preparedStmtList);
+            query.append(" AND bill.tenantid=? ");
             preparedStmtList.add(criteria.getTenantId());
         }
 
@@ -134,16 +156,14 @@ public class BillQueryBuilder {
             preparedStmtList.add(criteria.getTenantId());
         }
 
-        addOrderByClause(query, criteria, preparedStmtList);
+        addOrderByClause(billSearchRequest);
 
-        addLimitAndOffset(query, criteria, preparedStmtList);
-
-        return query.toString();
+        return addPaginationWrapper(query,billSearchRequest,preparedStmtList);
     }
 
-    private void addOrderByClause(StringBuilder queryBuilder, BillCriteria criteria, List<Object> preparedStmtList) {
+    private void addOrderByClause(BillSearchRequest billSearchRequest) {
 
-        Pagination pagination = criteria.getPagination();
+        Pagination pagination = billSearchRequest.getPagination();
 
 
         Set<String> sortableColumns=new HashSet<>(Arrays.asList("bill_id","bill_billdate","bill_duedate","bill_paymentstatus"
@@ -151,43 +171,44 @@ public class BillQueryBuilder {
 
 
         if (pagination.getSortBy() != null && !pagination.getSortBy().isEmpty() && sortableColumns.contains(pagination.getSortBy())) {
-            queryBuilder.append(" ORDER BY ");
-            queryBuilder.append(pagination.getSortBy()).append(" ");
+            paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
         }
         else{
-            queryBuilder.append(" ORDER BY bill_billdate ");
+            paginationWrapper=paginationWrapper.replace("{sortBy}", "bill_billdate");
         }
 
         if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {
-            queryBuilder.append(pagination.getOrder().name());
+            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
+
         }
         else{
-            criteria.getPagination().setOrder(Pagination.OrderEnum.ASC);
-            queryBuilder.append(Pagination.OrderEnum.ASC);
+            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.ASC.name());
+
         }
     }
 
-    private void addLimitAndOffset(StringBuilder queryBuilder, BillCriteria criteria, List<Object> preparedStmtList) {
+    private String addPaginationWrapper(StringBuilder query,BillSearchRequest billSearchRequest,List<Object> preparedStmtList){
 
-        int limit = criteria.getPagination().getLimit();
-        int offset = criteria.getPagination().getOffSet();
+        int limit = billSearchRequest.getPagination().getLimit();
+        int offset = billSearchRequest.getPagination().getOffSet();
 
-        queryBuilder.append(" LIMIT ?");
-        preparedStmtList.add(limit);
+        String finalQuery = paginationWrapper.replace("{}", query);
 
-        queryBuilder.append(" OFFSET ? ");
+
         preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
 
+        return finalQuery;
     }
 
-    private String createQuery2(Collection<String> ids) {
+    private String createQueryForReferenceIds(Collection<String> ids) {
     	//select referenceId from table where referenceId like 'id%'
         StringBuilder builder = new StringBuilder();
-        builder.append("SELECT referenceId FROM eg_expense_bill WHERE referenceid ");        
+        builder.append("SELECT referenceid FROM eg_expense_bill  WHERE referenceid ");
         int length = ids.size();
-        String[] referenceIds = (String[]) ids.toArray();
+        String[] referenceIds = ids.toArray(new String[ids.size()]);
         for (int i = 0; i < length; i++) {
-        	builder.append("LIKE " + referenceIds[i] + "%");
+        	builder.append("LIKE '" + referenceIds[i] + "%'");
         	if (i != length - 1) builder.append(" OR referenceid ");
         }
         return builder.toString();
