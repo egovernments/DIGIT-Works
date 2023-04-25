@@ -7,14 +7,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.Pagination;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
 public class BillQueryBuilder {
+	
+	@Autowired
+	private Configuration configs;
 
    
     private String paginationWrapper = "SELECT * FROM " +
@@ -77,13 +82,10 @@ public class BillQueryBuilder {
     private void addOrderByClause(BillSearchRequest billSearchRequest) {
 
         Pagination pagination = billSearchRequest.getPagination();
-
-
         Set<String> sortableColumns=new HashSet<>(Arrays.asList("bill_id","bill_billdate","bill_duedate","bill_paymentstatus"
                 ,"bill_status"));
 
-
-        if (pagination.getSortBy() != null && !pagination.getSortBy().isEmpty() && sortableColumns.contains(pagination.getSortBy())) {
+        if ( !StringUtils.isEmpty(pagination.getSortBy()) && sortableColumns.contains(pagination.getSortBy())) {
             paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
         }
         else{
@@ -102,8 +104,11 @@ public class BillQueryBuilder {
 
     private String addPaginationWrapper(StringBuilder query,BillSearchRequest billSearchRequest,List<Object> preparedStmtList){
 
-        int limit = billSearchRequest.getPagination().getLimit();
-        int offset = billSearchRequest.getPagination().getOffSet();
+		int limit = null != billSearchRequest.getPagination().getLimit() ? billSearchRequest.getPagination().getLimit()
+				: configs.getDefaultLimit();
+		int offset = null != billSearchRequest.getPagination().getOffSet()
+				? billSearchRequest.getPagination().getOffSet()
+				: configs.getDefaultOffset();        
 
         String finalQuery = paginationWrapper.replace("{}", query);
 

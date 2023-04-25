@@ -33,7 +33,6 @@ public class BillRequest {
 	private Bill bill;
 
 	@JsonProperty("workflow")
-	@Valid
 	private Workflow workflow;
 
 }

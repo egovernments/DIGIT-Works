@@ -122,7 +122,7 @@ public class BillService {
 
 		log.info("BillSearchRequest : "+billSearchRequest);
 		log.info("Validate billCriteria Parameters BillCriteria : "+billCriteria);
-		validator.validateSearchRequest(billCriteria);
+		validator.validateSearchRequest(billSearchRequest);
 
 		log.info("Enrich billCriteria");
 		enrichmentUtil.enrichSearchBillRequest(billSearchRequest);
