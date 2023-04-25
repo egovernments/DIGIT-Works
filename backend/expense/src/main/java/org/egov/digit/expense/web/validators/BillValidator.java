@@ -27,11 +27,9 @@ import org.springframework.util.StringUtils;
 import com.jayway.jsonpath.JsonPath;
 
 import digit.models.coremodels.Workflow;
-import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
 @Service
-@Slf4j
 public class BillValidator {
 
     @Autowired
