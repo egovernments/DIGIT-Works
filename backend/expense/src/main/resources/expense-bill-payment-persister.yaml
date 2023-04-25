@@ -6,7 +6,7 @@ serviceMaps:
    description: create bill in eg_expense_bill
    fromTopic: save-expense-bill-db
    queryMaps: 
-    - query: INSERT into eg_expense_bill (id, tenantid, billdate, duedate, netPayableAmount, netPaidAmount, businessservice, referenceId, fromperiod, toperiod, status, paymentStatus, createdby, createdTime, lastmodifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    - query: INSERT into eg_expense_bill (id, tenantid, billdate, duedate, billNumber, netPayableAmount, netPaidAmount, businessservice, referenceId, fromperiod, toperiod, status, paymentStatus, createdby, createdTime, lastmodifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
       basePath: $.bill
       jsonMaps:
        
@@ -17,6 +17,8 @@ serviceMaps:
        - jsonPath: $.bill.billDate
          
        - jsonPath: $.bill.dueDate
+       
+       - jsonPath: $.bill.billNumber
 
        - jsonPath: $.bill.netPayableAmount
          
@@ -416,7 +418,7 @@ serviceMaps:
 
 
     # insert into party from payer of payment
-    - query: INSERT INTO eg_expense_bill_payment(paymentid, billid, tenantid) VALUES (?, ?, ?);
+    - query: INSERT INTO eg_expense_payment_bill (paymentid, billid, tenantid, netBillAmount, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: $.payment.bills.*
       jsonMaps:
        
@@ -425,7 +427,75 @@ serviceMaps:
        - jsonPath: $.payment.bills.*.id
          
        - jsonPath: $.payment.tenantid
+       
+       - jsonPath: $.payment.bills.*.netBillAmount
+       
+       - jsonPath: $.payment.auditDetails.createdBy
 
+       - jsonPath: $.payment.auditDetails.createdTime
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
+
+       - jsonPath: $.payment.bills.*.additionalDetails
+         type: JSON
+         dbType: JSONB
+         
+    - query: INSERT INTO eg_expense_payment_billdetail (paymentid, billdetailid, tenantid, netLineItemAmount, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+      basePath: $.payment.bills.*.billDetails.*
+      jsonMaps:
+       
+       - jsonPath: $.payment.id
+
+       - jsonPath: $.payment.bills.*.billDetails.*.id
+         
+       - jsonPath: $.payment.tenantid
+       
+       - jsonPath: $.payment.bills.*.billDetails.*.netLineItemAmount
+       
+       - jsonPath: $.payment.auditDetails.createdBy
+
+       - jsonPath: $.payment.auditDetails.createdTime
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
+
+       - jsonPath: $.payment.bills.*.billDetails.*.additionalDetails
+         type: JSON
+         dbType: JSONB
+
+    - query: INSERT INTO eg_expense_payment_lineitem (paymentid, lineitemid, tenantid, amount, headcode, type, amountpaid createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      basePath: $.payment.bills.*.billDetails.*.payableLineItem.*
+      jsonMaps:
+       
+       - jsonPath: $.payment.id
+
+       - jsonPath: $.payment.bills.*.billDetails.*.payableLineItem.*.id
+         
+       - jsonPath: $.payment.tenantid
+       
+       - jsonPath: $.payment.bills.*.billDetails.*.payableLineItem.*.amount
+       
+       - jsonPath: $.payment.bills.*.billDetails.*.payableLineItem.*.headCode
+       
+       - jsonPath: $.payment.bills.*.billDetails.*.payableLineItem.*.type
+       
+       - jsonPath: $.payment.bills.*.billDetails.*.payableLineItem.*.amountPaid
+       
+       - jsonPath: $.payment.auditDetails.createdBy
+
+       - jsonPath: $.payment.auditDetails.createdTime
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
+
+       - jsonPath: $.payment.bills.*.billDetails.*.additionalDetails
+         type: JSON
+         dbType: JSONB
+         
  - version: 1.0
    name: Payment update
    description: update payment status in eg_expense_payment

@@ -22,7 +22,7 @@ public class Constants {
 	public static final String BILL_ID_FORMAT_SUFFIX = ".bill.number";
 	
 	public static final List<String> MDMS_MASTER_NAMES = Collections
-			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME));
+			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME, TENANT_MASTERNAME));
 
 	public static final List<String> TENANT_MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(TENANT_MASTERNAME));
