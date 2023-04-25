@@ -5,7 +5,7 @@ import { Header } from "@egovernments/digit-ui-react-components";
 
 const ViewSupervisionbill = ({ ...props }) => {
   const { t } = useTranslation();
-  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("expenditure");
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessServiceV1("expenditure");
   const { tenantId } = Digit.Hooks.useQueryParams();
 
   const { isLoading, data: applicationDetails, isError } = Digit.Hooks.bills.useSupervisionBillScreen({ t });

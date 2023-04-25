@@ -5,7 +5,7 @@ import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
 const ContractDetails = (props) => {
     const { t } = useTranslation()
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract-approval-mukta")
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessServiceV1("contracts")
 
     if (props.isLoading) return <Loader />
     return (
