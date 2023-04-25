@@ -69,6 +69,10 @@ public class WageSeekerBillGeneratorService {
                 BigDecimal netPayableAmount = BigDecimal.ZERO;
                 // Muster roll reference id is contractNumber
                 String referenceId = musterRoll.getReferenceId();
+                if(referenceId == null) {
+                    log.error("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+musterRoll.getMusterRollNumber()+"]");
+                    throw new CustomException("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+musterRoll.getMusterRollNumber()+"]");
+                }
                 // Get orgId for contractNumber
                 String cboId = getCBOID(requestInfo,tenantId,referenceId);
                 // Put orgId into meta
