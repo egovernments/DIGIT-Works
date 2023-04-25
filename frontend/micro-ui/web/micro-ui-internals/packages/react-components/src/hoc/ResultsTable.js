@@ -171,6 +171,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 onNextPage={nextPage}
                 onPrevPage={previousPage}
                 pageSizeLimit={getValues("limit")}
+                showCheckbox={false} //use this flag to show checkboxes
                 getCellProps={(cellInfo) => {
                     return {
                         style: {
