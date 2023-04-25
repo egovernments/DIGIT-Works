@@ -66,14 +66,18 @@ public class BillValidator {
 
             Workflow workflow = billRequest.getWorkflow();
 
+			if (null == workflow)
+				throw new CustomException("EG_BILL_WF_ERROR", "workflow is mandatory when worflow is active");
+
             if (null == workflow.getAction())
                 errorMap.put("EG_BILL_WF_FIELDS_ERROR",
                         "workflow action is mandatory when worflow is active");
         }
         
+		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
         validateBillAmountAndDate(bill, errorMap);
-        validateTenantId(billRequest);
-        validateMasterData(billRequest, errorMap);
+        validateTenantId(billRequest, mdmsData);
+        validateMasterData(billRequest, errorMap, mdmsData);
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
@@ -90,28 +94,28 @@ public class BillValidator {
         	throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
         			+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
         
-        validateTenantId(billRequest);
-        validateMasterData(billRequest, errorMap);
+		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
+        validateTenantId(billRequest, mdmsData);
+        validateMasterData(billRequest, errorMap, mdmsData);
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
     }
 
-    public void validateSearchRequest(BillCriteria billCriteria) {
+    public void validateSearchRequest(BillSearchRequest billSearchRequest) {
+    	
+    	BillCriteria billCriteria = billSearchRequest.getBillCriteria();
         if (StringUtils.isEmpty(billCriteria.getBusinessService())
                 && CollectionUtils.isEmpty(billCriteria.getReferenceIds())
                 && CollectionUtils.isEmpty(billCriteria.getIds()))
             throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
                     "One of referenceIds or ids or businessService should be provided for a bill search");
-
     }
 
-    private void validateMasterData(BillRequest billRequest, Map<String, String> errorMap) {
+    private void validateMasterData(BillRequest billRequest, Map<String, String> errorMap, Map<String, Map<String, JSONArray>> mdmsData) {
 
         Bill bill = billRequest.getBill();
-		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-				bill.getTenantId(), Constants.HEADCODES_MODULE_NAME, Constants.MDMS_MASTER_NAMES);
-
+        
         /* validating head code master data */
 		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.HEADCODES_MODULE_NAME).get(HEADCODE_MASTERNAME),HEADCODE_CODE_FILTER);
 
@@ -150,7 +154,7 @@ public class BillValidator {
             errorMap.put("EG_EXPENSE_INVALID_HEADCODES", "The following head codes are invalid : " + missingHeadCodes);
     }
 
-    private void validateTenantId(BillRequest billRequest) {
+    private void validateTenantId(BillRequest billRequest, Map<String, Map<String, JSONArray>> mdmsData2) {
 
         Bill bill = billRequest.getBill();
         String rootTenantId = bill.getTenantId().split("\\.")[0];
@@ -220,4 +224,16 @@ public class BillValidator {
 		
 		return billRepository.search(billSearchRequest);
     }
+
+	private Map<String, Map<String, JSONArray>> getMasterDataForValidation(BillRequest billRequest, Bill bill) {
+		
+		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
+				bill.getTenantId().split("\\.")[0], Constants.HEADCODES_MODULE_NAME, Constants.MDMS_MASTER_NAMES);
+        
+		if(CollectionUtils.isEmpty(mdmsData)) {
+			throw new CustomException("EG_EXPENSE_MDMS_ERROR", "MDMS Data not found for the tenantid : " + bill.getTenantId());
+		}
+		return mdmsData;
+	}
+
 }
