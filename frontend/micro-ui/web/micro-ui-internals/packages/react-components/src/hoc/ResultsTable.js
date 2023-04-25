@@ -171,6 +171,9 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 onNextPage={nextPage}
                 onPrevPage={previousPage}
                 pageSizeLimit={getValues("limit")}
+                showCheckbox={false} //use this flag to show checkboxes
+                actionLabel={'CS_COMMON_DOWNLOAD'} //use this label to table selection handler
+                tableSelectionHandler={() => {console.log('Handle table row selection')}} //pass handler from config
                 getCellProps={(cellInfo) => {
                     return {
                         style: {
