@@ -1,18 +1,21 @@
 package org.egov.digit.expense.util;
 
-import digit.models.coremodels.AuditDetails;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 import java.util.UUID;
 
-import static org.egov.digit.expense.config.Constants.*;
+import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.LineItem;
+import org.egov.digit.expense.web.models.Pagination;
+import org.egov.digit.expense.web.models.Payment;
+import org.egov.digit.expense.web.models.PaymentRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import digit.models.coremodels.AuditDetails;
 
 @Component
 public class EnrichmentUtil {
@@ -27,10 +30,14 @@ public class EnrichmentUtil {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
-        AuditDetails audit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
+		AuditDetails audit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
+		String billNumberIdFormatName = bill.getBusinessService().concat(Constants.BILL_ID_FORMAT_SUFFIX);
+		String billNumber = idgenUtil
+				.getIdList(billRequest.getRequestInfo(), bill.getTenantId(), billNumberIdFormatName, null, 1).get(0);
 
-        bill.setId(UUID.randomUUID().toString());
+	    bill.setId(UUID.randomUUID().toString());
         bill.setAuditDetails(audit);
+        bill.setBillNumber(billNumber);
 
         bill.getPayer().setId(UUID.randomUUID().toString());
         bill.getPayer().setAuditDetails(audit);
@@ -59,39 +66,8 @@ public class EnrichmentUtil {
 
             }
         }
-
-        //idGen to get the bill number
-		enrichBillNumber(billRequest, bill);
-
 		return billRequest;
     }
-
-	private void enrichBillNumber(BillRequest billRequest, Bill bill) {
-		if (StringUtils.isNotBlank(bill.getBusinessService())) {
-			String tenantId = bill.getTenantId();
-			String stateLevelTenantId = tenantId.split("\\.")[0];
-			RequestInfo requestInfo = billRequest.getRequestInfo();
-			if (BUSINESS_SERVICE_WAGE.equals(bill.getBusinessService())) {
-				List<String> wageBillNumbers = idgenUtil.getIdList(requestInfo, stateLevelTenantId,
-						config.getWageBillNumberName(), config.getWageBillNumberFormat(), 1);
-				if (!CollectionUtils.isEmpty(wageBillNumbers)) {
-					bill.setBillNumber(wageBillNumbers.get(0));
-				}
-			} else if (BUSINESS_SERVICE_PURCHASE.equals(bill.getBusinessService())) {
-				List<String> purchaseBillNumbers = idgenUtil.getIdList(requestInfo, stateLevelTenantId,
-						config.getPurchaseBillNumberName(), config.getPurchaseBillNumberFormat(), 1);
-				if (!CollectionUtils.isEmpty(purchaseBillNumbers)) {
-					bill.setBillNumber(purchaseBillNumbers.get(0));
-				}
-			} else if (BUSINESS_SERVICE_SUPERVISION.equals(bill.getBusinessService())) {
-				List<String> supervisionBillNumbers = idgenUtil.getIdList(requestInfo, stateLevelTenantId,
-						config.getSupervisionBillNumberName(), config.getSupervisionBillNumberFormat(), 1);
-				if (!CollectionUtils.isEmpty(supervisionBillNumbers)) {
-					bill.setBillNumber(supervisionBillNumbers.get(0));
-				}
-			}
-		}
-	}
 
 	public BillRequest encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest) {
 
