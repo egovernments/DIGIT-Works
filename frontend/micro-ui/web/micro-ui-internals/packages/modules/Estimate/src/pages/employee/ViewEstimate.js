@@ -48,7 +48,7 @@ const ViewEstimate = (props) => {
     })
 
     const HandleDownloadPdf = () => {
-        Digit.Utils.downloadEgovPDF('estimate/estimates',{estimateNumber,tenantId},`estimate-${estimateNumber}.pdf`)
+        Digit.Utils.downloadEgovPDF('estimate/estimates',{estimateNumber,tenantId},`Estimate-${estimateNumber}.pdf`)
     }
 
 
