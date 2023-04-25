@@ -161,6 +161,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             kIsWeb && FilePickerData.bytes != null
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         t.translate(i18.common.photoGraph),
@@ -185,6 +186,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                 : !kIsWeb && FilePickerData.imageFile != null
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             t.translate(i18.common.photoGraph),
@@ -414,7 +416,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
@@ -442,7 +444,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
             Column(
               children: [
                 SizedBox(
-                    width: MediaQuery.of(context).size.width / 2.5,
+                    width: MediaQuery.of(context).size.width / 2,
                     child: Text(
                       description,
                       style: const TextStyle(
@@ -453,7 +455,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                     )),
                 subDescription.isNotEmpty
                     ? SizedBox(
-                        width: MediaQuery.of(context).size.width / 2.5,
+                        width: MediaQuery.of(context).size.width / 2,
                         child: Text(
                           subDescription,
                           style: TextStyle(

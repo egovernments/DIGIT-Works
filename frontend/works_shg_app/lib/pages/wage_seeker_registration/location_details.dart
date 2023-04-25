@@ -103,6 +103,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                       formControlName: pinCodeKey,
                       label: t.translate(i18.common.pinCode),
                       keyboardType: TextInputType.number,
+                      maxLength: 6,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                       ],

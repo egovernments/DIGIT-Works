@@ -15,6 +15,7 @@ import '../services/urls.dart';
 import '../utils/notifiers.dart';
 import '../widgets/Back.dart';
 import '../widgets/LabelText.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/resend_otp.dart';
 import '../widgets/atoms/sub_label.dart';
 
@@ -52,6 +53,18 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
     localizationText = localizationText.replaceFirst(
         '{mobileNumber}', '+91 - ${widget.mobileNumber}');
     return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: const AppBarLogo(),
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        padding: const EdgeInsets.all(8.0),
+        child: const Align(
+          alignment: Alignment.bottomCenter,
+          child: PoweredByDigit(),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(children: [
           Back(
@@ -167,10 +180,6 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
               ],
             ),
           ),
-          const Align(
-            alignment: Alignment.bottomCenter,
-            child: PoweredByDigit(),
-          )
         ]),
       ),
     );

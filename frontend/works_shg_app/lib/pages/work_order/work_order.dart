@@ -1,3 +1,4 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -5,7 +6,7 @@ import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
-import 'package:works_shg_app/widgets/loaders.dart';
+import 'package:works_shg_app/widgets/loaders.dart' as shg_loader;
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
@@ -65,15 +66,14 @@ class _WorkOrderPage extends State<WorkOrderPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(Drawer(
-            child:
-                SideBar(module: CommonMethods.getLocaleModules()))),
+        drawer: DrawerWrapper(
+            Drawer(child: SideBar(module: CommonMethods.getLocaleModules()))),
         body: SingleChildScrollView(
           child: BlocListener<SearchMyWorksBloc, SearchMyWorksState>(
             listener: (context, state) {
               state.maybeWhen(
                   orElse: () => false,
-                  loading: () => Loaders.circularLoader(context),
+                  loading: () => shg_loader.Loaders.circularLoader(context),
                   error: (String? error) => Notifiers.getToastMessage(
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
@@ -121,7 +121,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                 builder: (context, searchState) {
               return searchState.maybeWhen(
                   orElse: () => Container(),
-                  loading: () => Loaders.circularLoader(context),
+                  loading: () => shg_loader.Loaders.circularLoader(context),
                   loaded: (ContractsModel? contractsModel) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -150,13 +150,83 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                         t.translate(i18.common.inProgress),
                                         isMainTab: true,
                                         isSelected: inProgress,
-                                        onPressed: null,
+                                        onPressed: () {
+                                          setState(() {
+                                            inProgress = true;
+                                            workOrderList = contractsModel!
+                                                .contracts!
+                                                .where((e) =>
+                                                    e.wfStatus == 'APPROVED' ||
+                                                    e.wfStatus == 'ACCEPTED')
+                                                .map((e) => {
+                                                      'cardDetails': {
+                                                        i18.workOrder
+                                                                .workOrderNo:
+                                                            e.contractNumber ??
+                                                                'NA',
+                                                        i18.attendanceMgmt
+                                                            .projectDesc: e
+                                                                .additionalDetails
+                                                                ?.projectDesc ??
+                                                            'NA',
+                                                        i18.workOrder.roleOfCBO:
+                                                            AppLocalizations.of(
+                                                                    context)
+                                                                .translate(
+                                                                    e.executingAuthority ??
+                                                                        'NA'),
+                                                        i18.attendanceMgmt
+                                                            .engineerInCharge: e
+                                                                .additionalDetails
+                                                                ?.officerInChargeName
+                                                                ?.name ??
+                                                            'NA',
+                                                        i18.workOrder
+                                                            .contractIssueDate: e
+                                                                    .issueDate !=
+                                                                null
+                                                            ? DateFormats
+                                                                .timeStampToDate(
+                                                                    e.issueDate,
+                                                                    format:
+                                                                        "dd/MM/yyyy")
+                                                            : 'NA',
+                                                        i18.workOrder.dueDate: e
+                                                                    .issueDate !=
+                                                                null
+                                                            ? DateFormats.getFilteredDate(DateTime
+                                                                    .fromMillisecondsSinceEpoch(
+                                                                        e.issueDate ??
+                                                                            0)
+                                                                .add(
+                                                                    const Duration(
+                                                                        days:
+                                                                            7))
+                                                                .toLocal()
+                                                                .toString())
+                                                            : 'NA',
+                                                        i18.workOrder
+                                                                .contractAmount:
+                                                            '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
+                                                        i18.common.status:
+                                                            e.wfStatus,
+                                                      },
+                                                      'payload': e.toMap()
+                                                    })
+                                                .toList();
+                                          });
+                                        },
                                       ),
                                       TabButton(
                                         t.translate(i18.common.completed),
                                         isMainTab: true,
                                         isSelected: !inProgress,
-                                        onPressed: null,
+                                        onPressed: () {
+                                          setState(() {
+                                            inProgress = false;
+                                            workOrderList = [];
+                                          });
+                                        },
                                       )
                                     ],
                                   ),
@@ -178,6 +248,13 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                   .noWorkOrderAssigned),
                                           align: Alignment.center,
                                         ),
+                                  const SizedBox(
+                                    height: 16.0,
+                                  ),
+                                  const Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: PoweredByDigit(),
+                                  )
                                 ]),
                             BlocListener<DeclineWorkOrderBloc,
                                 DeclineWorkOrderState>(
@@ -207,7 +284,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                 state.maybeWhen(
                                     initial: () => Container(),
                                     loading: () =>
-                                        Loaders.circularLoader(context),
+                                        shg_loader.Loaders.circularLoader(
+                                            context),
                                     error: (String? error) {
                                       Notifiers.getToastMessage(
                                           context, error.toString(), 'ERROR');

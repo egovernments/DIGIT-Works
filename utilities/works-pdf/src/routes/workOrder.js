@@ -67,7 +67,6 @@ router.post(
                     )
                 }
                 catch (ex) {
-                    console.log(ex)
                     if (ex.response && ex.response.data) console.log(ex.response.data);
                     return renderError(res, "Failed to generate PDF for work order", 500);
                 }

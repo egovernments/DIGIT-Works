@@ -23,7 +23,7 @@ class AppBarLogo extends StatelessWidget {
                   Text(
                     GlobalVariables
                             .organisationListModel?.organisations?.first.name ??
-                        'NA',
+                        '',
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
@@ -33,7 +33,7 @@ class AppBarLogo extends StatelessWidget {
                   Text(
                     GlobalVariables.organisationListModel?.organisations?.first
                             .orgNumber ??
-                        'NA',
+                        '',
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 12,

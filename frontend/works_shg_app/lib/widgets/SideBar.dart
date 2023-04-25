@@ -17,7 +17,9 @@ import '../models/organisation/organisation_model.dart';
 class SideBar extends StatefulWidget {
   final String module;
   const SideBar(
-      {super.key, this.module = 'rainmaker-common,rainmaker-attendencemgmt'});
+      {super.key,
+      this.module =
+          'rainmaker-common,rainmaker-attendencemgmt,rainmaker-common-masters'});
   @override
   State<StatefulWidget> createState() {
     return _SideBar();
@@ -62,8 +64,10 @@ class _SideBar extends State<SideBar> {
                       child: Loaders.circularLoader(context)),
                   loaded: (OrganisationListModel? organisationListModel) {
                     return organisationListModel?.organisations != null
-                        ? SizedBox(
+                        ? Container(
+                            width: MediaQuery.of(buildContext).size.width,
                             height: MediaQuery.of(buildContext).size.height / 3,
+                            color: const DigitColors().quillGray,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -137,7 +141,7 @@ class _SideBar extends State<SideBar> {
                               ?.map(
                                   (e) => DigitRowCardModel.fromJson(e.toJson()))
                               .toList() as List<DigitRowCardModel>,
-                          width: 85)
+                          width: 80)
                       : const Text('');
                 },
               ),
