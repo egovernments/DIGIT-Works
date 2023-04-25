@@ -121,6 +121,7 @@ public class BillService {
 	 * @return
 	 */
 	public BillResponse search(BillSearchRequest billSearchRequest) {
+		
 		BillCriteria billCriteria=billSearchRequest.getBillCriteria();
 
 		log.info("BillSearchRequest : "+billSearchRequest);
@@ -133,8 +134,9 @@ public class BillService {
 		log.info("Search repository using billCriteria");
 		List<Bill> bills = billRepository.search(billSearchRequest);
 
-		//set pay lineitems and lineItems
+		//set pay line items and lineItems
 		for(Bill bill:bills){
+			
 			List<LineItem> lineItems=null;
 			List<LineItem> payableLineItems=null;
 			for(BillDetail billDetail:bill.getBillDetails()){
