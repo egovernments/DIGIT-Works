@@ -3,7 +3,7 @@ export const SearchBillWMSConfig = {
     "moduleName": "commonMuktaUiConfig",
     "SearchBillWMSConfig":[
         {
-            label : "EXP_SEARCH_BILLSSS",
+            label : "EXP_SEARCH_BILL",
             type: 'search',
             apiDetails: {
                 serviceName: "/wms/expense/_search",
@@ -15,7 +15,7 @@ export const SearchBillWMSConfig = {
                 },
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
-                moduleName:"SearchBillConfig",
+                moduleName:"SearchBillWMSConfig",
                 tableFormJsonPath:"requestBody.inbox",
                 filterFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
                 searchFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
@@ -161,12 +161,12 @@ export const SearchBillWMSConfig = {
                         columns: [
                             {
                                 label: "WORKS_BILL_NUMBER",
-                                jsonPath: "musterRollNumber",
+                                jsonPath: "businessObject.billNumber",
                                 additionalCustomization:true 
                             },
                             {
                                 label: "WORKS_PROJECT_NAME",
-                                jsonPath: "additionalDetails.projectName",
+                                jsonPath: "businessObject.additionalDetails.projectName",
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
@@ -179,22 +179,23 @@ export const SearchBillWMSConfig = {
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "additionalDetails.billType",
+                                jsonPath: "businessObject.additionalDetails.billType",
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                jsonPath: "musterRollStatus",
+                                jsonPath: "businessObject.musterRollStatus",
                                 additionalCustomization:true
                             },
                             {
                                 label: "EXP_BILL_AMOUNT",
-                                jsonPath: "additionalDetails.amount",
-                                additionalCustomization:true
+                                jsonPath: "businessObject.netPayableAmount",
+                                additionalCustomization:true,
+                                headerAlign: "right"
                             }
                         ],
                         enableGlobalSearch: false,
                         enableColumnSort: true,
-                        resultsJsonPath: "musterRolls",
+                        resultsJsonPath: "items",
                     },
                     children: {},
                     show: true 

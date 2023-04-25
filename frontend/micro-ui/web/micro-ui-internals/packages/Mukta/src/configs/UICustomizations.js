@@ -966,8 +966,15 @@ export const UICustomizations = {
       }
     }
   },
-  /*
-  SearchBillConfig: {
+  SearchBillWMSConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     preProcess: (data) => {
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
@@ -1020,7 +1027,7 @@ export const UICustomizations = {
         );
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
@@ -1065,9 +1072,16 @@ export const UICustomizations = {
         },
       };
     }
-  }
-  */
+  },
   SearchBillConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     preProcess: (data) => {
       let requestBody = { ...data.body.billCriteria };
       const dateConfig = {
@@ -1119,7 +1133,7 @@ export const UICustomizations = {
         );
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return value ? Digit.Utils.dss.formatterWithoutRound(value, 'number') : t("ES_COMMON_NA")
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")

@@ -187,7 +187,8 @@ export const SearchBillConfig = {
                             {
                                 label: "EXP_BILL_AMOUNT",
                                 jsonPath: "additionalDetails.amount",
-                                additionalCustomization:true
+                                additionalCustomization:true,
+                                headerAlign: "right"
                             }
                         ],
                         enableGlobalSearch: false,
