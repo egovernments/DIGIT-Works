@@ -57,7 +57,8 @@ const Table = ({
   tableRef,
   isReportTable = false,
   showCheckbox = false,
-  actionLabel = 'CS_COMMON_DOWNLOAD'
+  actionLabel = 'CS_COMMON_DOWNLOAD',
+  tableSelectionHandler = () => {}
 }) => {
   const {
     getTableProps,
@@ -130,6 +131,7 @@ const Table = ({
   useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter,data]);
   
   const handleSelection = () => {
+    tableSelectionHandler()
     console.log('SELECTED ROWS', {selectedRowIds, rows})
   }
 
