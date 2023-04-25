@@ -767,6 +767,14 @@ export const UICustomizations = {
     }
   },
   SearchWageSeekerConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     preProcess: (data) => {
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
 
@@ -861,6 +869,14 @@ export const UICustomizations = {
     }
   },
   SearchOrganisationConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     preProcess: (data) => {  
         let requestBody = { ...data.body.SearchCriteria };
         const pathConfig = {
