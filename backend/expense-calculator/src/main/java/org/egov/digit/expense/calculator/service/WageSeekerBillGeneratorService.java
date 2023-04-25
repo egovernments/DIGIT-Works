@@ -178,6 +178,11 @@ public class WageSeekerBillGeneratorService {
             List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
             String tenantId = musterRoll.getTenantId();
             BigDecimal netPayableAmount = BigDecimal.ZERO;
+            if(musterRoll.getReferenceId() == null) {
+                log.error("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+musterRoll.getMusterRollNumber()+"]");
+                throw new CustomException("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+musterRoll.getMusterRollNumber()+"]");
+            }
+
             String cboId = getCBOID(requestInfo, tenantId, musterRoll.getReferenceId());
             for(IndividualEntry individualEntry : individualEntries){
                 String individualId = individualEntry.getIndividualId();

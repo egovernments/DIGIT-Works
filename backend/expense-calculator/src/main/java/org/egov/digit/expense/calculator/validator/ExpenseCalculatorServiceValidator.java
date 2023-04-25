@@ -224,7 +224,7 @@ public class ExpenseCalculatorServiceValidator {
         }
 
 
-        log.info("Required request parameter validation done for Calculator Estimate service");
+        log.info("Required request parameter validation done for Calculator");
     }
 
     private void validateRequestAgainstMDMS(RequestInfo requestInfo, String tenantId, String businessService) {
