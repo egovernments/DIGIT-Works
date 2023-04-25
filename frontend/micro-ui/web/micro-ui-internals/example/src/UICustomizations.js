@@ -13,6 +13,13 @@ const businessServiceMap = {
   expenditure:""
 };
 
+const businessServiceMapV1 = {
+  estimate: "ESTIMATE",
+  contracts: "CONTRACT",
+  attendencemgmt: "MUSTER_ROLL",
+  expenditure:""
+}
+
 const inboxModuleNameMap = {
   "mukta-estimate": "estimate-service",
   "contract-approval-mukta": "contract-service",
@@ -128,6 +135,21 @@ export const UICustomizations = {
       return businessServiceMap;
     }
   },
+
+  getBusinessServiceV1: (moduleCode) => {
+    if (moduleCode?.includes("estimate")) {
+      return businessServiceMapV1?.estimate;
+    } else if (moduleCode?.includes("contract")) {
+      return businessServiceMapV1?.contracts;
+    } else if (moduleCode?.includes("attendence")) {
+      return businessServiceMapV1?.attendencemgmt;
+    }else if (moduleCode?.includes("expenditure")) {
+      return businessServiceMapV1?.expenditure;
+    }else {
+      return businessServiceMapV1;
+    }
+  },
+
   getInboxModuleName: (moduleCode) => {
     if (moduleCode?.includes("estimate")) {
       return inboxModuleNameMap?.estimate;

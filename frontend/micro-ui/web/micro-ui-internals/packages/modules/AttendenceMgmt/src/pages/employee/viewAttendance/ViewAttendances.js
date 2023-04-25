@@ -12,6 +12,7 @@ const ViewAttendance = () => {
   const [modify, setModify] = useState(false);
   const [cardState,setCardState] = useState([])
   const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessServiceV1("attendence")
 
   const [isStateChanged, setStateChanged] = useState(``)
 
@@ -79,7 +80,7 @@ const ViewAttendance = () => {
           isDataLoading={false}
           showTimeLine={true}
           timelineStatusPrefix={"ATM_"}
-          businessService={"muster-roll-approval"}
+          businessService={businessService}
           forcedActionPrefix={"ATM"}
           mutate={mutate}
           showToast={showToast}
@@ -97,7 +98,7 @@ const ViewAttendance = () => {
       {isSuccess && !modify &&
         <WorkflowActions
           forcedActionPrefix={"ATM"}
-          businessService={"muster-roll-approval"}
+          businessService={businessService}
           applicationNo={musterRollNumber}
           tenantId={tenantId}
           applicationDetails={data?.applicationData}
