@@ -92,6 +92,9 @@ public class Configuration {
 	
 	@Value("#{${business.workflow.status.map}}")
 	private Map<String, Boolean> businessServiceWorkflowStatusMap;
+	
+	@Value("${expense.workflow.module.name}")
+	private String expenseWorkflowModuleName;
 
 	// MDMS
 	@Value("${egov.mdms.host}")

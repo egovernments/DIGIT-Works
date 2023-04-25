@@ -58,11 +58,11 @@ public class Bill {
 
 	@JsonProperty("businessService")
 	@NotNull
-	@Size(min = 2, max = 64)
+	@Size(min = 2, max = 128)
 	private String businessService;
 
 	@JsonProperty("referenceId")
-	@Size(min = 2, max = 64)
+	@Size(min = 2, max = 128)
 	private String referenceId;
 
 	@JsonProperty("fromPeriod")
