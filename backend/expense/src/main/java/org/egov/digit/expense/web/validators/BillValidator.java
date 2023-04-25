@@ -4,20 +4,26 @@ import static org.egov.digit.expense.config.Constants.HEADCODE_CODE_FILTER;
 import static org.egov.digit.expense.config.Constants.HEADCODE_MASTERNAME;
 import static org.egov.digit.expense.config.Constants.TENANT_MASTERNAME;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.LineItem;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,14 +43,23 @@ public class BillValidator {
 
     @Autowired
     private Configuration configs;
+    
+    @Autowired
+    private BillRepository billRepository;
 
     // TODO FIXME amount validation between amount and paid amount relation ship if negative values not involved
 
     public void validateCreateRequest(BillRequest billRequest) {
 
+    	Map<String, String> errorMap = new HashMap<>();
+    	
         Bill bill = billRequest.getBill();
-        Map<String, String> errorMap = new HashMap<>();
-
+        
+        List<Bill> billsFromSearch = getBillsForValidation(billRequest);
+        if(!CollectionUtils.isEmpty(billsFromSearch))
+        	throw new CustomException("EG_EXPENSE_DUPLICATE_BILL","Active bill exists for the given combination of "
+        			+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
+        
         boolean isWorkflowActiveForBusinessService = isWorkflowActiveForBusinessService(bill.getBusinessService());
 
         if (isWorkflowActiveForBusinessService) {
@@ -55,7 +70,8 @@ public class BillValidator {
                 errorMap.put("EG_BILL_WF_FIELDS_ERROR",
                         "workflow action is mandatory when worflow is active");
         }
-
+        
+        validateBillAmountAndDate(bill, errorMap);
         validateTenantId(billRequest);
         validateMasterData(billRequest, errorMap);
 
@@ -67,6 +83,13 @@ public class BillValidator {
     public void validateUpdateRequest(BillRequest billRequest) {
 
         Map<String, String> errorMap = new HashMap<>();
+        Bill bill = billRequest.getBill();
+        
+        List<Bill> billsFromSearch = getBillsForValidation(billRequest);
+        if(CollectionUtils.isEmpty(billsFromSearch))
+        	throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
+        			+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
+        
         validateTenantId(billRequest);
         validateMasterData(billRequest, errorMap);
 
@@ -86,27 +109,40 @@ public class BillValidator {
     private void validateMasterData(BillRequest billRequest, Map<String, String> errorMap) {
 
         Bill bill = billRequest.getBill();
-		String rootTenantId=bill.getTenantId().split("\\.")[0];
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-                rootTenantId, Constants.HEADCODES_MODULE_NAME, Constants.MDMS_MASTER_NAMES);
+		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
+				bill.getTenantId(), Constants.HEADCODES_MODULE_NAME, Constants.MDMS_MASTER_NAMES);
 
         /* validating head code master data */
 		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.HEADCODES_MODULE_NAME).get(HEADCODE_MASTERNAME),HEADCODE_CODE_FILTER);
 
         Set<String> missingHeadCodes = new HashSet<>();
 
-        for (BillDetail billDetail : bill.getBillDetails()) {
+		for (BillDetail billDetail : bill.getBillDetails()) {
 
-            for (LineItem item : billDetail.getLineItems()) {
+			for (LineItem item : billDetail.getLineItems()) {
 
-                if (!headCodeList.contains(item.getHeadCode()))
-                    missingHeadCodes.add(item.getHeadCode());
-            }
+				BigDecimal amount = item.getAmount();
+				BigDecimal paidAmount = item.getPaidAmount();
 
-            for (LineItem item : billDetail.getPayableLineItems()) {
+				if (!headCodeList.contains(item.getHeadCode()))
+					missingHeadCodes.add(item.getHeadCode());
 
-                if (!headCodeList.contains(item.getHeadCode()))
-                    missingHeadCodes.add(item.getHeadCode());
+                if (amount.compareTo(paidAmount) < 0)
+					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
+							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
+			}
+
+			for (LineItem item : billDetail.getPayableLineItems()) {
+
+				BigDecimal amount = item.getAmount();
+				BigDecimal paidAmount = item.getPaidAmount();
+
+				if (!headCodeList.contains(item.getHeadCode()))
+					missingHeadCodes.add(item.getHeadCode());
+
+                if (amount.compareTo(paidAmount) < 0)
+					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
+							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
             }
         }
 
@@ -135,8 +171,24 @@ public class BillValidator {
         }
     }
 
-
-    /**
+	private void validateBillAmountAndDate( Bill bill, Map<String, String> errorMap) {
+		
+		Long billDate = null != bill.getBillDate() ? bill.getBillDate() : 0l;
+		Long dueDate = null != bill.getDueDate() ? bill.getDueDate() : Long.MAX_VALUE;
+        
+        if(dueDate.compareTo(billDate) < 0)
+        	errorMap.put("EG_EXPENSE_BILL_INVALID_DATE",
+					"The due Date : " + billDate + " cannot be greater than the due Date : " + dueDate);
+        
+        BigDecimal billAmount = bill.getNetPayableAmount();
+        BigDecimal billPaidAmount = bill.getNetPaidAmount();
+        
+        if (billAmount.compareTo(billPaidAmount) < 0)
+			errorMap.put("EG_EXPENSE_BILL_INVALID_AMOUNT",
+					"The bill amount : " + billAmount + " cannot be lesser than the paid amount : " + billPaidAmount);
+	}
+    
+	/**
      * check whether the workflow is enabled for the given business type
      *
      * @param businessServiceName
@@ -148,5 +200,24 @@ public class BillValidator {
                 ? workflowActiveMap.get(businessServiceName)
                 : false;
         return isWorkflowActiveForBusinessService;
+    }
+    
+    private List<Bill> getBillsForValidation(BillRequest billRequest){
+
+    	Bill bill = billRequest.getBill();
+    	
+		BillCriteria billCriteria = BillCriteria.builder()
+				.referenceIds(Stream.of(bill.getReferenceId()).collect(Collectors.toSet()))
+				.businessService(bill.getBusinessService())
+				.status(Status.ACTIVE.toString())
+				.tenantId(bill.getTenantId())
+				.build();
+		
+		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
+				.requestInfo(billRequest.getRequestInfo())
+				.billCriteria(billCriteria)
+				.build();
+		
+		return billRepository.search(billSearchRequest);
     }
 }
