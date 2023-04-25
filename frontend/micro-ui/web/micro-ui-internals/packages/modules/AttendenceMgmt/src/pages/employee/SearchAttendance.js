@@ -18,7 +18,18 @@ const SearchAttendance = () => {
 
   const configs = data?.[configModuleName].SearchAttendanceWMSConfig?.[0];
 
-  const updatedConfig = useMemo(() => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields", {}), [
+  const updatedConfig = useMemo(() => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields", {
+    updateDependent : [
+      {
+        key : "startDate",
+        value : [new Date().toISOString().split("T")[0]]
+      },
+      {
+        key : "endDate",
+        value : [new Date().toISOString().split("T")[0]]
+      }
+    ]
+  }), [
     configs,
     data,
   ]);
