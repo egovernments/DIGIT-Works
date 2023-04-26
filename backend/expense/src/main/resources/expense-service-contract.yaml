@@ -635,7 +635,5 @@ components:
         - tenantId
         - headCode
         - amount
+        - paidAmount
         - type
-    
- 
-    
