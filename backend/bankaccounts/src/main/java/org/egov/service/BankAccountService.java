@@ -2,6 +2,7 @@ package org.egov.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.config.Configuration;
 import org.egov.kafka.Producer;
 import org.egov.repository.BankAccountRepository;
@@ -18,6 +19,11 @@ import java.util.List;
 @Slf4j
 public class BankAccountService {
 
+    public static final String BANK_ACCOUNT_ENCRYPT_KEY = "BankAccountEncrypt";
+    public static final String BANK_ACCOUNT_NUMBER_ENCRYPT_KEY = "BankAccountNumberEncrypt";
+    public static final String BANK_ACCOUNT_HOLDER_NAME_ENCRYPT_KEY = "BankAccountHolderNameEncrypt";
+    public static final String BANK_ACCOUNT_DECRYPT_KEY = "BankAccountDecrypt";
+
     @Autowired
     private BankAccountValidator bankAccountValidator;
 
@@ -28,17 +34,22 @@ public class BankAccountService {
     private BankAccountRepository bankAccountRepository;
 
     @Autowired
-    private Producer producer;
+    private Producer bankAccountProducer;
 
     @Autowired
     private Configuration configuration;
+
+    @Autowired
+    private EncryptionService encryptionService;
 
     public BankAccountRequest createBankAccount(BankAccountRequest bankAccountRequest) {
         log.info("BankAccountService::createBankAccount");
         bankAccountValidator.validateBankAccountOnCreate(bankAccountRequest);
         enrichmentService.enrichBankAccountOnCreate(bankAccountRequest);
 
-        producer.push(configuration.getSaveBankAccountTopic(),bankAccountRequest);
+        encryptionService.encrypt(bankAccountRequest, BANK_ACCOUNT_ENCRYPT_KEY);
+
+        bankAccountProducer.push(configuration.getSaveBankAccountTopic(), bankAccountRequest);
 
         return bankAccountRequest;
     }
@@ -52,9 +63,22 @@ public class BankAccountService {
         bankAccountValidator.validateBankAccountOnSearch(searchRequest);
         enrichmentService.enrichBankAccountOnSearch(searchRequest);
 
-        List<BankAccount> bankAccountList = bankAccountRepository.getBankAccount(searchRequest);
-        if (!CollectionUtils.isEmpty(bankAccountList))
-            return bankAccountList;
+        BankAccountSearchCriteria searchCriteria = searchRequest.getBankAccountDetails();
+        if (!CollectionUtils.isEmpty(searchCriteria.getAccountNumber())) {
+            encryptionService.encrypt(searchRequest, BANK_ACCOUNT_NUMBER_ENCRYPT_KEY);
+        }
+        if (StringUtils.isNotBlank(searchCriteria.getAccountHolderName())) {
+            encryptionService.encrypt(searchRequest, BANK_ACCOUNT_HOLDER_NAME_ENCRYPT_KEY);
+        }
+
+        List<BankAccount> encryptedBankAccountList = bankAccountRepository.getBankAccount(searchRequest);
+
+
+        if (!CollectionUtils.isEmpty(encryptedBankAccountList)) {
+            encryptedBankAccountList = encryptionService.decrypt(encryptedBankAccountList,
+                    BANK_ACCOUNT_DECRYPT_KEY, searchRequest.getRequestInfo());
+            return encryptedBankAccountList;
+        }
 
         return Collections.emptyList();
     }
