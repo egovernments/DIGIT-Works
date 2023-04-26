@@ -7,6 +7,7 @@ import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.enrichment.ExpenseCalculatorEnrichment;
 import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
 import org.egov.digit.expense.calculator.mapper.BillToMetaMapper;
+import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
 import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValidator;
 import org.egov.digit.expense.calculator.web.models.*;
@@ -58,6 +59,9 @@ public class ExpenseCalculatorService {
 
     @Autowired
     private BillToMetaMapper billToMetaMapper;
+
+    @Autowired
+    private ExpenseCalculatorRepository expenseCalculatorRepository;
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
         expenseCalculatorServiceValidator.validateCalculatorEstimateRequest(calculationRequest);
@@ -187,6 +191,13 @@ public class ExpenseCalculatorService {
         BillMetaRecords billMetaRecords = billToMetaMapper.map(bills,metaInfo);
         expenseCalculatorProducer.push(config.getCalculatorCreateBillTopic(),billMetaRecords);
     }
+
+    public List<String> search(CalculatorSearchRequest calculatorSearchRequest) {
+        List<String> billIds=expenseCalculatorRepository.getBillIds(calculatorSearchRequest);
+        return billIds;
+    }
+
+
 
     /**
      * Fetches the bills for the provided contract
