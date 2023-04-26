@@ -76,6 +76,7 @@ const App = ({ path }) => {
     const BillInbox = Digit?.ComponentRegistryService?.getComponent("BillInbox");
     const SearchBill = Digit?.ComponentRegistryService?.getComponent("SearchBill");
     const ViewWageBill = Digit?.ComponentRegistryService?.getComponent("ViewWageBill");
+    const DownloadBill = Digit?.ComponentRegistryService?.getComponent("DownloadBill");
 
     return (
       <Switch>
@@ -93,6 +94,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/view-bill`} component={() => <ViewWageBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/supervision-bill-details`} component={() => <ViewSupervisionbill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/download-bill`} component={() => <DownloadBill parentRoute={path} />} />
         </AppContainer>
       </Switch>
     );

@@ -28,7 +28,7 @@ const ViewWageBill = () => {
 
   return (
     <React.Fragment>
-      <Header>{t("EXP_VIEW_BILL")}</Header>
+      <Header className="works-header-view">{t("EXP_VIEW_BILL")}</Header>
       {
         showDataError === null && (
           <ApplicationDetails
