@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 import '../blocs/auth/auth.dart';
 import '../data/remote_client.dart';

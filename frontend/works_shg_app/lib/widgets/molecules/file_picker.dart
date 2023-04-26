@@ -10,8 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/file_store/file_store_model.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/utils/models/file_picker_data.dart';
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 
