@@ -52,8 +52,14 @@ class SuccessResponsePage extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-          bottomNavigationBar: const Align(
-              alignment: Alignment.bottomCenter, child: PoweredByDigit()),
+          bottomNavigationBar: Container(
+            height: 60,
+            padding: const EdgeInsets.all(8.0),
+            child: const Align(
+              alignment: Alignment.bottomCenter,
+              child: PoweredByDigit(),
+            ),
+          ),
           appBar: isWithoutLogin
               ? AppBar(
                   title: const Text('MuktaSoft'),
