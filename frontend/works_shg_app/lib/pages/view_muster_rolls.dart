@@ -2,7 +2,8 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
@@ -49,7 +50,7 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer:  DrawerWrapper(Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
           module: CommonMethods.getLocaleModules(),
         ))),
@@ -118,7 +119,14 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                 musterRollsModel: musters,
                                 elevatedButtonLabel:
                                     t.translate(i18.common.viewDetails),
-                              )
+                              ),
+                        const SizedBox(
+                          height: 16.0,
+                        ),
+                        const Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        )
                       ]);
                 },
                 orElse: () => Container());

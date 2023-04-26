@@ -1,5 +1,7 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 import '../../blocs/localization/app_localization.dart';
 
@@ -46,7 +48,10 @@ class _DropDownDialogState extends State<DropDownDialog> {
               height: 40,
               padding: const EdgeInsets.all(4.0),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
+                border: Border.all(
+                    color: widget.isDisabled
+                        ? const DigitColors().hintGrey
+                        : const DigitColors().black),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Row(
@@ -57,7 +62,11 @@ class _DropDownDialogState extends State<DropDownDialog> {
                       AppLocalizations.of(context)
                           .translate(widget.selectedOption),
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: widget.isDisabled
+                              ? const DigitColors().hintGrey
+                              : const DigitColors().black),
                     ),
                   ),
                   const Icon(
@@ -82,7 +91,12 @@ class _DropDownDialogState extends State<DropDownDialog> {
           title: Text(
             AppLocalizations.of(context)
                 .translate(widget.label ?? i18.common.selectAnOption),
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+            style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: widget.isDisabled
+                    ? const DigitColors().hintGrey
+                    : const DigitColors().black),
           ),
           content: SizedBox(
             height: widget.options.length * 40,

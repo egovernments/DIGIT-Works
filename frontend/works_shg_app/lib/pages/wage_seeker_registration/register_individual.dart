@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/financial_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/individual_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/location_details.dart';
-import 'package:works_shg_app/pages/wage_seeker_registration/skills.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/summary_details.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/utils/notifiers.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';
@@ -19,6 +19,7 @@ import '../../blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import '../../models/mdms/location_mdms.dart';
 import '../../models/mdms/wage_seeker_mdms.dart';
+import '../../utils/common_methods.dart';
 import '../../utils/models/file_picker_data.dart';
 import '../../widgets/SideBar.dart';
 import '../../widgets/atoms/app_bar_logo.dart';
@@ -62,12 +63,12 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
 
   var t = AppLocalizations.of(scaffoldMessengerKey.currentContext!);
   int currentStep = 0;
-  List<int> stepNumbers = [1, 2, 3, 4, 5];
+  List<int> stepNumbers = [1, 2, 3, 4];
   List<String> stepHeaders = [
     AppLocalizations.of(scaffoldMessengerKey.currentContext!)
         .translate(i18.attendanceMgmt.individualDetails),
-    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-        .translate(i18.attendanceMgmt.skillDetails),
+    // AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+    //     .translate(i18.attendanceMgmt.skillDetails),
     AppLocalizations.of(scaffoldMessengerKey.currentContext!)
         .translate(i18.common.locationDetails),
     AppLocalizations.of(scaffoldMessengerKey.currentContext!)
@@ -97,9 +98,9 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: const DrawerWrapper(Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: SingleChildScrollView(
           child: Column(
@@ -112,7 +113,7 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
                   activeStepColor: const DigitColors().burningOrange,
                   numberStyle: TextStyle(color: const DigitColors().white),
                   lineDotRadius: 2.0,
-                  lineLength: 50,
+                  lineLength: MediaQuery.of(context).size.width / 11,
                   activeStepBorderPadding: 0.0,
                   lineColor: const DigitColors().regalBlue,
                   activeStepBorderColor: const DigitColors().burningOrange,
@@ -127,6 +128,9 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
                       currentStep = index;
                     });
                   },
+                ),
+                const SizedBox(
+                  height: 16.0,
                 ),
                 BlocBuilder<WageSeekerMDMSBloc, WageSeekerMDMSState>(
                     builder: (context, mdmsState) {
@@ -146,7 +150,14 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
                       },
                       error: (String? error) => Notifiers.getToastMessage(
                           context, error.toString(), 'ERROR'));
-                })
+                }),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: PoweredByDigit(),
+                )
               ]),
         ));
   }
@@ -158,24 +169,25 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
           onPressed: updateCurrentStep,
           wageSeekerMDMS: wageSeekerMDMS,
         );
+      // case 1:
+      //   return SkillDetailsPage(
+      //     onPressed: updateCurrentStep,
+      //     wageSeekerMDMS: wageSeekerMDMS,
+      //   );
       case 1:
-        return SkillDetailsPage(
-          onPressed: updateCurrentStep,
-          wageSeekerMDMS: wageSeekerMDMS,
-        );
-      case 2:
         return LocationDetailsPage(
           onPressed: updateCurrentStep,
-          city: 'pg.citya',
+          city: GlobalVariables
+              .organisationListModel?.organisations?.first.tenantId,
           location: location,
           wageSeekerMDMS: wageSeekerMDMS,
         );
-      case 3:
+      case 2:
         return FinancialDetailsPage(
           onPressed: updateCurrentStep,
           wageSeekerMDMS: wageSeekerMDMS,
         );
-      case 4:
+      case 3:
         return SummaryDetailsPage(
           onPressed: jumpToStep,
           wageSeekerMDMS: wageSeekerMDMS,

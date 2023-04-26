@@ -7,7 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
@@ -109,6 +110,12 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.accountHolderNameRequired,
+                            ),
+                        'minLength': (_) => t.translate(
+                              i18.wageSeeker.minNameCharacters,
+                            ),
+                        'maxLength': (_) => t.translate(
+                              i18.wageSeeker.maxNameCharacters,
                             ),
                       },
                     ),
@@ -241,7 +248,11 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   FormGroup buildForm(FinancialDetails finance) => fb.group(<String, Object>{
         accountHolderKey: FormControl<String>(
             value: finance.accountHolderName,
-            validators: [Validators.required]),
+            validators: [
+              Validators.required,
+              Validators.minLength(2),
+              Validators.maxLength(128)
+            ]),
         accountNoKey: FormControl<String>(
             value: finance.accountNumber,
             validators: [

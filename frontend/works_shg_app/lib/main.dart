@@ -59,7 +59,7 @@ import 'blocs/work_orders/work_order_pdf.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
-import 'models/UserDetails/user_details_model.dart';
+import 'models/user_details/user_details_model.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -236,7 +236,8 @@ class _MainApplicationState extends State<MainApplication> {
                               const LocalizationState.initial(),
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
-                                module: 'rainmaker-common',
+                                module:
+                                    'rainmaker-common,rainmaker-common-masters',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),

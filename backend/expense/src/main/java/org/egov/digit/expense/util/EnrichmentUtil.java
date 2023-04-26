@@ -154,9 +154,9 @@ public class EnrichmentUtil {
     }
 
 
-    public void enrichSearchBillRequest(BillCriteria billCriteria) {
+    public void enrichSearchBillRequest(BillSearchRequest billSearchRequest) {
 
-        Pagination pagination = getPagination(billCriteria);
+        Pagination pagination = getPagination(billSearchRequest);
 
         if (pagination.getLimit() == null)
             pagination.setLimit(config.getDefaultLimit());
@@ -168,11 +168,11 @@ public class EnrichmentUtil {
             pagination.setLimit(config.getMaxSearchLimit());
     }
 
-    private Pagination getPagination(BillCriteria billCriteria) {
-        Pagination pagination = billCriteria.getPagination();
+    private Pagination getPagination(BillSearchRequest billSearchRequest) {
+        Pagination pagination = billSearchRequest.getPagination();
         if (pagination == null) {
             pagination = Pagination.builder().build();
-            billCriteria.setPagination(pagination);
+            billSearchRequest.setPagination(pagination);
         }
         return pagination;
     }

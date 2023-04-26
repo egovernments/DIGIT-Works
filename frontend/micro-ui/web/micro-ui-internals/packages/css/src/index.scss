@@ -1019,3 +1019,15 @@ font-size: 30px;
   font-size: 30px;
 }
 }
+
+input[type=“date”]::-webkit-calendar-picker-indicator {
+  width: 24px;
+  height: 24px;
+}
+
+.actionBarWrapper {
+  display: flex;
+  column-gap: 24px;
+  align-items: center;
+  justify-content: flex-end;
+}

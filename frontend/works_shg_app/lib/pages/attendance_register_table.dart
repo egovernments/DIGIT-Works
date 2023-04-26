@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:works_shg_app/models/attendance/attendance_registry_model.dart';
 import 'package:works_shg_app/models/table/table_model.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/delete_button.dart';
@@ -105,6 +106,45 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        bottomNavigationBar: SizedBox(
+          height: 35,
+          child: DigitElevatedButton(
+            onPressed: createAttendeePayLoadList.isEmpty &&
+                    deleteAttendeePayLoadList.isEmpty
+                ? null
+                : () {
+                    if (createAttendeePayLoadList.isNotEmpty &&
+                        deleteAttendeePayLoadList.isNotEmpty) {
+                      context.read<AttendeeCreateBloc>().add(
+                            CreateAttendeeEvent(
+                                attendeeList: createAttendeePayLoadList),
+                          );
+                      context.read<AttendeeDeEnrollBloc>().add(
+                            DeEnrollAttendeeEvent(
+                                attendeeList: deleteAttendeePayLoadList),
+                          );
+                    } else if (createAttendeePayLoadList.isNotEmpty &&
+                        deleteAttendeePayLoadList.isEmpty) {
+                      context.read<AttendeeCreateBloc>().add(
+                            CreateAttendeeEvent(
+                                attendeeList: createAttendeePayLoadList),
+                          );
+                    } else if (deleteAttendeePayLoadList.isNotEmpty &&
+                        createAttendeePayLoadList.isEmpty) {
+                      context.read<AttendeeDeEnrollBloc>().add(
+                            DeEnrollAttendeeEvent(
+                                attendeeList: deleteAttendeePayLoadList),
+                          );
+                    } else {}
+                  },
+            child: Text(
+                AppLocalizations.of(context).translate(i18.common.submit),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .apply(color: Colors.white)),
+          ),
+        ),
         appBar: AppBar(
           titleSpacing: 0,
           title: const AppBarLogo(),
@@ -462,92 +502,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                               child: Container(),
                                             ),
                                           ),
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 8.0,
-                                                right: 8.0,
-                                              ),
-                                              child: SizedBox(
-                                                height: 35,
-                                                child: DigitElevatedButton(
-                                                  onPressed:
-                                                      createAttendeePayLoadList
-                                                                  .isEmpty &&
-                                                              deleteAttendeePayLoadList
-                                                                  .isEmpty
-                                                          ? null
-                                                          : () {
-                                                              if (createAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  deleteAttendeePayLoadList
-                                                                      .isNotEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeCreateBloc>()
-                                                                    .add(
-                                                                      CreateAttendeeEvent(
-                                                                          attendeeList:
-                                                                              createAttendeePayLoadList),
-                                                                    );
-                                                                context
-                                                                    .read<
-                                                                        AttendeeDeEnrollBloc>()
-                                                                    .add(
-                                                                      DeEnrollAttendeeEvent(
-                                                                          attendeeList:
-                                                                              deleteAttendeePayLoadList),
-                                                                    );
-                                                              } else if (createAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  deleteAttendeePayLoadList
-                                                                      .isEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeCreateBloc>()
-                                                                    .add(
-                                                                      CreateAttendeeEvent(
-                                                                          attendeeList:
-                                                                              createAttendeePayLoadList),
-                                                                    );
-                                                              } else if (deleteAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  createAttendeePayLoadList
-                                                                      .isEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeDeEnrollBloc>()
-                                                                    .add(
-                                                                      DeEnrollAttendeeEvent(
-                                                                          attendeeList:
-                                                                              deleteAttendeePayLoadList),
-                                                                    );
-                                                              } else {}
-                                                            },
-                                                  child: Text(
-                                                      AppLocalizations.of(
-                                                              context)
-                                                          .translate(i18
-                                                              .common.submit),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleMedium!
-                                                          .apply(
-                                                              color: Colors
-                                                                  .white)),
-                                                ),
-                                              ),
-                                            ),
-                                          )
                                         ])
                                   : const EmptyImage(align: Alignment.center);
                             },
-                            error: (String? error) => Notifiers.getToastMessage(
-                                context,
-                                AppLocalizations.of(context)
-                                    .translate(error.toString()),
-                                'ERROR'),
+                            error: (String? error) => Container(),
                             orElse: () => Container());
                       }),
                     )

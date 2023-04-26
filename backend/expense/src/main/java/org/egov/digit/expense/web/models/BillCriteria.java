@@ -41,11 +41,11 @@ public class BillCriteria {
 	@JsonProperty("referenceIds")
 	private Set<String> referenceIds;
 
+	@JsonProperty("billNumbers")
+	private Set<String> billNumbers;
+
 	@JsonProperty("status")
 	private String status;
-
-	@JsonProperty("pagination")
-	private Pagination pagination;
 
 	public BillCriteria addIdsItem(String idsItem) {
 		if (this.ids == null) {
