@@ -39,6 +39,7 @@ mixin _$MusterCreateEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,
@@ -71,6 +72,7 @@ mixin _$MusterCreateEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,
@@ -103,6 +105,7 @@ mixin _$MusterCreateEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,
@@ -231,6 +234,7 @@ abstract class _$$CreateMusterEventCopyWith<$Res>
       String? projectDesc,
       String? locality,
       String? projectId,
+      String? projectType,
       String? ward,
       int? amount,
       String? executingAuthority,
@@ -261,6 +265,7 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
     Object? projectDesc = freezed,
     Object? locality = freezed,
     Object? projectId = freezed,
+    Object? projectType = freezed,
     Object? ward = freezed,
     Object? amount = freezed,
     Object? executingAuthority = freezed,
@@ -319,6 +324,10 @@ class __$$CreateMusterEventCopyWithImpl<$Res>
           ? _value.projectId
           : projectId // ignore: cast_nullable_to_non_nullable
               as String?,
+      projectType: freezed == projectType
+          ? _value.projectType
+          : projectType // ignore: cast_nullable_to_non_nullable
+              as String?,
       ward: freezed == ward
           ? _value.ward
           : ward // ignore: cast_nullable_to_non_nullable
@@ -356,6 +365,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       this.projectDesc,
       this.locality,
       this.projectId,
+      this.projectType,
       this.ward,
       this.amount,
       this.executingAuthority,
@@ -389,6 +399,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
   @override
   final String? projectId;
   @override
+  final String? projectType;
+  @override
   final String? ward;
   @override
   final int? amount;
@@ -406,7 +418,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
 
   @override
   String toString() {
-    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, serviceCode: $serviceCode, referenceId: $referenceId, projectName: $projectName, projectDesc: $projectDesc, locality: $locality, projectId: $projectId, ward: $ward, amount: $amount, executingAuthority: $executingAuthority, skillsList: $skillsList)';
+    return 'MusterCreateEvent.create(tenantId: $tenantId, registerId: $registerId, contractId: $contractId, orgName: $orgName, registerNo: $registerNo, registerName: $registerName, startDate: $startDate, serviceCode: $serviceCode, referenceId: $referenceId, projectName: $projectName, projectDesc: $projectDesc, locality: $locality, projectId: $projectId, projectType: $projectType, ward: $ward, amount: $amount, executingAuthority: $executingAuthority, skillsList: $skillsList)';
   }
 
   @override
@@ -439,6 +451,8 @@ class _$CreateMusterEvent implements CreateMusterEvent {
                 other.locality == locality) &&
             (identical(other.projectId, projectId) ||
                 other.projectId == projectId) &&
+            (identical(other.projectType, projectType) ||
+                other.projectType == projectType) &&
             (identical(other.ward, ward) || other.ward == ward) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.executingAuthority, executingAuthority) ||
@@ -463,6 +477,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
       projectDesc,
       locality,
       projectId,
+      projectType,
       ward,
       amount,
       executingAuthority,
@@ -491,6 +506,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,
@@ -520,6 +536,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
         projectDesc,
         locality,
         projectId,
+        projectType,
         ward,
         amount,
         executingAuthority,
@@ -543,6 +560,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,
@@ -572,6 +590,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
         projectDesc,
         locality,
         projectId,
+        projectType,
         ward,
         amount,
         executingAuthority,
@@ -595,6 +614,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,
@@ -626,6 +646,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
           projectDesc,
           locality,
           projectId,
+          projectType,
           ward,
           amount,
           executingAuthority,
@@ -681,6 +702,7 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
       final String? projectDesc,
       final String? locality,
       final String? projectId,
+      final String? projectType,
       final String? ward,
       final int? amount,
       final String? executingAuthority,
@@ -704,6 +726,7 @@ abstract class CreateMusterEvent implements MusterCreateEvent {
   String? get projectDesc;
   String? get locality;
   String? get projectId;
+  String? get projectType;
   String? get ward;
   int? get amount;
   String? get executingAuthority;
@@ -878,6 +901,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,
@@ -914,6 +938,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,
@@ -950,6 +975,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String? projectDesc,
             String? locality,
             String? projectId,
+            String? projectType,
             String? ward,
             int? amount,
             String? executingAuthority,

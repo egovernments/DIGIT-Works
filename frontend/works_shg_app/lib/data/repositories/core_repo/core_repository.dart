@@ -110,10 +110,6 @@ class CoreRepository {
 
     var res = await http.get(Uri.parse(
         '$apiBaseUrl${Urls.commonServices.fileFetch}?tenantId=$tenantId&fileStoreIds=${storeId.join(',')}'));
-    // await makeRequest(
-    //     url:
-    //         '${Urls.commonServices.fileFetch}?tenantId=${commonProvider.userDetails!.selectedtenant!.code!}&fileStoreIds=${storeId.join(',')}',
-    //     method: RequestType.GET);
 
     if (res != null) {
       fileStoreListModel = FileStoreListModelMapper.fromMap(
