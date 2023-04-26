@@ -6,6 +6,7 @@ import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/models/wage_seeker/location_details_model.dart';
 import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/notifiers.dart';
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
@@ -175,21 +176,30 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
-                          final locationDetails = LocationDetails(
-                              pinCode: form.value[pinCodeKey].toString(),
-                              city: form.value[cityKey].toString(),
-                              locality: form.value[localityKey].toString(),
-                              ward: form.value[wardKey].toString(),
-                              streetName: form.value[streetNameKey].toString(),
-                              doorNo: form.value[doorNoKey].toString());
-                          BlocProvider.of<WageSeekerBloc>(context).add(
-                            WageSeekerCreateEvent(
-                                individualDetails: individualDetails,
-                                skillDetails: skillDetails,
-                                locationDetails: locationDetails,
-                                financialDetails: financialDetails),
-                          );
-                          widget.onPressed();
+                          if (form.value[pinCodeKey].toString().isNotEmpty &&
+                              form.value[pinCodeKey].toString().length < 6) {
+                            Notifiers.getToastMessage(
+                                context,
+                                t.translate(i18.wageSeeker.pinCodeValidation),
+                                'ERROR');
+                          } else {
+                            final locationDetails = LocationDetails(
+                                pinCode: form.value[pinCodeKey].toString(),
+                                city: form.value[cityKey].toString(),
+                                locality: form.value[localityKey].toString(),
+                                ward: form.value[wardKey].toString(),
+                                streetName:
+                                    form.value[streetNameKey].toString(),
+                                doorNo: form.value[doorNoKey].toString());
+                            BlocProvider.of<WageSeekerBloc>(context).add(
+                              WageSeekerCreateEvent(
+                                  individualDetails: individualDetails,
+                                  skillDetails: skillDetails,
+                                  locationDetails: locationDetails,
+                                  financialDetails: financialDetails),
+                            );
+                            widget.onPressed();
+                          }
                         },
                         child: Center(
                           child: Text(t.translate(i18.common.next)),

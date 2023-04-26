@@ -105,6 +105,45 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        bottomNavigationBar: SizedBox(
+          height: 35,
+          child: DigitElevatedButton(
+            onPressed: createAttendeePayLoadList.isEmpty &&
+                    deleteAttendeePayLoadList.isEmpty
+                ? null
+                : () {
+                    if (createAttendeePayLoadList.isNotEmpty &&
+                        deleteAttendeePayLoadList.isNotEmpty) {
+                      context.read<AttendeeCreateBloc>().add(
+                            CreateAttendeeEvent(
+                                attendeeList: createAttendeePayLoadList),
+                          );
+                      context.read<AttendeeDeEnrollBloc>().add(
+                            DeEnrollAttendeeEvent(
+                                attendeeList: deleteAttendeePayLoadList),
+                          );
+                    } else if (createAttendeePayLoadList.isNotEmpty &&
+                        deleteAttendeePayLoadList.isEmpty) {
+                      context.read<AttendeeCreateBloc>().add(
+                            CreateAttendeeEvent(
+                                attendeeList: createAttendeePayLoadList),
+                          );
+                    } else if (deleteAttendeePayLoadList.isNotEmpty &&
+                        createAttendeePayLoadList.isEmpty) {
+                      context.read<AttendeeDeEnrollBloc>().add(
+                            DeEnrollAttendeeEvent(
+                                attendeeList: deleteAttendeePayLoadList),
+                          );
+                    } else {}
+                  },
+            child: Text(
+                AppLocalizations.of(context).translate(i18.common.submit),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .apply(color: Colors.white)),
+          ),
+        ),
         appBar: AppBar(
           titleSpacing: 0,
           title: const AppBarLogo(),
@@ -462,84 +501,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                               child: Container(),
                                             ),
                                           ),
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 8.0,
-                                                right: 8.0,
-                                              ),
-                                              child: SizedBox(
-                                                height: 35,
-                                                child: DigitElevatedButton(
-                                                  onPressed:
-                                                      createAttendeePayLoadList
-                                                                  .isEmpty &&
-                                                              deleteAttendeePayLoadList
-                                                                  .isEmpty
-                                                          ? null
-                                                          : () {
-                                                              if (createAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  deleteAttendeePayLoadList
-                                                                      .isNotEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeCreateBloc>()
-                                                                    .add(
-                                                                      CreateAttendeeEvent(
-                                                                          attendeeList:
-                                                                              createAttendeePayLoadList),
-                                                                    );
-                                                                context
-                                                                    .read<
-                                                                        AttendeeDeEnrollBloc>()
-                                                                    .add(
-                                                                      DeEnrollAttendeeEvent(
-                                                                          attendeeList:
-                                                                              deleteAttendeePayLoadList),
-                                                                    );
-                                                              } else if (createAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  deleteAttendeePayLoadList
-                                                                      .isEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeCreateBloc>()
-                                                                    .add(
-                                                                      CreateAttendeeEvent(
-                                                                          attendeeList:
-                                                                              createAttendeePayLoadList),
-                                                                    );
-                                                              } else if (deleteAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  createAttendeePayLoadList
-                                                                      .isEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeDeEnrollBloc>()
-                                                                    .add(
-                                                                      DeEnrollAttendeeEvent(
-                                                                          attendeeList:
-                                                                              deleteAttendeePayLoadList),
-                                                                    );
-                                                              } else {}
-                                                            },
-                                                  child: Text(
-                                                      AppLocalizations.of(
-                                                              context)
-                                                          .translate(i18
-                                                              .common.submit),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleMedium!
-                                                          .apply(
-                                                              color: Colors
-                                                                  .white)),
-                                                ),
-                                              ),
-                                            ),
-                                          )
                                         ])
                                   : const EmptyImage(align: Alignment.center);
                             },

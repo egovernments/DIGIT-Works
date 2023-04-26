@@ -5,9 +5,13 @@ class ButtonLink extends StatelessWidget {
   final String label;
   final void Function()? widgetFunction;
   final AlignmentGeometry align;
+  final double fontSize;
   final TextStyle? style;
   const ButtonLink(this.label, this.widgetFunction,
-      {super.key, this.align = Alignment.centerLeft, this.style});
+      {super.key,
+      this.align = Alignment.centerLeft,
+      this.fontSize = 16,
+      this.style});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,7 @@ class ButtonLink extends StatelessWidget {
                 label,
                 style: style ??
                     TextStyle(
-                        fontSize: 16,
+                        fontSize: fontSize,
                         fontWeight: FontWeight.w400,
                         color: DigitTheme
                             .instance.mobileTheme.colorScheme.secondary),
