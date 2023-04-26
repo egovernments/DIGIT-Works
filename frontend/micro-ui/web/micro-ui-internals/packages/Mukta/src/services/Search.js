@@ -62,8 +62,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                             return {
                                 title: document?.documentType === "Other" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
                                 documentType: document?.documentType,
-                                documentUid: document?.fileStore,
-                                fileStoreId: document?.fileStore,
+                                documentUid: document?.fileStoreId,
+                                fileStoreId: document?.fileStoreId,
                             };
                         }
                         return {};
