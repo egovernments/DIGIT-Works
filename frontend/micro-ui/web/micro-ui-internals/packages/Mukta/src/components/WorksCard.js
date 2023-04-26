@@ -1,4 +1,4 @@
-import { EmployeeModuleCard, ArrowRightInbox, WorksMgmtIcon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, ArrowRightInbox, WorksMgmtIcon, Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,7 +19,23 @@ const WorksCard = () => {
   }
 
   //getting the businessServiceMap
-  const businessServiceMap = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService();
+  const { isLoading: bussinessServiceLoading, data: businessServiceMap } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "expense",
+    [
+        {
+            "name": "BusinessService",
+        }
+    ],
+    {
+      select: (data) => {
+        let tempBussinessServiceMap = {};
+        data?.expense?.BusinessService?.map((ob) => tempBussinessServiceMap[ob?.code] = ob?.businessService );
+        return tempBussinessServiceMap;
+      }
+    }
+  );
+
 
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -29,7 +45,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.attendencemgmt],
+          businessService: [businessServiceMap?.["MUSTER_ROLL"]],
           moduleName: "muster-roll-service",
         },
         moduleSearchCriteria: {
@@ -40,7 +56,7 @@ const WorksCard = () => {
       },
     },
     config: {
-      enabled: Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.MUSTERROLLS) || Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.BILLS),
+      enabled: !bussinessServiceLoading && (Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.MUSTERROLLS) || Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.BILLS)),
     },
   };
 
@@ -52,7 +68,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.estimate],
+          businessService: [businessServiceMap?.["ESTIMATE"]],
           moduleName: "estimate-service",
         },
         moduleSearchCriteria: {
@@ -63,7 +79,7 @@ const WorksCard = () => {
       },
     },
     config: {
-      enabled: Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.ESTIMATE),
+      enabled: !bussinessServiceLoading && Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.ESTIMATE),
     },
     changeQueryName: "EstimateInbox",
   };
@@ -76,7 +92,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.contracts],
+          businessService: [businessServiceMap?.["CONTRACT"]],
           moduleName: "contract-service",
         },
         moduleSearchCriteria: {
@@ -87,7 +103,7 @@ const WorksCard = () => {
       },
     },
     config: {
-      enabled: Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.CONTRACT),
+      enabled:!bussinessServiceLoading && Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.CONTRACT),
     },
     changeQueryName: "ContractInbox",
   };
@@ -156,6 +172,11 @@ const WorksCard = () => {
     ],
     links: links,
   };
+
+  if (bussinessServiceLoading) {
+    return <Loader />;
+  }
+  
   return <EmployeeModuleCard {...propsForModuleCard} />;
 };
 

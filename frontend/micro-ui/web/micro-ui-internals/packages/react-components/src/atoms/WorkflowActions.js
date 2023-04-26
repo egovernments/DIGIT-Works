@@ -8,6 +8,18 @@ import { Loader } from "./Loader";
 import Toast from "./Toast";
 import { useHistory } from "react-router-dom";
 const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback }) => {
+  //getting the bussiness service from MDMS file using the bussiness code
+  const { isLoading: bussinessServiceLoading, data: bussinessServiceData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "expense",
+    [
+        {
+            "name": "BusinessService",
+            "filter":`[?(@.code=="${businessService}")]`
+        }
+    ],
+  );
+  businessService = bussinessServiceData?.expense?.BusinessService?.[0]?.businessService;
   const history = useHistory()
   const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
@@ -79,9 +91,9 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
-    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
-    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
-    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessServiceV1("contracts");
+    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessServiceV1("estimate")
+    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessServiceV1("attendencemgmt")
     setDisplayMenu(false)
     setSelectedAction(action)
 
@@ -139,7 +151,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   }
 
   //if workflowDetails are loading then a loader is displayed in workflowTimeline comp anyway
-  if(isEnableLoader){
+  if(isEnableLoader || bussinessServiceLoading){
     return <Loader />
   }
 
