@@ -209,6 +209,21 @@ function checkIfCitizen(requestinfo) {
   }
 }
 
+function search_expense_bill(request, limit, offset) {
+  return new Promise((resolve, reject) => {
+    let newRequest = JSON.parse(JSON.stringify(request))
+    newRequest["pagination"] = { limit, offset }
+    let promise = new axios({
+      method: "POST",
+      url: url.resolve(config.host.expense, config.paths.expense_bill_search),
+      data: newRequest,
+    });
+    promise.then((data) => {
+      resolve(data.data)
+    }).catch((err) => reject(err))
+  })
+}
+
 
 /**
  * It generates bill of property tax and merge into single PDF file
@@ -340,5 +355,6 @@ module.exports = {
   search_musterRoll,
   search_contract,
   search_mdmsWageSeekerSkills,
-  search_organisation
+  search_organisation,
+  search_expense_bill
 };

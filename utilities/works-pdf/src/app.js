@@ -8,6 +8,8 @@ var projectsRouter=require("./routes/projects");
 var estimateRouter=require("./routes/estimate");
 var musterRollRouter = require("./routes/musterRolls");
 var workOrderRouter = require("./routes/workOrder");
+var groupBills = require("./routes/groupBill");
+
 var {listenConsumer} = require("./consumer")
 
 // sample one
@@ -33,6 +35,7 @@ app.use(config.app.contextPath + "/download/project", projectsRouter);
 app.use(config.app.contextPath + "/download/estimate", estimateRouter);
 app.use(config.app.contextPath + "/download/musterRoll", musterRollRouter);
 app.use(config.app.contextPath + "/download/workOrder", workOrderRouter);
+app.use(config.app.contextPath + "/groupBill", groupBills);
 
 
 // catch 404 and forward to error handler
