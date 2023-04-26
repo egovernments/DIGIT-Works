@@ -3,8 +3,9 @@ import 'package:digit_components/widgets/molecules/digit_language_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/atoms/app_logo.dart';
 import 'package:works_shg_app/widgets/molecules/desktop_view.dart';
 import 'package:works_shg_app/widgets/molecules/mobile_view.dart';
