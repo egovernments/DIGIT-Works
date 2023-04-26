@@ -436,7 +436,7 @@ components:
         billIds:
           description: search payment by the bill ids         
           type: array
-          format: uuid
+          format: string
           items:
             type: string
             example: 1e4bce04-499d-433c-928b-51d222019d45
@@ -482,9 +482,12 @@ components:
           type: object
         auditDetails:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
-      
       required: 
-        - tenantId    
+        - tenantId  
+        - netPaidAmount
+        - netPayableAmount
+        - bills
+        - status
     PaymentSearchRequest:
       type: object
       properties:
@@ -501,7 +504,7 @@ components:
         requestInfo:
           $ref: >-
                 https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        paymentRequestCriteria:
+        payment:
           $ref: '#/components/schemas/Payment'
     PaymentResponse:
       type: object
@@ -523,14 +526,20 @@ components:
           description: Unique identifier of the record
           readOnly: true
           type: string
-          format: uuid
+        billId:
+          description: Unique identifier of the bill
+          type: string
         tenantId:
           description: Tenant Identifier
           example: pb.amritsar
           type: string
           minLength: 2
           maxLength: 64
-        netBillAmount:
+        billAmount:
+          description: Net paid amount for a bill
+          type: number
+          format: BigDecimal
+        paidAmount:
           description: Net paid amount for a bill
           type: number
           format: BigDecimal
@@ -544,8 +553,9 @@ components:
         auditDetails:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
       required:
-        - tenantId
-        - netBillAmount
+        - billId
+        - billAmount
+        - paidAmount
         - billDetails
     PaymentBillDetail:
       description: Bill details of the individual payees
@@ -556,24 +566,76 @@ components:
           readOnly: true
           type: string
           format: uuid
+        billDetailId:
+          description: Unique identifier of the record
+          type: string
+          format: uuid
         netLineItemAmount:
           description: Amount being paid for the particular bill-detail during payment  
           type: number
           format: int64
-          example: 1682899199000
+          example: 876
         payableLineItems:
           type: array
           description: Bill line items
           items:
-            $ref: '#/components/schemas/LineItem'
+            $ref: '#/components/schemas/PaymentLineItem'
         additionalDetails:
           description: Any additional details that need to be captured
           type: object
         auditDetails:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
       required:
-        -netLineItemAmount
-        -payableLineItems
-   
+        - billDetailId
+        - netLineItemAmount
+        - payableLineItems
+    PaymentLineItem:
+      description: Line items are the amount breakups for net amounts 
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the account
+          readOnly: true
+          type: string
+          example: 67dcdf9f-40c4-4621-be35-1982ecc650aa
+        lineItemid:
+          description: Unique identifier of the account
+          type: string
+          example: 7yu9df9f-40c4-4621-be35-1982ecc650aa
+        tenantId:
+          description: Tenant Identifier
+          example: pb.amritsar
+          type: string
+          minLength: 2
+          maxLength: 64
+        headCode:
+          description: Head codes are define master data  
+          example: WAGE 
+          type: string
+          minLength: 2
+          maxLength: 64
+        amount:
+          description: amount for head code
+          example: 500
+          type: number
+          format: BigDecimal
+        type:
+          description: Type of line item
+          type: string
+          enum:
+            - PAYABLE
+            - DEDUCTION
+        paidAmount:
+          description: Net paid amount for a bill
+          type: number
+          format: BigDecimal
+        auditDetails:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
+      required:
+        - tenantId
+        - headCode
+        - amount
+        - type
+    
  
     
