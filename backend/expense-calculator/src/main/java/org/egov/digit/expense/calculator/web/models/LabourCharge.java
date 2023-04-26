@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Schema(description = "A Object which holds the wage seeker skill")
 @Validated
@@ -17,14 +17,23 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WageSeekerSkill {
-    @JsonProperty("name")
+public class LabourCharge {
+
+    @JsonProperty("id")
     @Valid
-    private String name = null;
+    private Integer id = null;
+
+    @JsonProperty("service")
+    @Valid
+    private String service = null;
 
     @JsonProperty("code")
     @Valid
     private String code = null;
+
+    @JsonProperty("gender")
+    @Valid
+    private String gender = null;
 
     @JsonProperty("active")
     @Valid
@@ -33,4 +42,17 @@ public class WageSeekerSkill {
     @JsonProperty("amount")
     @Valid
     private Double amount = null;
+
+    @JsonProperty("unit")
+    @Valid
+    private String unit = null;
+
+    @JsonProperty("effectiveFrom")
+    @Valid
+    private BigDecimal effectiveFrom = null;
+
+    @JsonProperty("effectiveTo")
+    @Valid
+    private BigDecimal effectiveTo = null;
+
 }
