@@ -69,7 +69,7 @@ const ViewEstimate = (props) => {
                 title: '',
                 values: [
                   { title: "ESTIMATE_ESTIMATE_NO", value: estimate?.estimateNumber },
-                  { title: "WORKS_ESTIMATE_TYPE", value: "Original Estimate" },
+                  { title: "WORKS_ESTIMATE_TYPE", value: t("ORIGINAL_ESTIMATE") },
                   { title: "WORKS_PROJECT_ID", value: project?.projectNumber },
                   { title: "ES_COMMON_PROPOSAL_DATE", value: Digit.DateUtils.ConvertEpochToDate(project?.additionalDetails?.dateOfProposal)},
                   { title: "ES_COMMON_PROJECT_NAME", value: project?.name },
