@@ -12,9 +12,9 @@ const ViewPurchaseBill = ({props}) => {
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    
     const billCriteria = { //update this
-        "tenantId": "pg.citya",
+        "tenantId": tenantId,
         "ids": [],
-        "businessService": "works.wage",
+        "businessService": "works.purchase",
         "referenceIds": [],
         "status": ""
     }

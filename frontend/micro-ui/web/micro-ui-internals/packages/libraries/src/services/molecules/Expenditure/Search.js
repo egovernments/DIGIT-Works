@@ -189,11 +189,12 @@ export const BillsSearch = {
         ]
     };
 
+    let billAmount = mcDetails.amount + gstDetails.amount;
     const billDetails = {
         title: "EXP_INVOICE_DETAILS",
         asSectionHeader: true,
         values: [
-            { title: "EXP_BILL_AMOUNT", value: (mcDetails.amount + gstDetails.amount) || "NA" },
+            { title: "EXP_BILL_AMOUNT", value: (billAmount) || "NA" },
         ]
     };
 
@@ -203,16 +204,25 @@ export const BillsSearch = {
     //ES_COMMON_AMOUNT - payableLineItems.amount / payableLineItems.paidAmount
     //WF_COMMON_COMMENTS - WF_COMMON_COMMENTS
 
-    const deductionsTableRows = [t("WORKS_SNO"), t("EXP_DEDUCTION_NAME"), t("EXP_PERCENTAGE_OR_FIXED"), t("ES_COMMON_AMOUNT"), t("WF_COMMON_COMMENTS")] 
-    const deductionsTableData = lineItems?.map((lineItem, index)=>[
-      index + 1,
+    let totalDeductions = 0;
+    const deductionsTableRows = [t("WORKS_SNO"), t("EXP_DEDUCTION_NAME"), t("EXP_PERCENTAGE_OR_FIXED"), t("ES_COMMON_AMOUNT"), t("WF_COMMON_COMMENTS")];
+    const deductionsTableData = lineItems?.map((lineItem, index)=>{
+      if(lineItem?.type === "DEDUCTION") {
+        totalDeductions += lineItem?.amount;
+        return [
+          index + 1,
+          t(`EXP_${lineItem}`),
+          "CALLMDMSFORTHIS",
+          lineItem?.amount,
+          lineItem?.additionalDetails?.comments
+        ]
+      }
+     })
 
-    ])
-    const deductionsTableTotalAmount = "";
-    deductionsTableData?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(deductionsTableTotalAmount, 'number')]);
+    deductionsTableData?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalDeductions, 'number')]);
 
     const deductionsTable = {
-        title: "WORKS_NON_SOR",
+        title: "EXP_DEDUCTIONS",
         asSectionHeader: true,
         isTable: true,
         headers: deductionsTableRows,
@@ -224,11 +234,12 @@ export const BillsSearch = {
         }
     }
 
+    let netPayableAmtCalc = billAmount - totalDeductions;
     const netPayableAmt = {
         "title": " ",
         "asSectionHeader": true,
         "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
-        "value": Digit.Utils.dss.formatterWithoutRound(t(billData?.netPayableAmount))
+        "value": Digit.Utils.dss.formatterWithoutRound(t(netPayableAmtCalc))
     }
 
     const documentDetails = {
@@ -238,8 +249,18 @@ export const BillsSearch = {
             documents: [{
                 title: "WORKS_RELEVANT_DOCS",
                 BS: 'Works',
-                values: [],
-            },
+                values: currentProject?.documents?.map((document) => {
+                  if(document?.status !== "INACTIVE") {
+                      return {
+                          title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
+                          documentType: document?.documentType,
+                          documentUid: document?.fileStore,
+                          fileStoreId: document?.fileStore,
+                      };
+                  }
+                  return {};
+              })
+            }
             ]
         }
     }
