@@ -104,11 +104,13 @@ const ViewContractDetails = () => {
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
-            <MultiLink
-                   onHeadClick={() => HandleDownloadPdf()}
-                   downloadBtnClassName={"employee-download-btn-className"}
-                   label={t("CS_COMMON_DOWNLOAD")}
-            />
+            {data?.applicationData?.wfStatus === "APPROVED" && 
+               <MultiLink
+                 onHeadClick={() => HandleDownloadPdf()}
+                 downloadBtnClassName={"employee-download-btn-className"}
+                 label={t("CS_COMMON_DOWNLOAD")}
+               />
+            }
           </div>
           {project && <ViewDetailsCard cardState={cardState} t={t} />}
           {
