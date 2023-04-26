@@ -337,9 +337,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                     for (var i = 0; i < attendeeList.length; i++) {
                                                                       var item1 = attendeeList[i];
                                                                       TrackAttendanceTableData data = TrackAttendanceTableData();
-                                                                      data.name = item1.name;
-                                                                      data.aadhaar = item1.aadhaar;
-                                                                      data.individualGaurdianName = item1.individualGaurdianName;
+                                                                      data.name = item1.name ?? '';
+                                                                      data.aadhaar = item1.aadhaar ?? '';
+                                                                      data.individualGaurdianName = item1.individualGaurdianName ?? '';
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id ?? '';
                                                                       data.skill = item1.skill ?? '';
@@ -373,9 +373,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                     for (var i = 0; i < attendeeList.length; i++) {
                                                                       var item1 = attendeeList[i];
                                                                       TrackAttendanceTableData data = TrackAttendanceTableData();
-                                                                      data.name = item1.name;
-                                                                      data.aadhaar = item1.aadhaar;
-                                                                      data.individualGaurdianName = item1.individualGaurdianName;
+                                                                      data.name = item1.name ?? '';
+                                                                      data.aadhaar = item1.aadhaar ?? '';
+                                                                      data.individualGaurdianName = item1.individualGaurdianName ?? '';
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id;
                                                                       data.skill = item1.skill ?? '';
