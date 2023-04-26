@@ -1,5 +1,6 @@
 package org.egov.digit.expense.calculator.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -7,16 +8,10 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
 import org.egov.digit.expense.calculator.repository.IdGenRepository;
+import org.egov.digit.expense.calculator.util.CommonUtil;
 import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
-import org.egov.digit.expense.calculator.web.models.Bill;
-import org.egov.digit.expense.calculator.web.models.BillDetail;
-import org.egov.digit.expense.calculator.web.models.CalcDetail;
-import org.egov.digit.expense.calculator.web.models.CalcEstimate;
-import org.egov.digit.expense.calculator.web.models.Calculation;
-import org.egov.digit.expense.calculator.web.models.Contract;
-import org.egov.digit.expense.calculator.web.models.Criteria;
-import org.egov.digit.expense.calculator.web.models.LineItem;
-import org.egov.digit.expense.calculator.web.models.Party;
+import org.egov.digit.expense.calculator.util.MdmsUtils;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,17 +24,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.BILL_TYPE_WAGE;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.BUSINESS_SERVICE_PURCHASE;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.BUSINESS_SERVICE_SUPERVISION;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.CBO_IMPLEMENTATION_AGENCY;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.CBO_IMPLEMENTATION_PARTNER;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.HEAD_CODE_SUPERVISION;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.PAYEE_TYPE_SUPERVISIONBILL;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
 @Slf4j
 @Component
 public class SupervisionBillGeneratorService {
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
     private ExpenseCalculatorRepository expenseCalculatorRepository;
@@ -52,6 +44,12 @@ public class SupervisionBillGeneratorService {
 
     @Autowired
     private ExpenseCalculatorConfiguration config;
+
+    @Autowired
+    private MdmsUtils mdmsUtils;
+
+    @Autowired
+    private CommonUtil commonUtil;
 
     /**
      * Calculates estimate for supervision bill
@@ -127,8 +125,9 @@ public class SupervisionBillGeneratorService {
 
             }
 
-            Party payer = buildPayee(config.getWagePayerId(),config.getWagePayerType(),criteria.getTenantId());
+           // Party payer = buildPayee(config.getWagePayerId(),config.getWagePayerType(),criteria.getTenantId());
 
+            Party payer = this.buildParty(requestInfo, config.getPayerType(), criteria.getTenantId());
 
             //Supervision - Idgen
             String rootTenantId = criteria.getTenantId().split("\\.")[0];
@@ -278,7 +277,7 @@ public class SupervisionBillGeneratorService {
         String executingAuthority = contract.getExecutingAuthority();
 
         //payee for supervision bill
-        Party payee = buildPayee(orgId,PAYEE_TYPE_SUPERVISIONBILL,tenantId);
+        Party payee = buildParty(orgId,PAYEE_TYPE_SUPERVISIONBILL,tenantId);
 
         //calculate supervision charge
         BigDecimal supervisionRate = new BigDecimal(7.5); //TODO fetch from MDMS
@@ -349,13 +348,27 @@ public class SupervisionBillGeneratorService {
         return totalBillAmount;
     }
 
-    private Party buildPayee(String orgId, String type, String tenantId) {
+    private Party buildParty(String orgId, String type, String tenantId) {
         return Party.builder()
                 .identifier(orgId)
                 .type(type)
                 .tenantId(tenantId)
                 .status("STATUS")
                 .build();
+    }
+
+    private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
+        String rootTenantId = tenantId.split("\\.")[0];
+        Object mdmsResp = mdmsUtils.getPayersFromMDMS(requestInfo, type, rootTenantId);
+        List<Object> payerList = commonUtil.readJSONPathValue(mdmsResp,JSON_PATH_FOR_PAYER);
+        for(Object obj : payerList){
+            Payer payer = mapper.convertValue(obj, Payer.class);
+            if(tenantId.equals(payer.getTenantId())) {
+                return buildParty(payer.getId()+"0",payer.getCode(),tenantId);
+            }
+        }
+        log.error("PAYER_MISSING_IN_MDMS","Payer is missing in MDMS for type : "+type + " and tenantId : "+tenantId);
+        throw new CustomException("PAYER_MISSING_IN_MDMS","Payer is missing in MDMS for type : "+type + " and tenantId : "+tenantId);
     }
 
     private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay) {

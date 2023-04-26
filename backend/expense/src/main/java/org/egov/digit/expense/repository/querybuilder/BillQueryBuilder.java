@@ -71,7 +71,7 @@ public class BillQueryBuilder {
         if (StringUtils.isNotBlank(criteria.getStatus())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" bill.status=? ");
-            preparedStmtList.add(criteria.getTenantId());
+            preparedStmtList.add(criteria.getStatus());
         }
 
         addOrderByClause(billSearchRequest);
