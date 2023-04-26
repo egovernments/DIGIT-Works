@@ -25,7 +25,7 @@ module.exports = function (app) {
     "/property-services",
     "/fsm-calculator/v1/billingSlab/_search",
     "/muster-roll",
-    "/pms/project",
+    "/project",
     "/inbox/v2/_search",
     "/individual",
     "/org-services",

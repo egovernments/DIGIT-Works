@@ -9,7 +9,7 @@ const searchConfigMUKTA = {
             "actionRole": "EMPLOYEE",
             "actionLink": "project/create-project",
             apiDetails: {
-                serviceName: "/pms/project/v1/_search",
+                serviceName: "/project/v1/_search",
                 requestParam: {
                     
                 },

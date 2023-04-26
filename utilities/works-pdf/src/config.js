@@ -58,7 +58,7 @@ module.exports = {
     mdms_search: "/egov-mdms-service/v1/_search",
     download_url: "/download/epass",
     workflow_search: "/egov-workflow-v2/egov-wf/process/_search",
-    projectDetails_search: "/pms/project/v1/_search",
+    projectDetails_search: "/project/v1/_search",
     estimate_search: "/estimate-service/estimate/v1/_search",
     musterRoll_search: "/muster-roll/v1/_search",
     contract_search: "/contract-service/contract/v1/_search",
