@@ -159,7 +159,7 @@ export const SearchBillConfig = {
                         columns: [
                             {
                                 label: "WORKS_BILL_NUMBER",
-                                jsonPath: "musterRollNumber",
+                                jsonPath: "billNumber",
                                 additionalCustomization:true 
                             },
                             {
@@ -168,7 +168,7 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "",
+                                jsonPath: "tenantId",
                                 additionalCustomization:true 
                             },
                             {
@@ -193,7 +193,7 @@ export const SearchBillConfig = {
                         ],
                         enableGlobalSearch: false,
                         enableColumnSort: true,
-                        resultsJsonPath: "musterRolls",
+                        resultsJsonPath: "bills",
                     },
                     children: {},
                     show: true 

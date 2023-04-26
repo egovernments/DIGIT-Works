@@ -170,12 +170,12 @@ export const SearchBillWMSConfig = {
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "",
+                                jsonPath: "businessObject.tenantId",
                                 additionalCustomization:true 
                             },
                             {
                                 label: "ES_COMMON_CBO_NAME",
-                                jsonPath: "additionalDetails.orgName"
+                                jsonPath: "businessObject.additionalDetails.orgName"
                             },
                             {
                                 label: "WORKS_BILL_TYPE",

@@ -1019,7 +1019,7 @@ export const UICustomizations = {
             <Link
               to={`/${
                 window.contextPath
-              }/employee/expenditure/view-bill?tenantId=${row?.tenantId}&billNumber=${value}`}
+              }/employee/expenditure/view-bill?tenantId=${row?.businessObject?.tenantId}&billNumber=${value}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
