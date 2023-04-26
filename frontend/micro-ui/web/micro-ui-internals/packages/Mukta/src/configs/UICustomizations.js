@@ -834,7 +834,7 @@ export const UICustomizations = {
         case "MASTERS_SOCIAL_CATEGORY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
 
-        case "MASTERS_ULB":
+        case "CORE_COMMON_PROFILE_CITY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_WARD":

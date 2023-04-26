@@ -113,6 +113,7 @@ class Common {
   String get inProgress => 'IN_PROGRESS_LABEL';
   String get completed => 'COMPLETED_LABEL';
   String get info => 'ES_COMMON_INFO';
+  String get clickToAddPhoto => 'CLICK_TO_ADD_PHOTO';
   String get workOrderInfo => 'WORK_ORDER_INFO';
   String get days => 'COMMON_DAYS';
   String get orgId => 'COMMON_ORG_ID';
@@ -218,6 +219,7 @@ class WageSeeker {
   String get maxNameCharacters => 'MAX_NAME_CHARCTERS_REQUIRED';
   String get maxFatherNameCharacters => 'MAX_FATHER_CHARCTERS_REQUIRED';
   String get skillsRequired => 'SKILLS_IS_REQUIRED';
+  String get pinCodeValidation => 'COMMON_PINCODE_VALIDATION';
 }
 
 class AttendanceMgmt {
@@ -264,6 +266,8 @@ class AttendanceMgmt {
   String get skill => 'ATM_SKILLS';
   String get skillDetails => 'ATM_SKILLS_DETAILS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
+  String get attendanceChangedValidation =>
+      'ATM_ATT_CHANGED_CLICK_SAVE_DRAFT_FIRST';
   String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
   String get editMusterRoll => 'ATM_EDIT_MUSTERROLL';
 }
