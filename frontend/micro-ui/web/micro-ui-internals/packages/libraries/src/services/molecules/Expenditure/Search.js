@@ -4,31 +4,77 @@ import { OrganisationService } from "../../elements/Organisation";
 import { WorksService } from "../../elements/Works";
 
 export const BillsSearch = {
-  viewSupervisionBill: async ({ t }) => {
-
+  viewSupervisionBill: async ({ t,tenantId,billNumber }) => {
     
+    const supervisionBillSearch = await WorksService.searchBill({
+      "billCriteria": {
+        "tenantId": "pg.citya",
+        "ids": ["dc3b3bcd-d31a-4fd7-87bb-47484596050c"],
+        "businessService": "works.supervision",
+        "referenceIds": [],
+        "billNumber":"",
+        "status": ""
+    },
+       "pagination": {
+        "limit": 10,
+        "offSet": 0,
+        "sortBy": "ASC",
+        "order": "ASC"
+      }
+    })
+    
+    
+    const supervisionBill = supervisionBillSearch?.bills?.[0]
+    
+    const contractNumber = supervisionBill?.referenceId.split('_')?.[0]
+
+    //make contracts search to fetch other details
+
+    const contractSearch = await WorksService.contractSearch({tenantId,filters:{
+      tenantId,
+      contractNumber
+    }})
+
+    const contract = contractSearch?.contracts?.[0]
+
+    //fetch the list of ids from supervisionBill.billDetails then make a call to fetch those bills as well
+    const referenceIdsToSearch = supervisionBill?.billDetails?.map(row => row?.referenceId)
+    const tableBillSearch = await WorksService.searchBill({
+      "billCriteria": {
+        "tenantId": "pg.citya",
+        "ids": referenceIdsToSearch,
+    },
+       "pagination": {
+        "limit": 10,
+        "offSet": 0,
+        "sortBy": "ASC",
+        "order": "ASC"
+      }
+    })
+    const tableBills = tableBillSearch?.bills
     const billDetails = {
       title: " ",
       asSectionHeader: false,
       values: [
-        { title: "WORKS_BILL_NUMBER", value: "BILL-0000001002" || t("NA") },
-        { title: "WORKS_BILL_DATE", value: "12/03/2023" || t("NA") },
-        { title: "WORKS_ORDER_NO", value: "WO/2022-23/000052" || t("NA") },
-        { title: "WORKS_PROJECT_ID", value: "PJ/2022-23/000051" },
+        { title: "WORKS_BILL_NUMBER", value: supervisionBill.billNumber || t("NA") },
+        { title: "WORKS_BILL_DATE", value: Digit.DateUtils.ConvertEpochToDate(supervisionBill.fromPeriod) || t("NA") },
+        { title: "WORKS_ORDER_NO", value: contractNumber || t("NA") },
+        { title: "WORKS_PROJECT_ID", value: contract?.additionalDetails?.projectId || t("NA") },
         {
           title: "PROJECTS_DESCRIPTION",
-          value: "RWHS Scheme at Ward 2" || t("NA"),
+          value: contract?.additionalDetails?.projectDesc || t("NA"),
         },
-        { title: "ES_COMMON_LOCATION", value: "MG Road, Ward 1" || t("NA") },
+        { title: "ES_COMMON_LOCATION", value:t(Digit.Utils.locale.getTransformedLocale(`${tenantId}_ADMIN_${contract?.additionalDetails?.locality}`)) + `, Ward ${contract?.additionalDetails?.ward}` || t("NA") },
       ],
     };
 
+    
     const supervisionDetails = {
       title: "BILLS_SUPERVISION_DETAILS",
       asSectionHeader: true,
       values: [
-        { title: "COMMON_CBO_ID", value: "ORG-0000520021" || t("NA") },
-        { title: "ES_COMMON_CBO_NAME", value: "BRICS" || t("NA") },
+        { title: "COMMON_CBO_ID", value: contract?.additionalDetails?.cboOrgNumber || t("NA") },
+        { title: "ES_COMMON_CBO_NAME", value: contract?.additionalDetails?.cboName || t("NA") },
       ],
     };
 
@@ -41,6 +87,16 @@ export const BillsSearch = {
       t("ES_COMMON_PAYMENT_STATUS"),
     ];
 
+    const tableData = tableBills?.map(row => {
+      return {
+        billNo: row?.billNumber,
+        billType: t(Digit.Utils.locale.getTransformedLocale(`BILL_TYPE_${row?.businessService}`)),
+        billDate: Digit.DateUtils.ConvertEpochToDate(row?.fromPeriod),
+        status: t(`WF_STATUS_BILL_${row?.wfStatus}`),
+        amount:  Digit.Utils.dss.formatterWithoutRound(row?.netPayableAmount,'number')|| t('NA'),
+        paymentStatus: t(`PAYMENT_STATUS_${row?.paymentStatus}`),
+      }
+    })
     const dummyTableData = [
       {
         billNo: "LE/ENG/00002/10/2017-18",
@@ -68,7 +124,7 @@ export const BillsSearch = {
       },
     ];
 
-    const tableRows = dummyTableData.map((row, idx) => {
+    const tableRows = tableData.map((row, idx) => {
       return [
         {
           type: "link",
@@ -91,28 +147,31 @@ export const BillsSearch = {
       state: {},
       tableStyles: {
         rowStyle: {},
-        cellStyle: [{}, {}, {}, {}, {}, {}],
+        cellStyle: [{}, {}, {}, {}, {"textAlign":"right"}, {}],
       },
     };
 
+    const totalAmount = Digit.Utils.dss.formatterWithoutRound(tableBills?.reduce((acc,row)=> {
+      return acc + (row?.netPayableAmount || 0)
+    },0),"number")
     const totalBillAmt = {
       title: " ",
       asSectionHeader: true,
       Component: Digit.ComponentRegistryService.getComponent("TotalBillAmount"),
-      value: Digit.Utils.dss.formatterWithoutRound("57000", "number") || t("NA"),
+      value: totalAmount,
     };
 
     const billDetailsBelow = {
       title: "EXP_BILL_DETAILS",
       asSectionHeader: true,
-      values: [{ title: "EXP_TOTAL_BILL_AMOUNT", value: "4,275.00" || t("NA") }],
+      values: [{ title: "EXP_TOTAL_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.netPayableAmount, "number") || t("NA") }],
     };
 
     const totalBillAmtBelow = {
       title: " ",
       asSectionHeader: true,
       Component: Digit.ComponentRegistryService.getComponent("TotalBillAmount"),
-      value: Digit.Utils.dss.formatterWithoutRound("100000", "number") || t("NA"),
+      value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.netPayableAmount, "number") || t("NA"),
       containerStyles: { justifyContent: "flex-start" },
       key: "BILLS_NET_PAYABLE",
     };
