@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 

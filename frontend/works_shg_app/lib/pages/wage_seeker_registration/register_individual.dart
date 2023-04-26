@@ -5,9 +5,10 @@ import 'package:works_shg_app/pages/wage_seeker_registration/financial_details.d
 import 'package:works_shg_app/pages/wage_seeker_registration/individual_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/location_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/summary_details.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/utils/notifiers.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';

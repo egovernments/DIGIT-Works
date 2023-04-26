@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/models/wage_seeker/skill_details_model.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/date_formats.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/utils/models/file_picker_data.dart';
 import 'package:works_shg_app/widgets/atoms/custom_details.dart';
 
