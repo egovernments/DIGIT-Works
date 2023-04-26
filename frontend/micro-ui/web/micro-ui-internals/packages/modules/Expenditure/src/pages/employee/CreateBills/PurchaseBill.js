@@ -42,7 +42,6 @@ const PurchaseBill = () => {
             cacheTime : 0
         }
     })
-    console.log("CONTRACT :", contract);
 
     const findCurrentDate = () => {
         var date = new Date();

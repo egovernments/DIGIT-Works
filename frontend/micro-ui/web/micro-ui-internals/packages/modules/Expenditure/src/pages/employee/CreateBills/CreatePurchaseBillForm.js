@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useHistory } from "react-router-dom";
+import { createBillPayload } from "../../../utils/createBillUtils";
 
 const navConfig =  [
     {
@@ -110,9 +111,11 @@ const CreatePurchaseBillForm = ({
         }
     },[toast?.show]);
 
-
-    const onFormSubmit = (_data) => {
-        console.log("Form data :", _data);
+    const onFormSubmit = (data) => {
+        console.log("Form data :", data);
+        const payload = createBillPayload(data, contract);
+        console.log("Payload :", payload);
+        
     }
     
     useEffect(() => {
