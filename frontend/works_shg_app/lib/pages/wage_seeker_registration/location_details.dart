@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/models/wage_seeker/location_details_model.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/utils/notifiers.dart';
 
 import '../../blocs/localization/app_localization.dart';
