@@ -126,8 +126,8 @@ export const BillsSearch = {
       isNoDataFound: false,
     };
   },
-  viewPurchaseBillDetails: async ({tenantId, t, billCriteria, pagination, headerLocale}) => {
-
+  viewPurchaseBillDetails: async ({tenantId, t, billCriteria, pagination, headerLocale, metaData= {}}) => {
+    console.log(metaData);
     //Bill search
     const billResponse = await WorksService?.searchBill({billCriteria, pagination});
     const billData = billResponse?.bills?.[1]; //TODO: Index with update once API is done.

@@ -18,7 +18,25 @@ const ViewPurchaseBill = ({props}) => {
         "referenceIds": [],
         "status": ""
     }
-    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {});
+
+    const { isLoading : isApplicableChargesLoading, data : applicableCharges } = Digit.Hooks.useCustomMDMS(
+      Digit.ULBService.getStateId(),
+      "expense",
+      [{ name: "ApplicableCharges" }],
+      {
+          select: (data) => {
+              const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
+              return optionsData.filter((opt) => opt?.active && opt?.service === "works.purchase").map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+          },
+          enabled : true
+      }
+    );
+
+    if(!isApplicableChargesLoading) {
+      console.log(applicableCharges);
+    }
+
+    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {enabled : true}, {});
     
     const handleActionBar = (option) => {
 
