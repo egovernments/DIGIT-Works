@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/common_methods.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/date_range_picker.dart';
@@ -309,7 +309,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                           individualGaurdianName: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).individualGaurdianName : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.fatherName : e.additionalDetails?.individualGaurdianName ?? '',
                                                                           individualId: e.individualId,
                                                                           skillCodeList: estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.skillCode ?? [] : [],
-                                                                          id: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id : e.id ?? '',
+                                                                          id: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id : estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.id : '',
                                                                           skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
                                                                           monEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
                                                                           monExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
@@ -337,9 +337,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                     for (var i = 0; i < attendeeList.length; i++) {
                                                                       var item1 = attendeeList[i];
                                                                       TrackAttendanceTableData data = TrackAttendanceTableData();
-                                                                      data.name = item1.name;
-                                                                      data.aadhaar = item1.aadhaar;
-                                                                      data.individualGaurdianName = item1.individualGaurdianName;
+                                                                      data.name = item1.name ?? '';
+                                                                      data.aadhaar = item1.aadhaar ?? '';
+                                                                      data.individualGaurdianName = item1.individualGaurdianName ?? '';
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id ?? '';
                                                                       data.skill = item1.skill ?? '';
@@ -373,9 +373,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                     for (var i = 0; i < attendeeList.length; i++) {
                                                                       var item1 = attendeeList[i];
                                                                       TrackAttendanceTableData data = TrackAttendanceTableData();
-                                                                      data.name = item1.name;
-                                                                      data.aadhaar = item1.aadhaar;
-                                                                      data.individualGaurdianName = item1.individualGaurdianName;
+                                                                      data.name = item1.name ?? '';
+                                                                      data.aadhaar = item1.aadhaar ?? '';
+                                                                      data.individualGaurdianName = item1.individualGaurdianName ?? '';
                                                                       data.individualId = item1.individualId ?? '';
                                                                       data.id = item1.id;
                                                                       data.skill = item1.skill ?? '';
