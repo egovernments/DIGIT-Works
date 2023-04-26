@@ -14,6 +14,6 @@ import java.util.List;
 @Builder
 public class BillMetaRecords {
 
-    @JsonProperty("billMeta")
-    private List<BillMeta> billMeta;
+    @JsonProperty("BillMetaCalculation")
+    private List<BillMetaCalculation> billMetaCalculation;
 }

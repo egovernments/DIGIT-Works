@@ -30,11 +30,48 @@ public class MdmsUtils {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSValidationRequest(requestInfo, tenantId);
         return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
     }
+
+    public Object getPayersFromMDMS(RequestInfo requestInfo, String type, String tenantId){
+        List<MasterDetail> masterDetails = new ArrayList<>();
+        MasterDetail masterDetail = getMasterDetailForSubModule(MDMD_PAYER_LIST, "$.[?(@.active==true && @.type=='"+type+"')]");
+        masterDetails.add(masterDetail);
+        ModuleDetail expenseModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(MDMS_EXPENSE_MASTERS).build();
+
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(expenseModuleDetail);
+        MdmsCriteriaReq mdmsCriteriaReq = prepareMDMSCriteria(requestInfo, moduleDetails, tenantId);
+
+        return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
+    }
     private MdmsCriteriaReq getMDMSValidationRequest(RequestInfo requestInfo, String tenantId) {
         ModuleDetail tenantModuleDetail = getTenantModuleDetail();
+        ModuleDetail expenseModuleDetail = getExpenseModuleDetail();
+
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(tenantModuleDetail);
+        moduleDetails.add(expenseModuleDetail);
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
+    }
+
+    private ModuleDetail getExpenseModuleDetail() {
+        List<MasterDetail> masterDetails = new ArrayList<>();
+        MasterDetail businessServiceMasterDetail = getMasterDetailForSubModule(MDMS_BUSINESS_SERVICE,JSON_PATH_FOR_MDMS_BUSINESS_SERVICE);
+        MasterDetail headCodesMasterDetail = getMasterDetailForSubModule(MDMS_HEAD_CODES,FILTER_CODE);
+        masterDetails.add(businessServiceMasterDetail);
+        masterDetails.add(headCodesMasterDetail);
+        ModuleDetail expenseModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName("expense").build();
+        return expenseModuleDetail;
+    }
+
+    private ModuleDetail getTenantModuleDetail() {
+        List<MasterDetail> masterDetails = new ArrayList<>();
+        MasterDetail masterDetail = getMasterDetailForSubModule(MASTER_TENANTS, FILTER_CODE);
+        masterDetails.add(masterDetail);
+        ModuleDetail tenantModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(MDMS_TENANT_MODULE_NAME).build();
+        return tenantModuleDetail;
     }
 
     private MdmsCriteriaReq prepareMDMSCriteria(RequestInfo requestInfo,List<ModuleDetail> moduleDetails, String tenantId){
@@ -48,28 +85,24 @@ public class MdmsUtils {
                                                          .build();
         return mdmsCriteriaReq;
     }
-
-    private ModuleDetail getTenantModuleDetail() {
-        List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail masterDetail = getMasterDetailForSubModule(MASTER_TENANTS,TENANT_FILTER_CODE);
-        masterDetails.add(masterDetail);
-        ModuleDetail tenantModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
-                .moduleName(MDMS_TENANT_MODULE_NAME).build();
-        return tenantModuleDetail;
-    }
     private MasterDetail getMasterDetailForSubModule(String masterDetailName, String filter){
       return MasterDetail.builder().name(masterDetailName)
               .filter(filter).build();
     }
 
-    private ModuleDetail getWageSeekerSkillsModuleDetails() {
+    private MasterDetail getMasterDetailForSubModule(String masterDetailName){
+        return MasterDetail.builder().name(masterDetailName)
+                .build();
+    }
+
+    private ModuleDetail getLabourChargesModuleDetails() {
         List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModule(WAGE_SEEKER_SKILLS, MDMS_COMMON_ACTIVE_FILTER);
+        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModule(MDMD_LABOUR_CHARGES, MDMS_COMMON_ACTIVE_FILTER);
         masterDetails.add(overHeadsMasterDetail);
 
         return ModuleDetail.builder()
                             .masterDetails(masterDetails)
-                            .moduleName(MDMS_COMMON_MASTERS)
+                            .moduleName(MDMS_EXPENSE_MASTERS)
                             .build();
     }
 
@@ -77,14 +110,14 @@ public class MdmsUtils {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
 
-    public Object fetchMDMSDataForWageSeekersSkills(RequestInfo requestInfo, String rootTenantId) {
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForWageSeekersSkills(requestInfo, rootTenantId);
+    public Object fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String rootTenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForLabourChanges(requestInfo, rootTenantId);
         Object result = serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
         return result;
     }
 
-    private MdmsCriteriaReq getMDMSRequestForWageSeekersSkills(RequestInfo requestInfo, String tenantId) {
-        ModuleDetail wageSeekerSkillsModuleDetail = getWageSeekerSkillsModuleDetails();
+    private MdmsCriteriaReq getMDMSRequestForLabourChanges(RequestInfo requestInfo, String tenantId) {
+        ModuleDetail wageSeekerSkillsModuleDetail = getLabourChargesModuleDetails();
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(wageSeekerSkillsModuleDetail);
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
