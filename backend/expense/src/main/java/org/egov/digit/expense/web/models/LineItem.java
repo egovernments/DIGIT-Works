@@ -55,6 +55,7 @@ public class LineItem {
 
 
 	@JsonProperty("type")
+	@NotNull
 	private LineItemType type;
 
 	@JsonProperty("paidAmount")
