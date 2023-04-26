@@ -1033,8 +1033,19 @@ export const UICustomizations = {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId)
-        return t(`TENANT_TENANTS_${headerLocale}`)
+        const location = value;
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        if (location) {
+          let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
+          let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
+          let city = location?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(location?.city)}`) : "";
+          return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+        }
+        return <p>{"NA"}</p>;
+      }
+      if(key === "WORKS_BILL_TYPE") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(value)
+        return value ? t(`COMMON_MASTERS_BILL_TYPE_${headerLocale}`) : t("ES_COMMON_NA")
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {
@@ -1055,7 +1066,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"muster-roll-approval" },
+        params: { tenantId, businessServices:"works.purchase" },
         body: {},
         config: {
           enabled: true,
@@ -1063,7 +1074,7 @@ export const UICustomizations = {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
               return {
                 "code": state?.applicationStatus,
-                "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
+                "i18nKey":`WF_BILL_${state?.applicationStatus}`,
                 "wfStatus":state?.applicationStatus
               }
             })
@@ -1161,7 +1172,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"muster-roll-approval" },
+        params: { tenantId, businessServices:"works.purchase" },
         body: {},
         config: {
           enabled: true,
@@ -1169,7 +1180,7 @@ export const UICustomizations = {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
               return {
                 "code": state?.applicationStatus,
-                "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
+                "i18nKey":`WF_BILL_${state?.applicationStatus}`,
                 "wfStatus":state?.applicationStatus
               }
             })

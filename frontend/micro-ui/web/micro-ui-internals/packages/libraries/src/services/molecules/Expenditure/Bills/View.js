@@ -57,7 +57,7 @@ const getBeneficiaryData = async (wageBillDetails, tenantId, t) => {
 const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   if(data.bills.length === 0) throw new Error('No data found');
   
-  const wageBill = data.bills[2] //temp added 0th index
+  const wageBill = data.bills[4] //temp add 0th index later
   const referenceIds = wageBill?.referenceId?.split('_')
   const workOrderNum = referenceIds?.[0]
   const musterRollNum = referenceIds?.[1]
@@ -67,8 +67,12 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   const location = t(`TENANT_TENANTS_${headerLocale}`)
 
   //get contract details
-  // const response = await ContractService.search(tenantId, data, searchParams);
-  // console.log('response', response);
+  const contractPayload = {
+    tenantId,
+    contractNumber: workOrderNum
+  }
+  const response = await ContractService.search(tenantId, contractPayload, {});
+  const contract = response?.contracts?.[0]
 
   //get muster period, call muster search
   
@@ -79,8 +83,8 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       { title: "WORKS_BILL_NUMBER", value: wageBill?.billNumber || t("ES_COMMON_NA")},
       { title: "WORKS_BILL_DATE", value: Digit.DateUtils.ConvertTimestampToDate(wageBill?.billDate, 'dd/MM/yyyy') || t("ES_COMMON_NA") },
       { title: "WORKS_ORDER_NO", value: workOrderNum || t("ES_COMMON_NA")},
-      { title: "WORKS_PROJECT_ID", value: 'PJ/2022-23/000051' || t("ES_COMMON_NA")},
-      { title: "PROJECTS_DESCRIPTION", value: 'RWHS Scheme at Ward 2' || t("ES_COMMON_NA") },
+      { title: "WORKS_PROJECT_ID", value: contract?.additionalDetails?.projectId || t("ES_COMMON_NA")},
+      { title: "PROJECTS_DESCRIPTION", value: contract?.additionalDetails?.projectDesc || t("ES_COMMON_NA") },
       { title: "ES_COMMON_LOCATION", value: location || t("ES_COMMON_NA") }
     ]
   }
