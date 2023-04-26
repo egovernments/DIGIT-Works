@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.egov.services</groupId>
             <artifactId>services-common</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.egov</groupId>
@@ -111,12 +111,8 @@
             <version>2.0.4-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.springframework.kafka</groupId>
-                    <artifactId>spring-kafka</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka-clients</artifactId>
+                    <groupId>org.egov.services</groupId>
+                    <artifactId>tracer</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

@@ -34,7 +34,7 @@ public class BankAccountService {
     private BankAccountRepository bankAccountRepository;
 
     @Autowired
-    private Producer producer;
+    private Producer bankAccountProducer;
 
     @Autowired
     private Configuration configuration;
@@ -49,7 +49,7 @@ public class BankAccountService {
 
         encryptionService.encrypt(bankAccountRequest, BANK_ACCOUNT_ENCRYPT_KEY);
 
-        producer.push(configuration.getSaveBankAccountTopic(), bankAccountRequest);
+        bankAccountProducer.push(configuration.getSaveBankAccountTopic(), bankAccountRequest);
 
         return bankAccountRequest;
     }
