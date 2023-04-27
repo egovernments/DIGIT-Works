@@ -16,6 +16,7 @@ import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -48,13 +49,15 @@ public class Bill {
 	@Valid
 	private Long dueDate;
 	
-	@JsonProperty("netPayableAmount")
+	@JsonProperty("totalAmount")
 	@Valid
-	private BigDecimal netPayableAmount;
+	@Default
+	private BigDecimal totalAmount = BigDecimal.ZERO;
 
-	@JsonProperty("netPaidAmount")
+	@JsonProperty("totalPaidAmount")
 	@Valid
-	private BigDecimal netPaidAmount;
+	@Default
+	private BigDecimal totalPaidAmount = BigDecimal.ZERO;
 
 	@JsonProperty("businessService")
 	@NotNull

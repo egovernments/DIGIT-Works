@@ -120,8 +120,13 @@ public class BillValidator {
 		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.HEADCODES_MODULE_NAME).get(HEADCODE_MASTERNAME),HEADCODE_CODE_FILTER);
 
         Set<String> missingHeadCodes = new HashSet<>();
+        BigDecimal billAmount = BigDecimal.ZERO;
+        BigDecimal billPaidAmount = BigDecimal.ZERO;
 
 		for (BillDetail billDetail : bill.getBillDetails()) {
+
+			BigDecimal billDetailAmount = BigDecimal.ZERO;
+			BigDecimal billDetailPaidAmount = BigDecimal.ZERO;
 
 			for (LineItem item : billDetail.getLineItems()) {
 
@@ -140,19 +145,28 @@ public class BillValidator {
 
 				BigDecimal amount = item.getAmount();
 				BigDecimal paidAmount = item.getPaidAmount();
+				billDetailAmount = billDetailAmount.add(amount);
+				billDetailPaidAmount = billDetailPaidAmount.add(paidAmount);
 
 				if (!headCodeList.contains(item.getHeadCode()))
 					missingHeadCodes.add(item.getHeadCode());
 
-                if (amount.compareTo(paidAmount) < 0)
+				if (amount.compareTo(paidAmount) < 0)
 					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
-            }
-        }
+			}
 
-        if (!CollectionUtils.isEmpty(missingHeadCodes))
-            errorMap.put("EG_EXPENSE_INVALID_HEADCODES", "The following head codes are invalid : " + missingHeadCodes);
-    }
+			billDetail.setTotalAmount(billDetailAmount);
+			billDetail.setTotalPaidAmount(billPaidAmount);
+			billAmount = billAmount.add(billDetailAmount);
+			billPaidAmount = billPaidAmount.add(billDetailPaidAmount);
+		}
+		bill.setTotalAmount(billAmount);
+		bill.setTotalPaidAmount(billPaidAmount);
+
+		if (!CollectionUtils.isEmpty(missingHeadCodes))
+			errorMap.put("EG_EXPENSE_INVALID_HEADCODES", "The following head codes are invalid : " + missingHeadCodes);
+	}
 
     private void validateTenantId(BillRequest billRequest, Map<String, Map<String, JSONArray>> mdmsData2) {
 
@@ -183,13 +197,6 @@ public class BillValidator {
         if(dueDate.compareTo(billDate) < 0)
         	errorMap.put("EG_EXPENSE_BILL_INVALID_DATE",
 					"The due Date : " + billDate + " cannot be greater than the due Date : " + dueDate);
-        
-        BigDecimal billAmount = bill.getNetPayableAmount();
-        BigDecimal billPaidAmount = bill.getNetPaidAmount();
-        
-        if (billAmount.compareTo(billPaidAmount) < 0)
-			errorMap.put("EG_EXPENSE_BILL_INVALID_AMOUNT",
-					"The bill amount : " + billAmount + " cannot be lesser than the paid amount : " + billPaidAmount);
 	}
     
 	/**

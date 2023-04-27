@@ -1,22 +1,36 @@
 package org.egov.digit.expense.service;
 
-import digit.models.coremodels.AuditDetails;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.Producer;
 import org.egov.digit.expense.repository.PaymentRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
-import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.LineItem;
+import org.egov.digit.expense.web.models.Payment;
+import org.egov.digit.expense.web.models.PaymentRequest;
+import org.egov.digit.expense.web.models.PaymentResponse;
+import org.egov.digit.expense.web.models.PaymentSearchRequest;
 import org.egov.digit.expense.web.validators.PaymentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import digit.models.coremodels.AuditDetails;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -122,7 +136,7 @@ public class PaymentService {
 
             Bill billFromSearch = billMap.get(bill.getId());
 
-            billFromSearch.setNetPaidAmount(bill.getNetPaidAmount());
+			billFromSearch.setTotalPaidAmount(billFromSearch.getTotalPaidAmount().add(bill.getTotalPaidAmount()));
             billFromSearch.setPaymentStatus(payment.getStatus());
             billFromSearch.setAuditDetails(auditDetails);
 
@@ -135,7 +149,7 @@ public class PaymentService {
                 for (LineItem payableLineItem : billDetail.getPayableLineItems()) {
 
                     LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getId());
-                    lineItemFromSearch.setPaidAmount(payableLineItem.getPaidAmount());
+                    lineItemFromSearch.setPaidAmount(lineItemFromSearch.getPaidAmount().add(payableLineItem.getPaidAmount()));
                     lineItemFromSearch.setAuditDetails(auditDetails);
                 }
             }
