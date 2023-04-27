@@ -33,8 +33,24 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
         closeModal,
         submitAction,
         businessService,
-        moduleCode
+        moduleCode,
+        bussinessServiceData
     } = props
+
+    const { isLoading: configMapLoading, data: configMap } = Digit.Hooks.useCustomMDMS(
+        Digit.ULBService.getStateId(),
+        "commonMuktaUiConfig",
+        [
+            {
+                "name": "WorkflowPopupConfig",
+            }
+        ],
+        {
+            select:(data) => {
+                return data?.commonMuktaUiConfig?.WorkflowPopupConfig?.[0]
+            }
+        }
+      );
 
     const enableAssignee = Digit?.Customizations?.["commonUiConfig"]?.enableHrmsSearch(businessService,action)
     // const [approvers,setApprovers] = useState([])
@@ -56,16 +72,16 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     useEffect(() => {
       if(assigneeOptions?.length >=0){
       setConfig(
-        configEstimateModal(t,action,assigneeOptions,businessService, moduleCode)
+        configEstimateModal(t,action,assigneeOptions,businessService, moduleCode,bussinessServiceData,configMap)
       )
       }
       else {
         setConfig(
-            configEstimateModal(t, action, undefined, businessService, moduleCode)
+            configEstimateModal(t, action, undefined, businessService, moduleCode,bussinessServiceData,configMap)
         )
       }
       
-    }, [assigneeOptions])
+    }, [assigneeOptions,configMap])
     
     const _submit = (data) => {
         //here call an UICustomizaton fn to update the payload for update call(businessService based)
@@ -79,7 +95,7 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
         Digit?.Customizations?.["commonUiConfig"]?.enableModalSubmit(businessService,action,setModalSubmit,formData)
     }
 
-    if(isLoadingHrmsSearch) return <Loader />
+    if(isLoadingHrmsSearch || configMapLoading) return <Loader />
     
     return action && config?.form ? (
         <Modal
