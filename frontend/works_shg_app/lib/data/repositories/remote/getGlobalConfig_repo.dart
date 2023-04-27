@@ -3,15 +3,15 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:works_shg_app/utils/constants.dart';
 
+import '../../../Env/app_config.dart';
 import '../../../models/init_mdms/global_config_model.dart';
 
 class GetGlobalConfig {
   Future<GlobalConfigModel> getGlobalConfig() async {
     final dio = Dio();
     try {
-      var response = await dio.get(Constants.devAssets);
+      var response = await dio.get(runningEnvAssets);
 
       return GlobalConfigModel.fromJson(
         response.data,

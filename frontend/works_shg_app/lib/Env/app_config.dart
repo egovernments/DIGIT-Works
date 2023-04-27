@@ -1,6 +1,7 @@
-import 'dart:html';
-
 import 'package:flutter/foundation.dart';
+import 'package:universal_html/html.dart';
+
+import '../utils/constants.dart';
 
 const _baseUrl = "baseUrl";
 
@@ -24,6 +25,18 @@ void setEnvironment(Environment env) {
 
 dynamic get apiBaseUrl {
   return _config[_baseUrl];
+}
+
+dynamic get runningEnvAssets {
+  if (_config[_baseUrl].toString().contains(Constants.devEnv)) {
+    return Constants.devAssets;
+  } else if (_config[_baseUrl].toString().contains(Constants.qaEnv)) {
+    return Constants.qaAssets;
+  } else if (_config[_baseUrl].toString().contains(Constants.uatEnv)) {
+    return Constants.uatAssets;
+  } else {
+    return Constants.prodAssets;
+  }
 }
 
 class EnvironmentVariables {
