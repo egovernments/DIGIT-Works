@@ -10,11 +10,13 @@ import java.util.List;
 public class ExpenseCalculatorQueryBuilder {
 
 
-    private static final String FETCH_CALCULATE_QUERY = "SELECT musterroll_num FROM eg_works_calculation ";
+    private static final String FETCH_MUSTER_NUM_QUERY = "SELECT musterroll_number FROM eg_works_calculation ";
+
+    private static final String FETCH_BILL_ID_QUERY = "SELECT bill_id FROM eg_works_calculation ";
 
 
-    public String getMusterRollsOfContract(String contractId, String billType, List<String> billIds, List<Object> preparedStmtList) {
-        StringBuilder queryBuilder = new StringBuilder(FETCH_CALCULATE_QUERY);
+    public String getMusterRollsOfContract(String contractId, String billType, String tenantId, List<String> billIds, List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = new StringBuilder(FETCH_MUSTER_NUM_QUERY);
 
         if (StringUtils.isNotBlank(contractId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
@@ -22,9 +24,15 @@ public class ExpenseCalculatorQueryBuilder {
             preparedStmtList.add(contractId);
         }
 
+        if (StringUtils.isNotBlank(tenantId)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append("tenant_id=? ");
+            preparedStmtList.add(tenantId);
+        }
+
         if (StringUtils.isNotBlank(billType)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append("bill_type=? ");
+            queryBuilder.append("business_service=? ");
             preparedStmtList.add(billType);
         }
 
@@ -32,6 +40,24 @@ public class ExpenseCalculatorQueryBuilder {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append("bill_id IN (").append(createQuery(billIds)).append(")");
             addToPreparedStatement(preparedStmtList, billIds);
+        }
+
+        return queryBuilder.toString();
+    }
+
+    public String getBillsOfContract(String contractId, String tenantId, List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = new StringBuilder(FETCH_BILL_ID_QUERY);
+
+        if (StringUtils.isNotBlank(contractId)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append("contract_id=? ");
+            preparedStmtList.add(contractId);
+        }
+
+        if (StringUtils.isNotBlank(tenantId)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append("tenant_id=? ");
+            preparedStmtList.add(tenantId);
         }
 
         return queryBuilder.toString();

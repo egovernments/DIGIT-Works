@@ -2,6 +2,7 @@ package org.egov.digit.expense.calculator.repository.rowmapper;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -20,12 +21,12 @@ public class ExpenseCalculatorRowMapper implements ResultSetExtractor<List<Strin
 
     @Override
     public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        List<String> musterRollIds = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         while (rs.next()) {
-            String musterrollId = rs.getString("musterroll_id");
-            musterRollIds.add(musterrollId);
+            String id = StringUtils.isNotBlank(rs.getString("musterroll_num")) ? rs.getString("musterroll_num") : rs.getString("bill_id");
+            ids.add(id);
         }
-        return  musterRollIds;
+        return  ids;
     }
 
 

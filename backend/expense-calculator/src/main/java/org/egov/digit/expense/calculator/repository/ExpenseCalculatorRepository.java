@@ -27,10 +27,22 @@ public class ExpenseCalculatorRepository {
      * @param contractId
      * @return
      */
-    public List<String> getMusterRoll(String contractId, String billType, List<String> billIds) {
+    public List<String> getMusterRoll(String contractId, String billType, String tenantId, List<String> billIds) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getMusterRollsOfContract(contractId, billType, billIds, preparedStmtList);
+        String query = queryBuilder.getMusterRollsOfContract(contractId, billType, tenantId, billIds, preparedStmtList);
         List<String> musterrollIds = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         return musterrollIds;
+    }
+
+    /**
+     * Fetch the record from DB based on the search criteria
+     * @param contractId
+     * @return
+     */
+    public List<String> getBills(String contractId, String tenantId) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getBillsOfContract(contractId, tenantId, preparedStmtList);
+        List<String> billIds = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+        return billIds;
     }
 }

@@ -63,8 +63,8 @@ public class SupervisionBillGeneratorService {
         //If the bill is empty or null, return empty response
         if (CollectionUtils.isEmpty(bills)) {
             log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. " +
-                    " So Supervision bill cannot be calculated. Returning empty response");
-            return new Calculation();
+                    " So Supervision bill cannot be calculated.");
+            throw new CustomException("NO_WAGE_PURCHASE_BILL","Wage and purchase bill is not created. So Supervision bill cannot be calculated.");
         }
 
         // fetch the musterRolls of the contract
@@ -72,7 +72,7 @@ public class SupervisionBillGeneratorService {
 
         //Check if the supervision bill is already created for all musterRollIds of the contract
         List<String> filteredMusters = new ArrayList<>();
-        boolean supervisionbillExists = checkSupervisionBillExists(bills, criteria.getContractId(), contractMusterRollIds, filteredMusters);
+        boolean supervisionbillExists = checkSupervisionBillExists(bills, criteria.getContractId(), criteria.getTenantId(), contractMusterRollIds, filteredMusters);
         if (supervisionbillExists) {
             log.error("SupervisionBillGeneratorService::calculateEstimate::Supervision bill already exists for all the musters of the contract - "+criteria.getContractId());
             throw new CustomException("DUPLICATE_SUPERVISIONBILL","Supervision bill already exists for all the musters of the contract - "+criteria.getContractId());
@@ -168,8 +168,8 @@ public class SupervisionBillGeneratorService {
      * @param contractId
      * @return
      */
-    private List<String> fetchWagebillMusters(String contractId, String billType, List<String> billIds) {
-        List<String> musterRollIds = expenseCalculatorRepository.getMusterRoll(contractId, billType, billIds);
+    private List<String> fetchWagebillMusters(String contractId, String billType, String tenantId, List<String> billIds) {
+        List<String> musterRollIds = expenseCalculatorRepository.getMusterRoll(contractId, billType, tenantId, billIds);
         if (CollectionUtils.isEmpty(musterRollIds)) {
             log.error("SupervisionBillGeneratorService::fetchWagebillMusters::Wage bill is not calculated for the contract id - "+contractId);
             throw new CustomException("NO_WAGE_BILL","Wage bill is not calculated for the contract id - "+contractId);
@@ -186,7 +186,7 @@ public class SupervisionBillGeneratorService {
      * @param filteredMusters
      * @return
      */
-    private boolean checkSupervisionBillExists (List<Bill> bills, String contractId, List<String> contractMusterRollIds, List<String> filteredMusters)  {
+    private boolean checkSupervisionBillExists (List<Bill> bills, String contractId, String tenantId, List<String> contractMusterRollIds, List<String> filteredMusters)  {
 
         List<String> billIds = new ArrayList<>();
 
@@ -209,7 +209,7 @@ public class SupervisionBillGeneratorService {
         }
 
         //Fetch the musterrollIds of the corresponding billIds from calculator DB
-        List<String> wagebillMusterIds = fetchWagebillMusters(contractId, config.getWageBusinessService(), billIds);
+        List<String> wagebillMusterIds = fetchWagebillMusters(contractId, config.getWageBusinessService(), tenantId, billIds);
 
         for (String contractMusterRollId : contractMusterRollIds) {
             if (!wagebillMusterIds.contains(contractMusterRollId)) {
