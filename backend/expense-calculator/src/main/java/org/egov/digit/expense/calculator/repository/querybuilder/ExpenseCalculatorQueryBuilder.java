@@ -20,7 +20,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(contractId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" contract_id=? ");
+            queryBuilder.append(" contract_number=? ");
             preparedStmtList.add(contractId);
         }
 
@@ -50,7 +50,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(contractId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" contract_id=? ");
+            queryBuilder.append(" contract_number=? ");
             preparedStmtList.add(contractId);
         }
 
