@@ -23,7 +23,7 @@ public class ExpenseCalculatorRowMapper implements ResultSetExtractor<List<Strin
     public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {
         List<String> ids = new ArrayList<>();
         while (rs.next()) {
-            String id = StringUtils.isNotBlank(rs.getString("musterroll_num")) ? rs.getString("musterroll_num") : rs.getString("bill_id");
+            String id = StringUtils.isNotBlank(rs.getString("musterroll_number")) ? rs.getString("musterroll_number") : rs.getString("bill_id");
             ids.add(id);
         }
         return  ids;
