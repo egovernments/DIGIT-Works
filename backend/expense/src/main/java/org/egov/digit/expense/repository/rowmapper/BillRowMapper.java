@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.digit.expense.web.models.Bill;
@@ -15,7 +19,6 @@ import org.egov.digit.expense.web.models.enums.LineItemType;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
@@ -69,8 +72,8 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.tenantId(tenantId)
 					.billDate(billDate)
 					.dueDate(dueDate)
-					.netPayableAmount(netPayableAmount)
-					.netPaidAmount(netPaidAmount)
+					.totalAmount(netPayableAmount)
+					 .totalPaidAmount(netPaidAmount)
 					.businessService(businessService)
 					.referenceId(referenceId)
 					.fromPeriod(fromPeriod)
