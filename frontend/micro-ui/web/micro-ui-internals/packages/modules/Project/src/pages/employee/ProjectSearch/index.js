@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import { useHistory, useLocation } from "react-router-dom";
+import searchConfigMUKTA from "../../../configs/searchConfigMUKTA";
 
 const ProjectSearch = () => {
   const { t } = useTranslation();
@@ -10,19 +11,21 @@ const ProjectSearch = () => {
   const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
   const [sessionFormData, clearSessionFormData] = projectSession;
   const location = useLocation();
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, 
-    Digit.Utils.getConfigModuleName(),
-    [
-      {
-        name: "SearchProjectConfig",
-      }
-    ],
-    {
-      select: (data) => {
-          return data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
-      },
-    }
-    )
+  // const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, 
+  //   Digit.Utils.getConfigModuleName(),
+  //   [
+  //     {
+  //       name: "SearchProjectConfig",
+  //     }
+  //   ],
+  //   {
+  //     select: (data) => {
+  //         return data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
+  //     },
+  //   }
+  //   )
+
+  const data = searchConfigMUKTA?.SearchProjectConfig?.[0];
 
   let configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
@@ -46,7 +49,7 @@ const ProjectSearch = () => {
       }
   },[location]);
 
-  if (isLoading) return <Loader />;
+  // if (isLoading) return <Loader />;
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">
