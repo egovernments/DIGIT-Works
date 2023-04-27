@@ -5,6 +5,7 @@ import static org.egov.digit.expense.config.Constants.HEADCODE_MASTERNAME;
 import static org.egov.digit.expense.config.Constants.TENANT_MASTERNAME;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +50,10 @@ public class BillValidator {
 
     // TODO FIXME amount validation between amount and paid amount relation ship if negative values not involved
 
+    /**
+     * validates the incoming bill update request for Duplicity, master data and amount values
+     * @param billRequest
+     */
     public void validateCreateRequest(BillRequest billRequest) {
 
     	Map<String, String> errorMap = new HashMap<>();
@@ -76,14 +81,17 @@ public class BillValidator {
         
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
         validateBillAmountAndDate(bill, errorMap);
-        validateTenantId(billRequest, mdmsData);
+        validateTenantId(billRequest);
         validateMasterData(billRequest, errorMap, mdmsData);
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
 
     }
-
+	/**
+	 * validates the incoming bill update request for authenticity, master data and amount values
+	 * @param billRequest
+	 */
     public void validateUpdateRequest(BillRequest billRequest) {
 
         Map<String, String> errorMap = new HashMap<>();
@@ -95,7 +103,7 @@ public class BillValidator {
         			+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
         
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
-        validateTenantId(billRequest, mdmsData);
+        validateTenantId(billRequest);
         validateMasterData(billRequest, errorMap, mdmsData);
 
         if (!CollectionUtils.isEmpty(errorMap))
@@ -154,15 +162,15 @@ public class BillValidator {
             errorMap.put("EG_EXPENSE_INVALID_HEADCODES", "The following head codes are invalid : " + missingHeadCodes);
     }
 
-    private void validateTenantId(BillRequest billRequest, Map<String, Map<String, JSONArray>> mdmsData2) {
+    private void validateTenantId(BillRequest billRequest) {
 
         Bill bill = billRequest.getBill();
-        String rootTenantId = bill.getTenantId().split("\\.")[0];
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-                rootTenantId, Constants.TENANT_MODULE_NAME, Constants.TENANT_MDMS_MASTER_NAMES);
-
-
         List<String> tenantIdList=null;
+        
+		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
+				bill.getTenantId().split("\\.")[0], Constants.TENANT_MODULE_NAME,
+				Arrays.asList(Constants.TENANT_MASTERNAME));
+        
         try {
             /* validating head code master data */
             tenantIdList = JsonPath.read(mdmsData.get(Constants.TENANT_MODULE_NAME).get(TENANT_MASTERNAME), HEADCODE_CODE_FILTER);
@@ -213,8 +221,8 @@ public class BillValidator {
 		BillCriteria billCriteria = BillCriteria.builder()
 				.referenceIds(Stream.of(bill.getReferenceId()).collect(Collectors.toSet()))
 				.businessService(bill.getBusinessService())
-				.status(Status.ACTIVE.toString())
 				.tenantId(bill.getTenantId())
+				.statusNot(Status.INACTIVE.toString())
 				.build();
 		
 		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
@@ -225,6 +233,12 @@ public class BillValidator {
 		return billRepository.search(billSearchRequest);
     }
 
+    /**
+     * private to call MDMS search for all the masters required in validation
+     * @param billRequest
+     * @param bill
+     * @return
+     */
 	private Map<String, Map<String, JSONArray>> getMasterDataForValidation(BillRequest billRequest, Bill bill) {
 		
 		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),

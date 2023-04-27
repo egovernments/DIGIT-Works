@@ -6,12 +6,9 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import digit.models.coremodels.AuditDetails;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,9 +17,6 @@ import lombok.NoArgsConstructor;
 /**
  * Payment
  */
-@Schema(description = "A Object which holds the info about the expense details")
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,7 +38,7 @@ public class Payment {
 
 	@JsonProperty("bills")
 	@Valid
-	private List<Bill> bills;
+	private List<PaymentBill> bills;
 
 	@JsonProperty("status")
 	private String status;
@@ -55,7 +49,7 @@ public class Payment {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 	
-	public Payment addBillDetailsItem(Bill bill) {
+	public Payment addBillDetailsItem(PaymentBill bill) {
 
 		if (this.bills == null)
 			this.bills = new ArrayList<>();

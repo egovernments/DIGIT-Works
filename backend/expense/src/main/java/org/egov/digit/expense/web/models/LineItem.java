@@ -65,9 +65,6 @@ public class LineItem {
 	@JsonProperty("status")
 	private String status;
 	
-	@JsonProperty("isLineItemPayable")
-	private Boolean isLineItemPayable;
-
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 

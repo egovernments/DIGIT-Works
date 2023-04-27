@@ -24,7 +24,7 @@ serviceMaps:
          
        - jsonPath: $.bill.netPaidAmount
        
-       - jsonPath: $.bill.businessservice
+       - jsonPath: $.bill.businessService
 
        - jsonPath: $.bill.referenceId
 
@@ -214,7 +214,7 @@ serviceMaps:
          
        - jsonPath: $.bill.netPaidAmount
        
-       - jsonPath: $.bill.businessservice
+       - jsonPath: $.bill.businessService
 
        - jsonPath: $.bill.referenceId
 

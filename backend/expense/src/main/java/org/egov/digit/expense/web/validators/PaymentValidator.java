@@ -16,6 +16,9 @@ import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Pagination;
 import org.egov.digit.expense.web.models.Payment;
+import org.egov.digit.expense.web.models.PaymentBill;
+import org.egov.digit.expense.web.models.PaymentBillDetail;
+import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,7 @@ public class PaymentValidator {
 
 		Payment payment = paymentRequest.getPayment();
 		Map<String, String> errorMap = new HashMap<>();
-		Set<String> billIds = payment.getBills().stream().map(Bill::getId).collect(Collectors.toSet());
+		Set<String> billIds = payment.getBills().stream().map(PaymentBill::getBillId).collect(Collectors.toSet());
 		
 		if(payment.getBills().size() != billIds.size())
 			errorMap.put("EG_PAYMENT_DUPLICATE_BILLS_ERROR", "The same bills cannot be repeated for payments");
@@ -66,18 +69,18 @@ public class PaymentValidator {
 		if(!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
 		
-		for (Bill bill : payment.getBills()) {
+		for (PaymentBill paymentBill : payment.getBills()) {
 			
-			Bill billFromSearch = billMap.get(bill.getId());
-			if (bill.getNetPaidAmount().compareTo(billFromSearch.getNetPayableAmount()) != 0) {
+			Bill billFromSearch = billMap.get(paymentBill.getBillId());
+			if (paymentBill.getPaidAmount().compareTo(billFromSearch.getNetPayableAmount()) != 0) {
 				errorMap.put("EG_PAYMENT_INVALID_LINEITEM_AMOUNT",
-						"The paid bill amount " + bill.getNetPaidAmount()
+						"The paid bill amount " + paymentBill.getPaidAmount()
 					  + " is not equal to the actual amount : " + billFromSearch.getNetPayableAmount());
 			}
 			
-			for (BillDetail billDetail : bill.getBillDetails()) {
+			for (PaymentBillDetail billDetail : paymentBill.getBillDetails()) {
 				
-				BillDetail billDetailFromSearch = billDetailMap.get(billDetail.getId());
+				BillDetail billDetailFromSearch = billDetailMap.get(billDetail.getBillDetailId());
 				
 				if (null == billDetailFromSearch) {
 					errorMap.put("EG_PAYMENT_INVALID_BILLDETAIL",
@@ -85,9 +88,9 @@ public class PaymentValidator {
 				break;
 				}
 				
-				for (LineItem payableLineItem : billDetail.getPayableLineItems()) {
+				for (PaymentLineItem payableLineItem : billDetail.getPayableLineItems()) {
 					
-					LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getId());
+					LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemid());
 					if (null == lineItemFromSearch) {
 						errorMap.put("EG_PAYMENT_INVALID_LINEITEM",
 								"The payable line item id is invalid : " + payableLineItem.getId());

@@ -1,22 +1,39 @@
 package org.egov.digit.expense.service;
 
-import digit.models.coremodels.AuditDetails;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.Producer;
 import org.egov.digit.expense.repository.PaymentRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
-import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.LineItem;
+import org.egov.digit.expense.web.models.Payment;
+import org.egov.digit.expense.web.models.PaymentBill;
+import org.egov.digit.expense.web.models.PaymentBillDetail;
+import org.egov.digit.expense.web.models.PaymentLineItem;
+import org.egov.digit.expense.web.models.PaymentRequest;
+import org.egov.digit.expense.web.models.PaymentResponse;
+import org.egov.digit.expense.web.models.PaymentSearchRequest;
 import org.egov.digit.expense.web.validators.PaymentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import digit.models.coremodels.AuditDetails;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -44,6 +61,7 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
 
     public PaymentResponse create(@Valid PaymentRequest paymentRequest) {
+    	
         log.info("PaymentService::create");
         Payment payment = paymentRequest.getPayment();
         validator.validateCreateRequest(paymentRequest);
@@ -60,6 +78,7 @@ public class PaymentService {
     }
 
     public PaymentResponse update(@Valid PaymentRequest paymentRequest) {
+    	
         log.info("PaymentService::update");
         Payment payment = paymentRequest.getPayment();
         validator.validateUpdateRequest(paymentRequest);
@@ -75,6 +94,7 @@ public class PaymentService {
     }
 
     public PaymentResponse search(@Valid PaymentSearchRequest paymentSearchRequest) {
+    	
         log.info("PaymentService::search");
         List<Payment> payments = paymentRepository.search(paymentSearchRequest);
         /*
@@ -88,6 +108,7 @@ public class PaymentService {
     }
 
     private void backUpdateBillForPayment(@Valid PaymentRequest paymentRequest) {
+    	
         log.info("PaymentService::backUpdateBillForPayment");
         RequestInfo requestInfo = paymentRequest.getRequestInfo();
         Payment payment = paymentRequest.getPayment();
@@ -95,7 +116,7 @@ public class PaymentService {
         AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), false);
 
         Set<String> billIds = paymentRequest.getPayment().getBills()
-                .stream().map(Bill::getId)
+                .stream().map(PaymentBill::getBillId)
                 .collect(Collectors.toSet());
 
         BillSearchRequest billSearchRequest = validator.prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
@@ -118,23 +139,23 @@ public class PaymentService {
                 .collect(Collectors.toMap(LineItem::getId, Function.identity()));
 
 
-        for (Bill bill : payment.getBills()) {
+        for (PaymentBill bill : payment.getBills()) {
 
-            Bill billFromSearch = billMap.get(bill.getId());
+            Bill billFromSearch = billMap.get(bill.getBillId());
 
-            billFromSearch.setNetPaidAmount(bill.getNetPaidAmount());
+            billFromSearch.setNetPaidAmount(bill.getPaidAmount());
             billFromSearch.setPaymentStatus(payment.getStatus());
             billFromSearch.setAuditDetails(auditDetails);
 
-            for (BillDetail billDetail : bill.getBillDetails()) {
+            for (PaymentBillDetail billDetail : bill.getBillDetails()) {
 
-                BillDetail billDetailFromSearch = billDetailMap.get(billDetail.getId());
-                billDetailFromSearch.setPaymentStatus(billDetail.getPaymentStatus());
+                BillDetail billDetailFromSearch = billDetailMap.get(billDetail.getBillDetailId());
+                billDetailFromSearch.setPaymentStatus(payment.getStatus());
                 billDetailFromSearch.setAuditDetails(auditDetails);
 
-                for (LineItem payableLineItem : billDetail.getPayableLineItems()) {
+                for (PaymentLineItem payableLineItem : billDetail.getPayableLineItems()) {
 
-                    LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getId());
+                    LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemid());
                     lineItemFromSearch.setPaidAmount(payableLineItem.getPaidAmount());
                     lineItemFromSearch.setAuditDetails(auditDetails);
                 }
