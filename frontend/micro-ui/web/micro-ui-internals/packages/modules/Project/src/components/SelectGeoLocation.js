@@ -8,7 +8,7 @@ const SelectGeoLocation = ({ onSelect, config, formData }) => {
   const [showLocationSearch, setShowLocationSearch] = useState(false);
   const onChange = (pincode, position) => {
     console.log(pincode, position, config);
-    onSelect(config?.key, position)
+    onSelect(config?.key, position);
   }
 
   const handleShowLocationSearch = () => {

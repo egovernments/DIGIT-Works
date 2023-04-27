@@ -120,6 +120,7 @@ export const FormComposer = (props) => {
   }
 
   useEffect(() => {
+    console.log(formData);
     props.onFormValueChange && props.onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
   }, [formData]);
 
