@@ -20,25 +20,25 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(contractId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append("contract_id=? ");
+            queryBuilder.append(" contract_id=? ");
             preparedStmtList.add(contractId);
         }
 
         if (StringUtils.isNotBlank(tenantId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append("tenant_id=? ");
+            queryBuilder.append(" tenant_id=? ");
             preparedStmtList.add(tenantId);
         }
 
         if (StringUtils.isNotBlank(billType)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append("business_service=? ");
+            queryBuilder.append(" business_service=? ");
             preparedStmtList.add(billType);
         }
 
         if (billIds != null && !billIds.isEmpty()) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append("bill_id IN (").append(createQuery(billIds)).append(")");
+            queryBuilder.append(" bill_id IN (").append(createQuery(billIds)).append(")");
             addToPreparedStatement(preparedStmtList, billIds);
         }
 
@@ -50,13 +50,13 @@ public class ExpenseCalculatorQueryBuilder {
 
         if (StringUtils.isNotBlank(contractId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append("contract_id=? ");
+            queryBuilder.append(" contract_id=? ");
             preparedStmtList.add(contractId);
         }
 
         if (StringUtils.isNotBlank(tenantId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append("tenant_id=? ");
+            queryBuilder.append(" tenant_id=? ");
             preparedStmtList.add(tenantId);
         }
 
