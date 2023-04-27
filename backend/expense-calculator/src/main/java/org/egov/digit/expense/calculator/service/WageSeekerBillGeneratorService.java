@@ -214,6 +214,7 @@ public class WageSeekerBillGeneratorService {
     private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay) {
        return LineItem.builder()
                 .amount(actualAmountToPay)
+                .paidAmount(BigDecimal.ZERO)
                 .headCode(configs.getWageHeadCode())
                 .type(LineItem.TypeEnum.PAYABLE)
                 .tenantId(tenantId)
