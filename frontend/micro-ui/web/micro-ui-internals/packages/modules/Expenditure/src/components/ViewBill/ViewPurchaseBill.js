@@ -25,8 +25,8 @@ const ViewPurchaseBill = ({props}) => {
       [{ name: "ApplicableCharges" }],
       {
           select: (data) => {
-              const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
-              return optionsData.filter((opt) => opt?.active && opt?.service === "works.purchase").map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+              const optionsData = _.get(data, `expense.ApplicableCharges`, []);
+              return optionsData.filter((opt) => opt?.active && opt?.service === "works.purchase").map((opt) => ({ ...opt, name: `COMMON_MASTERS_DEDUCTIONS_${opt.code}` }));
           },
           enabled : true
       }
