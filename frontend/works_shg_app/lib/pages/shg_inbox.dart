@@ -5,8 +5,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/common_widgets.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -84,6 +84,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   List<DigitTimelineOptions> timeLineAttributes = [];
   DaysInRange? daysInRange;
   bool inWorkFlow = false;
+  List<String> dates = [];
 
   @override
   void initState() {
@@ -209,6 +210,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                         .musterRoll!.first.startDate!,
                                     individualMusterRollModel
                                         .musterRoll!.first.endDate!);
+                                dates = DateFormats.getFormattedDatesOfAWeek(selectedDateRange!.startDate, selectedDateRange!.endDate);
                               }
                             });
                           },
@@ -376,15 +378,13 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         .individualEntries!
                                                                         .map((e) => AttendeesTrackList(
                                                                             name: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.userName ??
-                                                                                e
-                                                                                    .individualId,
+                                                                                '',
                                                                             aadhaar: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.aadharNumber ??
-                                                                                e
-                                                                                    .individualId,
+                                                                                '',
                                                                             individualId: e
                                                                                 .individualId,
                                                                             skillCodeList: e.musterIndividualAdditionalDetails?.skillCode ?? [],
-                                                                            individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName,
+                                                                            individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName ?? '',
                                                                             id: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                             skill: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                                 '',
@@ -874,11 +874,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
               .translate(i18.common.nameLabel),
           apiKey: 'name',
         ),
-        TableHeader(
-          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate(i18.common.aadhaarNumber),
-          apiKey: 'aadhaarNumber',
-        ),
+    TableHeader(
+      AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+          .translate(i18.common.fatherName),
+      apiKey: 'individualGaurdianName',
+    ),
     TableHeader(
       '${AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.attendanceMgmt.skill)}*',
@@ -887,30 +887,37 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.mon),
+            subLabel: dates.isNotEmpty ? dates[0] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.tue),
+            subLabel: dates.isNotEmpty ? dates[1] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.wed),
+            subLabel: dates.isNotEmpty ? dates[2] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.thu),
+            subLabel: dates.isNotEmpty ? dates[3] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.fri),
+            subLabel: dates.isNotEmpty ? dates[4] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.sat),
+            subLabel: dates.isNotEmpty ? dates[5] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.sun),
+            subLabel: dates.isNotEmpty ? dates[6] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
@@ -921,6 +928,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   TableDataRow getAttendanceRow(TrackAttendanceTableData tableDataModel) {
     return TableDataRow([
       TableData(label: tableDataModel.name, apiKey: tableDataModel.name),
+      TableData(label: tableDataModel.individualGaurdianName, apiKey: tableDataModel.individualGaurdianName),
       TableData(label: tableDataModel.aadhaar, apiKey: tableDataModel.aadhaar),
       TableData(
           apiKey: tableDataModel.skill,
