@@ -1,256 +1,497 @@
-import Dropdown from '../../Dropdown';
-import { Loader } from '../../Loader';
-import React, { useState } from 'react'
 
 const configEstimateModal = (
     t,
     action,
     approvers,
     businessService,
-    moduleCode
+    moduleCode,
+    bussinessServiceData,
+    configMap
 ) => {
+    businessService = bussinessServiceData?.expense?.BusinessService?.[0]?.code
     const {action:actionString} = action
     
-    const configMap = {
-        "mukta-estimate": {
-            "default":{
-                comments:{
-                    isMandatory:false,
-                    show:true,
-                },
-                assignee:{
-                    isMandatory:false,
-                    show:true
-                },
-                upload:{
-                    isMandatory:false,
-                    show:true
-                }
-            },
-            "REJECT": {
-                comments: {
-                    isMandatory: true,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                }
-            },
-            "SENDBACK": {
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                }
-            },
-            "SENDBACKTOORIGINATOR": {
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                }
-            },
-            "APPROVE": {
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                }
-            }
-        },
-        "contract-approval-mukta": {
-            "default":{
-                comments:{
-                    isMandatory:false,
-                    show:true,
-                },
-                assignee:{
-                    isMandatory:false,
-                    show:true
-                },
-                upload:{
-                    isMandatory:false,
-                    show:true
-                }
-            },
-            "REJECT": {
-                comments: {
-                    isMandatory: true,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                }
-            },
-            "SEND_BACK": {
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                }
-            },
-            "VERIFY_AND_FORWARD": {
-                comments:{
-                    isMandatory:false,
-                    show:true,
-                },
-                assignee:{
-                    isMandatory:false,
-                    show:true
-                },
-                upload:{
-                    isMandatory:false,
-                    show:true
-                }
-            },
-            "SEND_BACK_TO_ORIGINATOR": {
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                }
-            },
-            "APPROVE": {
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                }
-            },
-        },
-        "muster-roll-approval":{
-            "default":{
-                comments:{
-                    isMandatory:false,
-                    show:true,
-                },
-                assignee:{
-                    isMandatory:false,
-                    show:true
-                },
-                upload:{
-                    isMandatory:false,
-                    show:true
-                }
-            },
-            "APPROVE": {
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                },
-                acceptTerms: {
-                    isMandatory:true,
-                    show:true
-                }
-            },
-            "REJECT": {
-                comments: {
-                    isMandatory: true,
-                    show: true,
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                },
-            },
-            "SENDBACK":{
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                },
-                acceptTerms: {
-                    isMandatory:false,
-                    show:false
-                }
-            },
-            "SENDBACKTOCBO":{
-                comments: {
-                    isMandatory: false,
-                    show: true,
-                },
-                assignee: {
-                    isMandatory: false,
-                    show: false
-                },
-                upload: {
-                    isMandatory: false,
-                    show: true
-                },
-                acceptTerms: {
-                    isMandatory:false,
-                    show:false
-                }
-            }
-        }
-    }
+    // const configMap =  {
+    //     "ESTIMATE": {
+    //       "default": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "REJECT": {
+    //         "comments": {
+    //           "isMandatory": true,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "SENDBACK": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "SENDBACKTOORIGINATOR": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "APPROVE": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       }
+    //     },
+    //     "CONTRACT": {
+    //       "default": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "REJECT": {
+    //         "comments": {
+    //           "isMandatory": true,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "SEND_BACK": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "VERIFY_AND_FORWARD": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "SEND_BACK_TO_ORIGINATOR": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "APPROVE": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       }
+    //     },
+    //     "MUSTER_ROLL": {
+    //       "default": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "APPROVE": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "acceptTerms": {
+    //           "isMandatory": true,
+    //           "show": true
+    //         }
+    //       },
+    //       "REJECT": {
+    //         "comments": {
+    //           "isMandatory": true,
+    //           "show": true
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         }
+    //       },
+    //       "SENDBACK": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "acceptTerms": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         }
+    //       },
+    //       "SENDBACKTOCBO": {
+    //         "comments": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "assignee": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         },
+    //         "upload": {
+    //           "isMandatory": false,
+    //           "show": true
+    //         },
+    //         "acceptTerms": {
+    //           "isMandatory": false,
+    //           "show": false
+    //         }
+    //       }
+    //     }
+    //   }
+
+    // const configMap = {
+    //     "mukta-estimate": {
+    //         "default":{
+    //             comments:{
+    //                 isMandatory:false,
+    //                 show:true,
+    //             },
+    //             assignee:{
+    //                 isMandatory:false,
+    //                 show:true
+    //             },
+    //             upload:{
+    //                 isMandatory:false,
+    //                 show:true
+    //             }
+    //         },
+    //         "REJECT": {
+    //             comments: {
+    //                 isMandatory: true,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             }
+    //         },
+    //         "SENDBACK": {
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             }
+    //         },
+    //         "SENDBACKTOORIGINATOR": {
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             }
+    //         },
+    //         "APPROVE": {
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             }
+    //         }
+    //     },
+    //     "contract-approval-mukta": {
+    //         "default":{
+    //             comments:{
+    //                 isMandatory:false,
+    //                 show:true,
+    //             },
+    //             assignee:{
+    //                 isMandatory:false,
+    //                 show:true
+    //             },
+    //             upload:{
+    //                 isMandatory:false,
+    //                 show:true
+    //             }
+    //         },
+    //         "REJECT": {
+    //             comments: {
+    //                 isMandatory: true,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             }
+    //         },
+    //         "SEND_BACK": {
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             }
+    //         },
+    //         "VERIFY_AND_FORWARD": {
+    //             comments:{
+    //                 isMandatory:false,
+    //                 show:true,
+    //             },
+    //             assignee:{
+    //                 isMandatory:false,
+    //                 show:true
+    //             },
+    //             upload:{
+    //                 isMandatory:false,
+    //                 show:true
+    //             }
+    //         },
+    //         "SEND_BACK_TO_ORIGINATOR": {
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             }
+    //         },
+    //         "APPROVE": {
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             }
+    //         },
+    //     },
+    //     "muster-roll-approval":{
+    //         "default":{
+    //             comments:{
+    //                 isMandatory:false,
+    //                 show:true,
+    //             },
+    //             assignee:{
+    //                 isMandatory:false,
+    //                 show:true
+    //             },
+    //             upload:{
+    //                 isMandatory:false,
+    //                 show:true
+    //             }
+    //         },
+    //         "APPROVE": {
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             },
+    //             acceptTerms: {
+    //                 isMandatory:true,
+    //                 show:true
+    //             }
+    //         },
+    //         "REJECT": {
+    //             comments: {
+    //                 isMandatory: true,
+    //                 show: true,
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             },
+    //         },
+    //         "SENDBACK":{
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             },
+    //             acceptTerms: {
+    //                 isMandatory:false,
+    //                 show:false
+    //             }
+    //         },
+    //         "SENDBACKTOCBO":{
+    //             comments: {
+    //                 isMandatory: false,
+    //                 show: true,
+    //             },
+    //             assignee: {
+    //                 isMandatory: false,
+    //                 show: false
+    //             },
+    //             upload: {
+    //                 isMandatory: false,
+    //                 show: true
+    //             },
+    //             acceptTerms: {
+    //                 isMandatory:false,
+    //                 show:false
+    //             }
+    //         }
+    //     }
+    // }
 //field can have (comments,assignee,upload)
     const fetchIsMandatory = (field) => {
         

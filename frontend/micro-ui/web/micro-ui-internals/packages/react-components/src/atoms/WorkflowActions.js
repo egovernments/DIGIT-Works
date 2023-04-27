@@ -8,6 +8,7 @@ import { Loader } from "./Loader";
 import Toast from "./Toast";
 import { useHistory } from "react-router-dom";
 const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback }) => {
+  
   //getting the bussiness service from MDMS file using the bussiness code
   const { isLoading: bussinessServiceLoading, data: bussinessServiceData } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
@@ -195,6 +196,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         businessService={businessService}
         applicationDetails={applicationDetails}
         moduleCode={moduleCode}
+        bussinessServiceData={bussinessServiceData}
       />}
       {showToast && <Toast
         error={showToast?.error}
