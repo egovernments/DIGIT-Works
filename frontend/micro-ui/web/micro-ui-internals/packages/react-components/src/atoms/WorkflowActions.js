@@ -97,19 +97,19 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessServiceV1("attendencemgmt")
     setDisplayMenu(false)
     setSelectedAction(action)
-
+    
     //here check if actin is edit then do a history.push acc to the businessServ and action
     //send appropriate states over
-    if(bsEstimate === businessService && action?.action === "RE-SUBMITTED"){
+    if(bsEstimate === bussinessServiceData?.expense?.BusinessService?.[0]?.code && action?.action === "RE-SUBMITTED"){
         history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
         return 
     }
 
-    if(bsContract === businessService && action?.action === "EDIT"){
+    if(bsContract === bussinessServiceData?.expense?.BusinessService?.[0]?.code && action?.action === "EDIT"){
       history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
       return 
   }
-    if(bsAttendance === businessService && action?.action === "EDIT"){
+    if(bsAttendance === bussinessServiceData?.expense?.BusinessService?.[0]?.code && action?.action === "EDIT"){
         editCallback()
         return 
     }
