@@ -134,7 +134,9 @@ public class ExpenseCalculatorService {
 
         BillResponse billResponse = null;
         List<Bill> submittedBills = new ArrayList<>();
-        Workflow workflow = Workflow.builder().action("SUBMIT").build();
+        Workflow workflow = Workflow.builder()
+                                    .action(WF_SUBMIT_ACTION_CONSTANT)
+                                    .build();
         for(Bill bill : bills) {
             billResponse = postBill(requestInfo, bill,workflow);
             if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
@@ -161,7 +163,9 @@ public class ExpenseCalculatorService {
         List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, musterRoll.getTenantId());
         List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,Collections.singletonList(musterRoll),labourCharges,context);
         BillResponse billResponse = null;
-        Workflow workflow = Workflow.builder().action("SUBMIT").build();
+        Workflow workflow = Workflow.builder()
+                            .action(WF_SUBMIT_ACTION_CONSTANT)
+                            .build();
         for(Bill bill : wageSeekerBills) {
             billResponse = postBill(requestInfo, bill,workflow);
             if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))

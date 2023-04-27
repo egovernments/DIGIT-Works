@@ -118,7 +118,6 @@ public class WageSeekerBillGeneratorService {
                         .businessService(configs.getWageBusinessService())
                         .fromPeriod(musterRoll.getStartDate().longValue())
                         .toPeriod(musterRoll.getEndDate().longValue())
-                        .netPaidAmount(BigDecimal.valueOf(100)) // hard coding for now to be checked
                         .payer(payer)
                         .paymentStatus("PENDING")
                         .status("ACTIVE")
@@ -214,7 +213,6 @@ public class WageSeekerBillGeneratorService {
 
     private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay) {
        return LineItem.builder()
-                .paidAmount(BigDecimal.valueOf(5)) // for mow hard coding will update
                 .amount(actualAmountToPay)
                 .headCode(configs.getWageHeadCode())
                 .type(LineItem.TypeEnum.PAYABLE)

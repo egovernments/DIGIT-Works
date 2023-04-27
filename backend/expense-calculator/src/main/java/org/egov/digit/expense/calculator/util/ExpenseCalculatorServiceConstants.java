@@ -46,7 +46,7 @@ public class ExpenseCalculatorServiceConstants {
     public static final String PROJECT_ID_OF_CONSTANT = "PROJECT_ID_OF_";
     public static final String CONCAT_CHAR_CONSTANT = "_";
     public static final String ORG_ID_CONSTANT = "ORG_ID";
-
+    public static final String WF_SUBMIT_ACTION_CONSTANT = "SUBMIT";
     public static final String DEDUCTION_CONSTANT = "deduction";
     public static final String PERCENTAGE_CONSTANT = "percentage";
     public static final String LUMPSUM_CONSTANT = "lumpsum";
