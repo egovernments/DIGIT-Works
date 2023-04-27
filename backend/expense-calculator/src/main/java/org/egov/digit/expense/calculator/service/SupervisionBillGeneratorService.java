@@ -105,7 +105,7 @@ public class SupervisionBillGeneratorService {
                 BillDetail billDetail = null;
                 if (StringUtils.isNotBlank(expenseBill.getBusinessService()) &&
                         (expenseBill.getBusinessService().equalsIgnoreCase(config.getWageBusinessService()) ||
-                                expenseBill.getBusinessService().equalsIgnoreCase(BUSINESS_SERVICE_PURCHASE) )) {
+                                expenseBill.getBusinessService().equalsIgnoreCase(config.getPurchaseBusinessService()) )) {
 
                     // Build BillDetail
                     billDetail = BillDetail.builder()
@@ -146,7 +146,7 @@ public class SupervisionBillGeneratorService {
                     .billDate(Instant.now().toEpochMilli())
                     .netPayableAmount(calculation.getTotalAmount())
                     .referenceId(criteria.getContractId() +"_SB_"+supervisionBillNumber)
-                    .businessService(BUSINESS_SERVICE_SUPERVISION)
+                    .businessService(config.getSupervisionBusinessService())
                     .fromPeriod(calcDetail.getFromPeriod().longValue())
                     .toPeriod(calcDetail.getToPeriod().longValue())
                     .payer(payer)
@@ -193,7 +193,7 @@ public class SupervisionBillGeneratorService {
         /* Fetch the musterrollIds from supervisionBill to check if the supervision bill is already created for the musterrollIds
            for which wage bill is calculated */
         for (Bill bill : bills) {
-            if (StringUtils.isNotBlank(bill.getBusinessService()) && BUSINESS_SERVICE_SUPERVISION.equalsIgnoreCase(bill.getBusinessService())) {
+            if (StringUtils.isNotBlank(bill.getBusinessService()) && config.getSupervisionBusinessService().equalsIgnoreCase(bill.getBusinessService())) {
                 List<BillDetail> billDetailList = bill.getBillDetails();
                 List<String> ids = billDetailList.stream().map(billDetail -> billDetail.getReferenceId())
                                                  .collect(Collectors.toList());
@@ -246,7 +246,7 @@ public class SupervisionBillGeneratorService {
        //fetch the purchase bill(s)
         List<String> billIds = new ArrayList<>();
         for (Bill bill : bills) {
-            if (StringUtils.isNotBlank(bill.getBusinessService()) && BUSINESS_SERVICE_SUPERVISION.equalsIgnoreCase(bill.getBusinessService())) {
+            if (StringUtils.isNotBlank(bill.getBusinessService()) && config.getSupervisionBusinessService().equalsIgnoreCase(bill.getBusinessService())) {
                 List<BillDetail> billDetailList = bill.getBillDetails();
                 List<String> ids = billDetailList.stream().map(billDetail -> billDetail.getReferenceId())
                         .collect(Collectors.toList());
@@ -256,7 +256,7 @@ public class SupervisionBillGeneratorService {
             }
         }
         for (Bill bill : bills) {
-           if (StringUtils.isNotBlank(bill.getBusinessService()) && bill.getBusinessService().equalsIgnoreCase(BUSINESS_SERVICE_PURCHASE)
+           if (StringUtils.isNotBlank(bill.getBusinessService()) && bill.getBusinessService().equalsIgnoreCase(config.getPurchaseBusinessService())
                  && !billIds.contains(bill.getId())) {
                filteredBills.add(bill);
            }
@@ -285,7 +285,7 @@ public class SupervisionBillGeneratorService {
         BigDecimal supervisionCharge = null;
 
         if (StringUtils.isNotBlank(executingAuthority) && CBO_IMPLEMENTATION_AGENCY.equalsIgnoreCase(executingAuthority)) {
-           BigDecimal totalPurchaseBillAmount = calculateTotalBillAmount(bills, BUSINESS_SERVICE_PURCHASE);
+           BigDecimal totalPurchaseBillAmount = calculateTotalBillAmount(bills, config.getPurchaseBusinessService());
             supervisionCharge = (totalWageBillAmount.add(totalPurchaseBillAmount)).multiply(supervisionRate).divide(new BigDecimal(100));
         } else if (StringUtils.isNotBlank(executingAuthority) && CBO_IMPLEMENTATION_PARTNER.equalsIgnoreCase(executingAuthority)) {
             supervisionCharge = totalWageBillAmount.multiply(supervisionRate).divide(new BigDecimal(100));
@@ -314,7 +314,7 @@ public class SupervisionBillGeneratorService {
                 .netPayableAmount(supervisionCharge)
                 .tenantId(tenantId)
                 .calcDetails(calcDetails)
-                .businessService(BUSINESS_SERVICE_SUPERVISION)
+                .businessService(config.getSupervisionBusinessService())
                 .build();
 
         calcEstimates.add(calcEstimate);
