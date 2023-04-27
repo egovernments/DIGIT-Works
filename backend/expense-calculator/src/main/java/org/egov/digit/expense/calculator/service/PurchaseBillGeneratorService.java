@@ -101,7 +101,7 @@ public class PurchaseBillGeneratorService {
         List<LineItem> payableLineItems = billDetail.getPayableLineItems();
         BigDecimal netLineItemAmount = BigDecimal.ZERO;
         for(LineItem lineItem : payableLineItems) {
-            netLineItemAmount = netLineItemAmount.add(lineItem.getPaidAmount());
+            netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
         }
         billDetail.setNetLineItemAmount(netLineItemAmount);
     }
@@ -138,12 +138,13 @@ public class PurchaseBillGeneratorService {
             }
         }
         billDetail.addPayableLineItems(buildPayableLineItem(expense.subtract(deduction),tenantId,"PURCHASE"));
-        billDetail.addPayableLineItems(buildPayableLineItem(deduction,tenantId,"ULB_CHARGES"));
+        billDetail.addPayableLineItems(buildPayableLineItem(deduction,tenantId,"PURCHASE"));
     }
 
-    private LineItem buildPayableLineItem(BigDecimal paidAmount, String tenantId, String headCode) {
+    private LineItem buildPayableLineItem(BigDecimal amount, String tenantId, String headCode) {
        return LineItem.builder()
-                .paidAmount(paidAmount)
+                .amount(amount)
+                .paidAmount(BigDecimal.ZERO)
                 .tenantId(tenantId)
                 .isLineItemPayable(true)
                 .type(LineItem.TypeEnum.PAYABLE)

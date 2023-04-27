@@ -32,7 +32,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PurchaseBill {
 	@JsonProperty("id")
-
 	@Valid
 	private String id;
 
@@ -76,6 +75,9 @@ public class PurchaseBill {
 	@JsonProperty("documents")
 	@Valid
 	private List<Document> documents = null;
+
+	@JsonProperty("workflow")
+	private Workflow workflow;
 
 	public PurchaseBill addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
