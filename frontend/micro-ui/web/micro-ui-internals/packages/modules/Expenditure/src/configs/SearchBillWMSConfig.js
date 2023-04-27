@@ -201,7 +201,7 @@ export const SearchBillWMSConfig = {
                         enableColumnSort: true,
                         resultsJsonPath: "items",
                         showCheckBox: true,
-                        checkBoxActionLabel: 'ES_COMMON_GERERATE_PAYMENT_ADVICE',
+                        checkBoxActionLabel: 'ES_COMMON_GENERATE_PAYMENT_ADVICE',
                         showTableInstruction : "EXP_DOWNLOAD_BILL_INSTRUCTION",
                     },
                     children: {},

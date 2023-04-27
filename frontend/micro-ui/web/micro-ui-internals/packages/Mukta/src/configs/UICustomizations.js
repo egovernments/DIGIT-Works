@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import _ from "lodash";
 import React from "react";
-import { Amount } from "@egovernments/digit-ui-react-components";
+import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -1189,5 +1189,27 @@ export const UICustomizations = {
         },
       };
     }
-  }
+  },
+  DownloadBillConfig: {
+    preProcess: (data) => {
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      if (key === "ES_COMMON_TOTAL_AMOUNT") {
+        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+      }
+      if(key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+      if(key === "CS_COMMON_ACTION") {
+        return value ?  
+        <LinkLabel onClick={() => { console.log('Take Action')}}>
+          {value}
+        </LinkLabel> :
+        t("ES_COMMON_NA")
+      }
+    }
+  },
 };
