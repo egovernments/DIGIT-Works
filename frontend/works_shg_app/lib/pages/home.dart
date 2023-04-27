@@ -171,13 +171,13 @@ class _HomePage extends State<HomePage> {
 
   void Function()? getRoute(String key, BuildContext context) {
     switch (key) {
-      case 'HOME_MY_WORKS':
+      case Constants.homeMyWorks:
         return () => context.router.push(const WorkOrderRoute());
-      case 'HOME_TRACK_ATTENDENCE':
+      case Constants.homeTrackAttendance:
         return () => context.router.push(const TrackAttendanceInboxRoute());
-      case 'HOME_MUSTER_ROLLS':
+      case Constants.homeMusterRolls:
         return () => context.router.push(const ViewMusterRollsRoute());
-      case 'HOME_REGISTER_WAGE_SEEKER':
+      case Constants.homeRegisterWageSeeker:
         return () => context.router.push(const RegisterIndividualRoute());
       default:
         return null;
