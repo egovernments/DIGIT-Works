@@ -32,70 +32,60 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Bill {
 	@JsonProperty("id")
-
 	@Valid
 	private String id;
 
 	@JsonProperty("tenantId")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
 	@JsonProperty("billDate")
-
 	@Valid
 	private Long billDate;
 
 	@JsonProperty("dueDate")
-
 	@Valid
 	private Long dueDate;
 
 	@JsonProperty("netPayableAmount")
-
 	@Valid
 	private BigDecimal netPayableAmount = null;
 
 	@JsonProperty("netPaidAmount")
-
 	@Valid
 	private BigDecimal netPaidAmount = null;
 
-	@JsonProperty("businessservice")
+	@JsonProperty("businessService")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String businessService = null;
 
 	@JsonProperty("referenceId")
-
 	@Size(min = 2, max = 64)
 	private String referenceId;
 
 	@JsonProperty("fromPeriod")
-
 	@Valid
 	private Long fromPeriod;
 
 	@JsonProperty("toPeriod")
-
 	@Valid
 	private Long toPeriod;
 
 	@JsonProperty("paymentStatus")
-
 	@Size(min = 2, max = 64)
 	private String paymentStatus;
 
 	@JsonProperty("status")
-
 	@Size(min = 2, max = 64)
 	private String status;
 
+	@JsonProperty("billNumber")
+	private String billNumber;
+
 	@JsonProperty("payer")
 	@NotNull
-
 	@Valid
 	private Party payer;
 
@@ -108,7 +98,6 @@ public class Bill {
 	private Object additionalDetails;
 
 	@JsonProperty("auditDetails")
-
 	@Valid
 	private AuditDetails auditDetails;
 
@@ -116,7 +105,6 @@ public class Bill {
 	private ProcessInstance workflow;
 
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
-
 		if(null == this.billDetails)
 			this.billDetails = new ArrayList<>();
 

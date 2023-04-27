@@ -17,7 +17,9 @@ import '../models/organisation/organisation_model.dart';
 class SideBar extends StatefulWidget {
   final String module;
   const SideBar(
-      {super.key, this.module = 'rainmaker-common,rainmaker-attendencemgmt'});
+      {super.key,
+      this.module =
+          'rainmaker-common,rainmaker-attendencemgmt,rainmaker-common-masters'});
   @override
   State<StatefulWidget> createState() {
     return _SideBar();
@@ -62,8 +64,10 @@ class _SideBar extends State<SideBar> {
                       child: Loaders.circularLoader(context)),
                   loaded: (OrganisationListModel? organisationListModel) {
                     return organisationListModel?.organisations != null
-                        ? SizedBox(
+                        ? Container(
+                            width: MediaQuery.of(buildContext).size.width,
                             height: MediaQuery.of(buildContext).size.height / 3,
+                            color: const DigitColors().quillGray,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -90,10 +94,26 @@ class _SideBar extends State<SideBar> {
                   });
             });
           }),
-          DigitIconTile(
-            title: AppLocalizations.of(context).translate(i18.common.home),
-            icon: Icons.home,
-            onPressed: () => context.router.replace(const HomeRoute()),
+          Row(
+            children: [
+              context.router.currentPath == '/'
+                  ? Container(
+                      alignment: Alignment.centerLeft,
+                      height: 50,
+                      width: 9,
+                      color: const DigitColors().burningOrange,
+                    )
+                  : const SizedBox.shrink(),
+              Expanded(
+                child: DigitIconTile(
+                  title:
+                      AppLocalizations.of(context).translate(i18.common.home),
+                  selected: context.router.currentPath == '/',
+                  icon: Icons.home,
+                  onPressed: () => context.router.replace(const HomeRoute()),
+                ),
+              ),
+            ],
           ),
           DigitIconTile(
             title: AppLocalizations.of(context).translate(i18.common.language),
@@ -137,20 +157,35 @@ class _SideBar extends State<SideBar> {
                               ?.map(
                                   (e) => DigitRowCardModel.fromJson(e.toJson()))
                               .toList() as List<DigitRowCardModel>,
-                          width: 85)
+                          width: 80)
                       : const Text('');
                 },
               ),
             ),
             onPressed: () {},
           ),
-          DigitIconTile(
-              title:
-                  AppLocalizations.of(context).translate(i18.common.orgProfile),
-              icon: Icons.perm_contact_cal_sharp,
-              onPressed: () {
-                context.router.push(const ORGProfileRoute());
-              }),
+          Row(
+            children: [
+              context.router.currentPath.contains('orgProfile')
+                  ? Container(
+                      alignment: Alignment.centerLeft,
+                      height: 50,
+                      width: 9,
+                      color: const DigitColors().burningOrange,
+                    )
+                  : const SizedBox.shrink(),
+              Expanded(
+                child: DigitIconTile(
+                    title: AppLocalizations.of(context)
+                        .translate(i18.common.orgProfile),
+                    selected: context.router.currentPath.contains('orgProfile'),
+                    icon: Icons.perm_contact_cal_sharp,
+                    onPressed: () {
+                      context.router.push(const ORGProfileRoute());
+                    }),
+              ),
+            ],
+          ),
           DigitIconTile(
               title: AppLocalizations.of(context).translate(i18.common.logOut),
               icon: Icons.logout,

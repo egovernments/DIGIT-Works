@@ -56,12 +56,13 @@ class Assignees with _$Assignees {
 @freezed
 class WorkflowState with _$WorkflowState {
   const factory WorkflowState({
-    String? tenantId,
+    required String tenantId,
     String? businessServiceId,
     String? applicationStatus,
     String? state,
     bool? isStartState,
     bool? isTerminateState,
+    List<WorkflowActions>? actions,
     bool? isStateUpdatable,
   }) = _WorkflowState;
 
@@ -69,4 +70,14 @@ class WorkflowState with _$WorkflowState {
     Map<String, dynamic> json,
   ) =>
       _$WorkflowStateFromJson(json);
+}
+
+@freezed
+class WorkflowActions with _$WorkflowActions {
+  const factory WorkflowActions({List<String>? roles}) = _WorkflowActions;
+
+  factory WorkflowActions.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$WorkflowActionsFromJson(json);
 }

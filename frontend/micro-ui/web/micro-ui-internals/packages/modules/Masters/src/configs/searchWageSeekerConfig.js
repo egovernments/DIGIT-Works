@@ -70,7 +70,7 @@ const searchWageSeekerConfig = () => {
               },
             },
             {
-              label: "MASTERS_PHONE_NUMBER",
+              label: "CORE_COMMON_PROFILE_MOBILE_NUMBER",
               type: "mobileNumber",
               isMandatory: false,
               disable: false,
@@ -160,7 +160,7 @@ const searchWageSeekerConfig = () => {
               // additionalCustomization: true,
             },
             {
-              label: "MASTERS_ULB",
+              label: "CORE_COMMON_PROFILE_CITY",
               jsonPath: "address[0].tenantId",
               additionalCustomization: true,
             },
