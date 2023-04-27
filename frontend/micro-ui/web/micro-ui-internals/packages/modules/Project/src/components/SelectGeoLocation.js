@@ -3,17 +3,21 @@ import { CardLabel, LabelFieldPair, LocationSearch, Modal, TextInput } from "@eg
 import { useTranslation } from "react-i18next";
 
 const SelectGeoLocation = ({ onSelect, config, formData }) => {
+  console.log("inside geolocation compo");
   const { t } = useTranslation();
   const [showLocationSearch, setShowLocationSearch] = useState(false);
   const onChange = (pincode, position) => {
+    console.log(pincode, position, config);
     onSelect(config?.key, position)
   }
 
   const handleShowLocationSearch = () => {
+    console.log("opened modal");
     setShowLocationSearch(true);
   }
 
   const actionCancelOnSubmit = () =>{
+    console.log("closed modal");
     setShowLocationSearch(false);
   }
 

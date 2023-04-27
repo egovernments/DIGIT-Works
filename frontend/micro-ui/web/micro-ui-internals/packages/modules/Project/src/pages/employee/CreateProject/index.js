@@ -7,7 +7,7 @@ import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMU
 import { updateDefaultValues } from "../../../utils/modifyProjectUtils";
 
 const CreateProject = () => {
-    
+    console.log("inside create project form");
     const {t} = useTranslation();
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
