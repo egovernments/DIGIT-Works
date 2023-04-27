@@ -5,6 +5,9 @@ export const SearchBillWMSConfig = {
         {
             label : "EXP_SEARCH_BILL",
             type: 'search',
+            actionLabel: "ES_COMMON_DOWNLOAD_PAYMENT_ADVICE",
+            actionRole: "EMPLOYEE",
+            actionLink: "expenditure/download-bill",
             apiDetails: {
                 serviceName: "/wms/expense/_search",
                 requestParam: {},
@@ -70,7 +73,7 @@ export const SearchBillWMSConfig = {
                                     moduleName: "expense",
                                     localePrefix: "COMMON_MASTERS_BILL",
                                     select:
-                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('BILL')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_'+ele.code }))}"
+                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('BILL')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_TYPE_'+Digit.Utils.locale.getTransformedLocale(ele.businessService) }))}"
                                     } 
                                 }
                             },
@@ -112,7 +115,7 @@ export const SearchBillWMSConfig = {
                                   optionsKey: "i18nKey",
                                   allowMultiSelect: false,
                                   masterName: "commonUiConfig",
-                                  moduleName: "SearchBillConfig",
+                                  moduleName: "SearchBillWMSConfig", //update this based on 
                                   customfn: "populateReqCriteria",
                                 }
                             },
@@ -170,7 +173,7 @@ export const SearchBillWMSConfig = {
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "businessObject.tenantId",
+                                jsonPath: "businessObject.additionalDetails.location",
                                 additionalCustomization:true 
                             },
                             {
@@ -179,11 +182,12 @@ export const SearchBillWMSConfig = {
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "businessObject.additionalDetails.billType",
+                                jsonPath: "businessObject.businessservice",
+                                additionalCustomization:true
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                jsonPath: "businessObject.musterRollStatus",
+                                jsonPath: "ProcessInstance.state.state",
                                 additionalCustomization:true
                             },
                             {
@@ -196,6 +200,9 @@ export const SearchBillWMSConfig = {
                         enableGlobalSearch: false,
                         enableColumnSort: true,
                         resultsJsonPath: "items",
+                        showCheckBox: true,
+                        checkBoxActionLabel: 'ES_COMMON_GERERATE_PAYMENT_ADVICE',
+                        showTableInstruction : "EXP_DOWNLOAD_BILL_INSTRUCTION",
                     },
                     children: {},
                     show: true 

@@ -1,38 +1,22 @@
 import BillingService from "../../../elements/Bill";
-import { WageSeekerService } from "../../../elements/WageSeeker";
-import { BankAccountService } from "../../../elements/BankAccount";
 import { ContractService } from "../../../elements/Contracts";
+import AttendanceService from "../../../elements/Attendance";
 
-const getBeneficiaryData = async (wageBillDetails, tenantId, t) => {
+const getBeneficiaryData = async (wageBillDetails, tenantId, musterRoll, t) => {
   let tableData = {}
+  const individuals = musterRoll?.individualEntries
   if(wageBillDetails?.length > 0) {
-    const individualIds = wageBillDetails?.map(item => item?.payee?.identifier)
-    //Get individual data to fetch reg id, name, guardian name
-    const payload = {
-      Individual: {
-        id : individualIds //array of individual Ids
-      }
-    }
-    const searchParams = { offset: 0, limit: 100}
-    const data = await WageSeekerService.search(tenantId, payload, searchParams);
-    const individualData = data?.Individual
-
-    //Get bank data
-    const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "IND", referenceId: individualIds } }
-    const bankDetails = await BankAccountService.search(bankDetailPayload, {});
-    const bankAccounts = bankDetails?.bankAccounts?.[0]?.bankAccountDetails?.[0]
-
     wageBillDetails?.forEach((item, index) => {
       let tableRow = {}
-      const individual = individualData?.find(ind => ind?.id === item?.payee?.identifier)
+      const individual = individuals?.find(ind => ind?.individualId === item?.payee?.identifier)
       tableRow.id = item?.id
       tableRow.sno = index + 1
-      tableRow.registerId = individual?.individualId || t("NA")
-      tableRow.nameOfIndividual = individual?.name?.givenName || t("NA")
-      tableRow.guardianName = individual?.fatherName || t("NA")
+      tableRow.registerId = individual?.additionalDetails?.userId || t("NA")
+      tableRow.nameOfIndividual = individual?.additionalDetails?.userName || t("NA")
+      tableRow.guardianName = individual?.additionalDetails?.fatherName || t("NA")
       tableRow.amount = item?.payableLineItems?.[0]?.amount || 0 //check if correct
       tableRow.bankAccountDetails = {
-        accountNo : (bankAccounts?.accountNumber && bankAccounts?.bankBranchIdentifier?.code) ? `${bankAccounts?.accountNumber} - ${bankAccounts?.bankBranchIdentifier?.code}` : t("NA"), 
+        accountNo : individual?.additionalDetails?.bankDetails || t("NA"), 
         ifscCode : null
       }
       //update this id
@@ -62,7 +46,6 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   const workOrderNum = referenceIds?.[0]
   const musterRollNum = referenceIds?.[1]
 
-  const beneficiaryData = await getBeneficiaryData(wageBill?.billDetails, tenantId, t)
   const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
   const location = t(`TENANT_TENANTS_${headerLocale}`)
 
@@ -71,11 +54,15 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     tenantId,
     contractNumber: workOrderNum
   }
-  const response = await ContractService.search(tenantId, contractPayload, {});
-  const contract = response?.contracts?.[0]
+  const contractRes = await ContractService.search(tenantId, contractPayload, {});
+  const contract = contractRes?.contracts?.[0]
 
-  //get muster period, call muster search
+  //get muster details
+  const musterRes = await AttendanceService.search(tenantId, { musterRollNumber: musterRollNum });
+  const musterRoll = musterRes?.musterRolls?.[0]
   
+  const beneficiaryData = await getBeneficiaryData(wageBill?.billDetails, tenantId, musterRoll, t)
+
   const billDetails = {
     title: " ",
     asSectionHeader: true,
@@ -94,8 +81,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     asSectionHeader: true,
     values: [
         { title: "ES_COMMON_MUSTER_ROLL_ID", value: musterRollNum || t("ES_COMMON_NA")},
-        { title: "ES_COMMON_MUSTER_ROLL_PERIOD", value: '06/03/2023 - 12/03/2023' || t("ES_COMMON_NA") }
-        // { title: "ES_COMMON_MUSTER_ROLL_PERIOD", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("ES_COMMON_NA") }
+        { title: "ES_COMMON_MUSTER_ROLL_PERIOD", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("ES_COMMON_NA") }
     ],
     additionalDetails : {
       table : {
