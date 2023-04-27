@@ -177,7 +177,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 onNextPage={nextPage}
                 onPrevPage={previousPage}
                 pageSizeLimit={getValues("limit")}
-                showCheckbox={config?.showCheckbox ? true : false}
+                showCheckBox={config?.showCheckBox ? true : false}
                 actionLabel={config?.checkBoxActionLabel}
                 tableSelectionHandler={() => {console.log('Handle table row selection')}} //pass handler from config
                 getCellProps={(cellInfo) => {
