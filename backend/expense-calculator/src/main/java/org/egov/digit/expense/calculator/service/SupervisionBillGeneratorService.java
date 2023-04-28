@@ -118,7 +118,7 @@ public class SupervisionBillGeneratorService {
                             .payee(expenseBill.getBillDetails().get(0).getPayee())
                             .lineItems(expenseBill.getBillDetails().get(0).getLineItems())
                             .payableLineItems(expenseBill.getBillDetails().get(0).getPayableLineItems())
-                            .netLineItemAmount(expenseBill.getNetPayableAmount())
+                            .totalAmount(expenseBill.getTotalAmount())
                             .build();
                     billDetails.add(billDetail);
                 }
@@ -144,7 +144,7 @@ public class SupervisionBillGeneratorService {
             Bill bill = Bill.builder()
                     .tenantId(criteria.getTenantId())
                     .billDate(Instant.now().toEpochMilli())
-                    .netPayableAmount(calculation.getTotalAmount())
+                    .totalAmount(calculation.getTotalAmount())
                     .referenceId(criteria.getContractId() +"_SB_"+supervisionBillNumber)
                     .businessService(config.getSupervisionBusinessService())
                     .fromPeriod(calcDetail.getFromPeriod().longValue())
@@ -344,7 +344,7 @@ public class SupervisionBillGeneratorService {
         BigDecimal totalBillAmount = BigDecimal.ZERO;
         List<BigDecimal> billAmountList = bills.stream()
                 .filter(bill -> bill.getBusinessService().equalsIgnoreCase(businessService))
-                .map(bill -> bill.getNetPayableAmount())
+                .map(bill -> bill.getTotalAmount())
                 .collect(Collectors.toList());
 
         for (BigDecimal billAmount : billAmountList) {

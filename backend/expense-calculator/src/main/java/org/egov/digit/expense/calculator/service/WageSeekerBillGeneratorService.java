@@ -103,7 +103,7 @@ public class WageSeekerBillGeneratorService {
                                                 .payee(payee)
                                                 .lineItems(Collections.singletonList(lineItem))
                                                 .payableLineItems(Collections.singletonList(lineItem))
-                                                .netLineItemAmount(actualAmountToPay)
+                                               // .netLineItemAmount(actualAmountToPay)
                                                 .build();
 
                     billDetails.add(billDetail);
@@ -115,7 +115,7 @@ public class WageSeekerBillGeneratorService {
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
                         .billDate(Instant.now().toEpochMilli())
-                        .netPayableAmount(netPayableAmount)
+                      //  .netPayableAmount(netPayableAmount)
                         .referenceId(referenceId +CONCAT_CHAR_CONSTANT+musterRoll.getMusterRollNumber())
                         .businessService(configs.getWageBusinessService())
                         .fromPeriod(musterRoll.getStartDate().longValue())
