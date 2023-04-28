@@ -358,7 +358,7 @@ public class SupervisionBillGeneratorService {
                 .identifier(orgId)
                 .type(type)
                 .tenantId(tenantId)
-                .status("STATUS")
+                .status("ACTIVE")
                 .build();
     }
 

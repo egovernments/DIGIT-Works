@@ -55,6 +55,11 @@ public class BillDetail {
 	@Default
 	private BigDecimal totalPaidAmount = BigDecimal.ZERO;
 
+	@JsonProperty("netLineItemAmount")
+	@Valid
+	@Default
+	private BigDecimal netLineItemAmount = BigDecimal.ZERO;
+
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 64)
 	private String referenceId;
