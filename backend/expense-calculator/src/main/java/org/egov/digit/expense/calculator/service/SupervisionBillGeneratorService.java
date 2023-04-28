@@ -236,10 +236,15 @@ public class SupervisionBillGeneratorService {
        //fetch the wage bill(s)
        for (Bill bill : bills) {
           if (StringUtils.isNotBlank(bill.getBusinessService()) && bill.getBusinessService().equalsIgnoreCase(config.getWageBusinessService())) {
-              String musterNumBill = bill.getReferenceId().split("\\_")[1];
-              if (filteredMusters.contains(musterNumBill)) {
+              if (!CollectionUtils.isEmpty(filteredMusters)) {
+                  String musterNumBill = bill.getReferenceId().split("\\_")[1];
+                  if (filteredMusters.contains(musterNumBill)) {
+                      filteredBills.add(bill);
+                  }
+              } else {
                   filteredBills.add(bill);
               }
+
           }
        }
 
