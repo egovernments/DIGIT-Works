@@ -19,7 +19,6 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive)
     payload_modal.documentType = documentType?.[docType];
     payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
     payload_modal.documentUid = document?.[1]?.['fileStoreId']?.['fileStoreId'];
-    payload_modal.tenantId = document?.[1]?.['fileStoreId']?.['tenantId'];
     payload_modal.key = docType;
     payload_modal.additionalDetails = {
       fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] : documentType?.[docType],
@@ -49,7 +48,7 @@ const fetchDeductions = (deductions, tenantId) => {
             "tenantId": tenantId,
             "headCode": row?.name?.code,
             "amount": row?.amount,
-            "type": "deduction",
+            "type": "DEDUCTION",
             "additionalDetails": {
                 "comments": row?.comments
             }
@@ -65,18 +64,23 @@ export const createBillPayload = (data, contract) => {
     let payload = {
         bill: {
             "tenantId": tenantId,
-            "invoiceDate": data?.invoice_date,
+            "invoiceDate": convertDateToEpoch(data?.invoice_date),
             "invoiceNumber": data?.invoiceDetails_invoiceNumber,
             "contractNumber": data?.basicDetails_workOrderNumber,
             "projectId": data?.basicDetails_projectID,
-            "fromPeriod":convertDateToEpoch(contract?.startDate),
-            "toPeriod": convertDateToEpoch(contract?.endDate), 
-            "billDate": convertDateToEpoch(data?.billDetails_billDate),
+            "billDate": convertDateToEpoch(data?.billDetails_billDate), //NOT NEEDED?
+            "status": "ACTIVE", //?
             "billDetails": [
-              {
+              { 
+                "tenantId": tenantId,	
+                "billId": null,	
+                "netLineItemAmount": null,	
+                "referenceId": null,	
+                "paymentStatus": null,	
                 "fromPeriod": convertDateToEpoch(contract?.startDate),
                 "toPeriod":convertDateToEpoch(contract?.endDate),
                 "payee": {
+                  "tenantId": tenantId,
                   "type": "ORG", 
                   "identifier": data?.invoiceDetails_vendorId
                 },
@@ -85,13 +89,13 @@ export const createBillPayload = (data, contract) => {
                     "tenantId": tenantId,
                     "headCode": "MC",
                     "amount": data?.invoiceDetails_materialCost,
-                    "type": "expense"
+                    "type": "PAYABLE" //confirm
                   },
                   {
                     "tenantId": tenantId,
                     "headCode": "GST",
                     "amount": data?.invoiceDetails_gst,
-                    "type": "expense"
+                    "type": "PAYABLE" //confirm
                   },
                   ...DeductionsList
                 ],
@@ -113,7 +117,7 @@ export const createBillPayload = (data, contract) => {
                 ),
           },
         workflow: {
-            "action": "create", 
+            "action": "CREATE",  //?
             "assignees": []
           }
     };
