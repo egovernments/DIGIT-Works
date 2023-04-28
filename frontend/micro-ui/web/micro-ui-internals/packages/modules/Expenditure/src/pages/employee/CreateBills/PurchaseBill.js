@@ -15,26 +15,26 @@ const PurchaseBill = () => {
     const [isFormReady, setIsFormReady] = useState(false);
     const stateTenant = Digit.ULBService.getStateId();
 
-    const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
-    stateTenant,
-    Digit.Utils.getConfigModuleName(),
-    [
-        {
-            "name": "CreatePurchaseBillConfig"
-        }
-    ],
-    {
-      select: (data) => {
-          return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
-      },
-    }
-    );
+    // const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
+    // stateTenant,
+    // Digit.Utils.getConfigModuleName(),
+    // [
+    //     {
+    //         "name": "CreatePurchaseBillConfig"
+    //     }
+    // ],
+    // {
+    //   select: (data) => {
+    //       return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
+    //   },
+    // }
+    // );
 
     //local config
-    //let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
+    let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
 
     //fetching contract data
-    const { isLoading: isContractLoading,data:contract } = Digit.Hooks.contracts.useContractSearch({
+    const { isLoading: isContractLoading,data : contract } = Digit.Hooks.contracts.useContractSearch({
         tenantId,
         filters: { contractNumber, tenantId },
         config:{
@@ -55,13 +55,11 @@ const PurchaseBill = () => {
     const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = PurchaseBillSession;
 
-
-
     const searchVendorPayload = {
         "SearchCriteria": {
             "tenantId": tenantId,
             "functions" : {
-                "type" : "VEN"
+                "type" : "VEN" //hardcoded
             }
         }
     }
@@ -69,28 +67,17 @@ const PurchaseBill = () => {
     //vendor search
     const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload);
 
-    
-    //Deductions Search
-    const { isLoading : isDeductionsMasterDataLoading, data : deductionMasterData } = Digit.Hooks.useCustomMDMS(
-        Digit.ULBService.getStateId(),
-        "expense",
-        [{ "name": "ApplicableCharges"}]
-    );
-
     const createNameOfVendorObject = (vendorOptions) => {
         return vendorOptions?.organisations?.map(vendorOption => ( {code : vendorOption?.id, name : vendorOption?.name, applicationNumber : vendorOption?.applicationNumber, orgNumber : vendorOption?.orgNumber } ))
     }
 
     useEffect(()=>{
-        if((contract && configs && !isOrgSearchLoading && !isDeductionsMasterDataLoading && !isContractLoading)) {
+        if((contract && configs && !isOrgSearchLoading && !isContractLoading)) {
             updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract});
-
-
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
-
             setIsFormReady(true);
         }
-    },[isContractLoading, isOrgSearchLoading, isDeductionsMasterDataLoading, contract]);
+    },[isContractLoading, isOrgSearchLoading]);
 
     
     if(isConfigLoading) return <Loader></Loader>
@@ -104,7 +91,7 @@ const PurchaseBill = () => {
                 setSessionFormData={setSessionFormData} 
                 clearSessionFormData={clearSessionFormData} 
                 contract={contract} 
-                preProcessData={{nameOfVendor : nameOfVendor}}
+                preProcessData={{nameOfVendor}}
                 isModify={isModify} 
                 ></CreatePurchaseBillForm>
             }

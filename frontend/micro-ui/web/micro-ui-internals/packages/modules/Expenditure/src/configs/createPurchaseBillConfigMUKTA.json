@@ -30,23 +30,6 @@
                   }
                 },
                 {
-                  "label": "WORKS_BILL_DATE",
-                  "isMandatory": false,
-                  "key": "basicDetails_purchaseBillDate",
-                  "type": "date",
-                  "disable": true,
-                  "preProcess" : {
-                    "updateDependent" : ["populators.customStyle.display"]
-                  },
-                  "populators": {
-                    "name": "basicDetails_purchaseBillDate",
-                    "customStyle" : {
-                      "display" : "none"
-                    },
-                    "customClass": "field-value-no-border"
-                  }
-                },
-                {
                   "label": "WORKS_ORDER_NO",
                   "isMandatory": false,
                   "key": "basicDetails_workOrderNumber",

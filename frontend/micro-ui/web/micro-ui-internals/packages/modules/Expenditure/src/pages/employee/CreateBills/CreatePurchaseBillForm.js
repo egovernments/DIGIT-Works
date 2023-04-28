@@ -24,26 +24,7 @@ const CreatePurchaseBillForm = ({
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
-
     const rolesForThisAction = "BILL_CREATOR" //hardcoded for now
-    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
-    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
-
-    // useEffect(() => {
-    //     setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
-    //     //TODO: if name-designation is req
-    //     // let refactoredAppoversNames = [];
-    //     // if(employeeDatav1?.Employees?.length > 0) {
-    //     //     refactoredAppoversNames = employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA").map((emp=>{
-    //     //         let designation = t(`COMMON_MASTERS_DESIGNATION_${emp?.assignments?.[0]?.designation}`);
-    //     //         return {...emp, name_designation : `${emp?.nameOfEmp} - ${designation}`}
-    //     //     }))
-    //     // }else {
-    //     //     refactoredAppoversNames = [];
-    //     // }
-
-    //     // setApprovers(refactoredAppoversNames);
-    // }, [employeeDatav1])
 
     createPurchaseBillConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfig(t, createPurchaseBillConfig, {
@@ -57,10 +38,6 @@ const CreatePurchaseBillForm = ({
                 value : [!isModify ? "none" : "flex"]
               },
               {
-                key : 'basicDetails_purchaseBillDate',
-                value : [!isModify ? "none" : "flex"]
-              },
-              {
                 key : 'billDetails_billDate',
                 value : [new Date().toISOString().split("T")[0]]
               },
@@ -68,8 +45,8 @@ const CreatePurchaseBillForm = ({
           }),
       [preProcessData?.nameOfVendor]);
 
-    //session storage rendering infinitely
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+        
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
