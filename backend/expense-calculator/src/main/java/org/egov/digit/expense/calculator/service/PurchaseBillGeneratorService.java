@@ -88,12 +88,13 @@ public class PurchaseBillGeneratorService {
                                 .fromPeriod(contract.getStartDate().longValue())
                                 .toPeriod(contract.getEndDate().longValue())
                                 .status(providedPurchaseBill.getStatus())
-                                .netPayableAmount(netPayableAmount)
+                               // .netPayableAmount(netPayableAmount)
                                 .paymentStatus("PENDING")
                                 .payer(payer)
                                 .billDetails(providedPurchaseBill.getBillDetails())
                                 .additionalDetails(providedPurchaseBill.getAdditionalDetails())
                                 .build();
+
         return purchaseBill;
     }
 

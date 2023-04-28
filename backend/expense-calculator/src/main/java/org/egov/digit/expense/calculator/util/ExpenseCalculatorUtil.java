@@ -6,6 +6,7 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
+import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillCriteria;
@@ -30,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.BUSINESS_SERVICE_SUPERVISION;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MUSTER_ROLL_ID_JSON_PATH;
 
 @Component
@@ -43,6 +43,9 @@ public class ExpenseCalculatorUtil {
 
     @Autowired
     private ExpenseCalculatorConfiguration configs;
+
+    @Autowired
+    private ExpenseCalculatorRepository expenseCalculatorRepository;
 
     public List<String> fetchListOfMusterRollIds(RequestInfo requestInfo, String tenantId, List<String> musterRollId, boolean onlyApproved) {
         StringBuilder url = null;
@@ -135,10 +138,14 @@ public class ExpenseCalculatorUtil {
     }
 
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
+
+        // fetch the bill id from the calculator DB
+        List<String> billIds = expenseCalculatorRepository.getBills(contractId, tenantId);
+
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         //Pagination pagination = Pagination.builder().limit(100).offSet(0).order(Order.ASC).build();
         BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
-                .referenceIds(new HashSet<>(Arrays.asList(contractId))).build();
+                .ids(new HashSet<>(billIds)).build();
         BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
                 .billCriteria(billCriteria).tenantId(tenantId).build();
         Object responseObj = restRepo.fetchResult(url, billSearchRequest);
