@@ -63,14 +63,10 @@ class _LanguageSelectionPage extends State<LanguageSelectionPage> {
                                     selectedLangIndex:
                                         data!.value == 'en_IN' ? 0 : 1));
 
-                            await AppLocalizations(
-                              Locale(data.value.split('_').first,
-                                  data.value.split('_').last),
-                            ).load();
                             context.read<LocalizationBloc>().add(
                                 OnLoadLocalizationEvent(
                                     module:
-                                        'rainmaker-common,rainmaker-attendencemgmt',
+                                        'rainmaker-common,rainmaker-common-masters,rainmaker-${GlobalVariables.stateInfoListModel?.code}',
                                     tenantId: state.stateInfoListModel!.code
                                         .toString(),
                                     locale: data.value));

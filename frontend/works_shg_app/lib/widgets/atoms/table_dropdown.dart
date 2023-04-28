@@ -50,7 +50,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
               decoration: BoxDecoration(
                 border: Border.all(
                     color: widget.isDisabled
-                        ? const DigitColors().hintGrey
+                        ? const Color.fromRGBO(149, 148, 148, 1)
                         : const DigitColors().black),
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -65,7 +65,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
                       style: TextStyle(
                           fontSize: 12,
                           color: widget.isDisabled
-                              ? const DigitColors().hintGrey
+                              ? const Color.fromRGBO(149, 148, 148, 1)
                               : const DigitColors().black),
                     ),
                   ),
@@ -87,34 +87,42 @@ class _DropDownDialogState extends State<DropDownDialog> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          contentPadding: const EdgeInsets.all(4.0),
           scrollable: true,
           title: Text(
             AppLocalizations.of(context)
                 .translate(widget.label ?? i18.common.selectAnOption),
             style: TextStyle(
-                fontSize: 12,
+                fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: widget.isDisabled
-                    ? const DigitColors().hintGrey
+                    ? const Color.fromRGBO(149, 148, 148, 1)
                     : const DigitColors().black),
           ),
           content: SizedBox(
-            height: widget.options.length * 40,
-            width: 200,
+            height:
+                widget.options.length < 4 ? widget.options.length * 45 : 120,
             child: Scrollbar(
               controller: _scrollController,
               thumbVisibility: true,
               child: SingleChildScrollView(
+                padding: EdgeInsets.zero,
                 controller: _scrollController,
                 physics: const ClampingScrollPhysics(),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: widget.options.map((option) {
                     return RadioListTile(
+                      contentPadding: const EdgeInsets.only(
+                          left: 8.0, top: 0.0, bottom: 0.0),
+                      visualDensity: const VisualDensity(
+                          horizontal: VisualDensity.minimumDensity,
+                          vertical: VisualDensity.minimumDensity),
                       title: Text(
                           AppLocalizations.of(context).translate(option),
                           style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400)),
+                              fontSize: 16, fontWeight: FontWeight.w400)),
                       value: option,
                       groupValue: widget.selectedOption,
                       onChanged: (value) {

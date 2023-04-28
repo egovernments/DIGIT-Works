@@ -68,7 +68,7 @@ const CreateEstimate = () => {
             values: [
                 {
                     "title": "WORKS_ESTIMATE_TYPE",
-                    "value": "Original Estimate"
+                    "value": t("ORIGINAL_ESTIMATE")
                 },
                 {
                     "title": "WORKS_PROJECT_ID",
