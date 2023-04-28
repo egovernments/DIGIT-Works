@@ -19,7 +19,7 @@ const ViewPurchaseBill = ({props}) => {
         "status": ""
     }
 
-    const { isLoading : isApplicableChargesLoading, data : applicableCharges } = Digit.Hooks.useCustomMDMS(
+    const { isLoading : isApplicableChargesLoading, data : metaData } = Digit.Hooks.useCustomMDMS(
       Digit.ULBService.getStateId(),
       "expense",
       [{ name: "ApplicableCharges" }],
@@ -32,11 +32,7 @@ const ViewPurchaseBill = ({props}) => {
       }
     );
 
-    if(!isApplicableChargesLoading) {
-      console.log(applicableCharges);
-    }
-
-    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {enabled : true}, {});
+    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {enabled : !isApplicableChargesLoading}, metaData);
     
     const handleActionBar = (option) => {
 

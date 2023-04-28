@@ -10,7 +10,7 @@
     "packages/modules/Contracts",
     "packages/modules/Estimate",
     "packages/modules/AttendenceMgmt",
-    "packages/modules/Expenditure",
+    "packages/modules/*",
     "packages/Mukta"
     ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",

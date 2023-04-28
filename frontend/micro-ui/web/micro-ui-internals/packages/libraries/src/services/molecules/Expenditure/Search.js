@@ -127,38 +127,35 @@ export const BillsSearch = {
     };
   },
   viewPurchaseBillDetails: async ({tenantId, t, billCriteria, pagination, headerLocale, metaData= {}}) => {
-    console.log(metaData);
+
     //Bill search
     const billResponse = await WorksService?.searchBill({billCriteria, pagination});
     const billData = billResponse?.bills?.[1]; //TODO: Index with update once API is done.
     const WONumber = billData?.referenceId.split("_")[0];
 
+    //Work order search
     const WOSearchPayload = {
       tenantId : tenantId,
       contractNumber : WONumber
     }
-
-    //Work order search
     const WOResponse = await ContractService?.search(tenantId, WOSearchPayload, {});
     const WOData = WOResponse?.contracts?.[0];
 
+    //Org Search
     const orgPayload = {
       SearchCriteria: {
         id: [billData?.billDetails?.[0]?.payee?.identifier], //b9838d9c-b079-4cdb-b061-3d9addac9d40
         tenantId
       }
     }
-
-    //Org Search
     const orgResponse = await OrganisationService?.search(orgPayload);
     const orgData = orgResponse?.organisations?.[0];
 
-    //PayableLineItems
+    //lineItems
     const lineItems = billData?.billDetails?.[0]?.lineItems;
 
     let mcDetails = {};
     let gstDetails = {};
-
     mcDetails.amount = lineItems?.filter(lineItem=>lineItem?.headCode === "MC")?.[0]?.amount;
     gstDetails.amount = lineItems?.filter(lineItem=>lineItem?.headCode === "GST")?.[0]?.amount;
 
@@ -189,6 +186,7 @@ export const BillsSearch = {
         ]
     };
 
+    //total bill amount
     let billAmount = mcDetails.amount + gstDetails.amount;
     const billDetails = {
         title: "EXP_INVOICE_DETAILS",
@@ -197,22 +195,22 @@ export const BillsSearch = {
             { title: "EXP_BILL_AMOUNT", value: (billAmount) || "NA" },
         ]
     };
-
-    //headCode filteration 
-    //EXP_DEDUCTION_NAME
-    //EXP_PERCENTAGE_OR_FIXED
-    //ES_COMMON_AMOUNT - payableLineItems.amount / payableLineItems.paidAmount
-    //WF_COMMON_COMMENTS - WF_COMMON_COMMENTS
-
+    console.log(lineItems, metaData);
+    //totalDeductions = sum of amount in the table
     let totalDeductions = 0;
     const deductionsTableRows = [t("WORKS_SNO"), t("EXP_DEDUCTION_NAME"), t("EXP_PERCENTAGE_OR_FIXED"), t("ES_COMMON_AMOUNT"), t("WF_COMMON_COMMENTS")];
     const deductionsTableData = lineItems?.map((lineItem, index)=>{
       if(lineItem?.type === "DEDUCTION") {
+
+        let masterDeduction = metaData?.filter(data=>data?.code === lineItem?.headCode)[0];
+        let masterDeductionType = masterDeduction?.calculationType;
+        let percentageOrFixed = masterDeductionType === "percentage" ? `${masterDeduction?.value}%` : t("EXP_FIXED");
         totalDeductions += lineItem?.amount;
+
         return [
           index + 1,
-          t(`EXP_${lineItem}`),
-          "CALLMDMSFORTHIS",
+          t(`EXP_${lineItem?.headCode}`),
+          percentageOrFixed,
           lineItem?.amount,
           lineItem?.additionalDetails?.comments
         ]
