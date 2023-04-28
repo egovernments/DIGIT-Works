@@ -25,7 +25,7 @@ public class PaymentQueryBuilder {
 		PaymentCriteria paymentCriteria = paymentSearchRequest.getPaymentCriteria();
 		Pagination pagination = paymentSearchRequest.getPagination();
 		
-		StringBuilder paymentSearchQuery = null; //new StringBuilder(Constants.BILL_QUERY); //TODO
+		StringBuilder paymentSearchQuery = new StringBuilder(Constants.PAYMENT_QUERY);
 
 		paymentSearchQuery.append(" payment.tenantId = ? ");
 		preparedStatementValues.add(paymentCriteria.getTenantId());

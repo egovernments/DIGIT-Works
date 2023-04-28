@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.Pagination;
@@ -31,7 +32,7 @@ public class BillQueryBuilder {
 
     public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
         BillCriteria criteria=billSearchRequest.getBillCriteria();
-        StringBuilder query = new StringBuilder(BILL_SELECT_QUERY);
+        StringBuilder query = new StringBuilder(Constants.BILL_QUERY);
 
         Set<String> billNumbers = criteria.getBillNumbers();
         if(!CollectionUtils.isEmpty(billNumbers)) {
@@ -58,20 +59,26 @@ public class BillQueryBuilder {
 
         if (StringUtils.isNotBlank(criteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.tenantid=? ");
+            query.append(" bill.tenantid = ? ");
             preparedStmtList.add(criteria.getTenantId());
         }
 
         if (StringUtils.isNotBlank(criteria.getBusinessService())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.businessservice=? ");
+            query.append(" bill.businessservice = ? ");
             preparedStmtList.add(criteria.getBusinessService());
         }
 
         if (StringUtils.isNotBlank(criteria.getStatus())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.status=? ");
+            query.append(" bill.status = ? ");
             preparedStmtList.add(criteria.getStatus());
+        }
+        
+        if (StringUtils.isNotBlank(criteria.getStatusNot())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.status != ? ");
+            preparedStmtList.add(criteria.getStatusNot());
         }
 
         addOrderByClause(billSearchRequest);
@@ -140,86 +147,4 @@ public class BillQueryBuilder {
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
         preparedStmtList.addAll(ids);
     }
-    
-    private static final String BILL_SELECT_QUERY = "SELECT bill.id as bill_id, "+
-            "bill.tenantid as bill_tenantid, "+
-            "bill.billNumber as bill_billNumber, "+
-            "bill.billdate as bill_billdate, " +
-            "bill.duedate as bill_duedate, " +
-            "bill.netpayableamount as bill_netpayableamount, "+
-            "bill.netpaidamount as bill_netpaidamount, " +
-            "bill.businessservice as bill_businessservice, "+
-            "bill.referenceid as bill_referenceid, "+
-            "bill.fromperiod as bill_fromperiod, "+
-            "bill.toperiod as bill_toperiod, "+
-            "bill.status as bill_status, "+
-            "bill.paymentstatus as bill_paymentstatus, "+
-            "bill.billNumber as bill_billnumber, "+
-            "bill.createdby as bill_createdby, "+
-            "bill.createdtime as bill_createdtime, "+
-            "bill.lastmodifiedby as bill_lastmodifiedby, "+
-            " bill.lastmodifiedtime as bill_lastmodifiedtime, "+
-            "bill.additionaldetails as bill_additionaldetails, "+ //--bill
-
-            " bd.id as bd_id, "+
-            "bd.referenceid as bd_referenceid, "+
-            "bd.tenantid as bd_tenantid, "+
-            "bd.billid as bd_billid, "+
-            "bd.paymentstatus as bd_paymentstatus, "+
-            "bd.fromperiod as bd_fromperiod, "+
-            "bd.toperiod as bd_toperiod, "+
-            "bd.createdby as bd_createdby, "+
-            "bd.createdtime as bd_createdtime, "+
-            "bd.lastmodifiedby as bd_lastmodifiedby, "+
-            "bd.lastmodifiedtime as bd_lastmodifiedtime, "+
-            "bd.additionaldetails as bd_additionaldetails, "+ //-- bill details
-
-            "li.id as li_id, "+
-            "li.billdetailid as li_billdetailid, "+
-            "li.tenantid as li_tenantid, "+
-            "li.headcode as li_headcode, "+
-            "li.amount as li_amount, "+
-            "li.paidamount as li_paidamount, "+
-            "li.type as li_type, "+
-            "li.status as li_status, "+
-            "li.islineitempayable as li_islineitempayable, "+
-            "li.createdby as li_createdby, "+
-            "li.createdtime as li_createdtime, "+
-            "li.lastmodifiedby as li_lastmodifiedby, "+
-            "li.lastmodifiedtime as li_lastmodifiedtime, "+
-            "li.additionaldetails as li_additionaldetails, "+ //-- line_items
-
-            "payer.id as payer_id, "+
-            "payer.tenantid as payer_tenantid, "+
-            "payer.type as payer_type, "+
-            "payer.status as payer_status, "+
-            "payer.identifier as payer_identifier, "+
-            "payer.parentid as payer_parentid, "+
-            "payer.createdby as payer_createdby, "+
-            "payer.createdtime as payer_createdtime, "+
-            "payer.lastmodifiedby as payer_lastmodifiedby, "+
-            "payer.lastmodifiedtime as payer_lastmodifiedtime, "+
-            "payer.additionaldetails as payer_additionaldetails, "+ //-- eg_expense_party_payer
-
-            "payee.id as payee_id, "+
-            "payee.tenantid as payee_tenantid, "+
-            "payee.type as payee_type, "+
-            "payee.status as payee_status, "+
-            "payee.identifier as payee_identifier, "+
-            "payee.parentid as payee_parentid, "+
-            "payee.createdby as payee_createdby, "+
-            "payee.createdtime as payee_createdtime, "+
-            "payee.lastmodifiedby as payee_lastmodifiedby, "+
-            "payee.lastmodifiedtime as payee_lastmodifiedtime, "+
-            "payee.additionaldetails as payee_additionaldetails "+ //-- eg_expense_party_payee
-
-            "FROM eg_expense_bill as bill "+
-
-            "LEFT JOIN eg_expense_billdetail as bd ON bill.id = bd.billid "+
-
-            "LEFT JOIN eg_expense_lineitem as li ON bd.id = li.billdetailid "+
-
-            "LEFT JOIN eg_expense_party_payer as payer ON bill.id = payer.parentid "+
-
-            "LEFT JOIN eg_expense_party_payee as payee ON bd.billid = payee.parentid ";
 }

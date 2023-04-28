@@ -22,7 +22,7 @@ lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
 CONSTRAINT pk_eg_expense_bill PRIMARY KEY (id),
-CONSTRAINT unique_eg_expense_bill UNIQUE (referenceId, businessservice, tenantid)
+CONSTRAINT unique_eg_expense_bill UNIQUE (referenceId, businessservice, tenantid, status) WHERE status != 'INACTIVE'
 );
 
 create table eg_expense_billdetail 
@@ -69,7 +69,7 @@ CONSTRAINT fk_eg_expense_lineitem FOREIGN KEY (billdetailid) REFERENCES eg_expen
 
 );
 
-CREATE TABLE IF NOT EXISTS eg_expense_party_payer
+CREATE TABLE IF NOT EXISTS eg_expense_party
 (
 id character varying(64)   NOT NULL,
 tenantid character varying(250) NOT NULL,
@@ -83,26 +83,7 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_party_payer PRIMARY KEY (id),
-CONSTRAINT fk_eg_expense_party_payer FOREIGN KEY (parentid) REFERENCES eg_expense_bill (id)
-);
-
-CREATE TABLE IF NOT EXISTS eg_expense_party_payee
-(
-id character varying(64)   NOT NULL,
-tenantid character varying(250) NOT NULL,
-type character varying(250)  NOT NULL,
-status character varying(64) NOT NULL,
-identifier character varying(250)  NOT NULL,
-parentid character varying(250) NOT NULL, -- whether the bill or bill detail id for payer and payee respectively
-createdby character varying(64)   NOT NULL,
-createdtime bigint NOT NULL,
-lastmodifiedby character varying(64) NOT NULL,
-lastmodifiedtime bigint NOT NULL,
-additionaldetails jsonb,
-
-CONSTRAINT pk_eg_expense_party_payee PRIMARY KEY (id),
-CONSTRAINT fk_eg_expense_party_payee FOREIGN KEY (parentid) REFERENCES eg_expense_bill (id)
+CONSTRAINT pk_eg_expense_party_payer PRIMARY KEY (id)
 );
 
    

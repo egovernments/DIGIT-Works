@@ -5,11 +5,14 @@ class ButtonLink extends StatelessWidget {
   final String label;
   final void Function()? widgetFunction;
   final AlignmentGeometry align;
+  final TextAlign textAlign;
+
   final double fontSize;
   final TextStyle? style;
   const ButtonLink(this.label, this.widgetFunction,
       {super.key,
       this.align = Alignment.centerLeft,
+      this.textAlign = TextAlign.start,
       this.fontSize = 16,
       this.style});
 
@@ -18,11 +21,12 @@ class ButtonLink extends StatelessWidget {
     return GestureDetector(
       onTap: widgetFunction,
       child: Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 10, right: 25),
+          padding: const EdgeInsets.only(top: 10, bottom: 10),
           child: Align(
               alignment: align,
               child: Text(
                 label,
+                textAlign: textAlign,
                 style: style ??
                     TextStyle(
                         fontSize: fontSize,

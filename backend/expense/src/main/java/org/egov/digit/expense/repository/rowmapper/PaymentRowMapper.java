@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.Payment;
+import org.egov.digit.expense.web.models.PaymentBill;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 			 */
 			String BillId = rs.getString("billid");
 			payment.addBillDetailsItem(
-					Bill.builder()
+					PaymentBill.builder()
 					.id(BillId)
 					.build());
 
