@@ -5,7 +5,6 @@ import 'package:works_shg_app/pages/wage_seeker_registration/financial_details.d
 import 'package:works_shg_app/pages/wage_seeker_registration/individual_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/location_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/summary_details.dart';
-import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
     as i18;
@@ -13,6 +12,7 @@ import 'package:works_shg_app/utils/notifiers.dart';
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';
 
+import '../../blocs/app_initilization/app_initilization.dart';
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_location_bloc.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
@@ -61,21 +61,8 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
         );
   }
 
-  var t = AppLocalizations.of(scaffoldMessengerKey.currentContext!);
   int currentStep = 0;
   List<int> stepNumbers = [1, 2, 3, 4];
-  List<String> stepHeaders = [
-    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-        .translate(i18.attendanceMgmt.individualDetails),
-    // AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-    //     .translate(i18.attendanceMgmt.skillDetails),
-    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-        .translate(i18.common.locationDetails),
-    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-        .translate(i18.common.financialDetails),
-    AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-        .translate(i18.wageSeeker.summaryDetails)
-  ];
 
   void updateCurrentStep() {
     if (currentStep <= stepNumbers.length - 1) {
@@ -93,6 +80,15 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
+    List<String> stepHeaders = [
+      i18.attendanceMgmt.individualDetails,
+      // AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+      //     .translate(i18.attendanceMgmt.skillDetails),
+      i18.common.locationDetails,
+      i18.common.financialDetails,
+      i18.wageSeeker.summaryDetails
+    ];
     return Scaffold(
         appBar: AppBar(
           titleSpacing: 0,
@@ -108,27 +104,32 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Back(),
-                DigitStepper(
-                  stepColor: const DigitColors().cloudGray,
-                  activeStepColor: const DigitColors().burningOrange,
-                  numberStyle: TextStyle(color: const DigitColors().white),
-                  lineDotRadius: 2.0,
-                  lineLength: MediaQuery.of(context).size.width / 11,
-                  activeStepBorderPadding: 0.0,
-                  lineColor: const DigitColors().regalBlue,
-                  activeStepBorderColor: const DigitColors().burningOrange,
-                  stepReachedAnimationEffect: Curves.ease,
-                  stepRadius: 12.0,
-                  numbers: stepNumbers,
-                  headers: stepHeaders,
-                  activeStep: currentStep,
-                  enableNextPreviousButtons: false,
-                  onStepReached: (index) {
-                    setState(() {
-                      currentStep = index;
-                    });
-                  },
-                ),
+                BlocBuilder<AppInitializationBloc, AppInitializationState>(
+                    builder: (context, initState) {
+                  return DigitStepper(
+                    stepColor: const DigitColors().cloudGray,
+                    activeStepColor: const DigitColors().burningOrange,
+                    numberStyle: TextStyle(color: const DigitColors().white),
+                    lineDotRadius: 2.0,
+                    lineLength: MediaQuery.of(context).size.width / 10,
+                    activeStepBorderPadding: 0.0,
+                    lineColor: const DigitColors().regalBlue,
+                    activeStepBorderColor: const DigitColors().burningOrange,
+                    stepReachedAnimationEffect: Curves.ease,
+                    stepRadius: 12.0,
+                    numbers: stepNumbers,
+                    headers: stepHeaders
+                        .map((e) => t.translate(e).toString())
+                        .toList(),
+                    activeStep: currentStep,
+                    enableNextPreviousButtons: false,
+                    onStepReached: (index) {
+                      setState(() {
+                        currentStep = index;
+                      });
+                    },
+                  );
+                }),
                 const SizedBox(
                   height: 16.0,
                 ),

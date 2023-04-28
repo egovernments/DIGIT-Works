@@ -697,7 +697,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                               10,
                                                                       height: 58 +
                                                                           (52.0 *
-                                                                              (tableData.length + 1)),
+                                                                              (tableData.length + 0.2)),
                                                                       scrollPhysics:
                                                                           const NeverScrollableScrollPhysics(),
                                                                     ),
@@ -785,7 +785,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                     });
                                                                                                   },
                                                                                                   child: OutlinedButton(
-                                                                                                      style: OutlinedButton.styleFrom(backgroundColor: Colors.white, side: BorderSide(width: 2, color: DigitTheme.instance.colorScheme.secondary)),
+                                                                                                      style: OutlinedButton.styleFrom(backgroundColor: Colors.white, side: BorderSide(width: 2, color: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? const Color.fromRGBO(149, 148, 148, 1) : DigitTheme.instance.colorScheme.secondary)),
                                                                                                       onPressed: musterRollsSearch != null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
                                                                                                           ? null
                                                                                                           : () {
@@ -806,7 +806,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                       child: Center(
                                                                                                           child: Text(
                                                                                                         AppLocalizations.of(context).translate(i18.common.saveAsDraft),
-                                                                                                        style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? Theme.of(context).textTheme.titleSmall?.apply(color: const Color.fromRGBO(149, 148, 148, 1)) : Theme.of(context).textTheme.titleSmall,
+                                                                                                        style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1)) : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
                                                                                                       ))),
                                                                                                 ),
                                                                                                 const SizedBox(
@@ -878,7 +878,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                   }
                                                                                                             : null,
                                                                                                     child: Center(
-                                                                                                      child: Text(AppLocalizations.of(context).translate(i18.common.sendForApproval), style: Theme.of(context).textTheme.titleSmall!.apply(color: Colors.white)),
+                                                                                                      child: Text(AppLocalizations.of(context).translate(i18.common.sendForApproval), style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
                                                                                                     ),
                                                                                                   ),
                                                                                                 ),
