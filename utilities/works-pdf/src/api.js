@@ -4,6 +4,8 @@ var url = require("url");
 var producer = require("./producer").producer;
 var logger = require("./logger").logger;
 const { Pool } = require('pg');
+const get = require('lodash/get');
+var FormData = require("form-data");
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -224,6 +226,46 @@ function search_expense_bill(request, limit, offset) {
   })
 }
 
+function search_bank_account_details(request) {
+  return new Promise((resolve, reject) => {
+    let newRequest = JSON.parse(JSON.stringify(request))
+    let promise = new axios({
+      method: "POST",
+      url: url.resolve(config.host.bankaccount, config.paths.bankaccount_search),
+      data: newRequest,
+    });
+    promise.then((data) => {
+      resolve(data.data)
+    }).catch((err) => reject(err))
+  })
+}
+
+/**
+ *
+ * @param {*} filename -name of localy stored temporary file
+ * @param {*} tenantId - tenantID
+ */
+async function upload_file_using_filestore(filename, tenantId, fileData) {
+  try {
+    var url = `${config.host.filestore}/filestore/v1/files?tenantId=${tenantId}&module=billgen&tag=works-billgen`;
+    var form = new FormData();
+    form.append("file", fileData, {
+      filename: filename,
+      contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+    let response = await axios.post(url, form, {
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
+      headers: {
+        ...form.getHeaders()
+      }
+    });
+    return get(response.data, "files[0].fileStoreId");
+  } catch (error) {
+    console.log(error);
+    throw(error)
+  }
+};
 
 /**
  * It generates bill of property tax and merge into single PDF file
@@ -356,5 +398,7 @@ module.exports = {
   search_contract,
   search_mdmsWageSeekerSkills,
   search_organisation,
-  search_expense_bill
+  search_expense_bill,
+  search_bank_account_details,
+  upload_file_using_filestore
 };
