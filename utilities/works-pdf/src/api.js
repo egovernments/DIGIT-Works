@@ -387,6 +387,7 @@ async function create_bulk_pdf_pt(kafkaData) {
 }
 
 module.exports = {
+  pool,
   create_pdf,
   create_pdf_and_upload,
   search_mdms,

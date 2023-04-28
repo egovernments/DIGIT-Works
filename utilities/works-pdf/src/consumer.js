@@ -24,7 +24,7 @@ const listenConsumer = async()=>{
   };
 
   var consumerGroup = new kafka.ConsumerGroup(options, [
-    config.KAFKA_BULK_PDF_TOPIC,
+    config.KAFKA_PAYMENT_EXCEL_GEN_TOPIC,
   ]);
 
   consumerGroup.on("ready", function() {
@@ -35,7 +35,8 @@ const listenConsumer = async()=>{
     logger.info("record received on consumer for create");
     try {
       var data = JSON.parse(message.value);
-      if (data?.RequestInfo && data?.Criteria) {
+      // TODO: billids has to be remove after integration with payment api
+      if (data?.RequestInfo && data?.billIds && data.paymentId) {
         processGroupBill(data).then(() => {
           logger.info("Record created for expense consumer request");
         }).catch(error => {

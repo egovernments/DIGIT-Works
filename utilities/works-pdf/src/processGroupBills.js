@@ -1,11 +1,11 @@
-var { search_expense_bill, search_bank_account_details, upload_file_using_filestore } = require("./api");
+var { search_expense_bill, search_bank_account_details, upload_file_using_filestore, pool } = require("./api");
 const XLSX = require('xlsx');
-const { Blob } = require('buffer');
-
+var logger = require("./logger").logger;
 async function processGroupBill(requestData) {
     try {
-        let jobId = requestData.jobId;
+        let paymentId = requestData.paymentId;
         let tenantId = requestData.tenantId;
+        let userId = requestData?.RequestInfo?.userInfo?.uuid;
         let bills = await getBillDetails(requestData);
         let billsForExcel = [];
         if (bills) {
@@ -37,9 +37,16 @@ async function processGroupBill(requestData) {
             }
             return billDetails;
         })
-        // let filestoreId = await createXlsxFromBills(billsForExcel, jobId, tenantId);
-        let filestoreId = "hasdjkfhjkadshjkf asdh";
-        await updateForJobCompletion(jobId, filestoreId);
+        let filestoreId = await createXlsxFromBills(billsForExcel, paymentId, tenantId);
+        let billsLength = bills.length;
+        let numberofbeneficialy = billsForExcel.length;
+        let totalAmount = 0;
+        bills.forEach((bill) => {
+            if (bill?.totalAmount) {
+                totalAmount = totalAmount + bill?.totalAmount;
+            }
+        })
+        await updateForJobCompletion(paymentId, filestoreId, userId, billsLength, numberofbeneficialy, totalAmount);
         return filestoreId;
     } catch (error) {
         console.log("err", error)
@@ -52,12 +59,16 @@ const getBillDetails = async (requestData) => {
     try {
         let request = {}
         request['requestInfo'] = requestData['RequestInfo']
-        request['billCriteria'] = requestData['Criteria']
+        request['billCriteria'] = {
+            tenantId: requestData.tenantId,
+            ids: requestData.billIds
+        }
         // Get how many expenses are there
-        let expenseResponse = await search_expense_bill(request, 1, 0)
-        let pagination = expenseResponse?.pagination;
+        // let expenseResponse = await search_expense_bill(request, 1, 0)
+        // let pagination = expenseResponse?.pagination;
         // pagination.totalCount = 11;
-        let total = pagination.totalCount;
+        // let total = pagination.totalCount;
+        let total = requestData.billIds.length;
         if (total) {
             let limit = 100;
             let rounds = total / limit;
@@ -82,7 +93,7 @@ const getBankAccountDetails = async (requestData, beneficiaryIds) => {
     let defaultRequest = {}
     defaultRequest['requestInfo'] = requestData['RequestInfo'];
     defaultRequest["bankAccountDetails"] = {};
-    defaultRequest["bankAccountDetails"]["tenantId"] = requestData?.Criteria?.tenantId;
+    defaultRequest["bankAccountDetails"]["tenantId"] = requestData?.tenantId;
     defaultRequest["bankAccountDetails"]["ids"] = beneficiaryIds;
     let total = beneficiaryIds.length;
     if (total) {
@@ -97,7 +108,6 @@ const getBankAccountDetails = async (requestData, beneficiaryIds) => {
             }
             requests.push(nRequest);
         }
-        console.log('requests : ', requests)
         let promises = [];
         requests.forEach((request) => {
             promises.push(fetchBankAccountDetailsByRequest(deepClone(request)));
@@ -159,7 +169,7 @@ const getBillsForExcel = (bill) => {
         "accountType" : "", // call bank account service with paye.identifire id
         "bankAccountNumber" : "",
         "ifsc" : "",
-        "payableAmount" : 0,,
+        "payableAmount" : 0,
         "headCode": ""
     }
     if (!(bill.billDetails && bill.billDetails.length)) { 
@@ -226,7 +236,7 @@ let getSupervisionBill = (bill, billObj) => {
     return bills;
 }
 
-let createXlsxFromBills = async (billsData, jobId, tenantId) => {
+let createXlsxFromBills = async (billsData, paymentId, tenantId) => {
     const data = billsData.map((obj, idx) => [
         idx+1,
         obj.projectId,
@@ -266,7 +276,7 @@ let createXlsxFromBills = async (billsData, jobId, tenantId) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Payment');
     const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
     try {
-        let filename = jobId + ".xlsx";
+        let filename = `${paymentId} - ${new Date().getTime()}.xlsx`;
         let filestoreId = await upload_file_using_filestore(filename, tenantId, buffer);
         return filestoreId;
     } catch (error) {
@@ -275,13 +285,15 @@ let createXlsxFromBills = async (billsData, jobId, tenantId) => {
     }
 }
 
-async function updateForJobCompletion (jobId, filestoreId) {
+async function updateForJobCompletion (paymentId, filestoreId, userId, billsLength, numberofbeneficialy, totalAmount) {
     try {
-        const updateQuery = 'UPDATE eg_works_bill_gen SET filestoreId =  $1, lastmodifiedtime = $2, endtime = $3 WHERE jobId = $4';
+        const updateQuery = 'UPDATE eg_payments_excel SET filestoreid =  $1, lastmodifiedby = $2, lastmodifiedtime = $3, status = $4, numberofbills = $5, numberofbeneficialy = $6, totalamount = $7 WHERE paymentid = $8';
         const curentTimeStamp = new Date().getTime();
-        await pool.query(updateQuery,[filestoreId, curentTimeStamp, curentTimeStamp, jobId]);
+        let status = "COMPLETED";
+        await pool.query(updateQuery, [filestoreId, userId, curentTimeStamp, status, billsLength, numberofbeneficialy, totalAmount, paymentId]);
     } catch (error) {
-        
+        logger.error("Error occured while updating the eg_payments_excel table.");
+        logger.error(error.stack || error);
     }
 }
 

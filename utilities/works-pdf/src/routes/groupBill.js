@@ -4,15 +4,8 @@ var config = require("../config");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 var logger = require("../logger").logger;
 const uuidv4 = require("uuid/v4");
+const { pool } = require("../api");
 var producer = require("../producer").producer;
-const { Pool } = require('pg');
-const pool = new Pool({
-  user: config.DB_USER,
-  host: config.DB_HOST,
-  database: config.DB_NAME,
-  password: config.DB_PASSWORD,
-  port: config.DB_PORT,
-});
 
 function renderError(res, errorMessage, errorCode) {
   if (errorCode == undefined) errorCode = 500;
@@ -22,8 +15,10 @@ function renderError(res, errorMessage, errorCode) {
 router.post(
   "/_generate",
   asyncMiddleware(async function (req, res, next) {
+    /**
+     * TODO: integration with payment api is left, in query only payment id will be send, using payment id will fetch billids and then will trigger the request
+     */
     var tenantId = req.query.tenantId;
-    var bussinessService = req.query.bussinessService;
     var requestinfo = req.body?.RequestInfo;
     var criteria = req.body?.Criteria;
 
@@ -39,6 +34,15 @@ router.post(
         "TenantId are mandatory to generate the group bill"
       );
     }
+    let paymentId = criteria?.paymentId;
+    let billIds = criteria?.billIds;
+
+    if (!paymentId || ! (billIds && billIds.length)) {
+      return renderError(
+        res,
+        "paymentId and billIds are mandatory to generate the group bill"
+      );
+    }
 
     if (!requestinfo?.userInfo?.uuid) {
       return renderError(
@@ -48,19 +52,18 @@ router.post(
     }
 
     var id = uuidv4();
-    var jobId = `${config.pdf.group_bill}-${new Date().getTime()}-${id}`;
 
     var kafkaData = {
       RequestInfo: requestinfo,
       tenantId: tenantId,
-      jobId: jobId,
-      Criteria: criteria
+      paymentId: paymentId,
+      billIds: billIds
     };
 
     try {
       var payloads = [];
       payloads.push({
-        topic: config.KAFKA_BULK_PDF_TOPIC,
+        topic: config.KAFKA_PAYMENT_EXCEL_GEN_TOPIC,
         messages: JSON.stringify(kafkaData)
       });
       producer.send(payloads, function (err, data) {
@@ -70,18 +73,23 @@ router.post(
             message: `error while publishing to kafka: ${err.message}`
           });
         } else {
-          logger.info("jobId: " + jobId + ": published to kafka successfully");
+          logger.info("paymentId: " + paymentId + ": published to kafka successfully to generate excel.");
         }
       });
 
       try {
-        const result = await pool.query('select * from eg_works_bill_gen where jobId = $1', [jobId]);
+        const result = await pool.query('select * from eg_payments_excel where paymentid = $1', [paymentId]);
+        var userId = requestinfo?.userInfo?.uuid;
         if (result.rowCount < 1) {
-          var userId = requestinfo?.userInfo?.uuid;
-          const insertQuery = 'INSERT INTO eg_works_bill_gen(id, jobId, tenantId, userId, status, numberOfBills, numberOfBeneficialy, totalAmount, filestoreId, criteria, createdtime, lastmodifiedtime, endtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)';
+          const insertQuery = 'INSERT INTO eg_payments_excel(id, paymentid, tenantId, status, numberofbills, numberofbeneficialy, totalamount, filestoreid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
           const curentTimeStamp = new Date().getTime();
           const status = 'INPROGRESS';
-          await pool.query(insertQuery, [id, jobId, tenantId, userId, status, 0, 0, 0, null, criteria, curentTimeStamp, curentTimeStamp, null]);
+          await pool.query(insertQuery, [id, paymentId, tenantId, status, 0, 0, 0, null, userId, userId, curentTimeStamp, curentTimeStamp]);
+        } else {
+          const status = 'INPROGRESS';
+          const updateQuery = 'UPDATE eg_payments_excel SET status =  $1, numberofbills = $2, numberofbeneficialy = $3, totalamount = $4, filestoreid = $5, lastmodifiedby = $6, lastmodifiedtime = $7 WHERE paymentid = $8';
+          const curentTimeStamp = new Date().getTime();
+          await pool.query(updateQuery,[status, 0, 0, 0, null, userId, curentTimeStamp, paymentId]);
         }
       } catch (err) {
         logger.error(err.stack || err);
@@ -90,8 +98,8 @@ router.post(
       res.status(201);
       res.json({
         ResponseInfo: requestinfo,
-        jobId: jobId,
-        message: "Bulk bill creation is in process",
+        paymentId: paymentId,
+        message: `XLSX Bill creation is in process for payment ${paymentId}.`,
       });
 
     } catch (error) {
@@ -108,29 +116,29 @@ router.post(
     let requestInfo;
     try {
       let tenantid = req.query.tenantid;
-      let jobId = req.query.jobId;
+      let paymentId = req.query.paymentId;
       requestInfo = req.body?.RequestInfo;
       let userId = requestInfo?.userInfo?.uuid;
       if (
         (userId == undefined || userId.trim() == "") &&
-        (jobId == undefined || jobId.trim() == "")
+        (paymentId == undefined || paymentId.trim() == "")
       ) {
         res.status(400);
         res.json({
           ResponseInfo: requestInfo,
-          message: "jobId and userId both can not be empty",
+          message: "paymentId and userId both can not be empty",
         });
       } else {
-        if (jobId) {
-          if (jobId.includes(",")) {
-            jobId = jobId.split(",");
+        if (paymentId) {
+          if (paymentId.includes(",")) {
+            paymentId = paymentId.split(",");
           } else {
-            jobId = [jobId];
+            paymentId = [paymentId];
           }
         }
 
         getFileStoreIds(
-          jobId,
+          paymentId,
           tenantid,
           userId,
           (responseBody) => {
@@ -156,7 +164,7 @@ router.post(
 );
 
 const getFileStoreIds = (
-  jobId,
+  paymentId,
   tenantId,
   userId,
   callback
@@ -164,13 +172,13 @@ const getFileStoreIds = (
   var searchquery = "";
   var queryparams = [];
   var next = 1;
-  var jobIdPresent = false;
-  searchquery = "SELECT * FROM eg_works_bill_gen WHERE";
+  var paymentIdPresent = false;
+  searchquery = "SELECT * FROM eg_payments_excel WHERE";
 
-  if (jobId != undefined && jobId.length > 0) {
-    searchquery += ` jobId = ANY ($${next++})`;
-    queryparams.push(jobId);
-    jobIdPresent = true;
+  if (paymentId != undefined && paymentId.length > 0) {
+    searchquery += ` paymentId = ANY ($${next++})`;
+    queryparams.push(paymentId);
+    paymentIdPresent = true;
   }
 
   if (tenantId != undefined && tenantId.trim() !== "") {
@@ -179,8 +187,8 @@ const getFileStoreIds = (
   }
 
   if (userId != undefined && userId.trim() !== "") {
-    if (jobIdPresent) searchquery += " and";
-    searchquery += ` userId = ($${next++})`;
+    if (paymentIdPresent) searchquery += " and";
+    searchquery += ` createdby = ($${next++})`;
     queryparams.push(userId);
   }
 
@@ -196,15 +204,18 @@ const getFileStoreIds = (
         var searchresult = [];
         results.rows.map(crow => {
           searchresult.push({
-            filestoreId: crow.filestoreid,
-            jobId: crow.jobid,
-            tenantId: crow.tenantid,
-            createdtime: crow.createdtime,
-            endtime: crow.endtime,
-            totalcount: crow.totalcount,
-            key: crow.key,
-            documentType: crow.documenttype,
-            moduleName: crow.modulename
+            "id": crow.id,
+            "paymentid": crow.paymentid,
+            "tenantId": crow.tenantId,
+            "status": crow.status,
+            "numberofbills": crow.numberofbills,
+            "numberofbeneficialy": crow.numberofbeneficialy,
+            "totalamount": crow.totalamount,
+            "filestoreid": crow.filestoreid,
+            "createdby": crow.createdby,
+            "lastmodifiedby": crow.lastmodifiedby,
+            "createdtime": crow.createdtime,
+            "lastmodifiedtime": crow.lastmodifiedtime,
           });
         });
         logger.info(results.rows.length + " matching records found in search");

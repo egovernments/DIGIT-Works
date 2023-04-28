@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST || 'localhost';
+HOST = process.env.EGOV_HOST;
 
 
 if (!HOST) {
@@ -14,6 +14,7 @@ module.exports = {
   KAFKA_BROKER_HOST: process.env.KAFKA_BROKER_HOST || "localhost:9092",
   KAFKA_RECEIVE_CREATE_JOB_TOPIC: process.env.KAFKA_RECEIVE_CREATE_JOB_TOPIC || "PDF_GEN_RECEIVE",
   KAFKA_BULK_PDF_TOPIC: process.env.KAFKA_BULK_PDF_TOPIC || "BULK_PDF_GEN",
+  KAFKA_PAYMENT_EXCEL_GEN_TOPIC: process.env.KAFKA_PAYMENT_EXCEL_GEN_TOPIC || "PAYMENT_EXCEL_GEN",
   PDF_BATCH_SIZE: process.env.PDF_BATCH_SIZE || 40,
   DB_USER: process.env.DB_USER || "postgres",
   DB_PASSWORD: process.env.DB_PASSWORD || "postgres",
@@ -31,8 +32,6 @@ module.exports = {
       process.env.WORK_ORDER_TEMPLATE || "work-order",
     work_order_template_hindi:
       process.env.WORK_ORDER_TEMPLATE_HINDI || "work-order-hindi",
-    group_bill:
-      process.env.GROUP_BILL || "group-bill",
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
@@ -50,9 +49,9 @@ module.exports = {
     musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
     contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086',
     organisation: process.env.EGOV_ORGANISATION_HOST || 'http://localhost:8087',
-    expense: process.env.WORKS_EXPENSE_HOST || 'http://localhost:8090',
-    bankaccount: process.env.WORKS_BANKACCOUNT_HOST || 'http://localhost:8091',
-    filestore: process.env.EGOV_FILE_STORE || 'http://localhost:8092',
+    expense: process.env.EXPENSE_SERVICE_HOST || 'http://localhost:8090',
+    bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
+    filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
