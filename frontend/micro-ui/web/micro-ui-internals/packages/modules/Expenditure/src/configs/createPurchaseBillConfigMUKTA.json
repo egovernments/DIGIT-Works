@@ -163,7 +163,7 @@
                 },
                 {
                   "label": "EXP_GST_RS",
-                  "isMandatory": true,
+                  "isMandatory": false,
                   "key": "invoiceDetails_gst",
                   "type": "number",
                   "disable": false,

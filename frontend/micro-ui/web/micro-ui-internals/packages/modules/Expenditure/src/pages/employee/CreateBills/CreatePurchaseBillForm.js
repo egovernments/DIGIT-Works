@@ -42,12 +42,15 @@ const CreatePurchaseBillForm = ({
                 key : 'billDetails_billDate',
                 value : [new Date().toISOString().split("T")[0]]
               },
+              {
+                key : 'invoiceDetails_invoiceDate',
+                value : [new Date().toISOString().split("T")[0]]
+              },
             ]
           }),
       [preProcessData?.nameOfVendor]);
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-        
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
@@ -55,12 +58,14 @@ const CreatePurchaseBillForm = ({
                 setValue("invoiceDetails_vendorId", formData.invoiceDetails_vendor?.orgNumber);
             }
 
-            if(formData.invoiceDetails_materialCost && formData.invoiceDetails_gst) {
-                setValue("billDetails_billAmt", parseInt(formData.invoiceDetails_materialCost)+parseInt(formData.invoiceDetails_gst));
+            if(formData.invoiceDetails_materialCost) {
+                let gstAmount = formData.invoiceDetails_gst ? formData.invoiceDetails_gst : 0;
+                setValue("billDetails_billAmt", parseInt(formData.invoiceDetails_materialCost)+parseInt(gstAmount));
             }
 
             if(formData.billDetails_billAmt) {
-                let value = parseFloat(formData.invoiceDetails_materialCost)+ parseFloat(formData.invoiceDetails_gst);
+                let gstAmount = formData.invoiceDetails_gst ? formData.invoiceDetails_gst : 0;
+                let value = parseFloat(formData.invoiceDetails_materialCost)+ parseFloat(gstAmount);
                 if(value > contract?.totalContractedAmount){
                     setValue("billDetails_billAmt", Digit.Utils.dss.formatterWithoutRound(value, "number"));
                     setError("billDetails_billAmt",{ type: "custom" }, { shouldFocus: true })
@@ -69,23 +74,21 @@ const CreatePurchaseBillForm = ({
                     setValue("billDetails_billAmt", Digit.Utils.dss.formatterWithoutRound(value, "number"));
                     clearErrors("billDetails_billAmt")
                 }
+            }
 
+            if(difference?.billDetails_billAmt){
+                let billAmount = parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData?.billDetails_billAmt));
+                formData?.deductionDetails?.forEach((data, index)=>{
+                  if(data?.name?.calculationType === "percentage") {
+                    const amount = billAmount ? (billAmount * (parseFloat(data?.name?.value)/100)).toFixed(1) : 0
+                    setValue(`deductionDetails.${index}.amount`, amount);
+                  }
+                })
             }
 
             setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
-
-    const sendDataToResponsePage = (billNumber, tenantId, isSuccess, message, showID) => {
-        history.push({
-          pathname: `/${window?.contextPath}/employee/expenditure/create-purchase-bill-response`,
-          search: `?billNumber=${billNumber}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
-          state : {
-            message : message,
-            showID : showID
-          }
-        }); 
-      }
 
     const handleToastClose = () => {
         setToast({show : false, label : "", error : false});
@@ -100,13 +103,35 @@ const CreatePurchaseBillForm = ({
         }
     },[toast?.show]);
 
-    const onFormSubmit = (data) => {
-        console.log("Form data :", data);
+    const { mutate: CreatePurchaseBillMutation } = Digit.Hooks.bills.useCreatePurchaseBill();
+
+    const onFormSubmit = async(data) => {
+        //transform formdata to Payload
         const payload = createBillPayload(data, contract);
-        console.log("Payload :", payload);
-        //sendDataToResponsePage("billNumber", tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
-        sendDataToResponsePage("", tenantId, false, "EXPENDITURE_PB_FAILED", false);
+
+        await CreatePurchaseBillMutation(payload, {
+            onError: async (error, variables) => {
+                console.log(error);
+                sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
+            },
+            onSuccess: async (responseData, variables) => {
+                console.log(responseData);
+              //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
+              sendDataToResponsePage("billNumber", tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
+            },
+          });
     }
+
+    const sendDataToResponsePage = (billNumber, tenantId, isSuccess, message, showID) => {
+        history.push({
+          pathname: `/${window?.contextPath}/employee/expenditure/create-purchase-bill-response`,
+          search: `?billNumber=${billNumber}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+          state : {
+            message : message,
+            showID : showID
+          }
+        }); 
+      }
     
     useEffect(() => {
         return () => {

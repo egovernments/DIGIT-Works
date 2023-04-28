@@ -197,4 +197,14 @@ export const WorksService = {
             params: {  },
         })
     },
+    createPurchaseBill:(details)=>
+        Request({
+            url: Urls.bills.createPurchaseBill,
+            data:details,
+            useCache:false,
+            setTimeParam:false,
+            userService:true,
+            method:"POST",
+            auth:true,
+        }), 
 }

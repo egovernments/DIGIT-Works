@@ -1,12 +1,11 @@
 import React, { useState,useEffect,useMemo } from 'react'
-import { AddIcon, DeleteIcon,TextInput, CardLabelError,Loader,Dropdown } from '@egovernments/digit-ui-react-components'
+import { AddIcon, DeleteIcon,TextInput, CardLabelError,Loader,Dropdown, parse } from '@egovernments/digit-ui-react-components'
 import { Controller } from 'react-hook-form';
 import _ from "lodash"
 
 const DeductionsTable = ({control,watch,...props}) => {
     const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE",{});
     const [sessionFormData] = PurchaseBillSession;
-    
     const [totalAmount,setTotalAmount] = useState(0)
     const formFieldName = "deductionDetails" // this will be the key under which the data for this table will be present on onFormSubmit
 
@@ -35,8 +34,6 @@ const DeductionsTable = ({control,watch,...props}) => {
     
 
     const { t, register, errors, setValue, getValues, formData } = props
-
-
 
     const setTotal = (formData) => {
         const tableData = formData?.[formFieldName]
@@ -109,7 +106,6 @@ const DeductionsTable = ({control,watch,...props}) => {
         for(let keys of Object.keys(formData?.[formFieldName])) {
           totalRows += 1;
         }
-        console.log("totalRows :", totalRows);
         if(totalRows === 1) {
             setValue(`${formFieldName}.${row.key}.name`,undefined)
             setValue(`${formFieldName}.${row.key}.percentage`,``)
@@ -197,17 +193,17 @@ const DeductionsTable = ({control,watch,...props}) => {
                 //set the percentage field
                 //set the amount field
                 //disable both the fields
-                const amount = (parseFloat(totalAmount) * (parseFloat(e.value)/100)).toFixed(1)
+                const amount = formData?.billDetails_billAmt ? parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData?.billDetails_billAmt) * (parseFloat(e.value)/100)).toFixed(1) : 0
                 setValue(`deductionDetails.${row.key}.percentage`,`${e.value} ${t("WORKS_PERCENT")}`)
                 setValue(`deductionDetails.${row.key}.amount`,amount)
 
         }else if(e.calculationType === "lumpsum" && e.value !== null){
                 //set both lumpsum and amount field
-                setValue(`deductionDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)
+                setValue(`deductionDetails.${row.key}.percentage`, `${t("EXP_FIXED")}`)
                 setValue(`deductionDetails.${row.key}.amount`, e.value)
         }
         else {
-            setValue(`deductionDetails.${row.key}.percentage`, `${t("WORKS_LUMPSUM")}`)
+            setValue(`deductionDetails.${row.key}.percentage`, `${t("EXP_FIXED")}`)
             setValue(`deductionDetails.${row.key}.amount`, '')
         }
     }
