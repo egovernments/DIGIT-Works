@@ -764,6 +764,36 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
+    },
+    postProcess: {
+      getApiConfig:(apiDetails,data)=> {
+        return {
+          url:'/user/_search',
+          params:{
+          
+          },
+          body:{
+            tenantId:'pg.citya',
+            pageSize:'100',
+            uuid:data?.items?.map(item => {
+              return item.businessObject.auditDetails.createdBy
+            })
+          },
+          config: {
+              enabled: !!data,
+          }
+        };
+        
+      },
+      combineResponse:(data,nextData) => {
+        debugger
+        //here combine the response from both apis and send(this same data will be sent to the ResultsTable component)
+        return {
+          data,
+          nextData
+        }
+      }
+
     }
   },
   SearchWageSeekerConfig: {

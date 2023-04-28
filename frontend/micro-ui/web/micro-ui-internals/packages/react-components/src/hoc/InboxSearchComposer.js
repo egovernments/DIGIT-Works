@@ -77,7 +77,8 @@ const InboxSearchComposer = ({configs}) => {
         config: {
             enabled: enable,
         },
-        state
+        state,
+        apiDetails
     };
 
     //clear the reducer state when user moves away from inbox screen(it already resets when component unmounts)(keeping this code here for reference)
@@ -103,9 +104,14 @@ const InboxSearchComposer = ({configs}) => {
 
     const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria) : requestCriteria 
 
-    
-    const { isLoading, data, revalidate,isFetching } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
-    
+    // let { isLoading, data, revalidate,isFetching } = {}
+
+    if(apiDetails?.additionalAPICallRequired){
+       var { isLoading, data, revalidate,isFetching } = Digit.Hooks.useMultiCustomAPIHook(updatedReqCriteria);
+    }
+    else {
+       var { isLoading, data, revalidate,isFetching } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
+    }
     
     useEffect(() => {
         return () => {

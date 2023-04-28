@@ -6,7 +6,7 @@ import searchContractConfig from "../../configs/searchContractConfig";
 
 const SearchContractDetails = () => {
     const { t } = useTranslation();
-    //const configs = searchContractConfig();
+    const configs = searchContractConfig();
     const configModuleName = Digit.Utils.getConfigModuleName()
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -19,7 +19,7 @@ const SearchContractDetails = () => {
         ]
     );
 
-    const configs = data?.[configModuleName].SearchContractConfig?.[0]
+    // const configs = data?.[configModuleName].SearchContractConfig?.[0]
 
   if (isLoading) return <Loader />
   
