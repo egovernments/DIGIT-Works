@@ -266,7 +266,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                 style={{ marginBottom: "0px" }}
                 name={`${formFieldName}.${row.key}.percentage`}
                 inputRef={register({
-                  required: true,
+                  required: false,
                   pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/,
                 })}
                 // disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
@@ -309,7 +309,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                 style={{ marginBottom: "0px" }}
                 name={`${formFieldName}.${row.key}.comments`}
                 inputRef={register({
-                  required: true,
+                  required: false,
                   pattern: /^[a-zA-Z0-9_ .$%@#\/ ]*$/,
                 })}
                 disable={false}

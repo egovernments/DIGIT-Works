@@ -24,6 +24,7 @@ const CreatePurchaseBillForm = ({
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
     const rolesForThisAction = "BILL_CREATOR" //hardcoded for now
 
     createPurchaseBillConfig = useMemo(
@@ -75,6 +76,17 @@ const CreatePurchaseBillForm = ({
         }
     }
 
+    const sendDataToResponsePage = (billNumber, tenantId, isSuccess, message, showID) => {
+        history.push({
+          pathname: `/${window?.contextPath}/employee/expenditure/create-purchase-bill-response`,
+          search: `?billNumber=${billNumber}&tenantId=${tenantId}&isSuccess=${isSuccess}`,
+          state : {
+            message : message,
+            showID : showID
+          }
+        }); 
+      }
+
     const handleToastClose = () => {
         setToast({show : false, label : "", error : false});
     }
@@ -92,7 +104,8 @@ const CreatePurchaseBillForm = ({
         console.log("Form data :", data);
         const payload = createBillPayload(data, contract);
         console.log("Payload :", payload);
-        
+        //sendDataToResponsePage("billNumber", tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
+        sendDataToResponsePage("", tenantId, false, "EXPENDITURE_PB_FAILED", false);
     }
     
     useEffect(() => {

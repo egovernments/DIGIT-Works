@@ -83,6 +83,7 @@ const App = ({ path }) => {
     const SearchBill = Digit?.ComponentRegistryService?.getComponent("SearchBill");
     const ViewBill = Digit?.ComponentRegistryService?.getComponent("ViewBill");
     const PurchaseBill = Digit?.ComponentRegistryService?.getComponent("PurchaseBill");
+    const PurchaseBillResponse = Digit?.ComponentRegistryService?.getComponent("CreatePurchaseBillResponse");
 
     return (
       <Switch>
@@ -101,6 +102,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-bill`} component={() => <ViewBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/supervision-bill-details`} component={() => <ViewSupervisionbill parentRoute={path} />} />
           <PrivateRoute path={`${path}/create-purchase-bill`} component={() => <PurchaseBill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/create-purchase-bill-response`} component={() => <PurchaseBillResponse parentRoute={path} />} />
         </AppContainer>
       </Switch>
     );

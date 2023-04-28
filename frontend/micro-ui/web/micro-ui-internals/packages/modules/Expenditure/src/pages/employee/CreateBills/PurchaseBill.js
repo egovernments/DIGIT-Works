@@ -80,7 +80,7 @@ const PurchaseBill = () => {
     },[isContractLoading, isOrgSearchLoading]);
 
     
-    if(isConfigLoading) return <Loader></Loader>
+    //if(isConfigLoading) return <Loader></Loader>
     return (
         <React.Fragment>
             <Header styles={{fontSize: "32px"}}>{isModify ? t("EXP_MODIFY_PB") : t("ACTION_TEST_CREATE_PB")}</Header>
