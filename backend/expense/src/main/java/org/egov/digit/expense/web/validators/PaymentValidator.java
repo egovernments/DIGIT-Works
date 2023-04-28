@@ -72,10 +72,10 @@ public class PaymentValidator {
 		for (PaymentBill paymentBill : payment.getBills()) {
 			
 			Bill billFromSearch = billMap.get(paymentBill.getBillId());
-			if (paymentBill.getPaidAmount().compareTo(billFromSearch.getNetPayableAmount()) != 0) {
+			if (paymentBill.getPaidAmount().compareTo(billFromSearch.getTotalAmount()) != 0) {
 				errorMap.put("EG_PAYMENT_INVALID_LINEITEM_AMOUNT",
 						"The paid bill amount " + paymentBill.getPaidAmount()
-					  + " is not equal to the actual amount : " + billFromSearch.getNetPayableAmount());
+					  + " is not equal to the actual amount : " + billFromSearch.getTotalAmount());
 
 			}
 			

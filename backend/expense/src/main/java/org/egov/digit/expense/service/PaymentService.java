@@ -142,7 +142,7 @@ public class PaymentService {
         for (PaymentBill bill : payment.getBills()) {
 
             Bill billFromSearch = billMap.get(bill.getBillId());
-      			billFromSearch.setTotalPaidAmount(billFromSearch.getTotalPaidAmount().add(bill.getTotalPaidAmount()));
+      			billFromSearch.setTotalPaidAmount(billFromSearch.getTotalPaidAmount().add(bill.getPaidAmount()));
             billFromSearch.setPaymentStatus(payment.getStatus());
             billFromSearch.setAuditDetails(auditDetails);
 

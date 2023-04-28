@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -57,8 +56,8 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.tenantId(rs.getString("b_tenantid"))
 					.billDate(rs.getLong("billdate"))
 					.dueDate(rs.getLong("duedate"))
-					.netPayableAmount(rs.getBigDecimal("netpayableamount"))
-					.netPaidAmount(rs.getBigDecimal("netpaidamount"))
+					.totalAmount(rs.getBigDecimal("netpayableamount"))
+					.totalPaidAmount(rs.getBigDecimal("netpaidamount"))
 					.businessService(rs.getString("businessservice"))
 					.referenceId(rs.getString("referenceid"))
 					.fromPeriod(rs.getLong("b_fromperiod"))
