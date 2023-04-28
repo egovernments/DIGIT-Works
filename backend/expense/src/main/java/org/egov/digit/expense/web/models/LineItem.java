@@ -66,6 +66,9 @@ public class LineItem {
 	@JsonProperty("status")
 	private String status;
 	
+	@JsonProperty("paymentStatus")
+	private String paymentStatus;
+	
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 

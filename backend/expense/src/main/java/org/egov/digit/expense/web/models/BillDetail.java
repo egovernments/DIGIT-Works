@@ -62,6 +62,10 @@ public class BillDetail {
 	@JsonProperty("paymentStatus")
 	@Size(min = 2, max = 64)
 	private String paymentStatus;
+	
+	@JsonProperty("status")
+	@Size(min = 2, max = 64)
+	private String status;
 
 	@JsonProperty("fromPeriod")
 	@Valid

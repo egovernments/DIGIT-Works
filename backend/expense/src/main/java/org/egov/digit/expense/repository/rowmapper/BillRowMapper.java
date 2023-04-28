@@ -46,9 +46,9 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				
 				AuditDetails auditDetails =AuditDetails.builder()
 					.createdBy(rs.getString("b_createdby"))
-					.createdTime((Long) rs.getObject("b_createddate"))
+					.createdTime((Long) rs.getObject("b_createdtime"))
 					.lastModifiedBy(rs.getString("b_lastmodifiedby"))
-					.lastModifiedTime((Long) rs.getObject("b_lastmodifieddate"))
+					.lastModifiedTime((Long) rs.getObject("b_lastmodifiedtime"))
 					.build();
 
 				bill = Bill.builder()
@@ -56,10 +56,10 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.tenantId(rs.getString("b_tenantid"))
 					.billDate(rs.getLong("billdate"))
 					.dueDate(rs.getLong("duedate"))
-					.totalAmount(rs.getBigDecimal("netpayableamount"))
-					.totalPaidAmount(rs.getBigDecimal("netpaidamount"))
+					.totalAmount(rs.getBigDecimal("b_totalamount"))
+					.totalPaidAmount(rs.getBigDecimal("b_totalpaidamount"))
 					.businessService(rs.getString("businessservice"))
-					.referenceId(rs.getString("referenceid"))
+					.referenceId(rs.getString("b_referenceid"))
 					.fromPeriod(rs.getLong("b_fromperiod"))
 					.toPeriod(rs.getLong("b_toperiod"))
 					.status(rs.getString("b_status"))
@@ -81,9 +81,9 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 
 				AuditDetails auditDetails =AuditDetails.builder()
 					.createdBy(rs.getString("bd_createdby"))
-					.createdTime((Long) rs.getObject("bd_createddate"))
+					.createdTime((Long) rs.getObject("bd_createdtime"))
 					.lastModifiedBy(rs.getString("bd_lastmodifiedby"))
-					.lastModifiedTime((Long) rs.getObject("bd_lastmodifieddate"))
+					.lastModifiedTime((Long) rs.getObject("bd_lastmodifiedtime"))
 					.build();
 				
 				
@@ -92,8 +92,11 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.billId(rs.getString("billid"))
 					.referenceId(rs.getString("bd_referenceid"))
 					.paymentStatus(rs.getString("bd_paymentstatus"))
+					.totalAmount(rs.getBigDecimal("bd_totalamount"))
+					.totalPaidAmount(rs.getBigDecimal("bd_totalpaidamount"))
 					.fromPeriod(rs.getLong("bd_fromperiod"))
 					.toPeriod(rs.getLong("bd_toperiod"))
+					.status(rs.getString("bd_status"))
 					.auditDetails(auditDetails)
 					.additionalDetails(getadditionalDetail(rs, "bd_additionalDetails"))
 					.build();
@@ -107,14 +110,14 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 			/*
 			 * Line items details
 			 */
-			Boolean isLineItemPayable = rs.getBoolean("isPayable"); 
+			Boolean isLineItemPayable = rs.getBoolean("islineitemPayable"); 
 			String lineTiemBillDetailId = rs.getString("line_billdetailid");
 			
 			AuditDetails auditDetails =AuditDetails.builder()
 					.createdBy(rs.getString("line_createdby"))
-					.createdTime((Long) rs.getObject("line_createddate"))
+					.createdTime((Long) rs.getObject("line_createdtime"))
 					.lastModifiedBy(rs.getString("line_lastmodifiedby"))
-					.lastModifiedTime((Long) rs.getObject("line_lastmodifieddate"))
+					.lastModifiedTime((Long) rs.getObject("line_lastmodifiedtime"))
 					.build();
 
 			LineItem lineItem = LineItem.builder()
@@ -124,6 +127,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.headCode(rs.getString("headcode"))
 					.amount(rs.getBigDecimal("amount"))
 					.paidAmount(rs.getBigDecimal("paidamount"))
+					.paymentStatus(rs.getString("li_paymentstatus"))
 					.type(LineItemType.fromValue(rs.getString("line_type")))
 					.additionalDetails(getadditionalDetail(rs, "line_additionalDetails"))
 					.build();

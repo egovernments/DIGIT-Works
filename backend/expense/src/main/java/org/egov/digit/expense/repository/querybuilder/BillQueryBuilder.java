@@ -24,7 +24,7 @@ public class BillQueryBuilder {
 
    
     private String paginationWrapper = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy} , bill_id) offset_ FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy} , b_id) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
@@ -89,14 +89,14 @@ public class BillQueryBuilder {
     private void addOrderByClause(BillSearchRequest billSearchRequest) {
 
         Pagination pagination = billSearchRequest.getPagination();
-        Set<String> sortableColumns=new HashSet<>(Arrays.asList("bill_id","bill_billdate","bill_duedate","bill_paymentstatus"
+        Set<String> sortableColumns=new HashSet<>(Arrays.asList("b_id","billdate","duedate","b_paymentstatus"
                 ,"bill_status"));
 
         if ( !StringUtils.isEmpty(pagination.getSortBy()) && sortableColumns.contains(pagination.getSortBy())) {
             paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
         }
         else{
-            paginationWrapper=paginationWrapper.replace("{sortBy}", "bill_billdate");
+            paginationWrapper=paginationWrapper.replace("{sortBy}", "billdate");
         }
 
         if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {

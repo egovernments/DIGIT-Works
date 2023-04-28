@@ -43,6 +43,7 @@ public class Bill {
 	
 	@JsonProperty("billDate")
 	@Valid
+	@NotNull
 	private Long billDate;
 
 	@JsonProperty("dueDate")

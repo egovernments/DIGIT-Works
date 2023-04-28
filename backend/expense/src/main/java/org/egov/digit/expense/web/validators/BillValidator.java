@@ -1,6 +1,7 @@
 package org.egov.digit.expense.web.validators;
 
-import static org.egov.digit.expense.config.Constants.HEADCODE_CODE_FILTER;
+import static org.egov.digit.expense.config.Constants.BUSINESS_SERVICE_MASTERNAME;
+import static org.egov.digit.expense.config.Constants.CODE_FILTER;
 import static org.egov.digit.expense.config.Constants.HEADCODE_MASTERNAME;
 import static org.egov.digit.expense.config.Constants.TENANT_MASTERNAME;
 
@@ -117,7 +118,13 @@ public class BillValidator {
         Bill bill = billRequest.getBill();
         
         /* validating head code master data */
-		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.HEADCODES_MODULE_NAME).get(HEADCODE_MASTERNAME),HEADCODE_CODE_FILTER);
+        List<String> BusinessCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(BUSINESS_SERVICE_MASTERNAME),CODE_FILTER);
+        
+        if(!BusinessCodeList.contains(bill.getBusinessService())) {
+        	errorMap.put("EG_EXPENSE_INVALID_BUSINESSSERVICE", "The business service value : "+ bill.getBusinessService() +" is invalid");
+        }
+        
+		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(HEADCODE_MASTERNAME),CODE_FILTER);
 
         Set<String> missingHeadCodes = new HashSet<>();
         BigDecimal billAmount = BigDecimal.ZERO;
@@ -179,7 +186,7 @@ public class BillValidator {
         List<String> tenantIdList=null;
         try {
             /* validating head code master data */
-            tenantIdList = JsonPath.read(mdmsData.get(Constants.TENANT_MODULE_NAME).get(TENANT_MASTERNAME), HEADCODE_CODE_FILTER);
+            tenantIdList = JsonPath.read(mdmsData.get(Constants.TENANT_MODULE_NAME).get(TENANT_MASTERNAME), CODE_FILTER);
         } catch (Exception e) {
             throw new CustomException("INVALID_TENANT", "Invalid tenantId [" + bill.getTenantId() + "]");
         }
@@ -235,7 +242,7 @@ public class BillValidator {
 	private Map<String, Map<String, JSONArray>> getMasterDataForValidation(BillRequest billRequest, Bill bill) {
 		
 		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-				bill.getTenantId().split("\\.")[0], Constants.HEADCODES_MODULE_NAME, Constants.MDMS_MASTER_NAMES);
+				bill.getTenantId().split("\\.")[0], Constants.EXPENSE_MODULE_NAME, Constants.MDMS_MASTER_NAMES);
         
 		if(CollectionUtils.isEmpty(mdmsData)) {
 			throw new CustomException("EG_EXPENSE_MDMS_ERROR", "MDMS Data not found for the tenantid : " + bill.getTenantId());
