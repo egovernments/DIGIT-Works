@@ -3,6 +3,8 @@ package org.egov.digit.expense.calculator.repository;
 import org.egov.digit.expense.calculator.repository.querybuilder.ExpenseCalculatorQueryBuilder;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorBillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorMusterRowMapper;
+import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
+import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -47,6 +49,18 @@ public class ExpenseCalculatorRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getBillsOfContract(contractId, tenantId, preparedStmtList);
         List<String> billIds = jdbcTemplate.query(query, billRowMapper, preparedStmtList.toArray());
+        return billIds;
+    }
+
+    /* Fetch the record from DB based on the calculatorSearchCritera
+     * @param calculatorSearchRequest
+     * @return
+     */
+    public List<String> getBillIds(CalculatorSearchRequest calculatorSearchRequest) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getBillIds(calculatorSearchRequest,preparedStmtList);
+        List<String> billIds = jdbcTemplate.queryForList(query,String.class,preparedStmtList.toArray());
+
         return billIds;
     }
 }

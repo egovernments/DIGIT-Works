@@ -5,18 +5,16 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
-import org.egov.digit.expense.calculator.web.models.Bill;
-import org.egov.digit.expense.calculator.web.models.BillResponse;
-import org.egov.digit.expense.calculator.web.models.Calculation;
-import org.egov.digit.expense.calculator.web.models.CalculationRequest;
-import org.egov.digit.expense.calculator.web.models.CalculationResponse;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,6 +69,16 @@ public class WorksCalculatorApiController {
 				                                                     .calculation(calculation)
 				                                                     .build();
 		return new ResponseEntity<CalculationResponse>(calculationResponse, HttpStatus.OK);
+	}
+
+
+	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
+	public ResponseEntity<CalculatorSearchResponse> search(@Valid @RequestBody CalculatorSearchRequest calculatorSearchRequest) {
+		RequestInfo requestInfo=calculatorSearchRequest.getRequestInfo();
+		List<String> searchResponse = expenseCalculatorService.search(calculatorSearchRequest);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculatorSearchRequest.getRequestInfo(), true);
+		CalculatorSearchResponse calculatorSearchResponse= CalculatorSearchResponse.builder().responseInfo(responseInfo).billIds(searchResponse).build();
+		return new ResponseEntity<CalculatorSearchResponse>(calculatorSearchResponse, HttpStatus.OK);
 	}
 
 }

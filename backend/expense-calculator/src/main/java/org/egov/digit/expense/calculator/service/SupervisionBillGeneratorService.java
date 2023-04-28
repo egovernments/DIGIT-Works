@@ -364,12 +364,12 @@ public class SupervisionBillGeneratorService {
 
     private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
-        Object mdmsResp = mdmsUtils.getPayersFromMDMS(requestInfo, type, rootTenantId);
+        Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, rootTenantId);
         List<Object> payerList = commonUtil.readJSONPathValue(mdmsResp,JSON_PATH_FOR_PAYER);
         for(Object obj : payerList){
             Payer payer = mapper.convertValue(obj, Payer.class);
             if(tenantId.equals(payer.getTenantId())) {
-                return buildParty(payer.getId()+"0",payer.getCode(),tenantId);
+                return buildParty(payer.getId(),payer.getCode(),tenantId);
             }
         }
         log.error("PAYER_MISSING_IN_MDMS","Payer is missing in MDMS for type : "+type + " and tenantId : "+tenantId);

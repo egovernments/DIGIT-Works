@@ -73,7 +73,7 @@ const ViewContractDetails = () => {
     },[isProjectError]);
 
     const HandleDownloadPdf = () => {
-        Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`workOrder-${contractId}.pdf`)
+        Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`WorkOrder-${contractId}.pdf`)
     }
 
     const handleToastClose = () => {

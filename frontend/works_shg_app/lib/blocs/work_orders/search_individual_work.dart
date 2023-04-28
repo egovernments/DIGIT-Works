@@ -42,7 +42,8 @@ class SearchIndividualWorkBloc
             await MyWorksRepository(client.init()).searchMyWorks(
                 url: Urls.workServices.myWorks,
                 body: {
-                  "tenantId": 'pg.citya',
+                  "tenantId": GlobalVariables
+                      .organisationListModel!.organisations!.first.tenantId,
                   "orgIds": [],
                   "contractNumber": event.contractNumber,
                   // "pagination": {

@@ -19,6 +19,11 @@ class Constants {
   static const qaEnv = 'qa';
   static const uatEnv = 'uat';
   static const prodEnv = 'prod';
+  static const homeMyWorks = 'HOME_MY_WORKS';
+  static const homeTrackAttendance = 'HOME_TRACK_ATTENDENCE';
+  static const homeMusterRolls = 'HOME_MUSTER_ROLLS';
+  static const homeMyBills = 'HOME_MY_BILLS';
+  static const homeRegisterWageSeeker = 'HOME_REGISTER_WAGE_SEEKER';
 }
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();

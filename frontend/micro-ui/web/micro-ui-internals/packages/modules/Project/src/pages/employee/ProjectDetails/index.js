@@ -96,7 +96,7 @@ const ProjectDetails = () => {
 
     const HandleDownloadPdf = () => {
         const projectId=searchParams?.Projects?.[0]?.projectNumber;
-        Digit.Utils.downloadEgovPDF('project/project-details',{projectId,tenantId:searchParams?.Projects?.[0]?.tenantId},`project-${projectId}.pdf`)
+        Digit.Utils.downloadEgovPDF('project/project-details',{projectId,tenantId:searchParams?.Projects?.[0]?.tenantId},`Project-${projectId}.pdf`)
     }
 
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);

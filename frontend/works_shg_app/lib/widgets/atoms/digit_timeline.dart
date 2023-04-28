@@ -7,99 +7,189 @@ class DigitTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        children: List.generate(
-      timelineOptions.length,
-      (index) => Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.circle_rounded,
-                size: 40,
-                color: timelineOptions[index].isCurrentState
-                    ? DigitTheme.instance.colorScheme.primary
-                    : const DigitColors().cloudGray,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      timelineOptions[index].title,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w400),
-                      textAlign: TextAlign.start,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: Text(
-                        timelineOptions[index].subTitle ?? '',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: const DigitColors().davyGray),
-                      ),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2.5,
-                      child: Text(
-                        timelineOptions[index].assignee ?? '',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: const DigitColors().davyGray),
-                      ),
-                    ),
-                    Row(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        SizedBox(
+          child: Column(
+              children: List.generate(
+                  timelineOptions.length,
+                  (index) => Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.circle_rounded,
+                            size: 25,
+                            color: timelineOptions[index].isCurrentState
+                                ? DigitTheme.instance.colorScheme.primary
+                                : const DigitColors().cloudGray,
+                          ),
+                          index == timelineOptions.length - 1
+                              ? const SizedBox.shrink()
+                              : Container(
+                                  alignment: Alignment.centerLeft,
+                                  margin: const EdgeInsets.only(
+                                    left: 12.0,
+                                  ),
+                                  height: 60,
+                                  width: 2,
+                                  color: timelineOptions[index].isCurrentState
+                                      ? const DigitColors().burningOrange
+                                      : const DigitColors().cloudGray,
+                                ),
+                        ],
+                      ))),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(
+              timelineOptions.length,
+              (index) => Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16.0, bottom: 8.0, top: 0),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(
+                          timelineOptions[index].title,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                          textAlign: TextAlign.start,
+                        ),
+                        timelineOptions[index].subTitle != null &&
+                                timelineOptions[index].subTitle!.isNotEmpty
+                            ? SizedBox(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: Text(
+                                  timelineOptions[index].subTitle ?? '',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: const DigitColors().davyGray),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        timelineOptions[index].assignee != null &&
+                                timelineOptions[index].assignee!.isNotEmpty
+                            ? SizedBox(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: Text(
+                                  timelineOptions[index].assignee ?? '',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: const DigitColors().davyGray),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
                         timelineOptions[index].mobileNumber != null &&
                                 timelineOptions[index].mobileNumber!.isNotEmpty
-                            ? const Icon(Icons.phone)
-                            : const Text(''),
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  timelineOptions[index].mobileNumber != null &&
+                                          timelineOptions[index]
+                                              .mobileNumber!
+                                              .isNotEmpty
+                                      ? const Icon(
+                                          Icons.phone,
+                                          size: 16,
+                                        )
+                                      : const Text(''),
+                                  timelineOptions[index].mobileNumber != null
+                                      ? SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2.5,
+                                          child: Text(
+                                            timelineOptions[index]
+                                                            .mobileNumber !=
+                                                        null &&
+                                                    timelineOptions[index]
+                                                        .mobileNumber!
+                                                        .isNotEmpty
+                                                ? timelineOptions[index]
+                                                    .mobileNumber
+                                                    .toString()
+                                                : '',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: const DigitColors()
+                                                    .davyGray),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink(),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width / 2.5,
-                          child: Text(
-                            timelineOptions[index].mobileNumber != null &&
-                                    timelineOptions[index]
-                                        .mobileNumber!
-                                        .isNotEmpty
-                                ? timelineOptions[index].mobileNumber.toString()
-                                : '',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: const DigitColors().davyGray),
-                          ),
-                        ),
+                          height: index != timelineOptions.length - 1
+                              ? timelineOptions[index].mobileNumber != null &&
+                                      timelineOptions[index].assignee != null
+                                  ? 18
+                                  : timelineOptions[index].mobileNumber ==
+                                              null &&
+                                          timelineOptions[index].assignee !=
+                                              null
+                                      ? 36
+                                      : timelineOptions[index].mobileNumber !=
+                                                  null &&
+                                              timelineOptions[index].assignee ==
+                                                  null
+                                          ? 32
+                                          : 48
+                              : 0,
+                        )
                       ],
                     ),
-                  ],
-                ),
-              )
-            ],
-          ),
-          index == timelineOptions.length - 1
-              ? Container()
-              : Container(
-                  alignment: Alignment.centerLeft,
-                  margin: const EdgeInsets.only(
-                    left: 20.0,
-                  ),
-                  height: 70,
-                  width: 1,
-                  color: timelineOptions[index].isCurrentState
-                      ? const DigitColors().burningOrange
-                      : const DigitColors().cloudGray,
-                ),
-        ],
-      ),
-    ));
+                  )),
+        )
+      ],
+    );
+
+    // Column(
+    //     children: List.generate(
+    //   timelineOptions.length,
+    //   (index) => Column(
+    //     mainAxisAlignment: MainAxisAlignment.end,
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //     children: [
+    //       Row(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           Icon(
+    //             Icons.circle_rounded,
+    //             size: 25,
+    //             color: timelineOptions[index].isCurrentState
+    //                 ? DigitTheme.instance.colorScheme.primary
+    //                 : const DigitColors().cloudGray,
+    //           ),
+    //         ],
+    //       ),
+    //       index == timelineOptions.length - 1
+    //           ? const SizedBox.shrink()
+    //           : Container(
+    //               alignment: Alignment.centerLeft,
+    //               margin: const EdgeInsets.only(
+    //                 left: 12.0,
+    //               ),
+    //               height: 60,
+    //               width: 2,
+    //               color: timelineOptions[index].isCurrentState
+    //                   ? const DigitColors().burningOrange
+    //                   : const DigitColors().cloudGray,
+    //             ),
+    //     ],
+    //   ),
+    // ));
   }
 }
 
