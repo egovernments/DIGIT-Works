@@ -18,4 +18,7 @@ public class BillCalculatorRequestInfoWrapper {
 
     @JsonProperty("bill")
     private Bill bill;
+
+    @JsonProperty("workflow")
+    private Workflow workflow = null;
 }

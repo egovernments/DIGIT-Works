@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Bill {
+public class PurchaseBill {
 	@JsonProperty("id")
 	@Valid
 	private String id;
@@ -40,54 +40,25 @@ public class Bill {
 	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
-	@JsonProperty("billDate")
+	@JsonProperty("invoiceDate")
 	@Valid
-	private Long billDate;
+	private Long invoiceDate;
 
-	@JsonProperty("dueDate")
+	@JsonProperty("invoiceNumber")
 	@Valid
-	private Long dueDate;
-
-	@JsonProperty("netPayableAmount")
+	private String invoiceNumber;
+	
+	@JsonProperty("contractNumber")
 	@Valid
-	private BigDecimal netPayableAmount = null;
-
-	@JsonProperty("netPaidAmount")
+	private String contractNumber;
+	
+	@JsonProperty("projectId")
 	@Valid
-	private BigDecimal netPaidAmount = null;
-
-	@JsonProperty("businessService")
-	@NotNull
-	@Size(min = 2, max = 64)
-	private String businessService = null;
-
-	@JsonProperty("referenceId")
-	@Size(min = 2, max = 64)
-	private String referenceId;
-
-	@JsonProperty("fromPeriod")
-	@Valid
-	private Long fromPeriod;
-
-	@JsonProperty("toPeriod")
-	@Valid
-	private Long toPeriod;
-
-	@JsonProperty("paymentStatus")
-	@Size(min = 2, max = 64)
-	private String paymentStatus;
-
+	private String projectId;
+	
 	@JsonProperty("status")
 	@Size(min = 2, max = 64)
 	private String status;
-
-	@JsonProperty("billNumber")
-	private String billNumber;
-
-	@JsonProperty("payer")
-	@NotNull
-	@Valid
-	private Party payer;
 
 	@JsonProperty("billDetails")
 	@NotNull
@@ -98,14 +69,27 @@ public class Bill {
 	private Object additionalDetails;
 
 	@JsonProperty("auditDetails")
+
 	@Valid
 	private AuditDetails auditDetails;
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents = null;
 
 	@JsonProperty("workflow")
-	private ProcessInstance workflow;
+	private Workflow workflow;
 
-	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
-		if(null == this.billDetails)
+	public PurchaseBill addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		this.documents.add(documentsItem);
+		return this;
+	}
+
+	public PurchaseBill addBillDetailsItem(BillDetail billDetailsItem) {
+
+		if (null == this.billDetails)
 			this.billDetails = new ArrayList<>();
 
 		this.billDetails.add(billDetailsItem);

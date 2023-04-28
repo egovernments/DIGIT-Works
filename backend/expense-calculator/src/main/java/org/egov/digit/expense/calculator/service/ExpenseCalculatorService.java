@@ -37,8 +37,6 @@ public class ExpenseCalculatorService {
     private ExpenseCalculatorProducer expenseCalculatorProducer;
     @Autowired
     private ExpenseCalculatorConfiguration config;
-
-
     @Autowired
     private PurchaseBillGeneratorService purchaseBillGeneratorService;
 
@@ -83,12 +81,35 @@ public class ExpenseCalculatorService {
 
     public List<Bill> createPurchaseBill(PurchaseBillRequest purchaseBillRequest){
         expenseCalculatorServiceValidator.validatePurchaseRequest(purchaseBillRequest);
-        purchaseBillRequest.getDocuments();
-        Bill purchaseBill = purchaseBillGeneratorService.createPurchaseBill(purchaseBillRequest);
-        BillResponse billResponse = postBill(purchaseBillRequest.getRequestInfo(), purchaseBill);
-        List<Bill> bills = billResponse.getBills();
-        persistMeta(bills,new HashMap<>());
-        return bills;
+
+        RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
+        PurchaseBill providedPurchaseBill = purchaseBillRequest.getBill();
+        String tenantId = providedPurchaseBill.getTenantId();
+        //Fetch Payers from MDMS
+        List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
+        // Fetch HeadCodes from MDMS
+        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
+        // Fetch Applicable Charges from MDMS
+        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
+        // Initialize meta map
+        Map<String, String> metaInfo = new HashMap<>();
+        // Create the bill
+        Bill purchaseBill = purchaseBillGeneratorService.createPurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
+        // Post the newly created bill to expense service
+        BillResponse billResponse = postBill(purchaseBillRequest.getRequestInfo(), purchaseBill, purchaseBillRequest.getWorkflow());
+
+        List<Bill> submittedBills = new ArrayList<>();
+        if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
+        {
+
+                List<Bill> respBills = billResponse.getBills();
+                if(respBills != null && !respBills.isEmpty()) {
+                    persistMeta(respBills,metaInfo);
+                    submittedBills.addAll(respBills);
+                }
+
+        }
+        return submittedBills;
     }
 
     public List<Bill> createBills(CalculationRequest calculationRequest){
@@ -117,12 +138,18 @@ public class ExpenseCalculatorService {
 
         BillResponse billResponse = null;
         List<Bill> submittedBills = new ArrayList<>();
+        Workflow workflow = Workflow.builder()
+                                    .action(WF_SUBMIT_ACTION_CONSTANT)
+                                    .build();
         for(Bill bill : bills) {
-            billResponse = postBill(requestInfo, bill);
+            billResponse = postBill(requestInfo, bill,workflow);
             if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
             {
-                submittedBills = billResponse.getBills();
-                persistMeta(submittedBills,metaInfo);
+                List<Bill> respBills = billResponse.getBills();
+                if(respBills != null && !respBills.isEmpty()) {
+                    persistMeta(respBills,metaInfo);
+                    submittedBills.addAll(respBills);
+                }
             }
         }
         return submittedBills;
@@ -140,8 +167,11 @@ public class ExpenseCalculatorService {
         List<LabourCharge> labourCharges = fetchMDMSDataForLabourCharges(requestInfo, musterRoll.getTenantId());
         List<Bill> wageSeekerBills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,Collections.singletonList(musterRoll),labourCharges,context);
         BillResponse billResponse = null;
+        Workflow workflow = Workflow.builder()
+                            .action(WF_SUBMIT_ACTION_CONSTANT)
+                            .build();
         for(Bill bill : wageSeekerBills) {
-            billResponse = postBill(requestInfo, bill);
+            billResponse = postBill(requestInfo, bill,workflow);
             if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
             {
                 List<Bill> bills = billResponse.getBills();
@@ -163,8 +193,8 @@ public class ExpenseCalculatorService {
         }
         return contractProjectMapping;
     }
-    private BillResponse postBill(RequestInfo requestInfo, Bill bill){
-        return billUtils.postBill(requestInfo, bill);
+    private BillResponse postBill(RequestInfo requestInfo, Bill bill, Workflow workflow){
+        return billUtils.postBill(requestInfo, bill, workflow);
     }
 
     private List<LabourCharge> fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String tenantId){
@@ -209,5 +239,47 @@ public class ExpenseCalculatorService {
     private List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
         List<Bill> bills = expenseCalculatorUtil.fetchBills(requestInfo, tenantId, contractId);
         return bills;
+    }
+
+    private List<Payer> fetchMDMSDataForPayers(RequestInfo requestInfo, String tenantId){
+        String rootTenantId = tenantId.split("\\.")[0];
+        log.info("Fetch payer list from MDMS");
+        Object mdmsData = mdmsUtils.getPayersFromMDMS(requestInfo, rootTenantId);
+        List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_PAYER);
+        List<Payer> payers = new ArrayList<>();
+        for(Object obj : payerListJson){
+            Payer payer = mapper.convertValue(obj, Payer.class);
+            payers.add(payer);
+        }
+        log.info("Payers fetched from MDMS");
+        return payers;
+    }
+
+    private List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
+        String rootTenantId = tenantId.split("\\.")[0];
+        log.info("Fetch head code list from MDMS");
+        Object mdmsData = mdmsUtils.getHeadCodesFromMDMS(requestInfo, rootTenantId);
+        List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
+        List<HeadCode> headCodes = new ArrayList<>();
+        for(Object obj : headCodeListJson){
+            HeadCode headCode = mapper.convertValue(obj, HeadCode.class);
+            headCodes.add(headCode);
+        }
+        log.info("Head codes fetched from MDMS");
+        return headCodes;
+    }
+
+    private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
+        String rootTenantId = tenantId.split("\\.")[0];
+        log.info("Fetch head code list from MDMS");
+        Object mdmsData = mdmsUtils.getApplicableChargesFromMDMS(requestInfo, rootTenantId);
+        List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
+        List<ApplicableCharge> applicableCharges = new ArrayList<>();
+        for(Object obj : applicableChargesListJson){
+            ApplicableCharge applicableCharge = mapper.convertValue(obj, ApplicableCharge.class);
+            applicableCharges.add(applicableCharge);
+        }
+        log.info("Head codes fetched from MDMS");
+        return applicableCharges;
     }
 }
