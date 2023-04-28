@@ -90,9 +90,9 @@ export const BillsSearch = {
     const tableData = tableBills?.map(row => {
       return {
         billNo: row?.billNumber,
-        billType: t(Digit.Utils.locale.getTransformedLocale(`BILL_TYPE_${row?.businessService}`)),
+        billType: t(Digit.Utils.locale.getTransformedLocale(`COMMON_MASTERS_BILL_TYPE_${row?.businessService}`)),
         billDate: Digit.DateUtils.ConvertEpochToDate(row?.fromPeriod),
-        status: t(`WF_STATUS_BILL_${row?.wfStatus}`),
+        status: t(`WF_BILL_${row?.wfStatus}`),
         amount:  Digit.Utils.dss.formatterWithoutRound(row?.netPayableAmount,'number')|| t('NA'),
         paymentStatus: t(`PAYMENT_STATUS_${row?.paymentStatus}`),
       }
