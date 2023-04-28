@@ -94,6 +94,8 @@ public class PurchaseBillGeneratorService {
                                 .billDetails(providedPurchaseBill.getBillDetails())
                                 .additionalDetails(providedPurchaseBill.getAdditionalDetails())
                                 .build();
+
+        log.info("Purchase bill created successfully");
         return purchaseBill;
     }
 
@@ -104,6 +106,7 @@ public class PurchaseBillGeneratorService {
             netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
         }
         billDetail.setNetLineItemAmount(netLineItemAmount);
+        log.info("Net LineItem amount calculated");
     }
 
     private void calculateAndSetPayableLineItems(BillDetail billDetail, List<HeadCode> headCodes, List<ApplicableCharge> applicableCharges) {
@@ -138,7 +141,8 @@ public class PurchaseBillGeneratorService {
             }
         }
         billDetail.addPayableLineItems(buildPayableLineItem(expense.subtract(deduction),tenantId,"PURCHASE"));
-        billDetail.addPayableLineItems(buildPayableLineItem(deduction,tenantId,"PURCHASE"));
+        billDetail.addPayableLineItems(buildPayableLineItem(deduction,tenantId,"DEDUCTION"));
+        log.info("Created Payable LineItems");
     }
 
     private LineItem buildPayableLineItem(BigDecimal amount, String tenantId, String headCode) {
@@ -164,11 +168,14 @@ public class PurchaseBillGeneratorService {
             log.error("Error while parsing additionalDetails object.");
             throw new CustomException("PARSE_ERROR","Error while parsing additionalDetails object.");
         }
+
+        log.info("Purchase Bill additional details populated with given key value");
     }
 
     private Contract getContract(RequestInfo requestInfo, String tenantId, String referenceId) {
         ContractResponse contractResponse = contractUtils.fetchContract(requestInfo, tenantId, referenceId);
         Contract contract = contractResponse.getContracts().get(0);
+        log.info("Contract fetched for referenceId ["+referenceId+"]");
         return contract;
     }
 

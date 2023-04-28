@@ -78,6 +78,7 @@ public class ExpenseCalculatorServiceValidator {
     }
 
     public void validatePurchaseRequest (PurchaseBillRequest purchaseBillRequest) {
+        log.info("Validate purchase bill");
         RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
         PurchaseBill bill = purchaseBillRequest.getBill();
 
@@ -87,6 +88,7 @@ public class ExpenseCalculatorServiceValidator {
         validatePurchaseRequestParameters(purchaseBillRequest);
         //Validate request against MDMS
         validateRequestAgainstMDMS(requestInfo,bill.getTenantId(),configs.getPurchaseBusinessService());
+        log.info("Purchase bill validation done");
     }
 
     private void validatePurchaseRequestParameters(PurchaseBillRequest purchaseBillRequest) {
@@ -143,6 +145,7 @@ public class ExpenseCalculatorServiceValidator {
                 throw new CustomException("INVALID_CONTRACT_ID", "Contract not found");
             }
         }
+        log.info("ContractId validated against service");
     }
 
     public void validateCommonCalculatorRequest(CalculationRequest calculationRequest){
@@ -160,6 +163,8 @@ public class ExpenseCalculatorServiceValidator {
             businessServiceToValidate = configs.getSupervisionBusinessService();
 
         validateRequestAgainstMDMS(requestInfo,criteria.getTenantId(),businessServiceToValidate);
+
+        log.info("Common Calculator Request validation done");
     }
 
     private void validateMusterRollIdAgainstService(CalculationRequest calculationRequest, boolean onlyApproved) {
@@ -174,6 +179,7 @@ public class ExpenseCalculatorServiceValidator {
             List<String> fetchedMusterRollIds = fetchListOfMusterRollIdsForGivenIds(requestInfo, tenantId, musterRollIds, onlyApproved);
             validateMusterRollIds(musterRollIds,fetchedMusterRollIds);
         }
+        log.info("MusterRollId validated against service");
     }
     private void validateMusterRollIdAgainstService(MusterRollRequest musterRollRequest) {
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();

@@ -45,9 +45,9 @@ public class MdmsUtils {
         return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
     }
 
-    public Object getPayersFromMDMS(RequestInfo requestInfo, String tenantId){
+    public Object getExpenseMDMSForSubmodule(RequestInfo requestInfo, String tenantId, String subModule){
         List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail masterDetail = getMasterDetailForSubModule(MDMD_PAYER_LIST,MDMS_COMMON_ACTIVE_FILTER );
+        MasterDetail masterDetail = getMasterDetailForSubModule(subModule,MDMS_COMMON_ACTIVE_FILTER );
         masterDetails.add(masterDetail);
         ModuleDetail expenseModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
                 .moduleName(MDMS_EXPENSE_MASTERS).build();
@@ -56,32 +56,6 @@ public class MdmsUtils {
         moduleDetails.add(expenseModuleDetail);
         MdmsCriteriaReq mdmsCriteriaReq = prepareMDMSCriteria(requestInfo, moduleDetails, tenantId);
 
-        return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
-    }
-
-    public Object getApplicableChargesFromMDMS(RequestInfo requestInfo, String tenantId){
-        List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail masterDetail = getMasterDetailForSubModule(MDMS_APPLICABLE_CHARGES,MDMS_COMMON_ACTIVE_FILTER );
-        masterDetails.add(masterDetail);
-        ModuleDetail expenseModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
-                .moduleName(MDMS_EXPENSE_MASTERS).build();
-
-        List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(expenseModuleDetail);
-        MdmsCriteriaReq mdmsCriteriaReq = prepareMDMSCriteria(requestInfo, moduleDetails, tenantId);
-
-        return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
-    }
-
-    public Object getHeadCodesFromMDMS(RequestInfo requestInfo, String tenantId){
-        List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail masterDetail = getMasterDetailForSubModule(MDMS_HEAD_CODES,MDMS_COMMON_ACTIVE_FILTER );
-        masterDetails.add(masterDetail);
-        ModuleDetail expenseModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
-                .moduleName(MDMS_EXPENSE_MASTERS).build();
-        List<ModuleDetail> moduleDetails = new LinkedList<>();
-        moduleDetails.add(expenseModuleDetail);
-        MdmsCriteriaReq mdmsCriteriaReq = prepareMDMSCriteria(requestInfo, moduleDetails, tenantId);
         return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
     }
 

@@ -37,7 +37,11 @@ public class BillUtils {
                                                                 .build();
 
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
-        return mapper.convertValue(responseObj, BillResponse.class);
+
+        BillResponse billResponse = mapper.convertValue(responseObj, BillResponse.class);
+        String status = billResponse.getResponseInfo().getStatus();
+        log.info("Bill posted. Response status ["+status+"]" );
+        return billResponse;
     }
 
     private StringBuilder getBillCreateURI() {

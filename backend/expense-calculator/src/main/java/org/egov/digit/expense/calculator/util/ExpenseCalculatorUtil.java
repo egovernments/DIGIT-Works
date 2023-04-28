@@ -72,6 +72,7 @@ public class ExpenseCalculatorUtil {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         MusterRollResponse response = mapper.convertValue(responseObj, MusterRollResponse.class);
+        log.info("Received Muster roll response from service");
         return response.getMusterRolls();
     }
 

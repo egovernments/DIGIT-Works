@@ -54,6 +54,7 @@ public class WageSeekerBillGeneratorService {
 
 
     private List<Bill> createBillForMusterRolls(RequestInfo requestInfo, List<MusterRoll> musterRolls, List<LabourCharge> labourCharges,Map<String, String> metaInfo) {
+           log.info("Create wage bill for provided muster rolls");
             List<Bill> bills = new ArrayList<>();
             List<String> musterRollNumbers = new ArrayList<>();
 
@@ -90,6 +91,7 @@ public class WageSeekerBillGeneratorService {
                     Party payee = buildParty(individualId,configs.getWagePayeeType(),tenantId);
                     metaInfo.put(individualId,String.valueOf(getWageSeekerSkillCodeId(individualEntry,labourCharges)));
                     // Build BillDetail
+                    log.info("Create bill details");
                     BillDetail billDetail = BillDetail.builder()
                                                 //.referenceId(individualId)
                                                 .billId(null)
@@ -135,7 +137,9 @@ public class WageSeekerBillGeneratorService {
     private String getCBOID(RequestInfo requestInfo, String tenantId, String referenceId) {
         ContractResponse contractResponse = contractUtils.fetchContract(requestInfo, tenantId, referenceId);
         Contract contract = contractResponse.getContracts().get(0);
-        return contract.getOrgId();
+        String orgId = contract.getOrgId();
+        log.info("OrgId is ["+orgId+" for provided referenceId ["+referenceId+"]");
+        return orgId;
     }
     private String getContractId(MusterRoll musterRoll) {
 //        final Object additionalDetails = musterRoll.getAdditionalDetails();
@@ -256,18 +260,18 @@ public class WageSeekerBillGeneratorService {
 
     private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
 
-        return new Double(150);
-//        String skill =  getWageSeekerSkill(individualEntry);
-//        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
-//        for(LabourCharge labourCharge : labourCharges){
-//            if(labourCharge.getCode().equalsIgnoreCase(skill)
-//                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
-//                return labourCharge.getAmount();
-//            }
-//        }
-//
-//        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
-//        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+//        return new Double(150);
+        String skill =  getWageSeekerSkill(individualEntry);
+        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
+        for(LabourCharge labourCharge : labourCharges){
+            if(labourCharge.getCode().equalsIgnoreCase(skill)
+                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
+                return labourCharge.getAmount();
+            }
+        }
+
+        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
     }
 
     private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {

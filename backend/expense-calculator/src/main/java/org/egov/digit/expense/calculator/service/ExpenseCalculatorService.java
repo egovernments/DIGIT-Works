@@ -75,7 +75,8 @@ public class ExpenseCalculatorService {
     }
 
 
-    public List<Bill> createPurchaseBill(PurchaseBillRequest purchaseBillRequest){
+    public List<Bill> createPurchaseBill(PurchaseBillRequest purchaseBillRequest) {
+        log.info("Create the purchase bill");
         expenseCalculatorServiceValidator.validatePurchaseRequest(purchaseBillRequest);
 
         RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
@@ -94,16 +95,18 @@ public class ExpenseCalculatorService {
         // Post the newly created bill to expense service
         BillResponse billResponse = postBill(purchaseBillRequest.getRequestInfo(), purchaseBill, purchaseBillRequest.getWorkflow());
 
+        return persistMeta(billResponse,metaInfo);
+    }
+
+    private List<Bill> persistMeta(BillResponse billResponse,Map<String, String> metaInfo) {
         List<Bill> submittedBills = new ArrayList<>();
         if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
         {
-
-                List<Bill> respBills = billResponse.getBills();
-                if(respBills != null && !respBills.isEmpty()) {
-                    persistMeta(respBills,metaInfo);
-                    submittedBills.addAll(respBills);
-                }
-
+            List<Bill> respBills = billResponse.getBills();
+            if(respBills != null && !respBills.isEmpty()) {
+                persistMeta(respBills,metaInfo);
+                submittedBills.addAll(respBills);
+            }
         }
         return submittedBills;
     }
@@ -190,6 +193,7 @@ public class ExpenseCalculatorService {
         return contractProjectMapping;
     }
     private BillResponse postBill(RequestInfo requestInfo, Bill bill, Workflow workflow){
+        log.info("Post the bill to expense service");
         return billUtils.postBill(requestInfo, bill, workflow);
     }
 
@@ -216,6 +220,7 @@ public class ExpenseCalculatorService {
     private void persistMeta(List<Bill> bills,Map<String, String> metaInfo) {
         BillMetaRecords billMetaRecords = billToMetaMapper.map(bills,metaInfo);
         expenseCalculatorProducer.push(config.getCalculatorCreateBillTopic(),billMetaRecords);
+        log.info("Meta records pushed to topic ["+config.getCalculatorCreateBillTopic()+"]");
     }
 
     /**
@@ -233,7 +238,7 @@ public class ExpenseCalculatorService {
     private List<Payer> fetchMDMSDataForPayers(RequestInfo requestInfo, String tenantId){
         String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch payer list from MDMS");
-        Object mdmsData = mdmsUtils.getPayersFromMDMS(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.getExpenseMDMSForSubmodule(requestInfo, rootTenantId, MDMD_PAYER_LIST);
         List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_PAYER);
         List<Payer> payers = new ArrayList<>();
         for(Object obj : payerListJson){
@@ -247,7 +252,7 @@ public class ExpenseCalculatorService {
     private List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getHeadCodesFromMDMS(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.getExpenseMDMSForSubmodule(requestInfo, rootTenantId,MDMS_HEAD_CODES);
         List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
         List<HeadCode> headCodes = new ArrayList<>();
         for(Object obj : headCodeListJson){
@@ -260,15 +265,15 @@ public class ExpenseCalculatorService {
 
     private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
-        log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getApplicableChargesFromMDMS(requestInfo, rootTenantId);
+        log.info("Fetch applicable charges list from MDMS");
+        Object mdmsData = mdmsUtils.getExpenseMDMSForSubmodule(requestInfo, rootTenantId,MDMS_APPLICABLE_CHARGES);
         List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
         List<ApplicableCharge> applicableCharges = new ArrayList<>();
         for(Object obj : applicableChargesListJson){
             ApplicableCharge applicableCharge = mapper.convertValue(obj, ApplicableCharge.class);
             applicableCharges.add(applicableCharge);
         }
-        log.info("Head codes fetched from MDMS");
+        log.info("Applicable charges fetched from MDMS");
         return applicableCharges;
     }
 }
