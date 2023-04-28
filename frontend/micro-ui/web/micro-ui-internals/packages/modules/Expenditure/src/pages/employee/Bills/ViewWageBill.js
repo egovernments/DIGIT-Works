@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
-import { useHistory } from 'react-router-dom';
-import { Header, ActionBar, SubmitBar } from '@egovernments/digit-ui-react-components';
+import { Header } from '@egovernments/digit-ui-react-components';
 import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewWageBill = () => {
   const { t } = useTranslation();
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("expenditure").WAGE_BILL;
   const { tenantId, billNumber } = Digit.Hooks.useQueryParams();
   const [showDataError, setShowDataError] = useState(null)
 
@@ -38,7 +38,11 @@ const ViewWageBill = () => {
             moduleCode="AttendenceMgmt"
             isDataLoading={false}
             workflowDetails={data?.workflowDetails}
-            showTimeLine={false}
+            showTimeLine={true}
+            timelineStatusPrefix={"WF_WBILL_STATUS_"}
+            applicationNo={billNumber}
+            businessService={businessService}
+            statusAttribute={"state"}
             mutate={()=>{}}
             tenantId={tenantId}
           />

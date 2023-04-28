@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from 'react-router-dom';
-import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
+import { Header, InboxSearchComposer, Loader, Button, DownloadImgIcon} from "@egovernments/digit-ui-react-components";
 import { SearchBillConfig } from '../../../configs/SearchBillConfig';
 import { SearchBillWMSConfig } from '../../../configs/SearchBillWMSConfig';
 
@@ -55,7 +55,7 @@ const SearchBill = () => {
             <Button
               label={t(configs?.actionLabel)}
               variation="secondary"
-              icon={<AddFilled style={{height : "20px", width : "20px"}}/>}
+              icon={<DownloadImgIcon style={{height : "20px", width : "20px"}}/>}
               onButtonClick={() => {
                 history.push(`/${window?.contextPath}/employee/${configs?.actionLink}`);
               }}
