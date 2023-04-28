@@ -208,7 +208,7 @@ function ApplicationDetailsContent({
       window.location.href.includes("employee/contracts") || 
       window.location.href.includes("employee/masters") ||
       window.location.href.includes("employee/project") ||
-      window.location.href.includes("employee/contracts") 
+      window.location.href.includes("employee/expenditure") 
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {

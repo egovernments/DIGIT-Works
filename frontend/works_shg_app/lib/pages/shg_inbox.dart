@@ -5,8 +5,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/common_widgets.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -84,6 +84,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   List<DigitTimelineOptions> timeLineAttributes = [];
   DaysInRange? daysInRange;
   bool inWorkFlow = false;
+  List<String> dates = [];
 
   @override
   void initState() {
@@ -209,6 +210,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                         .musterRoll!.first.startDate!,
                                     individualMusterRollModel
                                         .musterRoll!.first.endDate!);
+                                dates = DateFormats.getFormattedDatesOfAWeek(selectedDateRange!.startDate, selectedDateRange!.endDate);
                               }
                             });
                           },
@@ -266,8 +268,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                         title: t.translate('WF_MUSTOR_${e.workflowState?.applicationStatus}'),
                                                         subTitle: DateFormats.getTimeLineDate(e.auditDetails?.lastModifiedTime ?? 0),
                                                         isCurrentState: i == 0,
-                                                        assignee: e.assignes?.first.name,
-                                                        mobileNumber: e.assignes != null ? '+91-${e.assignes?.first.mobileNumber}' : ''
+                                                        assignee: e.assignes?.first.name ,
+                                                        mobileNumber: e.assignes != null ? '+91-${e.assignes?.first.mobileNumber}' : null
 
                                                   )).toList();
                                               }
@@ -278,13 +280,17 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                  return workflowState.maybeWhen(orElse: () => Container(),
                                                  loading: () => shg_loader.Loaders.circularLoader(context),
                                                  loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkFlow) {
-                                                   return DigitCard(padding: const EdgeInsets.all(4.0),child: Column(
+                                                   return DigitCard(padding: const EdgeInsets.all(8.0),child: Column(
+                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                      children: [
-                                                       Text(
-                                                         t.translate(i18.common.workflowTimeline) ?? '',
-                                                         style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
-                                                             ?.apply(color: const DigitColors().black),
-                                                         textAlign: TextAlign.left,
+                                                       Padding(
+                                                         padding: const EdgeInsets.only(left: 4.0, bottom: 16.0, top: 8.0),
+                                                         child: Text(
+                                                           t.translate(i18.common.workflowTimeline) ?? '',
+                                                           style: DigitTheme.instance.mobileTheme.textTheme.headlineLarge
+                                                               ?.apply(color: const DigitColors().black),
+                                                           textAlign: TextAlign.left,
+                                                         ),
                                                        ),
                                                        DigitTimeline(timelineOptions: timeLineAttributes,),
                                                      ],
@@ -376,15 +382,14 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         .individualEntries!
                                                                         .map((e) => AttendeesTrackList(
                                                                             name: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.userName ??
-                                                                                e
-                                                                                    .individualId,
+                                                                                '',
                                                                             aadhaar: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.aadharNumber ??
-                                                                                e
-                                                                                    .individualId,
+                                                                                '',
                                                                             individualId: e
                                                                                 .individualId,
                                                                             skillCodeList: e.musterIndividualAdditionalDetails?.skillCode ?? [],
-                                                                            individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName,
+                                                                            individualGaurdianName: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.fatherName ??
+                                                                                  e.musterIndividualAdditionalDetails?.fatherName ?? '',
                                                                             id: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                             skill: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                                 '',
@@ -421,6 +426,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         var item1 = attendeeList[i];
                                                                         TrackAttendanceTableData data = TrackAttendanceTableData();
                                                                         data.name = item1.name;
+                                                                        data.individualGaurdianName = item1.individualGaurdianName ?? '';
                                                                         data.aadhaar = item1.aadhaar;
                                                                         data.individualId = item1.individualId ?? '';
                                                                         data.id = item1.id ?? '';
@@ -459,6 +465,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         data.name = item1.name;
                                                                         data.aadhaar = item1.aadhaar;
                                                                         data.individualId = item1.individualId ?? '';
+                                                                        data.individualGaurdianName = item1.individualGaurdianName ?? '';
                                                                         data.id = item1.id ?? '';
                                                                         data.skill = item1.skill;
                                                                         data.skillCodeList = item1.skillCodeList;
@@ -500,7 +507,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                     10,
                                                                             height: 58 +
                                                                                 (52.0 *
-                                                                                    (tableData.length + 1)),
+                                                                                    (tableData.length + 0.2)),
                                                                             scrollPhysics:
                                                                                 const NeverScrollableScrollPhysics(),
                                                                           ),
@@ -638,7 +645,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                             .white,
                                                                     side: BorderSide(
                                                                         width: 2,
-                                                                        color: DigitTheme
+                                                                        color: inWorkFlow ? const Color.fromRGBO(149, 148, 148, 1) : DigitTheme
                                                                             .instance
                                                                             .colorScheme
                                                                             .secondary)),
@@ -699,20 +706,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                           .common
                                                                           .saveAsDraft),
                                                                   style: inWorkFlow
-                                                                      ? Theme.of(
-                                                                              context)
-                                                                          .textTheme
-                                                                          .titleSmall
-                                                                          ?.apply(
-                                                                              color: const Color.fromRGBO(
-                                                                                  149,
-                                                                                  148,
-                                                                                  148,
-                                                                                  1))
-                                                                      : Theme.of(
-                                                                              context)
-                                                                          .textTheme
-                                                                          .titleSmall,
+                                                                      ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1))
+                                                                      : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
                                                                 ))),
                                                           ),
                                                           const SizedBox(
@@ -804,13 +799,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                         .translate(i18
                                                                             .attendanceMgmt
                                                                             .resubmitMusterRoll),
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .titleSmall!
-                                                                        .apply(
-                                                                            color: Colors
-                                                                                .white)),
+                                                                    style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
                                                               )),
                                                         ],
                                                       );
@@ -874,11 +863,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
               .translate(i18.common.nameLabel),
           apiKey: 'name',
         ),
-        TableHeader(
-          AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate(i18.common.aadhaarNumber),
-          apiKey: 'aadhaarNumber',
-        ),
+    TableHeader(
+      AppLocalizations.of(scaffoldMessengerKey.currentContext!)
+          .translate(i18.common.fatherName),
+      apiKey: 'individualGaurdianName',
+    ),
     TableHeader(
       '${AppLocalizations.of(scaffoldMessengerKey.currentContext!)
           .translate(i18.attendanceMgmt.skill)}*',
@@ -887,30 +876,37 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.mon),
+            subLabel: dates.isNotEmpty ? dates[0] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.tue),
+            subLabel: dates.isNotEmpty ? dates[1] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.wed),
+            subLabel: dates.isNotEmpty ? dates[2] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.thu),
+            subLabel: dates.isNotEmpty ? dates[3] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.fri),
+            subLabel: dates.isNotEmpty ? dates[4] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.sat),
+            subLabel: dates.isNotEmpty ? dates[5] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
               .translate(i18.common.sun),
+            subLabel: dates.isNotEmpty ? dates[6] : ''
         ),
         TableHeader(
           AppLocalizations.of(scaffoldMessengerKey.currentContext!)
@@ -921,7 +917,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   TableDataRow getAttendanceRow(TrackAttendanceTableData tableDataModel) {
     return TableDataRow([
       TableData(label: tableDataModel.name, apiKey: tableDataModel.name),
-      TableData(label: tableDataModel.aadhaar, apiKey: tableDataModel.aadhaar),
+      TableData(label: tableDataModel.individualGaurdianName, apiKey: tableDataModel.individualGaurdianName),
       TableData(
           apiKey: tableDataModel.skill,
           hide: false,

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/pages/bills/my_bills.dart';
 import 'package:works_shg_app/pages/org_profile.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/register_individual.dart';
 
@@ -60,7 +61,8 @@ part 'app_router.gr.dart';
             page: TrackAttendancePage, path: 'track-attendance/:id/:tenantId'),
         AutoRoute(page: RegisterIndividualPage, path: 'register-individual'),
         AutoRoute(page: ViewWorkDetailsPage, path: 'view-work-order'),
-        AutoRoute(page: SuccessResponsePage, path: 'success')
+        AutoRoute(page: SuccessResponsePage, path: 'success'),
+        AutoRoute(page: MyBillsPage, path: 'my-bills')
       ],
     ),
   ],

@@ -119,23 +119,37 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.wage.head.code}")
 	private String wageHeadCode;
 
+	@Value("${egov.works.expense.wage.labour.charge.unit}")
+	private String wageLabourChargeUnit;
+
 	@Value("${egov.works.expense.wage.payee.type}")
 	private String wagePayeeType;
 
 	@Value("${egov.works.expense.wage.business.service}")
 	private String wageBusinessService;
 
+	@Value("${egov.works.expense.purchase.business.service}")
+	private String purchaseBusinessService;
+
+	@Value("${egov.works.expense.supervision.business.service}")
+	private String supervisionBusinessService;
+
 	@Value("${egov.works.expense.wage.lineitem.type}")
 	private String wageLineItemType;
 
-	@Value("${egov.works.expense.wage.payer.type}")
-	private String wagePayerType;
-
-	@Value("${egov.works.expense.wage.payer.id}")
-	private String wagePayerId;
+	@Value("${egov.works.expense.payer.type}")
+	private String payerType;
 
 	//KAFKA topic
 	@Value("${expense.calculator.create.topic}")
 	private String calculatorCreateTopic;
+	
+	//Purchase bill referenceId IDGen format key
+	@Value("${egov.works.expense.purchasebill.referenceId.format}")
+	private String purchaseBillReferenceIdFormatKey;
+	
+	//Supervision bill referenceId IDGen format key
+	@Value("${egov.works.expense.superbill.referenceId.format}")
+	private String supervisionBillreferenceIdFormatKey;
 
 }

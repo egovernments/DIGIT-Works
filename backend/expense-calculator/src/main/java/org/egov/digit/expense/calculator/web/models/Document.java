@@ -43,15 +43,10 @@ public class Document {
     @Valid
     private Status status = null;
 
-    @Size(max = 64)
-    private String contractId = null;
-
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
     @JsonIgnore
     private AuditDetails auditDetails = null;
-
-
 }
 

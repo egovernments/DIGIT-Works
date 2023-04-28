@@ -21,9 +21,11 @@ class AppBarLogo extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    GlobalVariables
-                            .organisationListModel?.organisations?.first.name ??
-                        '',
+                    GlobalVariables.organisationListModel != null
+                        ? GlobalVariables.organisationListModel?.organisations
+                                ?.first.name ??
+                            ''
+                        : '',
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 12,

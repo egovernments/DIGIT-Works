@@ -8,8 +8,10 @@ import ViewBillsMenu from "./pages/employee/viewBills/viewBillsMenu";
 import ViewBills from "./pages/employee/viewBills/viewBills";
 import BillInbox from "./pages/employee/Bills/BillInbox";
 import SearchBill from "./pages/employee/Bills/SearchBill";
-import ViewBill from "./pages/employee/Bills/ViewBill";
+import ViewWageBill from "./pages/employee/Bills/ViewWageBill";
 import TotalBillAmount from "./pageComponents/TotalBillAmount";
+import PayableAmt from "./components/PayableAmt";
+import DownloadBill from "./pages/employee/Bills/DownloadBill";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     
@@ -39,8 +41,10 @@ const componentsToRegister = {
   //new
   BillInbox,
   SearchBill,
-  ViewBill,
+  ViewWageBill,
   TotalBillAmount,
+  PayableAmt,
+  DownloadBill
 };
 
 export const initExpenditureComponents = () => {

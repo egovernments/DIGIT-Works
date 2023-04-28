@@ -7,11 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import digit.models.coremodels.AuditDetails;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Schema(description = "A Object which holds the meta about the bill")
 @Validated
@@ -19,28 +17,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillMeta {
-
+public class BillMetaCalcDetails {
     @JsonProperty("id")
     private String id;
 
     @JsonProperty("tenantId")
     private String tenantId = null;
 
-    @JsonProperty("serviceCode")
-    private String serviceCode = null;
+    @JsonProperty("calculationId")
+    private String calculationId = null;
 
-    @JsonProperty("contractId")
-    private String contractId = null;
+    @JsonProperty("payeeId")
+    private String payeeId = null;
 
-    @JsonProperty("musterrollId")
-    private String musterrollId = null;
-
-    @JsonProperty("billType")
-    private String billType = null;
-
-    @JsonProperty("billId")
-    private String billId = null;
+    @JsonProperty("billingSlabCode")
+    private String billingSlabCode = null;
 
     @JsonProperty("isActive")
     private Boolean isActive = null;
@@ -48,23 +39,8 @@ public class BillMeta {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-    @JsonProperty("billAmount")
-    @Valid
-    private BigDecimal billAmount = null;
-
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
 
-    @JsonProperty("documents")
-    @Valid
-    private List<Document> documents = null;
-
-    public BillMeta addDocumentsItem(Document documentsItem) {
-        if (this.documents == null) {
-            this.documents = new ArrayList<>();
-        }
-        this.documents.add(documentsItem);
-        return this;
-    }
 }
