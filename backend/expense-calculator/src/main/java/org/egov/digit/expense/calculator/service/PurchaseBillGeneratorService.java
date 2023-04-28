@@ -88,7 +88,7 @@ public class PurchaseBillGeneratorService {
                                 .fromPeriod(contract.getStartDate().longValue())
                                 .toPeriod(contract.getEndDate().longValue())
                                 .status(providedPurchaseBill.getStatus())
-                               // .netPayableAmount(netPayableAmount)
+                                .totalAmount(netPayableAmount)
                                 .paymentStatus("PENDING")
                                 .payer(payer)
                                 .billDetails(providedPurchaseBill.getBillDetails())
@@ -243,7 +243,6 @@ public class PurchaseBillGeneratorService {
      * Generates the referenceId to be set on the Bill object. This referenceId is a combination of the
      * contract number and a unique ID generated from MDMS format template. 
      * Example: CON123_PB_123
-     * @param request
      * @param contractNumber
      * @return
      */

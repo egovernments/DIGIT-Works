@@ -133,7 +133,6 @@ public class ExpenseCalculatorService {
             List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
             Calculation calculation = supervisionBillGeneratorService.calculateEstimate(requestInfo, criteria, expenseBills);
             bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
-            //expenseCalculatorProducer.push(config.getCalculatorCreateTopic(),calculation);
         }
 
         BillResponse billResponse = null;

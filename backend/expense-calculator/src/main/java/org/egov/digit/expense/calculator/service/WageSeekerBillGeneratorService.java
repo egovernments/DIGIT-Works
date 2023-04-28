@@ -101,7 +101,7 @@ public class WageSeekerBillGeneratorService {
                                                 .payee(payee)
                                                 .lineItems(Collections.singletonList(lineItem))
                                                 .payableLineItems(Collections.singletonList(lineItem))
-                                               // .netLineItemAmount(actualAmountToPay)
+                                                .netLineItemAmount(actualAmountToPay)
                                                 .build();
 
                     billDetails.add(billDetail);
