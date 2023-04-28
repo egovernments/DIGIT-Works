@@ -2,6 +2,7 @@ package org.egov.digit.expense.calculator.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.enrichment.ExpenseCalculatorEnrichment;
@@ -13,9 +14,12 @@ import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValid
 import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
@@ -222,9 +226,20 @@ public class ExpenseCalculatorService {
         expenseCalculatorProducer.push(config.getCalculatorCreateBillTopic(),billMetaRecords);
     }
 
-    public List<String> search(CalculatorSearchRequest calculatorSearchRequest) {
-        List<String> billIds=expenseCalculatorRepository.getBillIds(calculatorSearchRequest);
-        return billIds;
+    public List<BillMapper> search(CalculatorSearchRequest calculatorSearchRequest) {
+        RequestInfo requestInfo=calculatorSearchRequest.getRequestInfo();
+        String tenantId=calculatorSearchRequest.getSearchCriteria().getTenantId();
+
+        Map<String,BillMapper> billMappers=expenseCalculatorRepository.getBillMappers(calculatorSearchRequest);
+        List<Bill> bills=expenseCalculatorUtil.fetchBillsWithBillIds(requestInfo,tenantId,new ArrayList<>(billMappers.keySet()));
+
+        //set bills in billMapper
+        for(Bill bill:bills){
+            if(billMappers.containsKey(bill.getId())){
+                billMappers.get(bill.getId()).setBill(bill);
+            }
+        }
+        return new ArrayList<>(billMappers.values());
     }
 
 

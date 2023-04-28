@@ -73,12 +73,12 @@ public class WorksCalculatorApiController {
 
 
 	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
-	public ResponseEntity<CalculatorSearchResponse> search(@Valid @RequestBody CalculatorSearchRequest calculatorSearchRequest) {
+	public ResponseEntity<BillMapperSearchResponse> search(@Valid @RequestBody CalculatorSearchRequest calculatorSearchRequest) {
 		RequestInfo requestInfo=calculatorSearchRequest.getRequestInfo();
-		List<String> searchResponse = expenseCalculatorService.search(calculatorSearchRequest);
+		List<BillMapper> bills = expenseCalculatorService.search(calculatorSearchRequest);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculatorSearchRequest.getRequestInfo(), true);
-		CalculatorSearchResponse calculatorSearchResponse= CalculatorSearchResponse.builder().responseInfo(responseInfo).billIds(searchResponse).build();
-		return new ResponseEntity<CalculatorSearchResponse>(calculatorSearchResponse, HttpStatus.OK);
+		BillMapperSearchResponse billResponse= BillMapperSearchResponse.builder().responseInfo(responseInfo).billMappers(bills).build();
+		return new ResponseEntity<BillMapperSearchResponse>(billResponse, HttpStatus.OK);
 	}
 
 }
