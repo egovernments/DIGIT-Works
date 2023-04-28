@@ -87,6 +87,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.bill.create.endpoint}")
 	private String billCreateEndPoint;
 
+	@Value("${egov.bill.update.endpoint}")
+	private String billUpdateEndPoint;
+
 	@Value("${egov.expense.bill.service.search.endpoint}")
 	private String expenseBillSearchEndPoint;
 

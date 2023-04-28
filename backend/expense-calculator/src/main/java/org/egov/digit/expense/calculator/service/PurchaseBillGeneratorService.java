@@ -80,6 +80,7 @@ public class PurchaseBillGeneratorService {
         // Populate additional details object with documents
         populateBillAdditionalDetails(providedPurchaseBill,DOCUMENTS_CONSTANT, documents);
         // Generate the bill
+        log.info("Create purchase bill for referenceId ["+referenceId+"]");
         Bill purchaseBill = Bill.builder()
                                 .tenantId(tenantId)
                                 .billDate(providedPurchaseBill.getInvoiceDate())
@@ -95,6 +96,7 @@ public class PurchaseBillGeneratorService {
                                 .additionalDetails(providedPurchaseBill.getAdditionalDetails())
                                 .build();
 
+        log.info("Purchase bill created");
         return purchaseBill;
     }
 
@@ -104,6 +106,7 @@ public class PurchaseBillGeneratorService {
         for(LineItem lineItem : payableLineItems) {
             netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
         }
+        log.info("Calculated netLineItemAmount for billDetail::referenceId ["+billDetail.getReferenceId()+"]");
         billDetail.setNetLineItemAmount(netLineItemAmount);
     }
 
@@ -121,25 +124,34 @@ public class PurchaseBillGeneratorService {
                 expense = expense.add(amount);
             }
         }
+        log.info("Calculated expense for billDetail::referenceId ["+billDetail.getReferenceId()+"]");
         // Calculate total deduction on top of expense
         for(LineItem lineItem :lineItems) {
             String headCode = lineItem.getHeadCode();
             String category = getHeadCodeCategory(headCode,headCodes);
-            if(category != null && category.equalsIgnoreCase(DEDUCTION_CONSTANT)) {
+            BigDecimal tempDeduction = BigDecimal.ZERO;
+            if(DEDUCTION_CONSTANT.equalsIgnoreCase(category)) {
                 String calculationType = getCalculationType(headCode,applicableCharges);
                 String value = getDeductionValue(headCode,applicableCharges);
-                if(calculationType.equalsIgnoreCase(PERCENTAGE_CONSTANT)) {
-                    deduction = deduction.add(expense.multiply(new BigDecimal(value)).divide(new BigDecimal(100)));
-                } else if (calculationType.equalsIgnoreCase(LUMPSUM_CONSTANT)) {
-                    deduction = deduction.add(new BigDecimal(value));
+                if(PERCENTAGE_CONSTANT.equalsIgnoreCase(calculationType) && (value == null || "null".equalsIgnoreCase(value))) {
+                    log.error("INVALID_CALCULATION_TYPE_VALUE", "For calculationType [" + calculationType +"] value is null");
+                    throw new CustomException("INVALID_CALCULATION_TYPE_VALUE", "For calculationType [" + calculationType +"] field value is null");
+                } else if (PERCENTAGE_CONSTANT.equalsIgnoreCase(calculationType) && value != null && !"null".equalsIgnoreCase(value) ) {
+                    tempDeduction = expense.multiply(new BigDecimal(value)).divide(new BigDecimal(100)) ;
+                } else if (LUMPSUM_CONSTANT.equalsIgnoreCase(calculationType) && (value == null || "null".equalsIgnoreCase(value)))  {
+                    tempDeduction = lineItem.getAmount();
+                } else if (LUMPSUM_CONSTANT.equalsIgnoreCase(calculationType) && value != null && !"null".equalsIgnoreCase(value) ) {
+                    tempDeduction = new BigDecimal(value);
                 } else {
                     log.error("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
                     throw new CustomException("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
                 }
+                deduction = deduction.add(tempDeduction);
+                billDetail.addPayableLineItems(buildPayableLineItem(tempDeduction,tenantId,headCode));
             }
         }
+        log.info("Calculated deduction for billDetail::referenceId ["+billDetail.getReferenceId()+"]");
         billDetail.addPayableLineItems(buildPayableLineItem(expense.subtract(deduction),tenantId,"PURCHASE"));
-        billDetail.addPayableLineItems(buildPayableLineItem(deduction,tenantId,"DEDUCTION"));
     }
 
     private LineItem buildPayableLineItem(BigDecimal amount, String tenantId, String headCode) {
@@ -165,6 +177,7 @@ public class PurchaseBillGeneratorService {
             log.error("Error while parsing additionalDetails object.");
             throw new CustomException("PARSE_ERROR","Error while parsing additionalDetails object.");
         }
+        log.info("Purchase Bill additional details populated with given key value");
     }
 
     private Contract getContract(RequestInfo requestInfo, String tenantId, String referenceId) {
@@ -192,7 +205,7 @@ public class PurchaseBillGeneratorService {
                 .identifier(individualId)
                 .type(type)
                 .tenantId(tenantId)
-                .status("STATUS")
+                .status("ACTIVE")
                 .build();
     }
 
@@ -202,8 +215,8 @@ public class PurchaseBillGeneratorService {
                 return applicableCharge.getValue();
             }
         }
-        log.error("INVALID_HEAD_CODE","");
-        throw new CustomException("INVALID_HEAD_CODE","");
+        log.error("MISSING_HEAD_CODE","HeadCode ["+headCode+"] missing in applicable charge MDMS");
+        throw new CustomException("MISSING_HEAD_CODE","HeadCode ["+headCode+"] missing in applicable charge MDMS");
     }
 
     private String getCalculationType(String headCode, List<ApplicableCharge> applicableCharges) {
