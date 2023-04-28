@@ -14,19 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class ExpenseCalculatorRowMapper implements ResultSetExtractor<List<String>> {
+public class ExpenseCalculatorMusterRowMapper implements ResultSetExtractor<List<String>> {
 
     @Autowired
     private ObjectMapper mapper;
 
     @Override
     public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        List<String> ids = new ArrayList<>();
+        List<String> musterIds = new ArrayList<>();
         while (rs.next()) {
-            String id = StringUtils.isNotBlank(rs.getString("musterroll_number")) ? rs.getString("musterroll_number") : rs.getString("bill_id");
-            ids.add(id);
+            String id = rs.getString("musterroll_number");
+            musterIds.add(id);
         }
-        return  ids;
+        return  musterIds;
     }
 
 
