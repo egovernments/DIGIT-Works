@@ -226,7 +226,7 @@ public class WageSeekerBillGeneratorService {
                 .identifier(individualId)
                 .type(type)
                 .tenantId(tenantId)
-                .status("STATUS")
+                .status("ACTIVE")
                 .build();
     }
 
@@ -256,18 +256,18 @@ public class WageSeekerBillGeneratorService {
 
     private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
 
-        return new Double(150);
-//        String skill =  getWageSeekerSkill(individualEntry);
-//        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
-//        for(LabourCharge labourCharge : labourCharges){
-//            if(labourCharge.getCode().equalsIgnoreCase(skill)
-//                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
-//                return labourCharge.getAmount();
-//            }
-//        }
-//
-//        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
-//        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+   //     return new Double(150);
+        String skill =  getWageSeekerSkill(individualEntry);
+        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
+        for(LabourCharge labourCharge : labourCharges){
+            if(labourCharge.getCode().equalsIgnoreCase(skill)
+                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
+                return labourCharge.getAmount();
+            }
+        }
+
+        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
     }
 
     private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {

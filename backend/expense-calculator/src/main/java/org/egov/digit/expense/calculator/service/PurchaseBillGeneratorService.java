@@ -139,7 +139,7 @@ public class PurchaseBillGeneratorService {
             }
         }
         billDetail.addPayableLineItems(buildPayableLineItem(expense.subtract(deduction),tenantId,"PURCHASE"));
-        billDetail.addPayableLineItems(buildPayableLineItem(deduction,tenantId,"PURCHASE"));
+        billDetail.addPayableLineItems(buildPayableLineItem(deduction,tenantId,"DEDUCTION"));
     }
 
     private LineItem buildPayableLineItem(BigDecimal amount, String tenantId, String headCode) {
