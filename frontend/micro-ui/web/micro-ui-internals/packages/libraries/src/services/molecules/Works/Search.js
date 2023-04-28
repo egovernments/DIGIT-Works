@@ -209,7 +209,7 @@ export const WorksSearch = {
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail[0]?.amount?.toFixed(2), 'number')
             ]
         })
-        const totalAmountNonSor = nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0).toFixed(2)
+        const totalAmountNonSor = Math.round(nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0))
         tableRowsNonSor?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountNonSor, 'number')])
         
         const tableRowsOverheads = overheads?.map((row, index) => {
@@ -220,7 +220,7 @@ export const WorksSearch = {
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail?.[0]?.amount?.toFixed(2), 'number')
             ]
         })
-        const totalAmountOverheads = overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0).toFixed(2)
+        const totalAmountOverheads = Math.round(overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0))
         tableRowsOverheads?.push(["","", t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountOverheads, 'number')])
         const nonSorItems = {
             title: "WORKS_NON_SOR",
@@ -232,7 +232,7 @@ export const WorksSearch = {
             tableStyles:{
                 rowStyle:{},
                 cellStyle: [{}, { "width": "40vw",whiteSpace: 'break-spaces',
-                wordBreak: 'break-all' }, {}, {"textAlign":"right"}, {"textAlign":"right"},{"textAlign":"right"}]
+                wordBreak: 'break-all' }, {}, {"textAlign":"right"}, {"textAlign":"left"},{"textAlign":"right"}]
             }
         }
         const overheadItems = {
@@ -245,7 +245,7 @@ export const WorksSearch = {
             tableStyles: {
                 rowStyle: {},
                 cellStyle: [{}, { "width": "50vw", whiteSpace: 'break-spaces',
-                wordBreak: 'break-all' }, {"textAlign":"right"}, { "textAlign": "right" }]
+                wordBreak: 'break-all' }, {"textAlign":"left"}, { "textAlign": "right" }]
             }
         }
         
@@ -274,7 +274,7 @@ export const WorksSearch = {
             "title": " ",
             "asSectionHeader": true,
             "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
-            "value": Digit.Utils.dss.formatterWithoutRound(estimate?.additionalDetails?.totalEstimatedAmount, 'number')|| t("NA")
+            "value": Digit.Utils.dss.formatterWithoutRound(Math.round(estimate?.additionalDetails?.totalEstimatedAmount), 'number')|| t("NA")
         }
 
         const labourDetails = {

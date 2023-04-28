@@ -8,11 +8,14 @@ class Urls {
   static WageSeekerServices wageSeekerServices = const WageSeekerServices();
   static WorkServices workServices = const WorkServices();
   static ORGServices orgServices = const ORGServices();
+  static BillServices billServices = const BillServices();
 }
 
 class CommonServices {
   const CommonServices();
   String get workflow => 'egov-workflow-v2/egov-wf/process/_search';
+  String get businessWorkflow =>
+      'egov-workflow-v2/egov-wf/businessservice/_search';
   String get fileUpload => 'filestore/v1/files';
   String get fileFetch => 'filestore/v1/files/url';
   String get fetchCities => 'egov-location/location/v11/boundarys/_search';
@@ -25,6 +28,12 @@ class ORGServices {
 
   String get orgSearch => 'org-services/organisation/v1/_search';
   String get financeSearch => 'bankaccount-service/bankaccount/v1/_search';
+}
+
+class BillServices {
+  const BillServices();
+
+  String get searchMyBills => '/expense/bill/v1/_search';
 }
 
 class WageSeekerServices {

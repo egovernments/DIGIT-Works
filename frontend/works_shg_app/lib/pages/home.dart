@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/app_bar_logo.dart';
 
@@ -119,29 +120,33 @@ class _HomePage extends State<HomePage> {
                                           children: cboHomeScreenConfig
                                                   ?.map((e) {
                                                 if (e.order == 1) {
-                                                  return Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                  return Column(
                                                     children: [
-                                                      LabeledField(
-                                                        label: t.translate(
-                                                            i18.home.mukta),
-                                                        child: Column(
-                                                          children: [
-                                                            ButtonLink(
-                                                                t.translate(
-                                                                    e.label ??
-                                                                        ''),
-                                                                getRoute(
-                                                                    e.key
-                                                                        .toString(),
-                                                                    context)),
-                                                          ],
-                                                        ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            t.translate(
+                                                                i18.home.mukta),
+                                                            style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 24),
+                                                          ),
+                                                          SvgPicture.asset(
+                                                              Constants
+                                                                  .muktaIcon)
+                                                        ],
                                                       ),
-                                                      SvgPicture.asset(
-                                                          Constants.muktaIcon)
+                                                      ButtonLink(
+                                                          t.translate(
+                                                              e.label ?? ''),
+                                                          getRoute(
+                                                              e.key.toString(),
+                                                              context))
                                                     ],
                                                   );
                                                 } else {
@@ -166,13 +171,13 @@ class _HomePage extends State<HomePage> {
 
   void Function()? getRoute(String key, BuildContext context) {
     switch (key) {
-      case 'HOME_MY_WORKS':
+      case Constants.homeMyWorks:
         return () => context.router.push(const WorkOrderRoute());
-      case 'HOME_TRACK_ATTENDENCE':
+      case Constants.homeTrackAttendance:
         return () => context.router.push(const TrackAttendanceInboxRoute());
-      case 'HOME_MUSTER_ROLLS':
+      case Constants.homeMusterRolls:
         return () => context.router.push(const ViewMusterRollsRoute());
-      case 'HOME_REGISTER_WAGE_SEEKER':
+      case Constants.homeRegisterWageSeeker:
         return () => context.router.push(const RegisterIndividualRoute());
       default:
         return null;

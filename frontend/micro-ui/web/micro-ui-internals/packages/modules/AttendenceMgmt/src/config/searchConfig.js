@@ -128,8 +128,13 @@ const searchConfig = () => {
                 type: "date",
                 isMandatory: false,
                 disable: false,
+                key: "startDate",
+                preProcess : {
+                  updateDependent : ["populators.max"]
+                },
                 populators: {
                   name: "startDate",
+                  max : "currentDate"
                 },
               },
               {
@@ -137,8 +142,13 @@ const searchConfig = () => {
                 type: "date",
                 isMandatory: false,
                 disable: false,
+                key: "endDate",
+                preProcess : {
+                  updateDependent : ["populators.max"]
+                },
                 populators: {
                   name: "endDate",
+                  max : "currentDate"
                 },
               },
             ],
@@ -180,12 +190,7 @@ const searchConfig = () => {
                 label: "CORE_COMMON_STATUS",
                 jsonPath: "ProcessInstance.state.state",
                 additionalCustomization: true,
-              },
-              {
-                label: "MUSTER_WAGE_AMOUNT",
-                jsonPath: "businessObject.additionalDetails.amount",
-                additionalCustomization: true,
-              },
+              }
             ],
             enableGlobalSearch: false,
             enableColumnSort: true,

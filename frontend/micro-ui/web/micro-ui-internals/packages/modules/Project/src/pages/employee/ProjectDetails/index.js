@@ -96,7 +96,7 @@ const ProjectDetails = () => {
 
     const HandleDownloadPdf = () => {
         const projectId=searchParams?.Projects?.[0]?.projectNumber;
-        Digit.Utils.downloadEgovPDF('project/project-details',{projectId,tenantId:searchParams?.Projects?.[0]?.tenantId},`project-${projectId}.pdf`)
+        Digit.Utils.downloadEgovPDF('project/project-details',{projectId,tenantId:searchParams?.Projects?.[0]?.tenantId},`Project-${projectId}.pdf`)
     }
 
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
@@ -181,7 +181,7 @@ const ProjectDetails = () => {
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_DETAILS")}</Header>
+                <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{t("WORKS_PROJECT_DETAILS")}</Header>
             <MultiLink
               onHeadClick={() => HandleDownloadPdf()}
               downloadBtnClassName={"employee-download-btn-className"}

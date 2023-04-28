@@ -25,27 +25,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PurchaseBillRequest   {
-        @JsonProperty("requestInfo")
-
-          @Valid
-                private RequestInfo requestInfo = null;
+        @JsonProperty("RequestInfo")
+        @Valid
+        private RequestInfo requestInfo = null;
 
         @JsonProperty("bill")
+        @Valid
+        private PurchaseBill bill = null;
+        
+        @JsonProperty("workflow")
+    	private Workflow workflow;
 
-          @Valid
-                private Bill bill = null;
-
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
-
-
-        public PurchaseBillRequest addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
-
+       
 }

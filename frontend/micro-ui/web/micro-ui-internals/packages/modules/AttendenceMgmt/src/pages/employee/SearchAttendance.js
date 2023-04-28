@@ -18,7 +18,18 @@ const SearchAttendance = () => {
 
   const configs = data?.[configModuleName].SearchAttendanceWMSConfig?.[0];
 
-  const updatedConfig = useMemo(() => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields", {}), [
+  const updatedConfig = useMemo(() => Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields", {
+    updateDependent : [
+      {
+        key : "startDate",
+        value : [new Date().toISOString().split("T")[0]]
+      },
+      {
+        key : "endDate",
+        value : [new Date().toISOString().split("T")[0]]
+      }
+    ]
+  }), [
     configs,
     data,
   ]);
@@ -27,7 +38,7 @@ const SearchAttendance = () => {
 
   return (
     <React.Fragment>
-      <Header styles={{ fontSize: "32px" }}>{t(updatedConfig?.label)}</Header>
+      <Header className="works-header-search">{t(updatedConfig?.label)}</Header>
       <div className="inbox-search-wrapper">
         <InboxSearchComposer configs={updatedConfig}></InboxSearchComposer>
       </div>

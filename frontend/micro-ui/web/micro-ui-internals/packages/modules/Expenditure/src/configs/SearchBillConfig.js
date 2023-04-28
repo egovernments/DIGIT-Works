@@ -1,26 +1,3 @@
-const billStatus = [
-    {
-        name: 'Submitted',
-        code: 'SUBMITTED',
-        i18nKey: 'SUBMITTED'
-    },
-    {
-        name: 'Approved',
-        code: 'APPROVED',
-        i18nKey: 'APPROVED'
-    },
-    {
-        name: 'Rejected',
-        code: 'REJECTED',
-        i18nKey: 'REJECTED'
-    },
-    {
-        name: 'Verified',
-        code: 'VERIFIED',
-        i18nKey: 'VERIFIED'
-    }
-]
-
 export const SearchBillConfig = {
     "tenantId": "pg",
     "moduleName": "commonMuktaUiConfig",
@@ -29,15 +6,17 @@ export const SearchBillConfig = {
             label : "EXP_SEARCH_BILL",
             type: 'search',
             apiDetails: {
-                serviceName: "/muster-roll/v1/_search",
+                serviceName: "/expense/bill/v1/_search",
                 requestParam: {},
-                requestBody: {},
+                requestBody: {
+                    billCriteria: {}
+                },
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
                 moduleName:"SearchBillConfig",
-                tableFormJsonPath:"requestParam",
-                filterFormJsonPath:"rrequestParam",
-                searchFormJsonPath:"requestParam",
+                tableFormJsonPath:"requestBody.pagination",
+                filterFormJsonPath:"requestBody.billCriteria",
+                searchFormJsonPath:"requestBody.billCriteria",
             },
             sections : {
                 search : {
@@ -46,54 +25,51 @@ export const SearchBillConfig = {
                         primaryLabel: 'ES_COMMON_SEARCH',
                         secondaryLabel: 'ES_COMMON_CLEAR_SEARCH',
                         minReqFields: 1,
-                        showFormInstruction : "",
+                        showFormInstruction : "BILL_SELECT_ONE_PARAM_TO_SEARCH",
+                        formClassName:"custom-both-clear-search",
                         defaultValues : {
                             ward: "",
-                            billType: {
-                                name: "COMMON_MASTERS_BILL_WORK_ORDER",
-                                code: "WORK_ORDER",
-                                active: true
-                            },
+                            billType: "",
                             projectName: "",
-                            musterRollNumber: "",
+                            billNumber: "",
                             status: "",
                             createdFrom: "",
                             createdTo: ""
                         },
                         fields : [
-                            // {
-                            //     label: "COMMON_WARD",
-                            //     type: "locationdropdown",
-                            //     isMandatory: false,
-                            //     disable: false,
-                            //     populators: {
-                            //         name: "ward",
-                            //         type: "ward",
-                            //         optionsKey: "name",
-                            //         defaultText: "COMMON_SELECT_WARD",
-                            //         selectedText: "COMMON_SELECTED",
-                            //         allowMultiSelect: false,
-                            //         optionsCustomStyle : {
-                            //             top : "2.3rem"
-                            //         }
-                            //     }
-                            // },
+                            {
+                                label: "COMMON_WARD",
+                                type: "locationdropdown",
+                                isMandatory: false,
+                                disable: false,
+                                populators: {
+                                    name: "ward",
+                                    type: "ward",
+                                    optionsKey: "i18nKey",
+                                    allowMultiSelect: false,
+                                    optionsCustomStyle : {
+                                        top : "2.3rem"
+                                    }
+                                }
+                            },
                             {
                                 label: "WORKS_BILL_TYPE",
                                 type: "dropdown",
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                  name: "billType",
+                                  name: "businessService",
                                   optionsKey: "name",
                                   optionsCustomStyle : {
                                     top : "2.3rem"
                                   },
                                   mdmsConfig: {
-                                    masterName: "BillType",
-                                    moduleName: "common-masters",
+                                    masterName: "BusinessService",
+                                    moduleName: "expense",
                                     localePrefix: "COMMON_MASTERS_BILL",
-                                  }
+                                    select:
+                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('BILL')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_'+ele.code }))}"
+                                    } 
                                 }
                             },
                             {
@@ -107,7 +83,7 @@ export const SearchBillConfig = {
                                 populators: { 
                                     name: "projectName",
                                     error: `PROJECT_PATTERN_ERR_MSG`,
-                                    validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
+                                    validation: { pattern: "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$", minlength : 2 }
                                 }
                             },
                             {
@@ -116,23 +92,26 @@ export const SearchBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: { 
-                                    name: "musterRollNumber",
+                                    name: "billNumber",
                                     error: "ES_COMMON_BILL_PATTERN_ERR_MSG",
                                     validation: { pattern: "^[A-Za-z0-9\\/-]*$", minlength : 2 }
                                 }
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                type: "dropdown",
+                                type: "apidropdown",
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                    name: "musterRollStatus",
-                                    optionsKey: "name",
-                                    optionsCustomStyle: {
-                                        top: "2.3rem"
-                                    },
-                                    options: billStatus
+                                  optionsCustomStyle: {
+                                    top: "2.3rem",
+                                  },
+                                  name: "status",
+                                  optionsKey: "i18nKey",
+                                  allowMultiSelect: false,
+                                  masterName: "commonUiConfig",
+                                  moduleName: "SearchBillConfig",
+                                  customfn: "populateReqCriteria",
                                 }
                             },
                             {
@@ -140,8 +119,13 @@ export const SearchBillConfig = {
                                 type: "date",
                                 isMandatory: false,
                                 disable: false,
+                                key : "createdFrom",
+                                preProcess : {
+                                    updateDependent : ["populators.max"]
+                                },
                                 populators: {
-                                    name: "createdFrom"
+                                    name: "createdFrom",
+                                    max : "currentDate"
                                 },
                             },
                             {
@@ -149,9 +133,14 @@ export const SearchBillConfig = {
                                 type: "date",
                                 isMandatory: false,
                                 disable: false,
+                                key : "createdTo",
+                                preProcess : {
+                                    updateDependent : ["populators.max"]
+                                },
                                 populators: { 
                                     name: "createdTo",
-                                    error: 'DATE_VALIDATION_MSG'
+                                    error: 'DATE_VALIDATION_MSG',
+                                    max : "currentDate"
                                 },
                                 additionalValidation: {
                                     type: 'date',
@@ -170,7 +159,7 @@ export const SearchBillConfig = {
                         columns: [
                             {
                                 label: "WORKS_BILL_NUMBER",
-                                jsonPath: "musterRollNumber",
+                                jsonPath: "billNumber",
                                 additionalCustomization:true 
                             },
                             {
@@ -179,7 +168,7 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "",
+                                jsonPath: "tenantId",
                                 additionalCustomization:true 
                             },
                             {
@@ -198,12 +187,13 @@ export const SearchBillConfig = {
                             {
                                 label: "EXP_BILL_AMOUNT",
                                 jsonPath: "additionalDetails.amount",
-                                additionalCustomization:true
+                                additionalCustomization:true,
+                                headerAlign: "right"
                             }
                         ],
                         enableGlobalSearch: false,
                         enableColumnSort: true,
-                        resultsJsonPath: "musterRolls",
+                        resultsJsonPath: "bills",
                     },
                     children: {},
                     show: true 

@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
@@ -62,6 +63,7 @@ class WorkDetailsCard extends StatelessWidget {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
           child: DigitCard(
+              padding: const EdgeInsets.all(8.0),
               child: getCardDetails(context, detailsList[i],
                   attendanceRegisterId: attendanceRegistersModel![i].id,
                   attendanceRegister: attendanceRegistersModel![i])),
@@ -71,6 +73,7 @@ class WorkDetailsCard extends StatelessWidget {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
           child: DigitCard(
+              padding: const EdgeInsets.all(8.0),
               child: getCardDetails(context, detailsList[i]['cardDetails'],
                   payload: detailsList[i]['payload'],
                   isAccept: detailsList[i]['cardDetails'][i18.common.status] ==
@@ -83,6 +86,7 @@ class WorkDetailsCard extends StatelessWidget {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
           child: DigitCard(
+              padding: const EdgeInsets.all(8.0),
               child: getCardDetails(context, detailsList[i],
                   musterRoll: musterRollsModel![i])),
         ));
@@ -90,7 +94,9 @@ class WorkDetailsCard extends StatelessWidget {
     } else {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
-          child: DigitCard(child: getCardDetails(context, detailsList[i])),
+          child: DigitCard(
+              padding: const EdgeInsets.all(8.0),
+              child: getCardDetails(context, detailsList[i])),
         ));
       }
     }
@@ -110,19 +116,22 @@ class WorkDetailsCard extends StatelessWidget {
       String? registerNumber}) {
     var labelList = <Widget>[];
     if (isWorkOrderInbox && !isAccept!) {
-      labelList.add(Align(
-        alignment: Alignment.centerLeft,
-        child: SvgPicture.asset('assets/svg/new_tag.svg'),
+      labelList.add(Padding(
+        padding: const EdgeInsets.only(left: 4.0, bottom: 16.0, top: 8.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: SvgPicture.asset('assets/svg/new_tag.svg'),
+        ),
       ));
     }
     if ((viewWorkOrder || orgProfile) && cardTitle != null) {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: const EdgeInsets.only(left: 4.0, bottom: 16.0, top: 8.0),
           child: Text(
             cardTitle ?? '',
-            style: DigitTheme.instance.mobileTheme.textTheme.displayMedium
+            style: DigitTheme.instance.mobileTheme.textTheme.headlineLarge
                 ?.apply(color: const DigitColors().black),
             textAlign: TextAlign.left,
           ),
@@ -133,73 +142,80 @@ class WorkDetailsCard extends StatelessWidget {
       labelList.add(getItemWidget(context,
           title: AppLocalizations.of(context)
               .translate(cardDetails.keys.elementAt(j).toString()),
-          description:
-              cardDetails.keys.elementAt(j).toString() == i18.common.status
-                  ? AppLocalizations.of(context)
-                      .translate(cardDetails.values.elementAt(j).toString())
-                  : cardDetails.values.elementAt(j).toString(),
-          isActiveStatus: cardDetails.keys.elementAt(j).toString() ==
-                  i18.common.status &&
-              cardDetails.values.elementAt(j).toString() != Constants.rejected,
+          description: cardDetails.keys.elementAt(j).toString() ==
+                  i18.common.status
+              ? AppLocalizations.of(context)
+                  .translate(cardDetails.values.elementAt(j).toString())
+              : cardDetails.values.elementAt(j).toString(),
+          isActiveStatus:
+              cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+                  (cardDetails.values.elementAt(j).toString() !=
+                          Constants.rejected ||
+                      cardDetails.values.elementAt(j).toString() !=
+                          Constants.sentBack),
           isRejectStatus: cardDetails.values.elementAt(j).toString() ==
-              Constants.rejected));
+                  Constants.rejected ||
+              cardDetails.values.elementAt(j).toString() ==
+                  Constants.sentBack));
     }
     if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Column(
         children: [
-          ButtonLink(
-            AppLocalizations.of(context).translate(i18.common.viewDetails),
-            () => context.router.push(ViewWorkDetailsRoute(
-                contractNumber: contractNumber.toString())),
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: DigitTheme.instance.colorScheme.primary),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: ButtonLink(
+              AppLocalizations.of(context).translate(i18.common.viewDetails),
+              () => context.router.push(ViewWorkDetailsRoute(
+                  contractNumber: contractNumber.toString())),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: DigitTheme.instance.colorScheme.primary),
+            ),
           ),
           Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ButtonGroup(
-                  outlinedButtonLabel,
-                  elevatedButtonLabel,
-                  outLinedCallBack: () => DigitDialog.show(context,
-                      options: DigitDialogOptions(
-                          titleText: AppLocalizations.of(context)
-                              .translate(i18.common.warning),
-                          contentText: AppLocalizations.of(context)
-                              .translate(i18.workOrder.warningMsg),
-                          primaryAction: DigitDialogActions(
-                            label: AppLocalizations.of(context)
-                                .translate(i18.common.confirm),
-                            action: (BuildContext context) {
-                              context.read<DeclineWorkOrderBloc>().add(
-                                    WorkOrderDeclineEvent(
-                                        contractsModel: payload,
-                                        action: 'DECLINE',
-                                        comments: 'DECLINE contract'),
-                                  );
-                              Navigator.of(context, rootNavigator: true).pop();
-                            },
-                          ),
-                          secondaryAction: DigitDialogActions(
-                            label: AppLocalizations.of(context)
-                                .translate(i18.common.back),
-                            action: (BuildContext context) =>
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop(),
-                          ))),
-                  elevatedCallBack: () {
-                    context.read<AcceptWorkOrderBloc>().add(
-                          WorkOrderAcceptEvent(
-                              contractsModel: payload,
-                              action: 'ACCEPT',
-                              comments: 'Accept contract'),
-                        );
-                  },
-                ),
-              ],
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.all(4.0),
+            child: ButtonGroup(
+              outlinedButtonLabel,
+              elevatedButtonLabel,
+              outLinedCallBack: () => DigitDialog.show(context,
+                  options: DigitDialogOptions(
+                      titleIcon: const Icon(
+                        Icons.warning,
+                        color: Colors.red,
+                      ),
+                      titleText: AppLocalizations.of(context)
+                          .translate(i18.common.warning),
+                      contentText: AppLocalizations.of(context)
+                          .translate(i18.workOrder.warningMsg),
+                      primaryAction: DigitDialogActions(
+                        label: AppLocalizations.of(context)
+                            .translate(i18.common.confirm),
+                        action: (BuildContext context) {
+                          context.read<DeclineWorkOrderBloc>().add(
+                                WorkOrderDeclineEvent(
+                                    contractsModel: payload,
+                                    action: 'DECLINE',
+                                    comments: 'DECLINE contract'),
+                              );
+                          Navigator.of(context, rootNavigator: true).pop();
+                        },
+                      ),
+                      secondaryAction: DigitDialogActions(
+                        label: AppLocalizations.of(context)
+                            .translate(i18.common.back),
+                        action: (BuildContext context) =>
+                            Navigator.of(context, rootNavigator: true).pop(),
+                      ))),
+              elevatedCallBack: () {
+                context.read<AcceptWorkOrderBloc>().add(
+                      WorkOrderAcceptEvent(
+                          contractsModel: payload,
+                          action: 'ACCEPT',
+                          comments: 'Accept contract'),
+                    );
+              },
             ),
           ),
         ],
@@ -207,14 +223,17 @@ class WorkDetailsCard extends StatelessWidget {
     } else if (isWorkOrderInbox && isAccept!) {
       labelList.add(Column(
         children: [
-          ButtonLink(
-            AppLocalizations.of(context).translate(i18.common.viewDetails),
-            () => context.router.push(ViewWorkDetailsRoute(
-                contractNumber: contractNumber.toString())),
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: DigitTheme.instance.colorScheme.primary),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: ButtonLink(
+              AppLocalizations.of(context).translate(i18.common.viewDetails),
+              () => context.router.push(ViewWorkDetailsRoute(
+                  contractNumber: contractNumber.toString())),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: DigitTheme.instance.colorScheme.primary),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
@@ -287,7 +306,11 @@ class WorkDetailsCard extends StatelessWidget {
                 );
           },
           child: Center(
-            child: Text(elevatedButtonLabel,
+            child: Text(
+                musterRoll!.musterRollStatus!.contains('BACKTOCBO')
+                    ? AppLocalizations.of(context)
+                        .translate(i18.attendanceMgmt.editMusterRoll)
+                    : elevatedButtonLabel,
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium!
@@ -298,7 +321,7 @@ class WorkDetailsCard extends StatelessWidget {
     }
     if (showButtonLink! && linkLabel!.isNotEmpty) {
       labelList.add(Padding(
-        padding: const EdgeInsets.all(2.0),
+        padding: const EdgeInsets.all(4.0),
         child: ButtonLink(linkLabel ?? '', onLinkPressed),
       ));
     }
@@ -314,7 +337,7 @@ class WorkDetailsCard extends StatelessWidget {
       bool isActiveStatus = false,
       bool isRejectStatus = false}) {
     return Container(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: (Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,13 +365,13 @@ class WorkDetailsCard extends StatelessWidget {
                           : const Text('')
                     ])),
             SizedBox(
-                width: MediaQuery.of(context).size.width / 2.5,
+                width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   description,
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: isActiveStatus
+                      color: isActiveStatus && !isRejectStatus
                           ? DigitTheme.instance.colorScheme.onSurfaceVariant
                           : isRejectStatus
                               ? DigitTheme.instance.colorScheme.error

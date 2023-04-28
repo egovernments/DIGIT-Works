@@ -3,7 +3,6 @@ package org.egov.digit.expense.calculator.web.models;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -13,89 +12,106 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Bill details of the individual payees
+ * Bill details of the individual payee
  */
 @Schema(description = "Bill details of the individual payees")
 @Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-11T13:19:59.852+05:30[Asia/Kolkata]")
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class BillDetail {
+
 	@JsonProperty("id")
-
 	@Valid
-	private UUID id = null;
+	private String id;
 
-	@JsonProperty("referenceId")
-
+	@JsonProperty("tenantId")
+	@NotNull
 	@Size(min = 2, max = 64)
-	private String referenceId = null;
+	private String tenantId;
 
-	@JsonProperty("paymentStatus")
-
-	@Size(min = 2, max = 64)
-	private String paymentStatus = null;
-
-	@JsonProperty("fromPeriod")
-
+	@JsonProperty("billId")
 	@Valid
-	private BigDecimal fromPeriod = null;
+	private String billId;
 
-	@JsonProperty("toPeriod")
-
+	@JsonProperty("totalAmount")
 	@Valid
-	private BigDecimal toPeriod = null;
+	@Default
+	private BigDecimal totalAmount = BigDecimal.ZERO;;
+
+	@JsonProperty("totalPaidAmount")
+	@Valid
+	@Default
+	private BigDecimal totalPaidAmount = BigDecimal.ZERO;
 
 	@JsonProperty("netLineItemAmount")
-
 	@Valid
-	private BigDecimal netLineItemAmount = null;
+	@Default
+	private BigDecimal netLineItemAmount = BigDecimal.ZERO;
+
+	@JsonProperty("referenceId")
+	@Size(min = 2, max = 64)
+	private String referenceId;
+
+	@JsonProperty("paymentStatus")
+	@Size(min = 2, max = 64)
+	private String paymentStatus;
+
+	@JsonProperty("fromPeriod")
+	@Valid
+	private Long fromPeriod;
+
+	@JsonProperty("toPeriod")
+	@Valid
+	private Long toPeriod;
 
 	@JsonProperty("payee")
 	@NotNull
-
 	@Valid
-	private Party payee = null;
+	private Party payee;
 
 	@JsonProperty("lineItems")
 	@Valid
-	private List<LineItem> lineItems = null;
+	private List<LineItem> lineItems;
 
 	@JsonProperty("payableLineItems")
+	@NotNull
 	@Valid
-	private List<LineItem> payableLineItems = null;
-
-	@JsonProperty("additionalDetails")
-
-	private Object additionalDetails = null;
+	private List<LineItem> payableLineItems;
 
 	@JsonProperty("auditDetails")
-
 	@Valid
-	private AuditDetails auditDetails = null;
+	private AuditDetails auditDetails;
 
-	public BillDetail addLineItemsItem(LineItem lineItemsItem) {
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
+
+	public BillDetail addLineItems(LineItem lineItem) {
+
 		if (this.lineItems == null) {
 			this.lineItems = new ArrayList<>();
 		}
-		this.lineItems.add(lineItemsItem);
+		this.lineItems.add(lineItem);
 		return this;
 	}
 
-	public BillDetail addPayableLineItemsItem(LineItem payableLineItemsItem) {
+	public BillDetail addPayableLineItems(LineItem payableLineItem) {
+
 		if (this.payableLineItems == null) {
 			this.payableLineItems = new ArrayList<>();
 		}
-		this.payableLineItems.add(payableLineItemsItem);
+		this.payableLineItems.add(payableLineItem);
 		return this;
 	}
 

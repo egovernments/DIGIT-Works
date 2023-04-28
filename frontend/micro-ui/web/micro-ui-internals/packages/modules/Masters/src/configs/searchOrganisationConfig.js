@@ -15,7 +15,7 @@ const searchOrganisationConfig = () => {
       minParametersForSearchForm: 1,
       masterName: "commonUiConfig",
       moduleName: "SearchOrganisationConfig",
-      tableFormJsonPath: "requestParam",
+      tableFormJsonPath: "requestBody.Pagination",
       filterFormJsonPath: "requestBody.SearchCriteria",
       searchFormJsonPath: "requestBody.SearchCriteria",
     },
@@ -45,6 +45,9 @@ const searchOrganisationConfig = () => {
                 name: "boundaryCode",
                 type: "ward",
                 optionsKey: "i18nKey",
+                optionsCustomStyle: {
+                  top: "2.3rem",
+                },
                 defaultText: "COMMON_SELECT_WARD",
                 selectedText: "COMMON_SELECTED",
                 allowMultiSelect: false,

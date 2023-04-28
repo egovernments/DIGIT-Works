@@ -24,7 +24,7 @@ const ViewAttendance = () => {
   const { mutate } = Digit.Hooks.attendance.useUpdateAttendance();
 
   const HandleDownloadPdf = () => {
-    Digit.Utils.downloadEgovPDF('musterRoll/muster-roll',{musterRollNumber,tenantId},`muster-roll-${musterRollNumber}.pdf`)
+    Digit.Utils.downloadEgovPDF('musterRoll/muster-roll',{musterRollNumber,tenantId},`Muster-roll-${musterRollNumber}.pdf`)
   }
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const ViewAttendance = () => {
                   { title: "WORKS_PROJECT_ID", value: muster?.additionalDetails?.projectId || t("ES_COMMON_NA") },
                   { title: "PROJECTS_DESCRIPTION", value: muster?.additionalDetails?.projectDesc || t("ES_COMMON_NA")},
                   { title: "COMMON_NAME_OF_CBO", value: muster?.additionalDetails?.orgName || t("ES_COMMON_NA") },
-                  { title: "COMMON_ROLE_OF_CBO", value: muster?.additionalDetails?.cboRole || t("ES_COMMON_NA") },
+                  { title: "COMMON_ROLE_OF_CBO", value: t(`COMMON_MASTERS_${muster?.additionalDetails?.executingAuthority}`) || t("ES_COMMON_NA") },
                   { title: "ES_COMMON_MUSTER_ROLL_PERIOD", value: `${Digit.DateUtils.ConvertTimestampToDate(muster?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(muster?.endDate, 'dd/MM/yyyy')}` },
                   { title: "MUSTER_ROLLS_NO_OF_WAGE_SEEKERS", value: muster?.individualEntries.length || t("ES_COMMON_NA") },
                   { title: "MUSTER_ROLLS_TOTAL_ATTENDANCE_IN_DAYS", value: muster?.individualEntries?.reduce((acc,row)=>acc + (row?.actualTotalAttendance || row?.modifiedTotalAttendance || 0),0) || t("ES_COMMON_NA") },
@@ -60,7 +60,7 @@ const ViewAttendance = () => {
   return (
     <React.Fragment>
       <div className={"employee-application-details"} >
-        <Header>{showEditTitle ? t('ATM_EDIT_ATTENDENCE') : t("ATM_VIEW_ATTENDENCE")}</Header>
+        <Header className="works-header-view">{showEditTitle ? t('ATM_EDIT_ATTENDENCE') : t("ATM_VIEW_ATTENDENCE")}</Header>
         <MultiLink
          onHeadClick={() => HandleDownloadPdf()}
          downloadBtnClassName={"employee-download-btn-className"}

@@ -42,7 +42,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   const checkKeyDown = (e) => {
     const keyCode = e.keyCode ? e.keyCode : e.key ? e.key : e.which;
     if (keyCode === 13) {
-      e.preventDefault();
+      // e.preventDefault();
     }
   };
 

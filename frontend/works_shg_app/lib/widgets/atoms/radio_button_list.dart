@@ -67,6 +67,9 @@ class DigitRadioButtonList<T> extends StatelessWidget {
                     contentPadding: const EdgeInsets.all(0),
                     title: Text(valueMapper(data)),
                     value: data,
+                    visualDensity: const VisualDensity(
+                        horizontal: VisualDensity.minimumDensity,
+                        vertical: VisualDensity.minimumDensity),
                     onChanged: (isEnabled ?? true)
                         ? (control) {
                             final value = control.value;

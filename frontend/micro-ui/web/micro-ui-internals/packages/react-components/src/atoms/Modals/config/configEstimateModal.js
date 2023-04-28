@@ -24,7 +24,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "REJECT": {
@@ -96,7 +97,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "REJECT": {
@@ -182,7 +184,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "APPROVE": {
@@ -212,6 +215,42 @@ const configEstimateModal = (
                     isMandatory: false,
                     show: true
                 },
+            },
+            "SENDBACK":{
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:false,
+                    show:false
+                }
+            },
+            "SENDBACKTOCBO":{
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:false,
+                    show:false
+                }
             }
         },
         "works.purchase":{
@@ -263,20 +302,16 @@ const configEstimateModal = (
     const fetchIsMandatory = (field) => {
         
         if(configMap?.[businessService]?.[actionString]){
-            console.log(configMap?.[businessService]?.[actionString]?.[field]?.isMandatory);
             return configMap?.[businessService]?.[actionString]?.[field]?.isMandatory ? configMap?.[businessService]?.[actionString]?.[field]?.isMandatory : false
         }else{
-            console.log(configMap?.[businessService]?.default?.[field]?.isMandatory);
             return configMap?.[businessService]?.default?.[field]?.isMandatory ? configMap?.[businessService]?.default?.[field]?.isMandatory: false
         }
     }
     const fetchIsShow = (field) => {
         
         if (configMap?.[businessService]?.[actionString]) {
-            console.log(configMap?.[businessService]?.[actionString]?.[field]?.show);
            return configMap?.[businessService]?.[actionString]?.[field]?.show ? configMap?.[businessService]?.[actionString]?.[field]?.show : false
         } else {
-            console.log(configMap?.[businessService]?.default?.[field]?.show);
             return configMap?.[businessService]?.default?.[field]?.show ? configMap?.[businessService]?.default?.[field]?.show:false
         }
         
@@ -340,7 +375,7 @@ const configEstimateModal = (
                             name: "documents",
                             allowedMaxSizeInMB: 5,
                             maxFilesAllowed: 1,
-                            allowedFileTypes: /(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv)$/i,
+                            allowedFileTypes:configMap?.[businessService]?.default?.upload?.allowedFileTypes,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
                             hideInForm:!fetchIsShow("upload")

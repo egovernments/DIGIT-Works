@@ -13,6 +13,12 @@ public class BillCalculatorRequestInfoWrapper {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
+//    @JsonProperty("bill")
+//    private List<Bill> bills;
+
     @JsonProperty("bill")
-    private List<Bill> bills;
+    private Bill bill;
+
+    @JsonProperty("workflow")
+    private Workflow workflow = null;
 }

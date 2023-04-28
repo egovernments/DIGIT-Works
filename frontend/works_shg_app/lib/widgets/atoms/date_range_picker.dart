@@ -54,22 +54,22 @@ class DateRangePicker extends StatelessWidget {
                         firstDayOfWeek: 1,
                         dayFormat: 'EEE'))),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                DigitElevatedButton(
-                  onPressed: () {
-                    onSubmit!();
-                    Navigator.pop(dialogContext);
-                  },
-                  child: Text(applyLabel ?? 'Apply'),
-                ),
                 TextButton(
                   onPressed: () {
                     onCancel!();
                     Navigator.pop(dialogContext);
                   },
                   child: Text(cancelLabel ?? ''),
+                ),
+                DigitElevatedButton(
+                  onPressed: () {
+                    onSubmit!();
+                    Navigator.pop(dialogContext);
+                  },
+                  child: Text(applyLabel ?? 'Apply'),
                 ),
               ],
             ),
@@ -108,8 +108,9 @@ class DateRangePicker extends StatelessWidget {
                             ));
                           });
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.date_range,
+                      size: 24,
                     ))),
           ]));
     } else {

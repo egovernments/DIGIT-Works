@@ -1,0 +1,10 @@
+@startuml
+Client --> InboxSvc : Fetch Estimates
+InboxSvc --> WorkflowSvc: Based on the logged in user\n fetch assigned/pending estimates
+WorkflowSvc --> InboxSvc: Workflow results
+InboxSvc --> ElasticSearch: Fetch estimates pending/assigned \n for logged in role
+ElasticSearch --> InboxSvc: Return estimates
+InboxSvc --> Client: Return estimates to FE
+@enduml
+
+

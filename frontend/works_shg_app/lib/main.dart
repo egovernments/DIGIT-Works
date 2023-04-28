@@ -44,6 +44,7 @@ import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
 import 'blocs/muster_rolls/muster_roll_pdf.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
+import 'blocs/my_bills/search_my_bills.dart';
 import 'blocs/organisation/org_financial_bloc.dart';
 import 'blocs/organisation/org_search_bloc.dart';
 import 'blocs/user/user_search.dart';
@@ -59,7 +60,7 @@ import 'blocs/work_orders/work_order_pdf.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
-import 'models/UserDetails/user_details_model.dart';
+import 'models/user_details/user_details_model.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -146,8 +147,9 @@ class _MainApplicationState extends State<MainApplication> {
           }
         }
       }
+      setState(() {});
     });
-    FlutterDownloader.registerCallback(downloadCallback);
+    await FlutterDownloader.registerCallback(downloadCallback);
   }
 
   @override
@@ -194,6 +196,7 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => MusterCreateBloc()),
         BlocProvider(create: (context) => MusterGetWorkflowBloc()),
         BlocProvider(create: (context) => SearchMyWorksBloc()),
+        BlocProvider(create: (context) => SearchMyBillsBloc()),
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
         BlocProvider(create: (context) => DeclineWorkOrderBloc()),
         BlocProvider(create: (context) => SearchIndividualWorkBloc()),
@@ -235,7 +238,8 @@ class _MainApplicationState extends State<MainApplication> {
                               const LocalizationState.initial(),
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
-                                module: 'rainmaker-common',
+                                module:
+                                    'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),
