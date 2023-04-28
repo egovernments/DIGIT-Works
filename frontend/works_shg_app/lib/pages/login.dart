@@ -161,7 +161,7 @@ class _LoginPage extends State<LoginPage> {
             return MobileView(
               getLoginCard(context),
               GlobalVariables.stateInfoListModel!.bannerUrl.toString(),
-              logoBottomPosition: constraints.maxHeight / 4,
+              logoBottomPosition: constraints.maxHeight / 8,
               cardBottomPosition: constraints.maxHeight / 3,
             );
           } else {

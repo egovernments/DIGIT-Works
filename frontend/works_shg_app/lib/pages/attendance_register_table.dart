@@ -107,42 +107,46 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: SizedBox(
-          height: 35,
-          child: DigitElevatedButton(
-            onPressed: createAttendeePayLoadList.isEmpty &&
-                    deleteAttendeePayLoadList.isEmpty
-                ? null
-                : () {
-                    if (createAttendeePayLoadList.isNotEmpty &&
-                        deleteAttendeePayLoadList.isNotEmpty) {
-                      context.read<AttendeeCreateBloc>().add(
-                            CreateAttendeeEvent(
-                                attendeeList: createAttendeePayLoadList),
-                          );
-                      context.read<AttendeeDeEnrollBloc>().add(
-                            DeEnrollAttendeeEvent(
-                                attendeeList: deleteAttendeePayLoadList),
-                          );
-                    } else if (createAttendeePayLoadList.isNotEmpty &&
-                        deleteAttendeePayLoadList.isEmpty) {
-                      context.read<AttendeeCreateBloc>().add(
-                            CreateAttendeeEvent(
-                                attendeeList: createAttendeePayLoadList),
-                          );
-                    } else if (deleteAttendeePayLoadList.isNotEmpty &&
-                        createAttendeePayLoadList.isEmpty) {
-                      context.read<AttendeeDeEnrollBloc>().add(
-                            DeEnrollAttendeeEvent(
-                                attendeeList: deleteAttendeePayLoadList),
-                          );
-                    } else {}
-                  },
-            child: Text(
-                AppLocalizations.of(context).translate(i18.common.submit),
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .apply(color: Colors.white)),
+          height: 60,
+          child: DigitCard(
+            margin: const EdgeInsets.all(0),
+            padding: const EdgeInsets.all(8.0),
+            child: DigitElevatedButton(
+              onPressed: createAttendeePayLoadList.isEmpty &&
+                      deleteAttendeePayLoadList.isEmpty
+                  ? null
+                  : () {
+                      if (createAttendeePayLoadList.isNotEmpty &&
+                          deleteAttendeePayLoadList.isNotEmpty) {
+                        context.read<AttendeeCreateBloc>().add(
+                              CreateAttendeeEvent(
+                                  attendeeList: createAttendeePayLoadList),
+                            );
+                        context.read<AttendeeDeEnrollBloc>().add(
+                              DeEnrollAttendeeEvent(
+                                  attendeeList: deleteAttendeePayLoadList),
+                            );
+                      } else if (createAttendeePayLoadList.isNotEmpty &&
+                          deleteAttendeePayLoadList.isEmpty) {
+                        context.read<AttendeeCreateBloc>().add(
+                              CreateAttendeeEvent(
+                                  attendeeList: createAttendeePayLoadList),
+                            );
+                      } else if (deleteAttendeePayLoadList.isNotEmpty &&
+                          createAttendeePayLoadList.isEmpty) {
+                        context.read<AttendeeDeEnrollBloc>().add(
+                              DeEnrollAttendeeEvent(
+                                  attendeeList: deleteAttendeePayLoadList),
+                            );
+                      } else {}
+                    },
+              child: Text(
+                  AppLocalizations.of(context).translate(i18.common.submit),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .apply(color: Colors.white)),
+            ),
           ),
         ),
         appBar: AppBar(
@@ -405,7 +409,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 rightColumnWidth: width * 4,
                                                 height: 58 +
                                                     (52.0 *
-                                                        (tableData.length + 1)),
+                                                        (tableData.length +
+                                                            0.2)),
                                                 scrollPhysics:
                                                     const NeverScrollableScrollPhysics(),
                                               ),

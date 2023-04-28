@@ -63,6 +63,7 @@ class WorkDetailsCard extends StatelessWidget {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
           child: DigitCard(
+              padding: const EdgeInsets.all(8.0),
               child: getCardDetails(context, detailsList[i],
                   attendanceRegisterId: attendanceRegistersModel![i].id,
                   attendanceRegister: attendanceRegistersModel![i])),
@@ -72,6 +73,7 @@ class WorkDetailsCard extends StatelessWidget {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
           child: DigitCard(
+              padding: const EdgeInsets.all(8.0),
               child: getCardDetails(context, detailsList[i]['cardDetails'],
                   payload: detailsList[i]['payload'],
                   isAccept: detailsList[i]['cardDetails'][i18.common.status] ==
@@ -84,6 +86,7 @@ class WorkDetailsCard extends StatelessWidget {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
           child: DigitCard(
+              padding: const EdgeInsets.all(8.0),
               child: getCardDetails(context, detailsList[i],
                   musterRoll: musterRollsModel![i])),
         ));
@@ -91,7 +94,9 @@ class WorkDetailsCard extends StatelessWidget {
     } else {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
-          child: DigitCard(child: getCardDetails(context, detailsList[i])),
+          child: DigitCard(
+              padding: const EdgeInsets.all(8.0),
+              child: getCardDetails(context, detailsList[i])),
         ));
       }
     }
@@ -111,16 +116,19 @@ class WorkDetailsCard extends StatelessWidget {
       String? registerNumber}) {
     var labelList = <Widget>[];
     if (isWorkOrderInbox && !isAccept!) {
-      labelList.add(Align(
-        alignment: Alignment.centerLeft,
-        child: SvgPicture.asset('assets/svg/new_tag.svg'),
+      labelList.add(Padding(
+        padding: const EdgeInsets.only(left: 4.0, bottom: 16.0, top: 8.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: SvgPicture.asset('assets/svg/new_tag.svg'),
+        ),
       ));
     }
     if ((viewWorkOrder || orgProfile) && cardTitle != null) {
       labelList.add(Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 4.0, bottom: 16.0, top: 8.0),
           child: Text(
             cardTitle ?? '',
             style: DigitTheme.instance.mobileTheme.textTheme.headlineLarge
@@ -154,7 +162,7 @@ class WorkDetailsCard extends StatelessWidget {
       labelList.add(Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: ButtonLink(
               AppLocalizations.of(context).translate(i18.common.viewDetails),
               () => context.router.push(ViewWorkDetailsRoute(
@@ -166,53 +174,48 @@ class WorkDetailsCard extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ButtonGroup(
-                  outlinedButtonLabel,
-                  elevatedButtonLabel,
-                  outLinedCallBack: () => DigitDialog.show(context,
-                      options: DigitDialogOptions(
-                          titleIcon: const Icon(
-                            Icons.warning,
-                            color: Colors.red,
-                          ),
-                          titleText: AppLocalizations.of(context)
-                              .translate(i18.common.warning),
-                          contentText: AppLocalizations.of(context)
-                              .translate(i18.workOrder.warningMsg),
-                          primaryAction: DigitDialogActions(
-                            label: AppLocalizations.of(context)
-                                .translate(i18.common.confirm),
-                            action: (BuildContext context) {
-                              context.read<DeclineWorkOrderBloc>().add(
-                                    WorkOrderDeclineEvent(
-                                        contractsModel: payload,
-                                        action: 'DECLINE',
-                                        comments: 'DECLINE contract'),
-                                  );
-                              Navigator.of(context, rootNavigator: true).pop();
-                            },
-                          ),
-                          secondaryAction: DigitDialogActions(
-                            label: AppLocalizations.of(context)
-                                .translate(i18.common.back),
-                            action: (BuildContext context) =>
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop(),
-                          ))),
-                  elevatedCallBack: () {
-                    context.read<AcceptWorkOrderBloc>().add(
-                          WorkOrderAcceptEvent(
-                              contractsModel: payload,
-                              action: 'ACCEPT',
-                              comments: 'Accept contract'),
-                        );
-                  },
-                ),
-              ],
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.all(4.0),
+            child: ButtonGroup(
+              outlinedButtonLabel,
+              elevatedButtonLabel,
+              outLinedCallBack: () => DigitDialog.show(context,
+                  options: DigitDialogOptions(
+                      titleIcon: const Icon(
+                        Icons.warning,
+                        color: Colors.red,
+                      ),
+                      titleText: AppLocalizations.of(context)
+                          .translate(i18.common.warning),
+                      contentText: AppLocalizations.of(context)
+                          .translate(i18.workOrder.warningMsg),
+                      primaryAction: DigitDialogActions(
+                        label: AppLocalizations.of(context)
+                            .translate(i18.common.confirm),
+                        action: (BuildContext context) {
+                          context.read<DeclineWorkOrderBloc>().add(
+                                WorkOrderDeclineEvent(
+                                    contractsModel: payload,
+                                    action: 'DECLINE',
+                                    comments: 'DECLINE contract'),
+                              );
+                          Navigator.of(context, rootNavigator: true).pop();
+                        },
+                      ),
+                      secondaryAction: DigitDialogActions(
+                        label: AppLocalizations.of(context)
+                            .translate(i18.common.back),
+                        action: (BuildContext context) =>
+                            Navigator.of(context, rootNavigator: true).pop(),
+                      ))),
+              elevatedCallBack: () {
+                context.read<AcceptWorkOrderBloc>().add(
+                      WorkOrderAcceptEvent(
+                          contractsModel: payload,
+                          action: 'ACCEPT',
+                          comments: 'Accept contract'),
+                    );
+              },
             ),
           ),
         ],
@@ -221,7 +224,7 @@ class WorkDetailsCard extends StatelessWidget {
       labelList.add(Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: ButtonLink(
               AppLocalizations.of(context).translate(i18.common.viewDetails),
               () => context.router.push(ViewWorkDetailsRoute(
@@ -334,9 +337,9 @@ class WorkDetailsCard extends StatelessWidget {
       bool isActiveStatus = false,
       bool isRejectStatus = false}) {
     return Container(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: (Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(

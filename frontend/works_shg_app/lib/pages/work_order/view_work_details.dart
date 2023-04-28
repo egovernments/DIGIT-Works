@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:works_shg_app/blocs/work_orders/work_order_pdf.dart';
-import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -104,79 +105,100 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
               return workOrderList.isNotEmpty &&
                       workOrderList.first['payload']['wfStatus'] == 'APPROVED'
                   ? SizedBox(
-                      height: 120,
+                      height: 100,
                       child: DigitCard(
+                          padding: const EdgeInsets.all(8.0),
+                          margin: const EdgeInsets.all(0),
                           child: Column(
-                        children: [
-                          DigitElevatedButton(
-                            onPressed: () {
-                              context.read<AcceptWorkOrderBloc>().add(
-                                    WorkOrderAcceptEvent(
-                                        contractsModel:
-                                            workOrderList.first['payload'],
-                                        action: 'ACCEPT',
-                                        comments: 'Accept contract'),
-                                  );
-                            },
-                            child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 4.0),
-                                child: Text(t.translate(i18.common.accept),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16,
-                                        color: DigitTheme
-                                            .instance.colorScheme.onPrimary))),
-                          ),
-                          Center(
-                            child: ButtonLink(
-                              t.translate(i18.common.decline),
-                              () => DigitDialog.show(context,
-                                  options: DigitDialogOptions(
-                                      titleText: AppLocalizations.of(context)
-                                          .translate(i18.common.warning),
-                                      contentText: AppLocalizations.of(context)
-                                          .translate(i18.workOrder.warningMsg),
-                                      primaryAction: DigitDialogActions(
-                                        label: AppLocalizations.of(context)
-                                            .translate(i18.common.confirm),
-                                        action: (BuildContext context) {
-                                          context
-                                              .read<DeclineWorkOrderBloc>()
-                                              .add(
-                                                WorkOrderDeclineEvent(
-                                                    contractsModel:
-                                                        workOrderList
-                                                            .first['payload'],
-                                                    action: 'DECLINE',
-                                                    comments:
-                                                        'DECLINE contract'),
-                                              );
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                      secondaryAction: DigitDialogActions(
-                                        label: AppLocalizations.of(context)
-                                            .translate(i18.common.back),
-                                        action: (BuildContext context) =>
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .pop(),
-                                      ))),
-                              align: Alignment.center,
-                            ),
-                          )
-                        ],
-                      )),
+                            children: [
+                              DigitElevatedButton(
+                                onPressed: () {
+                                  context.read<AcceptWorkOrderBloc>().add(
+                                        WorkOrderAcceptEvent(
+                                            contractsModel:
+                                                workOrderList.first['payload'],
+                                            action: 'ACCEPT',
+                                            comments: 'Accept contract'),
+                                      );
+                                },
+                                child: Center(
+                                  child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 4.0),
+                                      child:
+                                          Text(t.translate(i18.common.accept),
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 16,
+                                                color: DigitTheme.instance
+                                                    .colorScheme.onPrimary,
+                                              ))),
+                                ),
+                              ),
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: ButtonLink(
+                                    t.translate(i18.common.decline),
+                                    () => DigitDialog.show(context,
+                                        options: DigitDialogOptions(
+                                            titleText: AppLocalizations.of(
+                                                    context)
+                                                .translate(i18.common.warning),
+                                            contentText: AppLocalizations.of(
+                                                    context)
+                                                .translate(
+                                                    i18.workOrder.warningMsg),
+                                            primaryAction: DigitDialogActions(
+                                              label:
+                                                  AppLocalizations.of(context)
+                                                      .translate(
+                                                          i18.common.confirm),
+                                              action: (BuildContext context) {
+                                                context
+                                                    .read<
+                                                        DeclineWorkOrderBloc>()
+                                                    .add(
+                                                      WorkOrderDeclineEvent(
+                                                          contractsModel:
+                                                              workOrderList
+                                                                      .first[
+                                                                  'payload'],
+                                                          action: 'DECLINE',
+                                                          comments:
+                                                              'DECLINE contract'),
+                                                    );
+                                                Navigator.of(context,
+                                                        rootNavigator: true)
+                                                    .pop();
+                                              },
+                                            ),
+                                            secondaryAction: DigitDialogActions(
+                                              label: AppLocalizations.of(
+                                                      context)
+                                                  .translate(i18.common.back),
+                                              action: (BuildContext context) =>
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop(),
+                                            ))),
+                                    align: Alignment.center,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            ],
+                          )),
                     )
                   : workOrderList.isNotEmpty &&
                           workOrderList.first['payload']['wfStatus'] ==
                               'ACCEPTED'
                       ? SizedBox(
-                          height: 90,
+                          height: 60,
                           child: DigitCard(
+                            padding: const EdgeInsets.all(8.0),
+                            margin: const EdgeInsets.all(0.0),
                             child: DigitElevatedButton(
                               onPressed: () {
                                 context.router.push(
@@ -233,7 +255,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                   i18.attendanceMgmt.projectId:
                                       e.additionalDetails?.projectId ?? 'NA',
                                   i18.common.location:
-                                      '${e.additionalDetails?.locality}, ${e.additionalDetails?.ward}',
+                                      '${t.translate('${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}')}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
                                   i18.attendanceMgmt.projectType:
                                       e.additionalDetails?.projectType ?? 'NA',
                                   i18.attendanceMgmt.projectName:

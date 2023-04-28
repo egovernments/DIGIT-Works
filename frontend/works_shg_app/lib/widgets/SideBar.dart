@@ -100,7 +100,7 @@ class _SideBar extends State<SideBar> {
               context.router.currentPath == '/'
                   ? Container(
                       alignment: Alignment.centerLeft,
-                      height: 50,
+                      height: 60,
                       width: 9,
                       color: const DigitColors().burningOrange,
                     )
@@ -131,11 +131,6 @@ class _SideBar extends State<SideBar> {
                                 AppInitializationSetupEvent(
                                     selectedLangIndex:
                                         data.value != 'en_IN' ? 1 : 0));
-
-                            await AppLocalizations(
-                              Locale(data.value.split('_').first,
-                                  data.value.split('_').last),
-                            ).load();
                             context.read<LocalizationBloc>().add(
                                 OnLoadLocalizationEvent(
                                     module: widget.module,
