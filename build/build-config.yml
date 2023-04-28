@@ -34,13 +34,13 @@ config:
         image-name: "muster-roll-service"
       - work-dir: "backend/muster-roll-service/src/main/resources/db"
         image-name: "muster-roll-service-db"
-  - name: "builds/digit-works/backend/estimate-service"
+  - name: "builds/digit-works/backend/estimates"
     build:
-      - work-dir: "backend/estimate-service"
+      - work-dir: "backend/estimates"
         dockerfile: "build/maven/Dockerfile"
-        image-name: "estimate-service"
-      - work-dir: "backend/estimate-service/src/main/resources/db"
-        image-name: "estimate-service-db"
+        image-name: "estimates"
+      - work-dir: "backend/estimates/src/main/resources/db"
+        image-name: "estimates-db"
 
   - name: "builds/digit-works/backend/loi-service"
     build:

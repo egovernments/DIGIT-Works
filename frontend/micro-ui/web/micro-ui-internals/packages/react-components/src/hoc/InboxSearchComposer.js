@@ -65,7 +65,7 @@ const InboxSearchComposer = ({configs}) => {
             setEnable(true)
         }
 
-        if(configs?.type === 'inbox') setEnable(true)
+        if(configs?.type === 'inbox' || configs?.type === 'download') setEnable(true)
 
     },[state])
     

@@ -24,7 +24,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "REJECT": {
@@ -96,7 +97,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "REJECT": {
@@ -182,7 +184,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "APPROVE": {
@@ -328,7 +331,7 @@ const configEstimateModal = (
                             name: "documents",
                             allowedMaxSizeInMB: 5,
                             maxFilesAllowed: 1,
-                            allowedFileTypes: /(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv)$/i,
+                            allowedFileTypes:configMap?.[businessService]?.default?.upload?.allowedFileTypes,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
                             hideInForm:!fetchIsShow("upload")

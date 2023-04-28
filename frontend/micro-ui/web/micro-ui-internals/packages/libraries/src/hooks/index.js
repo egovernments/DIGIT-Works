@@ -140,7 +140,7 @@ import useCreateWO from "./works/useCreateWO";
 
 import useSearchOrg from "./works/useSearchOrg";
 
-import useViewBill from "./bills/useViewBill";
+import useViewWageBill from "./bills/useViewWageBill";
 import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
@@ -273,7 +273,7 @@ const attendance = {
 
 const bills = {
   useViewBills,
-  useViewBill,
+  useViewWageBill,
   useBillCreate,
   useSupervisionBillScreen,
 };

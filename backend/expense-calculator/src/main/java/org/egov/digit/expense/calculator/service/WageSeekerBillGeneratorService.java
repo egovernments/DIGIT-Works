@@ -1,8 +1,6 @@
 package org.egov.digit.expense.calculator.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
@@ -115,7 +113,7 @@ public class WageSeekerBillGeneratorService {
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
                         .billDate(Instant.now().toEpochMilli())
-                        .netPayableAmount(netPayableAmount)
+                      //  .netPayableAmount(netPayableAmount)
                         .referenceId(referenceId +CONCAT_CHAR_CONSTANT+musterRoll.getMusterRollNumber())
                         .businessService(configs.getWageBusinessService())
                         .fromPeriod(musterRoll.getStartDate().longValue())
@@ -139,20 +137,6 @@ public class WageSeekerBillGeneratorService {
         Contract contract = contractResponse.getContracts().get(0);
         return contract.getOrgId();
     }
-
-    private void populateBillAdditionalDetails(Bill bill, String key , String value) {
-        Object additionalDetails = bill.getAdditionalDetails();
-        try {
-            JsonNode node = mapper.readTree(mapper.writeValueAsString(additionalDetails));
-            ((ObjectNode)node).put(key,value);
-            bill.setAdditionalDetails(mapper.readValue(node.toString(), Object.class));
-        }
-        catch (Exception e){
-            log.error("Error while parsing additionalDetails object.");
-            throw new CustomException("PARSE_ERROR","Error while parsing additionalDetails object.");
-        }
-    }
-
     private String getContractId(MusterRoll musterRoll) {
 //        final Object additionalDetails = musterRoll.getAdditionalDetails();
 //        final Optional<String> contractId = commonUtil.findValue(additionalDetails, CONTRACT_ID_CONSTANT);
@@ -230,7 +214,9 @@ public class WageSeekerBillGeneratorService {
     private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay) {
        return LineItem.builder()
                 .amount(actualAmountToPay)
+                .paidAmount(BigDecimal.ZERO)
                 .headCode(configs.getWageHeadCode())
+                .type(LineItem.TypeEnum.PAYABLE)
                 .tenantId(tenantId)
                 .build();
     }
@@ -240,18 +226,18 @@ public class WageSeekerBillGeneratorService {
                 .identifier(individualId)
                 .type(type)
                 .tenantId(tenantId)
-                .status("STATUS")
+                .status("ACTIVE")
                 .build();
     }
 
     private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
-        Object mdmsResp = mdmsUtils.getPayersFromMDMS(requestInfo, type, rootTenantId);
+        Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, rootTenantId);
         List<Object> payerList = commonUtil.readJSONPathValue(mdmsResp,JSON_PATH_FOR_PAYER);
         for(Object obj : payerList){
             Payer payer = mapper.convertValue(obj, Payer.class);
             if(tenantId.equals(payer.getTenantId())) {
-                return buildParty(payer.getId()+"0",payer.getCode(),tenantId);
+                return buildParty(payer.getId(),payer.getCode(),tenantId);
             }
         }
         log.error("PAYER_MISSING_IN_MDMS","Payer is missing in MDMS for type : "+type + " and tenantId : "+tenantId);
@@ -270,18 +256,18 @@ public class WageSeekerBillGeneratorService {
 
     private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
 
-        return new Double(150);
-//        String skill =  getWageSeekerSkill(individualEntry);
-//        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
-//        for(LabourCharge labourCharge : labourCharges){
-//            if(labourCharge.getCode().equalsIgnoreCase(skill)
-//                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
-//                return labourCharge.getAmount();
-//            }
-//        }
-//
-//        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
-//        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+   //     return new Double(150);
+        String skill =  getWageSeekerSkill(individualEntry);
+        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
+        for(LabourCharge labourCharge : labourCharges){
+            if(labourCharge.getCode().equalsIgnoreCase(skill)
+                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
+                return labourCharge.getAmount();
+            }
+        }
+
+        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
     }
 
     private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {

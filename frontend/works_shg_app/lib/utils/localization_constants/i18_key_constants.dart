@@ -166,7 +166,7 @@ class WorkOrder {
   String get roleOfCBO => 'WORKS_ROLE_CBO';
   String get completionPeriod => 'WORKS_COMPLETION_PERIOD';
   String get contractIssueDate => 'WORKS_CONTRACT_ISSUE_DATE';
-  String get contractAmount => 'WORKS_CONTRACT_AMOUNT';
+  String get workOrderAmount => 'WORK_ORDER_AMOUNT';
   String get dueDate => 'WORKS_DUE_DATE';
   String get noWorkOrderAssigned => 'NO_WORK_ORDERS_ASSIGNED';
   String get workOrderAcceptSuccess => 'WORK_ORDER_ACCEPTED_SUCCESS';
