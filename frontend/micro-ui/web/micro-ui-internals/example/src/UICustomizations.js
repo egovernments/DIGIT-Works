@@ -10,7 +10,11 @@ const businessServiceMap = {
   estimate: "mukta-estimate",
   contracts: "contract-approval-mukta",
   attendencemgmt: "muster-roll-approval",
-  expenditure:""
+  expenditure:{
+    WAGE_BILL:"works.wages",
+    PURCHASE_BILL:"works.purchase",
+    SUPERVISION_BILL:"works.supervision"
+  }
 };
 
 const inboxModuleNameMap = {
