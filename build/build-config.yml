@@ -203,5 +203,5 @@ config:
       - work-dir: "utilities/works-pdf"
         image-name: "works-pdf"
       - work-dir: "utilities/works-pdf/migration"
-        image-name: "egov-pdf-db"
+        image-name: "works-pdf-db"
         
