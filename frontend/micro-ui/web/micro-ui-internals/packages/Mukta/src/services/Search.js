@@ -9,6 +9,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
     let totalProjectsLength = project.length;
     // for(let projectIndex = 0; projectIndex < totalProjectsLength; projectIndex++) {
         let currentProject = project[0];
+        console.log("View Page", currentProject);
         const headerDetails = {
             title: " ",
             asSectionHeader: true,
@@ -35,7 +36,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             title: "WORKS_LOCATION_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
+                { title: "WORKS_GEO_LOCATION",value: (currentProject?.address?.latitude || currentProject?.address?.longitude ) ? `${currentProject?.address?.latitude}, ${currentProject?.address?.longitude}`  : "NA" },
                 { title: "WORKS_CITY",value: currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "NA" }, //will check with Backend
                 { title: "WORKS_WARD", value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA"  }, ///backend to update this
                 { title: "WORKS_LOCALITY",value: currentProject?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.locality}`) : "NA" },

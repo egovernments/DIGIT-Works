@@ -95,7 +95,7 @@ const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId) 
 }
 
 function createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams, configs) {
-    
+    console.log("data", data);
     let projects_payload = [];
     let project_details;
     let basic_details = data?.basicDetails;
@@ -110,6 +110,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
         project_details = data?.withSubProject;
       }
     }
+    console.log("create project", project_details);
     //iterate till all sub-projects. For noSubProject Case, this will iterate only once
     for(let index=1; index<=total_projects; index++) {
         // In case of Sub Projects having Parent ID, project_details will be each sub-project
@@ -142,11 +143,11 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
             "id" : modifyParams?.modify_addressID,
             "tenantId": tenantId,
             // "doorNo": "1", //Not being captured on UI
-            // "latitude": 90, //Not being captured on UI
-            // "longitude": 180, //Not being captured on UI
+            "latitude": project_details?.geoLocation?.latitude,
+            "longitude": project_details?.geoLocation?.longitude,
             // "locationAccuracy": 10000, //Not being captured on UI
             // "type": "Home", //Not being captured on UI
-            "addressLine1": project_details?.geoLocation,
+            // "addressLine1": project_details?.geoLocation,
             // "addressLine2": "Address Line 2", //Not being captured on UI
             // "landmark": "Area1", //Not being captured on UI
             "city": project_details?.ulb?.code,

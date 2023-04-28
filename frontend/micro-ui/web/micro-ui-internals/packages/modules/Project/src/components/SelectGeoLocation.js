@@ -6,8 +6,10 @@ const SelectGeoLocation = ({ onSelect, config, formData }) => {
   console.log("inside geolocation compo");
   const { t } = useTranslation();
   const [showLocationSearch, setShowLocationSearch] = useState(false);
+  const [position, setPosition] = useState();
   const onChange = (pincode, position) => {
     console.log(pincode, position, config);
+    setPosition(position);
     onSelect(config?.key, position);
   }
 
@@ -28,7 +30,7 @@ const SelectGeoLocation = ({ onSelect, config, formData }) => {
         {
           !showLocationSearch && 
           <div className="field">
-            <TextInput customIcon="geolocation" disable={true} onIconSelection={handleShowLocationSearch} value={"LAT/LONG"}></TextInput>
+            <TextInput customIcon="geolocation" disable={true} onIconSelection={handleShowLocationSearch} value={`${position?.latitude}, ${position?.longitude}`}></TextInput>
           </div>
         }
         {showLocationSearch && 
