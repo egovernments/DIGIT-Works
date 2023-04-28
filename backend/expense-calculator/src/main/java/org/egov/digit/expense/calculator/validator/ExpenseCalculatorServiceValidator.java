@@ -79,12 +79,58 @@ public class ExpenseCalculatorServiceValidator {
 
     public void validatePurchaseRequest (PurchaseBillRequest purchaseBillRequest) {
         RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
-        Bill bill = purchaseBillRequest.getBill();
+        PurchaseBill bill = purchaseBillRequest.getBill();
 
         // Validate the Request Info object
         validateRequestInfo(requestInfo);
+        // Validate purchase request parameters
+        validatePurchaseRequestParameters(purchaseBillRequest);
         //Validate request against MDMS
-        validateRequestAgainstMDMS(requestInfo,bill.getTenantId() , configs.getPurchaseBusinessService());
+        validateRequestAgainstMDMS(requestInfo,bill.getTenantId(),configs.getPurchaseBusinessService());
+    }
+
+    private void validatePurchaseRequestParameters(PurchaseBillRequest purchaseBillRequest) {
+        Map<String, String> errorMap = new HashMap<>();
+        PurchaseBill purchaseBill = purchaseBillRequest.getBill();
+        if (purchaseBill == null) {
+            log.error("PurchaseBill is mandatory");
+            throw new CustomException("PURCHASE_BILL", "PurchaseBill is mandatory");
+        }
+
+        List<BillDetail> billDetails = purchaseBill.getBillDetails();
+        if(billDetails == null || billDetails.isEmpty()) {
+            log.error("BillDetails is mandatory");
+            throw new CustomException("PURCHASE_BILL.BILL_DETAILS", "BillDetails is mandatory");
+        }
+
+        for(BillDetail billDetail : billDetails) {
+            Party payee = billDetail.getPayee();
+            if(payee == null) {
+                log.error("Payee is mandatory");
+                throw new CustomException("PURCHASE_BILL.BILL_DETAILS.PAYEE", "Payee is mandatory");
+            }
+
+            if(StringUtils.isBlank(payee.getType()) ) {
+                log.error("Payee type is mandatory");
+                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.TYPE", "Payee type is mandatory");
+            }
+
+            if(StringUtils.isBlank(payee.getIdentifier())) {
+                log.error("Payee identifier is mandatory");
+                errorMap.put("PURCHASE_BILL.BILL_DETAILS.PAYEE.IDENTIFIER", "Payee identifier is mandatory");
+            }
+        }
+
+        if (StringUtils.isBlank(purchaseBill.getTenantId())) {
+            log.error("TenantId is mandatory");
+            errorMap.put("PURCHASE_BILL.TENANTID", "TenantId is mandatory");
+        }
+
+        if (!errorMap.isEmpty()) {
+            log.error("Purchase bill validation failed");
+            throw new CustomException(errorMap);
+        }
+        log.info("Required request parameter validation done for purchase bill");
     }
 
     private void validateContractIdAgainstService(CalculationRequest calculationRequest) {

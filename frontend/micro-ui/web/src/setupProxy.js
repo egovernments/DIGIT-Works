@@ -25,7 +25,7 @@ module.exports = function (app) {
     "/property-services",
     "/fsm-calculator/v1/billingSlab/_search",
     "/muster-roll",
-    "/pms/project",
+    "/project",
     "/inbox/v2/_search",
     "/individual",
     "/org-services",
@@ -33,7 +33,8 @@ module.exports = function (app) {
     "/contract-service",
     "/expensebilling",
     "/bankaccount-service",
-    "/expense-calculator/v1/_estimate"
+    "/expense-calculator/v1/_estimate",
+    "/expense/bill/v1"
   ].forEach((location) =>
     app.use(location, createProxy)
   );

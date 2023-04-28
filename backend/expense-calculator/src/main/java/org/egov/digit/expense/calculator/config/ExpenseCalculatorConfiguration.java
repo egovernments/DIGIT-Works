@@ -143,5 +143,13 @@ public class ExpenseCalculatorConfiguration {
 	//KAFKA topic
 	@Value("${expense.calculator.create.topic}")
 	private String calculatorCreateTopic;
+	
+	//Purchase bill referenceId IDGen format key
+	@Value("${egov.works.expense.purchasebill.referenceId.format}")
+	private String purchaseBillReferenceIdFormatKey;
+	
+	//Supervision bill referenceId IDGen format key
+	@Value("${egov.works.expense.superbill.referenceId.format}")
+	private String supervisionBillreferenceIdFormatKey;
 
 }

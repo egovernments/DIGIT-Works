@@ -21,7 +21,6 @@ module.exports = {
   DB_NAME: process.env.DB_NAME || "postgres",
   DB_PORT: process.env.DB_PORT || 5432,
   pdf: {
-    epass_pdf_template: process.env.EPASS_TEMPLATE || "tlcertificate",
     project_details_template:
       process.env.PROJECT_DETAILS_TEMPLATE || "project-detail",
     estimate_template: process.env.ESTIMATE_TEMPLATE || "estimate",
@@ -39,7 +38,6 @@ module.exports = {
   },
   host: {
     mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8083',
-    epass: process.env.EGOV_TLSERVICES_HOST || HOST,
     pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8082',
     user: process.env.EGOV_USER_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
@@ -53,17 +51,14 @@ module.exports = {
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
-    epass_search: "/tl-services/v1/_search",
     user_search: "/user/_search",
     mdms_search: "/egov-mdms-service/v1/_search",
-    download_url: "/download/epass",
     workflow_search: "/egov-workflow-v2/egov-wf/process/_search",
-    projectDetails_search: "/pms/project/v1/_search",
+    projectDetails_search: "/project/v1/_search",
     estimate_search: "/estimate-service/estimate/v1/_search",
     musterRoll_search: "/muster-roll/v1/_search",
     contract_search: "/contract-service/contract/v1/_search",
     mdmsWageSeekerSkills_search: "/egov-mdms-service/v1/_get",
     orgnisation_search: "/org-services/organisation/v1/_search"
-
   },
 };

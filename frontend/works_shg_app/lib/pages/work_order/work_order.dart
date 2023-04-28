@@ -109,7 +109,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                             .toLocal()
                                             .toString())
                                     : 'NA',
-                                i18.workOrder.contractAmount:
+                                i18.workOrder.workOrderAmount:
                                     '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                 i18.common.status: e.wfStatus,
                               },
@@ -207,7 +207,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                 .toString())
                                                             : 'NA',
                                                         i18.workOrder
-                                                                .contractAmount:
+                                                                .workOrderAmount:
                                                             '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                                         i18.common.status:
                                                             e.wfStatus,

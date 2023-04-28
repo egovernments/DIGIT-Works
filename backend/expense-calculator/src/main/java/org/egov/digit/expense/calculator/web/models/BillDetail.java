@@ -1,19 +1,24 @@
 package org.egov.digit.expense.calculator.web.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import digit.models.coremodels.AuditDetails;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Builder.Default;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Bill details of the individual payee
@@ -40,9 +45,20 @@ public class BillDetail {
 	@Valid
 	private String billId;
 
+	@JsonProperty("totalAmount")
+	@Valid
+	@Default
+	private BigDecimal totalAmount = BigDecimal.ZERO;;
+
+	@JsonProperty("totalPaidAmount")
+	@Valid
+	@Default
+	private BigDecimal totalPaidAmount = BigDecimal.ZERO;
+
 	@JsonProperty("netLineItemAmount")
 	@Valid
-	private BigDecimal netLineItemAmount;
+	@Default
+	private BigDecimal netLineItemAmount = BigDecimal.ZERO;
 
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 64)

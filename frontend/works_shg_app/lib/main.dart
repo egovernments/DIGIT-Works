@@ -44,6 +44,7 @@ import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
 import 'blocs/muster_rolls/muster_roll_pdf.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
+import 'blocs/my_bills/search_my_bills.dart';
 import 'blocs/organisation/org_financial_bloc.dart';
 import 'blocs/organisation/org_search_bloc.dart';
 import 'blocs/user/user_search.dart';
@@ -195,6 +196,7 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => MusterCreateBloc()),
         BlocProvider(create: (context) => MusterGetWorkflowBloc()),
         BlocProvider(create: (context) => SearchMyWorksBloc()),
+        BlocProvider(create: (context) => SearchMyBillsBloc()),
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
         BlocProvider(create: (context) => DeclineWorkOrderBloc()),
         BlocProvider(create: (context) => SearchIndividualWorkBloc()),
@@ -237,7 +239,7 @@ class _MainApplicationState extends State<MainApplication> {
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
                                 module:
-                                    'rainmaker-common,rainmaker-common-masters',
+                                    'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),

@@ -43,9 +43,9 @@ const Urls = {
     updateLOI:"/loi-service/v1/_update",
     updateEstimate:"/estimate-service/estimate/v1/_update",
     download_pdf:"/egov-pdf/download/WORKSESTIMATE/estimatepdf",
-    createProject : "/pms/project/v1/_create",
-    searchProject : "/pms/project/v1/_search",
-    updateProject : "/pms/project/v1/_update",
+    createProject : "/project/v1/_create",
+    searchProject : "/project/v1/_search",
+    updateProject : "/project/v1/_update",
   },
 
   contracts : {
@@ -249,6 +249,10 @@ const Urls = {
 
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
+
+  bill: {
+    search: "/expense/bill/v1/_search"
+  },
 
   calculator : {
     expenseBill : "/expense-calculator/v1/_estimate"
