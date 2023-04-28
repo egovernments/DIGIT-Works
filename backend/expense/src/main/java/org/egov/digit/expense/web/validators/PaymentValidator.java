@@ -76,6 +76,7 @@ public class PaymentValidator {
 				errorMap.put("EG_PAYMENT_INVALID_LINEITEM_AMOUNT",
 						"The paid bill amount " + paymentBill.getPaidAmount()
 					  + " is not equal to the actual amount : " + billFromSearch.getNetPayableAmount());
+
 			}
 			
 			for (PaymentBillDetail billDetail : paymentBill.getBillDetails()) {

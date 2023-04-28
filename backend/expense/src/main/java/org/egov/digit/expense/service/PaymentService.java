@@ -142,8 +142,7 @@ public class PaymentService {
         for (PaymentBill bill : payment.getBills()) {
 
             Bill billFromSearch = billMap.get(bill.getBillId());
-
-            billFromSearch.setNetPaidAmount(bill.getPaidAmount());
+      			billFromSearch.setTotalPaidAmount(billFromSearch.getTotalPaidAmount().add(bill.getTotalPaidAmount()));
             billFromSearch.setPaymentStatus(payment.getStatus());
             billFromSearch.setAuditDetails(auditDetails);
 
@@ -155,8 +154,8 @@ public class PaymentService {
 
                 for (PaymentLineItem payableLineItem : billDetail.getPayableLineItems()) {
 
-                    LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemid());
-                    lineItemFromSearch.setPaidAmount(payableLineItem.getPaidAmount());
+                    LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getId());
+                    lineItemFromSearch.setPaidAmount(lineItemFromSearch.getPaidAmount().add(payableLineItem.getPaidAmount()));
                     lineItemFromSearch.setAuditDetails(auditDetails);
                 }
             }

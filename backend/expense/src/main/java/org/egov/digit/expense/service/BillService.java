@@ -133,7 +133,6 @@ public class BillService {
 		log.info("Search repository using billCriteria");
 		List<Bill> bills = billRepository.search(billSearchRequest);
 
-		// TODO FIXME get count query
 		log.info("update pagination object for total count : "+bills.size());
 		billSearchRequest.getPagination().setTotalCount(bills.size());
 

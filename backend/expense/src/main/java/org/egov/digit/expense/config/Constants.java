@@ -26,6 +26,10 @@ public class Constants {
 	public static final List<String> MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME, BUSINESS_SERVICE_MASTERNAME));
 
+	public static final List<String> TENANT_MDMS_MASTER_NAMES = Collections
+			.unmodifiableList(Arrays.asList(TENANT_MASTERNAME));
+	
+	
 	private static final String INNER_JOIN = "INNER JOIN";
 	private static final String WHERE = " WHERE ";
 

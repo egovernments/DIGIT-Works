@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,6 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 		Map<String, BillDetail> billDetailMap = new HashMap<>();
 
 		while (rs.next()) {
-
 			String billId = rs.getString("b_id");
 			Bill bill = billMap.get(billId);
 

@@ -147,7 +147,4 @@ public class BillQueryBuilder {
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids) {
         preparedStmtList.addAll(ids);
     }
-    
-
-    
 }
