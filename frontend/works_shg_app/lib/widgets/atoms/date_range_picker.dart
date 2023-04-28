@@ -57,19 +57,19 @@ class DateRangePicker extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                DigitElevatedButton(
-                  onPressed: () {
-                    onSubmit!();
-                    Navigator.pop(dialogContext);
-                  },
-                  child: Text(applyLabel ?? 'Apply'),
-                ),
                 TextButton(
                   onPressed: () {
                     onCancel!();
                     Navigator.pop(dialogContext);
                   },
                   child: Text(cancelLabel ?? ''),
+                ),
+                DigitElevatedButton(
+                  onPressed: () {
+                    onSubmit!();
+                    Navigator.pop(dialogContext);
+                  },
+                  child: Text(applyLabel ?? 'Apply'),
                 ),
               ],
             ),

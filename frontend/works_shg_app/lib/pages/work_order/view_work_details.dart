@@ -286,7 +286,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                           'NA'),
                                   i18.workOrder.completionPeriod:
                                       '${e.completionPeriod} ${t.translate(i18.common.days)}',
-                                  i18.workOrder.contractAmount:
+                                  i18.workOrder.workOrderAmount:
                                       '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                   i18.common.status: e.wfStatus,
                                 },

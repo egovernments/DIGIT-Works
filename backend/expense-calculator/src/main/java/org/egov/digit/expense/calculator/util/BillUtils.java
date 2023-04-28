@@ -8,6 +8,7 @@ import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillCalculatorRequestInfoWrapper;
 import org.egov.digit.expense.calculator.web.models.BillResponse;
+import org.egov.digit.expense.calculator.web.models.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,12 +27,13 @@ public class BillUtils {
     @Autowired
     private ObjectMapper mapper;
 
-    public BillResponse postBill(RequestInfo requestInfo,Bill bill) {
+    public BillResponse postBill(RequestInfo requestInfo, Bill bill, Workflow workflow) {
         StringBuilder url = getBillCreateURI();
 
         BillCalculatorRequestInfoWrapper requestInfoWrapper = BillCalculatorRequestInfoWrapper.builder()
                                                                 .requestInfo(requestInfo)
                                                                 .bill(bill)
+                                                                .workflow(workflow)
                                                                 .build();
 
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);

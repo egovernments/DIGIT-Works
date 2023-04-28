@@ -69,7 +69,7 @@ public class BillToMetaMapper {
                     .isActive(Boolean.TRUE)
                     .billingSlabCode(infoMeta.get(payee.getIdentifier()))
                     .auditDetails(billDetail.getAuditDetails())
-                    .additionalDetails(bill.getAdditionalDetails())
+                    .additionalDetails(billDetail.getAdditionalDetails())
                     .build();
             calcDetails.add(billMetaCalcDetails);
         }

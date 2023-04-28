@@ -1,22 +1,27 @@
-export const SearchBillConfig = {
+export const SearchBillWMSConfig = {
     "tenantId": "pg",
     "moduleName": "commonMuktaUiConfig",
-    "SearchBillConfig":[
+    "SearchBillWMSConfig":[
         {
             label : "EXP_SEARCH_BILL",
             type: 'search',
+            actionLabel: "ES_COMMON_DOWNLOAD_PAYMENT_ADVICE",
+            actionRole: "EMPLOYEE",
+            actionLink: "expenditure/download-bill",
             apiDetails: {
-                serviceName: "/expense/bill/v1/_search",
+                serviceName: "/wms/expense/_search",
                 requestParam: {},
                 requestBody: {
-                    billCriteria: {}
+                    inbox: {
+                        moduleSearchCriteria: {}
+                    }
                 },
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
-                moduleName:"SearchBillConfig",
-                tableFormJsonPath:"requestBody.pagination",
-                filterFormJsonPath:"requestBody.billCriteria",
-                searchFormJsonPath:"requestBody.billCriteria",
+                moduleName:"SearchBillWMSConfig",
+                tableFormJsonPath:"requestBody.inbox",
+                filterFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
+                searchFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
             },
             sections : {
                 search : {
@@ -58,7 +63,7 @@ export const SearchBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                  name: "businessService",
+                                  name: "billType",
                                   optionsKey: "name",
                                   optionsCustomStyle : {
                                     top : "2.3rem"
@@ -68,7 +73,7 @@ export const SearchBillConfig = {
                                     moduleName: "expense",
                                     localePrefix: "COMMON_MASTERS_BILL",
                                     select:
-                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('BILL')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_'+ele.code }))}"
+                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('BILL')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_TYPE_'+Digit.Utils.locale.getTransformedLocale(ele.businessService) }))}"
                                     } 
                                 }
                             },
@@ -110,7 +115,7 @@ export const SearchBillConfig = {
                                   optionsKey: "i18nKey",
                                   allowMultiSelect: false,
                                   masterName: "commonUiConfig",
-                                  moduleName: "SearchBillConfig",
+                                  moduleName: "SearchBillWMSConfig", //update this based on 
                                   customfn: "populateReqCriteria",
                                 }
                             },
@@ -159,41 +164,45 @@ export const SearchBillConfig = {
                         columns: [
                             {
                                 label: "WORKS_BILL_NUMBER",
-                                jsonPath: "billNumber",
+                                jsonPath: "businessObject.billNumber",
                                 additionalCustomization:true 
                             },
                             {
                                 label: "WORKS_PROJECT_NAME",
-                                jsonPath: "additionalDetails.projectName",
+                                jsonPath: "businessObject.additionalDetails.projectName",
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "tenantId",
+                                jsonPath: "businessObject.additionalDetails.location",
                                 additionalCustomization:true 
                             },
                             {
                                 label: "ES_COMMON_CBO_NAME",
-                                jsonPath: "additionalDetails.orgName"
+                                jsonPath: "businessObject.additionalDetails.orgName"
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "additionalDetails.billType",
+                                jsonPath: "businessObject.businessservice",
+                                additionalCustomization:true
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                jsonPath: "musterRollStatus",
+                                jsonPath: "ProcessInstance.state.state",
                                 additionalCustomization:true
                             },
                             {
                                 label: "EXP_BILL_AMOUNT",
-                                jsonPath: "additionalDetails.amount",
+                                jsonPath: "businessObject.netPayableAmount",
                                 additionalCustomization:true,
                                 headerAlign: "right"
                             }
                         ],
                         enableGlobalSearch: false,
                         enableColumnSort: true,
-                        resultsJsonPath: "bills",
+                        resultsJsonPath: "items",
+                        showCheckBox: true,
+                        checkBoxActionLabel: 'ES_COMMON_GENERATE_PAYMENT_ADVICE',
+                        showTableInstruction : "EXP_DOWNLOAD_BILL_INSTRUCTION",
                     },
                     children: {},
                     show: true 

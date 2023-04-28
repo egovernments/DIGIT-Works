@@ -6,13 +6,16 @@ import billInboxFilter from "./components/BillInbox/NewInboxFilter"
 import ExpenditureCard from "./components/ExpenditureCard";
 import ViewBillsMenu from "./pages/employee/viewBills/viewBillsMenu";
 import DeductionsTable from "./pageComponents/DeductionsTable";
-import TotalBillAmount from "./pageComponents/TotalBillAmount";
 import ViewBills from "./pages/employee/viewBills/viewBills";
 import BillInbox from "./pages/employee/Bills/BillInbox";
 import SearchBill from "./pages/employee/Bills/SearchBill";
 import ViewBill from "./pages/employee/Bills/ViewBill";
 import PurchaseBill from "./pages/employee/CreateBills/PurchaseBill";
 import CreatePurchaseBillResponse from "./pages/employee/CreateBills/CreatePurchaseBillResponse";
+import ViewWageBill from "./pages/employee/Bills/ViewWageBill";
+import TotalBillAmount from "./pageComponents/TotalBillAmount";
+import PayableAmt from "./components/PayableAmt";
+import DownloadBill from "./pages/employee/Bills/DownloadBill";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     
@@ -47,6 +50,10 @@ const componentsToRegister = {
     CreatePurchaseBillResponse,
     DeductionsTable,
     TotalBillAmount,
+    //new
+    ViewWageBill,
+    PayableAmt,
+    DownloadBill
 };
 
 export const initExpenditureComponents = () => {

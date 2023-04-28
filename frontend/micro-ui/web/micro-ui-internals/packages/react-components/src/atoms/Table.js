@@ -56,7 +56,7 @@ const Table = ({
   tableTopComponent,
   tableRef,
   isReportTable = false,
-  showCheckbox = false,
+  showCheckBox = false,
   actionLabel = 'CS_COMMON_DOWNLOAD',
   tableSelectionHandler = () => {}
 }) => {
@@ -104,22 +104,24 @@ const Table = ({
     usePagination,
     useRowSelect,
     hooks => {
-      showCheckbox && hooks.visibleColumns.push(columns => [
-        {
-          id: 'selection',
-          Header: ({ getToggleAllPageRowsSelectedProps }) => (
-            <div>
-              <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
-            </div>
-          ),
-          Cell: ({ row }) => (
-            <div>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            </div>
-          ),
-        },
-        ...columns,
-      ])
+      if(showCheckBox) {
+        hooks.visibleColumns.push(columns => [
+          {
+            id: 'selection',
+            Header: ({ getToggleAllPageRowsSelectedProps }) => (
+              <div>
+                <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+              </div>
+            ),
+            Cell: ({ row }) => (
+              <div>
+                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+              </div>
+            ),
+          },
+          ...columns,
+        ])
+      }
     }
   );
   let isTotalColSpanRendered = false;
