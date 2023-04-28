@@ -15,23 +15,23 @@ const PurchaseBill = () => {
     const [isFormReady, setIsFormReady] = useState(false);
     const stateTenant = Digit.ULBService.getStateId();
 
-    // const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
-    // stateTenant,
-    // Digit.Utils.getConfigModuleName(),
-    // [
-    //     {
-    //         "name": "CreatePurchaseBillConfig"
-    //     }
-    // ],
-    // {
-    //   select: (data) => {
-    //       return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
-    //   },
-    // }
-    // );
+    const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
+    stateTenant,
+    Digit.Utils.getConfigModuleName(),
+    [
+        {
+            "name": "CreatePurchaseBillConfig"
+        }
+    ],
+    {
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
+      },
+    }
+    );
 
     //local config
-    let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
+    // let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
 
     //fetching contract data
     const { isLoading: isContractLoading,data : contract } = Digit.Hooks.contracts.useContractSearch({
