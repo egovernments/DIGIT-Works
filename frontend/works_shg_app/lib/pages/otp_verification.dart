@@ -55,8 +55,9 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
         '{mobileNumber}', '+91 - ${widget.mobileNumber}');
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
+        titleSpacing: 16,
         title: const AppBarLogo(),
+        automaticallyImplyLeading: false,
       ),
       bottomNavigationBar: Container(
         height: 60,

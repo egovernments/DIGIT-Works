@@ -130,7 +130,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                       isRequired: true,
                       formControlName: wardKey,
                       valueMapper: (value) => t.translate(
-                          '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_$value'),
+                          '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_$value'),
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.localityRequired,
@@ -154,7 +154,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,
                         valueMapper: (value) => t.translate(
-                            '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_$value'),
+                            '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_$value'),
                         isRequired: true,
                         onChanged: (value) {},
                         validationMessages: {

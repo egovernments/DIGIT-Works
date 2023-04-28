@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
 
 import '../atoms/digit_base_stepper.dart';
 
@@ -111,7 +112,7 @@ class DigitStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DigitBaseStepper(
-      textChildren: _headersWrappedInText(),
+      textChildren: _headersWrappedInText(context),
       nextPreviousButtonsDisabled: enableNextPreviousButtons,
       stepTappingDisabled: enableStepTapping,
       previousButtonIcon: previousButtonIcon,
@@ -144,24 +145,29 @@ class DigitStepper extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Text(
             '${numbers![index]}',
-            style: numberStyle.copyWith(fontSize: stepRadius / 1.1),
+            style: numberStyle.copyWith(fontSize: stepRadius / 1),
           ));
     });
   }
 
-  List<Widget> _headersWrappedInText() {
+  List<Widget> _headersWrappedInText(BuildContext context) {
     return List.generate(headers!.length, (index) {
-      return FittedBox(
-          alignment: Alignment.centerLeft,
-          child: SizedBox(
-            width: 55,
-            child: Text(
-              headers![index],
-              style: headerStyle.copyWith(fontSize: stepRadius),
-              softWrap: true,
-              maxLines: 4,
-            ),
-          ));
+      return Container(
+        alignment: Alignment.center,
+        margin: index == 0 || index == headers!.length - 1
+            ? EdgeInsets.only(
+                left: index == 0 ? 8.0 : 0,
+                right: index == headers!.length - 1 ? 4.0 : 0)
+            : const EdgeInsets.only(left: 20.0),
+        width: 65,
+        child: Text(
+          AppLocalizations.of(context).translate(headers![index]),
+          style: headerStyle.copyWith(fontSize: stepRadius),
+          softWrap: true,
+          maxLines: 4,
+          textAlign: TextAlign.left,
+        ),
+      );
     });
   }
 }
