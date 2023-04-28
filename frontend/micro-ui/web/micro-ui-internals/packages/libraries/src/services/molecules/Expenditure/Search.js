@@ -269,7 +269,7 @@ export const BillsSearch = {
 
     return {
         applicationDetails: details,
-        applicationData: [], //TODO:
+        applicationData: [], //TODO: @hariom send the search response object here(required by WorkflowActions)
         isNoDataFound : false //TODO:
     }
   }

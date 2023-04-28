@@ -7,7 +7,8 @@ const ViewPurchaseBill = ({props}) => {
     const [showActions, setShowActions] = useState(false);
     const menuRef = useRef();
     const [actionsMenu, setActionsMenu] = useState([]);
-    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const {billNumber,tenantId } = Digit.Hooks.useQueryParams()
+    const [isStateChanged, setStateChanged] = useState(``)
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    
@@ -53,7 +54,7 @@ const ViewPurchaseBill = ({props}) => {
                       workflowDetails={{}}
                       showTimeLine={false}
                       timelineStatusPrefix={""}
-                      businessService={""}
+                      businessService={"works.purchase"}
                       forcedActionPrefix={"WORKS"}
                       noBoxShadow={true}
                     />
@@ -64,25 +65,28 @@ const ViewPurchaseBill = ({props}) => {
                       moduleCode="works"
                       isDataLoading={isViewPurchaseBillDataLoading}
                       workflowDetails={{}}
-                      showTimeLine={false}
-                      timelineStatusPrefix={""}
-                      businessService={""}
+                      showTimeLine={true}
+                      timelineStatusPrefix={"WF_PBILL_STATUS_"}
+                      businessService={"works.purchase"}
                       forcedActionPrefix={"WORKS"}
                       noBoxShadow={true}
+                      applicationNo={billNumber}
+                      tenantId={tenantId}
+                      statusAttribute={"state"}
                     />
                 </>
             }                
-              <WorkflowActions
-                forcedActionPrefix={"WF_ESTIMATE_ACTION"}
-                businessService={""}
-                applicationNo={""}
-                tenantId={tenantId}
-                applicationDetails={data?.applicationData}
-                url={""}
-                setStateChanged={""}
-                moduleCode="Estimate"
-                editApplicationNumber={""}
-              />
+                <WorkflowActions
+                  forcedActionPrefix={"WF_PBILL_ACTION"}
+                  businessService={"works.purchase"}
+                  applicationNo={billNumber}
+                  tenantId={tenantId}
+                  applicationDetails={data?.applicationData}
+                  url={""} //TODO: @hariom Add the update api of bills here
+                  setStateChanged={setStateChanged}
+                  moduleCode="Expenditure"
+                  editApplicationNumber={""}
+                />
               {data?.applicationData?.wfStatus === "APPROVED" ?
                   <ActionBar>
 

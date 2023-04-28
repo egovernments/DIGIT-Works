@@ -213,6 +213,50 @@ const configEstimateModal = (
                     show: true
                 },
             }
+        },
+        "works.purchase":{
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "VERIFY_AND_FORWARD":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "REJECT":{
+                comments:{
+                    isMandatory:true,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            }
         }
     }
 //field can have (comments,assignee,upload)

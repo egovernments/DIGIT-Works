@@ -74,7 +74,6 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
         if (workflowDetails?.data?.applicationBusinessService === "muster-roll-approval" && workflowDetails?.data?.actionState?.applicationStatus === "APPROVED") {
             setAdditionalComment(true)
         }
-        console.log("workflow details", workflowDetails);
     }, [workflowDetails])
     
 
