@@ -1693,7 +1693,11 @@ const DoubleTickIcon = ({ className = "", fill = "none", style = {} }) => (
     <path d="M24.0002 2.33312L22.1202 0.453125L13.6669 8.90646L15.5469 10.7865L24.0002 2.33312ZM29.6535 0.453125L15.5469 14.5598L9.97354 8.99979L8.09354 10.8798L15.5469 18.3331L31.5469 2.33312L29.6535 0.453125ZM0.546875 10.8798L8.00021 18.3331L9.88021 16.4531L2.44021 8.99979L0.546875 10.8798Z" fill="#F47738"/>
   </svg>
 )
-
+const InfoIcon = ({ className = "", fill = "none", style = {} }) => (
+  <svg width="20" height="20" viewBox="0 0 20 20" className={className} style={style} fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 5H11V7H9V5ZM9 9H11V15H9V9ZM10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM10 18C5.59 18 2 14.41 2 10C2 5.59 5.59 2 10 2C14.41 2 18 5.59 18 10C18 14.41 14.41 18 10 18Z" fill="#505A5F"/>
+  </svg>
+)
 const ExpenditureIcon = BillsIcon;
 
 export {
@@ -1841,5 +1845,6 @@ export {
   HelperIcon,
   DashboardIcon,
   ExpenditureIcon,
-  DoubleTickIcon
+  DoubleTickIcon,
+  InfoIcon
 };

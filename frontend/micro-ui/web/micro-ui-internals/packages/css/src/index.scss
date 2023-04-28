@@ -1033,3 +1033,16 @@ input[type=“date”]::-webkit-calendar-picker-indicator {
   align-items: center;
   justify-content: flex-end;
 }
+
+.table-instruction-wrapper {
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.table-instruction-header {
+  font-size: 16px;
+  font-weight: 400;
+  color: theme(colors.text.secondary);
+}

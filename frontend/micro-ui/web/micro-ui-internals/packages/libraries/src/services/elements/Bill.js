@@ -29,6 +29,17 @@ const BillingService = {
         auth: true,
         userService: false,
       }),
+
+  search: (data) =>
+    Request({
+      url: Urls.bill.search,
+      data: data,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {}
+  })
 }
 
 export default BillingService

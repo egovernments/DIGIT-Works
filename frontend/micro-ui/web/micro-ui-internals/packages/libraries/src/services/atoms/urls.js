@@ -250,6 +250,10 @@ const Urls = {
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
 
+  bill: {
+    search: "/expense/bill/v1/_search"
+  },
+
   calculator : {
     expenseBill : "/expense-calculator/v1/_estimate"
   }
