@@ -9,7 +9,7 @@ createdby character varying(64)   NOT NULL,
 createdtime bigint NOT NULL,
 lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
-additional_details jsonb,
+additionaldetails jsonb,
 
 CONSTRAINT pk_eg_expense_payment PRIMARY KEY (id)
 );

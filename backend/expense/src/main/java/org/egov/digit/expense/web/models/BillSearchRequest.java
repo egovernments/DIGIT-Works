@@ -1,5 +1,8 @@
 package org.egov.digit.expense.web.models;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
@@ -22,13 +25,17 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BillSearchRequest {
 	
-	@JsonProperty("RequestInfo")
+	@JsonProperty("requestInfo")
+	@NotNull
 	private RequestInfo requestInfo;
 
 	@JsonProperty("billCriteria")
+	@NotNull
+	@Valid
 	private BillCriteria billCriteria;
 
 	@JsonProperty("pagination")
+	@NotNull
 	@Default
 	private Pagination pagination = new Pagination();
 

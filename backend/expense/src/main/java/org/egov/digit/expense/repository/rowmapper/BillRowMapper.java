@@ -12,7 +12,10 @@ import java.util.Map;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.LineItem;
+import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.enums.LineItemType;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,28 +47,33 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 
 			if (bill == null) {
 				
-				AuditDetails auditDetails =AuditDetails.builder()
-					.createdBy(rs.getString("b_createdby"))
-					.createdTime((Long) rs.getObject("b_createdtime"))
-					.lastModifiedBy(rs.getString("b_lastmodifiedby"))
-					.lastModifiedTime((Long) rs.getObject("b_lastmodifiedtime"))
-					.build();
-
+				billDetailMap.clear();
+				
+				
+				Party payer = getPayer(rs);
+				
+				AuditDetails billAuditDetails = getAuditDetailsForKey(rs,
+						"b_createdby",
+						"b_createdtime",
+						"b_lastmodifiedby",
+						"b_lastmodifiedtime");
+				
 				bill = Bill.builder()
-					.id(billId)
-					.tenantId(rs.getString("b_tenantid"))
-					.billDate(rs.getLong("billdate"))
-					.dueDate(rs.getLong("duedate"))
-					.totalAmount(rs.getBigDecimal("b_totalamount"))
+					.paymentStatus(PaymentStatus.fromValue(rs.getString("b_paymentstatus")))
+					.additionalDetails(getadditionalDetail(rs, "b_additionalDetails"))
 					.totalPaidAmount(rs.getBigDecimal("b_totalpaidamount"))
+					.status(Status.fromValue(rs.getString("b_status")))
 					.businessService(rs.getString("businessservice"))
+					.totalAmount(rs.getBigDecimal("b_totalamount"))
 					.referenceId(rs.getString("b_referenceid"))
 					.fromPeriod(rs.getLong("b_fromperiod"))
+					.tenantId(rs.getString("b_tenantid"))
 					.toPeriod(rs.getLong("b_toperiod"))
-					.status(rs.getString("b_status"))
-					.paymentStatus(rs.getString("b_paymentstatus"))
-					.additionalDetails(getadditionalDetail(rs, "b_additionalDetails"))
-					.auditDetails(auditDetails)
+					.billDate(rs.getLong("billdate"))
+					.dueDate(rs.getLong("duedate"))
+					.auditDetails(billAuditDetails)
+					.payer(payer)
+					.id(billId)
 					.build();
 
 				billMap.put(bill.getId(), bill);
@@ -78,27 +86,29 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 			BillDetail billDetail = billDetailMap.get(detailId);
 
 			if (billDetail == null) {
-
-				AuditDetails auditDetails =AuditDetails.builder()
-					.createdBy(rs.getString("bd_createdby"))
-					.createdTime((Long) rs.getObject("bd_createdtime"))
-					.lastModifiedBy(rs.getString("bd_lastmodifiedby"))
-					.lastModifiedTime((Long) rs.getObject("bd_lastmodifiedtime"))
-					.build();
 				
+				Party payee = getPayee(rs);
+				
+				AuditDetails bDAuditDetails =  getAuditDetailsForKey(rs,
+						"bd_createdby",
+						"bd_createdtime",
+						"bd_lastmodifiedby",
+						"bd_lastmodifiedtime");
 				
 				billDetail = BillDetail.builder()
-					.id(detailId)
-					.billId(rs.getString("billid"))
-					.referenceId(rs.getString("bd_referenceid"))
-					.paymentStatus(rs.getString("bd_paymentstatus"))
-					.totalAmount(rs.getBigDecimal("bd_totalamount"))
-					.totalPaidAmount(rs.getBigDecimal("bd_totalpaidamount"))
-					.fromPeriod(rs.getLong("bd_fromperiod"))
-					.toPeriod(rs.getLong("bd_toperiod"))
-					.status(rs.getString("bd_status"))
-					.auditDetails(auditDetails)
+					.paymentStatus(PaymentStatus.fromValue(rs.getString("bd_paymentstatus")))
 					.additionalDetails(getadditionalDetail(rs, "bd_additionalDetails"))
+					.totalPaidAmount(rs.getBigDecimal("bd_totalpaidamount"))
+					.status(Status.fromValue(rs.getString("bd_status")))
+					.totalAmount(rs.getBigDecimal("bd_totalamount"))
+					.referenceId(rs.getString("bd_referenceid"))
+					.fromPeriod(rs.getLong("bd_fromperiod"))
+					.tenantId(rs.getString("bd_tenantid"))
+					.toPeriod(rs.getLong("bd_toperiod"))
+					.billId(rs.getString("billid"))
+					.auditDetails(bDAuditDetails)
+					.id(detailId)
+					.payee(payee)
 					.build();
 		
 				billDetailMap.put(billDetail.getId(), billDetail);
@@ -123,11 +133,12 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 			LineItem lineItem = LineItem.builder()
 					.auditDetails(auditDetails)
 					.id(rs.getString("line_id"))
-					.status(rs.getString("line_status"))
+					.tenantId(rs.getString("line_tenantid"))
+					.status(Status.fromValue(rs.getString("line_status")))
 					.headCode(rs.getString("headcode"))
 					.amount(rs.getBigDecimal("amount"))
 					.paidAmount(rs.getBigDecimal("paidamount"))
-					.paymentStatus(rs.getString("li_paymentstatus"))
+					.paymentStatus(PaymentStatus.fromValue(rs.getString("li_paymentstatus")))
 					.type(LineItemType.fromValue(rs.getString("line_type")))
 					.additionalDetails(getadditionalDetail(rs, "line_additionalDetails"))
 					.build();
@@ -142,6 +153,78 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 		}
 		log.debug("converting map to list object ::: " + billMap.values());
 		return new ArrayList<>(billMap.values());
+	}
+
+
+	/**
+	 * Fetch payer details from result set
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
+	private Party getPayer(ResultSet rs) throws SQLException {
+		AuditDetails payerAuditDetails = getAuditDetailsForKey(rs, 
+				"payer_createdby",
+				"payer_createdtime",
+				"payer_lastmodifiedby",
+				"payer_lastmodifiedtime");
+
+		Party payer = Party.builder()
+				.status(Status.fromValue(rs.getString("payer_status")))
+				.identifier(rs.getString("payer_identifier"))
+				.tenantId(rs.getString("payer_tenantid"))
+				.type(rs.getString("payer_type"))
+				.auditDetails(payerAuditDetails)
+				.id(rs.getString("payer_id"))
+				.build();
+		return payer;
+	}
+	
+
+	/**
+	 * Fetch payee details from result set
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
+	private Party getPayee(ResultSet rs) throws SQLException {
+		
+		AuditDetails payeeAuditDetails = getAuditDetailsForKey(rs, 
+				"payee_createdby",
+				"payee_createdtime",
+				"payee_lastmodifiedby",
+				"payee_lastmodifiedtime");
+
+		Party payee = Party.builder()
+				.status(Status.fromValue(rs.getString("payee_status")))
+				.identifier(rs.getString("payee_identifier"))
+				.tenantId(rs.getString("payee_tenantid"))
+				.type(rs.getString("payee_type"))
+				.auditDetails(payeeAuditDetails)
+				.id(rs.getString("payee_id"))
+				.build();
+		return payee;
+	}
+	
+	/**
+	 * Fetch audit details from result set for the given keys
+	 * 
+	 * @param rs
+	 * @param createdBy
+	 * @param createdTime
+	 * @param modifiedBy
+	 * @param modifiedTime
+	 * @return
+	 * @throws SQLException
+	 */
+	private AuditDetails getAuditDetailsForKey (ResultSet rs, String createdBy, String createdTime, String modifiedBy, String modifiedTime) throws SQLException {
+		
+		return AuditDetails.builder()
+			.lastModifiedTime(rs.getLong(modifiedTime))
+			.createdTime((Long) rs.getObject(createdTime))
+			.lastModifiedBy(rs.getString(modifiedBy))
+			.createdBy(rs.getString(createdBy))
+			.build();
 	}
 	
 	
@@ -174,5 +257,4 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 		return additionalDetails;
 
 	}
-
 }

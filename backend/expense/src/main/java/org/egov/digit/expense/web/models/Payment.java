@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,6 +27,7 @@ import lombok.NoArgsConstructor;
 public class Payment {
 	
 	@JsonProperty("tenantId")
+	@NotNull
 	private String tenantId;
 
 	@JsonProperty("id")
@@ -31,17 +35,21 @@ public class Payment {
 	private String id;
 
 	@JsonProperty("netPayableAmount")
+	@NotNull
 	private BigDecimal netPayableAmount;
 
 	@JsonProperty("netPaidAmount")
+	@NotNull
 	private BigDecimal netPaidAmount;
 
 	@JsonProperty("bills")
 	@Valid
+	@NotNull
 	private List<PaymentBill> bills;
 
 	@JsonProperty("status")
-	private String status;
+	@NotNull
+	private PaymentStatus status;
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
@@ -49,7 +57,7 @@ public class Payment {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 	
-	public Payment addBillDetailsItem(PaymentBill bill) {
+	public Payment addBillItem(PaymentBill bill) {
 
 		if (this.bills == null)
 			this.bills = new ArrayList<>();

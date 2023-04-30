@@ -8,6 +8,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -78,12 +80,10 @@ public class Bill {
 	private Long toPeriod;
 
 	@JsonProperty("paymentStatus")
-	@Size(min = 2, max = 64)
-	private String paymentStatus;
+	private PaymentStatus paymentStatus;
 
 	@JsonProperty("status")
-	@Size(min = 2, max = 64)
-	private String status;
+	private Status status;
 
 	@JsonProperty("billNumber")
 	private String billNumber;

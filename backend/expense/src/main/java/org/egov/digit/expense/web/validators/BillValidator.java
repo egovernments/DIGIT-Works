@@ -95,6 +95,9 @@ public class BillValidator {
         	throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
         			+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
         
+        if(null == billRequest.getBill().getStatus())
+        	billRequest.getBill().setStatus(billsFromSearch.get(0).getStatus());
+        
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
         validateTenantId(billRequest, mdmsData);
         validateMasterData(billRequest, errorMap, mdmsData);
@@ -121,7 +124,7 @@ public class BillValidator {
         List<String> BusinessCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(BUSINESS_SERVICE_MASTERNAME),CODE_FILTER);
         
         if(!BusinessCodeList.contains(bill.getBusinessService())) {
-        	errorMap.put("EG_EXPENSE_INVALID_BUSINESSSERVICE", "The business service value : "+ bill.getBusinessService() +" is invalid");
+//        	errorMap.put("EG_EXPENSE_INVALID_BUSINESSSERVICE", "The business service value : "+ bill.getBusinessService() +" is invalid");
         }
         
 		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(HEADCODE_MASTERNAME),CODE_FILTER);
@@ -227,7 +230,7 @@ public class BillValidator {
 		BillCriteria billCriteria = BillCriteria.builder()
 				.referenceIds(Stream.of(bill.getReferenceId()).collect(Collectors.toSet()))
 				.businessService(bill.getBusinessService())
-				.status(Status.ACTIVE.toString())
+				.statusNot(Status.INACTIVE.toString())
 				.tenantId(bill.getTenantId())
 				.build();
 		

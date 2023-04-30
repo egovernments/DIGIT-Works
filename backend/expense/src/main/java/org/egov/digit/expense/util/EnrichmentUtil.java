@@ -11,6 +11,9 @@ import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Pagination;
 import org.egov.digit.expense.web.models.Payment;
+import org.egov.digit.expense.web.models.PaymentBill;
+import org.egov.digit.expense.web.models.PaymentBillDetail;
+import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +52,7 @@ public class EnrichmentUtil {
             billDetail.setId(UUID.randomUUID().toString());
             billDetail.setBillId(bill.getId());
             billDetail.setAuditDetails(audit);
-            billDetail.setStatus(Status.ACTIVE.toString());
+            billDetail.setStatus(Status.ACTIVE);
             
             billDetail.getPayee().setId(UUID.randomUUID().toString());
             billDetail.getPayee().setParentId(billDetail.getBillId());
@@ -59,14 +62,14 @@ public class EnrichmentUtil {
                 lineItem.setId(UUID.randomUUID().toString());
                 lineItem.setAuditDetails(audit);
                 lineItem.setBillDetailId(billDetail.getId());
-                lineItem.setStatus(Status.ACTIVE.toString());
+                lineItem.setStatus(Status.ACTIVE);
             }
 
             for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
                 payablelineItem.setId(UUID.randomUUID().toString());
                 payablelineItem.setAuditDetails(audit);
                 payablelineItem.setBillDetailId(billDetail.getId());
-                payablelineItem.setStatus(Status.ACTIVE.toString());
+                payablelineItem.setStatus(Status.ACTIVE);
 
             }
         }
@@ -162,6 +165,20 @@ public class EnrichmentUtil {
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         payment.setId(UUID.randomUUID().toString());
+        
+		for (PaymentBill paymentBill : payment.getBills()) {
+
+			paymentBill.setId(UUID.randomUUID().toString());
+
+			for (PaymentBillDetail billDetail : paymentBill.getBillDetails()) {
+
+				billDetail.setId(UUID.randomUUID().toString());
+
+				for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+					lineItem.setId(UUID.randomUUID().toString());
+				}
+			}
+		}
         payment.setAuditDetails(getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), true));
         return paymentRequest;
     }

@@ -21,7 +21,7 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_bill PRIMARY KEY (id)
+CONSTRAINT pk_eg_expense_bill PRIMARY KEY (id, tenantid)
 );
 CREATE INDEX index_unique_eg_expense_bill ON eg_expense_bill (referenceId, businessservice, tenantid, status) WHERE status != 'INACTIVE';
 
@@ -44,8 +44,8 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_billdetail PRIMARY KEY (id),
-CONSTRAINT fk_eg_expense_billdetail FOREIGN KEY (billid) REFERENCES eg_expense_bill (id)
+CONSTRAINT pk_eg_expense_billdetail PRIMARY KEY (id, tenantid),
+CONSTRAINT fk_eg_expense_billdetail FOREIGN KEY (billid, tenantid) REFERENCES eg_expense_bill (id, tenantid)
 
 );
 
@@ -68,8 +68,8 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_lineitem PRIMARY KEY (id),
-CONSTRAINT fk_eg_expense_lineitem FOREIGN KEY (billdetailid) REFERENCES eg_expense_billdetail (id)
+CONSTRAINT pk_eg_expense_lineitem PRIMARY KEY (id, tenantid),
+CONSTRAINT fk_eg_expense_lineitem FOREIGN KEY (billdetailid, tenantid) REFERENCES eg_expense_billdetail (id, tenantid)
 
 );
 
@@ -87,7 +87,7 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_party_payer PRIMARY KEY (id)
+CONSTRAINT pk_eg_expense_party PRIMARY KEY (id, tenantid)
 );
 
    

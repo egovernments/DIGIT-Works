@@ -1,8 +1,6 @@
 package org.egov.digit.expense.repository.querybuilder;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,14 +21,15 @@ public class BillQueryBuilder {
 	private Configuration configs;
 
    
-    private String paginationWrapper = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy} , b_id) offset_ FROM " +
+    private static String WRAPPER_QUERY = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY b_id, {sortBy} {orderBy}) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
 
     public String getBillQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
+    	
         BillCriteria criteria=billSearchRequest.getBillCriteria();
         StringBuilder query = new StringBuilder(Constants.BILL_QUERY);
 
@@ -80,19 +79,14 @@ public class BillQueryBuilder {
             query.append(" bill.status != ? ");
             preparedStmtList.add(criteria.getStatusNot());
         }
-
-        addOrderByClause(billSearchRequest);
-
-        return addPaginationWrapper(query,billSearchRequest,preparedStmtList);
+		return addPaginationWrapper(query, billSearchRequest.getPagination(), preparedStmtList);
     }
 
-    private void addOrderByClause(BillSearchRequest billSearchRequest) {
+    private String addOrderByClause(Pagination pagination) {
 
-        Pagination pagination = billSearchRequest.getPagination();
-        Set<String> sortableColumns=new HashSet<>(Arrays.asList("b_id","billdate","duedate","b_paymentstatus"
-                ,"bill_status"));
+    	String paginationWrapper = WRAPPER_QUERY;
 
-        if ( !StringUtils.isEmpty(pagination.getSortBy()) && sortableColumns.contains(pagination.getSortBy())) {
+        if ( !StringUtils.isEmpty(pagination.getSortBy()) && Constants.SORTABLE_BILL_COLUMNS.contains(pagination.getSortBy())) {
             paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
         }
         else{
@@ -105,20 +99,19 @@ public class BillQueryBuilder {
         }
         else{
             paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.ASC.name());
-
         }
+        
+        return paginationWrapper;
     }
 
-    private String addPaginationWrapper(StringBuilder query,BillSearchRequest billSearchRequest,List<Object> preparedStmtList){
+    private String addPaginationWrapper(StringBuilder query,Pagination pagination,List<Object> preparedStmtList){
 
-		int limit = null != billSearchRequest.getPagination().getLimit() ? billSearchRequest.getPagination().getLimit()
-				: configs.getDefaultLimit();
-		int offset = null != billSearchRequest.getPagination().getOffSet()
-				? billSearchRequest.getPagination().getOffSet()
-				: configs.getDefaultOffset();        
+		String paginatedQuery = addOrderByClause(pagination);
 
-        String finalQuery = paginationWrapper.replace("{}", query);
+		int limit = null != pagination.getLimit() ? pagination.getLimit() : configs.getDefaultLimit();
+		int offset = null != pagination.getOffSet() ? pagination.getOffSet() : configs.getDefaultOffset();
 
+        String finalQuery = paginatedQuery.replace("{}", query);
 
         preparedStmtList.add(offset);
         preparedStmtList.add(limit + offset);

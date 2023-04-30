@@ -267,7 +267,21 @@ components:
           type: string
           minLength: 2
           maxLength: 64
-          example: null
+          example: "INITIATED"
+        status:
+          description: Payment status for each bill details
+          type: string
+          minLength: 2
+          maxLength: 64
+          example: "ACTIVE"
+        totalAmount:
+          description: total Amount for the particular bill-detail during payment  
+          type: number
+          format: int64
+        totalPaidAmount:
+          description: Amount being paid for the particular bill-detail during payment  
+          type: number
+          format: int64
         fromPeriod:
           description: Start date of bill period  
           type: number
@@ -343,6 +357,9 @@ components:
         status:
           type: string
           example: ACTIVE
+        paymentStatus:
+          type: string
+          example: SUCCESSFUL
         additionalDetails:
           description: Any additional details that need to be captured
           type: object
@@ -475,8 +492,9 @@ components:
           items:
             $ref: '#/components/schemas/PaymentBill'
         status:
+          description: status of the payment
           type: string
-          example: PROCESSING
+          example: INITIATED
         additionalDetails:
           description: Any additional details that need to be captured
           type: object
@@ -535,6 +553,10 @@ components:
           type: string
           minLength: 2
           maxLength: 64
+        status:
+          description: status of payment for each bill in payment
+          type: string
+          example: INITIATED
         billAmount:
           description: Net paid amount for a bill
           type: number
@@ -570,11 +592,18 @@ components:
           description: Unique identifier of the record
           type: string
           format: uuid
-        netLineItemAmount:
+        totalAmount:
+          description: total Amount for the particular bill-detail during payment  
+          type: number
+          format: int64
+        totalPaidAmount:
           description: Amount being paid for the particular bill-detail during payment  
           type: number
           format: int64
-          example: 876
+        status:
+          description: status of payment for payment bill detail
+          type: string
+          example: INITIATED
         payableLineItems:
           type: array
           description: Bill line items
@@ -608,32 +637,33 @@ components:
           type: string
           minLength: 2
           maxLength: 64
-        headCode:
-          description: Head codes are define master data  
-          example: WAGE 
-          type: string
-          minLength: 2
-          maxLength: 64
         amount:
-          description: amount for head code
-          example: 500
-          type: number
-          format: BigDecimal
-        type:
-          description: Type of line item
-          type: string
-          enum:
-            - PAYABLE
-            - DEDUCTION
-        paidAmount:
           description: Net paid amount for a bill
           type: number
           format: BigDecimal
+        status:
+          description: status of payment for line item
+          type: string
+          example: INITIATED
         auditDetails:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
       required:
         - tenantId
-        - headCode
+        - lineItemid
         - amount
-        - paidAmount
-        - type
+        - status
+    paymentStatus:
+      description: enum value for the payment status 
+      type: string
+      enum:
+            - INITIATED
+            - SUCCESSFUL
+            - FAILED
+            - CANCELLED
+    status:
+      description: enum value for the payment status 
+      type: string
+      enum:
+            - INACTIVE
+            - ACTIVE
+            - INWORKFLOW
