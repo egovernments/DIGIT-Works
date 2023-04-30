@@ -19,6 +19,7 @@ import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Payment;
@@ -174,15 +175,15 @@ public class PaymentService {
         /*
          *  TODO create new bulk bill request for multiple bills persistence at once
          */
-//        for (Bill bill : billsFromSearch) {
-//
-//            BillRequest billRequest = BillRequest.builder()
-//                    .bill(bill)
-//                    .requestInfo(requestInfo)
-//                    .build();
-//            billService.update(billRequest);
-//
-//        }
+        for (Bill bill : billsFromSearch) {
+
+            BillRequest billRequest = BillRequest.builder()
+                    .bill(bill)
+                    .requestInfo(requestInfo)
+                    .build();
+            billService.update(billRequest);
+
+        }
     }
 
 	private BigDecimal getResultantAmount(BigDecimal billPaidAmount, BigDecimal paymentPaidAmount,
