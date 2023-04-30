@@ -6,8 +6,8 @@ id character varying(64)   NOT NULL,
 tenantid character varying(250) NOT NULL,
 billdate bigint NOT NULL,
 duedate bigint,
-netPayableAmount numeric(12,2),
-netPaidAmount numeric(12,2),
+totalamount numeric(12,2),
+totalPaidAmount numeric(12,2),
 businessservice character varying(250)   NOT NULL,
 referenceId character varying(250)   NOT NULL, -- id of the entity for which the bill is getting created 
 fromperiod bigint,
@@ -21,17 +21,20 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_bill PRIMARY KEY (id),
-CONSTRAINT unique_eg_expense_bill UNIQUE (referenceId, businessservice, tenantid, status) WHERE status != 'INACTIVE'
+CONSTRAINT pk_eg_expense_bill PRIMARY KEY (id, tenantid)
 );
+CREATE INDEX index_unique_eg_expense_bill ON eg_expense_bill (referenceId, businessservice, tenantid, status) WHERE status != 'INACTIVE';
 
-create table eg_expense_billdetail 
+CREATE TABLE IF NOT EXISTS eg_expense_billdetail 
 (
 id character varying(64)   NOT NULL,
 tenantid character varying(250) NOT NULL,
 referenceId character varying(250), -- unique id of an external entity referred by the bill detail
 billid character varying(64)   NOT NULL,
+totalamount numeric(12,2),
+totalPaidAmount numeric(12,2),
 paymentStatus character varying(64),
+status character varying(64) NOT NULL,
 fromperiod bigint,
 toperiod bigint,
 netLineItemAmount numeric(12,2),
@@ -41,12 +44,12 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_billdetail PRIMARY KEY (id),
-CONSTRAINT fk_eg_expense_billdetail FOREIGN KEY (billid) REFERENCES eg_expense_bill (id)
+CONSTRAINT pk_eg_expense_billdetail PRIMARY KEY (id, tenantid),
+CONSTRAINT fk_eg_expense_billdetail FOREIGN KEY (billid, tenantid) REFERENCES eg_expense_bill (id, tenantid)
 
 );
 
-create table eg_expense_lineitem
+CREATE TABLE IF NOT EXISTS eg_expense_lineitem
 (
 
 id character varying(64)   NOT NULL,
@@ -57,6 +60,7 @@ amount	numeric(12,2) NOT NULL,
 paidAmount numeric(12,2) NOT NULL,
 type character varying(64)   NOT NULL,	
 status character varying(64) NOT NULL,
+paymentStatus character varying(64),
 islineitempayable boolean NOT NULL,
 createdby character varying(64)   NOT NULL,
 createdtime bigint NOT NULL,
@@ -64,8 +68,8 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_lineitem PRIMARY KEY (id),
-CONSTRAINT fk_eg_expense_lineitem FOREIGN KEY (billdetailid) REFERENCES eg_expense_billdetail (id)
+CONSTRAINT pk_eg_expense_lineitem PRIMARY KEY (id, tenantid),
+CONSTRAINT fk_eg_expense_lineitem FOREIGN KEY (billdetailid, tenantid) REFERENCES eg_expense_billdetail (id, tenantid)
 
 );
 
@@ -83,7 +87,7 @@ lastmodifiedby character varying(64) NOT NULL,
 lastmodifiedtime bigint NOT NULL,
 additionaldetails jsonb,
 
-CONSTRAINT pk_eg_expense_party_payer PRIMARY KEY (id)
+CONSTRAINT pk_eg_expense_party PRIMARY KEY (id, tenantid)
 );
 
    

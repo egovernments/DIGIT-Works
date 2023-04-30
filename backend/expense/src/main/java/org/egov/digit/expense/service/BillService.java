@@ -67,9 +67,9 @@ public class BillService {
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
-			bill.setStatus(wfState.getApplicationStatus());
+			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 		} else {
-			bill.setStatus(Status.ACTIVE.toString());
+			bill.setStatus(Status.ACTIVE);
 		}
 		
 		producer.push(config.getBillCreateTopic(), billRequest);
@@ -99,9 +99,9 @@ public class BillService {
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
-			bill.setStatus(wfState.getApplicationStatus());
+			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 		} else {
-			bill.setStatus(Status.ACTIVE.toString());
+			bill.setStatus(Status.ACTIVE);
 		}
 		
 		producer.push(config.getBillUpdateTopic(), billRequest);

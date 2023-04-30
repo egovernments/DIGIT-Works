@@ -130,5 +130,8 @@ public class Configuration {
     
     @Value("${expense.billing.search.max.limit}")
     private Integer maxSearchLimit;
+    
+    @Value("${expense.payment.default.status}")
+	public String defaultPaymentStatus;
 
 }

@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.Payment;
 import org.egov.digit.expense.web.models.PaymentBill;
+import org.egov.digit.expense.web.models.PaymentBillDetail;
+import org.egov.digit.expense.web.models.PaymentLineItem;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,8 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 	public List<Payment> extractData(ResultSet rs) throws SQLException {
 		
 		Map<String, Payment> paymentMap = new LinkedHashMap<>();
+		Map<String, PaymentBill> paymentBillMap = new HashMap<>();
+		Map<String, PaymentBillDetail> paymentBillDtlMap = new HashMap<>();
 
 		while (rs.next()) {
 
@@ -42,35 +47,74 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 
 			if (payment == null) {
 				
+				paymentBillMap.clear();
+				paymentBillDtlMap.clear();
+				
 				AuditDetails auditDetails =AuditDetails.builder()
-					.createdBy(rs.getString("p_createdby"))
-					.createdTime((Long) rs.getObject("p_createddate"))
+					.lastModifiedTime((Long) rs.getObject("p_lastmodifiedtime"))
+					.createdTime((Long) rs.getObject("p_createdtime"))
 					.lastModifiedBy(rs.getString("p_lastmodifiedby"))
-					.lastModifiedTime((Long) rs.getObject("p_lastmodifieddate"))
+					.createdBy(rs.getString("p_createdby"))
 					.build();
 
 				payment = Payment.builder()
-					.id(paymentId)
-					.tenantId(rs.getString("p_tenantid"))
+					.additionalDetails(getadditionalDetail(rs, "p_additionalDetails"))
+					.status(PaymentStatus.fromValue(rs.getString("p_status")))
 					.netPayableAmount(rs.getBigDecimal("netpayableamount"))
 					.netPaidAmount(rs.getBigDecimal("netpaidamount"))
-					.status(rs.getString("p_status"))
-					.additionalDetails(getadditionalDetail(rs, "p_additionalDetails"))
+					.tenantId(rs.getString("p_tenantid"))
 					.auditDetails(auditDetails)
+					.id(paymentId)
 					.build();
 
 				paymentMap.put(payment.getId(), payment);
 			}
+			
+			String paymentBillId = rs.getString("b_id");
+			PaymentBill bill = paymentBillMap.get(paymentBillId);
+			
+			if(null == bill) {
+				
+				 bill = PaymentBill.builder()
+						.status(PaymentStatus.fromValue(rs.getString("b_status")))
+						.totalPaidAmount(rs.getBigDecimal("b_totalpaidAmount"))
+						.totalAmount(rs.getBigDecimal("b_totalamount"))
+			     		.tenantId(rs.getString("b_tenantId"))
+						.billId(rs.getString("billid"))
+						.id(paymentBillId)
+						.build();
+				 
+				 paymentBillMap.put(paymentBillId, bill);
+				 payment.addBillItem(bill);
+			}
+			
+			String paymentBillDetailId = rs.getString("bd_id");
+			PaymentBillDetail billDetail = paymentBillDtlMap.get(paymentBillDetailId);
+			
+			if(null == billDetail) {
+				
+				billDetail = PaymentBillDetail.builder()
+						.status(PaymentStatus.fromValue(rs.getString("bd_status")))
+						.totalPaidAmount(rs.getBigDecimal("bd_totalpaidAmount"))
+						.totalAmount(rs.getBigDecimal("bd_totalamount"))
+						.billDetailId(rs.getString("billDetailId"))
+						.tenantId(rs.getString("bd_tenantid"))
+						.id(paymentBillDetailId)
+						.build();
 
-			/*
-			 * bill details 
-			 */
-			String BillId = rs.getString("billid");
-			payment.addBillDetailsItem(
-					PaymentBill.builder()
-					.id(BillId)
-					.build());
-
+				paymentBillDtlMap.put(paymentBillDetailId, billDetail);
+				bill.addPaymentBillDetailItem(billDetail);
+			}
+			
+			PaymentLineItem lineItem = PaymentLineItem.builder()
+					.status(PaymentStatus.fromValue(rs.getString("li_status")))
+					.lineItemId(rs.getString("lineitemid"))
+					.paidAmount(rs.getBigDecimal("paidamount"))
+					.tenantId(rs.getString("li_tenantid"))
+					.id(rs.getString("li_id"))
+					.build();
+			
+				billDetail.addLineItem(lineItem);
 		}
 		log.debug("converting map to list object ::: " + paymentMap.values());
 		return new ArrayList<>(paymentMap.values());
