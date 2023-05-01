@@ -64,6 +64,12 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         show: location.pathname.includes("/expenditure/supervision-bill-details") ? true : false,
         isBack: fromScreen && true,
       },
+      {
+        path: `/${window.contextPath}/employee/expenditure/create-purchase-bill`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_PURCHASE_BILL")}` : t("EXP_CREATE_PURCHASE_BILL"),
+        show: location.pathname.includes("/expenditure/create-purchase-bill") ? true : false,
+        isBack: fromScreen && true,
+      }
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 }
@@ -77,6 +83,8 @@ const App = ({ path }) => {
     const SearchBill = Digit?.ComponentRegistryService?.getComponent("SearchBill");
     const ViewBill = Digit?.ComponentRegistryService?.getComponent("ViewBill");
     const ViewPurchaseBillComponent = Digit?.ComponentRegistryService?.getComponent("ViewPurchaseBill");
+    const PurchaseBill = Digit?.ComponentRegistryService?.getComponent("PurchaseBill");
+    const PurchaseBillResponse = Digit?.ComponentRegistryService?.getComponent("CreatePurchaseBillResponse");
     const ViewWageBill = Digit?.ComponentRegistryService?.getComponent("ViewWageBill");
     const DownloadBill = Digit?.ComponentRegistryService?.getComponent("DownloadBill");
 
@@ -97,6 +105,8 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/view-bill`} component={() => <ViewWageBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/supervision-bill-details`} component={() => <ViewSupervisionbill parentRoute={path} />} />
           <PrivateRoute path={`${path}/view-purchase-bill`} component={() => <ViewPurchaseBillComponent parentRoute={path} />}/>
+          <PrivateRoute path={`${path}/create-purchase-bill`} component={() => <PurchaseBill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/create-purchase-bill-response`} component={() => <PurchaseBillResponse parentRoute={path} />} />
           <PrivateRoute path={`${path}/download-bill`} component={() => <DownloadBill parentRoute={path} />} />
         </AppContainer>
       </Switch>
