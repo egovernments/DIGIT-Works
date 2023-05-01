@@ -34,6 +34,7 @@ module.exports = function (app) {
     "/expensebilling",
     "/bankaccount-service",
     "/expense-calculator/v1/_estimate",
+    "/expense-calculator/purchase/v1/_createbill",
     "/expense/bill/v1"
   ].forEach((location) =>
     app.use(location, createProxy)
