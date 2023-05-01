@@ -9,7 +9,6 @@ import DeductionsTable from "./pageComponents/DeductionsTable";
 import ViewBills from "./pages/employee/viewBills/viewBills";
 import BillInbox from "./pages/employee/Bills/BillInbox";
 import SearchBill from "./pages/employee/Bills/SearchBill";
-import ViewBill from "./pages/employee/Bills/ViewBill";
 import PurchaseBill from "./pages/employee/CreateBills/PurchaseBill";
 import CreatePurchaseBillResponse from "./pages/employee/CreateBills/CreatePurchaseBillResponse";
 import ViewWageBill from "./pages/employee/Bills/ViewWageBill";
@@ -46,7 +45,6 @@ const componentsToRegister = {
     //new
     BillInbox,
     SearchBill,
-    ViewBill,
     PurchaseBill,
     CreatePurchaseBillResponse,
     DeductionsTable,
