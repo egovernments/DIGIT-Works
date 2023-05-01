@@ -69,7 +69,7 @@ module.exports = function (app) {
     "/works-inbox-service/v2/_search",
     "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     "/muster-roll",
-    "/pms/project",
+    "/project",
     "/inbox/v2/_search",
     "/individual",
     "/org-services",
