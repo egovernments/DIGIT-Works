@@ -154,7 +154,8 @@ import useUpdateOrganisation from "./organisation/useUpdateOrganisation";
 
 import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
 import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
-
+import useViewPurchaseBillDetails from "./bills/useViewPurchaseBillDetails";
+import useCreatePurchaseBill from "./bills/useCreatePurchaseBill";
 
 const works = {
   useViewEstimateDetails,
@@ -275,7 +276,10 @@ const bills = {
   useViewBills,
   useViewWageBill,
   useBillCreate,
+  useViewPurchaseBillDetails,
+  useSupervisionBillScreen
   useSupervisionBillScreen,
+  useCreatePurchaseBill
 };
 const masters = {
   useViewOrg

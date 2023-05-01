@@ -62,8 +62,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                             return {
                                 title: document?.documentType === "Other" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
                                 documentType: document?.documentType,
-                                documentUid: document?.fileStore,
-                                fileStoreId: document?.fileStore,
+                                documentUid: document?.fileStoreId,
+                                fileStoreId: document?.fileStoreId,
                             };
                         }
                         return {};
@@ -118,8 +118,8 @@ export const Search = {
             },
         }
 
-        if(response?.Projects) {
-            let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
+        if(response?.Project) {
+            let projects = createProjectsArray(t, response?.Project, searchParams, headerLocale);
         
             //searched Project details
             projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
@@ -128,13 +128,13 @@ export const Search = {
         }
 
         return {
-            projectDetails : response?.Projects ? projectDetails : [],
-            response : response?.Projects,
+            projectDetails : response?.Project ? projectDetails : [],
+            response : response?.Project,
             processInstancesDetails: [],
             applicationData: {},
             workflowDetails: [],
             applicationData:{},
-            isNoDataFound : response?.Projects?.length === 0
+            isNoDataFound : response?.Project?.length === 0
         }
     },
     searchEstimate : async(tenantId, filters) => {

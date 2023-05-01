@@ -7,7 +7,7 @@
     "msgId": "string",
     "status": "successful"
   },
-  "Projects": [
+  "Project": [
     {
       "id": "854b3f54-3775-4a14-a962-9eba6620f0d3",
       "tenantId": "pb.amritsar",
