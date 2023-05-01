@@ -234,7 +234,7 @@ const Urls = {
   bills:{
     cancelBill:"/billing-service/bill/v2/_cancelbill",
     createBill : "/expensebilling/demand/v1/_create",
-    searchBill : "/expense/bill/v1/_search"
+    searchBill : "/expense/bill/v1/_search",
     createPurchaseBill:"/expense-calculator/purchase/v1/_createbill",
   },
 

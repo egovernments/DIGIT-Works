@@ -81,7 +81,6 @@ const App = ({ path }) => {
     const ViewBillsComponent = Digit?.ComponentRegistryService?.getComponent("ViewBills");
     const BillInbox = Digit?.ComponentRegistryService?.getComponent("BillInbox");
     const SearchBill = Digit?.ComponentRegistryService?.getComponent("SearchBill");
-    const ViewBill = Digit?.ComponentRegistryService?.getComponent("ViewBill");
     const ViewPurchaseBillComponent = Digit?.ComponentRegistryService?.getComponent("ViewPurchaseBill");
     const PurchaseBill = Digit?.ComponentRegistryService?.getComponent("PurchaseBill");
     const PurchaseBillResponse = Digit?.ComponentRegistryService?.getComponent("CreatePurchaseBillResponse");

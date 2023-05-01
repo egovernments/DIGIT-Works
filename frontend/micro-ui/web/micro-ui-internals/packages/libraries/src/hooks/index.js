@@ -277,7 +277,6 @@ const bills = {
   useViewWageBill,
   useBillCreate,
   useViewPurchaseBillDetails,
-  useSupervisionBillScreen
   useSupervisionBillScreen,
   useCreatePurchaseBill
 };
