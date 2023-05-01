@@ -37,6 +37,7 @@ const ExpenditureModule = ({ stateCode, userType, tenants }) => {
 };
 
 const componentsToRegister = {
+
     ExpenditureModule,
     billInboxFilter,
     ExpCard:ExpenditureCard,
@@ -52,6 +53,7 @@ const componentsToRegister = {
     TotalBillAmount,
     //new
     ViewWageBill,
+    ViewPurchaseBill,
     PayableAmt,
     DownloadBill
 };
