@@ -80,6 +80,7 @@ module.exports = function (app) {
     "/wms",
     "/wms/estimate/_search",
     "/expense-calculator/v1/_estimate",
+    "/expense-calculator/purchase/v1/_createbill",
     "/expense/bill/v1"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));

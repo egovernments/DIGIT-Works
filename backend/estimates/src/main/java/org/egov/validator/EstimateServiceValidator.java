@@ -71,7 +71,7 @@ public class EstimateServiceValidator {
 
     private void validateProjectId(EstimateRequest estimateRequest, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateProjectId");
-        final String projectJsonPath = "$.Projects.*";
+        final String projectJsonPath = "$.Project.*";
         List<Object> projects = null;
 
         Object projectRes = projectUtil.getProjectDetails(estimateRequest);

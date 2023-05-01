@@ -232,7 +232,8 @@ const Urls = {
     reportSearch: "/report/",
   },
   bills:{
-    cancelBill:"/billing-service/bill/v2/_cancelbill"
+    cancelBill:"/billing-service/bill/v2/_cancelbill",
+    createPurchaseBill:"/expense-calculator/purchase/v1/_createbill",
   },
 
   organisation : {
