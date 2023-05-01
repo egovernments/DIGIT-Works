@@ -6,19 +6,15 @@ export const DownloadBillConfig = {
             label : "ES_COMMON_DOWNLOADS",
             type: 'download',
             apiDetails: {
-                serviceName: "/wms/expense/_search", //API to be changed in download page
+                serviceName: "/egov-pdf/bill/_search",
                 requestParam: {},
-                requestBody: {
-                    inbox: {
-                        moduleSearchCriteria: {}
-                    }
-                },
+                requestBody: {},
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
                 moduleName:"DownloadBillConfig",
-                tableFormJsonPath:"requestBody.inbox",
-                filterFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
-                searchFormJsonPath:"requestBody.inbox.moduleSearchCriteria",
+                tableFormJsonPath:"requestParam",
+                filterFormJsonPath:"requestBody",
+                searchFormJsonPath:"requestBody",
             },
             sections : {
                 searchResult: {
@@ -31,40 +27,41 @@ export const DownloadBillConfig = {
                             },
                             {
                                 label: "ES_COMMON_JOB_ID",
-                                jsonPath: ""
+                                jsonPath: "id"
                             },
                             {
                                 label: "ES_COMMON_DATE",
-                                jsonPath: ""
+                                jsonPath: "createdtime",
+                                additionalCustomization:true
                             },
                             {
                                 label: "ES_COMMON_NO_OF_BILLS",
-                                jsonPath: ""
+                                jsonPath: "numberofbills"
                             },
                             {
                                 label: "ES_COMMON_NO_OF_BENEFICIARIES",
-                                jsonPath: ""
+                                jsonPath: "numberofbeneficialy"
                             },
                             {
                                 label: "ES_COMMON_TOTAL_AMOUNT",
-                                jsonPath: "businessObject.netPayableAmount",
+                                jsonPath: "totalamount",
                                 additionalCustomization:true,
                                 headerAlign: "right"
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                jsonPath: "ProcessInstance.state.state",
+                                jsonPath: "status",
                                 additionalCustomization:true
                             },
                             {
                                 label: "CS_COMMON_ACTION",
-                                jsonPath: "businessObject.businessservice",
+                                jsonPath: "filestoreid",
                                 additionalCustomization:true
                             }
                         ],
                         enableGlobalSearch: false,
                         enableColumnSort: true,
-                        resultsJsonPath: "items"                      
+                        resultsJsonPath: "searchresult"                      
                     },
                     children: {},
                     show: true 

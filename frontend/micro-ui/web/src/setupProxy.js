@@ -34,7 +34,8 @@ module.exports = function (app) {
     "/expensebilling",
     "/bankaccount-service",
     "/expense-calculator/v1/_estimate",
-    "/expense/bill/v1"
+    "/expense/bill/v1",
+    "/egov-pdf/bill/_search"
   ].forEach((location) =>
     app.use(location, createProxy)
   );
