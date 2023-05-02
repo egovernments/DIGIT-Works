@@ -16,8 +16,8 @@
   "BusinessServices": [
     {
       "tenantId": "pg",
-      "businessService": "works.wages",
-      "business": "expense-service",
+      "businessService": "WORKS.WAGES",
+      "business": "expense",
       "businessServiceSla": 604800000,
       "states": [
         {

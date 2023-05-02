@@ -16,8 +16,8 @@
   "BusinessServices": [
     {
       "tenantId": "pg",
-      "businessService": "works.supervision",
-      "business": "expense-service",
+      "businessService": "WORKS.SUPERVISION",
+      "business": "expense",
       "businessServiceSla": 604800000,
       "states": [
         {
