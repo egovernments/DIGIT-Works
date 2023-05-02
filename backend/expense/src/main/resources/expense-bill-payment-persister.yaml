@@ -522,3 +522,52 @@ serviceMaps:
        - jsonPath: $.payment.id
 
        - jsonPath: $.payment.tenantId
+
+    - query: UPDATE eg_expense_payment_bill SET status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id = ? AND paymentid=? AND tenantid = ?;
+      basePath: $.payment.bills.*
+      jsonMaps:
+       
+       - jsonPath: $.payment.bills.*.status
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
+
+       - jsonPath: $.payment.bills.*.id      
+
+       - jsonPath: $.payment.id
+
+       - jsonPath: $.payment.tenantId
+
+    - query: UPDATE eg_expense_payment_billdetail SET  status=?, lastmodifiedby=?, lastmodifiedtime=?	WHERE id=? AND paymentbillid=? AND tenantid=?;
+      basePath: $.payment.bills.*.billDetails.*
+      jsonMaps:
+       
+       - jsonPath: $.payment.bills.*.billDetails.*.status
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
+
+       - jsonPath: $.payment.bills.*.billDetails.*.id
+
+       - jsonPath: $.payment.bills[?({id} in @.billDetails[*].id)].id
+
+       - jsonPath: $.payment.tenantId
+
+    - query: UPDATE eg_expense_payment_lineitem SET  status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=? AND paymentbilldetailid=? AND tenantid=?;
+      basePath: $.payment.bills.*.billDetails.*.payableLineItems.*
+      jsonMaps:
+       
+       - jsonPath: $.payment.bills.*.billDetails.*.payableLineItems.*.status
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
+      
+       - jsonPath: $.payment.bills.*.billDetails.*.payableLineItems.*.id
+
+       - jsonPath: $.payment.bills.*.billDetails[?({id} in @.payableLineItems[*].id)].id
+
+       - jsonPath: $.payment.tenantId
+
