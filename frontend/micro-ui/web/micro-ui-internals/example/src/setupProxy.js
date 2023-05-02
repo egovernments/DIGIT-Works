@@ -82,7 +82,8 @@ module.exports = function (app) {
     "/expense-calculator/v1/_estimate",
     "/expense/bill",
     "/expense-calculator/purchase/v1/_createbill",
-    "/expense/bill/v1"
+    "/expense/bill/v1",
+    "/egov-pdf/bill/_search"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

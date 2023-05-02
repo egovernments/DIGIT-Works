@@ -179,7 +179,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 pageSizeLimit={getValues("limit")}
                 showCheckBox={config?.showCheckBox ? true : false}
                 actionLabel={config?.checkBoxActionLabel}
-                tableSelectionHandler={() => {console.log('Handle table row selection')}} //pass handler from config
+                tableSelectionHandler={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.selectionHandler}
                 getCellProps={(cellInfo) => {
                     return {
                         style: {

@@ -1082,6 +1082,9 @@ export const UICustomizations = {
           },
         },
       };
+    },
+    selectionHandler: (selectedRows) => {
+      console.log('SELECTED ROWS', selectedRows);
     }
   },
   SearchBillConfig: {
@@ -1188,12 +1191,14 @@ export const UICustomizations = {
           },
         },
       };
+    },
+    selectionHandler: (selectedRows) => {
+      console.log('SELECTED ROWS', selectedRows);
     }
   },
   DownloadBillConfig: {
     preProcess: (data) => {
-      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+      data.params.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
@@ -1203,10 +1208,13 @@ export const UICustomizations = {
       if(key === "CORE_COMMON_STATUS") {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
       }
+      if(key === "ES_COMMON_DATE") {
+        return value ? Digit.DateUtils.ConvertTimestampToDate(parseInt(value), "dd/MM/yyyy") : t("ES_COMMON_NA")
+      }
       if(key === "CS_COMMON_ACTION") {
         return value ?  
         <LinkLabel onClick={() => { console.log('Take Action')}}>
-          {value}
+          {t("CS_COMMON_DOWNLOAD")}
         </LinkLabel> :
         t("ES_COMMON_NA")
       }
