@@ -25,6 +25,7 @@ import org.egov.digit.expense.web.models.PaymentCriteria;
 import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
 import org.egov.digit.expense.web.models.PaymentSearchRequest;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -76,8 +77,14 @@ public class PaymentValidator {
 		BillSearchRequest billSearchRequest = prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
 		List<Bill> billsFromSearch = billService.search(billSearchRequest).getBills();
 
-		Map<String, Bill> billMap = billsFromSearch.stream()
+		Map<String, Bill> billMap = billsFromSearch.stream().filter(bill -> bill.getStatus().equals(Status.ACTIVE))
 				.collect(Collectors.toMap(Bill::getId, Function.identity()));
+
+		if (payment.getBills().size() != billMap.size()) {
+			billIds.removeAll(billMap.keySet());
+			throw new CustomException("EG_PAYMENT_INVALID_BILLS_ERROR",
+					"The following bill ids are either Invalid or not ACTIVE in the system : " + billIds);
+		}
 		
 		Map<String, BillDetail> billDetailMap = billsFromSearch.stream()
 				.map(Bill::getBillDetails)
@@ -91,11 +98,6 @@ public class PaymentValidator {
 				.flatMap(Collection::stream)
 				.collect(Collectors.toMap(LineItem::getId, Function.identity()));
 	
-		if (payment.getBills().size() != billMap.size()) {
-			billIds.removeAll(billsFromSearch.stream().map(Bill::getId).collect(Collectors.toList()));
-			throw new CustomException("EG_PAYMENT_INVALID_BILLS_ERROR",
-					"Invalid bill ids found in the payment request : " + billIds);
-		}
 		int billIndex = 0;
 		for (PaymentBill paymentBill : payment.getBills()) {
 
