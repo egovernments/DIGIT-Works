@@ -137,9 +137,6 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.supervision.business.service}")
 	private String supervisionBusinessService;
 
-	@Value("${egov.works.expense.wage.lineitem.type}")
-	private String wageLineItemType;
-
 	@Value("${egov.works.expense.payer.type}")
 	private String payerType;
 

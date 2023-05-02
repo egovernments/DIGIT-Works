@@ -90,7 +90,7 @@ public class PurchaseBillGeneratorService {
                                 .toPeriod(contract.getEndDate().longValue())
                                 .status(providedPurchaseBill.getStatus())
                                 .totalAmount(netPayableAmount)
-                                .paymentStatus("PENDING")
+                                //.paymentStatus("PENDING")
                                 .payer(payer)
                                 .billDetails(providedPurchaseBill.getBillDetails())
                                 .additionalDetails(providedPurchaseBill.getAdditionalDetails())
