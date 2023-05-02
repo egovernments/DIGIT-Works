@@ -9,11 +9,11 @@ export const BillsSearch = {
     const supervisionBillSearch = await WorksService.searchBill({
       "billCriteria": {
         "tenantId": "pg.citya",
-        "ids": ["dc3b3bcd-d31a-4fd7-87bb-47484596050c"],
+        // "ids": ["dc3b3bcd-d31a-4fd7-87bb-47484596050c"],
         "businessService": "works.supervision",
-        "referenceIds": [],
-        "billNumber":"",
-        "status": ""
+        // "referenceIds": [],
+        "billNumber":billNumber,
+        // "status": ""
     },
        "pagination": {
         "limit": 10,
@@ -92,9 +92,9 @@ export const BillsSearch = {
         billNo: row?.billNumber,
         billType: t(Digit.Utils.locale.getTransformedLocale(`COMMON_MASTERS_BILL_TYPE_${row?.businessService}`)),
         billDate: Digit.DateUtils.ConvertEpochToDate(row?.fromPeriod),
-        status: t(`WF_BILL_${row?.wfStatus}`),
-        amount:  Digit.Utils.dss.formatterWithoutRound(row?.netPayableAmount,'number')|| t('NA'),
-        paymentStatus: t(`PAYMENT_STATUS_${row?.paymentStatus}`),
+        status: t(`WF_BILL_${row?.status}`),
+        amount:  Digit.Utils.dss.formatterWithoutRound(row?.totalAmount,'number')|| t('NA'),
+        paymentStatus: row.paymentStatus ? t(`PAYMENT_STATUS_${row?.paymentStatus}`): t("NA"),
       }
     })
     const dummyTableData = [
@@ -152,26 +152,26 @@ export const BillsSearch = {
     };
 
     const totalAmount = Digit.Utils.dss.formatterWithoutRound(tableBills?.reduce((acc,row)=> {
-      return acc + (row?.netPayableAmount || 0)
+      return acc + (row?.totalAmount || 0)
     },0),"number")
     const totalBillAmt = {
       title: " ",
       asSectionHeader: true,
-      Component: Digit.ComponentRegistryService.getComponent("TotalBillAmount"),
+      Component: Digit.ComponentRegistryService.getComponent("TotalBillAmountView"),
       value: totalAmount,
     };
 
     const billDetailsBelow = {
       title: "EXP_BILL_DETAILS",
       asSectionHeader: true,
-      values: [{ title: "EXP_TOTAL_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.netPayableAmount, "number") || t("NA") }],
+      values: [{ title: "EXP_TOTAL_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.totalAmount, "number") || t("NA") }],
     };
 
     const totalBillAmtBelow = {
       title: " ",
       asSectionHeader: true,
-      Component: Digit.ComponentRegistryService.getComponent("TotalBillAmount"),
-      value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.netPayableAmount, "number") || t("NA"),
+      Component: Digit.ComponentRegistryService.getComponent("TotalBillAmountView"),
+      value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.totalAmount, "number") || t("NA"),
       containerStyles: { justifyContent: "flex-start" },
       key: "BILLS_NET_PAYABLE",
     };
