@@ -10,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/file_store/file_store_model.dart';
-import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
     as i18;
 import 'package:works_shg_app/utils/models/file_picker_data.dart';
@@ -54,7 +53,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
     controller.addListener(() => _extension = controller.text);
   }
 
-  void _openFileExplorer() async {
+  void _openFileExplorer(BuildContext context) async {
     setState(() => _loadingPath = true);
     try {
       _directoryPath = null;
@@ -78,8 +77,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
         }
 
         if (isNotValidSize) {
-          Notifiers.getToastMessage(scaffoldMessengerKey.currentContext!,
-              i18.common.fileSize, 'ERROR');
+          Notifiers.getToastMessage(context, i18.common.fileSize, 'ERROR');
           return;
         }
         if (multiPick) {
@@ -184,7 +182,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
                               icon: const Icon(Icons.cancel))
                         ])
                   : GestureDetector(
-                      onTap: () => selectDocumentOrImage(),
+                      onTap: () => selectDocumentOrImage(context),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -249,7 +247,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
     });
   }
 
-  Future<void> selectDocumentOrImage() async {
+  Future<void> selectDocumentOrImage(BuildContext context) async {
     FocusScope.of(context).unfocus();
     var list = [
       {"label": i18.common.camera, 'icon': Icons.camera_enhance},
@@ -257,7 +255,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
     ];
 
     if (kIsWeb) {
-      _openFileExplorer();
+      _openFileExplorer(context);
       return;
     }
 
@@ -323,8 +321,7 @@ class SHGFilePickerState extends State<SHGFilePicker> {
           final File file = await File(pickedFile.path).copy(newPath);
           if (file != null) {
             if (!(await CommonMethods.isValidFileSize(await file.length()))) {
-              Notifiers.getToastMessage(scaffoldMessengerKey.currentContext!,
-                  i18.common.fileSize, 'ERROR');
+              Notifiers.getToastMessage(context, i18.common.fileSize, 'ERROR');
               return;
             }
             ;
@@ -342,10 +339,10 @@ class SHGFilePickerState extends State<SHGFilePicker> {
             return null;
           }
         } else {
-          _openFileExplorer();
+          _openFileExplorer(context);
         }
       } else {
-        _openFileExplorer();
+        _openFileExplorer(context);
       }
     } on Exception catch (e) {
       Notifiers.getToastMessage(context, e.toString(), 'ERROR');
