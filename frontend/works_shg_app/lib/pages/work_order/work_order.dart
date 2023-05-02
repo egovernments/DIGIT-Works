@@ -69,6 +69,23 @@ class _WorkOrderPage extends State<WorkOrderPage> {
         ),
         drawer: DrawerWrapper(
             Drawer(child: SideBar(module: CommonMethods.getLocaleModules()))),
+        bottomNavigationBar: BlocBuilder<SearchMyWorksBloc, SearchMyWorksState>(
+            builder: (context, state) {
+          return state.maybeWhen(
+              orElse: () => Container(),
+              loading: () => shg_loader.Loaders.circularLoader(context),
+              loaded: (ContractsModel? contractsModel) {
+                return workOrderList.isEmpty || workOrderList.length == 1
+                    ? const SizedBox(
+                        height: 30,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              });
+        }),
         body: SingleChildScrollView(
           child: BlocListener<SearchMyWorksBloc, SearchMyWorksState>(
             listener: (context, state) {
@@ -252,10 +269,13 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                   const SizedBox(
                                     height: 16.0,
                                   ),
-                                  const Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: PoweredByDigit(),
-                                  )
+                                  workOrderList.isNotEmpty &&
+                                          workOrderList.length > 1
+                                      ? const Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: PoweredByDigit(),
+                                        )
+                                      : const SizedBox.shrink()
                                 ]),
                             BlocListener<DeclineWorkOrderBloc,
                                 DeclineWorkOrderState>(

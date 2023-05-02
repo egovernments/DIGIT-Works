@@ -9,13 +9,13 @@ import DeductionsTable from "./pageComponents/DeductionsTable";
 import ViewBills from "./pages/employee/viewBills/viewBills";
 import BillInbox from "./pages/employee/Bills/BillInbox";
 import SearchBill from "./pages/employee/Bills/SearchBill";
-import ViewBill from "./pages/employee/Bills/ViewBill";
 import PurchaseBill from "./pages/employee/CreateBills/PurchaseBill";
 import CreatePurchaseBillResponse from "./pages/employee/CreateBills/CreatePurchaseBillResponse";
 import ViewWageBill from "./pages/employee/Bills/ViewWageBill";
 import TotalBillAmount from "./pageComponents/TotalBillAmount";
 import PayableAmt from "./components/PayableAmt";
 import DownloadBill from "./pages/employee/Bills/DownloadBill";
+import ViewPurchaseBill from "./components/ViewBill/ViewPurchaseBill";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     
@@ -37,6 +37,7 @@ const ExpenditureModule = ({ stateCode, userType, tenants }) => {
 };
 
 const componentsToRegister = {
+
     ExpenditureModule,
     billInboxFilter,
     ExpCard:ExpenditureCard,
@@ -45,13 +46,13 @@ const componentsToRegister = {
     //new
     BillInbox,
     SearchBill,
-    ViewBill,
     PurchaseBill,
     CreatePurchaseBillResponse,
     DeductionsTable,
     TotalBillAmount,
     //new
     ViewWageBill,
+    ViewPurchaseBill,
     PayableAmt,
     DownloadBill
 };

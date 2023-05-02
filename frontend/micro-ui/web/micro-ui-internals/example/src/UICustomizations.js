@@ -10,7 +10,11 @@ const businessServiceMap = {
   estimate: "mukta-estimate",
   contracts: "contract-approval-mukta",
   attendencemgmt: "muster-roll-approval",
-  expenditure:""
+  expenditure:{
+    WAGE_BILL:"works.wages",
+    PURCHASE_BILL:"works.purchase",
+    SUPERVISION_BILL:"works.supervision"
+  }
 };
 
 const inboxModuleNameMap = {
@@ -112,6 +116,9 @@ export const UICustomizations = {
     }
      if (businessService === businessServiceMap.attendencemgmt) {
       return action.action.includes("VERIFY");
+    }
+    if(businessService === businessServiceMap.expenditure.PURCHASE_BILL){
+      return action.action.includes("VERIFY_AND_FORWARD")
     }
     return false;
   },

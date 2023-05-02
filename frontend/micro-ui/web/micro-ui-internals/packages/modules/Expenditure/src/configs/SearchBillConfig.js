@@ -5,6 +5,9 @@ export const SearchBillConfig = {
         {
             label : "EXP_SEARCH_BILL",
             type: 'search',
+            actionLabel: "ES_COMMON_DOWNLOAD_PAYMENT_ADVICE",
+            actionRole: "BILL_CREATOR",
+            actionLink: "expenditure/download-bill",
             apiDetails: {
                 serviceName: "/expense/bill/v1/_search",
                 requestParam: {},
@@ -194,6 +197,9 @@ export const SearchBillConfig = {
                         enableGlobalSearch: false,
                         enableColumnSort: true,
                         resultsJsonPath: "bills",
+                        showCheckBox: true,
+                        checkBoxActionLabel: 'ES_COMMON_GENERATE_PAYMENT_ADVICE',
+                        showTableInstruction : "EXP_DOWNLOAD_BILL_INSTRUCTION"
                     },
                     children: {},
                     show: true 

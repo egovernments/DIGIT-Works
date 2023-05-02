@@ -54,6 +54,23 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
             child: SideBar(
           module: CommonMethods.getLocaleModules(),
         ))),
+        bottomNavigationBar: BlocBuilder<AttendanceProjectsSearchBloc,
+            AttendanceProjectsSearchState>(builder: (context, state) {
+          return state.maybeWhen(
+              orElse: () => Container(),
+              loading: () => shg_loader.Loaders.circularLoader(context),
+              loaded: (AttendanceRegistersModel? attendanceModel) {
+                return projectList.isEmpty || projectList.length == 1
+                    ? const SizedBox(
+                        height: 30,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              });
+        }),
         body: SingleChildScrollView(
             child: BlocListener<AttendanceProjectsSearchBloc,
                 AttendanceProjectsSearchState>(
@@ -146,10 +163,12 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
                           const SizedBox(
                             height: 16.0,
                           ),
-                          const Align(
-                            alignment: Alignment.bottomCenter,
-                            child: PoweredByDigit(),
-                          )
+                          projectList.isNotEmpty && projectList.length > 1
+                              ? const Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: PoweredByDigit(),
+                                )
+                              : const SizedBox.shrink()
                         ]);
                   });
             },

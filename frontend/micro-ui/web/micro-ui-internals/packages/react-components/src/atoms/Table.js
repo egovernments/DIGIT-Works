@@ -133,8 +133,8 @@ const Table = ({
   useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter,data]);
   
   const handleSelection = () => {
-    tableSelectionHandler()
-    console.log('SELECTED ROWS', {selectedRowIds, rows})
+    const selectedRows = rows?.filter(ele => Object.keys(selectedRowIds)?.includes(ele?.id))
+    tableSelectionHandler(selectedRows)
   }
 
   //note -> adding data prop in dependency array to trigger filter whenever state of the table changes
