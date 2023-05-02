@@ -19,21 +19,21 @@
 config:
 
 # backend
-  - name: "builds/digit-works/backend/attendance-service"
+  - name: "builds/digit-works/backend/attendance"
     build:
-      - work-dir: "backend/attendance-service"
+      - work-dir: "backend/attendance"
         dockerfile: "build/maven/Dockerfile"
-        image-name: "attendance-service"
-      - work-dir: "backend/attendance-service/src/main/resources/db"
-        image-name: "attendance-service-db"
+        image-name: "attendance"
+      - work-dir: "backend/attendance/src/main/resources/db"
+        image-name: "attendance-db"
 
-  - name: "builds/digit-works/backend/muster-roll-service"
+  - name: "builds/digit-works/backend/muster-roll"
     build:
-      - work-dir: "backend/muster-roll-service"
+      - work-dir: "backend/muster-roll"
         dockerfile: "build/maven/Dockerfile"
-        image-name: "muster-roll-service"
-      - work-dir: "backend/muster-roll-service/src/main/resources/db"
-        image-name: "muster-roll-service-db"
+        image-name: "muster-roll"
+      - work-dir: "backend/muster-roll/src/main/resources/db"
+        image-name: "muster-roll-db"
   - name: "builds/digit-works/backend/estimates"
     build:
       - work-dir: "backend/estimates"
@@ -41,28 +41,6 @@ config:
         image-name: "estimates"
       - work-dir: "backend/estimates/src/main/resources/db"
         image-name: "estimates-db"
-
-  - name: "builds/digit-works/backend/loi-service"
-    build:
-      - work-dir: "backend/loi-service"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "loi-service"
-      - work-dir: "backend/loi-service/src/main/resources/db"
-        image-name: "loi-service-db"
-        
-  - name: "builds/digit-works/backend/works-inbox-service"
-    build:
-      - work-dir: "backend/works-inbox-service"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "works-inbox-service"
-        
-  - name: "builds/digit-works/backend/project-management-system"
-    build:
-      - work-dir: "backend/project-management-system"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "project-management-system"
-      - work-dir: "backend/project-management-system/src/main/resources/db"
-        image-name: "project-management-system-db"
 
   - name: "builds/digit-works/backend/works-management-service"
     build:
@@ -78,13 +56,13 @@ config:
       - work-dir: "backend/organisation/src/main/resources/db"
         image-name: "organisation-db"
 
-  - name: "builds/digit-works/backend/contract-service"
+  - name: "builds/digit-works/backend/contract"
     build:
-      - work-dir: "backend/contract-service"
+      - work-dir: "backend/contract"
         dockerfile: "build/maven/Dockerfile"
-        image-name: "contract-service"
-      - work-dir: "backend/contract-service/src/main/resources/db"
-        image-name: "contract-service-db"
+        image-name: "contract"
+      - work-dir: "backend/contract/src/main/resources/db"
+        image-name: "contract-db"
         
   - name: "builds/digit-works/backend/bankaccounts"
     build:
@@ -127,52 +105,6 @@ config:
     build:
       - work-dir: "utilities/egov-bff-service"
         image-name: "egov-bff-service"  
-
-  - name: "builds/digit-works/backend/project-management-system"
-    build:
-      - work-dir: "backend/project-management-system"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "project-management-system"
-      - work-dir: "backend/project-management-system/src/main/resources/db"
-        image-name: "project-management-system-db"
-
-  - name: "builds/digit-works/backend/works-management-service"
-    build:
-      - work-dir: "backend/works-management-service"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "works-management-service"
-
-  - name: "builds/digit-works/backend/organisation"
-    build:
-      - work-dir: "backend/organisation"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "organisation"
-      - work-dir: "backend/organisation/src/main/resources/db"
-        image-name: "organisation-db"
-
-  - name: "builds/digit-works/backend/contract-service"
-    build:
-      - work-dir: "backend/contract-service"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "contract-service"
-      - work-dir: "backend/contract-service/src/main/resources/db"
-        image-name: "contract-service-db"
-
-  - name: "builds/digit-works/backend/bankaccounts"
-    build:
-      - work-dir: "backend/bankaccounts"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "bankaccounts"
-      - work-dir: "backend/bankaccounts/src/main/resources/db"
-        image-name: "bankaccounts-db"
-
-  - name: "builds/digit-works/backend/expense-calculator"
-    build:
-      - work-dir: "backend/expense-calculator"
-        dockerfile: "build/maven/Dockerfile"
-        image-name: "expense-calculator"
-      - work-dir: "backend/expense-calculator/src/main/resources/db"
-        image-name: "expense-calculator-db"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
