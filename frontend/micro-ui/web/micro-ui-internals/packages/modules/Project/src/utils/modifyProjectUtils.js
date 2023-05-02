@@ -54,7 +54,6 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       }else{
         project = {};
       }
-
       configs.defaultValues.basicDetails_dateOfProposal = project?.additionalDetails?.dateOfProposal ? ConvertEpochToDate(project?.additionalDetails?.dateOfProposal, "yyyy-mm-dd")  : findCurrentDate(); //TODO:
       configs.defaultValues.noSubProject_ulb = ULBOptions[0];
       configs.defaultValues.basicDetails_projectName = project?.name ? project?.name  : "";

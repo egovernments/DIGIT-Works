@@ -13,7 +13,7 @@ const SelectGeoLocation = ({ onSelect, config, formData }) => {
 
   const handleShowLocationSearch = () => {
     setShowLocationSearch(true);
-  }
+  } 
 
   const actionCancelOnSubmit = () =>{
     setShowLocationSearch(false);
@@ -26,7 +26,7 @@ const SelectGeoLocation = ({ onSelect, config, formData }) => {
         {
           !showLocationSearch && 
           <div className="field">
-            <TextInput customIcon="geolocation" disable={true} onIconSelection={handleShowLocationSearch} value={`${position?.latitude}, ${position?.longitude}`}></TextInput>
+            <TextInput customIcon="geolocation" disable={true} onIconSelection={handleShowLocationSearch} value={position?.latitude && position?.longitude ? `${position?.latitude}, ${position?.longitude}` : ''}></TextInput>
           </div>
         }
         {showLocationSearch && 

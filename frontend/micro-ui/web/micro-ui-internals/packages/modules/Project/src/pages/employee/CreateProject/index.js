@@ -59,23 +59,23 @@ const CreateProject = () => {
       }
     })
 
-    // const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
-    //   stateTenant,
-    //   Digit.Utils.getConfigModuleName(),
-    //   [
-    //       {
-    //           "name": "CreateProjectConfig"
-    //       }
-    //   ],
-    //   {
-    //     select: (data) => {
-    //         return data?.[Digit.Utils.getConfigModuleName()]?.CreateProjectConfig[0];
-    //     },
-    //   }
-    // );
+    const { isLoading, data : configs} = Digit.Hooks.useCustomMDMS( //change to data
+      stateTenant,
+      Digit.Utils.getConfigModuleName(),
+      [
+          {
+              "name": "CreateProjectConfig"
+          }
+      ],
+      {
+        select: (data) => {
+            return data?.[Digit.Utils.getConfigModuleName()]?.CreateProjectConfig[0];
+        },
+      }
+    );
 
     // Use this only while Development - 
-    const configs = createProjectConfigMUKTA?.CreateProjectConfig[0];
+    // const configs = createProjectConfigMUKTA?.CreateProjectConfig[0];
 
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", 
       {}
