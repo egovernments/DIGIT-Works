@@ -80,7 +80,7 @@ public class ExpenseCalculatorQueryBuilder {
 
         CalculatorSearchCriteria calculatorSearchCriteria=calculatorSearchRequest.getSearchCriteria();
 
-        if (!StringUtils.isNotBlank(calculatorSearchCriteria.getTenantId())) {
+        if (StringUtils.isNotBlank(calculatorSearchCriteria.getTenantId())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" tenant_id=? ");
             preparedStmtList.add(calculatorSearchCriteria.getTenantId());
