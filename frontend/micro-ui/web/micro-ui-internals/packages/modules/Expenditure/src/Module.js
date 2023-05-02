@@ -15,6 +15,7 @@ import ViewWageBill from "./pages/employee/Bills/ViewWageBill";
 import TotalBillAmount from "./pageComponents/TotalBillAmount";
 import PayableAmt from "./components/PayableAmt";
 import DownloadBill from "./pages/employee/Bills/DownloadBill";
+import ViewPurchaseBill from "./components/ViewBill/ViewPurchaseBill";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     
