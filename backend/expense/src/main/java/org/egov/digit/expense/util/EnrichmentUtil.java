@@ -35,7 +35,7 @@ public class EnrichmentUtil {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
-		AuditDetails audit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
+		AuditDetails audit = getAuditDetails(createdBy, true);
 		String billNumberIdFormatName = bill.getBusinessService().toLowerCase().concat(Constants.BILL_ID_FORMAT_SUFFIX);
 		String billNumber = idgenUtil
 				.getIdList(billRequest.getRequestInfo(), bill.getTenantId().split("\\.")[0], billNumberIdFormatName, null, 1).get(0);
@@ -81,8 +81,8 @@ public class EnrichmentUtil {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
-        AuditDetails updateAudit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), false);
-        AuditDetails createAudit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
+        AuditDetails updateAudit = getAuditDetails(createdBy, false);
+        AuditDetails createAudit = getAuditDetails(createdBy, true);
 
         bill.setAuditDetails(updateAudit);
 
@@ -189,7 +189,7 @@ public class EnrichmentUtil {
 				}
 			}
 		}
-        payment.setAuditDetails(getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), true));
+        payment.setAuditDetails(getAuditDetails(createdBy, true));
         return paymentRequest;
     }
 
@@ -197,7 +197,7 @@ public class EnrichmentUtil {
 
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        payment.setAuditDetails(getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), false));
+        payment.setAuditDetails(getAuditDetails(createdBy, false));
         return paymentRequest;
     }
 
@@ -209,7 +209,7 @@ public class EnrichmentUtil {
      * @param isCreate
      * @return AuditDetails
      */
-    public AuditDetails getAuditDetails(String by, AuditDetails auditDetails, Boolean isCreate) {
+    public AuditDetails getAuditDetails(String by, Boolean isCreate) {
 
         Long time = System.currentTimeMillis();
 
@@ -222,8 +222,6 @@ public class EnrichmentUtil {
                     .build();
         else
             return AuditDetails.builder()
-                    .createdBy(auditDetails.getCreatedBy())
-                    .createdTime(auditDetails.getCreatedTime())
                     .lastModifiedBy(by)
                     .lastModifiedTime(time)
                     .build();

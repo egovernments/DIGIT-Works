@@ -117,7 +117,7 @@ public class PaymentService {
         RequestInfo requestInfo = paymentRequest.getRequestInfo();
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), false);
+        AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, false);
         
         Boolean isPaymentCancelled = payment.getStatus().equals(PaymentStatus.CANCELLED);
 
@@ -154,7 +154,7 @@ public class PaymentService {
 			for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
 
 				BillDetail billDetailFromSearch = billDetailMap.get(paymentBillDetail.getBillDetailId());
-				billDetailFromSearch.setPaymentStatus(payment.getStatus());
+				billDetailFromSearch.setPaymentStatus(paymentBillDetail.getStatus());
 				billDetailFromSearch.setTotalPaidAmount(
 						getResultantAmount(billDetailFromSearch.getTotalPaidAmount(), paymentBillDetail.getTotalPaidAmount(), isPaymentCancelled));
 				billDetailFromSearch.setAuditDetails(auditDetails);
@@ -162,6 +162,7 @@ public class PaymentService {
 				for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
 
 					LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemId());
+					lineItemFromSearch.setPaymentStatus(payableLineItem.getStatus());
 					lineItemFromSearch.setPaidAmount(
 							getResultantAmount(lineItemFromSearch.getPaidAmount(), payableLineItem.getPaidAmount(), isPaymentCancelled));
 					lineItemFromSearch.setAuditDetails(auditDetails);
