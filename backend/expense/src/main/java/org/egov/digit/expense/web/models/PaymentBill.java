@@ -53,6 +53,7 @@ public class PaymentBill {
 	@NotNull
 	private List<PaymentBillDetail> billDetails;
 	
+  @JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 	
 	public PaymentBill addPaymentBillDetailItem (PaymentBillDetail paymentBillDetailItem) {
