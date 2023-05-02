@@ -68,7 +68,10 @@ class CustomInfoCard extends StatelessWidget {
               textAlign: TextAlign.start,
             ),
           ),
-          child ?? const SizedBox.shrink()
+          Padding(
+            padding: const EdgeInsets.all(kPadding),
+            child: child ?? const SizedBox.shrink(),
+          )
         ],
       ),
     );
