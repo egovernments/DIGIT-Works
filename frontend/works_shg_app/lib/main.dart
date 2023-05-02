@@ -36,6 +36,7 @@ import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
 import 'blocs/attendance/de_enroll_attendee.dart';
+import 'blocs/attendance/muster_submission_mdms.dart';
 import 'blocs/attendance/search_projects/search_individual_project.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
@@ -222,6 +223,10 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(
             create: (context) => AttendanceHoursBloc(
                 const AttendanceHoursState.initial(),
+                MdmsRepository(client.init()))),
+        BlocProvider(
+            create: (context) => MusterSubmissionBloc(
+                const MusterSubmissionState.initial(),
                 MdmsRepository(client.init()))),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(

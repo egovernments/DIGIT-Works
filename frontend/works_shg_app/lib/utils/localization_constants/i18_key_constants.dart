@@ -270,4 +270,11 @@ class AttendanceMgmt {
       'ATM_ATT_CHANGED_CLICK_SAVE_DRAFT_FIRST';
   String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
   String get editMusterRoll => 'ATM_EDIT_MUSTERROLL';
+  String get singleClick => 'ATM_SINGLE_CLICK';
+  String get doubleClick => 'ATM_DOUBLE_CLICK';
+  String get tripleClick => 'ATM_TRIPLE_CLICK';
+  String get fullDay => 'ATM_FULL_DAY';
+  String get halfDay => 'ATM_HALF_DAY';
+  String get absent => 'ATM_ABSENT';
+  String get toMarkAttendance => 'ATM_INFO_TO_MARK_ATTENDANCE';
 }
