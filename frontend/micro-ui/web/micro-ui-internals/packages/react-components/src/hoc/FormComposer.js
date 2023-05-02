@@ -131,6 +131,7 @@ export const FormComposer = (props) => {
     if (sectionFormCategory && selectedFormCategory) {
       disableFormValidation = sectionFormCategory !== selectedFormCategory ? true : false;
     }
+  
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
     const customValidation = config?.populators?.validation?.customValidation;
     const customRules = customValidation ? {validate : customValidation} : {};
