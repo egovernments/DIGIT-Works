@@ -14,7 +14,7 @@ class AppBarLogo extends StatelessWidget {
           Image(
               width: 130,
               image: NetworkImage(
-                GlobalVariables.stateInfoListModel!.logoUrlWhite!,
+                GlobalVariables.stateInfoListModel!.logoUrlWhite ?? '',
               )),
           Padding(
               padding: const EdgeInsets.only(right: 8.0, top: 4.0, bottom: 4.0),

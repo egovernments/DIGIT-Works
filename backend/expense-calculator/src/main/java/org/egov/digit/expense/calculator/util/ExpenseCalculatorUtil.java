@@ -6,7 +6,7 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
-import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
+import org.egov.digit.expense.calculator.repository.*;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
 import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillCriteria;
@@ -24,11 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MUSTER_ROLL_ID_JSON_PATH;
@@ -152,6 +148,29 @@ public class ExpenseCalculatorUtil {
         BillResponse response = mapper.convertValue(responseObj, BillResponse.class);
         return response != null ? response.getBills() : null;
 
+    }
+
+    public List<Bill> fetchBillsWithBillIds(RequestInfo requestInfo, String tenantId, List<String> billIds) {
+
+        StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
+        List<Bill> bills=new ArrayList<>();
+
+            BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
+                    .ids(new HashSet<>(billIds)).build();
+            BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
+                    .billCriteria(billCriteria).tenantId(tenantId).build();
+            Object responseObj = restRepo.fetchResult(url, billSearchRequest);
+
+        BillResponse response = mapper.convertValue(responseObj, BillResponse.class);
+
+        if(response!=null) {
+            bills.addAll(response.getBills());
+        }
+        else {
+            throw new CustomException("Bill_Search_Error","Error in bill search");
+        }
+
+        return bills;
     }
 
     private StringBuilder searchURI(String host, String endpoint) {

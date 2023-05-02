@@ -12,7 +12,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * CalculatorSearchResponse
+ * CalculationResponse
  */
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-11T13:19:59.852+05:30[Asia/Kolkata]")
@@ -20,15 +20,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CalculatorSearchResponse {
+public class BillMapperSearchResponse {
 	@JsonProperty("responseInfo")
-
 	@Valid
 	private ResponseInfo responseInfo = null;
 
-	@JsonProperty("billIds")
-
+	@JsonProperty("bills")
 	@Valid
-	private List<String> billIds = null;
+	private List<BillMapper> billMappers = null;
 
 }

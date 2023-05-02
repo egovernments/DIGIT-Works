@@ -45,6 +45,7 @@ public class WageSeekerBillGeneratorService {
         // Calculate estimate for each muster roll
         List<CalcEstimate> calcEstimates = createEstimatesForMusterRolls(requestInfo, musterRolls,labourCharges);
         // Create Calculation
+        log.info("Make calculation and return");
         return makeCalculation(calcEstimates,tenantId);
     }
     public List<Bill> createWageSeekerBills(RequestInfo requestInfo, List<MusterRoll> musterRolls, List<LabourCharge> labourCharges, Map<String, String> metaInfo){
@@ -59,7 +60,9 @@ public class WageSeekerBillGeneratorService {
 
             // For each muster-roll create one wage bill
             for(MusterRoll musterRoll : musterRolls){
-                musterRollNumbers.add(musterRoll.getMusterRollNumber());
+                String musterRollNumber = musterRoll.getMusterRollNumber();
+                musterRollNumbers.add(musterRollNumber);
+                log.info("Create wage bill for musterRoll ["+ musterRollNumber +"]");
                 List<BillDetail> billDetails = new ArrayList<>();
 
 
@@ -68,8 +71,8 @@ public class WageSeekerBillGeneratorService {
                 // Muster roll reference id is contractNumber
                 String referenceId = musterRoll.getReferenceId();
                 if(referenceId == null) {
-                    log.error("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+musterRoll.getMusterRollNumber()+"]");
-                    throw new CustomException("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+musterRoll.getMusterRollNumber()+"]");
+                    log.error("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+ musterRollNumber +"]");
+                    throw new CustomException("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+ musterRollNumber +"]");
                 }
                 // Get orgId for contractNumber
                 String cboId = getCBOID(requestInfo,tenantId,referenceId);
@@ -77,7 +80,7 @@ public class WageSeekerBillGeneratorService {
                 metaInfo.put(ORG_ID_CONSTANT,cboId);
                 List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
 
-                for(IndividualEntry individualEntry : individualEntries){
+                for(IndividualEntry individualEntry : individualEntries) {
                     String individualId = individualEntry.getIndividualId();
                     // Calculate net amount to pay to wage seeker
                     Double skillAmount = getWageSeekerSkillAmount(individualEntry,labourCharges);
@@ -90,6 +93,7 @@ public class WageSeekerBillGeneratorService {
                     Party payee = buildParty(individualId,configs.getWagePayeeType(),tenantId);
                     metaInfo.put(individualId,String.valueOf(getWageSeekerSkillCodeId(individualEntry,labourCharges)));
                     // Build BillDetail
+                    log.info("Building billDetail for referenceId ["+referenceId+"] and musterRollNumber ["+musterRollNumber+"]");
                     BillDetail billDetail = BillDetail.builder()
                                                 //.referenceId(individualId)
                                                 .billId(null)
@@ -109,12 +113,13 @@ public class WageSeekerBillGeneratorService {
                 }
                 Party payer = buildParty(requestInfo, configs.getPayerType(), tenantId);
 
+                log.info("Building bill for musterRollNumber ["+musterRollNumber+"]");
                 // Build Bill
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
                         .billDate(Instant.now().toEpochMilli())
                       //  .netPayableAmount(netPayableAmount)
-                        .referenceId(referenceId +CONCAT_CHAR_CONSTANT+musterRoll.getMusterRollNumber())
+                        .referenceId(referenceId +CONCAT_CHAR_CONSTANT+ musterRollNumber)
                         .businessService(configs.getWageBusinessService())
                         .fromPeriod(musterRoll.getStartDate().longValue())
                         .toPeriod(musterRoll.getEndDate().longValue())
@@ -135,7 +140,9 @@ public class WageSeekerBillGeneratorService {
     private String getCBOID(RequestInfo requestInfo, String tenantId, String referenceId) {
         ContractResponse contractResponse = contractUtils.fetchContract(requestInfo, tenantId, referenceId);
         Contract contract = contractResponse.getContracts().get(0);
-        return contract.getOrgId();
+        String orgId = contract.getOrgId();
+        log.info("OrgId is ["+orgId+"] for referenceId ["+referenceId+"]");
+        return orgId;
     }
     private String getContractId(MusterRoll musterRoll) {
 //        final Object additionalDetails = musterRoll.getAdditionalDetails();
@@ -162,13 +169,15 @@ public class WageSeekerBillGeneratorService {
     private List<CalcEstimate> createEstimatesForMusterRolls(RequestInfo requestInfo,  List<MusterRoll> musterRolls, List<LabourCharge> labourCharges) {
         List<CalcEstimate> calcEstimates = new ArrayList<>();
         for(MusterRoll musterRoll : musterRolls){
+            String musterRollNumber = musterRoll.getMusterRollNumber();
+            log.info("Create calculation for musterRoll [" + musterRollNumber +"]");
             List<CalcDetail> calcDetails = new ArrayList<>();
             List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
             String tenantId = musterRoll.getTenantId();
             BigDecimal netPayableAmount = BigDecimal.ZERO;
             if(musterRoll.getReferenceId() == null) {
-                log.error("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+musterRoll.getMusterRollNumber()+"]");
-                throw new CustomException("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+musterRoll.getMusterRollNumber()+"]");
+                log.error("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+ musterRollNumber +"]");
+                throw new CustomException("MUSTER_ROLL_REFERENCE_ID_MISSING", "Reference Id is missing for muster roll ["+ musterRollNumber +"]");
             }
 
             String cboId = getCBOID(requestInfo, tenantId, musterRoll.getReferenceId());
@@ -184,6 +193,7 @@ public class WageSeekerBillGeneratorService {
                 // Build payee
                 Party payee = buildParty(individualId,configs.getWagePayeeType(),tenantId);
 
+                log.info("Create calcDetail for individualId ["+individualId+"] musterRollNumber ["+musterRollNumber+"]");
                 // Build CalcDetail
                 CalcDetail calcDetail = CalcDetail.builder()
                         .payee(payee)
@@ -195,9 +205,10 @@ public class WageSeekerBillGeneratorService {
                 calcDetails.add(calcDetail);
 
             }
+            log.info("Create calcEstimate for musterRollNumber ["+musterRollNumber+"]");
             // Build CalcEstimate
             CalcEstimate calcEstimate = CalcEstimate.builder()
-                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRoll.getMusterRollNumber())
+                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber)
                     .fromPeriod(musterRoll.getStartDate())
                     .toPeriod(musterRoll.getEndDate())
                     .netPayableAmount(netPayableAmount)
@@ -256,18 +267,18 @@ public class WageSeekerBillGeneratorService {
 
     private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
 
-   //     return new Double(150);
-        String skill =  getWageSeekerSkill(individualEntry);
-        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
-        for(LabourCharge labourCharge : labourCharges){
-            if(labourCharge.getCode().equalsIgnoreCase(skill)
-                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
-                return labourCharge.getAmount();
-            }
-        }
-
-        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
-        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+        return new Double(150);
+//        String skill =  getWageSeekerSkill(individualEntry);
+//        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
+//        for(LabourCharge labourCharge : labourCharges){
+//            if(labourCharge.getCode().equalsIgnoreCase(skill)
+//                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
+//                return labourCharge.getAmount();
+//            }
+//        }
+//
+//        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+//        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
     }
 
     private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
