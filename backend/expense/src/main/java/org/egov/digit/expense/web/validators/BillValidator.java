@@ -123,9 +123,10 @@ public class BillValidator {
         /* validating head code master data */
         List<String> BusinessCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(BUSINESS_SERVICE_MASTERNAME),CODE_FILTER);
         
-        if(!BusinessCodeList.contains(bill.getBusinessService())) {
-//        	errorMap.put("EG_EXPENSE_INVALID_BUSINESSSERVICE", "The business service value : "+ bill.getBusinessService() +" is invalid");
-        }
+		if (!BusinessCodeList.contains(bill.getBusinessService())) {
+			errorMap.put("EG_EXPENSE_INVALID_BUSINESSSERVICE",
+					"The business service value : " + bill.getBusinessService() + " is invalid");
+		}
         
 		List<String> headCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(HEADCODE_MASTERNAME),CODE_FILTER);
 

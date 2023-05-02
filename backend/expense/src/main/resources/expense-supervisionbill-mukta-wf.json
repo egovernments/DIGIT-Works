@@ -41,7 +41,7 @@
         {
           "sla": 604800000,
           "state": "APPROVED",
-          "applicationStatus": "APPROVED",
+          "applicationStatus": "ACTIVE",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": true,

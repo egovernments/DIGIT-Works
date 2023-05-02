@@ -1,5 +1,7 @@
 package org.egov.digit.expense.web.models.enums;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -29,6 +31,7 @@ public enum PaymentStatus {
 	}
 
 	@JsonCreator
+	@NotNull
 	public static PaymentStatus fromValue(String text) {
 		for (PaymentStatus b : PaymentStatus.values()) {
 			if (String.valueOf(b.value).equalsIgnoreCase(text)) {

@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BillRequest {
 
-	@JsonProperty("requestInfo")
+	@JsonProperty("RequestInfo")
 	@Valid
 	private RequestInfo requestInfo;
 
