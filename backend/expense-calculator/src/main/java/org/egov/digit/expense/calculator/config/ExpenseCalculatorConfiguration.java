@@ -87,6 +87,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.bill.create.endpoint}")
 	private String billCreateEndPoint;
 
+	@Value("${egov.bill.update.endpoint}")
+	private String billUpdateEndPoint;
+
 	@Value("${egov.expense.bill.service.search.endpoint}")
 	private String expenseBillSearchEndPoint;
 
@@ -134,14 +137,19 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.supervision.business.service}")
 	private String supervisionBusinessService;
 
-	@Value("${egov.works.expense.wage.lineitem.type}")
-	private String wageLineItemType;
-
 	@Value("${egov.works.expense.payer.type}")
 	private String payerType;
 
 	//KAFKA topic
 	@Value("${expense.calculator.create.topic}")
 	private String calculatorCreateTopic;
+	
+	//Purchase bill referenceId IDGen format key
+	@Value("${egov.works.expense.purchasebill.referenceId.format}")
+	private String purchaseBillReferenceIdFormatKey;
+	
+	//Supervision bill referenceId IDGen format key
+	@Value("${egov.works.expense.superbill.referenceId.format}")
+	private String supervisionBillreferenceIdFormatKey;
 
 }

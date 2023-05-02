@@ -35,7 +35,7 @@ router.post(
                 return renderError(res, "Failed to query details of the project", 500);
             }
             var project = resProject.data;
-            if (project && project.Projects && project.Projects.length > 0) {
+            if (project && project.Project && project.Project.length > 0) {
                     var pdfResponse;
                     var pdfkey = config.pdf.project_details_template;
                     

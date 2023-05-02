@@ -5,14 +5,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
-import org.egov.digit.expense.calculator.web.models.Bill;
-import org.egov.digit.expense.calculator.web.models.BillResponse;
-import org.egov.digit.expense.calculator.web.models.Calculation;
-import org.egov.digit.expense.calculator.web.models.CalculationRequest;
-import org.egov.digit.expense.calculator.web.models.CalculationResponse;
+import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +28,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Controller
 @RequestMapping("")
 public class WorksCalculatorApiController {
-
 	@Autowired
 	private final ObjectMapper objectMapper;
 	@Autowired
@@ -50,7 +46,7 @@ public class WorksCalculatorApiController {
 	@RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
 	public ResponseEntity<BillResponse> worksCalculatorV1CalculatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
-		List<Bill> bills = expenseCalculatorService.createBills(calculationRequest);
+		List<Bill> bills = expenseCalculatorService.createWageOrSupervisionBills(calculationRequest);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
 		BillResponse billResponse = BillResponse.builder()
 				.responseInfo(responseInfo)
@@ -71,6 +67,16 @@ public class WorksCalculatorApiController {
 				                                                     .calculation(calculation)
 				                                                     .build();
 		return new ResponseEntity<CalculationResponse>(calculationResponse, HttpStatus.OK);
+	}
+
+
+	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
+	public ResponseEntity<BillMapperSearchResponse> search(@Valid @RequestBody CalculatorSearchRequest calculatorSearchRequest) {
+		RequestInfo requestInfo=calculatorSearchRequest.getRequestInfo();
+		List<BillMapper> bills = expenseCalculatorService.search(calculatorSearchRequest);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculatorSearchRequest.getRequestInfo(), true);
+		BillMapperSearchResponse billResponse= BillMapperSearchResponse.builder().responseInfo(responseInfo).billMappers(bills).build();
+		return new ResponseEntity<BillMapperSearchResponse>(billResponse, HttpStatus.OK);
 	}
 
 }
