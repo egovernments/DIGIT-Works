@@ -85,7 +85,8 @@ public class PurchaseBillGeneratorService {
                                 .tenantId(tenantId)
                                 .billDate(providedPurchaseBill.getInvoiceDate())
                                 .referenceId(referenceId)
-                                .businessService(configs.getPurchaseBusinessService())
+                               // .businessService(configs.getPurchaseBusinessService())
+                                .businessService("EXPENSE.PURCHASE")
                                 .fromPeriod(contract.getStartDate().longValue())
                                 .toPeriod(contract.getEndDate().longValue())
                                 .status(providedPurchaseBill.getStatus())
@@ -97,6 +98,63 @@ public class PurchaseBillGeneratorService {
                                 .build();
 
         log.info("Purchase bill created");
+        return purchaseBill;
+    }
+
+    public Bill updatePurchaseBill(RequestInfo requestInfo,PurchaseBill providedPurchaseBill,List<Payer> payers , List<HeadCode> headCodes , List<ApplicableCharge> applicableCharges,Map<String, String> metaInfo) {
+        // Get Id
+        String id = providedPurchaseBill.getId();
+        // Get TenantId
+        String tenantId = providedPurchaseBill.getTenantId();
+        // Get documents
+        List<Document> documents = providedPurchaseBill.getDocuments();
+        // Get contract number
+        String contractNumber = providedPurchaseBill.getContractNumber();
+        //Generate referenceId
+        String referenceId = providedPurchaseBill.getReferenceId();
+        // Initialize net payable amount
+        BigDecimal netPayableAmount = BigDecimal.ZERO;
+        // Get provided billDetails
+        List<BillDetail> billDetails = providedPurchaseBill.getBillDetails();
+
+        // Fetch contract for provided contract number
+        Contract contract = getContract(requestInfo, tenantId, contractNumber);
+        // Put contact project mapping in meta
+        metaInfo.put(PROJECT_ID_OF_CONSTANT+contractNumber,providedPurchaseBill.getProjectId());
+        // Put OrgId in meta
+        metaInfo.put(ORG_ID_CONSTANT,contract.getOrgId());
+        // For each billDetails calculate different amount
+        for(BillDetail billDetail : billDetails) {
+            // Calculate payable line items
+            calculateAndSetPayableLineItems(billDetail, headCodes,applicableCharges);
+            // Calculate net line item amount
+            calculateAndSetNetLineItemAmount(billDetail);
+            // Calculate payable amount
+            netPayableAmount = netPayableAmount.add(billDetail.getNetLineItemAmount());
+        }
+        // Build payer
+        Party payer = buildParty(requestInfo, configs.getPayerType(), tenantId);
+        // Populate additional details object with documents
+        populateBillAdditionalDetails(providedPurchaseBill,DOCUMENTS_CONSTANT, documents);
+        // Generate the bill
+        log.info("Update purchase bill for referenceId ["+referenceId+"]");
+        Bill purchaseBill = Bill.builder()
+                .tenantId(tenantId)
+                .id(id)
+                .billDate(providedPurchaseBill.getInvoiceDate())
+                .referenceId(referenceId)
+                //.businessService(configs.getPurchaseBusinessService())
+                .businessService("EXPENSE.PURCHASE")
+                .fromPeriod(contract.getStartDate().longValue())
+                .toPeriod(contract.getEndDate().longValue())
+                .status(providedPurchaseBill.getStatus())
+                .totalAmount(netPayableAmount)
+                //.paymentStatus("PENDING")
+                .payer(payer)
+                .billDetails(providedPurchaseBill.getBillDetails())
+                .additionalDetails(providedPurchaseBill.getAdditionalDetails())
+                .build();
+
         return purchaseBill;
     }
 

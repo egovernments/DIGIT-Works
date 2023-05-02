@@ -89,7 +89,7 @@ public class ExpenseCalculatorService {
         // Initialize meta map
         Map<String, String> metaInfo = new HashMap<>();
         // Create purchase bill
-        Bill purchaseBill = createPurchaseBill(purchaseBillRequest,metaInfo);
+        Bill purchaseBill = updatePurchaseBill(purchaseBillRequest,metaInfo);
         // Post the newly created bill to expense service
         BillResponse billResponse = postUpdateBill(purchaseBillRequest.getRequestInfo(), purchaseBill, purchaseBillRequest.getWorkflow());
 
@@ -107,7 +107,7 @@ public class ExpenseCalculatorService {
 
     private Bill createPurchaseBill(PurchaseBillRequest purchaseBillRequest , Map<String, String> metaInfo){
         log.info("Create purchase bill");
-        expenseCalculatorServiceValidator.validatePurchaseRequest(purchaseBillRequest);
+        expenseCalculatorServiceValidator.validateCreatePurchaseRequest(purchaseBillRequest);
 
         RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
         PurchaseBill providedPurchaseBill = purchaseBillRequest.getBill();
@@ -120,6 +120,23 @@ public class ExpenseCalculatorService {
         List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
         // Create the bill
         return purchaseBillGeneratorService.createPurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
+    }
+
+    private Bill updatePurchaseBill(PurchaseBillRequest purchaseBillRequest , Map<String, String> metaInfo){
+        log.info("Update purchase bill");
+        expenseCalculatorServiceValidator.validateUpdatePurchaseRequest(purchaseBillRequest);
+
+        RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
+        PurchaseBill providedPurchaseBill = purchaseBillRequest.getBill();
+        String tenantId = providedPurchaseBill.getTenantId();
+        //Fetch Payers from MDMS
+        List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
+        // Fetch HeadCodes from MDMS
+        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
+        // Fetch Applicable Charges from MDMS
+        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
+        // Create the bill
+        return purchaseBillGeneratorService.updatePurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
     }
 
     public List<Bill> createWageOrSupervisionBills(CalculationRequest calculationRequest){
