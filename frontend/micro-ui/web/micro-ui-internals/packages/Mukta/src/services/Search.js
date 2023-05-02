@@ -9,7 +9,6 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
     let totalProjectsLength = project.length;
     // for(let projectIndex = 0; projectIndex < totalProjectsLength; projectIndex++) {
         let currentProject = project[0];
-        console.log("View Page", currentProject);
         const headerDetails = {
             title: " ",
             asSectionHeader: true,

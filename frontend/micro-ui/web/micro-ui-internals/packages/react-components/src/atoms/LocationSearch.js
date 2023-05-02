@@ -215,22 +215,18 @@ const mapStyles = [
 ];
 
 const setLocationText = (location, onChange, isPlaceRequired=false) => {
-  console.log("inside localtion searcg comp", location);
   const geocoder = new google.maps.Geocoder();
   geocoder.geocode(
     {
       location,
     },
     function (results, status) {
-      console.log("inside fun",results, status);
       if (status === "OK") {
         if (results[0]) {
-          console.log("inside results.0");
           let pincode = GetPinCode(results[0]);
           const infoWindowContent = document.getElementById("pac-input");
           infoWindowContent.value = getName(results[0]);
           if (onChange) {
-            console.log("inside onchange");
             if(isPlaceRequired)
             onChange(pincode, { longitude: location.lng, latitude: location.lat }, infoWindowContent.value);
             else

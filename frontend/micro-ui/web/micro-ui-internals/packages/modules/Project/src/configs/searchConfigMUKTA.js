@@ -290,8 +290,10 @@ const searchConfigMUKTA = {
           }
         },
         "additionalSections": {}
+        }
       }
-    ]
+    }
+   ]
   }
 
 export default searchConfigMUKTA;

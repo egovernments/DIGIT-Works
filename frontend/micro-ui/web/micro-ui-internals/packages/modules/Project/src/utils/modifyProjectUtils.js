@@ -34,7 +34,6 @@ export const handleModifyProjectFiles = (uploadedDocs) => {
 }
 
 export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, project, headerLocale}) => {
-  console.log("modify", project);
   if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       let validDefaultValues = ["basicDetails_dateOfProposal", "noSubProject_ulb"];
@@ -64,7 +63,7 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       configs.defaultValues.noSubProject_typeOfProject = project?.projectType ? { code : project?.projectType, name : `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(project?.projectType)}`, projectSubType : []}  : "";
       configs.defaultValues.noSubProject_targetDemography = project?.additionalDetails?.targetDemography ? { code : project?.additionalDetails?.targetDemography, name : `COMMON_MASTERS_${Digit.Utils.locale.getTransformedLocale(project?.additionalDetails?.targetDemography)}`}  : "";
       configs.defaultValues.noSubProject_estimatedCostInRs = project?.additionalDetails?.estimatedCostInRs ? project?.additionalDetails?.estimatedCostInRs  : "";
-      configs.defaultValues.noSubProject_geoLocation = ( project?.address?.latitude || project?.address?.longitude ) ? `${project?.address?.latitude}, ${project?.address?.longitude}`  : ""; 
+      configs.defaultValues.noSubProject_geoLocation = ( project?.address?.latitude && project?.address?.longitude ) ? `${project?.address?.latitude}, ${project?.address?.longitude}`  : ""; 
       configs.defaultValues.noSubProject_ward = project?.address?.boundary ?  { code : project?.address?.boundary, name : project?.address?.boundary, i18nKey: `${headerLocale}_ADMIN_${project?.address?.boundary}`}  : "";
       configs.defaultValues.noSubProject_locality = project?.additionalDetails?.locality ? { code : project?.additionalDetails?.locality , name : project?.additionalDetails?.locality, i18nKey: `${headerLocale}_ADMIN_${project?.additionalDetails?.locality}`}  : "";
       // configs.defaultValues.noSubProject_fund = project?.additionalDetails?.fund ? { code : project?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(project?.additionalDetails?.fund)}`}  : "";
