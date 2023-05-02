@@ -31,53 +31,57 @@ class _DropDownDialogState extends State<DropDownDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          InkWell(
-            onTap: widget.isDisabled
-                ? null
-                : () {
-                    _showDialog(context);
-                  },
-            child: Container(
-              width: 120,
-              height: 40,
-              padding: const EdgeInsets.all(4.0),
-              decoration: BoxDecoration(
-                border: Border.all(
-                    color: widget.isDisabled
-                        ? const Color.fromRGBO(149, 148, 148, 1)
-                        : const DigitColors().black),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 80,
-                    child: Text(
-                      AppLocalizations.of(context)
-                          .translate(widget.selectedOption),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: widget.isDisabled
-                              ? const Color.fromRGBO(149, 148, 148, 1)
-                              : const DigitColors().black),
+    return Tooltip(
+      message: AppLocalizations.of(context).translate(widget.selectedOption),
+      // triggerMode: TooltipTriggerMode.longPress,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: widget.isDisabled
+                  ? null
+                  : () {
+                      _showDialog(context);
+                    },
+              child: Container(
+                width: 120,
+                height: 40,
+                padding: const EdgeInsets.all(4.0),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: widget.isDisabled
+                          ? const Color.fromRGBO(149, 148, 148, 1)
+                          : const DigitColors().black),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 80,
+                      child: Text(
+                        AppLocalizations.of(context).translate(
+                            'COMMON_MASTERS_SKILLS_${widget.selectedOption}'),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: widget.isDisabled
+                                ? const Color.fromRGBO(149, 148, 148, 1)
+                                : const DigitColors().black),
+                      ),
                     ),
-                  ),
-                  const Icon(
-                    Icons.arrow_drop_down,
-                    size: 20,
-                  ),
-                ],
+                    const Icon(
+                      Icons.arrow_drop_down,
+                      size: 20,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -101,7 +105,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
           ),
           content: SizedBox(
             height:
-                widget.options.length < 4 ? widget.options.length * 45 : 120,
+                widget.options.length < 7 ? widget.options.length * 45 : 250,
             child: Scrollbar(
               controller: _scrollController,
               thumbVisibility: true,
@@ -120,7 +124,8 @@ class _DropDownDialogState extends State<DropDownDialog> {
                           horizontal: VisualDensity.minimumDensity,
                           vertical: VisualDensity.minimumDensity),
                       title: Text(
-                          AppLocalizations.of(context).translate(option),
+                          AppLocalizations.of(context)
+                              .translate('COMMON_MASTERS_SKILLS_$option'),
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w400)),
                       value: option,

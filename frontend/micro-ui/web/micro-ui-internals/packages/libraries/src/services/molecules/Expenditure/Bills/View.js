@@ -41,7 +41,7 @@ const getBeneficiaryData = async (wageBillDetails, tenantId, musterRoll, t) => {
 const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   if(data.bills.length === 0) throw new Error('No data found');
   
-  const wageBill = data.bills[4] //temp add 0th index later
+  const wageBill = data.bills[0]
   const referenceIds = wageBill?.referenceId?.split('_')
   const workOrderNum = referenceIds?.[0]
   const musterRollNum = referenceIds?.[1]

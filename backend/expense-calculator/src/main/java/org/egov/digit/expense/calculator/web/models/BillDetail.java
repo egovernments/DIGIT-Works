@@ -48,7 +48,7 @@ public class BillDetail {
 	@JsonProperty("totalAmount")
 	@Valid
 	@Default
-	private BigDecimal totalAmount = BigDecimal.ZERO;
+	private BigDecimal totalAmount = BigDecimal.ZERO;;
 
 	@JsonProperty("totalPaidAmount")
 	@Valid
@@ -58,7 +58,7 @@ public class BillDetail {
 	@JsonProperty("netLineItemAmount")
 	@Valid
 	@Default
-	private BigDecimal NetLineItemAmount = BigDecimal.ZERO;
+	private BigDecimal netLineItemAmount = BigDecimal.ZERO;
 
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 64)

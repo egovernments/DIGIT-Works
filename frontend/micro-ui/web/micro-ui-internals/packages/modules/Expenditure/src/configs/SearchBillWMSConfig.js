@@ -6,7 +6,7 @@ export const SearchBillWMSConfig = {
             label : "EXP_SEARCH_BILL",
             type: 'search',
             actionLabel: "ES_COMMON_DOWNLOAD_PAYMENT_ADVICE",
-            actionRole: "EMPLOYEE",
+            actionRole: "BILL_CREATOR",
             actionLink: "expenditure/download-bill",
             apiDetails: {
                 serviceName: "/wms/expense/_search",

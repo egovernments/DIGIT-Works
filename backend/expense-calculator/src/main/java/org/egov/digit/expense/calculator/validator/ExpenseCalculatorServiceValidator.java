@@ -142,6 +142,7 @@ public class ExpenseCalculatorServiceValidator {
                 log.error("ExpenseCalculatorServiceValidator:No matched contract found for contractId - "+criteria.getContractId());
                 throw new CustomException("INVALID_CONTRACT_ID", "Contract not found");
             }
+            log.info("ContractId validated against service");
         }
     }
 
@@ -173,6 +174,7 @@ public class ExpenseCalculatorServiceValidator {
             RequestInfo requestInfo = calculationRequest.getRequestInfo();
             List<String> fetchedMusterRollIds = fetchListOfMusterRollIdsForGivenIds(requestInfo, tenantId, musterRollIds, onlyApproved);
             validateMusterRollIds(musterRollIds,fetchedMusterRollIds);
+            log.info("MusterRollId validated against service");
         }
     }
     private void validateMusterRollIdAgainstService(MusterRollRequest musterRollRequest) {

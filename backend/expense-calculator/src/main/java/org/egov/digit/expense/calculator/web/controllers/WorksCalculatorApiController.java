@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,7 +28,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Controller
 @RequestMapping("")
 public class WorksCalculatorApiController {
-
 	@Autowired
 	private final ObjectMapper objectMapper;
 	@Autowired
@@ -48,7 +46,7 @@ public class WorksCalculatorApiController {
 	@RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
 	public ResponseEntity<BillResponse> worksCalculatorV1CalculatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
-		List<Bill> bills = expenseCalculatorService.createBills(calculationRequest);
+		List<Bill> bills = expenseCalculatorService.createWageOrSupervisionBills(calculationRequest);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
 		BillResponse billResponse = BillResponse.builder()
 				.responseInfo(responseInfo)

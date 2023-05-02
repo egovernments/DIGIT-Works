@@ -1034,6 +1034,9 @@ input[type=“date”]::-webkit-calendar-picker-indicator {
   justify-content: flex-end;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
 .table-instruction-wrapper {
   display: flex;
   column-gap: 10px;

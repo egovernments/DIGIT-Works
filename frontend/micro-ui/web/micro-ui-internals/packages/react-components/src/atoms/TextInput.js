@@ -99,7 +99,7 @@ const TextInput = (props) => {
         )}
         {/* {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />} */}
         {props.signature ? props.signatureImg : null}
-        {props.customIcon ? props.customIcon === "geolocation" ? <LocateIcon className="text-input-customIcon" /> : null : null}
+        {props.customIcon ? props.customIcon === "geolocation" ? <span className="cursor-pointer" onClick={props?.onIconSelection} ><LocateIcon className="text-input-customIcon" /></span> : null : null}
       </div>
     </React.Fragment>
   );
