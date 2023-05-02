@@ -85,7 +85,7 @@ public class BillValidator {
 
     }
 
-    public void validateUpdateRequest(BillRequest billRequest) {
+    public List<Bill> validateUpdateRequest(BillRequest billRequest) {
 
         Map<String, String> errorMap = new HashMap<>();
         Bill bill = billRequest.getBill();
@@ -104,6 +104,8 @@ public class BillValidator {
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
+        
+        return billsFromSearch;
     }
 
     public void validateSearchRequest(BillSearchRequest billSearchRequest) {
@@ -133,7 +135,7 @@ public class BillValidator {
         Set<String> missingHeadCodes = new HashSet<>();
         BigDecimal billAmount = BigDecimal.ZERO;
         BigDecimal billPaidAmount = BigDecimal.ZERO;
-
+        
 		for (BillDetail billDetail : bill.getBillDetails()) {
 
 			BigDecimal billDetailAmount = BigDecimal.ZERO;
@@ -168,7 +170,7 @@ public class BillValidator {
 			}
 
 			billDetail.setTotalAmount(billDetailAmount);
-			billDetail.setTotalPaidAmount(billPaidAmount);
+			billDetail.setTotalPaidAmount(billDetailPaidAmount);
 			billAmount = billAmount.add(billDetailAmount);
 			billPaidAmount = billPaidAmount.add(billDetailPaidAmount);
 		}
@@ -229,6 +231,7 @@ public class BillValidator {
     	Bill bill = billRequest.getBill();
     	
 		BillCriteria billCriteria = BillCriteria.builder()
+				.ids(Stream.of(bill.getId()).collect(Collectors.toSet()))
 				.referenceIds(Stream.of(bill.getReferenceId()).collect(Collectors.toSet()))
 				.businessService(bill.getBusinessService())
 				.statusNot(Status.INACTIVE.toString())

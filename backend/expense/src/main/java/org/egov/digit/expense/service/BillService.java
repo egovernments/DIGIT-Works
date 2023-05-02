@@ -92,9 +92,9 @@ public class BillService {
 		Bill bill = billRequest.getBill();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
-		
-		validator.validateUpdateRequest(billRequest);
-		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest);
+
+		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
+		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
@@ -105,7 +105,6 @@ public class BillService {
 		}
 		
 		producer.push(config.getBillUpdateTopic(), billRequest);
-		
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo,true))

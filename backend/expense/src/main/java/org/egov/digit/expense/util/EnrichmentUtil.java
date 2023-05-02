@@ -1,6 +1,11 @@
 package org.egov.digit.expense.util;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
@@ -10,6 +15,7 @@ import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Pagination;
+import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.Payment;
 import org.egov.digit.expense.web.models.PaymentBill;
 import org.egov.digit.expense.web.models.PaymentBillDetail;
@@ -77,14 +83,26 @@ public class EnrichmentUtil {
 		return billRequest;
     }
 
-	public BillRequest encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest) {
+	public BillRequest encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest, List<Bill> billsFromSearch) {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
         AuditDetails updateAudit = getAuditDetails(createdBy, false);
         AuditDetails createAudit = getAuditDetails(createdBy, true);
+        
+        Bill billFromSearch = billsFromSearch.get(0);
 
-        bill.setAuditDetails(updateAudit);
+		bill.setAuditDetails(updateAudit);
+
+		Party payer = bill.getPayer();
+		if (payer.getId() == null)
+			payer.setId(billFromSearch.getPayer().getId());
+		payer.setAuditDetails(updateAudit);
+		
+        Map<String, BillDetail> billDetailMap = billsFromSearch.stream()
+                .map(Bill::getBillDetails)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 
         for (BillDetail billDetail : bill.getBillDetails()) {
 
@@ -95,7 +113,11 @@ public class EnrichmentUtil {
 
                 billDetail.setId(UUID.randomUUID().toString());
                 billDetail.setAuditDetails(createAudit);
-
+                
+                Party payee = billDetail.getPayee();
+                payee.setId(UUID.randomUUID().toString());
+                payee.setAuditDetails(createAudit);
+                
                 for (LineItem lineItem : billDetail.getLineItems()) {
                     lineItem.setId(UUID.randomUUID().toString());
                     lineItem.setAuditDetails(createAudit);
@@ -111,7 +133,11 @@ public class EnrichmentUtil {
              */
             else {
 
+            	BillDetail detailFromSearch = billDetailMap.get(billDetail.getId());
+            	
                 billDetail.setAuditDetails(updateAudit);
+                billDetail.getPayee().setId(detailFromSearch.getPayee().getId()); 
+                billDetail.getPayee().setAuditDetails(createAudit);
 
                 for (LineItem lineItem : billDetail.getLineItems()) {
 
