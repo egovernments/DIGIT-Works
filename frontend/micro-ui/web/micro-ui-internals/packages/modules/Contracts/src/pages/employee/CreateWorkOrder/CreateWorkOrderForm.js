@@ -82,7 +82,6 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     [preProcessData?.documents, preProcessData?.officerInCharge, preProcessData?.nameOfCBO]);
 
     const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-        console.log(formData, sessionFormData);
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
