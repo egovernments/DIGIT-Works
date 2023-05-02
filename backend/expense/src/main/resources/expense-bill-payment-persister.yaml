@@ -422,7 +422,7 @@ serviceMaps:
 
 
     # insert into party from payer of payment
-    - query: INSERT INTO eg_expense_payment_bill (id, paymentid, billid, tenantid, totalamount, totalpaidamount, status) VALUES (?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_expense_payment_bill (id, paymentid, billid, tenantid, totalamount, totalpaidamount, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: $.payment.bills.*
       jsonMaps:
        
@@ -438,10 +438,18 @@ serviceMaps:
 
        - jsonPath: $.payment.bills.*.totalPaidAmount  
 
-       - jsonPath: $.payment.bills.*.status              
+       - jsonPath: $.payment.bills.*.status    
+       
+       - jsonPath: $.payment.auditDetails.createdBy
+
+       - jsonPath: $.payment.auditDetails.createdTime
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime          
        
          
-    - query: INSERT INTO eg_expense_payment_billdetail (id, tenantid, paymentbillid, billdetailid, totalamount, totalpaidamount, status) VALUES (?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_expense_payment_billdetail (id, tenantid, paymentbillid, billdetailid, totalamount, totalpaidamount, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: $.payment.bills.*.billDetails.*
       jsonMaps:
        
@@ -458,9 +466,17 @@ serviceMaps:
        - jsonPath: $.payment.bills.*.billDetails.*.totalPaidAmount
        
        - jsonPath: $.payment.bills.*.billDetails.*.status
+       
+       - jsonPath: $.payment.auditDetails.createdBy
+
+       - jsonPath: $.payment.auditDetails.createdTime
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
 
 
-    - query: INSERT INTO eg_expense_payment_lineitem (id, tenantid, paymentbilldetailid, lineitemid, paidamount, status) VALUES (?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_expense_payment_lineitem (id, tenantid, paymentbilldetailid, lineitemid, paidamount, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: $.payment.bills.*.billDetails.*.payableLineItems.*
       jsonMaps:
 
@@ -475,6 +491,14 @@ serviceMaps:
        - jsonPath: $.payment.bills.*.billDetails.*.payableLineItems.*.paidAmount
        
        - jsonPath: $.payment.bills.*.billDetails.*.payableLineItems.*.status
+       
+       - jsonPath: $.payment.auditDetails.createdBy
+
+       - jsonPath: $.payment.auditDetails.createdTime
+
+       - jsonPath: $.payment.auditDetails.lastModifiedBy
+
+       - jsonPath: $.payment.auditDetails.lastModifiedTime
 
  - version: 1.0
    name: Payment update
