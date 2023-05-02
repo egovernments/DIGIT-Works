@@ -15,6 +15,7 @@ import org.egov.digit.expense.web.models.PaymentBill;
 import org.egov.digit.expense.web.models.PaymentBillDetail;
 import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -165,17 +166,26 @@ public class EnrichmentUtil {
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         payment.setId(UUID.randomUUID().toString());
+        /*
+         * TODO needs to be removed when jit integration is implemented
+         */
+        PaymentStatus defaultStatus = PaymentStatus.fromValue(config.getDefaultPaymentStatus());
+        payment.setStatus(defaultStatus);
         
 		for (PaymentBill paymentBill : payment.getBills()) {
 
 			paymentBill.setId(UUID.randomUUID().toString());
-
+			paymentBill.setStatus(defaultStatus);
+			
 			for (PaymentBillDetail billDetail : paymentBill.getBillDetails()) {
 
 				billDetail.setId(UUID.randomUUID().toString());
-
+				billDetail.setStatus(defaultStatus);
+				
 				for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+					
 					lineItem.setId(UUID.randomUUID().toString());
+					lineItem.setStatus(defaultStatus);				
 				}
 			}
 		}

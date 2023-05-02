@@ -43,23 +43,33 @@ public class Constants {
 			+ " payment.lastmodifiedby as p_lastmodifiedby, payment.lastmodifiedtime as p_lastmodifiedtime,"
 			+ " payment.additionaldetails as p_additionaldetails, "
 			
-			+ " paymentbill.id as b_id, paymentbill.tenantid as b_tenantid, paymentid, billid, paymentbill.totalamount as b_totalAmount,"
-			+ " paymentbill.totalpaidamount as b_totalpaidAmount, paymentbill.status as b_status, "
+			+ " paymentbill.id as b_id, paymentbill.tenantid as b_tenantid, paymentid, billid,"
+			+ " paymentbill.totalamount as b_totalAmount, paymentbill.totalpaidamount as b_totalpaidAmount,"
+			+ " paymentbill.status as b_status, paymentbill.createdby as b_createdby,"
+			+ " paymentbill.createdtime as b_createdtime, paymentbill.lastmodifiedby as b_lastmodifiedby,"
+			+ " paymentbill.lastmodifiedtime as b_lastmodifiedtime, "
 			
-			+ " paymentbd.id as bd_id, paymentbd.tenantid as bd_tenantid, billDetailId, paymentbillid, paymentbd.totalamount as bd_totalAmount, "
-			+ " paymentbd.totalpaidamount as bd_totalpaidAmount, paymentbd.status as bd_status, "
+			+ " paymentbd.id as bd_id, paymentbd.tenantid as bd_tenantid, billDetailId, paymentbillid,"
+			+ " paymentbd.totalamount as bd_totalAmount, paymentbd.totalpaidamount as bd_totalpaidAmount,"
+			+ " paymentbd.status as bd_status, paymentbd.createdby as bd_createdby,"
+			+ " paymentbd.createdtime as bd_createdtime, paymentbd.lastmodifiedby as bd_lastmodifiedby,"
+			+ " paymentbd.lastmodifiedtime as bd_lastmodifiedtime, "
 			
-			+ " li.id as li_id, li.tenantid as li_tenantid, paymentbilldetailid, lineitemid, "
-			+ " paidAmount, li.status as li_status"
+			+ " li.id as li_id, li.tenantid as li_tenantid, paymentbilldetailid, lineitemid,"
+			+ " paidAmount, li.status as li_status, li.createdby as li_createdby, li.createdtime as li_createdtime,"
+			+ " li.lastmodifiedby as li_lastmodifiedby, li.lastmodifiedtime as li_lastmodifiedtime "
 
 			
 			+ " FROM eg_expense_payment payment "
 			
-			+ INNER_JOIN + " eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id AND paymentbill.tenantid = payment.tenantid "
+			+ INNER_JOIN + " eg_expense_payment_bill paymentbill ON paymentbill.paymentid = payment.id"
+					+ " AND paymentbill.tenantid = payment.tenantid "
 			
-			+ INNER_JOIN + " eg_expense_payment_billdetail paymentbd ON paymentbd.paymentbillid = paymentbill.id AND paymentbd.tenantid = paymentbill.tenantid "
+			+ INNER_JOIN + " eg_expense_payment_billdetail paymentbd ON paymentbd.paymentbillid = paymentbill.id"
+					+ " AND paymentbd.tenantid = paymentbill.tenantid "
 			
-			+ INNER_JOIN + " eg_expense_payment_lineitem li ON li.paymentbilldetailid = paymentbd.id AND li.tenantid=paymentbd.tenantid ";
+			+ INNER_JOIN + " eg_expense_payment_lineitem li ON li.paymentbilldetailid = paymentbd.id"
+					+ " AND li.tenantid=paymentbd.tenantid ";
 			
 	
 	public static final Set<String> SORTABLE_BILL_COLUMNS = Collections.unmodifiableSet(
