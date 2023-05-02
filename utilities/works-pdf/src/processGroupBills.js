@@ -1,6 +1,69 @@
-var { search_expense_bill, search_bank_account_details, upload_file_using_filestore, pool } = require("./api");
+var { search_expense_bill, search_bank_account_details, upload_file_using_filestore, search_payment_details, create_eg_payments_excel, exec_query_eg_payments_excel } = require("./api");
 const XLSX = require('xlsx');
 var logger = require("./logger").logger;
+let get = require('lodash.get')
+
+async function processGroupBillFromPaymentCreateTopic(requestData) {
+    try {
+        let request = {}
+        let filestoreId = null;
+        let userid = null;
+        let paymentId = null;
+        if (requestData.RequestInfo && requestData?.payment?.bills && requestData.payment.tenantId) {
+            request.paymentId = requestData.payment.id;
+            request.billIds = [];
+            request.billIds = requestData.payment.bills.map(bill => {return bill.billId})
+            request.RequestInfo = requestData.RequestInfo;
+            request.tenantId = requestData.payment.tenantId;
+            // Get user uuid and payment id and create an entry on db
+            userid = get(request, "RequestInfo.userInfo.uuid", null)
+            paymentId = request.paymentId;
+            await create_eg_payments_excel(paymentId, request.tenantId, userid);
+            filestoreId = await processGroupBill(request);
+        }
+        return filestoreId;
+    } catch (error) {
+        logger.error(error.stack || error);
+        await updatePaymentExcelIfJobFailed(paymentId, userid);
+        return;
+    }
+}
+
+
+async function processGroupBillFromPaymentId(requestData) {
+    try {
+        let filestoreId = null;
+        let userid = null;
+        let paymentId = null;
+        if (requestData.RequestInfo && requestData?.paymentId && requestData.tenantId) {
+            let request = {}
+            userid = get(requestData, "RequestInfo.userInfo.uuid", null);
+            paymentId = requestData.paymentId;
+            request.RequestInfo = requestData.RequestInfo;
+            request.paymentCriteria = {
+                "tenantId": requestData.tenantId,
+                "ids": [requestData.paymentId]
+            };
+            let paymentDetails = await search_payment_details(request);
+            if (paymentDetails && paymentDetails?.payments?.length) {
+                let request = {} ;
+                request.RequestInfo = request.requestInfo;
+                let payment = paymentDetails.payments[0];
+                request.paymentId = payment.id;
+                request.billIds = [];
+                request.billIds = payment.bills.map(bill => {return bill.billId})
+                request.RequestInfo = requestData.RequestInfo;
+                request.tenantId = payment.tenantId;
+                filestoreId = await processGroupBill(request);
+            }
+        }
+        return filestoreId;
+    } catch (error) {
+        logger.error(error.stack || error);
+        await updatePaymentExcelIfJobFailed(paymentId, userid);
+        return;
+    }
+}
 async function processGroupBill(requestData) {
     try {
         let paymentId = requestData.paymentId;
@@ -28,8 +91,8 @@ async function processGroupBill(requestData) {
         bankAccounts.forEach((bankAccount) => { accountIdMap[bankAccount.id] = bankAccount });
         billsForExcel = billsForExcel.map((billDetails) => {
             if (accountIdMap[billDetails.beneficiaryId]) {
-                let accountDetails = accountIdMap[billDetails.beneficiaryId];
-                let bankAccountDetails = accountDetails?.bankAccountDetails[0] || {};
+                let accountDetails = accountIdMap[billDetails.beneficiaryId] || {};
+                let bankAccountDetails = get(accountDetails, 'bankAccountDetails[0]', {});
                 billDetails['bankAccountNumber'] = bankAccountDetails?.accountNumber || "";
                 billDetails['accountType'] = bankAccountDetails?.accountType || "";
                 billDetails['beneficiaryName'] = bankAccountDetails?.accountHolderName || "";
@@ -49,16 +112,18 @@ async function processGroupBill(requestData) {
         await updateForJobCompletion(paymentId, filestoreId, userId, billsLength, numberofbeneficialy, totalAmount);
         return filestoreId;
     } catch (error) {
-        console.log("err", error)
-        return null
+        logger.error(error.stack || error);
+        throw(error)
     }
 }
+
+
 
 const getBillDetails = async (requestData) => {
     let bills = [];
     try {
         let request = {}
-        request['requestInfo'] = requestData['RequestInfo']
+        request['RequestInfo'] = requestData['RequestInfo']
         request['billCriteria'] = {
             tenantId: requestData.tenantId,
             ids: requestData.billIds
@@ -83,7 +148,7 @@ const getBillDetails = async (requestData) => {
             }
         }
     } catch (error) {
-        console.log('err', error)
+        logger.error(error.stack || error);
     }
     return bills;
 }
@@ -132,7 +197,7 @@ const fetchBillDetailsByRequest = (request, limit, offset) => {
             }).catch(err => reject(err))
         } catch (error) {
             reject(error)
-            console.log(error)
+            logger.error(error.stack || error);
         }
     })
 }
@@ -149,7 +214,7 @@ const fetchBankAccountDetailsByRequest = (request) => {
             }).catch(err => reject(err))
         } catch (error) {
             reject(error)
-            console.log(error)
+            logger.error(error.stack || error);
         }
     })
 }
@@ -177,13 +242,13 @@ const getBillsForExcel = (bill) => {
     }
     let businessService = bill['businessService'];
     console.log('businessService ' + businessService)
-    if (businessService == 'works.wages') {
+    if (businessService == 'EXPENSE.WAGES') {
         let wagesBills = getWagesBill(bill, billObj);
         bills = bills.concat(wagesBills);
-    } else if (businessService == 'works.purchase') {
+    } else if (businessService == 'EXPENSE.PURCHASE') {
         let purchaseBills = getPurchaseBill(bill, billObj);
         bills = bills.concat(purchaseBills);
-    } else if (businessService == 'works.supervision') {
+    } else if (businessService == 'EXPENSE.SUPERVISION') {
         let supervisionBills = getSupervisionBill(bill, billObj);
         bills = bills.concat(supervisionBills);
     } else {
@@ -227,11 +292,12 @@ let getPurchaseBill = (bill, billObj) => {
 let getSupervisionBill = (bill, billObj) => {
     let bills = [];
     let newBill = deepClone(billObj);
-    newBill['beneficiaryId'] = bill?.billDetails[0]?.payee?.identifier || "";
-    newBill['beneficiaryType'] = bill?.billDetails[0]?.payee?.type || "";
-    newBill['grossAmount'] = bill?.billDetails[0]?.netLineItemAmount || 0;
-    newBill['payableAmount'] = bill?.billDetails[0]?.netLineItemAmount || 0;
-    newBill['headCode'] = bill?.billDetails[0]?.payableLineItems[0]?.headCode || "";
+    let billDetail = get(bill, "billDetails[0]", {});
+    newBill['beneficiaryId'] = get(billDetail,'payee.identifier', "");
+    newBill['beneficiaryType'] = get(billDetail, "payee.type", "");
+    newBill['grossAmount'] = get(billDetail, 'netLineItemAmount', 0);
+    newBill['payableAmount'] = get(billDetail, 'netLineItemAmount', 0);
+    newBill['headCode'] = get(billDetail, 'payableLineItems[0].headCode', "");
     bills.push(newBill)
     return bills;
 }
@@ -290,13 +356,25 @@ async function updateForJobCompletion (paymentId, filestoreId, userId, billsLeng
         const updateQuery = 'UPDATE eg_payments_excel SET filestoreid =  $1, lastmodifiedby = $2, lastmodifiedtime = $3, status = $4, numberofbills = $5, numberofbeneficialy = $6, totalamount = $7 WHERE paymentid = $8';
         const curentTimeStamp = new Date().getTime();
         let status = "COMPLETED";
-        await pool.query(updateQuery, [filestoreId, userId, curentTimeStamp, status, billsLength, numberofbeneficialy, totalAmount, paymentId]);
+        await exec_query_eg_payments_excel(updateQuery, [filestoreId, userId, curentTimeStamp, status, billsLength, numberofbeneficialy, totalAmount, paymentId]);
     } catch (error) {
         logger.error("Error occured while updating the eg_payments_excel table.");
         logger.error(error.stack || error);
     }
 }
 
+async function updatePaymentExcelIfJobFailed(paymentId, userId) {
+    try {
+        const updateQuery = 'UPDATE eg_payments_excel SET lastmodifiedby = $1, lastmodifiedtime = $2, status = $3 WHERE paymentid = $4';
+        const curentTimeStamp = new Date().getTime();
+        let status = "FAILED";
+        await exec_query_eg_payments_excel(updateQuery, [userId, curentTimeStamp, status, paymentId]);
+    } catch (error) {
+        logger.error("Error occured while executing updatePaymentExcelIfJobFailed.");
+        logger.error(error.stack || error);
+    }
+}
+
 let deepClone = (data) => { return JSON.parse(JSON.stringify(data)) };
 
-module.exports = { processGroupBill };
+module.exports = { processGroupBillFromPaymentId, processGroupBillFromPaymentCreateTopic };

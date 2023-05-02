@@ -3,8 +3,7 @@ var router = express.Router();
 var config = require("../config");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 var logger = require("../logger").logger;
-const uuidv4 = require("uuid/v4");
-const { pool } = require("../api");
+const { pool, search_payment_details, exec_query_eg_payments_excel, create_eg_payments_excel, reset_eg_payments_excel } = require("../api");
 var producer = require("../producer").producer;
 
 function renderError(res, errorMessage, errorCode) {
@@ -37,10 +36,10 @@ router.post(
     let paymentId = criteria?.paymentId;
     let billIds = criteria?.billIds;
 
-    if (!paymentId || ! (billIds && billIds.length)) {
+    if (!paymentId) {
       return renderError(
         res,
-        "paymentId and billIds are mandatory to generate the group bill"
+        "paymentId is mandatory to generate the group bill"
       );
     }
 
@@ -51,14 +50,30 @@ router.post(
       );
     }
 
-    var id = uuidv4();
 
     var kafkaData = {
       RequestInfo: requestinfo,
       tenantId: tenantId,
-      paymentId: paymentId,
-      billIds: billIds
+      paymentId: paymentId
     };
+
+    try {
+      let paymentRequest = {};
+      paymentRequest['RequestInfo'] = requestinfo;
+      paymentRequest.paymentCriteria = {
+        "tenantId": tenantId,
+        "ids": [paymentId]
+      };
+      let paymentResp = await search_payment_details(paymentRequest);
+      if (!paymentResp?.payments?.length) {
+        console.log(error)
+        return renderError(res, `Failed to query for payment search. Check the Payment id.`);
+      }
+    } catch (error) {
+      logger.error(error.stack || err);
+      return renderError(res, `Failed to query for payment search.`);
+    }
+
 
     try {
       var payloads = [];
@@ -78,18 +93,12 @@ router.post(
       });
 
       try {
-        const result = await pool.query('select * from eg_payments_excel where paymentid = $1', [paymentId]);
+        const result = await exec_query_eg_payments_excel('select * from eg_payments_excel where paymentid = $1', [paymentId])
         var userId = requestinfo?.userInfo?.uuid;
         if (result.rowCount < 1) {
-          const insertQuery = 'INSERT INTO eg_payments_excel(id, paymentid, tenantId, status, numberofbills, numberofbeneficialy, totalamount, filestoreid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
-          const curentTimeStamp = new Date().getTime();
-          const status = 'INPROGRESS';
-          await pool.query(insertQuery, [id, paymentId, tenantId, status, 0, 0, 0, null, userId, userId, curentTimeStamp, curentTimeStamp]);
+          await create_eg_payments_excel(paymentId, tenantId, userId);
         } else {
-          const status = 'INPROGRESS';
-          const updateQuery = 'UPDATE eg_payments_excel SET status =  $1, numberofbills = $2, numberofbeneficialy = $3, totalamount = $4, filestoreid = $5, lastmodifiedby = $6, lastmodifiedtime = $7 WHERE paymentid = $8';
-          const curentTimeStamp = new Date().getTime();
-          await pool.query(updateQuery,[status, 0, 0, 0, null, userId, curentTimeStamp, paymentId]);
+          await reset_eg_payments_excel(paymentId, userId);
         }
       } catch (err) {
         logger.error(err.stack || err);
@@ -103,8 +112,8 @@ router.post(
       });
 
     } catch (error) {
-      console.log(error)
-      return renderError(res, `Failed to query bill for water and sewerage application`);
+      logger.error(error.stack || err);
+      return renderError(res, `Failed to query bill generate.`);
     }
 
   })
@@ -136,7 +145,8 @@ router.post(
             paymentId = [paymentId];
           }
         }
-
+        delete requestInfo['authToken']
+        delete requestInfo['userInfo']
         getFileStoreIds(
           paymentId,
           tenantid,
@@ -191,7 +201,7 @@ const getFileStoreIds = (
     searchquery += ` createdby = ($${next++})`;
     queryparams.push(userId);
   }
-
+  
   pool.query(searchquery, queryparams, (error, results) => {
     if (error) {
       logger.error(error.stack || error);

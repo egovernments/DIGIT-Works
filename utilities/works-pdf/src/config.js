@@ -15,6 +15,7 @@ module.exports = {
   KAFKA_RECEIVE_CREATE_JOB_TOPIC: process.env.KAFKA_RECEIVE_CREATE_JOB_TOPIC || "PDF_GEN_RECEIVE",
   KAFKA_BULK_PDF_TOPIC: process.env.KAFKA_BULK_PDF_TOPIC || "BULK_PDF_GEN",
   KAFKA_PAYMENT_EXCEL_GEN_TOPIC: process.env.KAFKA_PAYMENT_EXCEL_GEN_TOPIC || "PAYMENT_EXCEL_GEN",
+  KAFKA_EXPENSE_PAYMENT_CREATE_TOPIC: process.env.KAFKA_EXPENSE_PAYMENT_CREATE_TOPIC || "expense-payment-create",
   PDF_BATCH_SIZE: process.env.PDF_BATCH_SIZE || 40,
   DB_USER: process.env.DB_USER || "postgres",
   DB_PASSWORD: process.env.DB_PASSWORD || "postgres",
@@ -67,6 +68,7 @@ module.exports = {
     mdmsWageSeekerSkills_search: "/egov-mdms-service/v1/_get",
     orgnisation_search: "/org-services/organisation/v1/_search",
     expense_bill_search: "/expense/bill/v1/_search",
+    expense_payment_search: "/expense/payment/v1/_search",
     bankaccount_search: "/bankaccount-service/bankaccount/v1/_search"
   },
 };

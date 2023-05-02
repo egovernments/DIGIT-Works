@@ -1,7 +1,7 @@
 var config = require("./config");
 var kafka = require("kafka-node");
 const logger = require("./logger").logger;
-var { processGroupBill } = require("./processGroupBills");
+var { processGroupBillFromPaymentCreateTopic, processGroupBillFromPaymentId } = require("./processGroupBills");
 
 const listenConsumer = async()=>{
 
@@ -20,11 +20,14 @@ const listenConsumer = async()=>{
     fromOffset: "latest",
     // how to recover from OutOfRangeOffset error (where save offset is past server retention)
     // accepts same value as fromOffset
-    outOfRangeOffset: "earliest"
+    outOfRangeOffset: "earliest",
+    // Defining a kafka consumer-group because for payment-create-topic there are persister consumer is already running
+    groupId: "works-pdf"
   };
 
   var consumerGroup = new kafka.ConsumerGroup(options, [
     config.KAFKA_PAYMENT_EXCEL_GEN_TOPIC,
+    config.KAFKA_EXPENSE_PAYMENT_CREATE_TOPIC
   ]);
 
   consumerGroup.on("ready", function() {
@@ -34,14 +37,23 @@ const listenConsumer = async()=>{
   consumerGroup.on("message", function(message) {
     logger.info("record received on consumer for create");
     try {
+      let topic = message?.topic
       var data = JSON.parse(message.value);
-      // TODO: billids has to be remove after integration with payment api
-      if (data?.RequestInfo && data?.billIds && data.paymentId) {
-        processGroupBill(data).then(() => {
-          logger.info("Record created for expense consumer request");
+      if (topic == config.KAFKA_EXPENSE_PAYMENT_CREATE_TOPIC) {
+        processGroupBillFromPaymentCreateTopic(data).then(() => {
+          logger.info(`Record created for ${topic} consumer request`);
         }).catch(error => {
           logger.error(error.stack || error);
         })
+      } else if (topic == config.KAFKA_PAYMENT_EXCEL_GEN_TOPIC) {
+        // TODO: billids has to be remove after integration with payment api
+        if (data?.RequestInfo && data.paymentId) {
+          processGroupBillFromPaymentId(data).then(() => {
+            logger.info(`Record created for ${topic} consumer request`);
+          }).catch(error => {
+            logger.error(error.stack || error);
+          })
+        }
       }
     } catch (error) {
       logger.error("error in create request by consumer " + error.message);
