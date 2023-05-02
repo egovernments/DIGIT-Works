@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import CreateProjectForm from "./CreateProjectForm";
-import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
+// import { createProjectConfigMUKTA } from "../../../configs/createProjectConfigMUKTA";
 import { updateDefaultValues } from "../../../utils/modifyProjectUtils";
 
 const CreateProject = () => {
