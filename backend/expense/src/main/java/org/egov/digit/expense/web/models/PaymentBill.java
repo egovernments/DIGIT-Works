@@ -11,6 +11,7 @@ import org.egov.digit.expense.web.models.enums.PaymentStatus;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.models.coremodels.AuditDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
@@ -51,6 +52,9 @@ public class PaymentBill {
 	@Valid
 	@NotNull
 	private List<PaymentBillDetail> billDetails;
+	
+  @JsonProperty("auditDetails")
+	private AuditDetails auditDetails;
 	
 	public PaymentBill addPaymentBillDetailItem (PaymentBillDetail paymentBillDetailItem) {
 

@@ -422,7 +422,7 @@ serviceMaps:
 
 
     # insert into party from payer of payment
-    - query: INSERT INTO eg_expense_payment_bill (id, paymentid, billid, tenantid, totalamount, totalpaidamount, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_expense_payment_bill (id, paymentid, billid, tenantid, totalamount, totalpaidamount, status, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       basePath: $.payment.bills.*
       jsonMaps:
        

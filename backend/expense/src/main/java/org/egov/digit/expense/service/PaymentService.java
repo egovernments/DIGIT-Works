@@ -68,10 +68,7 @@ public class PaymentService {
         Payment payment = paymentRequest.getPayment();
         validator.validateCreateRequest(paymentRequest);
         enrichmentUtil.encrichCreatePayment(paymentRequest);
-        /*
-         * TODO needs to be removed when jit integration is implemented
-         */
-        payment.setStatus(PaymentStatus.fromValue(config.getDefaultPaymentStatus()));
+
         producer.push(config.getPaymentCreateTopic(), paymentRequest);
         backUpdateBillForPayment(paymentRequest);
 

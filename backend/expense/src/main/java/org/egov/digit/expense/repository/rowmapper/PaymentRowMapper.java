@@ -50,13 +50,12 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 				paymentBillMap.clear();
 				paymentBillDtlMap.clear();
 				
-				AuditDetails auditDetails =AuditDetails.builder()
-					.lastModifiedTime((Long) rs.getObject("p_lastmodifiedtime"))
-					.createdTime((Long) rs.getObject("p_createdtime"))
-					.lastModifiedBy(rs.getString("p_lastmodifiedby"))
-					.createdBy(rs.getString("p_createdby"))
-					.build();
-
+				AuditDetails auditDetails = getAuditDetailsForKey(rs,
+						"p_createdby",
+						"p_createdTime",
+						"p_lastmodifiedby",
+						"p_lastmodifiedTime");
+						
 				payment = Payment.builder()
 					.additionalDetails(getadditionalDetail(rs, "p_additionalDetails"))
 					.status(PaymentStatus.fromValue(rs.getString("p_status")))
@@ -75,12 +74,19 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 			
 			if(null == bill) {
 				
+				AuditDetails billAuditDetails = getAuditDetailsForKey(rs,
+						"b_createdby",
+						"b_createdTime",
+						"b_lastmodifiedby",
+						"b_lastmodifiedTime");
+				
 				 bill = PaymentBill.builder()
 						.status(PaymentStatus.fromValue(rs.getString("b_status")))
 						.totalPaidAmount(rs.getBigDecimal("b_totalpaidAmount"))
 						.totalAmount(rs.getBigDecimal("b_totalamount"))
 			     		.tenantId(rs.getString("b_tenantId"))
 						.billId(rs.getString("billid"))
+						.auditDetails(billAuditDetails)
 						.id(paymentBillId)
 						.build();
 				 
@@ -93,12 +99,19 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 			
 			if(null == billDetail) {
 				
+				AuditDetails bdAuditDetails = getAuditDetailsForKey(rs,
+						"bd_createdby",
+						"bd_createdTime",
+						"bd_lastmodifiedby",
+						"bd_lastmodifiedTime");
+				
 				billDetail = PaymentBillDetail.builder()
 						.status(PaymentStatus.fromValue(rs.getString("bd_status")))
 						.totalPaidAmount(rs.getBigDecimal("bd_totalpaidAmount"))
 						.totalAmount(rs.getBigDecimal("bd_totalamount"))
 						.billDetailId(rs.getString("billDetailId"))
 						.tenantId(rs.getString("bd_tenantid"))
+						.auditDetails(bdAuditDetails)
 						.id(paymentBillDetailId)
 						.build();
 
@@ -106,11 +119,18 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 				bill.addPaymentBillDetailItem(billDetail);
 			}
 			
+			AuditDetails liAuditDetails = getAuditDetailsForKey(rs,
+					"li_createdby",
+					"li_createdTime",
+					"li_lastmodifiedby",
+					"li_lastmodifiedTime");
+			
 			PaymentLineItem lineItem = PaymentLineItem.builder()
 					.status(PaymentStatus.fromValue(rs.getString("li_status")))
 					.lineItemId(rs.getString("lineitemid"))
 					.paidAmount(rs.getBigDecimal("paidamount"))
 					.tenantId(rs.getString("li_tenantid"))
+					.auditDetails(liAuditDetails)
 					.id(rs.getString("li_id"))
 					.build();
 			
@@ -118,6 +138,27 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 		}
 		log.debug("converting map to list object ::: " + paymentMap.values());
 		return new ArrayList<>(paymentMap.values());
+	}
+	
+	/**
+	 * Fetch audit details from result set for the given keys
+	 * 
+	 * @param rs
+	 * @param createdBy
+	 * @param createdTime
+	 * @param modifiedBy
+	 * @param modifiedTime
+	 * @return
+	 * @throws SQLException
+	 */
+	private AuditDetails getAuditDetailsForKey (ResultSet rs, String createdBy, String createdTime, String modifiedBy, String modifiedTime) throws SQLException {
+		
+		return AuditDetails.builder()
+			.lastModifiedTime(rs.getLong(modifiedTime))
+			.createdTime((Long) rs.getObject(createdTime))
+			.lastModifiedBy(rs.getString(modifiedBy))
+			.createdBy(rs.getString(createdBy))
+			.build();
 	}
 	
 	
