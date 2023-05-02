@@ -513,7 +513,12 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                             error: (String? error) => Container(),
                             orElse: () => Container());
                       }),
-                    )
+                    ),
+                    const SizedBox(height: 30),
+                    const Align(
+                      alignment: Alignment.bottomCenter,
+                      child: PoweredByDigit(),
+                    ),
                   ]))
             ]),
           ),
