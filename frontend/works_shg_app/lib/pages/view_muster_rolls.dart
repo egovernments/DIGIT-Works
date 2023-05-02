@@ -54,6 +54,24 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
             child: SideBar(
           module: CommonMethods.getLocaleModules(),
         ))),
+        bottomNavigationBar:
+            BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
+                builder: (context, state) {
+          return state.maybeWhen(
+              orElse: () => Container(),
+              loading: () => shg_loader.Loaders.circularLoader(context),
+              loaded: (MusterRollsModel? musterRollsModel) {
+                return musterList.isEmpty || musterList.length == 1
+                    ? const SizedBox(
+                        height: 30,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              });
+        }),
         body: SingleChildScrollView(
             child: BlocListener<MusterRollSearchBloc, MusterRollSearchState>(
           listener: (context, state) {
@@ -123,10 +141,12 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                         const SizedBox(
                           height: 16.0,
                         ),
-                        const Align(
-                          alignment: Alignment.bottomCenter,
-                          child: PoweredByDigit(),
-                        )
+                        musterList.isNotEmpty && musterList.length > 1
+                            ? const Align(
+                                alignment: Alignment.bottomCenter,
+                                child: PoweredByDigit(),
+                              )
+                            : const SizedBox.shrink()
                       ]);
                 },
                 orElse: () => Container());

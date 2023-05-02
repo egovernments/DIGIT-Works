@@ -257,7 +257,12 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                         : Container();
                   });
             },
-          )
+          ),
+          const SizedBox(height: 30),
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: PoweredByDigit(),
+          ),
         ])));
   }
 }

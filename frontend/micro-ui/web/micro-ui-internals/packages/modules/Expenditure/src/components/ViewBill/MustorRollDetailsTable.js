@@ -58,12 +58,6 @@ const MustorRollDetailsTable = ({ musterData }) => {
               styles={{marginTop: "16px"}}
               getCellProps={(cellInfo) => {
                   let tableProp = {};
-                  if(cellInfo.column.Header === "Modified Amount(Rs)") {
-                    tableProp["data-modified-amt"] = "modified-amt";
-                  }
-                  if(cellInfo.value === undefined) {
-                    tableProp["data-radio-selection"] = "last-radio";
-                  }
                   if(cellInfo?.row?.original?.type === "total") {
                     tableProp["data-last-row-cell"] = "last-row";
                   }

@@ -7,7 +7,6 @@ import CreateProjectForm from "./CreateProjectForm";
 import { updateDefaultValues } from "../../../utils/modifyProjectUtils";
 
 const CreateProject = () => {
-
     const {t} = useTranslation();
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();

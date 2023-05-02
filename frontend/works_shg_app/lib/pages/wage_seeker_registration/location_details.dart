@@ -112,6 +112,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                     DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.city),
+                      padding: const EdgeInsets.only(top: 0),
                       menuItems: city.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: cityKey,
@@ -126,6 +127,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                     DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.ward),
+                      padding: const EdgeInsets.only(top: 32),
                       menuItems: ward.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: wardKey,
@@ -151,6 +153,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                     DigitReactiveDropdown<String>(
                         label: t.translate(i18.common.locality),
+                        padding: const EdgeInsets.only(top: 32),
                         menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,
                         valueMapper: (value) => t.translate(
@@ -164,6 +167,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         }),
                     DigitTextFormField(
                       formControlName: streetNameKey,
+                      padding: const EdgeInsets.only(top: 32),
                       label: t.translate(i18.common.streetName),
                     ),
                     DigitTextFormField(
