@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaymentSearchRequest {
 
-	@JsonProperty("requestInfo")
+	@JsonProperty("RequestInfo")
 	@NotNull
 	private RequestInfo requestInfo;
 

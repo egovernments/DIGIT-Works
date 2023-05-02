@@ -41,7 +41,7 @@
         {
           "sla": 172800000,
           "state": "PENDING_FOR_VERIFICATION",
-          "applicationStatus": "SUBMITTED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -66,7 +66,7 @@
         {
           "sla": 86400000,
           "state": "PENDING_FOR_APPROVAL",
-          "applicationStatus": "VERIFIED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -105,7 +105,7 @@
         {
           "sla": 604800000,
           "state": "APPROVED",
-          "applicationStatus": "APPROVED",
+          "applicationStatus": "ACTIVE",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": true,
@@ -117,7 +117,7 @@
         {
           "sla": 86400000,
           "state": "PENDING_FOR_CORRECTION",
-          "applicationStatus": "SENT_BACK",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
@@ -135,7 +135,7 @@
         {
           "sla": null,
           "state": "REJECTED",
-          "applicationStatus": "REJECTED",
+          "applicationStatus": "INACTIVE",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": true,
