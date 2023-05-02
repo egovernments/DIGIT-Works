@@ -215,7 +215,7 @@ export const WorksSearch = {
         const tableRowsOverheads = overheads?.map((row, index) => {
             return [
                 index + 1,
-                row?.additionalDetails?.row?.name?.description,
+                t(`ES_COMMON_OVERHEADS_${row?.name}`),
                 row?.additionalDetails?.row?.name?.type?.includes("percent") ? `${row?.additionalDetails?.row?.name?.value}%`:t("WORKS_LUMPSUM"),
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail?.[0]?.amount?.toFixed(2), 'number')
             ]

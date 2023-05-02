@@ -16,6 +16,7 @@ import TotalBillAmount from "./pageComponents/TotalBillAmount";
 import PayableAmt from "./components/PayableAmt";
 import DownloadBill from "./pages/employee/Bills/DownloadBill";
 import ViewPurchaseBill from "./components/ViewBill/ViewPurchaseBill";
+import TotalBillAmountView from "./pageComponents/ViewTotalBillAmount";
 
 const ExpenditureModule = ({ stateCode, userType, tenants }) => {
     
@@ -54,7 +55,8 @@ const componentsToRegister = {
     ViewWageBill,
     ViewPurchaseBill,
     PayableAmt,
-    DownloadBill
+    DownloadBill,
+    TotalBillAmountView
 };
 
 export const initExpenditureComponents = () => {
