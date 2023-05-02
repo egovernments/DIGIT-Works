@@ -36,7 +36,7 @@ public class EnrichmentUtil {
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
 		AuditDetails audit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
-		String billNumberIdFormatName = bill.getBusinessService().concat(Constants.BILL_ID_FORMAT_SUFFIX);
+		String billNumberIdFormatName = bill.getBusinessService().toLowerCase().concat(Constants.BILL_ID_FORMAT_SUFFIX);
 		String billNumber = idgenUtil
 				.getIdList(billRequest.getRequestInfo(), bill.getTenantId().split("\\.")[0], billNumberIdFormatName, null, 1).get(0);
 
