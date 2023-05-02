@@ -145,7 +145,7 @@ public class SupervisionBillGeneratorService {
                     .tenantId(criteria.getTenantId())
                     .billDate(Instant.now().toEpochMilli())
                     .totalAmount(calculation.getTotalAmount())
-                    .referenceId(criteria.getContractId() +"_SB_"+supervisionBillNumber)
+                    .referenceId(criteria.getContractId() +"_"+supervisionBillNumber)
                     .businessService(config.getSupervisionBusinessService())
                     .fromPeriod(calcDetail.getFromPeriod().longValue())
                     .toPeriod(calcDetail.getToPeriod().longValue())
