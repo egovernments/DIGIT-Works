@@ -166,14 +166,23 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                               ),
                         }),
                     DigitTextFormField(
-                      formControlName: streetNameKey,
-                      padding: const EdgeInsets.only(top: 32),
-                      label: t.translate(i18.common.streetName),
-                    ),
+                        formControlName: streetNameKey,
+                        padding: const EdgeInsets.only(top: 32),
+                        label: t.translate(i18.common.streetName),
+                        validationMessages: {
+                          'maxLength': (_) => t.translate(
+                                i18.wageSeeker.maxStreetCharacters,
+                              ),
+                        }),
                     DigitTextFormField(
-                      formControlName: doorNoKey,
-                      label: t.translate(i18.common.doorNo),
-                    ),
+                        formControlName: doorNoKey,
+                        label: t.translate(i18.common.doorNo),
+                        maxLength: 8,
+                        validationMessages: {
+                          'maxLength': (_) => t.translate(
+                                i18.wageSeeker.maxDoorNoCharacters,
+                              ),
+                        }),
                   ]),
                   const SizedBox(height: 16),
                   Center(
@@ -229,8 +238,11 @@ class LocationDetailsState extends State<LocationDetailsPage> {
             value: locationDetails.ward, validators: [Validators.required]),
         localityKey: FormControl<String>(
             value: locationDetails.locality, validators: [Validators.required]),
-        streetNameKey:
-            FormControl<String>(value: locationDetails.streetName ?? ''),
-        doorNoKey: FormControl<String>(value: locationDetails.doorNo ?? ''),
+        streetNameKey: FormControl<String>(
+            value: locationDetails.streetName ?? '',
+            validators: [Validators.maxLength(64)]),
+        doorNoKey: FormControl<String>(
+            value: locationDetails.doorNo ?? '',
+            validators: [Validators.maxLength(8)]),
       });
 }
