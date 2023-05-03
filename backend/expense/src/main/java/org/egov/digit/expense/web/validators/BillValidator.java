@@ -61,7 +61,22 @@ public class BillValidator {
         	throw new CustomException("EG_EXPENSE_DUPLICATE_BILL","Active bill exists for the given combination of "
         			+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
         
-        boolean isWorkflowActiveForBusinessService = isWorkflowActiveForBusinessService(bill.getBusinessService());
+        validWorkflow(billRequest, errorMap);
+        
+		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
+        validateBillAmountAndDate(bill, errorMap);
+        validateTenantId(billRequest, mdmsData);
+        validateMasterData(billRequest, errorMap, mdmsData);
+
+        if (!CollectionUtils.isEmpty(errorMap))
+            throw new CustomException(errorMap);
+
+    }
+
+	private void validWorkflow(BillRequest billRequest, Map<String, String> errorMap) {
+		
+		Bill bill = billRequest.getBill();
+		boolean isWorkflowActiveForBusinessService = isWorkflowActiveForBusinessService(bill.getBusinessService());
 
         if (isWorkflowActiveForBusinessService) {
 
@@ -74,21 +89,14 @@ public class BillValidator {
                 errorMap.put("EG_BILL_WF_FIELDS_ERROR",
                         "workflow action is mandatory when worflow is active");
         }
-        
-		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
-        validateBillAmountAndDate(bill, errorMap);
-        validateTenantId(billRequest, mdmsData);
-        validateMasterData(billRequest, errorMap, mdmsData);
-
-        if (!CollectionUtils.isEmpty(errorMap))
-            throw new CustomException(errorMap);
-
-    }
+	}
 
     public List<Bill> validateUpdateRequest(BillRequest billRequest) {
 
         Map<String, String> errorMap = new HashMap<>();
         Bill bill = billRequest.getBill();
+        
+        validWorkflow(billRequest, errorMap);
         
         List<Bill> billsFromSearch = getBillsForValidation(billRequest);
         if(CollectionUtils.isEmpty(billsFromSearch))
@@ -231,7 +239,6 @@ public class BillValidator {
     	Bill bill = billRequest.getBill();
     	
 		BillCriteria billCriteria = BillCriteria.builder()
-				.ids(Stream.of(bill.getId()).collect(Collectors.toSet()))
 				.referenceIds(Stream.of(bill.getReferenceId()).collect(Collectors.toSet()))
 				.businessService(bill.getBusinessService())
 				.statusNot(Status.INACTIVE.toString())

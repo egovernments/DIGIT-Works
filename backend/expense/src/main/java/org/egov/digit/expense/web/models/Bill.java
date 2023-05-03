@@ -69,6 +69,7 @@ public class Bill {
 
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 128)
+	@NotNull
 	private String referenceId;
 
 	@JsonProperty("fromPeriod")
