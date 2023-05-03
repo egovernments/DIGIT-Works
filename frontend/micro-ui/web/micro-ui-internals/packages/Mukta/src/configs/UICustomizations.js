@@ -1097,39 +1097,37 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      let requestBody = { ...data.body.billCriteria };
-      const dateConfig = {
-        createdFrom: "daystart",
-        createdTo: "dayend",
-      };
-      const selectConfig = {
-        businessService: "businessService.businessService",
-        ward: "ward[0].code",
-        status: "status[0].code",
-      };
-      const textConfig = ["projectName", "billNumber"]
+      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdFrom,"daystart");
+      if(createdFromDate) data.body.searchCriteria.createdFrom = createdFromDate
+      const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdTo);
+      if(createdToDate) data.body.searchCriteria.createdTo = createdToDate
+      
+      const status = data?.body?.searchCriteria?.status?.[0]?.code
+      delete data?.body?.searchCriteria?.status
+      if(status){
+        data.body.searchCriteria.status = status
+      }
 
-      let SearchCriteria = Object.keys(requestBody)
-      .map((key) => {
-        if (selectConfig[key]) {
-          requestBody[key] = _.get(requestBody, selectConfig[key], null);
-        } else if (typeof requestBody[key] == "object") {
-          requestBody[key] = requestBody[key]?.code;
-        } else if (textConfig?.includes(key)) {
-          requestBody[key] = requestBody[key]?.trim()
-        }
-        return key;
-      })
-      .filter((key) => requestBody[key])
-      .reduce((acc, curr) => {
-        if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-          _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-        } else {
-          _.set(acc, curr, requestBody[curr]);
-        }
-        return acc;
-      }, {});
-      data.body.billCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+      const billType = data?.body?.searchCriteria?.billType?.businessService;
+      delete data?.body?.searchCriteria?.billType
+      delete data?.body?.searchCriteria?.billTypes
+      if(billType) data.body.searchCriteria.billTypes = [billType]
+
+      const ward =  data?.body?.searchCriteria?.ward?.[0]?.code
+      delete data?.body?.searchCriteria?.ward
+      if(ward) data.body.searchCriteria.ward = ward
+
+      const billNumber = data?.body?.searchCriteria?.billNumber?.trim()
+      delete data?.body?.searchCriteria?.billNumber
+      delete data?.body?.searchCriteria?.billNumbers
+      if(billNumber) data.body.searchCriteria.billNumbers = [billNumber]
+    
+      const projectNumber = data?.body?.searchCriteria?.projectNumber?.trim()
+      delete data?.body?.searchCriteria?.projectNumber
+      delete data?.body?.searchCriteria?.projectNumbers
+      if(projectNumber) data.body.searchCriteria.projectNumbers = [projectNumber]
+
+      data.body.searchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
