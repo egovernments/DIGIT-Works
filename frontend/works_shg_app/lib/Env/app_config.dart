@@ -55,8 +55,7 @@ Map<String, dynamic> devConstants = {
       ? '${window.location.origin}/'
       : const String.fromEnvironment('BASE_URL'),
   // "https://works-qa.digit.org/works-shg-app/",
-  _globalAssets: context['window']['globalConfigs']
-      .callMethod('getConfig', ['STATE_LEVEL_TENANT_ID'])
+  _globalAssets: context['window']['globalConfigs']['stateTenantId']
 };
 
 Map<String, dynamic> stageConstants = {
