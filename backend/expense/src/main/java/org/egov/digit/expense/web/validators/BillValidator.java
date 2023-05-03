@@ -48,20 +48,18 @@ public class BillValidator {
     @Autowired
     private BillRepository billRepository;
 
-    // TODO FIXME amount validation between amount and paid amount relation ship if negative values not involved
-
     public void validateCreateRequest(BillRequest billRequest) {
 
     	Map<String, String> errorMap = new HashMap<>();
     	
         Bill bill = billRequest.getBill();
         
-        List<Bill> billsFromSearch = getBillsForValidation(billRequest);
+        List<Bill> billsFromSearch = getBillsForValidation(billRequest, true);
         if(!CollectionUtils.isEmpty(billsFromSearch))
         	throw new CustomException("EG_EXPENSE_DUPLICATE_BILL","Active bill exists for the given combination of "
         			+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
         
-        validWorkflow(billRequest, errorMap);
+        validateWorkflow(billRequest, errorMap);
         
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
         validateBillAmountAndDate(bill, errorMap);
@@ -73,32 +71,14 @@ public class BillValidator {
 
     }
 
-	private void validWorkflow(BillRequest billRequest, Map<String, String> errorMap) {
-		
-		Bill bill = billRequest.getBill();
-		boolean isWorkflowActiveForBusinessService = isWorkflowActiveForBusinessService(bill.getBusinessService());
-
-        if (isWorkflowActiveForBusinessService) {
-
-            Workflow workflow = billRequest.getWorkflow();
-
-			if (null == workflow)
-				throw new CustomException("EG_BILL_WF_ERROR", "workflow is mandatory when worflow is active");
-
-            if (null == workflow.getAction())
-                errorMap.put("EG_BILL_WF_FIELDS_ERROR",
-                        "workflow action is mandatory when worflow is active");
-        }
-	}
-
     public List<Bill> validateUpdateRequest(BillRequest billRequest) {
 
         Map<String, String> errorMap = new HashMap<>();
         Bill bill = billRequest.getBill();
         
-        validWorkflow(billRequest, errorMap);
+        validateWorkflow(billRequest, errorMap);
         
-        List<Bill> billsFromSearch = getBillsForValidation(billRequest);
+        List<Bill> billsFromSearch = getBillsForValidation(billRequest, false);
         if(CollectionUtils.isEmpty(billsFromSearch))
         	throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
         			+ " businessService : " + bill.getBusinessService() + " and refernceId : " + bill.getReferenceId());
@@ -234,16 +214,24 @@ public class BillValidator {
         return isWorkflowActiveForBusinessService;
     }
     
-    private List<Bill> getBillsForValidation(BillRequest billRequest){
+    private List<Bill> getBillsForValidation(BillRequest billRequest, Boolean isCreate){
 
     	Bill bill = billRequest.getBill();
-    	
-		BillCriteria billCriteria = BillCriteria.builder()
-				.referenceIds(Stream.of(bill.getReferenceId()).collect(Collectors.toSet()))
-				.businessService(bill.getBusinessService())
-				.statusNot(Status.INACTIVE.toString())
+    	BillCriteria billCriteria = BillCriteria.builder()
+    			.statusNot(Status.INACTIVE.toString())
 				.tenantId(bill.getTenantId())
 				.build();
+    	
+		if (isCreate) {
+
+			billCriteria.setReferenceIds(Stream.of(bill.getReferenceId()).collect(Collectors.toSet()));
+			billCriteria.setBusinessService(bill.getBusinessService());
+		} else {
+			
+			billCriteria.setIds(Stream.of(bill.getId()).collect(Collectors.toSet()));
+		}
+		
+		
 		
 		BillSearchRequest billSearchRequest = BillSearchRequest.builder()
 				.requestInfo(billRequest.getRequestInfo())
@@ -252,6 +240,24 @@ public class BillValidator {
 		
 		return billRepository.search(billSearchRequest);
     }
+    
+	private void validateWorkflow(BillRequest billRequest, Map<String, String> errorMap) {
+		
+		Bill bill = billRequest.getBill();
+		boolean isWorkflowActiveForBusinessService = isWorkflowActiveForBusinessService(bill.getBusinessService());
+
+        if (isWorkflowActiveForBusinessService) {
+
+            Workflow workflow = billRequest.getWorkflow();
+
+			if (null == workflow)
+				throw new CustomException("EG_BILL_WF_ERROR", "workflow is mandatory when worflow is active");
+
+            if (null == workflow.getAction())
+                errorMap.put("EG_BILL_WF_FIELDS_ERROR",
+                        "workflow action is mandatory when worflow is active");
+        }
+	}
 
 	private Map<String, Map<String, JSONArray>> getMasterDataForValidation(BillRequest billRequest, Bill bill) {
 		

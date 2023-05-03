@@ -23,7 +23,7 @@ additionaldetails jsonb,
 
 CONSTRAINT pk_eg_expense_bill PRIMARY KEY (id, tenantid)
 );
-CREATE INDEX index_unique_eg_expense_bill ON eg_expense_bill (referenceId, businessservice, tenantid, status) WHERE status != 'INACTIVE';
+CREATE UNIQUE INDEX index_unique_eg_expense_bill ON eg_expense_bill (referenceId, businessservice, tenantid) WHERE status != 'INACTIVE';
 
 CREATE TABLE IF NOT EXISTS eg_expense_billdetail 
 (
