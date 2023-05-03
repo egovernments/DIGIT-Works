@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,26 +29,26 @@ public class CalculatorSearchCriteria {
 	@Size(min = 2, max = 64)
 	private String tenantId;
 
-	@JsonProperty("projectNumber")
-	private String projectNumber;
+	@JsonProperty("projectNumbers")
+	private List<String> projectNumbers;
 
-	@JsonProperty("contractNumber")
-	private String contractNumber;
+	@JsonProperty("contractNumbers")
+	private List<String> contractNumbers;
 
-	@JsonProperty("orgNumber")
-	private String orgNumber;
+	@JsonProperty("orgNumbers")
+	private List<String> orgNumbers;
 
-	@JsonProperty("musterRollNumber")
-	private String musterRollNumber;
+	@JsonProperty("musterRollNumbers")
+	private List<String> musterRollNumbers;
 
-	@JsonProperty("billNumber")
-	private String billNumber;
+	@JsonProperty("billNumbers")
+	private List<String> billNumbers;
 
-	@JsonProperty("billType")
-	private String billType;
+	@JsonProperty("billTypes")
+	private List<String> billTypes;
 
-	@JsonProperty("billRefId")
-	private String billReferenceId;
+	@JsonProperty("billRefIds")
+	private List<String> billReferenceIds;
 
 }
 

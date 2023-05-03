@@ -25,6 +25,6 @@ public class CalculatorSearchRequest {
 	private RequestInfo requestInfo;
 
 	@JsonProperty("searchCriteria")
-	private List<CalculatorSearchCriteria> searchCriterias;
+	private CalculatorSearchCriteria searchCriteria;
 
 }

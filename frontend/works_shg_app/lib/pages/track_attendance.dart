@@ -10,12 +10,14 @@ import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dar
     as i18;
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
+import 'package:works_shg_app/widgets/atoms/custom_info_card.dart';
 import 'package:works_shg_app/widgets/atoms/date_range_picker.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 import 'package:works_shg_app/widgets/molecules/digit_table.dart' as shg_app;
 
 import '../blocs/attendance/attendance_create_log.dart';
 import '../blocs/attendance/attendance_hours_mdms.dart';
+import '../blocs/attendance/muster_submission_mdms.dart';
 import '../blocs/attendance/search_projects/search_individual_project.dart';
 import '../blocs/attendance/skills/skills_bloc.dart';
 import '../blocs/localization/app_localization.dart';
@@ -101,6 +103,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     context.read<AttendanceHoursBloc>().add(
           const AttendanceHoursEvent(),
         );
+    context.read<MusterSubmissionBloc>().add(
+      const MusterSubmissionEvent(),
+    );
     context.read<SkillsBloc>().add(
           const SkillsEvent(),
         );
@@ -283,6 +288,78 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                       context)
                                                   .translate(i18.common.cancel),
                                             ),
+                                            CustomInfoCard(title: AppLocalizations.of(context)
+                                                .translate(i18.common.info), description: AppLocalizations.of(context)
+                                                .translate(i18.attendanceMgmt.toMarkAttendance),
+                                            child: Column(
+                                              children: entryExitList!.length > 2  ? [
+                                                Row(children:  [
+                                                  CircularButton(icon: Icons.circle_rounded,
+                                                      size: 15,
+                                                      color: const Color.fromRGBO(0, 100, 0, 1),
+                                                      index: 1,
+                                                      isNotGreyed: false,
+                                                    onTap: () {},),
+                                                   Padding(
+                                                     padding: const EdgeInsets.only(left: 4.0),
+                                                     child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                   )
+                                                ],),
+                                                const SizedBox(height: 4,),
+                                                Row(children: [
+                                                  CircularButton(icon: Icons.circle_rounded,
+                                                    size: 15,
+                                                    color: const Color.fromRGBO(0, 100, 0, 1),
+                                                    index: 0.5,
+                                                    isNotGreyed: false,
+                                                    onTap: () {},),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 4.0),
+                                                    child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
+                                                  )
+                                                ],),
+                                                const SizedBox(height: 4,),
+                                                Row(children:  [
+                                                  CircularButton(icon: Icons.circle_rounded,
+                                                    size: 15,
+                                                    color: const Color.fromRGBO(0, 100, 0, 1),
+                                                    index: 0,
+                                                    isNotGreyed: false,
+                                                  onTap: () {},),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 4.0),
+                                                    child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                  )
+                                                ],)
+                                              ] : [
+                                                Row(
+                                                  children:  [
+                                                  CircularButton(icon: Icons.circle_rounded,
+                                                    size: 15,
+                                                    color: const Color.fromRGBO(0, 100, 0, 1),
+                                                    index: 1,
+                                                    isNotGreyed: false,
+                                                    onTap: () {},),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 4.0),
+                                                    child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                  )
+                                                ],),
+                                                const SizedBox(height: 4,),
+                                                Row(children:  [
+                                                  CircularButton(icon: Icons.circle_rounded,
+                                                    size: 15,
+                                                    color: const Color.fromRGBO(0, 100, 0, 1),
+                                                    index: 0,
+                                                    isNotGreyed: false,
+                                                    onTap: () {},),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 4.0),
+                                                    child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                  )
+                                                ],)
+                                              ],
+                                            ),),
                                             Container(
                                                 margin:
                                                     const EdgeInsets.all(8.0),
@@ -760,130 +837,138 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                     child: BlocBuilder<MusterGetWorkflowBloc, MusterGetWorkflowState>(builder: (context, workflowState) {
                                                                                       return isInWorkFlow
                                                                                           ? Container()
-                                                                                          : Column(
-                                                                                              children: [
-                                                                                                BlocListener<AttendanceLogCreateBloc, AttendanceLogCreateState>(
-                                                                                                  listener: (context, logState) {
-                                                                                                    SchedulerBinding.instance.addPostFrameCallback((_) {
-                                                                                                      logState.maybeWhen(
-                                                                                                          error: () {
-                                                                                                            if (!hasLoaded && selectedDateRange != null) {
-                                                                                                              Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedFailed), 'ERROR');
-                                                                                                              onSubmit(widget.id);
-                                                                                                              hasLoaded = true;
-                                                                                                            }
-                                                                                                          },
-                                                                                                          loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                                                          loaded: () {
-                                                                                                            if (!hasLoaded && selectedDateRange != null) {
-                                                                                                              Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedSuccess), 'SUCCESS');
-                                                                                                              onSubmit(widget.id);
-                                                                                                              hasLoaded = true;
-                                                                                                            }
-                                                                                                          },
-                                                                                                          orElse: () => Container());
-                                                                                                    });
-                                                                                                  },
-                                                                                                  child: OutlinedButton(
-                                                                                                      style: OutlinedButton.styleFrom(backgroundColor: Colors.white, side: BorderSide(width: 2, color: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? const Color.fromRGBO(149, 148, 148, 1) : DigitTheme.instance.colorScheme.secondary)),
-                                                                                                      onPressed: musterRollsSearch != null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
-                                                                                                          ? null
-                                                                                                          : () {
-                                                                                                              if (selectedDateRange == null) {
-                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
-                                                                                                              } else {
-                                                                                                                hasLoaded = false;
-                                                                                                                if (updateAttendeePayload.isNotEmpty && createAttendeePayload.isNotEmpty) {
-                                                                                                                  context.read<AttendanceLogCreateBloc>().add(UpdateAttendanceLogEvent(attendanceList: updateAttendeePayload));
-                                                                                                                  context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
-                                                                                                                } else if (updateAttendeePayload.isNotEmpty) {
-                                                                                                                  context.read<AttendanceLogCreateBloc>().add(UpdateAttendanceLogEvent(attendanceList: updateAttendeePayload));
-                                                                                                                } else if (createAttendeePayload.isNotEmpty) {
-                                                                                                                  context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
+                                                                                          : BlocBuilder<MusterSubmissionBloc, MusterSubmissionState>(
+                                                                                          builder: (context, submissionState) {
+                                                                                              return submissionState.maybeWhen(orElse: () => Container(),
+                                                                                              loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                                              loaded : (bool isEndOfWeek) {
+                                                                                                return Column(
+                                                                                                  children: [
+                                                                                                    BlocListener<AttendanceLogCreateBloc, AttendanceLogCreateState>(
+                                                                                                      listener: (context, logState) {
+                                                                                                        SchedulerBinding.instance.addPostFrameCallback((_) {
+                                                                                                          logState.maybeWhen(
+                                                                                                              error: () {
+                                                                                                                if (!hasLoaded && selectedDateRange != null) {
+                                                                                                                  Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedFailed), 'ERROR');
+                                                                                                                  onSubmit(widget.id);
+                                                                                                                  hasLoaded = true;
                                                                                                                 }
+                                                                                                              },
+                                                                                                              loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                                                              loaded: () {
+                                                                                                                if (!hasLoaded && selectedDateRange != null) {
+                                                                                                                  Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedSuccess), 'SUCCESS');
+                                                                                                                  onSubmit(widget.id);
+                                                                                                                  hasLoaded = true;
+                                                                                                                }
+                                                                                                              },
+                                                                                                              orElse: () => Container());
+                                                                                                        });
+                                                                                                      },
+                                                                                                      child: OutlinedButton(
+                                                                                                          style: OutlinedButton.styleFrom(backgroundColor: Colors.white, side: BorderSide(width: 2, color: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? const Color.fromRGBO(149, 148, 148, 1) : DigitTheme.instance.colorScheme.secondary)),
+                                                                                                          onPressed: musterRollsSearch != null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
+                                                                                                              ? null
+                                                                                                              : () {
+                                                                                                            if (selectedDateRange == null) {
+                                                                                                              Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
+                                                                                                            } else {
+                                                                                                              hasLoaded = false;
+                                                                                                              if (updateAttendeePayload.isNotEmpty && createAttendeePayload.isNotEmpty) {
+                                                                                                                context.read<AttendanceLogCreateBloc>().add(UpdateAttendanceLogEvent(attendanceList: updateAttendeePayload));
+                                                                                                                context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
+                                                                                                              } else if (updateAttendeePayload.isNotEmpty) {
+                                                                                                                context.read<AttendanceLogCreateBloc>().add(UpdateAttendanceLogEvent(attendanceList: updateAttendeePayload));
+                                                                                                              } else if (createAttendeePayload.isNotEmpty) {
+                                                                                                                context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
+                                                                                                              }
+                                                                                                            }
+                                                                                                          },
+                                                                                                          child: Center(
+                                                                                                              child: Text(
+                                                                                                                AppLocalizations.of(context).translate(i18.common.saveAsDraft),
+                                                                                                                style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1)) : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
+                                                                                                              ))),
+                                                                                                    ),
+                                                                                                    const SizedBox(
+                                                                                                      height: 10,
+                                                                                                    ),
+                                                                                                    BlocListener<MusterCreateBloc, MusterCreateState>(
+                                                                                                      listener: (context, musterCreateState) {
+                                                                                                        musterCreateState.maybeWhen(
+                                                                                                            error: () {
+                                                                                                              if (!createMusterLoaded && selectedDateRange != null) {
+                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.musterCreateFailed), 'ERROR');
+                                                                                                                // onSubmit(registerId.toString());
+                                                                                                                createMusterLoaded = true;
+                                                                                                                context.router.popAndPush(TrackAttendanceRoute(
+                                                                                                                  tenantId: widget.tenantId.toString(),
+                                                                                                                  id: widget.id.toString(),
+                                                                                                                ));
                                                                                                               }
                                                                                                             },
-                                                                                                      child: Center(
-                                                                                                          child: Text(
-                                                                                                        AppLocalizations.of(context).translate(i18.common.saveAsDraft),
-                                                                                                        style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1)) : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
-                                                                                                      ))),
-                                                                                                ),
-                                                                                                const SizedBox(
-                                                                                                  height: 10,
-                                                                                                ),
-                                                                                                BlocListener<MusterCreateBloc, MusterCreateState>(
-                                                                                                  listener: (context, musterCreateState) {
-                                                                                                    musterCreateState.maybeWhen(
-                                                                                                        error: () {
-                                                                                                          if (!createMusterLoaded && selectedDateRange != null) {
-                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.musterCreateFailed), 'ERROR');
-                                                                                                            // onSubmit(registerId.toString());
-                                                                                                            createMusterLoaded = true;
-                                                                                                            context.router.popAndPush(TrackAttendanceRoute(
-                                                                                                              tenantId: widget.tenantId.toString(),
-                                                                                                              id: widget.id.toString(),
-                                                                                                            ));
-                                                                                                          }
-                                                                                                        },
-                                                                                                        loaded: (MusterRollsModel? createdMuster) {
-                                                                                                          if (!createMusterLoaded && selectedDateRange != null) {
-                                                                                                            Notifiers.getToastMessage(context, ' ${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.musterSentForApproval)}', 'SUCCESS');
-                                                                                                            createMusterLoaded = true;
-                                                                                                            // onSubmit(registerId.toString());
-                                                                                                            context.router.popAndPush(TrackAttendanceRoute(
-                                                                                                              tenantId: widget!.tenantId.toString(),
-                                                                                                              id: widget.id.toString(),
-                                                                                                            ));
-                                                                                                          }
-                                                                                                        },
-                                                                                                        orElse: () => Container());
-                                                                                                  },
-                                                                                                  child: DigitElevatedButton(
-                                                                                                    onPressed: selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch
-                                                                                                        ? null
-                                                                                                        : musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.first.individualEntries != null && musterRollsModel!.musterRoll!.first.individualEntries!.isNotEmpty
+                                                                                                            loaded: (MusterRollsModel? createdMuster) {
+                                                                                                              if (!createMusterLoaded && selectedDateRange != null) {
+                                                                                                                Notifiers.getToastMessage(context, ' ${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.musterSentForApproval)}', 'SUCCESS');
+                                                                                                                createMusterLoaded = true;
+                                                                                                                // onSubmit(registerId.toString());
+                                                                                                                context.router.popAndPush(TrackAttendanceRoute(
+                                                                                                                  tenantId: widget.tenantId.toString(),
+                                                                                                                  id: widget.id.toString(),
+                                                                                                                ));
+                                                                                                              }
+                                                                                                            },
+                                                                                                            orElse: () => Container());
+                                                                                                      },
+                                                                                                      child: DigitElevatedButton(
+                                                                                                        onPressed: isEndOfWeek && selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch
+                                                                                                            ? null
+                                                                                                            : musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.first.individualEntries != null && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty
                                                                                                             ? musterRollsSearch?.musterRoll != null && musterRollsSearch!.musterRoll!.isNotEmpty
-                                                                                                                ? isInWorkFlow == false
-                                                                                                                    ? () {
-                                                                                                                        if (selectedDateRange == null) {
-                                                                                                                          Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
-                                                                                                                        } else if (updateAttendeePayload.isNotEmpty) {
-                                                                                                                          Notifiers.getToastMessage(context, 'Attendance changed, Please click on Save as Draft first', 'INFO');
-                                                                                                                        } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null && e.skill.toString().isEmpty)) {
-                                                                                                                          setState(() {
-                                                                                                                            skillsDisable = false;
-                                                                                                                          });
-                                                                                                                          Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
-                                                                                                                        } else {
-                                                                                                                          createMusterLoaded = false;
-                                                                                                                          context.read<MusterCreateBloc>().add(UpdateMusterEvent(tenantId: widget.tenantId, id: musterRollsSearch.musterRoll!.first.id.toString(), orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', skillsList: skillsPayLoad));
-                                                                                                                        }
-                                                                                                                      }
-                                                                                                                    : null
-                                                                                                                : () {
-                                                                                                                    if (selectedDateRange == null) {
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
-                                                                                                                    } else if (createAttendeePayload.isNotEmpty) {
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
-                                                                                                                    } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null || e.skill.toString().isEmpty)) {
-                                                                                                                      setState(() {
-                                                                                                                        skillsDisable = false;
-                                                                                                                      });
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
-                                                                                                                    } else {
-                                                                                                                      createMusterLoaded = false;
-                                                                                                                      context.read<MusterCreateBloc>().add(CreateMusterEvent(tenantId: widget.tenantId, registerId: widget.id, startDate: selectedDateRange!.startDate, serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode, referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId, orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', executingAuthority: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.executingAuthority, registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '', projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '', projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '', projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '', locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '', ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '', amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500, skillsList: skillsPayLoad));
-                                                                                                                    }
-                                                                                                                  }
+                                                                                                            ? isInWorkFlow == false
+                                                                                                            ? () {
+                                                                                                          if (selectedDateRange == null) {
+                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
+                                                                                                          } else if (updateAttendeePayload.isNotEmpty) {
+                                                                                                            Notifiers.getToastMessage(context, 'Attendance changed, Please click on Save as Draft first', 'INFO');
+                                                                                                          } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null && e.skill.toString().isEmpty)) {
+                                                                                                            setState(() {
+                                                                                                              skillsDisable = false;
+                                                                                                            });
+                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
+                                                                                                          } else {
+                                                                                                            createMusterLoaded = false;
+                                                                                                            context.read<MusterCreateBloc>().add(UpdateMusterEvent(tenantId: widget.tenantId, id: musterRollsSearch.musterRoll!.first.id.toString(), orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', skillsList: skillsPayLoad));
+                                                                                                          }
+                                                                                                        }
+                                                                                                            : null
+                                                                                                            : () {
+                                                                                                          if (selectedDateRange == null) {
+                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
+                                                                                                          } else if (createAttendeePayload.isNotEmpty) {
+                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
+                                                                                                          } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null || e.skill.toString().isEmpty)) {
+                                                                                                            setState(() {
+                                                                                                              skillsDisable = false;
+                                                                                                            });
+                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
+                                                                                                          } else {
+                                                                                                            createMusterLoaded = false;
+                                                                                                            context.read<MusterCreateBloc>().add(CreateMusterEvent(tenantId: widget.tenantId, registerId: widget.id, startDate: selectedDateRange!.startDate, serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode, referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId, orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', executingAuthority: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.executingAuthority, registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '', projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '', projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '', projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '', locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '', ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '', amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500, skillsList: skillsPayLoad));
+                                                                                                          }
+                                                                                                        }
                                                                                                             : null,
-                                                                                                    child: Center(
-                                                                                                      child: Text(AppLocalizations.of(context).translate(i18.common.sendForApproval), style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
+                                                                                                        child: Center(
+                                                                                                          child: Text(AppLocalizations.of(context).translate(i18.common.sendForApproval), style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
+                                                                                                        ),
+                                                                                                      ),
                                                                                                     ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            );
+                                                                                                  ],
+                                                                                                );
+                                                                                              });
+                                                                                            }
+                                                                                          );
                                                                                     }),
                                                                                   );
                                                                                 });
