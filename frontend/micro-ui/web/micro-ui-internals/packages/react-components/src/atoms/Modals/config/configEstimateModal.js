@@ -10,9 +10,13 @@ const configEstimateModal = (
     moduleCode
 ) => {
     const {action:actionString} = action
+    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
+    const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendence");
+    const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("purchase");
     
     const configMap = {
-        "mukta-estimate": {
+        [bsEstimate]: {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -85,7 +89,7 @@ const configEstimateModal = (
                 }
             }
         },
-        "contract-approval-mukta": {
+        [bsContract]: {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -172,7 +176,7 @@ const configEstimateModal = (
                 }
             },
         },
-        "muster-roll-approval":{
+        [bsMuster]:{
             "default":{
                 comments:{
                     isMandatory:false,
@@ -253,7 +257,7 @@ const configEstimateModal = (
                 }
             }
         },
-        "works.purchase":{
+        [bsPurchaseBill]:{
             "default":{
                 comments:{
                     isMandatory:false,

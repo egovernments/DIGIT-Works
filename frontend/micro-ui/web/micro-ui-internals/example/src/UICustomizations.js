@@ -6,14 +6,25 @@ import _ from "lodash";
 // these functions will act as middlewares
 var Digit = window.Digit || {};
 
+// const businessServiceMap = {
+//   estimate: "ESTIMATE",
+//   contracts: "CONTRACT",
+//   attendencemgmt: "MR",
+//   expenditure:{
+//     WAGE_BILL:"EXPENSE.WAGE",
+//     PURCHASE_BILL:"EXPENSE.PURCHASE",
+//     SUPERVISION_BILL:"EXPENSE.SUPERVISION"
+//   }
+// };
+
 const businessServiceMap = {
   estimate: "ESTIMATE",
-  contracts: "CONTRACT",
-  attendencemgmt: "MR",
+  contract: "CONTRACT",
+  "muster roll": "MR",
   expenditure:{
-    WAGE_BILL:"EXPENSE.WAGE",
-    PURCHASE_BILL:"EXPENSE.PURCHASE",
-    SUPERVISION_BILL:"EXPENSE.SUPERVISION"
+    "works.wages":"EXPENSE.WAGE",
+    "works.purchase":"EXPENSE.PURCHASE",
+    "works.supervision":"EXPENSE.SUPERVISION"
   }
 };
 
@@ -51,7 +62,7 @@ export const UICustomizations = {
         workflow,
       };
     }
-    if (businessService === businessServiceMap.contracts) {
+    if (businessService === businessServiceMap.contract) {
       const workflow = {
         comment: data?.comments,
         documents: data?.documents?.map((document) => {
@@ -76,7 +87,7 @@ export const UICustomizations = {
         workflow,
       };
     }
-    if (businessService === businessServiceMap.attendencemgmt) {
+    if (businessService === businessServiceMap?.["muster roll"]) {
       const workflow = {
         comment: data?.comments,
         documents: data?.documents?.map((document) => {
@@ -103,7 +114,7 @@ export const UICustomizations = {
     }
   },
   enableModalSubmit:(businessService,action,setModalSubmit,data)=>{
-    if(businessService === businessServiceMap.attendencemgmt && action.action==="APPROVE"){
+    if(businessService === businessServiceMap?.["muster roll"] && action.action==="APPROVE"){
       setModalSubmit(data?.acceptTerms)
     }
   },
@@ -111,13 +122,13 @@ export const UICustomizations = {
     if (businessService === businessServiceMap.estimate) {
       return action.action.includes("TECHNICALSANCTION") || action.action.includes("VERIFYANDFORWARD");
     }
-    if (businessService === businessServiceMap.contracts) {
+    if (businessService === businessServiceMap.contract) {
       return action.action.includes("VERIFY_AND_FORWARD");
     }
-     if (businessService === businessServiceMap.attendencemgmt) {
+     if (businessService === businessServiceMap?.["muster roll"]) {
       return action.action.includes("VERIFY");
     }
-    if(businessService === businessServiceMap.expenditure.PURCHASE_BILL){
+    if(businessService === businessServiceMap.expenditure?.["works.purchase"]){
       return action.action.includes("VERIFY_AND_FORWARD")
     }
     return false;
@@ -126,10 +137,20 @@ export const UICustomizations = {
     if (moduleCode?.includes("estimate")) {
       return businessServiceMap?.estimate;
     } else if (moduleCode?.includes("contract")) {
-      return businessServiceMap?.contracts;
+      return businessServiceMap?.contract;
     } else if (moduleCode?.includes("attendence")) {
-      return businessServiceMap?.attendencemgmt;
-    }else if (moduleCode?.includes("expenditure")) {
+      return businessServiceMap?.["muster roll"];
+    }
+    else if (moduleCode?.includes("purchase")) {
+      return businessServiceMap?.expenditure?.["works.purchase"];
+    }
+    else if (moduleCode?.includes("wage")) {
+      return businessServiceMap?.expenditure?.["works.wage"];
+    }
+    else if (moduleCode?.includes("purchase")) {
+      return businessServiceMap?.expenditure?.["works.supervision"];
+    }
+    else if (moduleCode?.includes("expenditure")) {
       return businessServiceMap?.expenditure;
     }else {
       return businessServiceMap;
