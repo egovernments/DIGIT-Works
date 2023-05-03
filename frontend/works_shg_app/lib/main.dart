@@ -29,7 +29,6 @@ import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
-import 'Env/env_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_initilization/app_initilization.dart';
 import 'blocs/attendance/attendance_create_log.dart';
@@ -64,14 +63,14 @@ import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
 import 'models/user_details/user_details_model.dart';
 
-void main() async {
+void main() {
   HttpOverrides.global = MyHttpOverrides();
   setPathUrlStrategy();
-  if (kIsWeb) {
-    setEnvironment(Environment.dev);
-  } else {
-    await envConfig.initialize();
-  }
+  // if (kIsWeb) {
+  setEnvironment(Environment.dev);
+  // } else {
+  //   await envConfig.initialize();
+  // }
   Bloc.observer = AppBlocObserver();
   runZonedGuarded(() async {
     FlutterError.onError = (FlutterErrorDetails details) {
