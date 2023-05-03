@@ -49,6 +49,8 @@ const fetchDeductions = (deductions, tenantId) => {
             "headCode": row?.name?.code,
             "amount": row?.amount,
             "type": "DEDUCTION",
+            "paidAmount": 0,
+            "status": "ACTIVE",
             "additionalDetails": {
                 "comments": row?.comments
             }
@@ -68,34 +70,39 @@ export const createBillPayload = (data, contract) => {
             "invoiceNumber": data?.invoiceDetails_invoiceNumber,
             "contractNumber": data?.basicDetails_workOrderNumber,
             "projectId": data?.basicDetails_projectID,
-            "billDate": convertDateToEpoch(data?.billDetails_billDate), //NOT NEEDED?
-            "status": "ACTIVE", //?
+            "billDate": convertDateToEpoch(data?.billDetails_billDate), 
+            "status": "ACTIVE",
             "billDetails": [
               { 
                 "tenantId": tenantId,	
                 "billId": null,	
                 "netLineItemAmount": null,	
-                "referenceId": null,	
+                "referenceId": "BILL-01",	
                 "paymentStatus": null,	
                 "fromPeriod": convertDateToEpoch(contract?.startDate),
                 "toPeriod":convertDateToEpoch(contract?.endDate),
                 "payee": {
                   "tenantId": tenantId,
                   "type": "ORG", 
-                  "identifier": data?.invoiceDetails_vendorId
+                  "identifier": data?.invoiceDetails_vendorId,
+                  "status": "ACTIVE"
                 },
                 "lineItems": [
                   {
                     "tenantId": tenantId,
                     "headCode": "MC",
                     "amount": data?.invoiceDetails_materialCost,
-                    "type": "PAYABLE" //confirm
+                    "type": "PAYABLE", 
+                    "paidAmount": 0,
+                    "status": "ACTIVE"
                   },
                   {
                     "tenantId": tenantId,
                     "headCode": "GST",
                     "amount": data?.invoiceDetails_gst,
-                    "type": "PAYABLE" //confirm
+                    "type": "PAYABLE",
+                    "paidAmount": 0,
+                    "status": "ACTIVE"
                   },
                   ...DeductionsList
                 ],
@@ -103,7 +110,7 @@ export const createBillPayload = (data, contract) => {
                 "additionalDetails": {}
               }
             ],
-            "additionalFields": {
+            "additionalDetails": {
                 "totalBillAmount" : String(Digit.Utils.dss.convertFormatterToNumber(data?.billDetails_billAmt))
             },
             "documents": fetchDocuments(
@@ -117,7 +124,7 @@ export const createBillPayload = (data, contract) => {
                 ),
           },
         workflow: {
-            "action": "CREATE",  //?
+            "action": "CREATE",
             "assignees": []
           }
     };
