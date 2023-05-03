@@ -71,7 +71,7 @@ export const SearchBillConfig = {
                                     moduleName: "expense",
                                     localePrefix: "COMMON_MASTERS_BILL",
                                     select:
-                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('EXPENSE')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_TYPE_'+Digit.Utils.locale.getTransformedLocale(ele.businessService)}))}"
+                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('EXPENSE')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_TYPE_'+Digit.Utils.locale.getTransformedLocale(ele.code)}))}"
                                     } 
                                 }
                             },
@@ -180,16 +180,17 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "additionalDetails.billType",
+                                jsonPath: "businessService",
+                                additionalCustomization:true
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                jsonPath: "musterRollStatus",
+                                jsonPath: "status",
                                 additionalCustomization:true
                             },
                             {
                                 label: "EXP_BILL_AMOUNT",
-                                jsonPath: "additionalDetails.amount",
+                                jsonPath: "totalAmount",
                                 additionalCustomization:true,
                                 headerAlign: "right"
                             }

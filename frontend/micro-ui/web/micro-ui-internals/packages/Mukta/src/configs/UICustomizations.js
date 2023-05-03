@@ -10,15 +10,34 @@ var Digit = window.Digit || {};
 
 const getBillType = (businessService) => {
   switch(businessService) {
-    case "works.wages":
+    case "EXPENSE.WAGE":
       return 'wage'
-    case "works.purchase":
+    case "EXPENSE.PURCHASE":
       return 'purchase'
-    case "works.supervision":
+    case "EXPENSE.SUPERVISION":
       return 'supervision'
     default:
       return 'wage';
   }
+}
+
+const getCreatePaymentPayload = (data) => {
+  console.log('SELECTED ROWS', data);
+  let payment = {}
+  payment.tenantId = Digit.ULBService.getCurrentTenantId()
+  payment.netPayableAmount = 0
+  payment.netPaidAmount = 0
+  payment.bills = []
+  data?.forEach(item => {
+    let billObj = {}
+    billObj.billId = '123'
+    billObj.totalAmount = '500'
+    billObj.totalPaidAmount = '1000'
+    billObj.billDetails = []
+    payment.bills.push(billObj)
+  })
+  let payload = {payment}
+  return payload
 }
 
 export const UICustomizations = {
@@ -1041,7 +1060,7 @@ export const UICustomizations = {
         );
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
@@ -1097,7 +1116,17 @@ export const UICustomizations = {
         },
       };
     },
-    selectionHandler: (selectedRows) => {
+    selectionHandler: async (selectedRows) => {
+      const payload = getCreatePaymentPayload(selectedRows);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      try {
+        const response = await Digit.PaymentService.createPayment(payload);
+        return responseToReturn
+      } catch (error) {
+        responseToReturn.isSuccess = false
+        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        return responseToReturn
+      }
     }
   },
   SearchBillConfig: {
@@ -1145,7 +1174,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_BILL_NUMBER") {
-        const billType = getBillType(row?.businessObject?.businessservice)
+        const billType = getBillType(row?.businessService) //to be changed
         return (
           <span className="link">
             <Link
@@ -1157,6 +1186,9 @@ export const UICustomizations = {
             </Link>
           </span>
         );
+      }
+      if (key === "WORKS_BILL_TYPE") {
+        return value ? `COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}` : t("ES_COMMON_NA")
       }
       if (key === "EXP_BILL_AMOUNT") {
         return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
@@ -1204,7 +1236,17 @@ export const UICustomizations = {
         },
       };
     },
-    selectionHandler: (selectedRows) => {
+    selectionHandler: async (selectedRows) => {
+      const payload = getCreatePaymentPayload(selectedRows);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      try {
+        const response = await Digit.PaymentService.createPayment(payload);
+        return responseToReturn
+      } catch (error) {
+        responseToReturn.isSuccess = false
+        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        return responseToReturn
+      }
     }
   },
   DownloadBillConfig: {
@@ -1214,7 +1256,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "ES_COMMON_TOTAL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
