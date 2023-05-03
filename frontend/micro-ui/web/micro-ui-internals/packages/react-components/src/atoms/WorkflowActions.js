@@ -79,9 +79,9 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
-    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
-    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
+    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
     setDisplayMenu(false)
     setSelectedAction(action)
 
