@@ -174,7 +174,7 @@ public class WorkflowService {
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getEstimateWFModuleName());
         processInstance.setTenantId(estimate.getTenantId());
-        processInstance.setBusinessService(getBusinessService(request).getBusinessService());
+        processInstance.setBusinessService(serviceConfiguration.getEstimateWFBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 

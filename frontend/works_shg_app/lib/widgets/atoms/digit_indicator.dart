@@ -5,6 +5,8 @@ class DigitIndicator extends StatelessWidget {
   /// Whether this indicator is selected or not.
   final bool isSelected;
 
+  final bool isCompleted;
+
   /// The child to be placed within the indicator.
   final Widget? child;
   final Widget? textChild;
@@ -48,12 +50,16 @@ class DigitIndicator extends StatelessWidget {
     this.padding = 5.0,
     this.margin = 1.0,
     this.activeBorderWidth = 0.5,
+    this.isCompleted = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return isTextWidget
-        ? Align(alignment: Alignment.centerLeft, child: textChild)
+        ? Align(
+            alignment: Alignment.center,
+            child: Container(
+                margin: const EdgeInsets.only(left: 2.0), child: textChild))
         : Container(
             padding: isSelected ? EdgeInsets.all(margin) : EdgeInsets.zero,
             decoration: BoxDecoration(
@@ -61,7 +67,7 @@ class DigitIndicator extends StatelessWidget {
                   ? Border.all(
                       color: activeBorderColor ??
                           const DigitColors().burningOrange,
-                      width: activeBorderWidth,
+                      width: 0,
                     )
                   : null,
               shape: BoxShape.circle,
@@ -73,8 +79,8 @@ class DigitIndicator extends StatelessWidget {
                 width: radius * 2,
                 padding: EdgeInsets.all(padding),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? activeColor ?? Colors.green
+                  color: isSelected || isCompleted
+                      ? activeBorderColor ?? Colors.green
                       : color ?? Colors.grey,
                   shape: BoxShape.circle,
                 ),

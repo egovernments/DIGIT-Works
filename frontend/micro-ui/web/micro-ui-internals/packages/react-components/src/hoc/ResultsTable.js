@@ -9,7 +9,7 @@ import { InboxContext } from './InboxSearchComposerContext';
 import { Link } from "react-router-dom";
 import { Loader } from '../atoms/Loader';
 import NoResultsFound from '../atoms/NoResultsFound';
-
+import { InfoIcon } from "../atoms/svgindex";
 
 const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
     const {apiDetails} = fullConfig
@@ -154,6 +154,12 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
             <TextInput className="searchInput"  onChange={(e) => onSearch(e.target.value)} style={{ border: "none", borderRadius: "200px" }} />
              </div>}
+            {
+                config?.showTableInstruction && ( 
+                <div className='table-instruction-wrapper'>
+                    <InfoIcon /><p className='table-instruction-header'>{t(config?.showTableInstruction)}</p>
+                </div> )
+            }
             {searchResult?.length > 0 && <Table
                 //className="table-fixed-first-column-wage-seekers wage-seekers-table"
                 t={t}
@@ -171,9 +177,9 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 onNextPage={nextPage}
                 onPrevPage={previousPage}
                 pageSizeLimit={getValues("limit")}
-                showCheckbox={false} //use this flag to show checkboxes
-                actionLabel={'CS_COMMON_DOWNLOAD'} //use this label to table selection handler
-                tableSelectionHandler={() => {console.log('Handle table row selection')}} //pass handler from config
+                showCheckBox={config?.showCheckBox ? true : false}
+                actionLabel={config?.checkBoxActionLabel}
+                tableSelectionHandler={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.selectionHandler}
                 getCellProps={(cellInfo) => {
                     return {
                         style: {

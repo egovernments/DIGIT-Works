@@ -97,8 +97,11 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                 i18.common.orgSubType: t.translate(
                                         'COMMON_MASTERS_SUBORG_${e.functions?.first.type.toString().split('.').last.toUpperCase() ?? 'NA'}') ??
                                     'NA',
-                                i18.common.funcCat: t.translate(
-                                    e.functions?.first.category ?? 'NA'),
+                                i18.common.funcCat: e
+                                            .functions?.first.category !=
+                                        null
+                                    ? '${t.translate('COMMON_MASTERS_ORG_${e.functions?.first.category?.split('.').first.toString()}')}, ${t.translate('COMMON_MASTERS_FUNCATEGORY_${e.functions?.first.category?.split('.').last.toString()}')}'
+                                    : t.translate('NA'),
                                 i18.common.classOrRank: t.translate(
                                     'COMMON_MASTERS_CLASS_${e.functions?.first.orgClass ?? 'NA'}'),
                                 i18.common.validFrom:
@@ -128,10 +131,10 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                         'TENANT_TENANTS_${e.tenantId?.toUpperCase().replaceAll('.', '_')}') ??
                                     'NA',
                                 i18.common.ward: t.translate(
-                                        '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${e.orgAddress?.first.boundaryCode ?? 'NA'}') ??
+                                        '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_${e.orgAddress?.first.boundaryCode ?? 'NA'}') ??
                                     'NA',
                                 i18.common.locality: t.translate(
-                                    '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase()}_ADMIN_${e.additionalDetails?.locality}'),
+                                    '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_${e.additionalDetails?.locality}'),
                                 i18.common.streetName:
                                     e.orgAddress?.first.street ?? 'NA',
                                 i18.common.doorNo:
@@ -254,7 +257,12 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                         : Container();
                   });
             },
-          )
+          ),
+          const SizedBox(height: 30),
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: PoweredByDigit(),
+          ),
         ])));
   }
 }

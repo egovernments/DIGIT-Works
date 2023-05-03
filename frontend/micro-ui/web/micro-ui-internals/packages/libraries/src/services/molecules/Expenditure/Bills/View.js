@@ -1,27 +1,26 @@
+import BillingService from "../../../elements/Bill";
+import { ContractService } from "../../../elements/Contracts";
 import AttendanceService from "../../../elements/Attendance";
 
-const getAttendanceTableData = (data, skills, t) => {
+const getBeneficiaryData = async (wageBillDetails, tenantId, musterRoll, t) => {
   let tableData = {}
-  if(data?.individualEntries?.length > 0) {
-    data?.individualEntries.forEach((item, index) => {
+  const individuals = musterRoll?.individualEntries
+  if(wageBillDetails?.length > 0) {
+    wageBillDetails?.forEach((item, index) => {
       let tableRow = {}
-      tableRow.id = item.id
+      const individual = individuals?.find(ind => ind?.individualId === item?.payee?.identifier)
+      tableRow.id = item?.id
       tableRow.sno = index + 1
-      tableRow.registerId = item?.additionalDetails?.userId || t("NA")
-      tableRow.nameOfIndividual = item?.additionalDetails?.userName || t("NA")
-      tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
-      tableRow.skill = t(`COMMON_MASTERS_SKILLS_${item?.additionalDetails?.skillCode}`) || t("NA")
-      tableRow.actualWorkingDays = item?.actualTotalAttendance
-      tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
-      tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount || 0
-      tableRow.modifiedAmount = (item?.modifiedTotalAttendance ? (tableRow?.amount * item?.modifiedTotalAttendance) : (tableRow?.amount * item?.actualTotalAttendance)) || 0
+      tableRow.registerId = individual?.additionalDetails?.userId || t("NA")
+      tableRow.nameOfIndividual = individual?.additionalDetails?.userName || t("NA")
+      tableRow.guardianName = individual?.additionalDetails?.fatherName || t("NA")
+      tableRow.amount = item?.payableLineItems?.[0]?.amount || 0 //check if correct
       tableRow.bankAccountDetails = {
-        accountNo : item?.additionalDetails?.bankDetails || t("NA"),
+        accountNo : individual?.additionalDetails?.bankDetails || t("NA"), 
         ifscCode : null
       }
-      tableRow.paymentStatus = 'PAYMENT_PENDING'
-      //tableRow.aadharNumber = item?.additionalDetails?.aadharNumber || t("NA")
-      tableData[item.individualId] = tableRow
+      //update this id
+      tableData[item.id] = tableRow
     });
 
     //Add row to show Total data
@@ -31,40 +30,49 @@ const getAttendanceTableData = (data, skills, t) => {
     totalRow.registerId = "DNR"
     totalRow.nameOfIndividual = "DNR"
     totalRow.guardianName = "DNR"
-    totalRow.skill = ""
     totalRow.amount = 0
-    totalRow.modifiedAmount = 0
-    totalRow.actualWorkingDays = 0
-    totalRow.modifiedWorkingDays = 0
     totalRow.bankAccountDetails = ""
-    totalRow.paymentStatus = ""
-    //totalRow.aadharNumber = ""
             
     tableData['total'] = totalRow
   }
   return tableData
 }
 
-const transformViewDataToApplicationDetails = async (t, data, skills) => {
-  if(data.musterRolls.length === 0) return;
+const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
+  if(data.bills.length === 0) throw new Error('No data found');
   
-  const musterRoll = data.musterRolls[0]
-  const musterTableData = getAttendanceTableData(musterRoll, skills, t)
+  const wageBill = data.bills[0]
+  const referenceIds = wageBill?.referenceId?.split('_')
+  const workOrderNum = referenceIds?.[0]
+  const musterRollNum = referenceIds?.[1]
+
   const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
   const location = t(`TENANT_TENANTS_${headerLocale}`)
 
-  const BillDetails = {
+  //get contract details
+  const contractPayload = {
+    tenantId,
+    contractNumber: workOrderNum
+  }
+  const contractRes = await ContractService.search(tenantId, contractPayload, {});
+  const contract = contractRes?.contracts?.[0]
+
+  //get muster details
+  const musterRes = await AttendanceService.search(tenantId, { musterRollNumber: musterRollNum });
+  const musterRoll = musterRes?.musterRolls?.[0]
+  
+  const beneficiaryData = await getBeneficiaryData(wageBill?.billDetails, tenantId, musterRoll, t)
+
+  const billDetails = {
     title: " ",
     asSectionHeader: true,
     values: [
-      { title: "WORKS_BILL_NUMBER", value: musterRoll?.musterRollNumber || t("ES_COMMON_NA")},
-      { title: "WORKS_ORDER_NO", value: musterRoll?.additionalDetails?.contractId || t("ES_COMMON_NA")},
-      { title: "WORKS_PROJECT_ID", value: musterRoll?.additionalDetails?.projectId || t("ES_COMMON_NA")},
-      { title: "PROJECTS_DESCRIPTION", value: musterRoll?.additionalDetails?.projectName || t("ES_COMMON_NA") },
-      { title: "ES_COMMON_LOCATION", value: location || t("ES_COMMON_NA") },
-      { title: "EXP_BILL_CLASSIFICATION", value: musterRoll?.additionalDetails?.billType || t("ES_COMMON_NA") },
-      { title: "WORKS_BILL_DATE", value: Digit.DateUtils.ConvertTimestampToDate(musterRoll?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy') || t("ES_COMMON_NA") },
-      { title: "ES_COMMON_STATUS", value: `BILL_STATUS_${musterRoll?.musterRollStatus}`|| t("ES_COMMON_NA") }
+      { title: "WORKS_BILL_NUMBER", value: wageBill?.billNumber || t("ES_COMMON_NA")},
+      { title: "WORKS_BILL_DATE", value: Digit.DateUtils.ConvertTimestampToDate(wageBill?.billDate, 'dd/MM/yyyy') || t("ES_COMMON_NA") },
+      { title: "WORKS_ORDER_NO", value: workOrderNum || t("ES_COMMON_NA")},
+      { title: "WORKS_PROJECT_ID", value: contract?.additionalDetails?.projectId || t("ES_COMMON_NA")},
+      { title: "PROJECTS_DESCRIPTION", value: contract?.additionalDetails?.projectDesc || t("ES_COMMON_NA") },
+      { title: "ES_COMMON_LOCATION", value: location || t("ES_COMMON_NA") }
     ]
   }
 
@@ -72,40 +80,47 @@ const transformViewDataToApplicationDetails = async (t, data, skills) => {
     title: "EXP_BENEFICIARY_DETAILS",
     asSectionHeader: true,
     values: [
-        { title: "ES_COMMON_MUSTER_ROLL_ID", value: musterRoll?.musterRollNumber || t("ES_COMMON_NA")},
+        { title: "ES_COMMON_MUSTER_ROLL_ID", value: musterRollNum || t("ES_COMMON_NA")},
         { title: "ES_COMMON_MUSTER_ROLL_PERIOD", value: `${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(musterRoll?.endDate, 'dd/MM/yyyy')}` || t("ES_COMMON_NA") }
     ],
     additionalDetails : {
       table : {
         mustorRollTable : true,
-        tableData: musterTableData
+        tableData: beneficiaryData
       }
     }
   }
 
-  const applicationDetails = { applicationDetails: [BillDetails, beneficiaryDetails] };
+  const billAmount = {
+    title: "EXP_BILL_DETAILS",
+    asSectionHeader: true,
+    values: [
+        { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(wageBill?.netPayableAmount, "number") || t("ES_COMMON_NA")},
+    ]
+  }
+
+  const netPayable = {
+    title: " ",
+    asSectionHeader: true,
+    Component: Digit.ComponentRegistryService.getComponent("PayableAmt"),
+    value: Digit.Utils.dss.formatterWithoutRound(wageBill?.netPayableAmount, "number") || t("ES_COMMON_NA")
+}
+
+  const applicationDetails = { applicationDetails: [billDetails, beneficiaryDetails, billAmount, netPayable] };
 
   return {
     applicationDetails,
-    applicationData: musterRoll,
+    applicationData: wageBill,
     processInstancesDetails: {},
     workflowDetails: {}
   }
 }
 
-const getWageSeekerSkills = async () => {
-  const skills = {}
-  const response = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "common-masters", [{"name": "WageSeekerSkills"}])
-  response?.['common-masters']?.WageSeekerSkills.forEach(item => (skills[item.code] = item))
-  return skills
-}
-
 export const View = {
-    fetchBillDetails: async (t, tenantId, data, searchParams) => {
+    fetchBillDetails: async (t, tenantId, data) => {
       try {
-        const response = await AttendanceService.search(tenantId, searchParams);
-        const skills = await getWageSeekerSkills()
-        return transformViewDataToApplicationDetails(t, response, skills)
+        const response = await BillingService.search(data);
+        return transformViewDataToApplicationDetails(t, response, tenantId)
       } catch (error) {
           console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);

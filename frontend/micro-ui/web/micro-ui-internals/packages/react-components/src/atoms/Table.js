@@ -56,7 +56,7 @@ const Table = ({
   tableTopComponent,
   tableRef,
   isReportTable = false,
-  showCheckbox = false,
+  showCheckBox = false,
   actionLabel = 'CS_COMMON_DOWNLOAD',
   tableSelectionHandler = () => {}
 }) => {
@@ -104,22 +104,24 @@ const Table = ({
     usePagination,
     useRowSelect,
     hooks => {
-      showCheckbox && hooks.visibleColumns.push(columns => [
-        {
-          id: 'selection',
-          Header: ({ getToggleAllPageRowsSelectedProps }) => (
-            <div>
-              <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
-            </div>
-          ),
-          Cell: ({ row }) => (
-            <div>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            </div>
-          ),
-        },
-        ...columns,
-      ])
+      if(showCheckBox) {
+        hooks.visibleColumns.push(columns => [
+          {
+            id: 'selection',
+            Header: ({ getToggleAllPageRowsSelectedProps }) => (
+              <div>
+                <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+              </div>
+            ),
+            Cell: ({ row }) => (
+              <div>
+                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+              </div>
+            ),
+          },
+          ...columns,
+        ])
+      }
     }
   );
   let isTotalColSpanRendered = false;
@@ -131,8 +133,8 @@ const Table = ({
   useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter,data]);
   
   const handleSelection = () => {
-    tableSelectionHandler()
-    console.log('SELECTED ROWS', {selectedRowIds, rows})
+    const selectedRows = rows?.filter(ele => Object.keys(selectedRowIds)?.includes(ele?.id))
+    tableSelectionHandler(selectedRows)
   }
 
   //note -> adding data prop in dependency array to trigger filter whenever state of the table changes

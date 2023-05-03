@@ -24,6 +24,7 @@ public class BillToMetaMapper {
     public BillMetaRecords map(List<Bill> bills, Map<String, String> metaInfo) {
         if(bills == null || bills.isEmpty()) return null;
 
+        log.info("Create meta records");
         BillMetaRecords records = new BillMetaRecords();
         List<BillMetaCalculation> billMetaCalculations = new ArrayList<>();
         for(Bill bill :bills){
@@ -53,6 +54,7 @@ public class BillToMetaMapper {
         }
         records.setBillMetaCalculation(billMetaCalculations);
 
+        log.info("Meta records created successfully");
         return records;
     }
 
@@ -69,7 +71,7 @@ public class BillToMetaMapper {
                     .isActive(Boolean.TRUE)
                     .billingSlabCode(infoMeta.get(payee.getIdentifier()))
                     .auditDetails(billDetail.getAuditDetails())
-                    .additionalDetails(bill.getAdditionalDetails())
+                    .additionalDetails(billDetail.getAdditionalDetails())
                     .build();
             calcDetails.add(billMetaCalcDetails);
         }

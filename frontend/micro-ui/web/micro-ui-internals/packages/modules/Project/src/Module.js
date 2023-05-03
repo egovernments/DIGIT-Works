@@ -2,6 +2,7 @@ import { CitizenInfoLabel, Loader } from "@egovernments/digit-ui-react-component
 import React, { useEffect } from "react";
 import { useRouteMatch } from "react-router-dom";
 import ProjectCard from "./components/ProjectCard";
+import SelectGeoLocation from "./components/SelectGeoLocation";
 import SubProjectDetailsTable from "./components/SubProjectDetailsTable";
 import ViewFinancialDetails from "./pageComponents/ViewFinancialDetails";
 import ViewSubProjectsDetails from "./pageComponents/ViewSubProjectsDetails";
@@ -14,6 +15,7 @@ import ProjectSearch from "./pages/employee/ProjectSearch";
 import ProjectSearchAndInbox from "./pages/employee/ProjectSearchAndInbox";
 
 export const ProjectModule = ({ stateCode, userType, tenants }) => {
+  
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const moduleCode = ["Project","common-masters",tenantId];
@@ -44,7 +46,8 @@ const componentsToRegister = {
     CreateProjectResponse,
     CreateProjectForm,
     ViewSubProjectsDetails,
-    CitizenInfoLabel
+    CitizenInfoLabel,
+    SelectGeoLocation
 };
 
 export const initProjectComponents = () => {

@@ -166,7 +166,7 @@ class WorkOrder {
   String get roleOfCBO => 'WORKS_ROLE_CBO';
   String get completionPeriod => 'WORKS_COMPLETION_PERIOD';
   String get contractIssueDate => 'WORKS_CONTRACT_ISSUE_DATE';
-  String get contractAmount => 'WORKS_CONTRACT_AMOUNT';
+  String get workOrderAmount => 'WORK_ORDER_AMOUNT';
   String get dueDate => 'WORKS_DUE_DATE';
   String get noWorkOrderAssigned => 'NO_WORK_ORDERS_ASSIGNED';
   String get workOrderAcceptSuccess => 'WORK_ORDER_ACCEPTED_SUCCESS';
@@ -270,4 +270,11 @@ class AttendanceMgmt {
       'ATM_ATT_CHANGED_CLICK_SAVE_DRAFT_FIRST';
   String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';
   String get editMusterRoll => 'ATM_EDIT_MUSTERROLL';
+  String get singleClick => 'ATM_SINGLE_CLICK';
+  String get doubleClick => 'ATM_DOUBLE_CLICK';
+  String get tripleClick => 'ATM_TRIPLE_CLICK';
+  String get fullDay => 'ATM_FULL_DAY';
+  String get halfDay => 'ATM_HALF_DAY';
+  String get absent => 'ATM_ABSENT';
+  String get toMarkAttendance => 'ATM_INFO_TO_MARK_ATTENDANCE';
 }
