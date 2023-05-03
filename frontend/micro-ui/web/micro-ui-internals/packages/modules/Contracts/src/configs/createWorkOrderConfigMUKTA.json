@@ -62,12 +62,12 @@
                   "label": "WORKS_PROJECT_NAME",
                   "isMandatory": false,
                   "key": "basicDetails_projectName",
-                  "type": "text",
+                  "type": "paragraph",
                   "disable": true,
                   "appendColon": false,
                   "populators": {
                     "name": "basicDetails_projectName",
-                    "customClass": "fc-header-texts"
+                    "customClass": ""
                   }
                 },
                 {
@@ -75,12 +75,12 @@
                   "label": "PROJECTS_DESCRIPTION",
                   "isMandatory": false,
                   "key": "basicDetails_projectDesc",
-                  "type": "text",
+                  "type": "paragraph",
                   "disable": true,
                   "appendColon": false,
                   "populators": {
                     "name": "basicDetails_projectDesc",
-                    "customClass": "fc-header-texts"
+                    "customClass": ""
                   }
                 }
               ]

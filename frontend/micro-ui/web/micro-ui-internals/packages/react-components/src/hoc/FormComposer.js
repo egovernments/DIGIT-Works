@@ -26,6 +26,7 @@ import Toast from "../atoms/Toast";
 import UploadFileComposer from "./UploadFileComposer";
 import CheckBox from "../atoms/CheckBox";
 import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
+import Paragraph from "../atoms/Paragraph";
 
 const wrapperStyles = {
   // "display":"flex",
@@ -198,6 +199,26 @@ export const FormComposer = (props) => {
             rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
             control={control}
           />
+        );
+      case "paragraph":
+        return (
+          <div className="field-container">
+            <Controller
+              defaultValue={formData?.[populators.name]}
+              render={({ onChange, ref, value }) => (
+                <Paragraph
+                  value={formData?.[populators.name]}
+                  name={populators.name}
+                  inputRef={ref}
+                  customClass={populators?.customClass}
+                  customStyle={populators?.customStyle}
+                />
+              )}
+              name={populators.name}
+              rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
+              control={control}
+            />
+          </div>
         );
       case "mobileNumber":
         return (
