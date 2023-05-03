@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:works_shg_app/Env/js_connector.dart' as js;
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
@@ -38,12 +39,18 @@ class AppInitializationBloc
   ) async {
     if (GlobalVariables.globalConfigObject == null ||
         GlobalVariables.stateInfoListModel == null) {
-      GlobalConfigModel globalConfigModel =
-          await GetGlobalConfig().getGlobalConfig();
+      GlobalConfigModel? globalConfigModel;
+      String? tenantId;
+      if (!kIsWeb) {
+        globalConfigModel = await GetGlobalConfig().getGlobalConfig();
+      } else {
+        tenantId = js.getGlobalConfig();
+      }
 
       InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
           apiEndPoint: Urls.initServices.mdms,
-          tenantId: globalConfigModel.globalConfigs!.stateTenantId.toString(),
+          tenantId: tenantId ??
+              globalConfigModel!.globalConfigs!.stateTenantId.toString(),
           moduleDetails: [
             {
               "moduleName": "common-masters",

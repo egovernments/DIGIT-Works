@@ -101,6 +101,12 @@
       document.body.append(scriptTag);
     }
 
+    function getGlobalConfig(){
+    console.log("getGlobalConfig");
+    console.log(window.globalConfigs);
+     return window.globalConfigs.getConfig('STATE_LEVEL_TENANT_ID');
+    }
+
     if ('serviceWorker' in navigator) {
 
       // Service workers are supported. Use them.

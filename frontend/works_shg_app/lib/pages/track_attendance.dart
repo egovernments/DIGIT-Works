@@ -217,7 +217,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                       att.denrollmentDate ==
                                                           null ||
                                                       !(att.denrollmentDate! <=
-                                                          e.endDate!.toInt()))
+                                                          DateTime.now().millisecondsSinceEpoch))
                                                   .toList()
                                                   .length
                                               : 0,
@@ -492,11 +492,8 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                               .where((e) =>
                                                                   e.denrollmentDate == null ||
                                                                   !(e.denrollmentDate! <=
-                                                                      individualAttendanceRegisterModel
-                                                                          .attendanceRegister!
-                                                                          .first
-                                                                          .endDate!
-                                                                          .toInt()))
+                                                                      DateTime.now()
+                                                                          .millisecondsSinceEpoch))
                                                               .toList()
                                                               .map((e) => AttendeesTrackList(
                                                                   name: e.additionalDetails?.individualName ??
