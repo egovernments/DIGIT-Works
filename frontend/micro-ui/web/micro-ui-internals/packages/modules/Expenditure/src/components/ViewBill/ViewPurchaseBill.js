@@ -12,12 +12,10 @@ const ViewPurchaseBill = ({props}) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    
-    const billCriteria = { //update this
+    const billCriteria = {
         "tenantId": tenantId,
-        "ids": [],
-        "businessService": "works.purchase",
-        "referenceIds": [],
-        "status": ""
+        "billNumbers": [billNumber],
+        "businessService": "EXPENSE.PURCHASE", //take from key
     }
 
     const { isLoading : isApplicableChargesLoading, data : metaData } = Digit.Hooks.useCustomMDMS(
@@ -27,7 +25,7 @@ const ViewPurchaseBill = ({props}) => {
       {
           select: (data) => {
               const optionsData = _.get(data, `expense.ApplicableCharges`, []);
-              return optionsData.filter((opt) => opt?.active && opt?.service === "works.purchase").map((opt) => ({ ...opt, name: `COMMON_MASTERS_DEDUCTIONS_${opt.code}` }));
+              return optionsData.filter((opt) => opt?.active && opt?.service === "EXPENSE.PURCHASE").map((opt) => ({ ...opt, name: `COMMON_MASTERS_DEDUCTIONS_${opt.code}` }));
           },
           enabled : true
       }
@@ -54,7 +52,7 @@ const ViewPurchaseBill = ({props}) => {
                       workflowDetails={{}}
                       showTimeLine={false}
                       timelineStatusPrefix={""}
-                      businessService={"works.purchase"}
+                      businessService={"EXPENSE.PURCHASE"}
                       forcedActionPrefix={"WORKS"}
                       noBoxShadow={true}
                     />
@@ -67,7 +65,7 @@ const ViewPurchaseBill = ({props}) => {
                       workflowDetails={{}}
                       showTimeLine={true}
                       timelineStatusPrefix={"WF_PBILL_STATUS_"}
-                      businessService={"works.purchase"}
+                      businessService={"EXPENSE.PURCHASE"}
                       forcedActionPrefix={"WORKS"}
                       noBoxShadow={true}
                       applicationNo={billNumber}
@@ -78,7 +76,7 @@ const ViewPurchaseBill = ({props}) => {
             }                
                 <WorkflowActions
                   forcedActionPrefix={"WF_PBILL_ACTION"}
-                  businessService={"works.purchase"}
+                  businessService={"EXPENSE.PURCHASE"}
                   applicationNo={billNumber}
                   tenantId={tenantId}
                   applicationDetails={data?.applicationData}

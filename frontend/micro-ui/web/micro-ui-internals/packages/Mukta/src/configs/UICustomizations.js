@@ -1080,7 +1080,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"works.purchase" },
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
         body: {},
         config: {
           enabled: true,
@@ -1188,7 +1188,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"works.purchase" },
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
         body: {},
         config: {
           enabled: true,

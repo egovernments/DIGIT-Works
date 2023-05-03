@@ -77,7 +77,7 @@ export const createBillPayload = (data, contract) => {
                 "tenantId": tenantId,	
                 "billId": null,	
                 "netLineItemAmount": null,	
-                "referenceId": "BILL-01",	
+                "referenceId": data?.basicDetails_workOrderNumber,
                 "paymentStatus": null,	
                 "fromPeriod": convertDateToEpoch(contract?.startDate),
                 "toPeriod":convertDateToEpoch(contract?.endDate),

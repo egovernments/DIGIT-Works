@@ -144,7 +144,7 @@ const DeductionsTable = ({control,watch,...props}) => {
             {
                 select: (data) => {
                     const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
-                    return optionsData.filter((opt) => opt?.active && opt?.service === "works.purchase").map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+                    return optionsData.filter((opt) => opt?.active && opt?.service === "EXPENSE.PURCHASE").map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
                 },
                 enabled: options?.mdmsConfig ? true : false,
             }

@@ -12,7 +12,7 @@ const businessServiceMap = {
   attendencemgmt: "muster-roll-approval",
   expenditure:{
     WAGE_BILL:"works.wages",
-    PURCHASE_BILL:"works.purchase",
+    PURCHASE_BILL:"EXPENSE.PURCHASE",
     SUPERVISION_BILL:"works.supervision"
   }
 };

@@ -253,7 +253,7 @@ const configEstimateModal = (
                 }
             }
         },
-        "works.purchase":{
+        "EXPENSE.PURCHASE":{
             "default":{
                 comments:{
                     isMandatory:false,
