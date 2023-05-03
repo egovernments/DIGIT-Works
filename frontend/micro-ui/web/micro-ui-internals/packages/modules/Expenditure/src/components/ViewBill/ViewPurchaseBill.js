@@ -10,12 +10,14 @@ const ViewPurchaseBill = ({props}) => {
     const {billNumber,tenantId } = Digit.Hooks.useQueryParams()
     const [isStateChanged, setStateChanged] = useState(``)
     const {t} = useTranslation();
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("expenditure").PURCHASE_BILL;
+
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    
     const billCriteria = { //update this
         "tenantId": tenantId,
         "ids": [],
-        "businessService": "works.purchase",
+        "businessService":businessService,
         "referenceIds": [],
         "status": ""
     }
@@ -27,7 +29,7 @@ const ViewPurchaseBill = ({props}) => {
       {
           select: (data) => {
               const optionsData = _.get(data, `expense.ApplicableCharges`, []);
-              return optionsData.filter((opt) => opt?.active && opt?.service === "works.purchase").map((opt) => ({ ...opt, name: `COMMON_MASTERS_DEDUCTIONS_${opt.code}` }));
+              return optionsData.filter((opt) => opt?.active && opt?.service === businessService).map((opt) => ({ ...opt, name: `COMMON_MASTERS_DEDUCTIONS_${opt.code}` }));
           },
           enabled : true
       }
@@ -38,7 +40,6 @@ const ViewPurchaseBill = ({props}) => {
     const handleActionBar = (option) => {
 
     }
-const businessService="works.purchase";
     return (
         <>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("COMMON_PURCHASE_BILL")}</Header>

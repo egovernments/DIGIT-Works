@@ -68,7 +68,6 @@ import { isArray } from "lodash";
         }
       }
     }
-    console.log("doc_payload_list", documents_payload_list);
     return documents_payload_list;
 }
 
