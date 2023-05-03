@@ -5,7 +5,7 @@ import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewWageBill = () => {
   const { t } = useTranslation();
-  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("expenditure").WAGE_BILL;
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService(works.wage);
   const { tenantId, billNumber } = Digit.Hooks.useQueryParams();
   const [showDataError, setShowDataError] = useState(null)
 
@@ -13,7 +13,7 @@ const ViewWageBill = () => {
     billCriteria: {
       tenantId,
       billNumbers: [ billNumber ],
-      businessService: "works.wages"
+      businessService: businessService,
     },
     pagination: { limit: 10, offSet: 0, sortBy: "ASC", order: "ASC"}
   }
@@ -38,7 +38,7 @@ const ViewWageBill = () => {
             isDataLoading={false}
             workflowDetails={data?.workflowDetails}
             showTimeLine={true}
-            timelineStatusPrefix={"WF_WBILL_STATUS_"}
+            timelineStatusPrefix={`WF_${businessService}_`}
             applicationNo={billNumber}
             businessService={businessService}
             statusAttribute={"state"}

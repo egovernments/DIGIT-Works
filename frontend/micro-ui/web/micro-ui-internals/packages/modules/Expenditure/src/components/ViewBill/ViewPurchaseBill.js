@@ -10,12 +10,14 @@ const ViewPurchaseBill = ({props}) => {
     const {billNumber,tenantId } = Digit.Hooks.useQueryParams()
     const [isStateChanged, setStateChanged] = useState(``)
     const {t} = useTranslation();
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    
     const billCriteria = {
         "tenantId": tenantId,
         "billNumbers": [billNumber],
-        "businessService": "EXPENSE.PURCHASE", //take from key
+        "businessService": businessService,
     }
 
     const { isLoading : isApplicableChargesLoading, data : metaData } = Digit.Hooks.useCustomMDMS(
@@ -25,7 +27,7 @@ const ViewPurchaseBill = ({props}) => {
       {
           select: (data) => {
               const optionsData = _.get(data, `expense.ApplicableCharges`, []);
-              return optionsData.filter((opt) => opt?.active && opt?.service === "EXPENSE.PURCHASE").map((opt) => ({ ...opt, name: `COMMON_MASTERS_DEDUCTIONS_${opt.code}` }));
+              return optionsData.filter((opt) => opt?.active && opt?.service === businessService).map((opt) => ({ ...opt, name: `COMMON_MASTERS_DEDUCTIONS_${opt.code}` }));
           },
           enabled : true
       }
@@ -36,7 +38,6 @@ const ViewPurchaseBill = ({props}) => {
     const handleActionBar = (option) => {
 
     }
-
     return (
         <>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("COMMON_PURCHASE_BILL")}</Header>
@@ -51,8 +52,8 @@ const ViewPurchaseBill = ({props}) => {
                       isDataLoading={isViewPurchaseBillDataLoading}
                       workflowDetails={{}}
                       showTimeLine={false}
-                      timelineStatusPrefix={""}
-                      businessService={"EXPENSE.PURCHASE"}
+                      timelineStatusPrefix={`WF_${businessService}_`}
+                      businessService={businessService}
                       forcedActionPrefix={"WORKS"}
                       noBoxShadow={true}
                     />
@@ -64,9 +65,9 @@ const ViewPurchaseBill = ({props}) => {
                       isDataLoading={isViewPurchaseBillDataLoading}
                       workflowDetails={{}}
                       showTimeLine={true}
-                      timelineStatusPrefix={"WF_PBILL_STATUS_"}
-                      businessService={"EXPENSE.PURCHASE"}
-                      forcedActionPrefix={"WORKS"}
+                      timelineStatusPrefix={`WF_${businessService}_`}
+                      businessService={businessService}
+                      forcedActionPrefix={`WF_${businessService}_ACTION`}
                       noBoxShadow={true}
                       applicationNo={billNumber}
                       tenantId={tenantId}
@@ -75,8 +76,8 @@ const ViewPurchaseBill = ({props}) => {
                 </>
             }                
                 <WorkflowActions
-                  forcedActionPrefix={"WF_PBILL_ACTION"}
-                  businessService={"EXPENSE.PURCHASE"}
+                  forcedActionPrefix={`WF_${businessService}_ACTION`}
+                  businessService={businessService}
                   applicationNo={billNumber}
                   tenantId={tenantId}
                   applicationDetails={data?.applicationData}

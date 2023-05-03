@@ -137,6 +137,8 @@ const DeductionsTable = ({control,watch,...props}) => {
     }
 
     const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey = "name", options = []) => {
+      const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
             Digit.ULBService.getStateId(),
             options?.mdmsConfig?.moduleName,
@@ -144,7 +146,7 @@ const DeductionsTable = ({control,watch,...props}) => {
             {
                 select: (data) => {
                     const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
-                    return optionsData.filter((opt) => opt?.active && opt?.service === "EXPENSE.PURCHASE").map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+                    return optionsData.filter((opt) => opt?.active && opt?.service === businessService).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
                 },
                 enabled: options?.mdmsConfig ? true : false,
             }

@@ -19,7 +19,8 @@ const CreatePurchaseBillForm = ({
     clearSessionFormData, 
     contract,  
     preProcessData,
-    isModify
+    isModify,
+    docConfigData
 }) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
@@ -107,16 +108,15 @@ const CreatePurchaseBillForm = ({
 
     const onFormSubmit = async(data) => {
         //transform formdata to Payload
-        const payload = createBillPayload(data, contract);
+        const payload = createBillPayload(data, contract, docConfigData);
 
         await CreatePurchaseBillMutation(payload, {
             onError: async (error, variables) => {
-                console.log(error);
-                sendDataToResponsePage("", tenantId, false, "EXP_PB_CREATE_FAILURE", false);
+                sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
             },
             onSuccess: async (responseData, variables) => {
-                console.log(responseData);
-              sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXP_PB_CREATED_SUCCESS", true);
+              //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
+              sendDataToResponsePage("billNumber", tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
             },
           });
     }

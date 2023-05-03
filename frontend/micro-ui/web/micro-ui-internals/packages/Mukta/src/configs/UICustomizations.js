@@ -1098,7 +1098,6 @@ export const UICustomizations = {
       };
     },
     selectionHandler: (selectedRows) => {
-      console.log('SELECTED ROWS', selectedRows);
     }
   },
   SearchBillConfig: {
@@ -1206,7 +1205,6 @@ export const UICustomizations = {
       };
     },
     selectionHandler: (selectedRows) => {
-      console.log('SELECTED ROWS', selectedRows);
     }
   },
   DownloadBillConfig: {
@@ -1226,7 +1224,7 @@ export const UICustomizations = {
       }
       if(key === "CS_COMMON_ACTION") {
         return value ?  
-        <LinkLabel onClick={() => { console.log('Take Action')}}>
+        <LinkLabel onClick={() => { }}>
           {t("CS_COMMON_DOWNLOAD")}
         </LinkLabel> :
         t("ES_COMMON_NA")

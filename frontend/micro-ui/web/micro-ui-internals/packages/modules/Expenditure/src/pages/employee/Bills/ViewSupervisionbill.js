@@ -5,7 +5,7 @@ import { Header,Loader } from "@egovernments/digit-ui-react-components";
 
 const ViewSupervisionbill = ({ ...props }) => {
   const { t } = useTranslation();
-  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("expenditure").SUPERVISION_BILL;
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
   const { tenantId,billNumber } = Digit.Hooks.useQueryParams();
 
   const { isLoading, data: applicationDetails, isError } = Digit.Hooks.bills.useSupervisionBillScreen({ t,tenantId,billNumber });
@@ -21,7 +21,7 @@ const ViewSupervisionbill = ({ ...props }) => {
         applicationData={applicationDetails?.applicationData}
         moduleCode="Expenditure"
         showTimeLine={false}
-        timelineStatusPrefix={"WF_ESTIMATE_STATUS_"}
+        timelineStatusPrefix={`WF_${businessService}_`}
         businessService={businessService}
         // forcedActionPrefix={"ACTION_"}
         tenantId={tenantId}
@@ -35,7 +35,7 @@ const ViewSupervisionbill = ({ ...props }) => {
         applicationData={applicationDetails?.applicationData}
         moduleCode="Expenditure"
         showTimeLine={true}
-        timelineStatusPrefix={"WF_SBILL_STATUS_"}
+        timelineStatusPrefix={`WF_${businessService}_`}
         businessService={businessService}
         // forcedActionPrefix={"ACTION_"}
         tenantId={tenantId}
