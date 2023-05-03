@@ -7,13 +7,13 @@ import _ from "lodash";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "mukta-estimate",
-  contracts: "contract-approval-mukta",
-  attendencemgmt: "muster-roll-approval",
+  estimate: "ESTIMATE",
+  contracts: "CONTRACT",
+  attendencemgmt: "MR",
   expenditure:{
-    WAGE_BILL:"works.wages",
-    PURCHASE_BILL:"works.purchase",
-    SUPERVISION_BILL:"works.supervision"
+    WAGE_BILL:"EXPENSE.WAGE",
+    PURCHASE_BILL:"EXPENSE.PURCHASE",
+    SUPERVISION_BILL:"EXPENSE.SUPERVISION"
   }
 };
 

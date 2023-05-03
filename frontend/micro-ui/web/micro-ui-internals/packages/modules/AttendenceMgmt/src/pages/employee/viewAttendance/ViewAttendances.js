@@ -12,6 +12,7 @@ const ViewAttendance = () => {
   const [modify, setModify] = useState(false);
   const [cardState,setCardState] = useState([])
   const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
 
   const [isStateChanged, setStateChanged] = useState(``)
 
@@ -56,7 +57,6 @@ const ViewAttendance = () => {
     }, [data])
 
   if(isLoading) return <Loader />
-const businessService="muster-roll-approval";
   return (
     <React.Fragment>
       <div className={"employee-application-details"} >
