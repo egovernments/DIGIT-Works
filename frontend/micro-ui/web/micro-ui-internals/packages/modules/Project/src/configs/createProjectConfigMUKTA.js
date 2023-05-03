@@ -176,9 +176,11 @@ export const createProjectConfigMUKTA = {
                   "name": "noSubProject_estimatedCostInRs",
                   "error": "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
                   "validation": {
-                    "pattern": "^(?:0|[0-9][^+-]\\d*)(?:\\.(?!.*000)\\d+)?$",
-                    "maxlength" : 12,
-                    "step" : "0.01"
+                    "pattern": "^[1-9]\\d*(\\.\\d+)?$",
+                    "maxlength" : 16,
+                    "step" : "0.01",
+                    "min" : 0,
+                    "max" : 5000000
                   }
                 }
             }
