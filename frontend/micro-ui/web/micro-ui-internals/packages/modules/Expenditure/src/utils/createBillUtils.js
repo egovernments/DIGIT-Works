@@ -124,7 +124,7 @@ export const createBillPayload = (data, contract) => {
                 ),
           },
         workflow: {
-            "action": "CREATE",
+            "action": "SUBMIT",
             "assignees": []
           }
     };
