@@ -17,7 +17,7 @@ const WOTermsAndConditions = (props) => {
           }];
       }
       let tableState = [];
-      for(let i = 1; i<sessionFormData?.WOTermsAndConditions?.length; i++) {
+      for(let i = 0; i<sessionFormData?.WOTermsAndConditions?.length; i++) {
         if(sessionFormData?.WOTermsAndConditions[i]) {
           tableState.push({
             key: i,
