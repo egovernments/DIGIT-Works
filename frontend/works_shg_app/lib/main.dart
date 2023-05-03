@@ -11,6 +11,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:works_shg_app/Env/app_config.dart';
 import 'package:works_shg_app/blocs/app_initilization/home_screen_bloc.dart';
 import 'package:works_shg_app/blocs/attendance/attendance_user_search.dart';
 import 'package:works_shg_app/blocs/attendance/individual_search.dart';
@@ -66,7 +67,11 @@ import 'models/user_details/user_details_model.dart';
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
   setPathUrlStrategy();
-  await envConfig.initialize();
+  if (kIsWeb) {
+    setEnvironment(Environment.dev);
+  } else {
+    await envConfig.initialize();
+  }
   Bloc.observer = AppBlocObserver();
   runZonedGuarded(() async {
     FlutterError.onError = (FlutterErrorDetails details) {
