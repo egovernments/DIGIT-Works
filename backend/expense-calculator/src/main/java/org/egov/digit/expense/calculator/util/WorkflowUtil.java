@@ -126,8 +126,7 @@ public class WorkflowUtil {
 		processInstance.setAction(workflow.getAction());
 		processInstance.setModuleName(wfModuleName);
 		processInstance.setTenantId(tenantId);
-		processInstance.setBusinessService(
-				getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
+		processInstance.setBusinessService(configs.getPurchaseBusinessService());
 		processInstance.setDocuments(workflow.getVerificationDocuments());
 		processInstance.setComment(workflow.getComments());
 
