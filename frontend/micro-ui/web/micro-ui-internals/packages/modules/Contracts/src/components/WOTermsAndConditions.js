@@ -1,4 +1,4 @@
-import { AddIcon, CardLabelError, DeleteIcon, TextInput } from "@egovernments/digit-ui-react-components";
+import { AddIcon, CardLabelError, DeleteIcon, TextInput,TextArea } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 
 const WOTermsAndConditions = (props) => {
@@ -103,17 +103,39 @@ const WOTermsAndConditions = (props) => {
         let i = 0
         return rows?.map((row, index) => {
         if (row.isShow) i++
-        return row.isShow && <tr key={index} style={{ "height": "50%" }}>
-            <td style={getStyles(1)}>{i}</td>
+        return (
+          row.isShow && (
+            <tr key={index} style={{ height: "50%" }}>
+              <td style={getStyles(1)}>{i}</td>
 
-            <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.description`} inputRef={register({
-            required: false
-            })
-            }
-            />
-            </div></td>
-            <td style={getStyles(8)} >{showDelete() && <span className="icon-wrapper" onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} /></span>}</td>
-        </tr>
+              <td style={getStyles(2)}>
+                <div>
+                  {/* <TextInput
+                    style={{ marginBottom: "0px" }}
+                    name={`${formFieldName}.${row.key}.description`}
+                    inputRef={register({
+                      required: false,
+                    })}
+                  /> */}
+                  <TextArea
+                    style={{ marginBottom: "0px" }}
+                    name={`${formFieldName}.${row.key}.description`}
+                    inputRef={register({
+                      required: false,
+                    })}
+                  />
+                </div>
+              </td>
+              <td style={getStyles(8)}>
+                {showDelete() && (
+                  <span className="icon-wrapper" onClick={() => removeRow(row)}>
+                    <DeleteIcon fill={"#B1B4B6"} />
+                  </span>
+                )}
+              </td>
+            </tr>
+          )
+        );
         })
     }
 
