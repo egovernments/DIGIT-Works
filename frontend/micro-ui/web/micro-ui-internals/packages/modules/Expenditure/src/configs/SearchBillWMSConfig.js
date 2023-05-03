@@ -73,7 +73,7 @@ export const SearchBillWMSConfig = {
                                     moduleName: "expense",
                                     localePrefix: "COMMON_MASTERS_BILL",
                                     select:
-                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('BILL')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_TYPE_'+Digit.Utils.locale.getTransformedLocale(ele.businessService) }))}"
+                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('EXPENSE')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_TYPE_'+Digit.Utils.locale.getTransformedLocale(ele.businessService) }))}"
                                     } 
                                 }
                             },

@@ -1,28 +1,25 @@
-//form data input name (with cropped prefix) mapping with file category Name
-const documentType = {
-    "doc_boq" : "BOQ",
-    "doc_others" : "Others",
-    "doc_terms_and_conditions" : "Terms And Conditions",
-  }
-  
-  //This handler will return the payload for doc according to API spec. 
+    //This handler will return the payload for doc according to API spec. 
+
+import { isArray } from "lodash";
+
   //This object will be later pushed to an array
-  const createDocObject = (document, docType, otherDocFileName="Others", isActive) =>{
-  
+  const createDocObject = (document, docType, otherDocFileName="Others", isActive, docConfigData) =>{
+    let documentType = docConfigData?.works?.DocumentConfig?.[0]?.documents;
+
     //handle empty Category Name in File Type
     if((otherDocFileName.trim()).length === 0) {
       otherDocFileName = "";
     }
   
     let payload_modal = {};
-    payload_modal.documentType = documentType?.[docType];
+    payload_modal.documentType = documentType?.filter(doc=>doc?.name === docType)?.[0]?.code;
     payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
     payload_modal.documentUid = "";
     payload_modal.status = isActive;
     payload_modal.id = document?.[1]?.['file']?.['id'];
     payload_modal.key = docType;
     payload_modal.additionalDetails = {
-      fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] : documentType?.[docType],
+      fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] :  documentType?.filter(doc=>doc?.name === docType)?.[0]?.code,
       otherCategoryName : otherDocFileName
     }
     return payload_modal;
@@ -31,16 +28,20 @@ const documentType = {
   //documents - all uploaded docs in the current screen ( create / modify )
   //configs - previously uploaded docs -- defaultValues
   //otherDocFileName - filename filled in the text field for files -- Others
-  const createDocumentsPayload = (documents, otherDocFileName, configs) => {
+  const createDocumentsPayload = (documents, otherDocFileName, configs, docConfigData) => {
+
     let documents_payload_list = [];
     let documentDefaultValue = configs?.defaultValues?.documents;
     //new uploaded docs
     for(let docType of Object.keys(documents)) {
-      for(let document of documents[docType]) {
-        let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE"); 
-        documents_payload_list.push(payload_modal);
-      }
+        for(let document of documents[docType]) {
+          if(_.isArray(document)) {
+            let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE", docConfigData); 
+            documents_payload_list.push(payload_modal);
+          }
+        }
     }
+
 
     // compare with existing docs
     // if existing docs exists
@@ -54,7 +55,7 @@ const documentType = {
             //new file being uploaded, if ID is undefined ( Update Case )
             if(!uploadedDocObject?.id) {
               //if old file exists, make old file as inactive
-              let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
+              let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE", docConfigData); 
               documents_payload_list.push(payload_modal);
             }
             isExist = true;
@@ -62,12 +63,11 @@ const documentType = {
         }
         //if previous file does not exist in new formData ( Delete Case ), mark it as InActive
         if(!isExist && defaultDocKey !== "doc_others_name") {
-          let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
+          let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE", docConfigData); 
           documents_payload_list.push(payload_modal);
         }
       }
     }
-  
     return documents_payload_list;
 }
 
@@ -76,7 +76,7 @@ const handleTermsAndConditions = (data) => {
   return data.WOTermsAndConditions;
 }
 
-export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams}) => {
+export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams, docConfigData}) => {
     return {
         contract : {
             "id" : modifyParams?.contractID,
@@ -105,13 +105,11 @@ export const createWorkOrderUtils = ({tenantId, estimate, project, inputFormdata
                     "auditDetails" : modifyParams?.lineItems?.[0]?.auditDetails
                 }
             ],
-            "documents": createDocumentsPayload({
-                doc_boq : inputFormdata?.documents?.doc_boq,
-                doc_others : inputFormdata?.documents?.doc_others,
-                doc_terms_and_conditions : inputFormdata?.documents?.doc_terms_and_conditions
-            },
+            "documents": createDocumentsPayload(
+                inputFormdata?.documents,
                 inputFormdata?.documents?.doc_others_name,
-                createWorkOrderConfig
+                createWorkOrderConfig,
+                docConfigData
             ),
             "auditDetails" : modifyParams?.contractAuditDetails,
             "processInstance" : null,

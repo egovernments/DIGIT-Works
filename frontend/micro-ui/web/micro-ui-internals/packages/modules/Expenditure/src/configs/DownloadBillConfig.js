@@ -61,7 +61,8 @@ export const DownloadBillConfig = {
                         ],
                         enableGlobalSearch: false,
                         enableColumnSort: true,
-                        resultsJsonPath: "searchresult"                      
+                        resultsJsonPath: "searchresult",
+                        tableClassName:"download-table",
                     },
                     children: {},
                     show: true 

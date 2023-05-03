@@ -12,6 +12,7 @@ const ViewAttendance = () => {
   const [modify, setModify] = useState(false);
   const [cardState,setCardState] = useState([])
   const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
 
   const [isStateChanged, setStateChanged] = useState(``)
 
@@ -56,7 +57,6 @@ const ViewAttendance = () => {
     }, [data])
 
   if(isLoading) return <Loader />
-
   return (
     <React.Fragment>
       <div className={"employee-application-details"} >
@@ -78,9 +78,9 @@ const ViewAttendance = () => {
           moduleCode="AttendenceMgmt"
           isDataLoading={false}
           showTimeLine={true}
-          timelineStatusPrefix={"ATM_"}
-          businessService={"muster-roll-approval"}
-          forcedActionPrefix={"ATM"}
+          timelineStatusPrefix={`WF_${businessService}_`}
+          businessService={businessService}
+          forcedActionPrefix={`WF_${businessService}_ACTION`}
           mutate={mutate}
           showToast={showToast}
           setShowToast={setShowToast}
@@ -96,9 +96,9 @@ const ViewAttendance = () => {
 
       {isSuccess && !modify &&
         <WorkflowActions
-          forcedActionPrefix={"ATM"}
-          businessService={"muster-roll-approval"}
-          applicationNo={musterRollNumber}
+        forcedActionPrefix={`WF_${businessService}_ACTION`}
+        businessService={businessService}
+        applicationNo={musterRollNumber}
           tenantId={tenantId}
           applicationDetails={data?.applicationData}
           url={Digit.Utils.Urls.attendencemgmt.mustorRoll.update}

@@ -31,7 +31,7 @@ class DigitRadioButtonList<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(top: 5.0, bottom: 5, right: 8),
+        margin: const EdgeInsets.only(top: 12.0, bottom: 5, right: 8),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Visibility(
             visible: labelText.trim().isNotEmpty,
@@ -43,11 +43,8 @@ class DigitRadioButtonList<T> extends StatelessWidget {
                       Text(
                         labelText,
                         textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                            color:
-                                DigitTheme.instance.colorScheme.onBackground),
+                        style:
+                            DigitTheme.instance.mobileTheme.textTheme.bodyLarge,
                       ),
                       Text(isRequired ? '*' : '',
                           textAlign: TextAlign.left,

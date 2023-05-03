@@ -161,7 +161,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 </div> )
             }
             {searchResult?.length > 0 && <Table
-                //className="table-fixed-first-column-wage-seekers wage-seekers-table"
+                className={config?.tableClassName ? config?.tableClassName: "table"}
                 t={t}
                 //customTableWrapperClassName={"dss-table-wrapper"}
                 disableSort={config?.enableColumnSort ? false : true}

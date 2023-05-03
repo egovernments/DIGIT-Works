@@ -28,7 +28,7 @@ import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
-import 'Env/app_config.dart';
+import 'Env/env_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_initilization/app_initilization.dart';
 import 'blocs/attendance/attendance_create_log.dart';
@@ -36,6 +36,7 @@ import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
 import 'blocs/attendance/de_enroll_attendee.dart';
+import 'blocs/attendance/muster_submission_mdms.dart';
 import 'blocs/attendance/search_projects/search_individual_project.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
@@ -62,10 +63,10 @@ import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
 import 'models/user_details/user_details_model.dart';
 
-void main() {
+void main() async {
   HttpOverrides.global = MyHttpOverrides();
   setPathUrlStrategy();
-  setEnvironment(Environment.dev);
+  await envConfig.initialize();
   Bloc.observer = AppBlocObserver();
   runZonedGuarded(() async {
     FlutterError.onError = (FlutterErrorDetails details) {
@@ -222,6 +223,10 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(
             create: (context) => AttendanceHoursBloc(
                 const AttendanceHoursState.initial(),
+                MdmsRepository(client.init()))),
+        BlocProvider(
+            create: (context) => MusterSubmissionBloc(
+                const MusterSubmissionState.initial(),
                 MdmsRepository(client.init()))),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(

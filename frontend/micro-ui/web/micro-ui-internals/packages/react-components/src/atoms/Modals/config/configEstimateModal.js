@@ -10,9 +10,13 @@ const configEstimateModal = (
     moduleCode
 ) => {
     const {action:actionString} = action
+    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
+    const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll");
+    const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     
     const configMap = {
-        "mukta-estimate": {
+        [bsEstimate]: {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -85,7 +89,7 @@ const configEstimateModal = (
                 }
             }
         },
-        "contract-approval-mukta": {
+        [bsContract]: {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -172,7 +176,7 @@ const configEstimateModal = (
                 }
             },
         },
-        "muster-roll-approval":{
+        [bsMuster]:{
             "default":{
                 comments:{
                     isMandatory:false,
@@ -253,7 +257,7 @@ const configEstimateModal = (
                 }
             }
         },
-        "works.purchase":{
+        [bsPurchaseBill]:{
             "default":{
                 comments:{
                     isMandatory:false,
@@ -376,6 +380,8 @@ const configEstimateModal = (
                             allowedMaxSizeInMB: 5,
                             maxFilesAllowed: 1,
                             allowedFileTypes:configMap?.[businessService]?.default?.upload?.allowedFileTypes,
+                            hintText:t("WORKS_DOC_UPLOAD_HINT"),
+                            showHintBelow:true,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
                             hideInForm:!fetchIsShow("upload")
