@@ -23,13 +23,12 @@ class EnvironmentConfiguration {
     _dotEnv = DotEnv();
     try {
       await _dotEnv.load();
-      print('DotENv: ');
       _variables = Variables(dotEnv: _dotEnv);
     } catch (error) {
       print('catch Error');
       AppLogger.instance.error(
         title: runtimeType.toString(),
-        message: 'Error while accessing dotenv file. Using fallback values',
+        message: 'Error while accessing .env file. Using fallback values',
       );
 
       _variables = Variables(useFallbackValues: true, dotEnv: _dotEnv);

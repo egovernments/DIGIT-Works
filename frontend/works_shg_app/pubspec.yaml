@@ -119,7 +119,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - dotenv
+    - .env
     - assets/png/
     - assets/svg/
   fonts:
