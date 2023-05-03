@@ -27,7 +27,7 @@ const transformDefaultDocObject = (documentDefaultValue) => {
 const createDocObject = (document, docType, otherDocFileName="Others", isActive, tenantId, docConfigData) =>{
  
   let documentType = docConfigData?.works?.DocumentConfig?.[0]?.documents;
-  console.log("config data :", docConfigData);
+
   //handle empty Category Name in File Type
   if((otherDocFileName.trim()).length === 0) {
     otherDocFileName = "";
