@@ -376,6 +376,8 @@ const configEstimateModal = (
                             allowedMaxSizeInMB: 5,
                             maxFilesAllowed: 1,
                             allowedFileTypes:configMap?.[businessService]?.default?.upload?.allowedFileTypes,
+                            hintText:t("WORKS_DOC_UPLOAD_HINT"),
+                            showHintBelow:true,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
                             hideInForm:!fetchIsShow("upload")

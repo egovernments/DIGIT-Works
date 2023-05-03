@@ -177,6 +177,8 @@ class _HomePage extends State<HomePage> {
         return () => context.router.push(const TrackAttendanceInboxRoute());
       case Constants.homeMusterRolls:
         return () => context.router.push(const ViewMusterRollsRoute());
+      case Constants.homeMyBills:
+        return () => context.router.push(const MyBillsRoute());
       case Constants.homeRegisterWageSeeker:
         return () => context.router.push(const RegisterIndividualRoute());
       default:

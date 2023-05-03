@@ -9,9 +9,7 @@ import 'package:works_shg_app/widgets/loaders.dart' as shg_loader;
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/my_bills/search_my_bills.dart';
-import '../../blocs/work_orders/search_my_works.dart';
 import '../../models/my_bills/my_bills_model.dart';
-import '../../models/works/contracts_model.dart';
 import '../../utils/common_methods.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
@@ -32,8 +30,6 @@ class _MyBillsPage extends State<MyBillsPage> {
   bool hasLoaded = true;
   bool inProgress = true;
   List<Map<String, dynamic>> workOrderList = [];
-  List<Map<String, dynamic>> inProgressWorkOrderList = [];
-  List<Map<String, dynamic>> completedWorkOrderList = [];
 
   @override
   void initState() {
@@ -74,12 +70,12 @@ class _MyBillsPage extends State<MyBillsPage> {
                         .toList();
                   });
             },
-            child: BlocBuilder<SearchMyWorksBloc, SearchMyWorksState>(
+            child: BlocBuilder<SearchMyBillsBloc, SearchMyBillsState>(
                 builder: (context, searchState) {
               return searchState.maybeWhen(
                   orElse: () => Container(),
                   loading: () => shg_loader.Loaders.circularLoader(context),
-                  loaded: (ContractsModel? contractsModel) => Column(
+                  loaded: (MyBillsModel? myBillsModel) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Back(
