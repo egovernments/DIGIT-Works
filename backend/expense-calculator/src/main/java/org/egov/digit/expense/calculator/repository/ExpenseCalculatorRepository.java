@@ -1,8 +1,10 @@
 package org.egov.digit.expense.calculator.repository;
 
 import org.egov.digit.expense.calculator.repository.querybuilder.ExpenseCalculatorQueryBuilder;
+import org.egov.digit.expense.calculator.repository.rowmapper.BillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorBillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorMusterRowMapper;
+import org.egov.digit.expense.calculator.web.models.BillMapper;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ExpenseCalculatorRepository {
@@ -20,6 +23,9 @@ public class ExpenseCalculatorRepository {
 
     @Autowired
     private ExpenseCalculatorBillRowMapper billRowMapper;
+
+    @Autowired
+    private BillRowMapper billMapper;
 
     @Autowired
     private ExpenseCalculatorQueryBuilder queryBuilder;
@@ -56,11 +62,11 @@ public class ExpenseCalculatorRepository {
      * @param calculatorSearchRequest
      * @return
      */
-    public List<String> getBillIds(CalculatorSearchRequest calculatorSearchRequest) {
+    public Map<String,BillMapper> getBillMappers(CalculatorSearchRequest calculatorSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getBillIds(calculatorSearchRequest,preparedStmtList);
-        List<String> billIds = jdbcTemplate.queryForList(query,String.class,preparedStmtList.toArray());
+        Map<String,BillMapper> billMappers = jdbcTemplate.query(query,billMapper,preparedStmtList.toArray());
 
-        return billIds;
+        return billMappers;
     }
 }

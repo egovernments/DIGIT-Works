@@ -16,7 +16,7 @@
   "BusinessServices": [
     {
       "tenantId": "pg",
-      "businessService": "contract-approval-mukta",
+      "businessService": "CONTRACT",
       "business": "contract-service",
       "businessServiceSla": 604800000,
       "states": [
@@ -41,7 +41,7 @@
         {
           "sla": 172800000,
           "state": "PENDING_FOR_VERIFICATION",
-          "applicationStatus": "SUBMITTED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -73,7 +73,7 @@
         {
           "sla": 86400000,
           "state": "PENDING_FOR_APPROVAL",
-          "applicationStatus": "VERIFIED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -112,7 +112,7 @@
         {
           "sla": 604800000,
           "state": "PENDING_FOR_ACCEPTANCE",
-          "applicationStatus": "APPROVED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -144,7 +144,7 @@
         {
           "sla": 86400000,
           "state": "PENDING_FOR_CORRECTION",
-          "applicationStatus": "SENT_BACK",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
@@ -169,7 +169,7 @@
         {
           "sla": 86400000,
           "state": "PENDING_FOR_REASSIGNMENT",
-          "applicationStatus": "DECLINED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
@@ -194,7 +194,7 @@
         {
           "sla": 172800000,
           "state": "PENDING_FOR_REVERIFICATION",
-          "applicationStatus": "SENT_BACK",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -226,7 +226,7 @@
         {
           "sla": null,
           "state": "ACCEPTED",
-          "applicationStatus": "ACCEPTED",
+          "applicationStatus": "ACTIVE",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": true,
@@ -236,7 +236,7 @@
         {
           "sla": null,
           "state": "REJECTED",
-          "applicationStatus": "REJECTED",
+          "applicationStatus": "INACTIVE",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": true,
