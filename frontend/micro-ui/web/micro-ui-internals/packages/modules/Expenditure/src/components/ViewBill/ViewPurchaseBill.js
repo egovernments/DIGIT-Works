@@ -38,7 +38,7 @@ const ViewPurchaseBill = ({props}) => {
     const handleActionBar = (option) => {
 
     }
-
+const businessService="works.purchase";
     return (
         <>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("COMMON_PURCHASE_BILL")}</Header>
@@ -53,8 +53,8 @@ const ViewPurchaseBill = ({props}) => {
                       isDataLoading={isViewPurchaseBillDataLoading}
                       workflowDetails={{}}
                       showTimeLine={false}
-                      timelineStatusPrefix={""}
-                      businessService={"works.purchase"}
+                      timelineStatusPrefix={`WF_${businessService}_`}
+                      businessService={businessService}
                       forcedActionPrefix={"WORKS"}
                       noBoxShadow={true}
                     />
@@ -66,9 +66,9 @@ const ViewPurchaseBill = ({props}) => {
                       isDataLoading={isViewPurchaseBillDataLoading}
                       workflowDetails={{}}
                       showTimeLine={true}
-                      timelineStatusPrefix={"WF_PBILL_STATUS_"}
-                      businessService={"works.purchase"}
-                      forcedActionPrefix={"WORKS"}
+                      timelineStatusPrefix={`WF_${businessService}_`}
+                      businessService={businessService}
+                      forcedActionPrefix={`WF_${businessService}_ACTION`}
                       noBoxShadow={true}
                       applicationNo={billNumber}
                       tenantId={tenantId}
@@ -77,8 +77,8 @@ const ViewPurchaseBill = ({props}) => {
                 </>
             }                
                 <WorkflowActions
-                  forcedActionPrefix={"WF_PBILL_ACTION"}
-                  businessService={"works.purchase"}
+                      forcedActionPrefix={`WF_${businessService}_ACTION`}
+                      businessService={businessService}
                   applicationNo={billNumber}
                   tenantId={tenantId}
                   applicationDetails={data?.applicationData}

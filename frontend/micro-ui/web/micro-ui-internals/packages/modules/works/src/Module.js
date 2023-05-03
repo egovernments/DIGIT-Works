@@ -15,7 +15,7 @@ const WorksModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
   const language = Digit.StoreData.getCurrentLanguage();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const moduleCode = ["works","common-masters",tenantId];
+  const moduleCode = ["works","common-masters","workflow",tenantId];
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
     moduleCode,

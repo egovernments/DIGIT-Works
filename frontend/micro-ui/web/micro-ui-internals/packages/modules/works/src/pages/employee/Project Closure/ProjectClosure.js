@@ -69,7 +69,7 @@ const ProjectClosure = () => {
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_CLOSURE")}</Header>
                 <MultiLink
                     className="multilinkWrapper employee-mulitlink-main-div"
-                    onHeadClick={()=>console.log("download")}
+                    onHeadClick={{}}
                     downloadBtnClassName={"employee-download-btn-className"}
                 />
             </div>
@@ -100,7 +100,7 @@ const ProjectClosure = () => {
 
             
               <ActionBar>
-                  <SubmitBar onSubmit={() => { console.log("project Closed") }} label={t("WORKS_CLOSE_PROJECT")} />
+                  <SubmitBar onSubmit={() => { }} label={t("WORKS_CLOSE_PROJECT")} />
               </ActionBar>
           </div>
 

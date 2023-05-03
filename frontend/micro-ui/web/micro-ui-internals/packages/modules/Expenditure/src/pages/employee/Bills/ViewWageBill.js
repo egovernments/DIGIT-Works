@@ -39,7 +39,7 @@ const ViewWageBill = () => {
             isDataLoading={false}
             workflowDetails={data?.workflowDetails}
             showTimeLine={true}
-            timelineStatusPrefix={"WF_WBILL_STATUS_"}
+            timelineStatusPrefix={`WF_${businessService}_`}
             applicationNo={billNumber}
             businessService={businessService}
             statusAttribute={"state"}
