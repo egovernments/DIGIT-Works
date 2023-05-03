@@ -9,17 +9,17 @@ export const SearchBillConfig = {
             actionRole: "BILL_CREATOR",
             actionLink: "expenditure/download-bill",
             apiDetails: {
-                serviceName: "/expense/bill/v1/_search",
+                serviceName: "/expense-calculator/v1/_search",
                 requestParam: {},
                 requestBody: {
-                    billCriteria: {}
+                    searchCriteria: {}
                 },
                 minParametersForSearchForm:1,
                 masterName:"commonUiConfig",
                 moduleName:"SearchBillConfig",
                 tableFormJsonPath:"requestBody.pagination",
-                filterFormJsonPath:"requestBody.billCriteria",
-                searchFormJsonPath:"requestBody.billCriteria",
+                filterFormJsonPath:"requestBody.searchCriteria",
+                searchFormJsonPath:"requestBody.searchCriteria",
             },
             sections : {
                 search : {
@@ -33,7 +33,7 @@ export const SearchBillConfig = {
                         defaultValues : {
                             ward: "",
                             billType: "",
-                            projectName: "",
+                            projectNumber: "",
                             billNumber: "",
                             status: "",
                             createdFrom: "",
@@ -61,7 +61,7 @@ export const SearchBillConfig = {
                                 isMandatory: false,
                                 disable: false,
                                 populators: {
-                                  name: "businessService",
+                                  name: "billType",
                                   optionsKey: "name",
                                   optionsCustomStyle : {
                                     top : "2.3rem"
@@ -71,12 +71,12 @@ export const SearchBillConfig = {
                                     moduleName: "expense",
                                     localePrefix: "COMMON_MASTERS_BILL",
                                     select:
-                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('BILL')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_'+ele.code }))}"
+                                        "(data)=>{ return Array.isArray(data['expense'].BusinessService) && data['expense'].BusinessService.filter(ele=>ele.code.includes('EXPENSE')).map(ele=>({...ele, name:'COMMON_MASTERS_BILL_TYPE_'+Digit.Utils.locale.getTransformedLocale(ele.businessService)}))}"
                                     } 
                                 }
                             },
                             {
-                                label: "WORKS_PROJECT_NAME",
+                                label: "WORKS_PROJECT_ID",
                                 type: "text",
                                 isMandatory: false,
                                 disable: false,
@@ -84,9 +84,9 @@ export const SearchBillConfig = {
                                     convertStringToRegEx : ["populators.validation.pattern"]
                                 },
                                 populators: { 
-                                    name: "projectName",
+                                    name: "projectNumber",
                                     error: `PROJECT_PATTERN_ERR_MSG`,
-                                    validation: { pattern: "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$", minlength : 2 }
+                                    validation: { pattern: "PJ\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+", minlength : 2 }
                                 }
                             },
                             {

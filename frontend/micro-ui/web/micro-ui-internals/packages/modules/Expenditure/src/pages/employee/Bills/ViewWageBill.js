@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from "react-i18next";
-import { Header } from '@egovernments/digit-ui-react-components';
+import { Header, Toast } from '@egovernments/digit-ui-react-components';
 import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewWageBill = () => {
@@ -12,9 +12,8 @@ const ViewWageBill = () => {
   const payload = {
     billCriteria: {
       tenantId,
-      ids: [],
+      billNumbers: [ billNumber ],
       businessService: businessService,
-      referenceIds: []
     },
     pagination: { limit: 10, offSet: 0, sortBy: "ASC", order: "ASC"}
   }
