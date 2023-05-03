@@ -107,7 +107,6 @@ export const View = {
         const skills = await getWageSeekerSkills()
         return transformViewDataToApplicationDetails(t, response, skills)
       } catch (error) {
-          console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }
     }

@@ -84,7 +84,6 @@ const Inbox = ({
         handleSubmit(handleFilterChange)();
     }
     const previousPage = () => {
-        console.log("offset", getValues("offset") - getValues("limit"));
         setValue("offset", getValues("offset") - getValues("limit"));
         handleSubmit(handleFilterChange)();
     }
