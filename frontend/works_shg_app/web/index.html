@@ -88,6 +88,13 @@
 </style>
 <body>
 <script>
+  function getGlobalConfig(){
+    console.log("getGlobalConfig");
+    console.log(window.globalConfigs);
+     return window.globalConfigs.getConfig('STATE_LEVEL_TENANT_ID');
+    }
+</script>
+<script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
     function loadMainDartJs() {
@@ -101,11 +108,6 @@
       document.body.append(scriptTag);
     }
 
-    function getGlobalConfig(){
-    console.log("getGlobalConfig");
-    console.log(window.globalConfigs);
-     return window.globalConfigs.getConfig('STATE_LEVEL_TENANT_ID');
-    }
 
     if ('serviceWorker' in navigator) {
 
