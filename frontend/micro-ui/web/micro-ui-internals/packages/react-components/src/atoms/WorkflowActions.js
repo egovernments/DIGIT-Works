@@ -142,14 +142,13 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   if(isEnableLoader){
     return <Loader />
   }
-
   return (
     <React.Fragment>
       {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && (
         <ActionBar style={{ ...ActionBarStyle }}>
           {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
             <Menu
-              localeKeyPrefix={forcedActionPrefix || `WORKS_${businessService?.toUpperCase()}`}
+              localeKeyPrefix={forcedActionPrefix || `WF_${businessService?.toUpperCase()}_ACTION`}
               options={actions}
               optionKey={"action"}
               t={t}
@@ -168,7 +167,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
             name={actions?.[0]?.action}
             value={actions?.[0]?.action}
             onClick={(e) => { onActionSelect(actions?.[0] || {}) }}>
-            {t(`${forcedActionPrefix || `WF_EMPLOYEE_${businessService?.toUpperCase()}`}_${actions?.[0]?.action}`)}
+            {t( Digit.Utils.locale.getTransformedLocale(`${forcedActionPrefix || `WF_${businessService?.toUpperCase()}_ACTION`}_${actions?.[0]?.action}`))}
           </button>
         </ActionBar>
       )}

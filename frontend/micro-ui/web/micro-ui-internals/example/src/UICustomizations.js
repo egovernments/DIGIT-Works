@@ -7,9 +7,9 @@ import _ from "lodash";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "mukta-estimate",
-  contracts: "contract-approval-mukta",
-  attendencemgmt: "muster-roll-approval",
+  estimate: "ESTIMATE",
+  contracts: "CONTRACT",
+  attendencemgmt: "MR",
   expenditure:""
 };
 

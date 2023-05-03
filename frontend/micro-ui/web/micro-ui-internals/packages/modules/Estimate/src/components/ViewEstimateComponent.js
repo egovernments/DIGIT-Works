@@ -78,7 +78,6 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
     const handleToastClose = () => {
         setToast({show : false, label : "", error : false});
     }
-
     if (isLoading) return <Loader />
     return (
         <>
@@ -91,7 +90,7 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
                         applicationData={applicationDetails?.applicationData}
                         moduleCode="Estimate"
                         showTimeLine={true}
-                        timelineStatusPrefix={"WF_ESTIMATE_STATUS_"}
+                        timelineStatusPrefix={`WF_${businessService}_`}
                         businessService={businessService}
                         // forcedActionPrefix={"ACTION_"}
                         tenantId={tenantId}
@@ -99,7 +98,7 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
                         statusAttribute={"state"}
                     />
                     <WorkflowActions
-                        forcedActionPrefix={"WF_ESTIMATE_ACTION"}
+                        forcedActionPrefix={`WF_${businessService}_ACTION`}
                         businessService={businessService}
                         applicationNo={estimateNumber}
                         tenantId={tenantId}

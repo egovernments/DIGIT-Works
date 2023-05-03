@@ -11,7 +11,6 @@ const AddVendorBill = (props) => {
         //TODO: based on API response, pass as true/false
         props.setbillCreated(true)
         //handle proceed when no formcomposer : Organisation_Work_Order, Department_Purchase_Order
-        console.log('Data', data)
     }
 
     const addVendorBill = () => {}

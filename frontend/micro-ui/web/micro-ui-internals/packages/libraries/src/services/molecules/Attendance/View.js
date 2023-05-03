@@ -129,7 +129,6 @@ export const fetchAttendanceDetails = async (t, tenantId, searchParams) => {
     
     return transformViewDataToApplicationDetails(t, response, skills)
   } catch (error) {
-      console.log('error', error);
       throw new Error(error?.response?.data?.Errors[0].message);
   }
 };

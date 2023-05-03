@@ -112,7 +112,6 @@ export const View = {
           const response = await OrganisationService.search(data);
           return transformViewDataToApplicationDetails(t, response, tenantId)
       } catch (error) {
-          console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }  
     },
@@ -122,7 +121,6 @@ export const View = {
         const response = await OrganisationService.search(data);
         return fetchBankDetails(response, tenantId)
       } catch (error) {
-        console.log('error', error)
         throw new Error(error?.response?.data?.Errors?.[0]?.message)
       }
     }
