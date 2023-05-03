@@ -1,13 +1,18 @@
 //This handler creates a FormData for Docs defaultValues
 //This will add 'id' for all the docs, as they are coming from response
 //These Ids will be used when user will modify or delete a doc of certain criteria
-export const handleModifyWOFiles = (uploadedDocs) => {
+export const handleModifyWOFiles = (uploadedDocs, docConfigData) => {
   //form data inout name mapping with file category Name
-  let fileKeyMappings = [
-    {key : "doc_boq", value : "BOQ"},
-    {key : "doc_terms_and_conditions", value : "Terms And Conditions"},
-    {key : "doc_others", value : "Others"},
-  ]
+
+  let fileKeyMappings = [];
+  let docMDMS = docConfigData?.works?.DocumentConfig?.[0]?.documents;
+  docMDMS?.forEach((doc)=>{
+    fileKeyMappings?.push({
+      key : doc?.name,
+      value : doc?.code
+    })
+  });
+
   let documentObject = {};
 
   //keep only active docs -- at a time there would be only fileKeyMappings.length no of files
@@ -40,7 +45,7 @@ const handleRoleOfCBO = ({calculatedWOAmount, roleOfCBO}) => {
   }
 }
 
-export const updateDefaultValues = ({createWorkOrderConfigMUKTA, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO}) => {
+export const updateDefaultValues = ({createWorkOrderConfigMUKTA, isModify, sessionFormData, setSessionFormData, contract, estimate, project, handleWorkOrderAmount, overHeadMasterData, createNameOfCBOObject, organisationOptions, createOfficerInChargeObject, assigneeOptions, roleOfCBO, docConfigData}) => {
   if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       //these are the req default Values for Create WO
@@ -79,7 +84,7 @@ export const updateDefaultValues = ({createWorkOrderConfigMUKTA, isModify, sessi
 
       createWorkOrderConfigMUKTA.defaultValues.roleOfCBO = isModify ? {code : contract?.executingAuthority, name : `COMMON_MASTERS_${contract?.executingAuthority}`} : roleOfCBO_basedOnWOAmount;
       createWorkOrderConfigMUKTA.defaultValues.projectCompletionPeriodInDays = isModify ? contract?.completionPeriod : "";
-      createWorkOrderConfigMUKTA.defaultValues.documents = isModify ? handleModifyWOFiles(contract?.documents) : "";
+      createWorkOrderConfigMUKTA.defaultValues.documents = isModify ? handleModifyWOFiles(contract?.documents, docConfigData) : "";
       createWorkOrderConfigMUKTA.defaultValues.WOTermsAndConditions = isModify ? [...contract?.additionalDetails?.termsAndConditions] : "";
       setSessionFormData({...sessionFormData, ...createWorkOrderConfigMUKTA?.defaultValues});
     }
