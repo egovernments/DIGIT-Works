@@ -29,7 +29,7 @@ class EnvironmentConfiguration {
       print('catch Error');
       AppLogger.instance.error(
         title: runtimeType.toString(),
-        message: 'Error while accessing .env file. Using fallback values',
+        message: 'Error while accessing dotenv file. Using fallback values',
       );
 
       _variables = Variables(useFallbackValues: true, dotEnv: _dotEnv);
