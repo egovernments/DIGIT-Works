@@ -24,7 +24,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "REJECT": {
@@ -96,7 +97,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "REJECT": {
@@ -182,7 +184,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "APPROVE": {
@@ -212,6 +215,86 @@ const configEstimateModal = (
                     isMandatory: false,
                     show: true
                 },
+            },
+            "SENDBACK":{
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:false,
+                    show:false
+                }
+            },
+            "SENDBACKTOCBO":{
+                comments: {
+                    isMandatory: false,
+                    show: true,
+                },
+                assignee: {
+                    isMandatory: false,
+                    show: false
+                },
+                upload: {
+                    isMandatory: false,
+                    show: true
+                },
+                acceptTerms: {
+                    isMandatory:false,
+                    show:false
+                }
+            }
+        },
+        "works.purchase":{
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "VERIFY_AND_FORWARD":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "REJECT":{
+                comments:{
+                    isMandatory:true,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
             }
         }
     }
@@ -219,20 +302,16 @@ const configEstimateModal = (
     const fetchIsMandatory = (field) => {
         
         if(configMap?.[businessService]?.[actionString]){
-            console.log(configMap?.[businessService]?.[actionString]?.[field]?.isMandatory);
             return configMap?.[businessService]?.[actionString]?.[field]?.isMandatory ? configMap?.[businessService]?.[actionString]?.[field]?.isMandatory : false
         }else{
-            console.log(configMap?.[businessService]?.default?.[field]?.isMandatory);
             return configMap?.[businessService]?.default?.[field]?.isMandatory ? configMap?.[businessService]?.default?.[field]?.isMandatory: false
         }
     }
     const fetchIsShow = (field) => {
         
         if (configMap?.[businessService]?.[actionString]) {
-            console.log(configMap?.[businessService]?.[actionString]?.[field]?.show);
            return configMap?.[businessService]?.[actionString]?.[field]?.show ? configMap?.[businessService]?.[actionString]?.[field]?.show : false
         } else {
-            console.log(configMap?.[businessService]?.default?.[field]?.show);
             return configMap?.[businessService]?.default?.[field]?.show ? configMap?.[businessService]?.default?.[field]?.show:false
         }
         
@@ -280,7 +359,13 @@ const configEstimateModal = (
                         isMandatory: fetchIsMandatory("comments"),
                         populators: {
                             name: "comments",
-                            hideInForm:!fetchIsShow("comments")
+                            hideInForm:!fetchIsShow("comments"),
+                            validation:{
+                                maxLength:{
+                                    value:1024,
+                                    message:t("WORKS_COMMENT_LENGTH_EXCEEDED_1024")
+                                }
+                            }
                         },
                     },
                     {
@@ -289,12 +374,12 @@ const configEstimateModal = (
                         populators: {
                             name: "documents",
                             allowedMaxSizeInMB: 5,
-                            maxFilesAllowed: 2,
-                            allowedFileTypes: /(.*?)(pdf|docx|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/i,
+                            maxFilesAllowed: 1,
+                            allowedFileTypes:configMap?.[businessService]?.default?.upload?.allowedFileTypes,
+                            hintText:t("WORKS_DOC_UPLOAD_HINT"),
+                            showHintBelow:true,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
-                            hintText: "WORKFLOW_MODAL_UPLOAD_HINT_TEXT",
-                            showHintBelow: true,
                             hideInForm:!fetchIsShow("upload")
                         }
                     }

@@ -52,8 +52,8 @@ const inboxConfigMukta = () => {
                             },
                             populators: {
                                 name: "workOrderNumber",
-                                error: `ESTIMATE_PATTERN_ERR_MSG`,
-                                validation: { pattern: "^[a-zA-Z0-9\\/-]*$", minlength: 2 }
+                                error: `CONTRACT_PATTERN_ERR_MSG`,
+                                validation: { pattern: "WO\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+", minlength: 2 }
                             },
                         },
                         {
@@ -67,7 +67,7 @@ const inboxConfigMukta = () => {
                             populators: {
                                 name: "projectId",
                                 error: `PROJECT_PATTERN_ERR_MSG`,
-                                validation: { pattern: "^[a-zA-Z0-9\\/-]*$", minlength: 2 }
+                                validation: { pattern: "PJ\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+", minlength: 2 }
                             },
                         },
                         {
@@ -132,7 +132,8 @@ const inboxConfigMukta = () => {
                             label: "ES_COMMON_AMOUNT",
                             jsonPath: "businessObject.totalContractedAmount",
                             additionalCustomization: true,
-                            "key": "estimatedAmount"
+                            "key": "estimatedAmount",
+                            headerAlign: "right"
                         },
                         {
                             "label": "COMMON_SLA_DAYS",

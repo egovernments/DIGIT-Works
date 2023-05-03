@@ -7,9 +7,14 @@ import _ from "lodash";
 var Digit = window.Digit || {};
 
 const businessServiceMap = {
-  estimate: "mukta-estimate",
-  contracts: "contract-approval-mukta",
-  attendencemgmt: "muster-roll-approval",
+  estimate: "ESTIMATE",
+  contracts: "CONTRACT",
+  attendencemgmt: "MR",
+  expenditure:{
+    WAGE_BILL:"EXPENSE.WAGE",
+    PURCHASE_BILL:"EXPENSE.PURCHASE",
+    SUPERVISION_BILL:"EXPENSE.SUPERVISION"
+  }
 };
 
 const inboxModuleNameMap = {
@@ -112,6 +117,9 @@ export const UICustomizations = {
      if (businessService === businessServiceMap.attendencemgmt) {
       return action.action.includes("VERIFY");
     }
+    if(businessService === businessServiceMap.expenditure.PURCHASE_BILL){
+      return action.action.includes("VERIFY_AND_FORWARD")
+    }
     return false;
   },
   getBusinessService: (moduleCode) => {
@@ -121,7 +129,9 @@ export const UICustomizations = {
       return businessServiceMap?.contracts;
     } else if (moduleCode?.includes("attendence")) {
       return businessServiceMap?.attendencemgmt;
-    } else {
+    }else if (moduleCode?.includes("expenditure")) {
+      return businessServiceMap?.expenditure;
+    }else {
       return businessServiceMap;
     }
   },
@@ -504,7 +514,7 @@ export const UICustomizations = {
         case "MASTERS_SOCIAL_CATEGORY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
 
-        case "MASTERS_ULB":
+        case "CORE_COMMON_PROFILE_CITY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_WARD":
@@ -554,7 +564,7 @@ export const UICustomizations = {
         case "MASTERS_ORGANISATION_ID":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/masters/view-organisation?tenantId=${row?.tenantId}&orgId=${value}`}>
+              <Link to={`/${window.contextPath}/employee/masters/view-organization?tenantId=${row?.tenantId}&orgId=${value}`}>
                 {value ? value : t("ES_COMMON_NA")}
               </Link>
             </span>
@@ -583,7 +593,7 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "MASTERS_ORGANISATION_ID")
-          link = `/${window.contextPath}/employee/masters/view-organisation?tenantId=${tenantId}&orgId=${row[key]}`;
+          link = `/${window.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgId=${row[key]}`;
       });
       return link;
     },

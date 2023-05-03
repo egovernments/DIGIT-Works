@@ -52,7 +52,7 @@
       margin-top: 12px;
 
       .user-img-txt {
-        background: #f47738;
+        background: theme(colors.primary.main);
         padding: 10px 15px;
         border-radius: 50%;
         color: white;
@@ -114,7 +114,7 @@
     height: 100%;
     color: #ffffff;
     margin-top: 80px;
-    z-index: 10;
+    z-index: 22;
     transition: 0.3s ease all;
     white-space: nowrap;
     height: calc(100vh - 36px);
@@ -145,11 +145,18 @@
       padding: 20px;
       font-size: 14px;
       &.active {
-        color: #f47738 !important;
+        color: theme(colors.primary.main) !important;
 
-        border-right: 4px solid #f47738;
+        border-right: 4px solid theme(colors.primary.main);
         svg {
-          fill: #f47738 !important;
+          fill: theme(colors.primary.main) !important;
+        }
+        .actions{
+          svg {
+            path{
+              fill: theme(colors.primary.main) !important;
+            }
+          }
         }
       }
       .employee-search-input {
@@ -175,12 +182,12 @@
       }
 
       &:hover {
-        color: #f47738 !important;
+        color: theme(colors.primary.main) !important;
         background-color: #486480;
 
         cursor: pointer;
         svg {
-          fill: #f47738 !important;
+          fill: theme(colors.primary.main) !important;
         }
       }
       .search-icon-wrapper {
@@ -222,11 +229,11 @@
         }
       }
       &.active {
-        color: #f47738 !important;
+        color: theme(colors.primary.main) !important;
 
-        border-right: 4px solid #f47738;
+        border-right: 4px solid theme(colors.primary.main);
         svg {
-          fill: #f47738 !important;
+          fill: theme(colors.primary.main) !important;
         }
       }
     }
@@ -349,12 +356,9 @@
 }
 
 .textoverflow{
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  overflow: hidden;
-  display: inline-block;
-  max-width: var(--max-width);
+    overflow: hidden;
+    display: block;
+    max-width: var(--max-width);
 }
 
 .RightMostTopBarOptions {
@@ -382,6 +386,7 @@
   .employee {
     .ground-container {
       @apply block;
+      margin-left: 0px;
     }
     .breadcrumb {
       @apply mb-lg;
@@ -403,6 +408,9 @@
       flex-direction: column;
       margin-left: 55px;
       width: calc(100%-55px);
+      .customEmployeeCard{
+        width:288px !important
+      }
     }
     .citizen-home-container {
       display: flex;
@@ -528,3 +536,4 @@
 .total-wrapper .value {
   text-align: right;
 }
+

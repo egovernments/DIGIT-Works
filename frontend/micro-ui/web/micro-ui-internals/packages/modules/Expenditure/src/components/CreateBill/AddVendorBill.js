@@ -11,7 +11,6 @@ const AddVendorBill = (props) => {
         //TODO: based on API response, pass as true/false
         props.setbillCreated(true)
         //handle proceed when no formcomposer : Organisation_Work_Order, Department_Purchase_Order
-        console.log('Data', data)
     }
 
     const addVendorBill = () => {}
@@ -28,6 +27,7 @@ const AddVendorBill = (props) => {
                     cardStyle={{"padding" : 0}}
                     fieldStyle={{ fontWeight: '600' }}
                     sectionHeadStyle={{marginBottom: '1rem'}}
+                    labelBold={true}
                 /> 
                 <LinkLabel style={{ display: "flex", marginTop: "1.5rem", marginLeft: "1rem" }} onClick={addVendorBill}>+ {t("EXP_ADD_ANOTHER_VENDOR_BILL")}</LinkLabel>
                 {!noBreakLine && <BreakLine />}

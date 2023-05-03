@@ -2,13 +2,15 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/date_formats.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 import '../blocs/organisation/org_financial_bloc.dart';
 import '../blocs/organisation/org_search_bloc.dart';
 import '../models/organisation/organisation_model.dart';
 import '../models/wage_seeker/banking_details_model.dart';
+import '../utils/common_methods.dart';
 import '../utils/global_variables.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
@@ -58,9 +60,8 @@ class _ORGProfilePage extends State<ORGProfilePage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
-            child:
-                SideBar(module: 'rainmaker-common,rainmaker-attendencemgmt'))),
+        drawer: DrawerWrapper(
+            Drawer(child: SideBar(module: CommonMethods.getLocaleModules()))),
         body: SingleChildScrollView(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -90,24 +91,19 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                           .toList();
                       functionalDetails = organisationListModel.organisations!
                           .map((e) => {
-                                i18.common.orgType: t.translate(e
-                                            .functions?.first.type
-                                            .toString()
-                                            .split('.')
-                                            .first ??
-                                        'NA') ??
+                                i18.common.orgType: t.translate(
+                                        'COMMON_MASTERS_ORG_${e.functions?.first.type.toString().split('.').first.toUpperCase() ?? 'NA'}') ??
                                     'NA',
-                                i18.common.orgSubType: t.translate(e
-                                            .functions?.first.type
-                                            .toString()
-                                            .split('.')
-                                            .last ??
-                                        'NA') ??
+                                i18.common.orgSubType: t.translate(
+                                        'COMMON_MASTERS_SUBORG_${e.functions?.first.type.toString().split('.').last.toUpperCase() ?? 'NA'}') ??
                                     'NA',
-                                i18.common.funcCat:
-                                    e.functions?.first.category ?? 'NA',
-                                i18.common.classOrRank:
-                                    e.functions?.first.orgClass ?? 'NA',
+                                i18.common.funcCat: e
+                                            .functions?.first.category !=
+                                        null
+                                    ? '${t.translate('COMMON_MASTERS_ORG_${e.functions?.first.category?.split('.').first.toString()}')}, ${t.translate('COMMON_MASTERS_FUNCATEGORY_${e.functions?.first.category?.split('.').last.toString()}')}'
+                                    : t.translate('NA'),
+                                i18.common.classOrRank: t.translate(
+                                    'COMMON_MASTERS_CLASS_${e.functions?.first.orgClass ?? 'NA'}'),
                                 i18.common.validFrom:
                                     DateFormats.timeStampToDate(
                                         e.functions?.first.validFrom),
@@ -132,15 +128,13 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                 i18.common.pinCode:
                                     e.orgAddress?.first.pincode ?? 'NA',
                                 i18.common.city: t.translate(
-                                        'PG_${e.orgAddress?.first.city?.toUpperCase()}') ??
+                                        'TENANT_TENANTS_${e.tenantId?.toUpperCase().replaceAll('.', '_')}') ??
                                     'NA',
                                 i18.common.ward: t.translate(
-                                        e.orgAddress?.first.boundaryCode ??
-                                            'NA') ??
+                                        '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_${e.orgAddress?.first.boundaryCode ?? 'NA'}') ??
                                     'NA',
                                 i18.common.locality: t.translate(
-                                    e.additionalDetails?.locality?.i18nKey ??
-                                        'NA'),
+                                    '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_${e.additionalDetails?.locality}'),
                                 i18.common.streetName:
                                     e.orgAddress?.first.street ?? 'NA',
                                 i18.common.doorNo:
@@ -230,6 +224,17 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                         ?.additionalDetails
                                         ?.ifsccode ??
                                     'NA',
+                                i18.common.effectiveFrom:
+                                    DateFormats.timeStampToDate(
+                                        e.auditDetails?.createdTime),
+                                i18.common.effectiveTo: (e.bankAccountDetails
+                                                ?.first.isPrimary ==
+                                            true &&
+                                        e.bankAccountDetails?.first.isActive ==
+                                            true)
+                                    ? t.translate('NA')
+                                    : DateFormats.timeStampToDate(
+                                        e.auditDetails?.lastModifiedTime)
                               })
                           .toList();
                     }
@@ -252,7 +257,12 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                         : Container();
                   });
             },
-          )
+          ),
+          const SizedBox(height: 30),
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: PoweredByDigit(),
+          ),
         ])));
   }
 }

@@ -9,7 +9,7 @@ import { InboxContext } from './InboxSearchComposerContext';
 import { Link } from "react-router-dom";
 import { Loader } from '../atoms/Loader';
 import NoResultsFound from '../atoms/NoResultsFound';
-
+import { InfoIcon } from "../atoms/svgindex";
 
 const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
     const {apiDetails} = fullConfig
@@ -49,6 +49,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 return {
                     Header: t(column?.label) || t("ES_COMMON_NA"),
                     accessor:column.jsonPath,
+                    headerAlign: column?.headerAlign,
                     Cell: ({ value, col, row }) => {
                         return  Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalCustomizations(row.original,column?.label,column, value,t, searchResult);
                     }
@@ -57,6 +58,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
             return {
                 Header: t(column?.label) || t("ES_COMMON_NA"),
                 accessor: column.jsonPath,
+                headerAlign: column?.headerAlign,
                 Cell: ({ value, col, row }) => {
                     return String(value ? column.translate? t(column.prefix?`${column.prefix}${value}`:value) : value : t("ES_COMMON_NA"));
                 }
@@ -152,8 +154,14 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
             <TextInput className="searchInput"  onChange={(e) => onSearch(e.target.value)} style={{ border: "none", borderRadius: "200px" }} />
              </div>}
+            {
+                config?.showTableInstruction && ( 
+                <div className='table-instruction-wrapper'>
+                    <InfoIcon /><p className='table-instruction-header'>{t(config?.showTableInstruction)}</p>
+                </div> )
+            }
             {searchResult?.length > 0 && <Table
-                //className="table-fixed-first-column-wage-seekers wage-seekers-table"
+                className={config?.tableClassName ? config?.tableClassName: "table"}
                 t={t}
                 //customTableWrapperClassName={"dss-table-wrapper"}
                 disableSort={config?.enableColumnSort ? false : true}
@@ -169,11 +177,15 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
                 onNextPage={nextPage}
                 onPrevPage={previousPage}
                 pageSizeLimit={getValues("limit")}
+                showCheckBox={config?.showCheckBox ? true : false}
+                actionLabel={config?.checkBoxActionLabel}
+                tableSelectionHandler={Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.selectionHandler}
                 getCellProps={(cellInfo) => {
                     return {
                         style: {
                             padding: "20px 18px",
                             fontSize: "16px",
+                            whiteSpace: "break-spaces",
                         },
                     };
                 }}

@@ -1,4 +1,4 @@
-import { AddIcon, CardLabelError, DeleteIcon, TextInput } from "@egovernments/digit-ui-react-components";
+import { AddIcon, CardLabelError, DeleteIcon, TextInput,TextArea } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 
 const WOTermsAndConditions = (props) => {
@@ -17,7 +17,7 @@ const WOTermsAndConditions = (props) => {
           }];
       }
       let tableState = [];
-      for(let i = 1; i<sessionFormData?.WOTermsAndConditions?.length; i++) {
+      for(let i = 0; i<sessionFormData?.WOTermsAndConditions?.length; i++) {
         if(sessionFormData?.WOTermsAndConditions[i]) {
           tableState.push({
             key: i,
@@ -55,15 +55,25 @@ const WOTermsAndConditions = (props) => {
     const showDelete = () => {
         let countIsShow = 0
         rows?.map(row => row.isShow && countIsShow++)
-        if (countIsShow === 1) {
-        return false
-        }
+        // if (countIsShow === 1) {
+        // return false
+        // }
         return true
     }
 
     const errorCardStyle = {width:"100%"}
 
     const removeRow = (row) => {
+      
+      //check if only one row is present
+      let totalRows = 0;
+      for(let keys of Object.keys(formData?.[formFieldName])) {
+        totalRows += 1;
+      }
+      if(totalRows === 1) {
+        setValue(`${formFieldName}.${row.key}.description`, '');
+      }else {
+
         //make a new state here which doesn't have this key
         const updatedState = rows?.map(e => {
         if (e.key === row.key) {
@@ -74,9 +84,10 @@ const WOTermsAndConditions = (props) => {
         }
         return e
         })
-
+  
         unregister(`${formFieldName}.${row.key}.description`)
         setRows(prev => updatedState)
+      }
     }
 
     const addRow = () => {
@@ -92,17 +103,39 @@ const WOTermsAndConditions = (props) => {
         let i = 0
         return rows?.map((row, index) => {
         if (row.isShow) i++
-        return row.isShow && <tr key={index} style={{ "height": "50%" }}>
-            <td style={getStyles(1)}>{i}</td>
+        return (
+          row.isShow && (
+            <tr key={index} style={{ height: "50%" }}>
+              <td style={getStyles(1)}>{i}</td>
 
-            <td style={getStyles(2)} ><div ><TextInput style={{ "marginBottom": "0px" }} name={`${formFieldName}.${row.key}.description`} inputRef={register({
-            required: false
-            })
-            }
-            />
-            </div></td>
-            <td style={getStyles(8)} >{showDelete() && <span onClick={() => removeRow(row)}><DeleteIcon fill={"#B1B4B6"} style={{ "margin": "auto" }} /></span>}</td>
-        </tr>
+              <td style={getStyles(2)}>
+                <div>
+                  {/* <TextInput
+                    style={{ marginBottom: "0px" }}
+                    name={`${formFieldName}.${row.key}.description`}
+                    inputRef={register({
+                      required: false,
+                    })}
+                  /> */}
+                  <TextArea
+                    style={{ marginBottom: "0px" }}
+                    name={`${formFieldName}.${row.key}.description`}
+                    inputRef={register({
+                      required: false,
+                    })}
+                  />
+                </div>
+              </td>
+              <td style={getStyles(8)}>
+                {showDelete() && (
+                  <span className="icon-wrapper" onClick={() => removeRow(row)}>
+                    <DeleteIcon fill={"#B1B4B6"} />
+                  </span>
+                )}
+              </td>
+            </tr>
+          )
+        );
         })
     }
 

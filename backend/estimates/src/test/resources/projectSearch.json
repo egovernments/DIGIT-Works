@@ -1,0 +1,91 @@
+{
+  "ResponseInfo": {
+    "apiId": null,
+    "ver": null,
+    "ts": 0,
+    "resMsgId": "uief87324",
+    "msgId": "string",
+    "status": "successful"
+  },
+  "Project": [
+    {
+      "id": "854b3f54-3775-4a14-a962-9eba6620f0d3",
+      "tenantId": "pb.amritsar",
+      "projectNumber": "PR/2022-23/01/000012",
+      "name": "project23",
+      "projectType": "MP-CWS",
+      "projectSubType": "",
+      "department": "DEPT_11",
+      "description": "DEPT_11 900 description",
+      "referenceID": "d9d8ffee-68a2-485d-bc50-14160477ea4c",
+      "documents": [
+        {
+          "id": "e88daa8d-5daf-4df0-a139-7e73cd35edd9",
+          "documentType": "Aadhar",
+          "fileStore": "99dcde84-aae2-4836-9ff9-f711fb82bb8b",
+          "documentUid": "EFWER",
+          "status": null,
+          "additionalDetails": null,
+          "auditDetails": {
+            "createdBy": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
+            "lastModifiedBy": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
+            "createdTime": 1673522391856,
+            "lastModifiedTime": 1673522897278
+          }
+        }
+      ],
+      "address": {
+        "id": "564835f7-0327-44f1-a015-3f16d27d23a7",
+        "tenantId": "pb.amritsar",
+        "doorNo": "5556",
+        "latitude": 90,
+        "longitude": 180,
+        "locationAccuracy": 10000,
+        "type": "4",
+        "addressLine1": "4",
+        "addressLine2": "55",
+        "landmark": "4",
+        "city": "4",
+        "pincode": "55",
+        "buildingName": "4",
+        "street": "sfsf",
+        "locality": "SUN04",
+        "auditDetails": {
+          "createdBy": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
+          "lastModifiedBy": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
+          "createdTime": 1673522391856,
+          "lastModifiedTime": 1673522897277
+        }
+      },
+      "startDate": 0,
+      "endDate": 0,
+      "isTaskEnabled": false,
+      "parent": "tt",
+      "projectHierarchy": null,
+      "targets": [
+        {
+          "id": "3b25e0d5-5e6e-4e10-80b4-f9bd04c1a491",
+          "beneficiaryType": "Slum",
+          "totalNo": 0,
+          "targetNo": 0,
+          "isDeleted": false,
+          "auditDetails": {
+            "createdBy": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
+            "lastModifiedBy": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
+            "createdTime": 1673522391856,
+            "lastModifiedTime": 1673522897277
+          }
+        }
+      ],
+      "additionalDetails": null,
+      "isDeleted": false,
+      "rowVersion": 0,
+      "auditDetails": {
+        "createdBy": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
+        "lastModifiedBy": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011",
+        "createdTime": 1673522391856,
+        "lastModifiedTime": 1673522897277
+      }
+    }
+  ]
+}

@@ -7,7 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
@@ -16,6 +17,7 @@ import '../../models/wage_seeker/financial_details_model.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
 import '../../models/wage_seeker/skill_details_model.dart';
+import '../../utils/notifiers.dart';
 import '../../widgets/atoms/radio_button_list.dart';
 
 class FinancialDetailsPage extends StatefulWidget {
@@ -37,6 +39,8 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   LocationDetails? locationDetails = LocationDetails();
   SkillDetails? skillDetails = SkillDetails();
   String hintText = '';
+  String bank = '';
+  String branch = '';
   String accountHolderKey = 'accountHolder';
   String accountNoKey = 'accountNo';
   String reAccountNoKey = 'reAccountNo';
@@ -54,6 +58,13 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
       financialDetails = registrationState.financialDetails;
       accountType =
           registrationState.financialDetails?.accountType.toString() ?? '';
+      bank = registrationState.financialDetails?.bankName ?? '';
+      branch = registrationState.financialDetails?.branchName ?? '';
+      if (registrationState.financialDetails?.bankName != null) {
+        hintText = hintText.isNotEmpty
+            ? hintText
+            : '${registrationState.financialDetails!.bankName}';
+      }
     }
   }
 
@@ -93,9 +104,18 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                       label: t.translate(i18.common.accountHolderName),
                       isRequired: true,
                       keyboardType: TextInputType.name,
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(RegExp("[A-Za-z ]"))
+                      ],
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.accountHolderNameRequired,
+                            ),
+                        'minLength': (_) => t.translate(
+                              i18.wageSeeker.minNameCharacters,
+                            ),
+                        'maxLength': (_) => t.translate(
+                              i18.wageSeeker.maxNameCharacters,
                             ),
                       },
                     ),
@@ -112,8 +132,14 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         'required': (_) => t.translate(
                               i18.wageSeeker.accountNumberRequired,
                             ),
-                        'mustMatch': (_) => AppLocalizations.of(context)
-                            .translate(i18.wageSeeker.reEnterAccountNumber)
+                        'mustMatch': (_) =>
+                            t.translate(i18.wageSeeker.reEnterAccountNumber),
+                        'minLength': (_) => t.translate(
+                              i18.wageSeeker.minAccNoCharacters,
+                            ),
+                        'maxLength': (_) => t.translate(
+                              i18.wageSeeker.maxAccNoCharacters,
+                            ),
                       },
                     ),
                     DigitTextFormField(
@@ -135,11 +161,10 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         context,
                         labelText: t.translate(i18.common.accountType),
                         formControlName: accountTypeKey,
-                        options: accountTypeList
-                            .map((e) => t.translate(e).toString())
-                            .toList(),
+                        options:
+                            accountTypeList.map((e) => e.toString()).toList(),
                         isRequired: true,
-                        valueMapper: (value) => value,
+                        valueMapper: (value) => t.translate(value),
                         onValueChange: (value) {
                           setState(() {
                             accountType = value;
@@ -156,12 +181,15 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                           final response = await http.get(url);
                           if (response.statusCode == 200) {
                             final data = jsonDecode(response.body);
-                            final String bankName = data['BANKCODE'];
+                            final String bankName = data['BANK'];
                             final String branchName = data['BRANCH'];
 
                             setState(() {
-                              hintText =
-                                  '${t.translate(bankName)}, ${t.translate(branchName)}';
+                              hintText = '$bankName, $branchName';
+                            });
+                          } else {
+                            setState(() {
+                              hintText = '';
                             });
                           }
                         },
@@ -174,35 +202,40 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                         hintText: hintText),
                   ]),
                   const SizedBox(height: 16),
-                  DigitCard(
-                      child: Center(
+                  Center(
                     child: DigitElevatedButton(
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
-                          final financeDetails = FinancialDetails(
-                              accountHolderName:
-                                  form.value[accountHolderKey].toString(),
-                              accountNumber:
-                                  form.value[accountNoKey].toString(),
-                              reAccountNumber:
-                                  form.value[reAccountNoKey].toString(),
-                              ifscCode: form.value[ifscCodeKey].toString(),
-                              accountType:
-                                  form.value[accountTypeKey].toString());
-                          BlocProvider.of<WageSeekerBloc>(context).add(
-                            WageSeekerCreateEvent(
-                                individualDetails: individualDetails,
-                                skillDetails: skillDetails,
-                                locationDetails: locationDetails,
-                                financialDetails: financeDetails),
-                          );
-                          widget.onPressed();
+                          if (hintText.isEmpty) {
+                            Notifiers.getToastMessage(context,
+                                i18.wageSeeker.enterValidIFSC, 'ERROR');
+                          } else {
+                            final financeDetails = FinancialDetails(
+                                accountHolderName:
+                                    form.value[accountHolderKey].toString(),
+                                accountNumber:
+                                    form.value[accountNoKey].toString(),
+                                reAccountNumber:
+                                    form.value[reAccountNoKey].toString(),
+                                ifscCode: form.value[ifscCodeKey].toString(),
+                                accountType:
+                                    form.value[accountTypeKey].toString(),
+                                bankName: hintText);
+                            BlocProvider.of<WageSeekerBloc>(context).add(
+                              WageSeekerCreateEvent(
+                                  individualDetails: individualDetails,
+                                  skillDetails: skillDetails,
+                                  locationDetails: locationDetails,
+                                  financialDetails: financeDetails),
+                            );
+                            widget.onPressed();
+                          }
                         },
                         child: Center(
                           child: Text(t.translate(i18.common.next)),
                         )),
-                  ))
+                  )
                 ],
               ),
             ),
@@ -215,14 +248,24 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
   FormGroup buildForm(FinancialDetails finance) => fb.group(<String, Object>{
         accountHolderKey: FormControl<String>(
             value: finance.accountHolderName,
-            validators: [Validators.required]),
+            validators: [
+              Validators.required,
+              Validators.minLength(2),
+              Validators.maxLength(128)
+            ]),
         accountNoKey: FormControl<String>(
-            value: finance.accountNumber, validators: [Validators.required]),
+            value: finance.accountNumber,
+            validators: [
+              Validators.required,
+              Validators.minLength(9),
+              Validators.maxLength(18)
+            ]),
         reAccountNoKey: FormControl<String>(value: finance.reAccountNumber),
         accountTypeKey: FormControl<String>(
             value: finance.accountType, validators: [Validators.required]),
-        ifscCodeKey: FormControl<String>(
-            value: finance.ifscCode, validators: [Validators.required]),
+        ifscCodeKey: FormControl<String>(value: finance.ifscCode, validators: [
+          Validators.required,
+        ]),
       }, [
         Validators.mustMatch(accountNoKey, reAccountNoKey)
       ]);

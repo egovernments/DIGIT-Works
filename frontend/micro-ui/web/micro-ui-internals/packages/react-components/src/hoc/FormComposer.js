@@ -158,6 +158,7 @@ export const FormComposer = (props) => {
                   inputRef={ref}
                   errorStyle={errors?.[populators.name]}
                   max={populators.max}
+                  min={populators.min}
                   disable={disable}
                   style={type === "date" ? { paddingRight: "3px" } : ""}
                   maxlength={populators?.validation?.maxlength}
@@ -189,6 +190,8 @@ export const FormComposer = (props) => {
                 disable={disable}
                 errorStyle={errors?.[populators.name]}
                 style={{marginTop: 0}}
+                maxlength={populators?.validation?.maxlength}
+                minlength={populators?.validation?.minlength}
               />
             )}
             name={populators.name}
@@ -287,7 +290,7 @@ export const FormComposer = (props) => {
                   tenantId={Digit.ULBService.getCurrentTenantId()}
                   getFormState={getFileStoreData}
                   showHintBelow={populators?.showHintBelow ? true : false}
-                  setuploadedstate={value}
+                  setuploadedstate={value || []}
                   allowedFileTypesRegex={populators.allowedFileTypes}
                   allowedMaxSizeInMB={populators.allowedMaxSizeInMB}
                   hintText={populators.hintText}
@@ -518,7 +521,7 @@ export const FormComposer = (props) => {
                   {!field.withoutLabel && (
                     <CardLabel
                       style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
-                      className={field?.disable ? "disabled" : ""}
+                      className={field?.disable ? `disabled ${props?.labelBold ? 'bolder' : ""}` : `${props?.labelBold ? 'bolder' : ""}`}
                     >
                       {t(field.label)}
                       {field.isMandatory ? " * " : null}
@@ -539,6 +542,7 @@ export const FormComposer = (props) => {
                           color: "#505A5F",
                           ...field?.descriptionStyles,
                         }}
+                        className="bolder"
                       >
                         {t(field.description)}
                       </CardLabel>
@@ -564,6 +568,7 @@ export const FormComposer = (props) => {
                       marginBottom: props.inline ? "8px" : "revert",
                       fontWeight: props.isDescriptionBold ? "600" : null,
                     }}
+                    className="bolder"
                   >
                     {t(field.label)}
                     {field?.appendColon ? ' : ' : null}
@@ -673,7 +678,7 @@ export const FormComposer = (props) => {
   const checkKeyDown = (e) => {
     const keyCode = e.keyCode ? e.keyCode : e.key ? e.key : e.which;
     if (keyCode === 13) {
-      e.preventDefault();
+      // e.preventDefault();
     }
   };
 

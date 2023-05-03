@@ -7,6 +7,7 @@ class TrackAttendanceTableData {
   String? individualGaurdianName;
   String? id;
   String? skill;
+  List<String>? skillCodeList;
   void Function()? onTap;
   String? monEntryId;
   String? monExitId;
@@ -162,14 +163,14 @@ List<Map<String, dynamic>> createAttendanceLogPayload(
     String registerId,
     int entryTime,
     int exitTime,
-    String tenantId) {
+    String tenantId, {bool isAbsent = false}) {
   return [
     {
       "registerId": registerId,
       "individualId": attendeeList.individualId,
       "time": entryTime,
       "type": "ENTRY",
-      "status": "ACTIVE",
+      "status": isAbsent ?  "INACTIVE" : "ACTIVE",
       "tenantId": tenantId,
       "documentIds": []
     },
@@ -178,7 +179,7 @@ List<Map<String, dynamic>> createAttendanceLogPayload(
       "individualId": attendeeList.individualId,
       "time": exitTime,
       "type": "EXIT",
-      "status": "ACTIVE",
+      "status":  isAbsent ?  "INACTIVE" : "ACTIVE",
       "tenantId": tenantId,
       "documentIds": []
     }

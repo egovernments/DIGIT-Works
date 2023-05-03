@@ -37,11 +37,11 @@ class DigitTable extends StatelessWidget {
           rightSideItemBuilder: _generateRightHandSideColumnRow,
           itemCount: tableData.length,
           elevation: 0,
-          // rowSeparatorWidget: const Divider(
-          //   color: Colors.black54,
-          //   height: 1.0,
-          //   thickness: 0.0,
-          // ),
+          rowSeparatorWidget: const Divider(
+            color: Colors.black54,
+            height: 1.0,
+            thickness: 1.0,
+          ),
           leftHandSideColBackgroundColor: const Color(0xFFFFFFFF),
           rightHandSideColBackgroundColor: const Color(0xFFFFFFFF),
           scrollPhysics: scrollPhysics,
@@ -61,7 +61,7 @@ class DigitTable extends StatelessWidget {
 
   List<Widget> _getTitleWidget() {
     var index = 0;
-    return headerList.map((e) {
+    return headerList.where((e) => e.hide != true).map((e) {
       index++;
       if (e.isSortingRequired ?? false) {
         return TextButton(
@@ -70,44 +70,70 @@ class DigitTable extends StatelessWidget {
             ),
             onPressed: e.callBack == null ? null : () => e.callBack!(e),
             child: _getTitleItemWidget((e.label),
+                subLabel: e.subLabel ?? '',
                 isAscending: e.isAscendingOrder,
-                isBorderRequired: (index - 1) == 0));
+                isBorderRequired: true));
       } else {
-        return _getTitleItemWidget(e.label);
+        return _getTitleItemWidget(e.label,
+            subLabel: e.subLabel ?? '', isBorderRequired: true);
       }
     }).toList();
   }
 
   Widget _getTitleItemWidget(String label,
-      {bool? isAscending, bool isBorderRequired = false}) {
+      {bool? isAscending, String? subLabel, bool isBorderRequired = false}) {
     var textWidget = Text(label,
         style: const TextStyle(
-            fontWeight: FontWeight.w700, color: Colors.black, fontSize: 12));
+            fontWeight: FontWeight.w700, color: Colors.black, fontSize: 14));
 
     return Container(
       decoration: isBorderRequired
           ? BoxDecoration(
               border: Border(
-                  left: tableCellBorder,
-                  bottom: tableCellBorder,
-                  right: tableCellBorder))
+              top: tableCellBorder,
+              left: tableCellBorder,
+              // bottom: tableCellBorder,
+            ))
           : null,
       width: leftColumnWidth,
       height: 56,
-      padding: const EdgeInsets.only(left: 17, right: 5, top: 6, bottom: 6),
+      padding: const EdgeInsets.only(left: 17, right: 5, top: 12.0, bottom: 6),
       alignment: Alignment.centerLeft,
       child: isAscending != null
-          ? Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 5,
+          ? Column(
               children: [
-                textWidget,
-                Icon(isAscending
-                    ? Icons.arrow_upward
-                    : Icons.arrow_downward_sharp)
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 5,
+                  children: [
+                    textWidget,
+                    Icon(isAscending
+                        ? Icons.arrow_upward
+                        : Icons.arrow_downward_sharp)
+                  ],
+                ),
+                Text(
+                  subLabel ?? '',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: const DigitColors().davyGray,
+                    fontSize: 12,
+                  ),
+                )
               ],
             )
-          : textWidget,
+          : Column(
+              children: [
+                textWidget,
+                Text(
+                  subLabel ?? '',
+                  style: TextStyle(
+                      color: const DigitColors().davyGray,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400),
+                )
+              ],
+            ),
     );
   }
 
@@ -129,11 +155,12 @@ class DigitTable extends StatelessWidget {
           },
           child: Container(
             decoration: BoxDecoration(
+                color: Colors.white,
                 border: Border(
-              left: tableCellBorder,
-              bottom: tableCellBorder,
-              right: tableCellBorder,
-            )),
+                  left: tableCellBorder,
+                  // bottom: const BorderSide(color: Colors.transparent, width: 0.5),
+                  right: tableCellBorder,
+                )),
             width: leftColumnWidth,
             height: tableData[index].tableRow.first.label != null &&
                     tableData[index].tableRow.first.label!.length > 28
@@ -154,6 +181,11 @@ class DigitTable extends StatelessWidget {
   Widget _generateColumnRow(BuildContext context, int index, String input,
       {Widget? buttonWidget, TextStyle? style}) {
     return Container(
+      decoration: BoxDecoration(
+          color: index % 2 == 0 ? const Color(0xffEEEEEE) : Colors.white,
+          border: Border(
+            right: tableCellBorder,
+          )),
       width: leftColumnWidth,
       height: tableData[index].tableRow.first.label!.length > 28
           ? columnRowIncreasedHeight(index)
@@ -181,9 +213,12 @@ class DigitTable extends StatelessWidget {
     var data = tableData[index];
     var list = <Widget>[];
     for (int i = 1; i < data.tableRow.length; i++) {
-      list.add(_generateColumnRow(context, index, data.tableRow[i].label ?? '',
-          style: data.tableRow[i].style,
-          buttonWidget: data.tableRow[i].widget));
+      if (data.tableRow[i].hide != true) {
+        list.add(_generateColumnRow(
+            context, index, data.tableRow[i].label ?? '',
+            style: data.tableRow[i].style,
+            buttonWidget: data.tableRow[i].widget));
+      }
     }
     return Container(
         color: index % 2 == 0 ? const Color(0xffEEEEEE) : Colors.white,
@@ -191,5 +226,5 @@ class DigitTable extends StatelessWidget {
   }
 
   BorderSide get tableCellBorder =>
-      const BorderSide(color: Color.fromRGBO(238, 238, 238, 1), width: 0.5);
+      const BorderSide(color: Color.fromRGBO(182, 182, 182, 1), width: 0.5);
 }

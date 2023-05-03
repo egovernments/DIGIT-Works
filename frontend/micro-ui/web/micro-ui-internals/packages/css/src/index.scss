@@ -17,13 +17,14 @@
 @import "./components/filters.scss";
 @import "./components/button.scss";
 @import "./components/attendencetable.scss";
-@import "./pages/works/horizontalNav.scss";
 
 @import "./pages/employee/index.scss";
 @import "./components/uploadcomponents.scss";
 @import "./pages/works/inboxSearchComposer.scss";
 @import "./pages/works/InboxLinks.scss";
 @import "./pages/works/inboxSearch.scss";
+@import "./pages/works/horizontalNav.scss";
+
 
 
 .display-none {
@@ -187,6 +188,7 @@
 .disabled {
   @apply border-grey-dark text-grey-dark !important;
   pointer-events: none !important;
+  background-color: #EEEEEE;
 }
 
 .card-date-input {
@@ -751,6 +753,9 @@ input[type="number"] {
   &:empty {
     padding: 0px !important;
   }
+  .card-label.bolder{
+     @apply font-medium !important;
+  }
 }
 
 @screen sm {
@@ -876,6 +881,8 @@ input[type="number"] {
 
 .mukta-header-card {
   margin-bottom: 3rem !important;
+  padding: 26px !important;
+  padding-bottom: 0 !important;
 }
 
 .text-input-customIcon {
@@ -890,10 +897,13 @@ input[type="number"] {
 
 .search-instruction-header {
   margin-bottom: 1rem;
+  font-size: 16px;
+  font-weight: 500;
+  color: theme(colors.text.secondary);
 }
 
 .skill-details-wrapper {
-  max-width: 950px;
+  max-width: 760px;
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
@@ -919,11 +929,12 @@ input[type="number"] {
   border: none;
   display: flex;
   padding-top: 10px;
+  background-color: #fff;
 }
 
 .disabled-text-field {
   color: #000 !important;
-  background-color: #FAFAFA;
+  background-color: #EEEEEE;
 }
 
 .status-table-custom-class {
@@ -935,4 +946,106 @@ input[type="number"] {
   border: none;
   color: black !important;
   padding: 0;
+  background-color: white;
+}
+
+.icon-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.tooltiptext {
+  white-space: break-spaces !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-height: 7.2em;
+  line-height: 1.8em;
+  width: max-content; 
+  max-width: 64ch;
+}
+.table{
+  tr:nth-child(1) {
+    td:nth-child(2){
+      .tooltip {
+          .tooltiptext {
+              top: 100% !important;
+              bottom: 0% !important;
+              height: max-content;
+          }
+      }
+    }
+  }
+    
+}
+
+.employee-data-table  {
+.row {
+  .value {
+    white-space: break-spaces !important;
+    word-break: break-all;
+  }
+}
+}
+
+.text-wrap-overflow {
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.submenu-container:first-child {
+  .sidebar-link {
+
+    padding: 18px!important;
+    padding-top: 20px!important;
+    svg {
+      width: 21px!important;
+      height: 21px!important;
+    }
+}
+
+
+  .employee-search-input{
+      margin-left:16px !important;
+  }
+}
+.h1 {&.works-header-search{
+font-size: 36px;
+}
+&.works-header-create{
+  font-size: 36px;
+}
+&.works-header-view{
+  font-size: 36px;
+}
+}
+.submit-bar header{
+  font-family: Roboto;
+}
+input[type=“date”]::-webkit-calendar-picker-indicator {
+  width: 24px;
+  height: 24px;
+}
+
+.actionBarWrapper {
+  display: flex;
+  column-gap: 24px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.table-instruction-wrapper {
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.table-instruction-header {
+  font-size: 16px;
+  font-weight: 400;
+  color: theme(colors.text.secondary);
 }

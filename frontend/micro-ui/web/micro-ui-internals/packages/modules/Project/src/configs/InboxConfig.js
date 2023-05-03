@@ -4,7 +4,7 @@ const inboxConfig = () => {
         type : "inbox", 
         //Added search config, will be updated with inbox api config while integration
         apiDetails: {
-            serviceName: "/pms/project/v1/_search",
+            serviceName: "/project/v1/_search",
             requestParam: {
             },
             requestBody: {
@@ -239,7 +239,7 @@ const inboxConfig = () => {
                     ],
                     enableGlobalSearch: false,
                     enableColumnSort: true,
-                    resultsJsonPath: "Projects",
+                    resultsJsonPath: "Project",
                 },
                 children: {},
                 show: true 

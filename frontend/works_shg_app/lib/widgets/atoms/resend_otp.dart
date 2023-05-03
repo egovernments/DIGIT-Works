@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 class ResendOTP extends StatefulWidget {
   final void Function()? onPressed;
@@ -72,7 +73,9 @@ class ResendOTPState extends State<ResendOTP> {
             : localizationText,
         textAlign: TextAlign.left,
         style: TextStyle(
-          color: const DigitColors().burningOrange,
+          color: _canResendOTP
+              ? const DigitColors().burningOrange
+              : DigitTheme.instance.colorScheme.shadow,
         ),
       ),
     );

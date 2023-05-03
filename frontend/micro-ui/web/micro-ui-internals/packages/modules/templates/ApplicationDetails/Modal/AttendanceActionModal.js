@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import _ from "lodash";
 import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
 import { configAttendanceApproveModal, configAttendanceRejectModal, configAttendanceCheckModal } from "../config";
@@ -70,7 +70,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
       default:
         break
     }
-  }, [employeeData]);
+  }, [employeeData, action]);
 
   function onSubmit (data) {
     
@@ -86,7 +86,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     switch(selectedAction) {
       case "SAVE":
         musterRoll.individualEntries = saveAttendanceState?.updatePayload
-        workflow.action = 'VERIFY'
+        workflow.action = 'VERIFYANDFORWARD'
         break;
       case "RESUBMIT":
         musterRoll.additionalDetails = { computeAttendance : true } 
@@ -118,6 +118,10 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
       }
     }
     return {}
+  }
+  
+  if(action?.action === "SAVE" && !config?.form) {
+    return <></>
   }
 
   return action && config?.form ? (

@@ -88,7 +88,7 @@ const getPattern = (type) => {
     case "bankAccountNo":
       return /^\d{9,18}$/;
     case "IFSC":
-      return /^[A-Z]{4}0[A-Z0-9]{6}$/;
+      return /^[A-Za-z]{4}0[A-Za-z0-9]{6}$/;
     case "ApplicationNo":
       return /^[a-zA-z0-9\s\\/\-]$/i;
   }

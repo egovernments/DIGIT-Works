@@ -117,6 +117,7 @@ const fetchDocuments = (docs) => {
 }
 
 export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
+    
     if(isEdit){
         //here make the payload of edit estimate rather than create estimate
         
@@ -151,7 +152,9 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
                     },
                     "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
                     "totalEstimatedAmount": data?.totalEstimateAmount,
-                    "tenantId": tenantId
+                    "tenantId": tenantId,
+                    "ward":projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
+                    "locality":projectData?.projectDetails?.searchedProject?.basicDetails?.locality,
                 }
             },
             workflow:{
@@ -195,6 +198,8 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
                         ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
                         city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city
                     },
+                    "ward":projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
+                    "locality":projectData?.projectDetails?.searchedProject?.basicDetails?.locality,
                     "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
                     "totalEstimatedAmount": data?.totalEstimateAmount,
                     "tenantId": tenantId

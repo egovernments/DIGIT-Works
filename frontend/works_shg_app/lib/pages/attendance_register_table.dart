@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:works_shg_app/models/attendance/attendance_registry_model.dart';
 import 'package:works_shg_app/models/table/table_model.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/constants.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/Back.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/delete_button.dart';
@@ -20,6 +21,7 @@ import '../blocs/attendance/search_projects/search_individual_project.dart';
 import '../blocs/localization/app_localization.dart';
 import '../models/attendance/individual_list_model.dart';
 import '../router/app_router.dart';
+import '../utils/common_methods.dart';
 import '../utils/models.dart';
 import '../utils/notifiers.dart';
 import '../widgets/SideBar.dart';
@@ -104,13 +106,56 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        bottomNavigationBar: SizedBox(
+          height: 60,
+          child: DigitCard(
+            margin: const EdgeInsets.all(0),
+            padding: const EdgeInsets.all(8.0),
+            child: DigitElevatedButton(
+              onPressed: createAttendeePayLoadList.isEmpty &&
+                      deleteAttendeePayLoadList.isEmpty
+                  ? null
+                  : () {
+                      if (createAttendeePayLoadList.isNotEmpty &&
+                          deleteAttendeePayLoadList.isNotEmpty) {
+                        context.read<AttendeeCreateBloc>().add(
+                              CreateAttendeeEvent(
+                                  attendeeList: createAttendeePayLoadList),
+                            );
+                        context.read<AttendeeDeEnrollBloc>().add(
+                              DeEnrollAttendeeEvent(
+                                  attendeeList: deleteAttendeePayLoadList),
+                            );
+                      } else if (createAttendeePayLoadList.isNotEmpty &&
+                          deleteAttendeePayLoadList.isEmpty) {
+                        context.read<AttendeeCreateBloc>().add(
+                              CreateAttendeeEvent(
+                                  attendeeList: createAttendeePayLoadList),
+                            );
+                      } else if (deleteAttendeePayLoadList.isNotEmpty &&
+                          createAttendeePayLoadList.isEmpty) {
+                        context.read<AttendeeDeEnrollBloc>().add(
+                              DeEnrollAttendeeEvent(
+                                  attendeeList: deleteAttendeePayLoadList),
+                            );
+                      } else {}
+                    },
+              child: Text(
+                  AppLocalizations.of(context).translate(i18.common.submit),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .apply(color: Colors.white)),
+            ),
+          ),
+        ),
         appBar: AppBar(
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper(const Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
+          module: CommonMethods.getLocaleModules(),
         ))),
         body: Stack(children: [
           Container(
@@ -128,7 +173,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     AttendanceIndividualProjectSearchState>(
                   listener: (context, registerState) {
                     registerState.maybeWhen(
-                        loading: () => shg_loader.Loaders.circularLoader(context),
+                        loading: () =>
+                            shg_loader.Loaders.circularLoader(context),
                         initial: () {
                           existingAttendeeList.clear();
                         },
@@ -164,7 +210,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       builder: (context, registerState) {
                     return registerState.maybeWhen(
                         orElse: () => Container(),
-                        loading: () => shg_loader.Loaders.circularLoader(context),
+                        loading: () =>
+                            shg_loader.Loaders.circularLoader(context),
                         loaded: (AttendanceRegistersModel?
                                 individualAttendanceRegisterModel) =>
                             WorkDetailsCard(registerDetails));
@@ -204,7 +251,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                         AttendanceIndividualProjectSearchState>(
                       listener: (context, registerState) {
                         registerState.maybeWhen(
-                            loading: () => shg_loader.Loaders.circularLoader(context),
+                            loading: () =>
+                                shg_loader.Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
                             },
@@ -279,35 +327,35 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       child: BlocBuilder<IndividualSearchBloc,
                           IndividualSearchState>(builder: (context, userState) {
                         return userState.maybeWhen(
-                            loading: () => shg_loader.Loaders.circularLoader(context),
+                            loading: () =>
+                                shg_loader.Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
                               return const EmptyImage(align: Alignment.center);
                             },
                             loaded: (IndividualListModel? individualListModel) {
-                              userList =
-                                  individualListModel!.Individual!.isNotEmpty
-                                      ? individualListModel!.Individual!
-                                          .map((e) => {
-                                                "name": e.name?.givenName,
-                                                "aadhaar": e.identifiers?.first
-                                                        .identifierId ??
-                                                    e.individualId,
-                                                "individualCode":
-                                                    e.individualId,
-                                                "skill": AppLocalizations.of(
-                                                        context)
-                                                    .translate(
-                                                        '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
-                                                "individualId": e.id,
-                                                "uuid": e.id,
-                                                "individualGaurdianName":
-                                                    e.fatherName,
-                                                "mobileNumber": e.mobileNumber,
-                                                "tenantId": e.tenantId
-                                              })
-                                          .toList()
-                                      : [];
+                              userList = individualListModel!
+                                      .Individual!.isNotEmpty
+                                  ? individualListModel.Individual!
+                                      .map((e) => {
+                                            "name": e.name?.givenName,
+                                            "aadhaar": e.identifiers?.first
+                                                    .identifierId ??
+                                                e.individualId,
+                                            "individualCode": e.individualId,
+                                            "skill": AppLocalizations.of(
+                                                    context)
+                                                .translate(
+                                                    '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
+                                            "individualId": e.id,
+                                            "uuid": e.id,
+                                            "individualGaurdianName":
+                                                e.fatherName ?? e.husbandName,
+                                            "mobileNumber": e.mobileNumber,
+                                            "tenantId": e.tenantId
+                                          })
+                                      .toList()
+                                  : [];
                               if (userList.isNotEmpty) {
                                 for (var user in userList) {
                                   var userToAdd = {
@@ -361,7 +409,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                 rightColumnWidth: width * 4,
                                                 height: 58 +
                                                     (52.0 *
-                                                        (tableData.length + 1)),
+                                                        (tableData.length +
+                                                            0.2)),
                                                 scrollPhysics:
                                                     const NeverScrollableScrollPhysics(),
                                               ),
@@ -458,95 +507,18 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                               child: Container(),
                                             ),
                                           ),
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 8.0,
-                                                right: 8.0,
-                                              ),
-                                              child: SizedBox(
-                                                height: 35,
-                                                child: DigitElevatedButton(
-                                                  onPressed:
-                                                      createAttendeePayLoadList
-                                                                  .isEmpty &&
-                                                              deleteAttendeePayLoadList
-                                                                  .isEmpty
-                                                          ? null
-                                                          : () {
-                                                              if (createAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  deleteAttendeePayLoadList
-                                                                      .isNotEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeCreateBloc>()
-                                                                    .add(
-                                                                      CreateAttendeeEvent(
-                                                                          attendeeList:
-                                                                              createAttendeePayLoadList),
-                                                                    );
-                                                                context
-                                                                    .read<
-                                                                        AttendeeDeEnrollBloc>()
-                                                                    .add(
-                                                                      DeEnrollAttendeeEvent(
-                                                                          attendeeList:
-                                                                              deleteAttendeePayLoadList),
-                                                                    );
-                                                              } else if (createAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  deleteAttendeePayLoadList
-                                                                      .isEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeCreateBloc>()
-                                                                    .add(
-                                                                      CreateAttendeeEvent(
-                                                                          attendeeList:
-                                                                              createAttendeePayLoadList),
-                                                                    );
-                                                              } else if (deleteAttendeePayLoadList
-                                                                      .isNotEmpty &&
-                                                                  createAttendeePayLoadList
-                                                                      .isEmpty) {
-                                                                context
-                                                                    .read<
-                                                                        AttendeeDeEnrollBloc>()
-                                                                    .add(
-                                                                      DeEnrollAttendeeEvent(
-                                                                          attendeeList:
-                                                                              deleteAttendeePayLoadList),
-                                                                    );
-                                                              } else {}
-                                                            },
-                                                  child: Text(
-                                                      AppLocalizations.of(
-                                                              context)
-                                                          .translate(i18
-                                                              .common.submit),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleMedium!
-                                                          .apply(
-                                                              color: Colors
-                                                                  .white)),
-                                                ),
-                                              ),
-                                            ),
-                                          )
                                         ])
                                   : const EmptyImage(align: Alignment.center);
                             },
-                            error: (String? error) => Notifiers.getToastMessage(
-                                context,
-                                AppLocalizations.of(context)
-                                    .translate(error.toString()),
-                                'ERROR'),
+                            error: (String? error) => Container(),
                             orElse: () => Container());
                       }),
-                    )
+                    ),
+                    const SizedBox(height: 30),
+                    const Align(
+                      alignment: Alignment.bottomCenter,
+                      child: PoweredByDigit(),
+                    ),
                   ]))
             ]),
           ),
@@ -556,8 +528,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   void onSuggestionSelected(user) {
     setState(() {
       searchController.text = '';
-      bool hasDuplicate =
-          addToTableList.where((e) => e["uuid"] == user["uuid"]).isNotEmpty;
+      bool hasDuplicate = addToTableList
+              .where((e) => e["uuid"] == user["uuid"])
+              .isNotEmpty ||
+          attendeeTableList.where((e) => e['uuid'] == user['uuid']).isNotEmpty;
       if (!hasDuplicate) {
         addToTableList.add({
           "name": user["name"],
@@ -601,6 +575,9 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
             : [];
         deleteAttendeePayLoadList
             .removeWhere((e) => e["individualId"] == user["uuid"]);
+      } else {
+        Notifiers.getToastMessage(
+            context, i18.common.individualAlreadyAdded, 'ERROR');
       }
       searchUser = true;
     });

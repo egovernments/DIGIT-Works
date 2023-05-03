@@ -249,6 +249,8 @@ components:
           type: string
           minLength: 2
           maxLength: 64
+        isActive:
+          type: boolean
         additionalDetails:
           description: Any additional details that need to be captured
           type: object
@@ -592,6 +594,8 @@ components:
           description: The unique id(Pancard Number,Adhar etc.) of the given Document.
           type: string
           maxLength: 64
+        isActive:
+          type: boolean
         additionalDetails:
           description: Json object to capture any extra information which is not accommodated by model
           type: object

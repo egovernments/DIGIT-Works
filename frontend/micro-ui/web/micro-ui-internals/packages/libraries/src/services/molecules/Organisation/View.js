@@ -5,14 +5,13 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   if(data?.organisations?.length === 0) throw new Error('No data found');
     
   const organisation = data.organisations[0]
-  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
 
   const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "ORG", referenceId: [organisation?.id] } }
   const bankDetails = await BankAccountService.search(bankDetailPayload, {});
   const bankAccounts = bankDetails?.bankAccounts?.[0]?.bankAccountDetails
 
-  const PAN = organisation?.identifiers?.find(item => item?.type === 'PAN')
-  const GSTIN = organisation?.identifiers?.find(item => item?.type === 'GSTIN')
+  const PAN = organisation?.identifiers?.find(item => item?.isActive && item?.type === 'PAN' )
+  const GSTIN = organisation?.identifiers?.find(item => item?.isActive && item?.type === 'GSTIN')
 
   const orgDetails = [
     {
@@ -23,7 +22,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
         { title: "MASTERS_REGISTERED_BY_DEPT", value: organisation?.additionalDetails?.registeredByDept || t("NA")},
         { title: "MASTERS_REGISTRATION_NUMBER", value: organisation?.additionalDetails?.deptRegistrationNum || t("NA")},
         { title: "MASTERS_DATE_OF_INCORPORATION", value: Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'dd/MM/yyyy') || t("NA")},
-        { title: "CORE_COMMON_STATUS", value: organisation?.applicationStatus || t("NA")}
+        { title: "CORE_COMMON_STATUS", value: t(`MASTERS_ORG_STATUS_${organisation?.applicationStatus}`) || t("NA")}
       ]
     },
     {
@@ -45,7 +44,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     values: [
         { title: "CORE_COMMON_PROFILE_CITY", value: organisation?.orgAddress?.[0]?.tenantId ? Digit.Utils.locale.getCityLocale(organisation?.orgAddress?.[0]?.tenantId) : t("NA")},
         { title: "COMMON_WARD", value: organisation?.orgAddress?.[0]?.boundaryCode ? Digit.Utils.locale.getMohallaLocale(organisation?.orgAddress?.[0]?.boundaryCode, tenantId) : t("NA")},
-        { title: "COMMON_LOCALITY", value: organisation?.additionalDetails?.locality ? Digit.Utils.locale.getMohallaLocale(organisation?.additionalDetails?.locality?.code, tenantId) : t("NA")},
+        { title: "COMMON_LOCALITY", value: organisation?.additionalDetails?.locality ? Digit.Utils.locale.getMohallaLocale(organisation?.additionalDetails?.locality, tenantId) : t("NA")},
         { title: "ES_COMMON_STREET", value: organisation?.orgAddress?.[0]?.street || t("NA")},
         { title: "ES_COMMON_DOOR_NO", value: organisation?.orgAddress?.[0]?.doorNo || t("NA")},
     ]
@@ -73,7 +72,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       { title: "ES_COMMON_BRANCH", value: item?.bankBranchIdentifier?.additionalDetails?.ifsccode || t("NA")},
       { title: "MASTERS_EFFECTIVE_FROM", value: Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.createdTime, 'dd/MM/yyyy') || t("NA")},
       { title: "MASTERS_EFFECTIVE_TO", value: item?.isActive && item?.isPrimary ? t("NA") : Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy')},
-      { title: "COMMON_MASTERS_TAXIDENTIFIER_PAN", value: PAN ? PAN?.value : t("NA") },
+      { title: "COMMON_MASTERS_TAXIDENTIFIER_PAN", value: PAN?.value === "XXXXX0123X" ? t("NA") : PAN?.value },
       { title: "COMMON_MASTERS_TAXIDENTIFIER_GSTIN", value: GSTIN ? GSTIN?.value : t("NA")}
     ]
     financialDetails.push(bankDetails)
@@ -94,14 +93,35 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   }
 }
 
+const fetchBankDetails = async (data, tenantId) => {
+  if(data?.organisations?.length === 0) throw new Error('No data found');
+
+  const organisation = data.organisations[0]
+  const bankDetailPayload = { bankAccountDetails: { tenantId, serviceCode: "ORG", referenceId: [organisation?.id] } }
+  const bankDetails = await BankAccountService.search(bankDetailPayload, {});
+  
+  return {
+    organisation,
+    bankDetails: bankDetails?.bankAccounts
+  }
+}
+
 export const View = {
     fetchOrganisationDetails: async (t, tenantId, data) => {
       try {
           const response = await OrganisationService.search(data);
           return transformViewDataToApplicationDetails(t, response, tenantId)
       } catch (error) {
-          console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }  
+    },
+
+    fetchOrganisationWithBankDetails : async (tenantId, data) => {
+      try {
+        const response = await OrganisationService.search(data);
+        return fetchBankDetails(response, tenantId)
+      } catch (error) {
+        throw new Error(error?.response?.data?.Errors?.[0]?.message)
+      }
     }
 }

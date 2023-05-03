@@ -55,6 +55,14 @@ const ModifyWageSeeker = () => {
         }
     }, [error])
    
+    useEffect(() => {
+        if(showDataError) {
+          setTimeout(()=>{
+            setShowDataError(false);
+          },3000);
+        }
+    },[showDataError]);
+    
     //session for Wage Seeker data
     const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = wageSeekerSession;
@@ -74,7 +82,7 @@ const ModifyWageSeeker = () => {
     if(isLoading || wageSeekerDataFetching) return <Loader />
     return (
         <React.Fragment>
-            <Header styles={{ fontSize: "32px" }}>{isModify ? t("MASTERS_MODIFY_WAGESEEKER") : t("ACTION_TEST_MASTERS_CREATE_WAGESEEKER")}</Header>
+            <Header className="works-header-create">{isModify ? t("MASTERS_MODIFY_WAGESEEKER") : t("ACTION_TEST_MASTERS_CREATE_WAGESEEKER")}</Header>
             {
                 showDataError === null && isFormReady && (
                     <ModifyWageSeekerForm 

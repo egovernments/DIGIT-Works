@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:works_shg_app/models/UserDetails/user_details_model.dart';
+import 'package:works_shg_app/models/user_details/user_details_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 

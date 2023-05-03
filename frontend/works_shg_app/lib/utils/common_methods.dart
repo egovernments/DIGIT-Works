@@ -27,11 +27,12 @@ class CommonMethods {
   void onTapOfAttachment(
       FileStoreModel store, String tenantId, BuildContext context) async {
     var random = Random();
-    List<FileStoreModel>? file = await CoreRepository()
-        .fetchFiles([store.fileStoreId.toString()], 'pg.citya');
-    print(file);
+    List<FileStoreModel>? file = await CoreRepository().fetchFiles(
+        [store.fileStoreId.toString()],
+        GlobalVariables.organisationListModel!.organisations!.first.tenantId
+            .toString());
     var fileName = CommonMethods.getExtension(file!.first.url.toString());
-    CoreRepository().fileDownload(file!.first.url.toString(),
+    CoreRepository().fileDownload(file.first.url.toString(),
         '${random.nextInt(200)}${random.nextInt(100)}$fileName');
   }
 
@@ -48,7 +49,7 @@ class CommonMethods {
 
   static Future<bool> isValidFileSize(int fileLength) async {
     var flag = true;
-    if (fileLength > 5000000) {
+    if (fileLength > 2000000) {
       flag = false;
     }
     return flag;
@@ -56,6 +57,25 @@ class CommonMethods {
 
   static String getRandomName() {
     return '${GlobalVariables.userRequestModel!['id']}${Random().nextInt(3)}';
+  }
+
+  static getConvertedLocalizedCode(String type, {String subString = ''}) {
+    switch (type) {
+      case 'city':
+        return GlobalVariables
+            .organisationListModel!.organisations!.first.tenantId
+            .toString()
+            .toUpperCase()
+            .replaceAll('.', '_');
+
+      case 'ward':
+      case 'locality':
+        return '${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString().toUpperCase().replaceAll('.', '_')}_ADMIN_${subString.toUpperCase()}';
+    }
+  }
+
+  static String getLocaleModules() {
+    return 'rainmaker-common,rainmaker-common-masters,rainmaker-attendencemgmt,rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}';
   }
 
   static DateTime firstDayOfWeek(DateTime date) {

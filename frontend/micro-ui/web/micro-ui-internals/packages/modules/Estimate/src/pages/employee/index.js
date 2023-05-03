@@ -17,7 +17,7 @@ const EstimateBreadCrumbs = ({ location }) => {
     const crumbs = [
         {
             path: `/${window?.contextPath}/employee`,
-            content: t("WORKS_WMS"),
+            content: t("WORKS_MUKTA"),
             show: true,
         },
         {
@@ -63,8 +63,8 @@ const EstimateBreadCrumbs = ({ location }) => {
 
 const App = ({ path }) => {
 
-    const EstimateSession = Digit.Hooks.useSessionStorage("ESTIMATE_CREATE", {});
-    const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
+    const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", {});
+    const [sessionFormData, clearSessionFormData] = EstimateSession;
 
     const location = useLocation();
     const locationCheck =
@@ -90,13 +90,12 @@ const App = ({ path }) => {
         }
     }
 
-    useEffect(() => {
-        return () => {
-            if (!window.location.href.includes("create-estimate") && Object.keys(sessionFormData) != 0) {
-                clearSessionFormData();
-            }
-        };
-    });
+    // remove session form data if user navigates away from the estimate create screen
+    useEffect(()=>{
+        if (!window.location.href.includes("create-estimate") && sessionFormData && Object.keys(sessionFormData) != 0) {
+        clearSessionFormData();
+        }
+    },[location]);
 
     return (
         <Switch>
@@ -105,7 +104,7 @@ const App = ({ path }) => {
                     <div style={getBreadCrumbStyles(window.location.href)}>
                         <EstimateBreadCrumbs location={location} />
                     </div>
-                    <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }} EstimateSession={EstimateSession} />} />
+                    <PrivateRoute path={`${path}/create-estimate`} component={() => <CreateEstimate {...{ path }}  />} />
                     <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
                     <PrivateRoute path={`${path}/search-estimate-plain`} component={() => <EstimateSearchPlain {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />

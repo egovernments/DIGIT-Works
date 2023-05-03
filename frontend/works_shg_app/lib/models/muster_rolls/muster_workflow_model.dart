@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:works_shg_app/models/muster_rolls/muster_roll_model.dart';
 
 part 'muster_workflow_model.freezed.dart';
 part 'muster_workflow_model.g.dart';
@@ -23,6 +24,8 @@ class ProcessInstances with _$ProcessInstances {
     String? id,
     String? businessId,
     String? action,
+    AuditDetails? auditDetails,
+    List<Assignees>? assignes,
     @JsonKey(name: 'state') WorkflowState? workflowState,
   }) = _ProcessInstances;
 
@@ -33,14 +36,33 @@ class ProcessInstances with _$ProcessInstances {
 }
 
 @freezed
+class Assignees with _$Assignees {
+  const factory Assignees({
+    String? emailId,
+    int? id,
+    String? mobileNumber,
+    String? name,
+    String? tenantId,
+    String? uuid,
+    String? userName,
+  }) = _Assignees;
+
+  factory Assignees.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$AssigneesFromJson(json);
+}
+
+@freezed
 class WorkflowState with _$WorkflowState {
   const factory WorkflowState({
-    String? tenantId,
+    required String tenantId,
     String? businessServiceId,
     String? applicationStatus,
     String? state,
     bool? isStartState,
     bool? isTerminateState,
+    List<WorkflowActions>? actions,
     bool? isStateUpdatable,
   }) = _WorkflowState;
 
@@ -48,4 +70,14 @@ class WorkflowState with _$WorkflowState {
     Map<String, dynamic> json,
   ) =>
       _$WorkflowStateFromJson(json);
+}
+
+@freezed
+class WorkflowActions with _$WorkflowActions {
+  const factory WorkflowActions({List<String>? roles}) = _WorkflowActions;
+
+  factory WorkflowActions.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$WorkflowActionsFromJson(json);
 }

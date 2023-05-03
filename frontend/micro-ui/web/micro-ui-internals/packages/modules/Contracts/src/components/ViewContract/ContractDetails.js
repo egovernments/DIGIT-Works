@@ -16,7 +16,7 @@ const ContractDetails = (props) => {
                 applicationData={""}
                 moduleCode="Contract"
                 showTimeLine={true}
-                timelineStatusPrefix={"WF_CONTRACT_STATUS_"}
+                timelineStatusPrefix={`WF_${businessService}_`}
                 businessService={businessService}
                 // forcedActionPrefix={"ACTION_"}
                 tenantId={props.tenantId}

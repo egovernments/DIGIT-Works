@@ -104,6 +104,9 @@ public class OrganisationEnrichmentService {
             if (!CollectionUtils.isEmpty(documentList)) {
                 for (Document document : documentList) {
                     document.setId(UUID.randomUUID().toString());
+                    if (document.getIsActive() == null) {
+                        document.setIsActive(Boolean.TRUE);
+                    }
                 }
             }
 
@@ -111,6 +114,9 @@ public class OrganisationEnrichmentService {
             if (!CollectionUtils.isEmpty(identifierList)) {
                 for (Identifier identifier : identifierList) {
                     identifier.setId(UUID.randomUUID().toString());
+                    if (identifier.getIsActive() == null) {
+                        identifier.setIsActive(Boolean.TRUE);
+                    }
                 }
             }
 
@@ -130,6 +136,9 @@ public class OrganisationEnrichmentService {
                     if (!CollectionUtils.isEmpty(documents)) {
                         for (Document funcDocument : documents) {
                             funcDocument.setId(UUID.randomUUID().toString());
+                            if (funcDocument.getIsActive() == null) {
+                                funcDocument.setIsActive(Boolean.TRUE);
+                            }
                         }
                     }
                     funcAppNumIdFormatIndex++;
@@ -192,6 +201,9 @@ public class OrganisationEnrichmentService {
             for (Document document : documentList) {
                 if (StringUtils.isBlank(document.getId())) {
                     document.setId(UUID.randomUUID().toString());
+                    if (document.getIsActive() == null) {
+                        document.setIsActive(Boolean.TRUE);
+                    }
                 }
             }
         }
@@ -205,6 +217,9 @@ public class OrganisationEnrichmentService {
             for (Identifier identifier : identifierList) {
                 if (StringUtils.isBlank(identifier.getId())) {
                     identifier.setId(UUID.randomUUID().toString());
+                    if (identifier.getIsActive() == null) {
+                        identifier.setIsActive(Boolean.TRUE);
+                    }
                 }
             }
         }
@@ -262,6 +277,9 @@ public class OrganisationEnrichmentService {
                     for (Document document : documents) {
                         if (StringUtils.isBlank(document.getId())) {
                             document.setId(UUID.randomUUID().toString());
+                            if (document.getIsActive() == null) {
+                                document.setIsActive(Boolean.TRUE);
+                            }
                         }
                     }
                 }

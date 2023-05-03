@@ -140,15 +140,22 @@ import useCreateWO from "./works/useCreateWO";
 
 import useSearchOrg from "./works/useSearchOrg";
 
-import useViewBill from "./bills/useViewBill";
+import useViewWageBill from "./bills/useViewWageBill";
 import useContractSearch from "./contracts/useContractSearch";
 import useBillCreate from "./bills/useBillCreate";
 import useUpdateProject from "./works/useUpdateProject";
 import useUpdateWO from "./works/useUpdateWO";
+import useSupervisionBillScreen from "./bills/useSupervisionBillScreen";
 
 import useViewOrganisation from "./organisation/useViewOrganisation";
+import useOrganisationDetails from "./organisation/useOrganisationDetails";
+import useCreateOrganisation from "./organisation/useCreateOrganisation";
+import useUpdateOrganisation from "./organisation/useUpdateOrganisation";
+
 import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
 import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
+import useViewPurchaseBillDetails from "./bills/useViewPurchaseBillDetails";
+import useCreatePurchaseBill from "./bills/useCreatePurchaseBill";
 
 const works = {
   useViewEstimateDetails,
@@ -185,7 +192,10 @@ const contracts = {
 
 const organisation = {
   useSearchOrg,
-  useViewOrganisation
+  useViewOrganisation,
+  useOrganisationDetails,
+  useCreateOrganisation,
+  useUpdateOrganisation
 }
 
 const estimates = {
@@ -264,9 +274,12 @@ const attendance = {
 
 const bills = {
   useViewBills,
-  useViewBill,
-  useBillCreate
-}
+  useViewWageBill,
+  useBillCreate,
+  useViewPurchaseBillDetails,
+  useSupervisionBillScreen,
+  useCreatePurchaseBill
+};
 const masters = {
   useViewOrg
 }

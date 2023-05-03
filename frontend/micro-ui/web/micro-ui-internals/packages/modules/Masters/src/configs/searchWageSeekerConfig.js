@@ -70,7 +70,7 @@ const searchWageSeekerConfig = () => {
               },
             },
             {
-              label: "MASTERS_PHONE_NUMBER",
+              label: "CORE_COMMON_PROFILE_MOBILE_NUMBER",
               type: "mobileNumber",
               isMandatory: false,
               disable: false,
@@ -103,8 +103,13 @@ const searchWageSeekerConfig = () => {
               type: "date",
               isMandatory: false,
               disable: false,
+              key : "createdFrom",
+              preProcess : {
+                updateDependent : ["populators.max"]
+              },
               populators: {
                 name: "createdFrom",
+                max : "currentDate"
               },
             },
             {
@@ -112,9 +117,14 @@ const searchWageSeekerConfig = () => {
               type: "date",
               isMandatory: false,
               disable: false,
+              key : "createdTo",
+              preProcess : {
+                updateDependent : ["populators.max"]
+              },
               populators: {
                 name: "createdTo",
                 error: "DATE_VALIDATION_MSG",
+                max : "currentDate"
               },
               additionalValidation: {
                 type: "date",
@@ -150,7 +160,7 @@ const searchWageSeekerConfig = () => {
               // additionalCustomization: true,
             },
             {
-              label: "MASTERS_ULB",
+              label: "CORE_COMMON_PROFILE_CITY",
               jsonPath: "address[0].tenantId",
               additionalCustomization: true,
             },

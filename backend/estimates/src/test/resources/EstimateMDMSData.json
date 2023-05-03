@@ -1,0 +1,32 @@
+{
+  "ResponseInfo": null,
+  "MdmsRes": {
+    "works": {
+      "Category": [
+        "OVERHEAD",
+        "SOR",
+        "NON-SOR"
+      ],
+      "Overheads": [
+        "GST",
+        "REW",
+        "SC",
+        "TST"
+      ]
+    },
+    "common-masters": {
+      "Department": [
+        {
+          "name": "Street Lights",
+          "code": "DEPT_1",
+          "active": true
+        }
+      ]
+    },
+    "tenant": {
+      "tenants": [
+        "pb.amritsar"
+      ]
+    }
+  }
+}

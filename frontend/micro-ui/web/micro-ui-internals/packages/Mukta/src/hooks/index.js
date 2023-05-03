@@ -18,7 +18,7 @@ const contracts = {
 
 const Hooks ={
     attendance:{
-        update:()=>console.log("Hi")
+        update:()=>{}
     },
     works,
     contracts

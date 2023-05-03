@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/models/wage_seeker/location_details_model.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
+import 'package:works_shg_app/utils/notifiers.dart';
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
@@ -14,6 +16,7 @@ import '../../models/mdms/wage_seeker_mdms.dart';
 import '../../models/wage_seeker/financial_details_model.dart';
 import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/skill_details_model.dart';
+import '../../utils/global_variables.dart';
 
 class LocationDetailsPage extends StatefulWidget {
   final void Function() onPressed;
@@ -102,18 +105,19 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                       formControlName: pinCodeKey,
                       label: t.translate(i18.common.pinCode),
                       keyboardType: TextInputType.number,
+                      maxLength: 6,
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                       ],
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.city),
-                      menuItems:
-                          city.map((e) => t.translate(e).toString()).toList(),
+                      padding: const EdgeInsets.only(top: 0),
+                      menuItems: city.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: cityKey,
-                      valueMapper: (value) => value,
-                      initialValue: widget.city,
+                      valueMapper: (value) => t.translate(
+                          'TENANT_TENANTS_${value.replaceAll('.', '_').toUpperCase()}'),
                       onChanged: (value) {},
                       validationMessages: {
                         'required': (_) => t.translate(
@@ -121,13 +125,14 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                             ),
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.ward),
-                      menuItems:
-                          ward.map((e) => t.translate(e).toString()).toList(),
+                      padding: const EdgeInsets.only(top: 32),
+                      menuItems: ward.map((e) => e.toString()).toList(),
                       isRequired: true,
                       formControlName: wardKey,
-                      valueMapper: (value) => value,
+                      valueMapper: (value) => t.translate(
+                          '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_$value'),
                       validationMessages: {
                         'required': (_) => t.translate(
                               i18.wageSeeker.localityRequired,
@@ -146,13 +151,13 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         });
                       },
                     ),
-                    DigitDropdown<String>(
+                    DigitReactiveDropdown<String>(
                         label: t.translate(i18.common.locality),
-                        menuItems: locality
-                            .map((e) => t.translate(e).toString())
-                            .toList(),
+                        padding: const EdgeInsets.only(top: 32),
+                        menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,
-                        valueMapper: (value) => value,
+                        valueMapper: (value) => t.translate(
+                            '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_$value'),
                         isRequired: true,
                         onChanged: (value) {},
                         validationMessages: {
@@ -162,6 +167,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                         }),
                     DigitTextFormField(
                       formControlName: streetNameKey,
+                      padding: const EdgeInsets.only(top: 32),
                       label: t.translate(i18.common.streetName),
                     ),
                     DigitTextFormField(
@@ -170,32 +176,40 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                   ]),
                   const SizedBox(height: 16),
-                  DigitCard(
-                      child: Center(
+                  Center(
                     child: DigitElevatedButton(
                         onPressed: () {
                           form.markAllAsTouched(updateParent: false);
                           if (!form.valid) return;
-                          final locationDetails = LocationDetails(
-                              pinCode: form.value[pinCodeKey].toString(),
-                              city: form.value[cityKey].toString(),
-                              locality: form.value[localityKey].toString(),
-                              ward: form.value[wardKey].toString(),
-                              streetName: form.value[streetNameKey].toString(),
-                              doorNo: form.value[doorNoKey].toString());
-                          BlocProvider.of<WageSeekerBloc>(context).add(
-                            WageSeekerCreateEvent(
-                                individualDetails: individualDetails,
-                                skillDetails: skillDetails,
-                                locationDetails: locationDetails,
-                                financialDetails: financialDetails),
-                          );
-                          widget.onPressed();
+                          if (form.value[pinCodeKey].toString().isNotEmpty &&
+                              form.value[pinCodeKey].toString().length < 6) {
+                            Notifiers.getToastMessage(
+                                context,
+                                t.translate(i18.wageSeeker.pinCodeValidation),
+                                'ERROR');
+                          } else {
+                            final locationDetails = LocationDetails(
+                                pinCode: form.value[pinCodeKey].toString(),
+                                city: form.value[cityKey].toString(),
+                                locality: form.value[localityKey].toString(),
+                                ward: form.value[wardKey].toString(),
+                                streetName:
+                                    form.value[streetNameKey].toString(),
+                                doorNo: form.value[doorNoKey].toString());
+                            BlocProvider.of<WageSeekerBloc>(context).add(
+                              WageSeekerCreateEvent(
+                                  individualDetails: individualDetails,
+                                  skillDetails: skillDetails,
+                                  locationDetails: locationDetails,
+                                  financialDetails: financialDetails),
+                            );
+                            widget.onPressed();
+                          }
                         },
                         child: Center(
                           child: Text(t.translate(i18.common.next)),
                         )),
-                  ))
+                  )
                 ],
               ),
             ),
@@ -209,7 +223,8 @@ class LocationDetailsState extends State<LocationDetailsPage> {
       fb.group(<String, Object>{
         pinCodeKey: FormControl<String>(value: locationDetails.pinCode ?? ''),
         cityKey: FormControl<String>(
-            value: locationDetails.city, validators: [Validators.required]),
+            value: locationDetails.city ?? widget.city,
+            validators: [Validators.required]),
         wardKey: FormControl<String>(
             value: locationDetails.ward, validators: [Validators.required]),
         localityKey: FormControl<String>(
