@@ -21,11 +21,9 @@ const businessServiceMap = {
   estimate: "ESTIMATE",
   contract: "CONTRACT",
   "muster roll": "MR",
-  expenditure:{
-    "works.wages":"EXPENSE.WAGE",
-    "works.purchase":"EXPENSE.PURCHASE",
-    "works.supervision":"EXPENSE.SUPERVISION"
-  }
+  "works.wages":"EXPENSE.WAGE",
+  "works.purchase":"EXPENSE.PURCHASE",
+  "works.supervision":"EXPENSE.SUPERVISION"
 };
 
 const inboxModuleNameMap = {
@@ -128,7 +126,7 @@ export const UICustomizations = {
      if (businessService === businessServiceMap?.["muster roll"]) {
       return action.action.includes("VERIFY");
     }
-    if(businessService === businessServiceMap.expenditure?.["works.purchase"]){
+    if(businessService === businessServiceMap?.["works.purchase"]){
       return action.action.includes("VERIFY_AND_FORWARD")
     }
     return false;
@@ -138,21 +136,19 @@ export const UICustomizations = {
       return businessServiceMap?.estimate;
     } else if (moduleCode?.includes("contract")) {
       return businessServiceMap?.contract;
-    } else if (moduleCode?.includes("attendence")) {
+    } else if (moduleCode?.includes("muster roll")) {
       return businessServiceMap?.["muster roll"];
     }
-    else if (moduleCode?.includes("purchase")) {
-      return businessServiceMap?.expenditure?.["works.purchase"];
+    else if (moduleCode?.includes("works.purchase")) {
+      return businessServiceMap?.["works.purchase"];
     }
-    else if (moduleCode?.includes("wage")) {
-      return businessServiceMap?.expenditure?.["works.wage"];
+    else if (moduleCode?.includes("works.wage")) {
+      return businessServiceMap?.["works.wage"];
     }
-    else if (moduleCode?.includes("purchase")) {
-      return businessServiceMap?.expenditure?.["works.supervision"];
+    else if (moduleCode?.includes("works.supervision")) {
+      return businessServiceMap?.["works.supervision"];
     }
-    else if (moduleCode?.includes("expenditure")) {
-      return businessServiceMap?.expenditure;
-    }else {
+    else {
       return businessServiceMap;
     }
   },

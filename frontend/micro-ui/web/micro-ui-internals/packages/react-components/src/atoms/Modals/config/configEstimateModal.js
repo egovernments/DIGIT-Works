@@ -12,8 +12,8 @@ const configEstimateModal = (
     const {action:actionString} = action
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
     const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
-    const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendence");
-    const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("purchase");
+    const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll");
+    const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     
     const configMap = {
         [bsEstimate]: {

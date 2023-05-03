@@ -137,7 +137,7 @@ const DeductionsTable = ({control,watch,...props}) => {
     }
 
     const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey = "name", options = []) => {
-      const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("expenditure").PURCHASE_BILL;
+      const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
 
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
             Digit.ULBService.getStateId(),
