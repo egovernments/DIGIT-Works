@@ -12,7 +12,7 @@ const ViewAttendance = () => {
   const [modify, setModify] = useState(false);
   const [cardState,setCardState] = useState([])
   const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
-  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
 
   const [isStateChanged, setStateChanged] = useState(``)
 
