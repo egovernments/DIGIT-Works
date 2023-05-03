@@ -8,6 +8,19 @@ import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 // these functions will act as middlewares
 var Digit = window.Digit || {};
 
+const getBillType = (businessService) => {
+  switch(businessService) {
+    case "works.wages":
+      return 'wage'
+    case "works.purchase":
+      return 'purchase'
+    case "works.supervision":
+      return 'supervision'
+    default:
+      return 'wage';
+  }
+}
+
 export const UICustomizations = {
   EstimateInboxConfig: {
     preProcess: (data) => {
@@ -1014,12 +1027,13 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_BILL_NUMBER") {
+        const billType = getBillType(row?.businessObject?.businessservice)
         return (
           <span className="link">
             <Link
               to={`/${
                 window.contextPath
-              }/employee/expenditure/view-bill?tenantId=${row?.businessObject?.tenantId}&billNumber=${value}`}
+              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.businessObject?.tenantId}&billNumber=${value}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
@@ -1132,12 +1146,13 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_BILL_NUMBER") {
+        const billType = getBillType(row?.businessObject?.businessservice)
         return (
           <span className="link">
             <Link
               to={`/${
                 window.contextPath
-              }/employee/expenditure/view-bill?tenantId=${row?.tenantId}&billNumber=${value}`}
+              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.businessObject?.tenantId}&billNumber=${value}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
