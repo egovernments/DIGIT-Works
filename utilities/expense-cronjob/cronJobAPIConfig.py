@@ -1,77 +1,191 @@
 import requests
-import sys
-import json
-import time
+import json, os
+from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 # The first argument to the script is the job name
-argumentList = sys.argv 
-job_name = sys.argv[1]
+# argumentList = sys.argv 
+# job_name = sys.argv[1]
+rootTenantId = None
 
-ts = time.time()
-print("\n=================Job started=============== {} job_name {}".format(ts, job_name))
-
-mdms_host = "http://egov-mdms-service.egov:8080"
-user_host = "http://egov-user.egov:8080"
-
-# Calls MDMS service to fetch cron job API endpoints configuration
-
-mdms_url = "{}/egov-mdms-service/v1/_search".format(mdms_host)
-mdms_payload = "{\n \"RequestInfo\": {\n   \"apiId\": \"asset-services\",\n   \"ver\": null,\n   \"ts\": null,\n   \"action\": null,\n   \"did\": null,\n   \"key\": null,\n   \"msgId\": \"search with from and to values\",\n   \"authToken\": \"f81648a6-bfa0-4a5e-afc2-57d751f256b7\"\n },\n \"MdmsCriteria\": {\n   \"tenantId\": \"pg\",\n   \"moduleDetails\": [\n     {\n       \"moduleName\": \"common-masters\",\n       \"masterDetails\": [\n         {\n           \"name\": \"BillType\"\n         }\n       ]\n     }\n   ]\n }\n}"
-mdms_headers = {
-  'Content-Type': 'application/json'
-}
-response = requests.request("POST", mdms_url, headers=mdms_headers, data = mdms_payload)
-
-print("response {}".format(response))
-
-
-# # Convert the response to json
-# mdms_data = response.json()
-
-# print("mdms_data : {}".format(mdms_data))
-
-# # # Call user search to fetch SYSTEM user
-# user_url = "{}/user/v1/_search?tenantId=pb".format(user_host)
-# user_payload = "{\n\t\"requestInfo\" :{\n   \"apiId\": \"ap.public\",\n    \"ver\": \"1\",\n    \"ts\": 45646456,\n    \"action\": \"POST\",\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n    \"userInfo\": {\n    \t\"id\" : 32\n    },\n    \"authToken\": \"5eb3655f-31b1-4cd5-b8c2-4f9c033510d4\"\n\t},\n\t\n   \"tenantId\" : \"pg\",\n   \"userType\":\"SYSTEM\",\n   \"name\" : \"CRONJOB\",\n   \"pageSize\": \"1\",\n   \"roleCodes\" : [\"SYSTEM\"]\n\n\n}\n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n}\n"
-# user_headers = {
-#   'Content-Type': 'application/json'
-# }
-# user_response = requests.request("POST", user_url, headers=user_headers, data = user_payload)
-# users = user_response.json()['user']
-# if len(users)==0:
-#     raise Exception("System user not found")
-# else:
-#     userInfo = users[0]
-
-
-
-# RequestInfo = json.loads("{\n    \"apiId\": \"Rainmaker\",\n    \"ver\": \".01\",\n    \"action\": \"\",\n    \"did\": \"1\",\n    \"key\": \"\",\n    \"msgId\": \"20170310130900|en_IN\",\n    \"requesterId\": \"\",\n    \"userInfo\": \"\"\n  }")
-# RequestInfo["userInfo"] = userInfo
-
-
-# # Looping through each entry in the config, it checks if the active flag is true and jobName 
-# # matches the job name given as argument if both criteria fulfilled the given http request is called
-
-# for data in mdms_data["MdmsRes"]["common-masters"]["CronJobAPIConfig"]:
-    
-#     params = None
-#     payload = None
-#     headers = None
-
-#     if data["active"].lower()=="true" and data["jobName"]==job_name:
-#         method = data["method"]
-#         url = data["url"]
+def getContracts(requestInfo, tenantId, contractStatus):
+    contracts = []
+    try:
+        limit = 100
+        offset = 0
+        pageNo = 1
+        contract_host = os.getenv('CONTRACTS_SERVICE_HOST')
+        contract_search = os.getenv('CONTRACTS_SEARCH')
+        url = "{}{}".format(contract_host, contract_search)
+        payload = {}
+        payload["RequestInfo"] = requestInfo
+        payload['tenantId'] = tenantId
+        payload['status'] = contractStatus
+        headers = {'Content-Type': 'application/json'}
         
-#         if "header" in data.keys():
-#             headers = data["header"]
+        hasMoreRecords = True
+        while hasMoreRecords:
+            payload["pagination"] = { "limit": limit, "offSet": offset  }
+            requestData = json.dumps(payload)
+            response = requests.request("POST", url, headers=headers, data = requestData)
+            # Convert the response to json
+            payloadData = response.json()
+            contractsData = payloadData.get("contracts", [])
+            if (len(contractsData) > 0):
+                contracts = contracts + contractsData
+                offset = limit * pageNo
+                pageNo = pageNo + 1
+            else:
+                hasMoreRecords = False
+        return contracts
+    except Exception as ex:
+        logging.info("Exception while fetching contracts for tenant id: {}".format(tenantId))
+        logging.error("Exception occurred", exc_info=True)
+        return contracts
             
-#         if 'payload' in data.keys():    
-#             payload = data["payload"]
-#             if "RequestInfo" in payload:
-#                 if payload["RequestInfo"]=="{DEFAULT_REQUESTINFO}":
-#                     payload["RequestInfo"] = RequestInfo    
+
+
+def getTenants(): 
+    try:
+        mdms_host = os.getenv('MDMS_SERVICE_HOST')
+        mdms_search = os.getenv('MDMS_SEARCH')
+        # Calls MDMS service to fetch cron job API endpoints configuration
+        mdms_url = "{}{}".format(mdms_host, mdms_search)
+        mdms_payload = "{\n \"RequestInfo\": {\n   \"apiId\": \"asset-services\",\n   \"ver\": null,\n   \"ts\": null,\n   \"action\": null,\n   \"did\": null,\n   \"key\": null,\n   \"msgId\": \"search with from and to values\",\n   \"authToken\": \"f81648a6-bfa0-4a5e-afc2-57d751f256b7\"\n },\n \"MdmsCriteria\": {\n   \"tenantId\": \"pg\",\n   \"moduleDetails\": [\n     {\n       \"moduleName\": \"tenant\",\n       \"masterDetails\": [\n         {\n           \"name\": \"tenants\"\n         }\n       ]\n     }\n   ]\n }\n}"
+        mdms_headers = {'Content-Type': 'application/json'}
+        response = requests.request("POST", mdms_url, headers=mdms_headers, data = mdms_payload)
+        # Convert the response to json
+        mdms_data = response.json()
+        tenants = mdms_data.get("MdmsRes", {}).get("tenant", {}).get("tenants", [])
+        return tenants
+    except Exception as ex:
+        logging.info("Exception while fetching tenants")
+        logging.error("Exception occurred", exc_info=True)
+        return None
+
+def getUser(): 
+    try:
+        userInfo = None
+        user_host = os.getenv('USER_SERVICE_HOST')
+        user_search = os.getenv('USER_SEARCH')
+        # # Call user search to fetch SYSTEM user
+        user_url = "{}{}?tenantId={}".format(user_host, user_search, rootTenantId)
+        tenantId = "pg.citya"
+        uuid = os.getenv('USER_UUID')
+        user_payload = {"requestInfo":{"apiId":"ap.public","ver":"1","ts":45646456,"action":"POST","did":None,"key":None,"msgId":"8c11c5ca-03bd-11e7-93ae-92361f002671","userInfo":{"id":32},"authToken":"5eb3655f-31b1-4cd5-b8c2-4f9c033510d4"},"tenantId":tenantId,"uuid":[uuid],"pageSize":"1"}
+        user_payload = json.dumps(user_payload)
+        user_headers = {'Content-Type': 'application/json'}
+        user_response = requests.request("POST", user_url, headers=user_headers, data = user_payload)
+        users = user_response.json()['user']
+        if len(users)==0:
+            raise Exception("user not found")
+        else:
+            userInfo = users[0]
+        return userInfo;
+    except Exception as ex:
+        logging.info("Exception while fetching user info.")
+        logging.error("Exception occurred", exc_info=True)
+        return None
+
+
+def getRequestInfo(userInfo):
+    requestInfo = json.loads("{\n    \"apiId\": \"Rainmaker\",\n    \"ver\": \".01\",\n    \"action\": \"\",\n    \"did\": \"1\",\n    \"key\": \"\",\n    \"msgId\": \"20170310130900|en_IN\",\n    \"requesterId\": \"\",\n    \"userInfo\": \"\"\n  }")
+    requestInfo["userInfo"] = userInfo
+    return requestInfo
+
+def calculateExpense(contracts, requestInfo):
+    success = 0
+    failed = 0
+    failedContractIds = []
+    try:
+        expense_calculator_host = os.getenv('EXPENSE_CALCULATOR_SERVICE_HOST')
+        expense_calculator_URL = os.getenv('EXPENSE_CALCULATE_URL')
+        url = "{}{}".format(expense_calculator_host, expense_calculator_URL)
+        payload = {}
+        payload["RequestInfo"] = requestInfo
+        headers = {'Content-Type': 'application/json'}
+        for contract in contracts:
+            contractId = contract.get("id")
+            logging.info("Generating expense for contract id : {}".format(contractId))
+            criteria = {}
+            criteria["tenantId"] = contract.get("tenantId")
+            criteria["contractId"] = contractId
+            payload['criteria'] = criteria
+            requestData = json.dumps(payload)
+            try:
+                response = requests.request("POST", url, headers=headers, data = requestData)
+                logging.info("Response: {}".format(response.status_code))
+                if response.status_code == 201:
+                    success = success + 1
+                else:
+                    failed = failed + 1
+                    failedContractIds.append(contractId)
+            except Exception as ex:
+                logging.info("Exception while fetching contracts for tenant id: {}".format(contractId), exc_info=True)
+                failed = failed + 1
+                failedContractIds.append(contractId)
+    except Exception as ex:
+        logging.error("Exception while calculating expense", exc_info=True)
+    
+    return  [success, failed, failedContractIds]
+
+
+'''
+    Process the 
+'''
+def startExpenseCalcualtion():
+    try:
+        totalContracts = 0
+        success = 0
+        failed = 0
+        failedContractIds = []
+        logging.info("Fetching tenants.")
+        tenants = getTenants()
+        logging.info("Fetching User.")
+        userInfo = getUser()
+        contractStatus = os.getenv('CONTRACTS_STATUS')
+        contractsList = []
+        if tenants != None and len(tenants) > 0 and userInfo != None:
+            requestInfo = getRequestInfo(userInfo=userInfo)
+            for tenant in tenants:
+                tenantId = tenant.get("code", None)
+                if tenantId != rootTenantId:
+                    logging.info("Fetching contracts for tenant : {}".format(tenantId))
+                    contracts = getContracts(requestInfo=requestInfo, tenantId=tenantId, contractStatus=contractStatus)
+                    logging.info("Get contracts : {}".format(len(contracts)))
+                    contractsList = contractsList + contracts
             
-#         if 'parmas' in data.keys():
-#             params = data['params']
-            
-#         res = requests.request(method, url, params = params, headers = headers, data=json.dumps(payload))
+            logging.info("========Calculat expense for contracts========")
+            # Calculate contract
+            totalContracts = len(contractsList)
+            if totalContracts > 0:
+                [success, failed, failedContractIds] = calculateExpense(contractsList, requestInfo)
+            else:
+                logging.info("Contracts are not available.")
+        else:
+            logging.info("TenantId list or User info is not available.")
+        return [totalContracts, success, failed, failedContractIds]
+    except Exception as ex:
+        logging.error("Exception while processing data.", exc_info=True)
+        raise(ex)
+
+if __name__ == "__main__":
+    try:
+        logging.info('Started!')
+        load_dotenv()
+        rootTenantId = os.getenv('TENANT_ID')
+        if rootTenantId != None:
+            [totalContracts, success, failed, failedContractIds] = startExpenseCalcualtion()
+            logging.info("Total contracts : {}".format(totalContracts))
+            logging.info("Successfully generated : {}".format(success))
+            logging.info("Failed : {}".format(failed))
+            logging.info("Failed conract ids: {}".format(failedContractIds))
+        else:
+            logging.warning("Tenant id is missing in enviornment")
+        logging.info('Ends!')
+    except Exception as ex:
+        logging.error("Exception occured on main.", exc_info=True)
+        raise(ex)
+    
