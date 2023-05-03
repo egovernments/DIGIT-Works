@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_dynamic_calls
 
 import 'dart:async';
+import 'dart:html';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:works_shg_app/Env/env_config.dart';
 
 import '../../../models/init_mdms/global_config_model.dart';
@@ -10,8 +12,22 @@ import '../../../models/init_mdms/global_config_model.dart';
 class GetGlobalConfig {
   Future<GlobalConfigModel> getGlobalConfig() async {
     final dio = Dio();
+    String? globalurl;
     try {
-      var response = await dio.get(envConfig.variables.assets);
+      if (kIsWeb) {
+        HeadElement? head = querySelector('head') as HeadElement;
+
+        ScriptElement? script = head
+            .querySelector('script[type="text/javascript"]') as ScriptElement;
+
+        globalurl = script.attributes['src'];
+
+        // Extract the URL from the src attribute
+      }
+      var response = await dio.get(kIsWeb
+          ? globalurl ??
+              'https://s3.ap-south-1.amazonaws.com/works-qa-asset/worksGlobalConfig.json'
+          : envConfig.variables.assets);
 
       return GlobalConfigModel.fromJson(
         response.data,

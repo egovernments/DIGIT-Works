@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:flutter/foundation.dart';
 import 'package:universal_html/html.dart';
 
@@ -55,7 +53,8 @@ Map<String, dynamic> devConstants = {
       ? '${window.location.origin}/'
       : const String.fromEnvironment('BASE_URL'),
   // "https://works-qa.digit.org/works-shg-app/",
-  _globalAssets: context['window']['globalConfigs']['stateTenantId']
+  _globalAssets: window.customElements?.get('globalConfigs')
+  // context['window']['globalConfigs']['stateTenantId']
 };
 
 Map<String, dynamic> stageConstants = {

@@ -12,7 +12,6 @@ import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
-import '../../Env/app_config.dart';
 import '../../data/repositories/remote/getGlobalConfig_repo.dart';
 import '../../data/repositories/remote/mdms.dart';
 import '../../models/init_mdms/global_config_model.dart';
@@ -39,18 +38,12 @@ class AppInitializationBloc
   ) async {
     if (GlobalVariables.globalConfigObject == null ||
         GlobalVariables.stateInfoListModel == null) {
-      GlobalConfigModel? globalConfigModel;
-      String? tenantId;
-      if (!kIsWeb) {
-        globalConfigModel = await GetGlobalConfig().getGlobalConfig();
-      } else {
-        tenantId = globalAssets;
-      }
+      GlobalConfigModel? globalConfigModel =
+          await GetGlobalConfig().getGlobalConfig();
 
       InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
           apiEndPoint: Urls.initServices.mdms,
-          tenantId: tenantId ??
-              globalConfigModel!.globalConfigs!.stateTenantId.toString(),
+          tenantId: globalConfigModel!.globalConfigs!.stateTenantId.toString(),
           moduleDetails: [
             {
               "moduleName": "common-masters",
