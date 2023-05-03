@@ -256,7 +256,6 @@ export const BillsSearch = {
             { title: "EXP_BILL_AMOUNT", value: (billAmount) || "NA" },
         ]
     };
-    console.log(lineItems, metaData);
     //totalDeductions = sum of amount in the table
     let totalDeductions = 0;
     const deductionsTableRows = [t("WORKS_SNO"), t("EXP_DEDUCTION_NAME"), t("EXP_PERCENTAGE_OR_FIXED"), t("ES_COMMON_AMOUNT"), t("WF_COMMON_COMMENTS")];

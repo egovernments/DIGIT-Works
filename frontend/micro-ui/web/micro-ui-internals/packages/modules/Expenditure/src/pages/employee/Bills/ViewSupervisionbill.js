@@ -21,7 +21,7 @@ const ViewSupervisionbill = ({ ...props }) => {
         applicationData={applicationDetails?.applicationData}
         moduleCode="Expenditure"
         showTimeLine={false}
-        timelineStatusPrefix={"WF_ESTIMATE_STATUS_"}
+        timelineStatusPrefix={`WF_${businessService}_`}
         businessService={businessService}
         // forcedActionPrefix={"ACTION_"}
         tenantId={tenantId}
@@ -35,7 +35,7 @@ const ViewSupervisionbill = ({ ...props }) => {
         applicationData={applicationDetails?.applicationData}
         moduleCode="Expenditure"
         showTimeLine={true}
-        timelineStatusPrefix={"WF_SBILL_STATUS_"}
+        timelineStatusPrefix={`WF_${businessService}_`}
         businessService={businessService}
         // forcedActionPrefix={"ACTION_"}
         tenantId={tenantId}

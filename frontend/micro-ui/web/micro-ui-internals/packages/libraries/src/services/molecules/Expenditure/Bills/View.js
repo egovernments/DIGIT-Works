@@ -122,7 +122,6 @@ export const View = {
         const response = await BillingService.search(data);
         return transformViewDataToApplicationDetails(t, response, tenantId)
       } catch (error) {
-          console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }
     }

@@ -148,7 +148,7 @@ const ViewContractDetails = () => {
                         {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
                     </HorizontalNav>
                     <WorkflowActions
-                        forcedActionPrefix={"WF_CONTRACT_ACTION"}
+                        forcedActionPrefix={`WF_${businessService}_ACTION`}
                         businessService={businessService}
                         applicationNo={queryStrings?.workOrderNumber}
                         tenantId={tenantId}

@@ -102,7 +102,6 @@ export const View = {
           const response = await WageSeekerService.search(tenantId, data, searchParams);
           return transformViewDataToApplicationDetails(t, response, tenantId)
       } catch (error) {
-          console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }  
     },
@@ -112,7 +111,6 @@ export const View = {
         const response = await WageSeekerService.search(tenantId, data, searchParams);
         return fetchBankDetails(response, tenantId)
       } catch (error) {
-        console.log('error', error)
         throw new Error(error?.response?.data?.Errors?.[0]?.message)
       }
     }
