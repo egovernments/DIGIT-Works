@@ -8,11 +8,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:works_shg_app/Env/js_connector.dart' as js;
 import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
+import '../../Env/app_config.dart';
 import '../../data/repositories/remote/getGlobalConfig_repo.dart';
 import '../../data/repositories/remote/mdms.dart';
 import '../../models/init_mdms/global_config_model.dart';
@@ -44,7 +44,7 @@ class AppInitializationBloc
       if (!kIsWeb) {
         globalConfigModel = await GetGlobalConfig().getGlobalConfig();
       } else {
-        tenantId = js.getGlobalConfig();
+        tenantId = globalAssets;
       }
 
       InitMdmsModel result = await mdmsRepository.initMdmsRegistry(

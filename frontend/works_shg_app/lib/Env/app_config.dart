@@ -1,9 +1,12 @@
+import 'dart:js';
+
 import 'package:flutter/foundation.dart';
 import 'package:universal_html/html.dart';
 
 import '../utils/constants.dart';
 
 const _baseUrl = "baseUrl";
+const _globalAssets = "globalAssets";
 
 enum Environment { dev, stage, prod }
 
@@ -27,6 +30,10 @@ dynamic get apiBaseUrl {
   return _config[_baseUrl];
 }
 
+dynamic get globalAssets {
+  return _config[_globalAssets];
+}
+
 dynamic get runningEnvAssets {
   if (_config[_baseUrl].toString().contains(Constants.devEnv)) {
     return Constants.devAssets;
@@ -48,6 +55,8 @@ Map<String, dynamic> devConstants = {
       ? '${window.location.origin}/'
       : const String.fromEnvironment('BASE_URL'),
   // "https://works-qa.digit.org/works-shg-app/",
+  _globalAssets: context['window']['globalConfigs']
+      .callMethod('getConfig', ['STATE_LEVEL_TENANT_ID'])
 };
 
 Map<String, dynamic> stageConstants = {
