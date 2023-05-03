@@ -31,7 +31,7 @@ const whenHasSubProjectsHorizontalNavConfig =  [
   }
 ];
 
-const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig, isModify, modify_projectID, modify_projectNumber, modify_addressID}) => {
+const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig, isModify, modify_projectID, modify_projectNumber, modify_addressID, docConfigData}) => {
 
     const [selectedProjectType, setSelectedProjectType] = useState(createProjectConfig?.defaultValues?.basicDetails_hasSubProjects ? createProjectConfig?.defaultValues?.basicDetails_hasSubProjects : {name : "COMMON_NO", code : "COMMON_NO"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
@@ -220,7 +220,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       }
 
       //Final Payload
-      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId, modifyParams, createProjectConfig);
+      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId, docConfigData, modifyParams, createProjectConfig);
 
       if(!isModify) {
         handleResponseForCreate(payload);
@@ -237,7 +237,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
           if(selectedProjectType?.code === "COMMON_YES") {
-            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Project[0]?.id, tenantId);
+            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Project[0]?.id, tenantId, docConfigData);
             let parentProjectNumber = responseData?.Project[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
@@ -276,7 +276,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
           if(selectedProjectType?.code === "COMMON_YES") {
-            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Project[0]?.id, tenantId);
+            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Project[0]?.id, tenantId, docConfigData);
             let parentProjectNumber = responseData?.Project[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
