@@ -59,7 +59,7 @@ public class PurchaseBillApiController {
 				.bills(purchaseBills)
 				.build();
 
-		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.OK);
+		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.CREATED);
 
 	}
 
@@ -73,7 +73,7 @@ public class PurchaseBillApiController {
 				.bills(purchaseBills)
 				.build();
 
-		return new ResponseEntity<BillResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<BillResponse>(billResponse,HttpStatus.ACCEPTED);
 	}
 
 }

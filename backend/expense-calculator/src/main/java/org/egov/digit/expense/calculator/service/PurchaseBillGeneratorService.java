@@ -150,6 +150,7 @@ public class PurchaseBillGeneratorService {
                 .status(providedPurchaseBill.getStatus())
                 .totalAmount(netPayableAmount)
                 //.paymentStatus("PENDING")
+                .billNumber(providedPurchaseBill.getBillNumber())
                 .payer(payer)
                 .billDetails(providedPurchaseBill.getBillDetails())
                 .additionalDetails(providedPurchaseBill.getAdditionalDetails())

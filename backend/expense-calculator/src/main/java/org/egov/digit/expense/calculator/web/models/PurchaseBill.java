@@ -51,6 +51,9 @@ public class PurchaseBill {
 	@JsonProperty("referenceId")
 	@Size(min = 2, max = 128)
 	private String referenceId;
+
+	@JsonProperty("billNumber")
+	private String billNumber;
 	
 	@JsonProperty("contractNumber")
 	@Valid
