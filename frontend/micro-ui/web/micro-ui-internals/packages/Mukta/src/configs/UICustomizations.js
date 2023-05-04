@@ -46,7 +46,7 @@ const getCreatePaymentPayload = (data) => {
           {
             lineItemId: item?.id,
             tenantId: item?.tenantId,
-            paidAmount: item?.paidAmount
+            paidAmount: item?.amount
           }
         ))
         billDetailObj.additionalDetails = {}
