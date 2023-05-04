@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import "package:dio/dio.dart";
+import 'package:flutter/foundation.dart';
+import 'package:works_shg_app/Env/app_config.dart';
 
 import '../Env/env_config.dart';
 import '../models/request_info/request_info_model.dart';
@@ -9,7 +11,8 @@ class Client {
   Dio init() {
     final Dio dio = Dio();
     dio.interceptors.add(ApiInterceptors());
-    dio.options.baseUrl = envConfig.variables.baseUrl;
+    dio.options.baseUrl =
+        kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl;
 
     return dio;
   }
