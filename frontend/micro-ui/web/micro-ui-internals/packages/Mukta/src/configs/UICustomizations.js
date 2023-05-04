@@ -344,7 +344,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"mukta-estimate" },
+        params: { tenantId, businessServices:"ESTIMATE" },
         body: {
          
         },
@@ -597,7 +597,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"muster-roll-approval" },
+        params: { tenantId, businessServices:"MR" },
         body: {
          
         },
