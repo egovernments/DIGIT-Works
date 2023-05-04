@@ -101,9 +101,18 @@ public class BillValidator {
     	BillCriteria billCriteria = billSearchRequest.getBillCriteria();
         if (StringUtils.isEmpty(billCriteria.getBusinessService())
                 && CollectionUtils.isEmpty(billCriteria.getReferenceIds())
-                && CollectionUtils.isEmpty(billCriteria.getIds()))
+                && CollectionUtils.isEmpty(billCriteria.getIds())
+                && CollectionUtils.isEmpty(billCriteria.getBillNumbers()))
             throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
-                    "One of referenceIds or ids or businessService should be provided for a bill search");
+                    "One of ids OR (referenceIds & businessService) OR (billNumbers & businessService) should be provided for a bill search");
+        boolean isRefIdOrBillNoProvided = (!CollectionUtils.isEmpty(billCriteria.getReferenceIds())
+				|| !CollectionUtils.isEmpty(billCriteria.getBillNumbers()));
+        boolean isBusinessServiceProvided = !StringUtils.isEmpty(billCriteria.getBusinessService());
+		
+		if ((isRefIdOrBillNoProvided && !isBusinessServiceProvided)
+				|| (isBusinessServiceProvided && !isRefIdOrBillNoProvided))
+            throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
+                    "The values of referenceIds or billNumbers should be provided along with businessService for a bill search");
     }
 
     private void validateMasterData(BillRequest billRequest, Map<String, String> errorMap, Map<String, Map<String, JSONArray>> mdmsData) {

@@ -124,8 +124,10 @@ class _DropDownDialogState extends State<DropDownDialog> {
                           horizontal: VisualDensity.minimumDensity,
                           vertical: VisualDensity.minimumDensity),
                       title: Text(
-                          AppLocalizations.of(context)
-                              .translate('COMMON_MASTERS_SKILLS_$option'),
+                          option != null && option.isNotEmpty
+                              ? AppLocalizations.of(context)
+                                  .translate('COMMON_MASTERS_SKILLS_$option')
+                              : '',
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w400)),
                       value: option,

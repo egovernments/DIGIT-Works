@@ -95,7 +95,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     title: "EXP_BILL_DETAILS",
     asSectionHeader: true,
     values: [
-        { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(wageBill?.netPayableAmount, "number") || t("ES_COMMON_NA")},
+        { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(wageBill?.totalAmount, "number") || t("ES_COMMON_NA")},
     ]
   }
 
@@ -103,7 +103,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     title: " ",
     asSectionHeader: true,
     Component: Digit.ComponentRegistryService.getComponent("PayableAmt"),
-    value: Digit.Utils.dss.formatterWithoutRound(wageBill?.netPayableAmount, "number") || t("ES_COMMON_NA")
+    value: Digit.Utils.dss.formatterWithoutRound(wageBill?.totalAmount, "number") || t("ES_COMMON_NA")
 }
 
   const applicationDetails = { applicationDetails: [billDetails, beneficiaryDetails, billAmount, netPayable] };

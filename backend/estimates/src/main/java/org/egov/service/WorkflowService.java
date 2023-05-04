@@ -65,7 +65,8 @@ public class WorkflowService {
         ProcessInstance processInstance = getProcessInstanceForEstimate(estimateRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(estimateRequest.getRequestInfo(), Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
-        estimateRequest.getEstimate().setWfStatus(state.getApplicationStatus());
+        estimateRequest.getEstimate().setWfStatus(state.getState());        
+        estimateRequest.getEstimate().setStatus(Estimate.StatusEnum.fromValue(state.getApplicationStatus()));
         return state.getApplicationStatus();
     }
 

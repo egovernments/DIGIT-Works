@@ -10,6 +10,7 @@ import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.web.models.Contract;
 import org.egov.works.web.models.ContractRequest;
+import org.egov.works.web.models.Status;
 import org.egov.works.web.models.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +43,10 @@ public class WorkflowService {
         ProcessInstance processInstance = getProcessInstanceForContract(contractRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(contractRequest.getRequestInfo(), Collections.singletonList(processInstance));
         ProcessInstance processInstanceResponse = callWorkFlow(workflowRequest,contract.getId());
-        //contract workflow Status
-        contract.setWfStatus(processInstanceResponse.getState().getApplicationStatus());
+        //contract workflow Status. Set the Wf status to be the actual state of the workflow
+        contract.setWfStatus(processInstanceResponse.getState().getState());
+        //Set the application status to be ACTIVE or INACTIVE from the application status in workflow config
+        contract.setStatus(Status.fromValue(processInstanceResponse.getState().getApplicationStatus()));
         // Fetch currentProcessInstance from workflow process search for inbox config
         contract.setProcessInstance(processInstanceResponse);
         log.info("Work flow status updated. ContractId ["+contract.getId()+"]");
