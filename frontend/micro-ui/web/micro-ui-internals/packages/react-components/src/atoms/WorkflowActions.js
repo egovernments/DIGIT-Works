@@ -87,7 +87,8 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
 
     //here check if actin is edit then do a history.push acc to the businessServ and action
     //send appropriate states over
-    if(bsEstimate === businessService && action?.action === "RE-SUBMITTED"){
+    
+    if(bsEstimate === businessService && action?.action === "RE-SUBMIT"){
         history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
         return 
     }
