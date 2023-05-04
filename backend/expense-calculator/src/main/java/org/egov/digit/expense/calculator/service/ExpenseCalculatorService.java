@@ -2,7 +2,6 @@ package org.egov.digit.expense.calculator.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
@@ -13,8 +12,6 @@ import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValid
 import org.egov.digit.expense.calculator.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -116,15 +113,28 @@ public class ExpenseCalculatorService {
         RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
         PurchaseBill providedPurchaseBill = purchaseBillRequest.getBill();
         String tenantId = providedPurchaseBill.getTenantId();
-        //Fetch Payers from MDMS
+
+        String businessServiceName = fetchBusinessServiceName(requestInfo, tenantId, config.getPurchaseBusinessService());
+        // Fetch Payers from MDMS
         List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
         // Fetch HeadCodes from MDMS
-        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
+        List<HeadCode> headCodes = fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Fetch Applicable Charges from MDMS
-        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
+        List<ApplicableCharge> applicableCharges = fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Create the bill
         return purchaseBillGeneratorService.createPurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
     }
+
+    private String fetchBusinessServiceName(RequestInfo requestInfo, String tenantId, String businessServiceCode) {
+        // Fetch business service from MDMS
+        List<BusinessService> businessServices = fetchMDMSDataForBusinessService(requestInfo, tenantId);
+        Map<String, String> businessServiceToCodeMapping = businessServices.stream()
+                .collect(Collectors.toMap(BusinessService::getCode,BusinessService::getBusinessService));
+        String businessServiceName = businessServiceToCodeMapping.get(businessServiceCode);
+        log.info("Business Service code "+ businessServiceCode+" name is ["+businessServiceName+"]");
+        return businessServiceName;
+    }
+
 
     private Bill updatePurchaseBill(PurchaseBillRequest purchaseBillRequest , Map<String, String> metaInfo){
         log.info("Update purchase bill");
@@ -133,12 +143,14 @@ public class ExpenseCalculatorService {
         RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
         PurchaseBill providedPurchaseBill = purchaseBillRequest.getBill();
         String tenantId = providedPurchaseBill.getTenantId();
+
+        String businessServiceName = fetchBusinessServiceName(requestInfo, tenantId, config.getPurchaseBusinessService());
         //Fetch Payers from MDMS
         List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
         // Fetch HeadCodes from MDMS
-        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
+        List<HeadCode> headCodes = fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Fetch Applicable Charges from MDMS
-        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
+        List<ApplicableCharge> applicableCharges = fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Create the bill
         return purchaseBillGeneratorService.updatePurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
     }
@@ -292,10 +304,24 @@ public class ExpenseCalculatorService {
         return bills;
     }
 
+    private List<BusinessService> fetchMDMSDataForBusinessService(RequestInfo requestInfo, String tenantId){
+        String rootTenantId = tenantId.split("\\.")[0];
+        log.info("Fetch business service list from MDMS");
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmodule(requestInfo, rootTenantId, MDMS_BUSINESS_SERVICE);
+        List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION);
+        List<BusinessService> businessServices = new ArrayList<>();
+        for(Object obj : payerListJson){
+            BusinessService payer = mapper.convertValue(obj, BusinessService.class);
+            businessServices.add(payer);
+        }
+        log.info("Business Service fetched from MDMS");
+        return businessServices;
+    }
+
     private List<Payer> fetchMDMSDataForPayers(RequestInfo requestInfo, String tenantId){
         String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch payer list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmodule(requestInfo, rootTenantId, MDMD_PAYER_LIST);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMD_PAYER_LIST);
         List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_PAYER);
         List<Payer> payers = new ArrayList<>();
         for(Object obj : payerListJson){
@@ -306,10 +332,16 @@ public class ExpenseCalculatorService {
         return payers;
     }
 
+    private List<HeadCode> fetchHeadCodesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
+        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
+        List<HeadCode> filteredHeadCodes = headCodes.stream()
+                                                    .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
+        return filteredHeadCodes;
+    }
     private List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmodule(requestInfo, rootTenantId, MDMS_HEAD_CODES);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMS_HEAD_CODES);
         List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
         List<HeadCode> headCodes = new ArrayList<>();
         for(Object obj : headCodeListJson){
@@ -320,10 +352,16 @@ public class ExpenseCalculatorService {
         return headCodes;
     }
 
+    private List<ApplicableCharge> fetchApplicableChargesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
+        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
+        List<ApplicableCharge> filteredApplicableCharges = applicableCharges.stream()
+                                                                            .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
+        return filteredApplicableCharges;
+    }
     private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmodule(requestInfo, rootTenantId,MDMS_APPLICABLE_CHARGES);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId,MDMS_APPLICABLE_CHARGES);
         List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
         List<ApplicableCharge> applicableCharges = new ArrayList<>();
         for(Object obj : applicableChargesListJson){
