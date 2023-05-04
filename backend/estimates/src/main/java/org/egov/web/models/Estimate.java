@@ -95,6 +95,8 @@ public class Estimate {
     public enum StatusEnum {
 
         DRAFT("DRAFT"),
+        
+        INWORKFLOW("INWORKFLOW"),
 
         ACTIVE("ACTIVE"),
 
