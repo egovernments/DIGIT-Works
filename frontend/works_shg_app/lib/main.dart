@@ -64,13 +64,13 @@ import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
 import 'models/user_details/user_details_model.dart';
 
-Future<void> main() async {
+void main() async {
   HttpOverrides.global = MyHttpOverrides();
   setPathUrlStrategy();
   if (kIsWeb && !kDebugMode) {
-  setEnvironment(Environment.dev);
+    setEnvironment(Environment.dev);
   } else {
-  await envConfig.initialize();
+    await envConfig.initialize();
   }
   Bloc.observer = AppBlocObserver();
   runZonedGuarded(() async {

@@ -38,12 +38,12 @@ class AppInitializationBloc
   ) async {
     if (GlobalVariables.globalConfigObject == null ||
         GlobalVariables.stateInfoListModel == null) {
-      GlobalConfigModel? globalConfigModel =
+      GlobalConfigModel globalConfigModel =
           await GetGlobalConfig().getGlobalConfig();
 
       InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
           apiEndPoint: Urls.initServices.mdms,
-          tenantId: globalConfigModel!.globalConfigs!.stateTenantId.toString(),
+          tenantId: globalConfigModel.globalConfigs!.stateTenantId.toString(),
           moduleDetails: [
             {
               "moduleName": "common-masters",

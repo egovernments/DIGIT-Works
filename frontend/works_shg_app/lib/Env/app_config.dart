@@ -48,7 +48,6 @@ Map<String, dynamic> devConstants = {
       ? '${window.location.origin}/'
       : const String.fromEnvironment('BASE_URL'),
   // "https://works-qa.digit.org/works-shg-app/",
-  // context['window']['globalConfigs']['stateTenantId']
 };
 
 Map<String, dynamic> stageConstants = {
