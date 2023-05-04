@@ -323,7 +323,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                               onTap: () {},),
                                                             Padding(
                                                               padding: const EdgeInsets.only(left: 4.0),
-                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
                                                             )
                                                           ],),
                                                           const SizedBox(height: 4,),
@@ -336,7 +336,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                               onTap: () {},),
                                                             Padding(
                                                               padding: const EdgeInsets.only(left: 4.0),
-                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
+                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
                                                             )
                                                           ],),
                                                           const SizedBox(height: 4,),
@@ -349,7 +349,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                               onTap: () {},),
                                                             Padding(
                                                               padding: const EdgeInsets.only(left: 4.0),
-                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
                                                             )
                                                           ],)
                                                         ] : [
@@ -363,7 +363,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                 onTap: () {},),
                                                               Padding(
                                                                 padding: const EdgeInsets.only(left: 4.0),
-                                                                child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                                child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
                                                               )
                                                             ],),
                                                           const SizedBox(height: 4,),
@@ -376,7 +376,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                               onTap: () {},),
                                                             Padding(
                                                               padding: const EdgeInsets.only(left: 4.0),
-                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} - ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
                                                             )
                                                           ],)
                                                         ],
