@@ -18,11 +18,14 @@ class AppLogo extends StatelessWidget {
             Padding(
                 padding: const EdgeInsets.only(top: 4.0, bottom: 8),
                 child: Center(
-                  child: Image(
-                      width: 150,
-                      image: NetworkImage(
-                        GlobalVariables.stateInfoListModel!.logoUrl.toString(),
-                      )),
+                  child: GlobalVariables.stateInfoListModel?.logoUrl != null
+                      ? Image(
+                          width: 150,
+                          image: NetworkImage(
+                            GlobalVariables.stateInfoListModel!.logoUrl
+                                .toString(),
+                          ))
+                      : const SizedBox.shrink(),
                 )),
             const Padding(
                 padding: EdgeInsets.only(left: 16),

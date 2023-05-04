@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaymentResponse   {
 	
-  @JsonProperty("responseInfo")
+  @JsonProperty("ResponseInfo")
   private ResponseInfo responseInfo;
 
   @JsonProperty("payments")
