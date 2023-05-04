@@ -19,7 +19,8 @@ const CreatePurchaseBillForm = ({
     clearSessionFormData, 
     contract,  
     preProcessData,
-    isModify
+    isModify,
+    docConfigData
 }) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
@@ -107,7 +108,7 @@ const CreatePurchaseBillForm = ({
 
     const onFormSubmit = async(data) => {
         //transform formdata to Payload
-        const payload = createBillPayload(data, contract);
+        const payload = createBillPayload(data, contract, docConfigData);
 
         await CreatePurchaseBillMutation(payload, {
             onError: async (error, variables) => {

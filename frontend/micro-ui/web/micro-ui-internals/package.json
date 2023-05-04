@@ -47,7 +47,7 @@
     "build:mukta": "cd packages/Mukta && yarn build",
     "buildD:project": "cd packages/modules/Project && yarn build",
     "buildD:works": "cd packages/modules/works && yarn build",
-    "buildD:expenditure": "cd packages/modules/Expenditure && yarn build",
+    "build:expenditure": "cd packages/modules/Expenditure && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
   },

@@ -1,40 +1,34 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
+import _ from "lodash";
+const createDocObject = (document, docType, otherDocFileName="Others", isActive, docConfigData) =>{
 
-//form data input name (with cropped prefix) mapping with file category Name
-const documentType = {
-    "vendor_invoice" : "Vendor Invoice",
-    "material_utilisation_log" : "Material Utilisation Log",
-    "measurement_book" : "Measurement Book",
-    "others" : "Others"
-}
-
-
-const createDocObject = (document, docType, otherDocFileName="Others", isActive) =>{
- 
+   let documentType = docConfigData?.works?.DocumentConfig?.[0]?.documents;
     //handle empty Category Name in File Type
     if((otherDocFileName.trim()).length === 0) {
       otherDocFileName = "";
     }
     let payload_modal = {};
-    payload_modal.documentType = documentType?.[docType];
+    payload_modal.documentType = documentType?.filter(doc=>doc?.name === docType)?.[0]?.code;
     payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
     payload_modal.documentUid = document?.[1]?.['fileStoreId']?.['fileStoreId'];
     payload_modal.key = docType;
     payload_modal.additionalDetails = {
-      fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] : documentType?.[docType],
+      fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] :  documentType?.filter(doc=>doc?.name === docType)?.[0]?.code,
       otherCategoryName :  docType === "others" ? otherDocFileName : ""
     }
     return payload_modal;
 }
 
-const fetchDocuments = (documents, otherDocFileName) => {
+const fetchDocuments = (documents, otherDocFileName, docConfigData) => {
     let documents_payload_list = [];
   
     //new uploaded docs
     for(let docType of Object.keys(documents)) {
       for(let document of documents[docType]) {
-        let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE"); 
+        if(_.isArray(document)) {
+        let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE", docConfigData); 
         documents_payload_list.push(payload_modal);
+        }
       }
     }
   
@@ -49,6 +43,8 @@ const fetchDeductions = (deductions, tenantId) => {
             "headCode": row?.name?.code,
             "amount": row?.amount,
             "type": "DEDUCTION",
+            "paidAmount": 0,
+            "status": "ACTIVE",
             "additionalDetails": {
                 "comments": row?.comments
             }
@@ -57,7 +53,7 @@ const fetchDeductions = (deductions, tenantId) => {
     return deductionsList
 }
 
-export const createBillPayload = (data, contract) => {
+export const createBillPayload = (data, contract,  docConfigData) => {
     const tenantId = Digit.ULBService.getCurrentTenantId()
     let DeductionsList = fetchDeductions(data?.deductionDetails, tenantId)
 
@@ -68,34 +64,39 @@ export const createBillPayload = (data, contract) => {
             "invoiceNumber": data?.invoiceDetails_invoiceNumber,
             "contractNumber": data?.basicDetails_workOrderNumber,
             "projectId": data?.basicDetails_projectID,
-            "billDate": convertDateToEpoch(data?.billDetails_billDate), //NOT NEEDED?
-            "status": "ACTIVE", //?
+            "billDate": convertDateToEpoch(data?.billDetails_billDate), 
+            "status": "ACTIVE",
             "billDetails": [
               { 
                 "tenantId": tenantId,	
                 "billId": null,	
                 "netLineItemAmount": null,	
-                "referenceId": null,	
+                "referenceId": data?.basicDetails_workOrderNumber,
                 "paymentStatus": null,	
                 "fromPeriod": convertDateToEpoch(contract?.startDate),
                 "toPeriod":convertDateToEpoch(contract?.endDate),
                 "payee": {
                   "tenantId": tenantId,
                   "type": "ORG", 
-                  "identifier": data?.invoiceDetails_vendorId
+                  "identifier": data?.invoiceDetails_vendorId,
+                  "status": "ACTIVE"
                 },
                 "lineItems": [
                   {
                     "tenantId": tenantId,
                     "headCode": "MC",
                     "amount": data?.invoiceDetails_materialCost,
-                    "type": "PAYABLE" //confirm
+                    "type": "PAYABLE", 
+                    "paidAmount": 0,
+                    "status": "ACTIVE"
                   },
                   {
                     "tenantId": tenantId,
                     "headCode": "GST",
                     "amount": data?.invoiceDetails_gst,
-                    "type": "PAYABLE" //confirm
+                    "type": "PAYABLE",
+                    "paidAmount": 0,
+                    "status": "ACTIVE"
                   },
                   ...DeductionsList
                 ],
@@ -103,21 +104,17 @@ export const createBillPayload = (data, contract) => {
                 "additionalDetails": {}
               }
             ],
-            "additionalFields": {
+            "additionalDetails": {
                 "totalBillAmount" : String(Digit.Utils.dss.convertFormatterToNumber(data?.billDetails_billAmt))
             },
             "documents": fetchDocuments(
-                {
-                 vendor_invoice : data?.uploadedDocs?.doc_vendor_invoice, 
-                 material_utilisation_log : data?.uploadedDocs?.doc_material_utilisation_log, 
-                 measurement_book : data?.uploadedDocs?.doc_measurement_book, 
-                 others : data?.uploadedDocs?.doc_others
-                },
-                data?.uploadedDocs?.doc_others_name
+              data?.uploadedDocs,
+                data?.uploadedDocs?.doc_others_name,
+                docConfigData
                 ),
           },
         workflow: {
-            "action": "CREATE",  //?
+            "action": "SUBMIT",
             "assignees": []
           }
     };

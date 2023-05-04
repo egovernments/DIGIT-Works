@@ -14,12 +14,10 @@ const ViewPurchaseBill = ({props}) => {
 
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    
-    const billCriteria = { //update this
+    const billCriteria = {
         "tenantId": tenantId,
-        "ids": [],
-        "businessService":businessService,
-        "referenceIds": [],
-        "status": ""
+        "billNumbers": [billNumber],
+        "businessService": businessService,
     }
 
     const { isLoading : isApplicableChargesLoading, data : metaData } = Digit.Hooks.useCustomMDMS(
@@ -78,8 +76,8 @@ const ViewPurchaseBill = ({props}) => {
                 </>
             }                
                 <WorkflowActions
-                      forcedActionPrefix={`WF_${businessService}_ACTION`}
-                      businessService={businessService}
+                  forcedActionPrefix={`WF_${businessService}_ACTION`}
+                  businessService={businessService}
                   applicationNo={billNumber}
                   tenantId={tenantId}
                   applicationDetails={data?.applicationData}
