@@ -5,7 +5,7 @@ import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewWageBill = () => {
   const { t } = useTranslation();
-  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wage");
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
   const { tenantId, billNumber } = Digit.Hooks.useQueryParams();
   const [showDataError, setShowDataError] = useState(null)
 
