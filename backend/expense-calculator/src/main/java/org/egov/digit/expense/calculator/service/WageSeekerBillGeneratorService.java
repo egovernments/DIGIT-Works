@@ -121,7 +121,6 @@ public class WageSeekerBillGeneratorService {
                         .fromPeriod(musterRoll.getStartDate().longValue())
                         .toPeriod(musterRoll.getEndDate().longValue())
                         .payer(payer)
-                        .status(ACTIVE_STATUS_CONSTANT)
                         .billDetails(billDetails)
                         .build();
 

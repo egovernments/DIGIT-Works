@@ -52,5 +52,4 @@ public class ExpenseCalculatorServiceConstants {
     public static final String LUMPSUM_CONSTANT = "lumpsum";
     public static final String EXPENSE_CONSTANT = "expense";
     public static final String DOCUMENTS_CONSTANT = "documents";
-    public static final String ACTIVE_STATUS_CONSTANT = "ACTIVE";
 }
