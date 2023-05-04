@@ -1,5 +1,8 @@
 package org.egov.digit.expense.web.models;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
@@ -24,9 +27,13 @@ import lombok.NoArgsConstructor;
 public class PaymentRequest   {
 	
   @JsonProperty("RequestInfo")
+  @Valid
+  @NotNull
   private RequestInfo requestInfo;
 
   @JsonProperty("payment")
+  @Valid
+  @NotNull
   private Payment payment;
 
  

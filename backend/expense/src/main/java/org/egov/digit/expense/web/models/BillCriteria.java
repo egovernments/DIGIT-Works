@@ -46,6 +46,9 @@ public class BillCriteria {
 
 	@JsonProperty("status")
 	private String status;
+	
+	@JsonProperty("statusNot")
+	private String statusNot;
 
 	public BillCriteria addIdsItem(String idsItem) {
 		if (this.ids == null) {

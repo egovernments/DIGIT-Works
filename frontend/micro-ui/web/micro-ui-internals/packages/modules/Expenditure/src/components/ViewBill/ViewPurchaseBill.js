@@ -10,7 +10,7 @@ const ViewPurchaseBill = ({props}) => {
     const {billNumber,tenantId } = Digit.Hooks.useQueryParams()
     const [isStateChanged, setStateChanged] = useState(``)
     const {t} = useTranslation();
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("expenditure").PURCHASE_BILL;
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
 
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);    

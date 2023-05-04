@@ -16,8 +16,8 @@
   "BusinessServices": [
     {
       "tenantId": "pg",
-      "businessService": "works.wages",
-      "business": "expense-service",
+      "businessService": "EXPENSE.WAGES",
+      "business": "expense",
       "businessServiceSla": 604800000,
       "states": [
         {
@@ -41,7 +41,7 @@
         {
           "sla": 604800000,
           "state": "APPROVED",
-          "applicationStatus": "APPROVED",
+          "applicationStatus": "ACTIVE",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": true,

@@ -1,21 +1,26 @@
 package org.egov.digit.expense.web.models.enums;
 
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Type of line item
+ * enum value for the payment status
  */
-public enum LineItemType {
-	
-	PAYABLE("PAYABLE"),
+public enum PaymentStatus {
 
-	DEDUCTION("DEDUCTION");
+	INITIATED("INITIATED"),
+
+	SUCCESSFUL("SUCCESSFUL"),
+
+	FAILED("FAILED"),
+
+	CANCELLED("CANCELLED");
 
 	private String value;
 
-	LineItemType(String value) {
+	PaymentStatus(String value) {
 		this.value = value;
 	}
 
@@ -26,8 +31,9 @@ public enum LineItemType {
 	}
 
 	@JsonCreator
-	public static LineItemType fromValue(String text) {
-		for (LineItemType b : LineItemType.values()) {
+	@NotNull
+	public static PaymentStatus fromValue(String text) {
+		for (PaymentStatus b : PaymentStatus.values()) {
 			if (String.valueOf(b.value).equalsIgnoreCase(text)) {
 				return b;
 			}
