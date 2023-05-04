@@ -34,6 +34,8 @@ public class ExpenseCalculatorQueryBuilder {
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
 
+    private static final String BILL_COUNT_QUERY = "SELECT COUNT(*) FROM eg_works_calculation ";
+
 
 
 
@@ -85,8 +87,10 @@ public class ExpenseCalculatorQueryBuilder {
         return queryBuilder.toString();
     }
 
-    public String getBillIds(CalculatorSearchRequest calculatorSearchRequest, List<Object> preparedStmtList) {
-        StringBuilder queryBuilder = new StringBuilder(FETCH_CALCULATE_BILL_IDS_QUERY);
+    public String getBillIds(CalculatorSearchRequest calculatorSearchRequest, List<Object> preparedStmtList,boolean isCountQuery) {
+        //This uses a ternary operator to choose between COUNT_QUERY or FETCH_QUERY based on the value of isCountQuery.
+        String query = isCountQuery ? BILL_COUNT_QUERY : FETCH_CALCULATE_BILL_IDS_QUERY;
+        StringBuilder queryBuilder = new StringBuilder(query);
 
         CalculatorSearchCriteria calculatorSearchCriteria=calculatorSearchRequest.getSearchCriteria();
 
@@ -143,6 +147,10 @@ public class ExpenseCalculatorQueryBuilder {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" bill_reference IN (").append(createQuery(billRefIds)).append(")");
             addToPreparedStatement(preparedStmtList,billRefIds);
+        }
+
+        if (isCountQuery) {
+            return queryBuilder.toString();
         }
 
         addOrderByClause(calculatorSearchRequest);
@@ -218,6 +226,11 @@ public class ExpenseCalculatorQueryBuilder {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });
+    }
+
+    public String getSearchCountQueryString(CalculatorSearchRequest calculatorSearchRequest, List<Object> preparedStmtList,boolean isCountQuery) {
+        String query = getBillIds(calculatorSearchRequest,preparedStmtList,isCountQuery);
+        return query;
     }
 
 }

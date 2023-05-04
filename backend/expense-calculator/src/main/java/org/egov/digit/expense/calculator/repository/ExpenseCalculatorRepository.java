@@ -64,9 +64,18 @@ public class ExpenseCalculatorRepository {
      */
     public Map<String,BillMapper> getBillMappers(CalculatorSearchRequest calculatorSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getBillIds(calculatorSearchRequest,preparedStmtList);
+        String query = queryBuilder.getBillIds(calculatorSearchRequest,preparedStmtList,false);
         Map<String,BillMapper> billMappers = jdbcTemplate.query(query,billMapper,preparedStmtList.toArray());
 
         return billMappers;
+    }
+
+    public Integer getBillCount(CalculatorSearchRequest calculatorSearchRequest) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getSearchCountQueryString(calculatorSearchRequest, preparedStmtList,true);
+        if (query == null)
+            return 0;
+        Integer count = jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+        return count;
     }
 }

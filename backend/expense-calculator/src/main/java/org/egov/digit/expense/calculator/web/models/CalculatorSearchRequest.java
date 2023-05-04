@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -22,12 +23,15 @@ import java.util.List;
 public class CalculatorSearchRequest {
 	
 	@JsonProperty("RequestInfo")
+	@NotNull
 	private RequestInfo requestInfo;
 
 	@JsonProperty("searchCriteria")
+	@NotNull
 	private CalculatorSearchCriteria searchCriteria;
 
 	@JsonProperty("pagination")
+	@NotNull
 	private Pagination pagination;
 
 }

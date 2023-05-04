@@ -287,7 +287,9 @@ public class ExpenseCalculatorService {
         Map<String,BillMapper> billMappers=expenseCalculatorRepository.getBillMappers(calculatorSearchRequest);
 
         //set total count
-        calculatorSearchRequest.getPagination().setTotalCount(billMappers.size());
+        Integer totalCount= expenseCalculatorRepository.getBillCount(calculatorSearchRequest);
+        calculatorSearchRequest.getPagination().setTotalCount(totalCount);
+
 
         //checks if billIds are present
         List<Bill> bills=new ArrayList<>();
