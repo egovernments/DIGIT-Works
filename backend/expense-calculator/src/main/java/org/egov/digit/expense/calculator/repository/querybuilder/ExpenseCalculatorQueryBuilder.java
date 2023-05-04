@@ -2,19 +2,23 @@ package org.egov.digit.expense.calculator.repository.querybuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
+import org.egov.digit.expense.calculator.web.models.Order;
+import org.egov.digit.expense.calculator.web.models.Pagination;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class ExpenseCalculatorQueryBuilder {
+
+    @Autowired
+    private ExpenseCalculatorConfiguration config;
 
 
     private static final String FETCH_MUSTER_NUM_QUERY = "SELECT musterroll_number FROM eg_works_calculation ";
@@ -23,6 +27,12 @@ public class ExpenseCalculatorQueryBuilder {
 
     private static final String FETCH_CALCULATE_BILL_IDS_QUERY = "SELECT bill_id,contract_number,musterroll_number," +
             "project_number,org_id FROM eg_works_calculation ";
+
+    private String paginationWrapper = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY {sortBy} {orderBy} , bill_id) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
 
 
 
@@ -135,7 +145,54 @@ public class ExpenseCalculatorQueryBuilder {
             addToPreparedStatement(preparedStmtList,billRefIds);
         }
 
-        return queryBuilder.toString();
+        addOrderByClause(calculatorSearchRequest);
+
+        return addPaginationWrapper(queryBuilder,calculatorSearchRequest,preparedStmtList);
+    }
+
+    private void addOrderByClause(CalculatorSearchRequest calculatorSearchRequest) {
+
+        Pagination pagination = calculatorSearchRequest.getPagination();
+
+
+        Set<String> sortableColumns=new HashSet<>(Arrays.asList("bill_id","contract_number","project_number","musterroll_number"));
+
+
+        if (pagination.getSortBy() != null && !pagination.getSortBy().isEmpty() && sortableColumns.contains(pagination.getSortBy())) {
+            paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{sortBy}", "bill_id");
+            calculatorSearchRequest.getPagination().setSortBy("billId");
+        }
+
+        if (pagination.getOrder() != null && Order.fromValue(pagination.getOrder().toString()) != null) {
+            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
+
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{orderBy}", Order.ASC.name());
+            calculatorSearchRequest.getPagination().setOrder(Order.ASC);
+
+        }
+    }
+
+    private String addPaginationWrapper(StringBuilder query,CalculatorSearchRequest calculatorSearchRequest,List<Object> preparedStmtList){
+
+        int limit = calculatorSearchRequest.getPagination().getLimit();
+        int offset = calculatorSearchRequest.getPagination().getOffSet();
+
+        if(limit>config.getMaxLimit()){
+            limit=config.getMaxLimit();
+            calculatorSearchRequest.getPagination().setLimit(config.getMaxLimit());
+        }
+
+        String finalQuery = paginationWrapper.replace("{}", query);
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
+
+        return finalQuery;
     }
 
 

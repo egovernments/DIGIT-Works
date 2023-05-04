@@ -27,4 +27,7 @@ public class CalculatorSearchRequest {
 	@JsonProperty("searchCriteria")
 	private CalculatorSearchCriteria searchCriteria;
 
+	@JsonProperty("pagination")
+	private Pagination pagination;
+
 }

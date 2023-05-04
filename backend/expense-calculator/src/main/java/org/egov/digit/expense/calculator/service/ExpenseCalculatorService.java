@@ -11,6 +11,7 @@ import org.egov.digit.expense.calculator.repository.*;
 import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValidator;
 import org.egov.digit.expense.calculator.web.models.*;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -263,11 +264,25 @@ public class ExpenseCalculatorService {
     }
 
     public List<BillMapper> search(CalculatorSearchRequest calculatorSearchRequest) {
+        log.info("Validate calculatorSearchRequest");
+        expenseCalculatorServiceValidator.validateCalculatorSearchRequest(calculatorSearchRequest);
+
         RequestInfo requestInfo=calculatorSearchRequest.getRequestInfo();
+
         String tenantId=calculatorSearchRequest.getSearchCriteria().getTenantId();
 
         Map<String,BillMapper> billMappers=expenseCalculatorRepository.getBillMappers(calculatorSearchRequest);
-        List<Bill> bills=expenseCalculatorUtil.fetchBillsWithBillIds(requestInfo,tenantId,new ArrayList<>(billMappers.keySet()));
+
+        //set total count
+        calculatorSearchRequest.getPagination().setTotalCount(billMappers.size());
+
+        //checks if billIds are present
+        List<Bill> bills;
+        if(!CollectionUtils.isEmpty(billMappers.keySet())) {
+             bills= expenseCalculatorUtil.fetchBillsWithBillIds(requestInfo, tenantId, new ArrayList<>(billMappers.keySet()));
+        }else{
+            throw new CustomException("BILL_IDS_NOT_FOUND","Bill ids are either null or do not exist");
+        }
 
         //set bills in billMapper
         for(Bill bill:bills){
