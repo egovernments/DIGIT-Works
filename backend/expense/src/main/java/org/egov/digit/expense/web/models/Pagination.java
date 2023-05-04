@@ -1,17 +1,19 @@
 package org.egov.digit.expense.web.models;
 
+import javax.validation.Valid;
+
+import org.egov.tracer.model.CustomException;
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 
 /**
  * Pagination details
@@ -47,9 +49,10 @@ public class Pagination {
      * Sorting order
      */
     public enum OrderEnum {
-        ASC("asc"),
+    	
+        ASC("ASC"),
 
-        DESC("desc");
+        DESC("DESC");
 
         private String value;
 
@@ -60,11 +63,12 @@ public class Pagination {
         @JsonCreator
         public static OrderEnum fromValue(String text) {
             for (OrderEnum b : OrderEnum.values()) {
-                if (String.valueOf(b.value).equals(text)) {
+                if (String.valueOf(b.value).equalsIgnoreCase(text)) {
                     return b;
                 }
             }
-            return null;
+			throw new CustomException("EG_EXPENSE_SEARCH_INVALID_ORDER",
+					"The order value provided : " + text + " is wrong. it can only be ASC or DESC");
         }
 
         @Override
