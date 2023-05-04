@@ -125,8 +125,6 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                           .toList();
                       locationDetails = organisationListModel.organisations!
                           .map((e) => {
-                                i18.common.pinCode:
-                                    e.orgAddress?.first.pincode ?? 'NA',
                                 i18.common.city: t.translate(
                                         'TENANT_TENANTS_${e.tenantId?.toUpperCase().replaceAll('.', '_')}') ??
                                     'NA',

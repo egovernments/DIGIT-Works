@@ -8,15 +8,17 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.ProcessInstance;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -40,30 +42,34 @@ public class Bill {
 	@NotNull
 	@Size(min = 2, max = 64)
 	private String tenantId;
-
+	
 	@JsonProperty("billDate")
 	@Valid
+	@NotNull
 	private Long billDate;
 
 	@JsonProperty("dueDate")
 	@Valid
 	private Long dueDate;
-
-	@JsonProperty("netPayableAmount")
+	
+	@JsonProperty("totalAmount")
 	@Valid
-	private BigDecimal netPayableAmount;
+	@Default
+	private BigDecimal totalAmount = BigDecimal.ZERO;
 
-	@JsonProperty("netPaidAmount")
+	@JsonProperty("totalPaidAmount")
 	@Valid
-	private BigDecimal netPaidAmount;
+	@Default
+	private BigDecimal totalPaidAmount = BigDecimal.ZERO;
 
-	@JsonProperty("businessservice")
+	@JsonProperty("businessService")
 	@NotNull
-	@Size(min = 2, max = 64)
+	@Size(min = 2, max = 128)
 	private String businessService;
 
 	@JsonProperty("referenceId")
-	@Size(min = 2, max = 64)
+	@Size(min = 2, max = 128)
+	@NotNull
 	private String referenceId;
 
 	@JsonProperty("fromPeriod")
@@ -75,12 +81,10 @@ public class Bill {
 	private Long toPeriod;
 
 	@JsonProperty("paymentStatus")
-	@Size(min = 2, max = 64)
-	private String paymentStatus;
+	private PaymentStatus paymentStatus;
 
 	@JsonProperty("status")
-	@Size(min = 2, max = 64)
-	private String status;
+	private Status status;
 
 	@JsonProperty("billNumber")
 	private String billNumber;
@@ -102,16 +106,10 @@ public class Bill {
 	@Valid
 	private AuditDetails auditDetails;
 
-	@JsonProperty("workflow")
-	private ProcessInstance workflow;
-
 	@JsonProperty("wfStatus")
 	@Size(min = 2, max = 64)
-	private String wfStatus = null;
+	private String wfStatus;
 	
-	@JsonProperty("processInstance")
-	private ProcessInstance processInstance = null;
-
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
 
 		if (null == this.billDetails)

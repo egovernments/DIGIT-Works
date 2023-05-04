@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.springframework.validation.annotation.Validated;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import digit.models.coremodels.AuditDetails;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,9 +20,6 @@ import lombok.NoArgsConstructor;
 /**
  * Payment
  */
-@Schema(description = "A Object which holds the info about the expense details")
-@Validated
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,6 +27,7 @@ import lombok.NoArgsConstructor;
 public class Payment {
 	
 	@JsonProperty("tenantId")
+	@NotNull
 	private String tenantId;
 
 	@JsonProperty("id")
@@ -37,17 +35,21 @@ public class Payment {
 	private String id;
 
 	@JsonProperty("netPayableAmount")
+	@NotNull
 	private BigDecimal netPayableAmount;
 
 	@JsonProperty("netPaidAmount")
+	@NotNull
 	private BigDecimal netPaidAmount;
 
 	@JsonProperty("bills")
 	@Valid
-	private List<Bill> bills;
+	@NotNull
+	private List<PaymentBill> bills;
 
 	@JsonProperty("status")
-	private String status;
+	@NotNull
+	private PaymentStatus status;
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
@@ -55,7 +57,7 @@ public class Payment {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 	
-	public Payment addBillDetailsItem(Bill bill) {
+	public Payment addBillItem(PaymentBill bill) {
 
 		if (this.bills == null)
 			this.bills = new ArrayList<>();

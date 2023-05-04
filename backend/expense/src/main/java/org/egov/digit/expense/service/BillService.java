@@ -2,9 +2,7 @@ package org.egov.digit.expense.service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.config.Configuration;
@@ -13,13 +11,18 @@ import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
 import org.egov.digit.expense.util.WorkflowUtil;
-import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillCriteria;
+import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.BillResponse;
+import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import digit.models.coremodels.State;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -58,19 +61,15 @@ public class BillService {
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
 
-		log.info("Validate billRequest");
 		validator.validateCreateRequest(billRequest);
-
-		log.info("Enrich billRequest");
 		enrichmentUtil.encrichBillForCreate(billRequest);
 		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
-			//workflowSvc.updateWorkflowStatus(billRequest);
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
-			bill.setStatus(wfState.getApplicationStatus());
+			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 		} else {
-			bill.setStatus(Status.ACTIVE.toString());
+			bill.setStatus(Status.ACTIVE);
 		}
 		
 		producer.push(config.getBillCreateTopic(), billRequest);
@@ -93,20 +92,19 @@ public class BillService {
 		Bill bill = billRequest.getBill();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
-		
-		validator.validateUpdateRequest(billRequest);
-		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest);
+
+		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
+		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
-			bill.setStatus(wfState.getApplicationStatus());
+			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 		} else {
-			bill.setStatus(Status.ACTIVE.toString());
+			bill.setStatus(Status.ACTIVE);
 		}
 		
 		producer.push(config.getBillUpdateTopic(), billRequest);
-		
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo,true))
@@ -121,11 +119,12 @@ public class BillService {
 	 * @return
 	 */
 	public BillResponse search(BillSearchRequest billSearchRequest) {
+		
 		BillCriteria billCriteria=billSearchRequest.getBillCriteria();
 
 		log.info("BillSearchRequest : "+billSearchRequest);
 		log.info("Validate billCriteria Parameters BillCriteria : "+billCriteria);
-		validator.validateSearchRequest(billCriteria);
+		validator.validateSearchRequest(billSearchRequest);
 
 		log.info("Enrich billCriteria");
 		enrichmentUtil.enrichSearchBillRequest(billSearchRequest);
@@ -133,23 +132,6 @@ public class BillService {
 		log.info("Search repository using billCriteria");
 		List<Bill> bills = billRepository.search(billSearchRequest);
 
-		//set pay lineitems and lineItems
-		for(Bill bill:bills){
-			List<LineItem> lineItems=null;
-			List<LineItem> payableLineItems=null;
-			for(BillDetail billDetail:bill.getBillDetails()){
-				lineItems=billDetail.getLineItems().stream().filter(lineItem -> lineItem.getIsLineItemPayable().equals(false)).collect(Collectors.toList());
-				payableLineItems=billDetail.getLineItems().stream().filter(lineItem -> lineItem.getIsLineItemPayable().equals(true)).collect(Collectors.toList());
-
-				log.info("Set payableLineItems in the bill");
-				billDetail.setPayableLineItems(payableLineItems);
-
-				log.info("Set lineItems in the bill");
-				billDetail.setLineItems(lineItems);
-			}
-		}
-
-		//update pagination object
 		log.info("update pagination object for total count : "+bills.size());
 		billSearchRequest.getPagination().setTotalCount(bills.size());
 

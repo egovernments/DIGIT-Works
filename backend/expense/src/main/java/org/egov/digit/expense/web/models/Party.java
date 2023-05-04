@@ -4,11 +4,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import digit.models.coremodels.AuditDetails;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,8 +52,7 @@ public class Party {
 	private String identifier;
 
 	@JsonProperty("status")
-	@Size(min = 2, max = 64)
-	private String status;
+	private Status status;
 
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;

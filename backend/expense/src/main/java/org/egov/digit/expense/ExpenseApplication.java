@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.egov.digit.expense", "org.egov.digit.expense.web.controllers",
 		"org.egov.digit.expense.config" })
-public class Main {
+public class ExpenseApplication {
 
 	public static void main(String[] args) throws Exception {
-		SpringApplication.run(Main.class, args);
+		SpringApplication.run(ExpenseApplication.class, args);
 	}
 
 }

@@ -220,6 +220,8 @@ class WageSeeker {
   String get maxFatherNameCharacters => 'MAX_FATHER_CHARCTERS_REQUIRED';
   String get skillsRequired => 'SKILLS_IS_REQUIRED';
   String get pinCodeValidation => 'COMMON_PINCODE_VALIDATION';
+  String get maxStreetCharacters => 'MAX_STREET_NAME_CHARACTERS';
+  String get maxDoorNoCharacters => 'MAX_DOOR_NO_CHARACTERS';
 }
 
 class AttendanceMgmt {
