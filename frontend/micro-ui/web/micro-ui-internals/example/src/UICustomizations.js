@@ -6,15 +6,24 @@ import _ from "lodash";
 // these functions will act as middlewares
 var Digit = window.Digit || {};
 
+// const businessServiceMap = {
+//   estimate: "ESTIMATE",
+//   contracts: "CONTRACT",
+//   attendencemgmt: "MR",
+//   expenditure:{
+//     WAGE_BILL:"EXPENSE.WAGE",
+//     PURCHASE_BILL:"EXPENSE.PURCHASE",
+//     SUPERVISION_BILL:"EXPENSE.SUPERVISION"
+//   }
+// };
+
 const businessServiceMap = {
-  estimate: "mukta-estimate",
-  contracts: "contract-approval-mukta",
-  attendencemgmt: "muster-roll-approval",
-  expenditure:{
-    WAGE_BILL:"works.wages",
-    PURCHASE_BILL:"works.purchase",
-    SUPERVISION_BILL:"works.supervision"
-  }
+  estimate: "ESTIMATE",
+  contract: "CONTRACT",
+  "muster roll": "MR",
+  "works.wages":"EXPENSE.WAGE",
+  "works.purchase":"EXPENSE.PURCHASE",
+  "works.supervision":"EXPENSE.SUPERVISION"
 };
 
 const inboxModuleNameMap = {
@@ -51,7 +60,7 @@ export const UICustomizations = {
         workflow,
       };
     }
-    if (businessService === businessServiceMap.contracts) {
+    if (businessService === businessServiceMap.contract) {
       const workflow = {
         comment: data?.comments,
         documents: data?.documents?.map((document) => {
@@ -76,7 +85,7 @@ export const UICustomizations = {
         workflow,
       };
     }
-    if (businessService === businessServiceMap.attendencemgmt) {
+    if (businessService === businessServiceMap?.["muster roll"]) {
       const workflow = {
         comment: data?.comments,
         documents: data?.documents?.map((document) => {
@@ -103,7 +112,7 @@ export const UICustomizations = {
     }
   },
   enableModalSubmit:(businessService,action,setModalSubmit,data)=>{
-    if(businessService === businessServiceMap.attendencemgmt && action.action==="APPROVE"){
+    if(businessService === businessServiceMap?.["muster roll"] && action.action==="APPROVE"){
       setModalSubmit(data?.acceptTerms)
     }
   },
@@ -111,13 +120,13 @@ export const UICustomizations = {
     if (businessService === businessServiceMap.estimate) {
       return action.action.includes("TECHNICALSANCTION") || action.action.includes("VERIFYANDFORWARD");
     }
-    if (businessService === businessServiceMap.contracts) {
+    if (businessService === businessServiceMap.contract) {
       return action.action.includes("VERIFY_AND_FORWARD");
     }
-     if (businessService === businessServiceMap.attendencemgmt) {
+     if (businessService === businessServiceMap?.["muster roll"]) {
       return action.action.includes("VERIFY");
     }
-    if(businessService === businessServiceMap.expenditure.PURCHASE_BILL){
+    if(businessService === businessServiceMap?.["works.purchase"]){
       return action.action.includes("VERIFY_AND_FORWARD")
     }
     return false;
@@ -126,12 +135,20 @@ export const UICustomizations = {
     if (moduleCode?.includes("estimate")) {
       return businessServiceMap?.estimate;
     } else if (moduleCode?.includes("contract")) {
-      return businessServiceMap?.contracts;
-    } else if (moduleCode?.includes("attendence")) {
-      return businessServiceMap?.attendencemgmt;
-    }else if (moduleCode?.includes("expenditure")) {
-      return businessServiceMap?.expenditure;
-    }else {
+      return businessServiceMap?.contract;
+    } else if (moduleCode?.includes("muster roll")) {
+      return businessServiceMap?.["muster roll"];
+    }
+    else if (moduleCode?.includes("works.purchase")) {
+      return businessServiceMap?.["works.purchase"];
+    }
+    else if (moduleCode?.includes("works.wage")) {
+      return businessServiceMap?.["works.wage"];
+    }
+    else if (moduleCode?.includes("works.supervision")) {
+      return businessServiceMap?.["works.supervision"];
+    }
+    else {
       return businessServiceMap;
     }
   },

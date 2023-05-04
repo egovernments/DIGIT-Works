@@ -18,8 +18,12 @@ const WorksCard = () => {
     return null;
   }
 
-  //getting the businessServiceMap
-  const businessServiceMap = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService();
+
+  const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
+  const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
+  const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll");
+  const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+  
 
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -29,7 +33,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.attendencemgmt],
+          businessService: [bsMuster],
           moduleName: "muster-roll-service",
         },
         moduleSearchCriteria: {
@@ -52,7 +56,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.estimate],
+          businessService: [bsEstimate],
           moduleName: "estimate-service",
         },
         moduleSearchCriteria: {
@@ -76,7 +80,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.contracts],
+          businessService: [bsContract],
           moduleName: "contract-service",
         },
         moduleSearchCriteria: {

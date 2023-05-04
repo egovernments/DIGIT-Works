@@ -5,7 +5,7 @@ import ApplicationDetails from '../../../../templates/ApplicationDetails';
 
 const ContractDetails = (props) => {
     const { t } = useTranslation()
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract-approval-mukta")
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")
 
     if (props.isLoading) return <Loader />
     return (
@@ -16,7 +16,7 @@ const ContractDetails = (props) => {
                 applicationData={""}
                 moduleCode="Contract"
                 showTimeLine={true}
-                timelineStatusPrefix={"WF_CONTRACT_STATUS_"}
+                timelineStatusPrefix={`WF_${businessService}_`}
                 businessService={businessService}
                 // forcedActionPrefix={"ACTION_"}
                 tenantId={props.tenantId}

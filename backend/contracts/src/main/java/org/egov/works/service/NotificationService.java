@@ -67,6 +67,12 @@ public class NotificationService {
             pushNotificationToCreatorForApproveAction(request);
             pushNotificationToCBOForApproveAction(request);
         }
+        else if ("ACCEPT".equalsIgnoreCase(workflow.getAction())) {
+            pushNotificationToCreatorForAcceptAction(request);
+        }
+        else if ("DECLINE".equalsIgnoreCase(workflow.getAction())) {
+            pushNotificationToCreatorForDeclineAction(request);
+        }
 
     }
 
@@ -115,6 +121,54 @@ public class NotificationService {
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For Approve Action for WO Creator");
+        producer.push(config.getSmsNotifTopic(), smsRequest);
+    }
+
+    private void pushNotificationToCreatorForDeclineAction(ContractRequest request) {
+        Contract contract = request.getContract();
+        String createdByUuid = request.getContract().getAuditDetails().getCreatedBy();
+
+        log.info("get message template of creator for decline action");
+        String message = getMessage(request, false);
+
+        if (StringUtils.isEmpty(message)) {
+            log.info("SMS content has not been configured for this case");
+            return;
+        }
+
+        //get project number, location, userDetails
+        log.info("get project number, location, userDetails");
+        Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
+
+        log.info("build Message For decline Action for WO Creator");
+        message = buildMessageForDeclineAction_WOCreator(contract, smsDetails, message);
+        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
+
+        log.info("push Message For decline Action for WO Creator");
+        producer.push(config.getSmsNotifTopic(), smsRequest);
+    }
+
+    private void pushNotificationToCreatorForAcceptAction(ContractRequest request) {
+        Contract contract = request.getContract();
+        String createdByUuid = request.getContract().getAuditDetails().getCreatedBy();
+
+        log.info("get message template of creator for Accept action");
+        String message = getMessage(request, false);
+
+        if (StringUtils.isEmpty(message)) {
+            log.info("SMS content has not been configured for this case");
+            return;
+        }
+
+        //get project number, location, userDetails
+        log.info("get project number, location, userDetails");
+        Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
+
+        log.info("build Message For Accept Action for WO Creator");
+        message = buildMessageForAcceptAction_WOCreator(contract, smsDetails, message);
+        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
+
+        log.info("push Message For Accept Action for WO Creator");
         producer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
@@ -200,7 +254,7 @@ public class NotificationService {
 
 
     private String getMessage(ContractRequest request, boolean isCBORole) {
-        //RETHINK-- NEED TO SEND TWO MESSAGES
+
         Workflow workflow = request.getWorkflow();
         String message = null;
 
@@ -210,7 +264,10 @@ public class NotificationService {
             message = getMessage(request, ContractServiceConstants.CONTRACTS_APPROVE_CREATOR_LOCALIZATION_CODE);
         } else if ("APPROVE".equalsIgnoreCase(workflow.getAction()) && isCBORole) {
             message = getMessage(request, ContractServiceConstants.CONTRACTS_APPROVE_CBO_LOCALIZATION_CODE);
-
+        }else if ("ACCEPT".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
+            message = getMessage(request, ContractServiceConstants.CONTRACTS_ACCEPT_CREATOR_LOCALIZATION_CODE);
+        }else if ("DECLINE".equalsIgnoreCase(workflow.getAction()) && !isCBORole) {
+            message = getMessage(request, ContractServiceConstants.CONTRACTS_DECLINE_CREATOR_LOCALIZATION_CODE);
         }
 
         return message;
@@ -274,6 +331,20 @@ public class NotificationService {
                 .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
                 .replace("{LOCATION}", userDetailsForSMS.get("locationName"))
                 .replace("{organisationName}", userDetailsForSMS.get("orgName"));
+        return message;
+    }
+
+    public String buildMessageForDeclineAction_WOCreator(Contract contract, Map<String, String> userDetailsForSMS, String message) {
+        message = message.replace("{projectName}", userDetailsForSMS.get("projectName"))
+                .replace("{locationName}", userDetailsForSMS.get("locationName"))
+                .replace("{cboName}", userDetailsForSMS.get("orgName"));
+        return message;
+    }
+
+    public String buildMessageForAcceptAction_WOCreator(Contract contract, Map<String, String> userDetailsForSMS, String message) {
+        message = message.replace("{projectName}", userDetailsForSMS.get("projectName"))
+                .replace("{locationName}", userDetailsForSMS.get("locationName"))
+                .replace("{cboName}", userDetailsForSMS.get("orgName"));
         return message;
     }
 

@@ -13,7 +13,7 @@ const ViewContractDetails = () => {
     const queryStrings = Digit.Hooks.useQueryParams();
     const contractId = queryStrings?.workOrderNumber;
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts")
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
@@ -148,7 +148,7 @@ const ViewContractDetails = () => {
                         {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
                     </HorizontalNav>
                     <WorkflowActions
-                        forcedActionPrefix={"WF_CONTRACT_ACTION"}
+                        forcedActionPrefix={`WF_${businessService}_ACTION`}
                         businessService={businessService}
                         applicationNo={queryStrings?.workOrderNumber}
                         tenantId={tenantId}

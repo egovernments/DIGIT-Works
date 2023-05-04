@@ -42,7 +42,7 @@
         {
           "sla": null,
           "state": "SUBMITTED",
-          "applicationStatus": "SUBMITTED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -67,7 +67,7 @@
         {
           "sla": null,
           "state": "VERIFIED",
-          "applicationStatus": "VERIFIED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -92,7 +92,7 @@
         {
           "sla": null,
           "state": "APPROVED",
-          "applicationStatus": "APPROVED",
+          "applicationStatus": "ACTIVE",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,

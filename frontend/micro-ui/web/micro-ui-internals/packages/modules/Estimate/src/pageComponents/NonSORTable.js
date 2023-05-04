@@ -15,7 +15,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
   ];
 
   const { t, register, errors, setValue, getValues, formData, unregister } = props;
-
+  
   // const [rows, setRows] = useState(initialState);
   const [rows, setRows] = useState(
     formData?.[formFieldName]?.length > 2
@@ -222,7 +222,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
             <td style={getStyles(2)}>
               <div style={cellContainerStyle}>
                 <div>
-                  <TextInput
+                  {/* <TextInput
                     style={{ marginBottom: "0px", wordWrap: "break-word" }}
                     maxlength={512}
                     name={`${formFieldName}.${row.key}.description`}
@@ -232,11 +232,25 @@ const NonSORTable = ({ control, watch, ...props }) => {
                       //@Burhan-j Don't remove this whitespace in pattern, it is used for validation
                       // pattern: /^[a-zA-Z0-9_ .$@#{}:;&(),\/ ]*$/
                     })}
+                  /> */}
+                  <TextArea
+                    style={{ marginBottom: "0px", wordWrap: "break-word" }}
+                    name={`${formFieldName}.${row.key}.description`}
+                    inputRef={register({
+                        maxLength:{
+                          value:512,
+                          message:t(`WORKS_PATTERN_ERR`)
+                        },
+                        required:true
+                    })}
                   />
                 </div>
                 <div style={errorContainerStyles}>
                   {errors && errors?.[formFieldName]?.[row.key]?.description?.type === "pattern" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_PATTERN_ERR`)}</CardLabelError>
+                  )}
+                  {errors && errors?.[formFieldName]?.[row.key]?.description?.type === "maxLength" && (
+                    <CardLabelError style={errorCardStyle}>{t(`WORKS_DESC_LENGTH_EXCEEDED_512`)}</CardLabelError>
                   )}
                   {errors && errors?.[formFieldName]?.[row.key]?.description?.type === "required" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>

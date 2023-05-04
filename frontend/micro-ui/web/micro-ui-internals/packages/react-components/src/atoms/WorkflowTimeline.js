@@ -10,7 +10,7 @@ function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
 }
 
-const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineStatusPrefix="ESTIMATE_" ,statusAttribute="status", ...props}) => {
+const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineStatusPrefix="WF_SERVICE_" ,statusAttribute="status", ...props}) => {
     const [additionalComment,setAdditionalComment] = useState(false)
     //for testing from url these 2 lines of code are kept here
     // const { estimateNumber } = Digit.Hooks.useQueryParams();
@@ -76,7 +76,6 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
         }
     }, [workflowDetails])
     
-
     
     return (
         <Fragment>
@@ -102,7 +101,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                                                                     keyValue={index}
                                                                     isCompleted={index === 0}
                                                                     label={t(
-                                                                        `${timelineStatusPrefix}${checkpoint?.["state"]}`
+                                                                        Digit.Utils.locale.getTransformedLocale(`${timelineStatusPrefix}STATE_${checkpoint?.["state"]}`)
                                                                     )}
                                                                     customChild={getTimelineCaptions(checkpoint, -1)}
                                                                     customClassName="checkpoint-connect-wrap"
@@ -113,8 +112,8 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                                                         keyValue={index}
                                                         isCompleted={checkpoint?.isTerminateState && index === 0}
                                                         label={t(
-                                                            `${timelineStatusPrefix}${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}_ACTION` : checkpoint?.["status"]
-                                                            }`
+                                                            Digit.Utils.locale.getTransformedLocale(`${timelineStatusPrefix}STATUS_${checkpoint?.performedAction === "EDIT" ? `${checkpoint?.performedAction}` :   `${checkpoint?.performedAction}`
+                                                            }`)
                                                         )}
                                                         customChild={getTimelineCaptions(checkpoint, index)}
                                                     />

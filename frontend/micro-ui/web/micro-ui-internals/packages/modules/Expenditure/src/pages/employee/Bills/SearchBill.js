@@ -30,7 +30,7 @@ const SearchBill = () => {
   */
 
   //For local Update data to access searchConfig or searchWMS config
-  const data = SearchBillWMSConfig?.SearchBillWMSConfig?.[0]
+  const data = SearchBillConfig?.SearchBillConfig?.[0]
 
   let configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
