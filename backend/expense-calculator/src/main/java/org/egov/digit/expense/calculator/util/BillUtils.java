@@ -53,7 +53,7 @@ public class BillUtils {
 
     private StringBuilder getBillUpdateURI() {
         StringBuilder builder = new StringBuilder(configs.getBillHost());
-        builder.append(configs.getBillCreateEndPoint());
+        builder.append(configs.getBillUpdateEndPoint());
         return builder;
     }
 }

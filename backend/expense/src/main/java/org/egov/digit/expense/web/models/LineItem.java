@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.egov.digit.expense.web.models.enums.LineItemType;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,6 +17,7 @@ import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -53,20 +56,21 @@ public class LineItem {
 	@Valid
 	private BigDecimal amount;
 
-
 	@JsonProperty("type")
+	@NotNull
 	private LineItemType type;
 
 	@JsonProperty("paidAmount")
 	@Valid
-	private BigDecimal paidAmount;
+	@Default
+	private BigDecimal paidAmount = BigDecimal.ZERO;
 
 	@JsonProperty("status")
-	private String status;
+	private Status status;
 	
-	@JsonProperty("isLineItemPayable")
-	private Boolean isLineItemPayable;
-
+	@JsonProperty("paymentStatus")
+	private PaymentStatus paymentStatus;
+	
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 

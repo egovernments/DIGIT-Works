@@ -4,6 +4,7 @@ package org.egov.digit.expense.repository.querybuilder;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.util.QueryBuilderUtils;
 import org.egov.digit.expense.web.models.Pagination;
@@ -19,13 +20,16 @@ public class PaymentQueryBuilder {
 	
 	@Autowired
 	private QueryBuilderUtils builderUtils;
+	
+	@Autowired
+	private Configuration configs;
 
 	public String getPaymentQuery(PaymentSearchRequest paymentSearchRequest, List<Object> preparedStatementValues) {
 
 		PaymentCriteria paymentCriteria = paymentSearchRequest.getPaymentCriteria();
-		Pagination pagination = paymentSearchRequest.getPagination();
 		
-		StringBuilder paymentSearchQuery = null; //new StringBuilder(Constants.BILL_QUERY); //TODO
+		StringBuilder paymentSearchQuery = new StringBuilder(Constants.PAYMENT_QUERY);
+		builderUtils.addClauseIfRequired(preparedStatementValues, paymentSearchQuery);
 
 		paymentSearchQuery.append(" payment.tenantId = ? ");
 		preparedStatementValues.add(paymentCriteria.getTenantId());
@@ -37,26 +41,59 @@ public class PaymentQueryBuilder {
 			preparedStatementValues.add(paymentCriteria.getStatus());
 		}
 
-		Set<String> referenceIds = paymentCriteria.getBillIds();
-		if (!CollectionUtils.isEmpty(paymentCriteria.getBillIds())) {
+		Set<String> billIds = paymentCriteria.getBillIds();
+		if (!CollectionUtils.isEmpty(billIds)) {
 
 			builderUtils.addClauseIfRequired(preparedStatementValues, paymentSearchQuery);
-			paymentSearchQuery.append("billpayment.billid IN (").append(builderUtils.createQuery(referenceIds)).append(")");
-			builderUtils.addToPreparedStatement(preparedStatementValues, referenceIds);
+			paymentSearchQuery.append("paymentbill.billid IN (").append(builderUtils.createQuery(billIds)).append(")");
+			builderUtils.addToPreparedStatement(preparedStatementValues, billIds);
 		}
 
 		Set<String> ids = paymentCriteria.getIds();
-		if (CollectionUtils.isEmpty(ids)) {
+		if (!CollectionUtils.isEmpty(ids)) {
 
 			builderUtils.addClauseIfRequired(preparedStatementValues, paymentSearchQuery);
 			paymentSearchQuery.append("payment.id IN (").append(builderUtils.createQuery(ids)).append(")");
 			builderUtils.addToPreparedStatement(preparedStatementValues, ids);
 		}
-
-//		String finalQuery = builderUtils.addPaginationWrapper(paymentSearchQuery.toString(), preparedStatementValues, pagination);
-
-//		return finalQuery;
-
-		return null;
+		return addPaginationWrapper(paymentSearchQuery, paymentSearchRequest.getPagination(), preparedStatementValues);
 	}
+	
+
+    private String addPaginationWrapper(StringBuilder query,Pagination pagination ,List<Object> preparedStmtList){
+
+		String paginatedQuery = addOrderByClause(pagination);
+
+		int limit = null != pagination.getLimit() ? pagination.getLimit() : configs.getDefaultLimit();
+		int offset = null != pagination.getOffSet() ? pagination.getOffSet() : configs.getDefaultOffset();
+
+        String finalQuery = paginatedQuery.replace("{}", query);
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
+
+        return finalQuery;
+    }
+    
+    private String addOrderByClause(Pagination pagination) {
+
+    	String paginationWrapper = WRAPPER_QUERY;
+
+        if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {
+            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
+
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.ASC.name());
+        }
+        
+        return paginationWrapper;
+    }
+
+    
+    private static String WRAPPER_QUERY = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY p_id {orderBy}) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
 }

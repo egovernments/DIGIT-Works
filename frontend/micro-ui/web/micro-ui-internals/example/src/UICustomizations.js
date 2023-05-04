@@ -21,7 +21,7 @@ const businessServiceMap = {
   estimate: "ESTIMATE",
   contract: "CONTRACT",
   "muster roll": "MR",
-  "works.wages":"EXPENSE.WAGE",
+  "works.wages":"EXPENSE.WAGES",
   "works.purchase":"EXPENSE.PURCHASE",
   "works.supervision":"EXPENSE.SUPERVISION"
 };
@@ -142,8 +142,8 @@ export const UICustomizations = {
     else if (moduleCode?.includes("works.purchase")) {
       return businessServiceMap?.["works.purchase"];
     }
-    else if (moduleCode?.includes("works.wage")) {
-      return businessServiceMap?.["works.wage"];
+    else if (moduleCode?.includes("works.wages")) {
+      return businessServiceMap?.["works.wages"];
     }
     else if (moduleCode?.includes("works.supervision")) {
       return businessServiceMap?.["works.supervision"];

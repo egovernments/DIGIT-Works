@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import digit.models.coremodels.Workflow;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +33,6 @@ public class BillRequest {
 	private Bill bill;
 
 	@JsonProperty("workflow")
-	@Valid
-	private digit.models.coremodels.Workflow workflow = null;
+	private Workflow workflow;
 
 }

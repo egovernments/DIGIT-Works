@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:works_shg_app/Env/app_config.dart';
 
 import '../../../Env/env_config.dart';
 import '../../../models/user_details/user_details_model.dart';
@@ -24,7 +26,10 @@ class AuthRepository {
       };
       var formData = FormData.fromMap(body);
       final response = await Dio(BaseOptions(
-              baseUrl: envConfig.variables.baseUrl, headers: headers))
+              baseUrl: kIsWeb && !kDebugMode
+                  ? apiBaseUrl ?? envConfig.variables.baseUrl
+                  : envConfig.variables.baseUrl,
+              headers: headers))
           .post(url, queryParameters: queryParameters, data: formData);
 
       return UserDetailsModel.fromJson(

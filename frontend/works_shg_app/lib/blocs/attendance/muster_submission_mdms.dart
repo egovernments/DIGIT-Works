@@ -7,7 +7,6 @@ import 'package:works_shg_app/services/urls.dart';
 
 import '../../data/repositories/remote/mdms.dart';
 import '../../models/attendance/muster_submission.dart';
-import '../../models/mdms/attendance_hours.dart';
 import '../../utils/global_variables.dart';
 
 part 'muster_submission_mdms.freezed.dart';
@@ -49,7 +48,7 @@ class MusterSubmissionBloc
                 ?.where((e) => e.code == 'END_OF_WEEK')
                 .first
                 .active ??
-            false));
+            true));
       }
     } on DioError catch (e) {
       emit(MusterSubmissionState.error(e.response?.data['Errors'][0]['code']));
