@@ -29,4 +29,8 @@ public class BillMapperSearchResponse {
 	@Valid
 	private List<BillMapper> billMappers = null;
 
+	@JsonProperty("pagination")
+	@Valid
+	private Pagination pagination;
+
 }

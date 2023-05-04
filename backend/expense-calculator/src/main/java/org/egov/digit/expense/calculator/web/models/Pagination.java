@@ -28,7 +28,7 @@ public class Pagination {
 	@DecimalMax("100")
 	private Integer limit = 10;
 
-	@JsonProperty("offSet")
+	@JsonProperty("offset")
 
 	private Integer offSet = 0;
 

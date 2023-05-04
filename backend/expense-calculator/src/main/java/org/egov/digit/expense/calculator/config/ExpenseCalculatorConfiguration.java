@@ -152,4 +152,14 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.superbill.referenceId.format}")
 	private String supervisionBillreferenceIdFormatKey;
 
+	//search configs
+	@Value("${expense.billing.default.limit}")
+	private Integer defaultLimit;
+
+	@Value("${expense.billing.default.offset}")
+	private Integer defaultOffset;
+
+	@Value("${expense.billing.search.max.limit}")
+	private Integer maxLimit;
+
 }

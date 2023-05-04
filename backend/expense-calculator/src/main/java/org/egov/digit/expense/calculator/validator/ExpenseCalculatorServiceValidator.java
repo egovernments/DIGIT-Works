@@ -397,4 +397,30 @@ public class ExpenseCalculatorServiceValidator {
 
     }
 
+    public void validateCalculatorSearchRequest(CalculatorSearchRequest calculatorSearchRequest) {
+        // if only tenantId is passed or tenantId & billType is passed, throw error. One more criteria is mandatory
+        boolean isValidRequest=false;
+        String tenantId=calculatorSearchRequest.getSearchCriteria().getTenantId();
+        CalculatorSearchCriteria searchCriteria=calculatorSearchRequest.getSearchCriteria();
+
+        if(StringUtils.isBlank(tenantId)){
+            throw new CustomException("TENANT_ID","TenantId is mandatory");
+        }
+
+        if(StringUtils.isNotBlank(tenantId)){
+            if(!CollectionUtils.isEmpty(searchCriteria.getProjectNumbers())
+                    || !CollectionUtils.isEmpty(searchCriteria.getOrgNumbers())
+                    || !CollectionUtils.isEmpty(searchCriteria.getMusterRollNumbers())
+                    || !CollectionUtils.isEmpty(searchCriteria.getContractNumbers())
+                    || !CollectionUtils.isEmpty(searchCriteria.getBillNumbers())
+                    || !CollectionUtils.isEmpty(searchCriteria.getBillReferenceIds())){
+                isValidRequest=true;
+
+            }
+        }
+
+        if(!isValidRequest)
+            throw new CustomException("INVALID_SEARCH_CRITERIA","Search with only [tenantId] or [billTypes and tenantId] not allowed");
+    }
+
 }
