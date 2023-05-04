@@ -10,7 +10,7 @@ var Digit = window.Digit || {};
 
 const getBillType = (businessService) => {
   switch(businessService) {
-    case "EXPENSE.WAGE":
+    case "EXPENSE.WAGES":
       return 'wage'
     case "EXPENSE.PURCHASE":
       return 'purchase'
@@ -1046,7 +1046,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_BILL_NUMBER") {
-        const billType = getBillType(row?.businessObject?.businessservice)
+        const billType = getBillType(row?.businessService)
         return (
           <span className="link">
             <Link
@@ -1174,7 +1174,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       if (key === "WORKS_BILL_NUMBER") {
-        const billType = getBillType(row?.businessService) //to be changed
+        const billType = getBillType(row?.businessService)
         return (
           <span className="link">
             <Link
@@ -1191,7 +1191,7 @@ export const UICustomizations = {
         return value ? `COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}` : t("ES_COMMON_NA")
       }
       if (key === "EXP_BILL_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")

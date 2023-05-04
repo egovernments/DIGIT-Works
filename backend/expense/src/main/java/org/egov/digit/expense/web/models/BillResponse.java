@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BillResponse {
 
-	@JsonProperty("responseInfo")
+	@JsonProperty("ResponseInfo")
 	@Valid
 	private ResponseInfo responseInfo;
 
