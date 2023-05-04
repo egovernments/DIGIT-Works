@@ -1,21 +1,24 @@
 package org.egov.digit.expense.repository.rowmapper;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.enums.LineItemType;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
@@ -28,279 +31,230 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
-
+	
 	@Autowired
 	private ObjectMapper mapper;
 
 	@Override
 	public List<Bill> extractData(ResultSet rs) throws SQLException {
+		
 		Map<String, Bill> billMap = new LinkedHashMap<>();
-		Map<String, BillDetail> billDetailMap = new LinkedHashMap<>();
-
+		Map<String, BillDetail> billDetailMap = new HashMap<>();
 
 		while (rs.next()) {
-			String id = rs.getString("bill_id");
-			String tenantId = rs.getString("bill_tenantId");
-			Long billDate = rs.getLong("bill_billdate");
-			Long dueDate = rs.getLong("bill_duedate");
-			BigDecimal netPayableAmount = rs.getBigDecimal("bill_netpayableamount");
-			BigDecimal netPaidAmount = rs.getBigDecimal("bill_netpaidamount");
-			String businessService = rs.getString("bill_businessservice");
-			String referenceId = rs.getString("bill_referenceid");
-			Long fromPeriod = rs.getLong("bill_fromperiod");
-			Long toPeriod = rs.getLong("bill_toperiod");
-			String billStatus = rs.getString("bill_status");
-			String paymentStatus = rs.getString("bill_paymentstatus");
-			String billNumber = rs.getString("bill_billnumber");
-			String createdby = rs.getString("bill_createdby");
-			String lastmodifiedby = rs.getString("bill_lastModifiedBy");
-			Long createdtime = rs.getLong("bill_createdTime");
-			Long lastmodifiedtime = rs.getLong("bill_lastModifiedTime");
+			String billId = rs.getString("b_id");
+			Bill bill = billMap.get(billId);
 
-			AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
-					.lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
+			if (bill == null) {
+				
+				billDetailMap.clear();
+				
+				
+				Party payer = getPayer(rs);
+				
+				AuditDetails billAuditDetails = getAuditDetailsForKey(rs,
+						"b_createdby",
+						"b_createdtime",
+						"b_lastmodifiedby",
+						"b_lastmodifiedtime");
+				
+				bill = Bill.builder()
+					.paymentStatus(PaymentStatus.fromValue(rs.getString("b_paymentstatus")))
+					.additionalDetails(getadditionalDetail(rs, "b_additionalDetails"))
+					.totalPaidAmount(rs.getBigDecimal("b_totalpaidamount"))
+					.status(Status.fromValue(rs.getString("b_status")))
+					.businessService(rs.getString("businessservice"))
+					.totalAmount(rs.getBigDecimal("b_totalamount"))
+					.referenceId(rs.getString("b_referenceid"))
+					.fromPeriod(rs.getLong("b_fromperiod"))
+					.tenantId(rs.getString("b_tenantid"))
+					.toPeriod(rs.getLong("b_toperiod"))
+					.billDate(rs.getLong("billdate"))
+					.dueDate(rs.getLong("duedate"))
+					.auditDetails(billAuditDetails)
+					.payer(payer)
+					.id(billId)
 					.build();
 
-
-			JsonNode additionalDetails = getAdditionalDetail("bill_additionalDetails", rs);
-
-			Bill bill=Bill.builder()
-					.id(id)
-					.tenantId(tenantId)
-					.billDate(billDate)
-					.dueDate(dueDate)
-					.netPayableAmount(netPayableAmount)
-					.netPaidAmount(netPaidAmount)
-					.businessService(businessService)
-					.referenceId(referenceId)
-					.fromPeriod(fromPeriod)
-					.toPeriod(toPeriod)
-					.status(billStatus)
-					.paymentStatus(paymentStatus)
-					.billNumber(billNumber)
-					.additionalDetails(additionalDetails)
-					.auditDetails(auditDetails)
-					.build();
-
-			if (!billMap.containsKey(id)) {
-				billMap.put(id, bill);
+				billMap.put(bill.getId(), bill);
 			}
 
-			//one to many
-			addBillDetails(rs, billMap.get(id),billDetailMap);
+			/*
+			 * bill details 
+			 */
+			String detailId = rs.getString("bd_id");
+			BillDetail billDetail = billDetailMap.get(detailId);
 
-			//one to one
-			addPayerDetails(rs,billMap.get(id));
+			if (billDetail == null) {
+				
+				Party payee = getPayee(rs);
+				
+				AuditDetails bDAuditDetails =  getAuditDetailsForKey(rs,
+						"bd_createdby",
+						"bd_createdtime",
+						"bd_lastmodifiedby",
+						"bd_lastmodifiedtime");
+				
+				billDetail = BillDetail.builder()
+					.paymentStatus(PaymentStatus.fromValue(rs.getString("bd_paymentstatus")))
+					.additionalDetails(getadditionalDetail(rs, "bd_additionalDetails"))
+					.totalPaidAmount(rs.getBigDecimal("bd_totalpaidamount"))
+					.status(Status.fromValue(rs.getString("bd_status")))
+					.totalAmount(rs.getBigDecimal("bd_totalamount"))
+					.referenceId(rs.getString("bd_referenceid"))
+					.fromPeriod(rs.getLong("bd_fromperiod"))
+					.tenantId(rs.getString("bd_tenantid"))
+					.toPeriod(rs.getLong("bd_toperiod"))
+					.billId(rs.getString("billid"))
+					.auditDetails(bDAuditDetails)
+					.id(detailId)
+					.payee(payee)
+					.build();
+		
+				billDetailMap.put(billDetail.getId(), billDetail);
+
+				if (bill.getId().equals(billDetail.getBillId()))
+					bill.addBillDetailsItem(billDetail);
+			}
+			
+			/*
+			 * Line items details
+			 */
+			Boolean isLineItemPayable = rs.getBoolean("islineitemPayable"); 
+			String lineTiemBillDetailId = rs.getString("line_billdetailid");
+			
+			AuditDetails auditDetails =AuditDetails.builder()
+					.createdBy(rs.getString("line_createdby"))
+					.createdTime((Long) rs.getObject("line_createdtime"))
+					.lastModifiedBy(rs.getString("line_lastmodifiedby"))
+					.lastModifiedTime((Long) rs.getObject("line_lastmodifiedtime"))
+					.build();
+
+			LineItem lineItem = LineItem.builder()
+					.auditDetails(auditDetails)
+					.id(rs.getString("line_id"))
+					.tenantId(rs.getString("line_tenantid"))
+					.status(Status.fromValue(rs.getString("line_status")))
+					.headCode(rs.getString("headcode"))
+					.amount(rs.getBigDecimal("amount"))
+					.paidAmount(rs.getBigDecimal("paidamount"))
+					.paymentStatus(PaymentStatus.fromValue(rs.getString("li_paymentstatus")))
+					.type(LineItemType.fromValue(rs.getString("line_type")))
+					.additionalDetails(getadditionalDetail(rs, "line_additionalDetails"))
+					.build();
+			
+			if(lineTiemBillDetailId.equals(detailId)) {
+				if(isLineItemPayable)
+					billDetail.addPayableLineItems(lineItem);
+				else 
+					billDetail.addLineItems(lineItem);
+			}
+					
 		}
+		log.debug("converting map to list object ::: " + billMap.values());
 		return new ArrayList<>(billMap.values());
 	}
 
-	private void addBillDetails(ResultSet rs, Bill bill, Map<String,BillDetail> billDetailsMap) throws SQLException {
 
-		Map<String,LineItem> lineItemsMap=new LinkedHashMap<>();
-		BillDetail billDetail=null;
-
-		String id = rs.getString("bd_id");
-		String billId = rs.getString("bd_billid");
-		if (StringUtils.isNotBlank(id) && billId.equalsIgnoreCase(bill.getId())) {
-			String tenantId = rs.getString("bd_tenantId");
-			String referenceId = rs.getString("bd_referenceid");
-			String paymentStatus = rs.getString("bd_paymentstatus");
-			Long fromPeriod = rs.getLong("bd_fromperiod");
-			Long toPeriod = rs.getLong("bd_toperiod");
-			String createdby = rs.getString("bd_createdby");
-			String lastmodifiedby = rs.getString("bd_lastModifiedBy");
-			Long createdtime = rs.getLong("bd_createdTime");
-			Long lastmodifiedtime = rs.getLong("bd_lastModifiedTime");
-
-			AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
-					.lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
-					.build();
-
-			JsonNode additionalDetails = getAdditionalDetail("bd_additionalDetails", rs);
-
-			billDetail = BillDetail.builder()
-									.id(id)
-									.billId(billId)
-									.referenceId(referenceId)
-									.paymentStatus(paymentStatus)
-									.fromPeriod(fromPeriod)
-									.toPeriod(toPeriod)
-									.tenantId(tenantId)
-									.auditDetails(auditDetails)
-									.additionalDetails(additionalDetails)
-									.build();
-
-			if (!billDetailsMap.containsKey(id)) {
-				billDetailsMap.put(id, billDetail);
-			}
-
-			addLineItems(rs,billDetailsMap.get(id),lineItemsMap);
-			addPayeeDetails(rs,billDetailsMap.get(id));
-		}
-
-		//problem
-		if (bill.getBillDetails() == null || bill.getBillDetails().isEmpty()) {
-				List<BillDetail> billDetailList = new LinkedList<>();
-				billDetailList.add(billDetail);
-				bill.setBillDetails(billDetailList);
-		} else {
-			if (!billDetailsMap.containsKey(id)) {
-				bill.getBillDetails().add(billDetail);
-			}
-		}
-
-	}
-
-	private void addLineItems(ResultSet rs, BillDetail billDetail,Map<String,LineItem> lineItemsMap) throws SQLException {
-		LineItem lineItem=null;
-
-
-		String id = rs.getString("li_id");
-		String billDetailId = rs.getString("li_billdetailid");
-		if (StringUtils.isNotBlank(id) && billDetailId.equalsIgnoreCase(billDetail.getId())) {
-			String tenantId = rs.getString("li_tenantId");
-			String headCode = rs.getString("li_headcode");
-			BigDecimal amount = rs.getBigDecimal("li_amount");
-			BigDecimal paidAmount = rs.getBigDecimal("li_paidamount");
-			String type = rs.getString("li_type");
-			String status = rs.getString("li_status");
-			Boolean isLineItemPayable = rs.getBoolean("li_islineitempayable");
-			String createdby = rs.getString("li_createdby");
-			String lastmodifiedby = rs.getString("li_lastmodifiedby");
-			Long createdtime = rs.getLong("li_createdtime");
-			Long lastmodifiedtime = rs.getLong("li_lastmodifiedtime");
-
-			AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
-					.lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
-					.build();
-
-			JsonNode additionalDetails = getAdditionalDetail("li_additionaldetails", rs);
-
-			 lineItem = LineItem.builder()
-					.id(id)
-					 .billDetailId(billDetailId)
-					 .tenantId(tenantId)
-					 .headCode(headCode)
-					 .amount(amount)
-					 .paidAmount(paidAmount)
-					 .type(LineItemType.fromValue(type))
-					 .status(status)
-					 .isLineItemPayable(isLineItemPayable)
-					 .additionalDetails(additionalDetails)
-					 .auditDetails(auditDetails)
-					.build();
-
-			if (!lineItemsMap.containsKey(id)) {
-				lineItemsMap.put(id, lineItem);
-			}
-		}
-
-		if (billDetail.getLineItems() == null || billDetail.getLineItems().isEmpty()) {
-			List<LineItem> lineItemList = new LinkedList<>();
-			lineItemList.add(lineItem);
-			billDetail.setLineItems(lineItemList);
-		} else {
-			billDetail.getLineItems().add(lineItem);
-		}
-
-	}
-
-	private void addPayerDetails(ResultSet rs, Bill bill) throws SQLException {
-		Party payer=null;
-
-		String id = rs.getString("payer_id");
-		String parentId = rs.getString("payer_parentid");
-
-		if (StringUtils.isNotBlank(id) && parentId.equalsIgnoreCase(bill.getId())) {
-			String tenantId = rs.getString("payer_tenantId");
-			String type = rs.getString("payer_type");
-			String status = rs.getString("payer_status");
-			String identifier = rs.getString("payer_identifier");
-			String createdby = rs.getString("payer_createdby");
-			String lastmodifiedby = rs.getString("payer_lastmodifiedby");
-			Long createdtime = rs.getLong("payer_createdtime");
-			Long lastmodifiedtime = rs.getLong("payer_lastmodifiedtime");
-
-			AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
-					.lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
-					.build();
-
-			JsonNode additionalDetails = getAdditionalDetail("payer_additionaldetails", rs);
-
-			payer = Party.builder()
-					.id(id)
-					.type(type)
-					.status(status)
-					.identifier(identifier)
-					.parentId(parentId)
-					.tenantId(tenantId)
-					.additionalDetails(additionalDetails)
-					.auditDetails(auditDetails)
-					.build();
-		}
-			bill.setPayer(payer);
-	}
-
-
-	private void addPayeeDetails(ResultSet rs, BillDetail billDetail) throws SQLException {
-		Party payee=null;
-
-		String id = rs.getString("payee_id");
-		String parentId = rs.getString("payee_parentid");
-
-		if (StringUtils.isNotBlank(id) && parentId.equalsIgnoreCase(billDetail.getBillId())) {
-			String tenantId = rs.getString("payee_tenantId");
-			String type = rs.getString("payee_type");
-			String status = rs.getString("payee_status");
-			String identifier = rs.getString("payee_identifier");
-			String createdby = rs.getString("payee_createdby");
-			String lastmodifiedby = rs.getString("payee_lastmodifiedby");
-			Long createdtime = rs.getLong("payee_createdtime");
-			Long lastmodifiedtime = rs.getLong("payee_lastmodifiedtime");
-
-			AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
-					.lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
-					.build();
-
-			JsonNode additionalDetails = getAdditionalDetail("payee_additionaldetails", rs);
-
-			payee = Party.builder()
-					.id(id)
-					.type(type)
-					.status(status)
-					.identifier(identifier)
-					.parentId(parentId)
-					.tenantId(tenantId)
-					.additionalDetails(additionalDetails)
-					.auditDetails(auditDetails)
-					.build();
-		}
-		billDetail.setPayee(payee);
-	}
-	
 	/**
-	 * method parses the PGobject and returns the JSON node
-	 * 
-	 * @param columnName
+	 * Fetch payer details from result set
 	 * @param rs
 	 * @return
 	 * @throws SQLException
 	 */
-	private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
+	private Party getPayer(ResultSet rs) throws SQLException {
+		AuditDetails payerAuditDetails = getAuditDetailsForKey(rs, 
+				"payer_createdby",
+				"payer_createdtime",
+				"payer_lastmodifiedby",
+				"payer_lastmodifiedtime");
+
+		Party payer = Party.builder()
+				.status(Status.fromValue(rs.getString("payer_status")))
+				.identifier(rs.getString("payer_identifier"))
+				.tenantId(rs.getString("payer_tenantid"))
+				.type(rs.getString("payer_type"))
+				.auditDetails(payerAuditDetails)
+				.id(rs.getString("payer_id"))
+				.build();
+		return payer;
+	}
+	
+
+	/**
+	 * Fetch payee details from result set
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
+	private Party getPayee(ResultSet rs) throws SQLException {
+		
+		AuditDetails payeeAuditDetails = getAuditDetailsForKey(rs, 
+				"payee_createdby",
+				"payee_createdtime",
+				"payee_lastmodifiedby",
+				"payee_lastmodifiedtime");
+
+		Party payee = Party.builder()
+				.status(Status.fromValue(rs.getString("payee_status")))
+				.identifier(rs.getString("payee_identifier"))
+				.tenantId(rs.getString("payee_tenantid"))
+				.type(rs.getString("payee_type"))
+				.auditDetails(payeeAuditDetails)
+				.id(rs.getString("payee_id"))
+				.build();
+		return payee;
+	}
+	
+	/**
+	 * Fetch audit details from result set for the given keys
+	 * 
+	 * @param rs
+	 * @param createdBy
+	 * @param createdTime
+	 * @param modifiedBy
+	 * @param modifiedTime
+	 * @return
+	 * @throws SQLException
+	 */
+	private AuditDetails getAuditDetailsForKey (ResultSet rs, String createdBy, String createdTime, String modifiedBy, String modifiedTime) throws SQLException {
+		
+		return AuditDetails.builder()
+			.lastModifiedTime(rs.getLong(modifiedTime))
+			.createdTime((Long) rs.getObject(createdTime))
+			.lastModifiedBy(rs.getString(modifiedBy))
+			.createdBy(rs.getString(createdBy))
+			.build();
+	}
+	
+	
+	/**
+	 * method parses the PGobject and returns the JSON node
+	 * 
+	 * @param rs
+	 * @param key
+	 * @return
+	 * @throws SQLException
+	 */
+	private JsonNode getadditionalDetail(ResultSet rs, String key) throws SQLException {
+
 		JsonNode additionalDetails = null;
+
 		try {
-			PGobject obj = (PGobject) rs.getObject(columnName);
+
+			PGobject obj = (PGobject) rs.getObject(key);
 			if (obj != null) {
 				additionalDetails = mapper.readTree(obj.getValue());
 			}
-		} catch (IOException e) {
-			log.error("Failed to parse additionalDetail object");
-			throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
-		}
-		if (additionalDetails.isEmpty())
-			additionalDetails = null;
-		return additionalDetails;
-	}
 
+		} catch (IOException e) {
+			throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
+		}
+
+		if(additionalDetails.isEmpty())
+			additionalDetails = null;
+		
+		return additionalDetails;
+
+	}
 }

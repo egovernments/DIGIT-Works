@@ -1,8 +1,11 @@
 package org.egov.digit.expense.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.egov.digit.expense.web.models.Bill;
@@ -21,6 +24,7 @@ import digit.models.coremodels.ProcessInstanceRequest;
 import digit.models.coremodels.ProcessInstanceResponse;
 import digit.models.coremodels.RequestInfoWrapper;
 import digit.models.coremodels.State;
+import digit.models.coremodels.Workflow;
 
 @Service
 public class WorkflowUtil {
@@ -95,12 +99,21 @@ public class WorkflowUtil {
     public ProcessInstanceRequest prepareWorkflowRequestForBill(BillRequest billRequest) {
     	
     	Bill bill = billRequest.getBill();
-    	ProcessInstance workflow = bill.getWorkflow();
-    	workflow.setBusinessId(null); // TODO FIXME what is the business ID since muster role id is not unique
-    	workflow.setTenantId(bill.getTenantId());
+    	Workflow workflowFromRequest = billRequest.getWorkflow();
+    	List<User> assignes = new ArrayList<>();
+    	
+    	ProcessInstance processInstance = ProcessInstance.builder()
+    			.moduleName(configs.getExpenseWorkflowModuleName())
+    			.businessService(bill.getBusinessService())
+    			.comment(workflowFromRequest.getComments())
+    			.action(workflowFromRequest.getAction())
+    			.businessId(bill.getBillNumber())
+    			.tenantId(bill.getTenantId())
+    			.assignes(assignes) 
+    			.build();
     	
     	return ProcessInstanceRequest.builder()
-    			.processInstances(Arrays.asList(workflow))
+    			.processInstances(Arrays.asList(processInstance))
     			.requestInfo(billRequest.getRequestInfo())
     			.build();
     }

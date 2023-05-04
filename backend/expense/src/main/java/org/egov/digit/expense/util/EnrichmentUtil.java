@@ -1,18 +1,32 @@
 package org.egov.digit.expense.util;
 
-import digit.models.coremodels.AuditDetails;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.common.contract.request.RequestInfo;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.LineItem;
+import org.egov.digit.expense.web.models.Pagination;
+import org.egov.digit.expense.web.models.Party;
+import org.egov.digit.expense.web.models.Payment;
+import org.egov.digit.expense.web.models.PaymentBill;
+import org.egov.digit.expense.web.models.PaymentBillDetail;
+import org.egov.digit.expense.web.models.PaymentLineItem;
+import org.egov.digit.expense.web.models.PaymentRequest;
+import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-import java.util.UUID;
-
-import static org.egov.digit.expense.config.Constants.*;
+import digit.models.coremodels.AuditDetails;
 
 @Component
 public class EnrichmentUtil {
@@ -27,10 +41,14 @@ public class EnrichmentUtil {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
-        AuditDetails audit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
+		AuditDetails audit = getAuditDetails(createdBy, true);
+		String billNumberIdFormatName = bill.getBusinessService().toLowerCase().concat(Constants.BILL_ID_FORMAT_SUFFIX);
+		String billNumber = idgenUtil
+				.getIdList(billRequest.getRequestInfo(), bill.getTenantId().split("\\.")[0], billNumberIdFormatName, null, 1).get(0);
 
-        bill.setId(UUID.randomUUID().toString());
+	    bill.setId(UUID.randomUUID().toString());
         bill.setAuditDetails(audit);
+        bill.setBillNumber(billNumber);
 
         bill.getPayer().setId(UUID.randomUUID().toString());
         bill.getPayer().setAuditDetails(audit);
@@ -41,7 +59,8 @@ public class EnrichmentUtil {
             billDetail.setId(UUID.randomUUID().toString());
             billDetail.setBillId(bill.getId());
             billDetail.setAuditDetails(audit);
-
+            billDetail.setStatus(Status.ACTIVE);
+            
             billDetail.getPayee().setId(UUID.randomUUID().toString());
             billDetail.getPayee().setParentId(billDetail.getBillId());
             billDetail.getPayee().setAuditDetails(audit);
@@ -50,57 +69,40 @@ public class EnrichmentUtil {
                 lineItem.setId(UUID.randomUUID().toString());
                 lineItem.setAuditDetails(audit);
                 lineItem.setBillDetailId(billDetail.getId());
+                lineItem.setStatus(Status.ACTIVE);
             }
 
             for (LineItem payablelineItem : billDetail.getPayableLineItems()) {
                 payablelineItem.setId(UUID.randomUUID().toString());
                 payablelineItem.setAuditDetails(audit);
                 payablelineItem.setBillDetailId(billDetail.getId());
+                payablelineItem.setStatus(Status.ACTIVE);
 
             }
         }
-
-        //idGen to get the bill number
-		enrichBillNumber(billRequest, bill);
-
 		return billRequest;
     }
 
-	private void enrichBillNumber(BillRequest billRequest, Bill bill) {
-		if (StringUtils.isNotBlank(bill.getBusinessService())) {
-			String tenantId = bill.getTenantId();
-			String stateLevelTenantId = tenantId.split("\\.")[0];
-			RequestInfo requestInfo = billRequest.getRequestInfo();
-			if (BUSINESS_SERVICE_WAGE.equals(bill.getBusinessService())) {
-				List<String> wageBillNumbers = idgenUtil.getIdList(requestInfo, stateLevelTenantId,
-						config.getWageBillNumberName(), config.getWageBillNumberFormat(), 1);
-				if (!CollectionUtils.isEmpty(wageBillNumbers)) {
-					bill.setBillNumber(wageBillNumbers.get(0));
-				}
-			} else if (BUSINESS_SERVICE_PURCHASE.equals(bill.getBusinessService())) {
-				List<String> purchaseBillNumbers = idgenUtil.getIdList(requestInfo, stateLevelTenantId,
-						config.getPurchaseBillNumberName(), config.getPurchaseBillNumberFormat(), 1);
-				if (!CollectionUtils.isEmpty(purchaseBillNumbers)) {
-					bill.setBillNumber(purchaseBillNumbers.get(0));
-				}
-			} else if (BUSINESS_SERVICE_SUPERVISION.equals(bill.getBusinessService())) {
-				List<String> supervisionBillNumbers = idgenUtil.getIdList(requestInfo, stateLevelTenantId,
-						config.getSupervisionBillNumberName(), config.getSupervisionBillNumberFormat(), 1);
-				if (!CollectionUtils.isEmpty(supervisionBillNumbers)) {
-					bill.setBillNumber(supervisionBillNumbers.get(0));
-				}
-			}
-		}
-	}
-
-	public BillRequest encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest) {
+	public BillRequest encrichBillWithUuidAndAuditForUpdate(BillRequest billRequest, List<Bill> billsFromSearch) {
 
         Bill bill = billRequest.getBill();
         String createdBy = billRequest.getRequestInfo().getUserInfo().getUuid();
-        AuditDetails updateAudit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), false);
-        AuditDetails createAudit = getAuditDetails(createdBy, billRequest.getBill().getAuditDetails(), true);
+        AuditDetails updateAudit = getAuditDetails(createdBy, false);
+        AuditDetails createAudit = getAuditDetails(createdBy, true);
+        
+        Bill billFromSearch = billsFromSearch.get(0);
 
-        bill.setAuditDetails(updateAudit);
+		bill.setAuditDetails(updateAudit);
+
+		Party payer = bill.getPayer();
+		if (payer.getId() == null)
+			payer.setId(billFromSearch.getPayer().getId());
+		payer.setAuditDetails(updateAudit);
+		
+        Map<String, BillDetail> billDetailMap = billsFromSearch.stream()
+                .map(Bill::getBillDetails)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 
         for (BillDetail billDetail : bill.getBillDetails()) {
 
@@ -111,7 +113,11 @@ public class EnrichmentUtil {
 
                 billDetail.setId(UUID.randomUUID().toString());
                 billDetail.setAuditDetails(createAudit);
-
+                
+                Party payee = billDetail.getPayee();
+                payee.setId(UUID.randomUUID().toString());
+                payee.setAuditDetails(createAudit);
+                
                 for (LineItem lineItem : billDetail.getLineItems()) {
                     lineItem.setId(UUID.randomUUID().toString());
                     lineItem.setAuditDetails(createAudit);
@@ -127,7 +133,11 @@ public class EnrichmentUtil {
              */
             else {
 
+            	BillDetail detailFromSearch = billDetailMap.get(billDetail.getId());
+            	
                 billDetail.setAuditDetails(updateAudit);
+                billDetail.getPayee().setId(detailFromSearch.getPayee().getId()); 
+                billDetail.getPayee().setAuditDetails(createAudit);
 
                 for (LineItem lineItem : billDetail.getLineItems()) {
 
@@ -182,7 +192,30 @@ public class EnrichmentUtil {
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         payment.setId(UUID.randomUUID().toString());
-        payment.setAuditDetails(getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), true));
+        /*
+         * TODO needs to be removed when jit integration is implemented
+         */
+        PaymentStatus defaultStatus = PaymentStatus.fromValue(config.getDefaultPaymentStatus());
+        payment.setStatus(defaultStatus);
+        
+		for (PaymentBill paymentBill : payment.getBills()) {
+
+			paymentBill.setId(UUID.randomUUID().toString());
+			paymentBill.setStatus(defaultStatus);
+			
+			for (PaymentBillDetail billDetail : paymentBill.getBillDetails()) {
+
+				billDetail.setId(UUID.randomUUID().toString());
+				billDetail.setStatus(defaultStatus);
+				
+				for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+					
+					lineItem.setId(UUID.randomUUID().toString());
+					lineItem.setStatus(defaultStatus);				
+				}
+			}
+		}
+        payment.setAuditDetails(getAuditDetails(createdBy, true));
         return paymentRequest;
     }
 
@@ -190,7 +223,7 @@ public class EnrichmentUtil {
 
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        payment.setAuditDetails(getAuditDetails(createdBy, paymentRequest.getPayment().getAuditDetails(), false));
+        payment.setAuditDetails(getAuditDetails(createdBy, false));
         return paymentRequest;
     }
 
@@ -202,7 +235,7 @@ public class EnrichmentUtil {
      * @param isCreate
      * @return AuditDetails
      */
-    public AuditDetails getAuditDetails(String by, AuditDetails auditDetails, Boolean isCreate) {
+    public AuditDetails getAuditDetails(String by, Boolean isCreate) {
 
         Long time = System.currentTimeMillis();
 
@@ -215,8 +248,6 @@ public class EnrichmentUtil {
                     .build();
         else
             return AuditDetails.builder()
-                    .createdBy(auditDetails.getCreatedBy())
-                    .createdTime(auditDetails.getCreatedTime())
                     .lastModifiedBy(by)
                     .lastModifiedTime(time)
                     .build();
