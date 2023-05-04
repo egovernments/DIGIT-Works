@@ -1238,7 +1238,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"works.purchase" },
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
         body: {},
         config: {
           enabled: true,
@@ -1247,6 +1247,120 @@ export const UICustomizations = {
               return {
                 "code": state?.applicationStatus,
                 "i18nKey":`WF_BILL_${state?.applicationStatus}`,
+                "wfStatus":state?.applicationStatus
+              }
+            })
+            return states  
+          },
+        },
+      };
+    },
+    selectionHandler: async (selectedRows) => {
+      const payload = getCreatePaymentPayload(selectedRows);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      try {
+        const response = await Digit.PaymentService.createPayment(payload);
+        return responseToReturn
+      } catch (error) {
+        responseToReturn.isSuccess = false
+        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        return responseToReturn
+      }
+    }
+  },
+  SearchExpenseBillConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+    preProcess: (data) => {
+      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.billCriteria?.createdFrom,"daystart");
+      if(createdFromDate) data.body.billCriteria.createdFrom = createdFromDate
+      const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.billCriteria?.createdTo);
+      if(createdToDate) data.body.billCriteria.createdTo = createdToDate
+
+      const status = data?.body?.billCriteria?.status?.[0]?.code
+      delete data?.body?.billCriteria?.status
+      if(status){
+        data.body.billCriteria.status = status
+      }
+
+      const billType = data?.body?.billCriteria?.billType?.code;
+      delete data?.body?.billCriteria?.billType
+      if(billType) data.body.billCriteria.businessService = billType
+
+      const ward =  data?.body?.billCriteria?.ward?.[0]?.code
+      delete data?.body?.billCriteria?.ward
+      if(ward) data.body.billCriteria.ward = ward
+
+      const billNumber = data?.body?.billCriteria?.billNumber?.trim()
+      delete data?.body?.billCriteria?.billNumber
+      delete data?.body?.billCriteria?.billNumbers
+      if(billNumber) data.body.billCriteria.billNumbers = [billNumber]
+      
+      data.body.billCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      if (key === "WORKS_BILL_NUMBER") {
+        const billType = getBillType(row?.businessService)
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.tenantId}&billNumber=${value}`}
+            >
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (key === "WORKS_BILL_TYPE") {
+        return value ? `COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}` : t("ES_COMMON_NA")
+      }
+      if (key === "EXP_BILL_AMOUNT") {
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+      }
+      if(key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+      if(key === "ES_COMMON_LOCATION") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId)
+        return t(`TENANT_TENANTS_${headerLocale}`)
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "WORKS_BILL_NUMBER")
+          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    populateReqCriteria: () => {
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices:"muster-roll-approval" },
+        body: {},
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+              return {
+                "code": state?.applicationStatus,
+                "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
                 "wfStatus":state?.applicationStatus
               }
             })
