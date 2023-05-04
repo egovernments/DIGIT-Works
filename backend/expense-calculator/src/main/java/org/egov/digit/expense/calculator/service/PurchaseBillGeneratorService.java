@@ -266,7 +266,7 @@ public class PurchaseBillGeneratorService {
 
     private String getDeductionValue(String headCode, List<ApplicableCharge> applicableCharges) {
         for(ApplicableCharge applicableCharge : applicableCharges) {
-            if(applicableCharge.getCode().equalsIgnoreCase(headCode) && applicableCharge.getService().equalsIgnoreCase(config.getPurchaseBusinessService())){
+            if(applicableCharge.getCode().equalsIgnoreCase(headCode)){
                 return applicableCharge.getValue();
             }
         }
@@ -276,7 +276,7 @@ public class PurchaseBillGeneratorService {
 
     private String getCalculationType(String headCode, List<ApplicableCharge> applicableCharges) {
         for(ApplicableCharge applicableCharge : applicableCharges) {
-            if(applicableCharge.getCode().equalsIgnoreCase(headCode) && applicableCharge.getService().equalsIgnoreCase(config.getPurchaseBusinessService())){
+            if(applicableCharge.getCode().equalsIgnoreCase(headCode)){
                 String calculationType = applicableCharge.getCalculationType();
                 if (StringUtils.isBlank(calculationType)) {
                     log.error("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +"] and service ["+config.getPurchaseBusinessService()+"]");

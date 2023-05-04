@@ -146,7 +146,7 @@ const DeductionsTable = ({control,watch,...props}) => {
             {
                 select: (data) => {
                     const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
-                    return optionsData.filter((opt) => opt?.active && opt?.service === businessService).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+                    return optionsData.filter((opt) => opt?.active && Digit?.Customizations?.["commonUiConfig"]?.getBusinessService(opt?.service) === businessService).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
                 },
                 enabled: options?.mdmsConfig ? true : false,
             }

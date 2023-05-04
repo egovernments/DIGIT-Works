@@ -191,7 +191,7 @@ export const BillsSearch = {
 
     //Bill search
     const billResponse = await WorksService?.searchBill({billCriteria, pagination});
-    const billData = billResponse?.bills?.[1]; //TODO: Index with update once API is done.
+    const billData = billResponse?.bills?.[0]; //TODO: Index with update once API is done.
     const WONumber = billData?.referenceId.split("_")[0];
 
     //Work order search

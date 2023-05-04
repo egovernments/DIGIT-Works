@@ -1,5 +1,5 @@
 
-export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract}) => {
+export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract,  docConfigData}) => {
   
   if(!sessionFormData?.basicDetails_workOrderNumber || !sessionFormData.basicDetails_projectID || !sessionFormData.basicDetails_projectDesc || !sessionFormData.basicDetails_location) {  
     // if(isModify) {

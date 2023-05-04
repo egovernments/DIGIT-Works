@@ -38,6 +38,7 @@ module.exports = function (app) {
     '/expense/bill/v1',
     '/egov-pdf/bill/_search',
     '/expense/bill',
-    "/expense-calculator/v1/_search"
+    "/expense-calculator/v1/_search",
+    "/expense/payment/v1/_create"
   ].forEach((location) => app.use(location, createProxy));
 };

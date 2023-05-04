@@ -21,6 +21,44 @@ const getBillType = (businessService) => {
   }
 }
 
+const getCreatePaymentPayload = (data) => {
+  let payment = {}
+  payment.tenantId = Digit.ULBService.getCurrentTenantId()
+  payment.netPayableAmount = 0
+  payment.netPaidAmount = 0
+  payment.additionalDetails = {}
+
+  payment.bills = []
+  data?.forEach(item => {
+    let billObj = {}
+    billObj.billId = item?.original?.id
+    billObj.tenantId = item?.original?.tenantId
+    billObj.totalAmount = item?.original?.totalAmount
+    billObj.totalPaidAmount = item?.original?.totalPaidAmount
+    billObj.billDetails = []
+    if(item?.original?.billDetails?.length > 0) {
+      item?.original?.billDetails?.forEach(detail => {
+        let billDetailObj = {}
+        billDetailObj.billDetailId = detail?.id
+        billDetailObj.totalAmount = detail?.totalAmount
+        billDetailObj.totalPaidAmount = detail?.totalPaidAmount
+        billDetailObj.payableLineItems = detail?.payableLineItems?.map(item => (
+          {
+            lineItemId: item?.id,
+            tenantId: item?.tenantId,
+            paidAmount: item?.amount
+          }
+        ))
+        billDetailObj.additionalDetails = {}
+        billObj.billDetails.push(billDetailObj)
+      })
+    }
+    payment.bills.push(billObj)
+  })
+  let payload = {payment}
+  return payload
+}
+
 export const UICustomizations = {
   EstimateInboxConfig: {
     preProcess: (data) => {
@@ -325,7 +363,7 @@ export const UICustomizations = {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
           let city = location?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(location?.city)}`) : "";
-          return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+          return <p>{`${ward ? ward + ", " : ""}${city}`}</p>;
         }
         return <p>{"NA"}</p>;
       }
@@ -344,7 +382,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"mukta-estimate" },
+        params: { tenantId, businessServices:"ESTIMATE" },
         body: {
          
         },
@@ -597,7 +635,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"muster-roll-approval" },
+        params: { tenantId, businessServices:"MR" },
         body: {
          
         },
@@ -1080,7 +1118,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"works.purchase" },
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
         body: {},
         config: {
           enabled: true,
@@ -1097,7 +1135,17 @@ export const UICustomizations = {
         },
       };
     },
-    selectionHandler: (selectedRows) => {
+    selectionHandler: async (selectedRows) => {
+      const payload = getCreatePaymentPayload(selectedRows);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      try {
+        const response = await Digit.PaymentService.createPayment(payload);
+        return responseToReturn
+      } catch (error) {
+        responseToReturn.isSuccess = false
+        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        return responseToReturn
+      }
     }
   },
   SearchBillConfig: {
@@ -1121,7 +1169,7 @@ export const UICustomizations = {
         data.body.searchCriteria.status = status
       }
 
-      const billType = data?.body?.searchCriteria?.billType?.businessService;
+      const billType = data?.body?.searchCriteria?.billType?.code;
       delete data?.body?.searchCriteria?.billType
       delete data?.body?.searchCriteria?.billTypes
       if(billType) data.body.searchCriteria.billTypes = [billType]
@@ -1158,6 +1206,9 @@ export const UICustomizations = {
           </span>
         );
       }
+      if (key === "WORKS_BILL_TYPE") {
+        return value ? `COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}` : t("ES_COMMON_NA")
+      }
       if (key === "EXP_BILL_AMOUNT") {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
@@ -1187,7 +1238,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"works.purchase" },
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
         body: {},
         config: {
           enabled: true,
@@ -1204,7 +1255,17 @@ export const UICustomizations = {
         },
       };
     },
-    selectionHandler: (selectedRows) => {
+    selectionHandler: async (selectedRows) => {
+      const payload = getCreatePaymentPayload(selectedRows);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      try {
+        const response = await Digit.PaymentService.createPayment(payload);
+        return responseToReturn
+      } catch (error) {
+        responseToReturn.isSuccess = false
+        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        return responseToReturn
+      }
     }
   },
   DownloadBillConfig: {

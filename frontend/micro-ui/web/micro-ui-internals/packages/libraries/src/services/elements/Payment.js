@@ -140,4 +140,14 @@ export const PaymentService = {
       userService: true,
       params: { ...filters },
     }),
+  
+  createPayment: (data) => 
+    Request({
+      url: Urls.payment.createPayment,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      data: data
+    })
 };
