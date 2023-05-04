@@ -43,6 +43,7 @@ public class Estimate {
 
     @JsonProperty("status")
     private StatusEnum status = null;
+    //private String status = null;
 
     @JsonProperty("wfStatus")
     private String wfStatus = null;
