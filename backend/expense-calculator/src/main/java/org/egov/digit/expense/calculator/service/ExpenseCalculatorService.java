@@ -277,11 +277,9 @@ public class ExpenseCalculatorService {
         calculatorSearchRequest.getPagination().setTotalCount(billMappers.size());
 
         //checks if billIds are present
-        List<Bill> bills;
+        List<Bill> bills=new ArrayList<>();
         if(!CollectionUtils.isEmpty(billMappers.keySet())) {
              bills= expenseCalculatorUtil.fetchBillsWithBillIds(requestInfo, tenantId, new ArrayList<>(billMappers.keySet()));
-        }else{
-            throw new CustomException("BILL_IDS_NOT_FOUND","Bill ids are either null or do not exist for the given search criteria");
         }
 
         //set bills in billMapper
