@@ -14,8 +14,8 @@ public class ExpenseCalculatorServiceConstants {
     public static final String MDMS_APPLICABLE_CHARGES = "ApplicableCharges";
     public static final String MDMS_BUSINESS_SERVICE = "BusinessService";
     public static final String JSON_PATH_FOR_MDMS_BUSINESS_SERVICE =  "$.*.businessService";
-    public static final String MDMD_LABOUR_CHARGES = "LabourCharges";
-    public static final String MDMD_PAYER_LIST = "PayerList";
+    public static final String MDMS_LABOUR_CHARGES = "LabourCharges";
+    public static final String MDMS_PAYER_LIST = "PayerList";
     public static final String MDMS_COMMON_ACTIVE_FILTER ="$.*.[?(@.active==true)]";
     public static final String MDMS_COMMON_MASTERS ="common-masters";
    // public static final String JSON_PATH_FOR_WAGE_SEEKERS_SKILLS = MDMS_RESP_CONSTANT+MDMS_COMMON_MASTERS + "." + WAGE_SEEKER_SKILLS;
@@ -25,9 +25,9 @@ public class ExpenseCalculatorServiceConstants {
    // public static final String BILL_TYPE_WAGE = "works.wage";
     public static final String MDMS_EXPENSE_MASTERS ="expense";
 
-    public static final String JSON_PATH_FOR_PAYER = MDMS_RESP_CONSTANT + MDMS_EXPENSE_MASTERS + "." + MDMD_PAYER_LIST + ".*";
+    public static final String JSON_PATH_FOR_PAYER = MDMS_RESP_CONSTANT + MDMS_EXPENSE_MASTERS + "." + MDMS_PAYER_LIST + ".*";
     public static final String JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION = MDMS_RESP_CONSTANT + MDMS_EXPENSE_MASTERS + "." + MDMS_BUSINESS_SERVICE + ".*";
-    public static final String JSON_PATH_FOR_LABOUR_CHARGES = MDMS_RESP_CONSTANT+MDMS_EXPENSE_MASTERS + "." + MDMD_LABOUR_CHARGES;
+    public static final String JSON_PATH_FOR_LABOUR_CHARGES = MDMS_RESP_CONSTANT+MDMS_EXPENSE_MASTERS + "." + MDMS_LABOUR_CHARGES;
     public static final String JSON_PATH_FOR_HEAD_CODES = MDMS_RESP_CONSTANT+MDMS_EXPENSE_MASTERS + "." + MDMS_HEAD_CODES;
 
     public static final String JSON_PATH_FOR_APPLICABLE_CHARGES = MDMS_RESP_CONSTANT+MDMS_EXPENSE_MASTERS + "." + MDMS_APPLICABLE_CHARGES;

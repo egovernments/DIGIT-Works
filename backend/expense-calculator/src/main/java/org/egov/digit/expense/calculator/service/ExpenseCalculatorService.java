@@ -321,7 +321,7 @@ public class ExpenseCalculatorService {
     private List<Payer> fetchMDMSDataForPayers(RequestInfo requestInfo, String tenantId){
         String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch payer list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMD_PAYER_LIST);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMS_PAYER_LIST);
         List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_PAYER);
         List<Payer> payers = new ArrayList<>();
         for(Object obj : payerListJson){

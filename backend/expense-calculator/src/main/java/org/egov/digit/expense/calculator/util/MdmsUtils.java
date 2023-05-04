@@ -33,7 +33,7 @@ public class MdmsUtils {
 
     public Object getPayersForTypeFromMDMS(RequestInfo requestInfo, String type, String tenantId){
         List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail masterDetail = getMasterDetailForSubModuleAndFilter(MDMD_PAYER_LIST, "$.[?(@.active==true && @.type=='"+type+"')]");
+        MasterDetail masterDetail = getMasterDetailForSubModuleAndFilter(MDMS_PAYER_LIST, "$.[?(@.active==true && @.type=='"+type+"')]");
         masterDetails.add(masterDetail);
         ModuleDetail expenseModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
                 .moduleName(MDMS_EXPENSE_MASTERS).build();
@@ -131,7 +131,7 @@ public class MdmsUtils {
 
     private ModuleDetail getLabourChargesModuleDetails() {
         List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModuleAndFilter(MDMD_LABOUR_CHARGES, MDMS_COMMON_ACTIVE_FILTER);
+        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModuleAndFilter(MDMS_LABOUR_CHARGES, MDMS_COMMON_ACTIVE_FILTER);
         masterDetails.add(overHeadsMasterDetail);
 
         return ModuleDetail.builder()
