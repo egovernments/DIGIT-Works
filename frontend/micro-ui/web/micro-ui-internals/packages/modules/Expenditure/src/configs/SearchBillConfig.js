@@ -166,8 +166,8 @@ export const SearchBillConfig = {
                                 additionalCustomization:true 
                             },
                             {
-                                label: "WORKS_PROJECT_NAME",
-                                jsonPath: "additionalDetails.projectName",
+                                label: "WORKS_PROJECT_ID",
+                                jsonPath: "projectNumber",
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
@@ -180,17 +180,17 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "businessService",
+                                jsonPath: "bill.businessService",
                                 additionalCustomization:true
                             },
                             {
                                 label: "CORE_COMMON_STATUS",
-                                jsonPath: "status",
+                                jsonPath: "bill.status",
                                 additionalCustomization:true
                             },
                             {
                                 label: "EXP_BILL_AMOUNT",
-                                jsonPath: "totalAmount",
+                                jsonPath: "bill.totalAmount",
                                 additionalCustomization:true,
                                 headerAlign: "right"
                             }

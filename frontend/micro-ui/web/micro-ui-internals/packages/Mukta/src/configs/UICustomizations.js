@@ -27,13 +27,37 @@ const getCreatePaymentPayload = (data) => {
   payment.tenantId = Digit.ULBService.getCurrentTenantId()
   payment.netPayableAmount = 0
   payment.netPaidAmount = 0
+  payment.status = "INITIATED"
+  payment.additionalDetails = {}
+
   payment.bills = []
   data?.forEach(item => {
     let billObj = {}
-    billObj.billId = '123'
-    billObj.totalAmount = '500'
-    billObj.totalPaidAmount = '1000'
+    billObj.billId = item?.original?.id
+    billObj.tenantId = item?.original?.tenantId
+    billObj.totalAmount = item?.original?.totalAmount
+    billObj.totalPaidAmount = item?.original?.totalPaidAmount
+    billObj.status = "INITIATED"
     billObj.billDetails = []
+    if(item?.original?.billDetails?.length > 0) {
+      item?.original?.billDetails?.forEach(detail => {
+        let billDetailObj = {}
+        billDetailObj.billDetailId = detail?.id
+        billDetailObj.totalAmount = detail?.totalAmount
+        billDetailObj.totalPaidAmount = detail?.totalPaidAmount
+        billDetailObj.status = "INITIATED"
+        billDetailObj.payableLineItems = detail?.payableLineItems?.map(item => (
+          {
+            lineItemId: item?.id,
+            tenantId: item?.tenantId,
+            paidAmount: item?.paidAmount,
+            status: "INITIATED"
+          }
+        ))
+        billDetailObj.additionalDetails = {}
+        billObj.billDetails.push(billDetailObj)
+      })
+    }
     payment.bills.push(billObj)
   })
   let payload = {payment}
@@ -1150,7 +1174,7 @@ export const UICustomizations = {
         data.body.searchCriteria.status = status
       }
 
-      const billType = data?.body?.searchCriteria?.billType?.businessService;
+      const billType = data?.body?.searchCriteria?.billType?.code;
       delete data?.body?.searchCriteria?.billType
       delete data?.body?.searchCriteria?.billTypes
       if(billType) data.body.searchCriteria.billTypes = [billType]

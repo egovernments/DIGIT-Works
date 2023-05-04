@@ -69,6 +69,12 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_PURCHASE_BILL")}` : t("EXP_CREATE_PURCHASE_BILL"),
         show: location.pathname.includes("/expenditure/purchase-bill-details") ? true : false,
         isBack: fromScreen && true,
+      },
+      {
+        path: `/${window.contextPath}/employee/expenditure/download-bill`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("ES_COMMON_DOWNLOADS")}` : t("ES_COMMON_DOWNLOADS"),
+        show: location.pathname.includes("/expenditure/download-bill") ? true : false,
+        isBack: fromScreen && true,
       }
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
