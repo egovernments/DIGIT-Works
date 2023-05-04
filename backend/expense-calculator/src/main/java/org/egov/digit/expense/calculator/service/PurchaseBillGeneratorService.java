@@ -85,8 +85,7 @@ public class PurchaseBillGeneratorService {
                                 .tenantId(tenantId)
                                 .billDate(providedPurchaseBill.getInvoiceDate())
                                 .referenceId(referenceId)
-                               // .businessService(configs.getPurchaseBusinessService())
-                                .businessService("EXPENSE.PURCHASE")
+                                .businessService(configs.getPurchaseBusinessService())
                                 .fromPeriod(contract.getStartDate().longValue())
                                 .toPeriod(contract.getEndDate().longValue())
                                 .status(providedPurchaseBill.getStatus())
@@ -143,8 +142,7 @@ public class PurchaseBillGeneratorService {
                 .id(id)
                 .billDate(providedPurchaseBill.getInvoiceDate())
                 .referenceId(referenceId)
-                //.businessService(configs.getPurchaseBusinessService())
-                .businessService("EXPENSE.PURCHASE")
+                .businessService(configs.getPurchaseBusinessService())
                 .fromPeriod(contract.getStartDate().longValue())
                 .toPeriod(contract.getEndDate().longValue())
                 .status(providedPurchaseBill.getStatus())
@@ -165,7 +163,6 @@ public class PurchaseBillGeneratorService {
         for(LineItem lineItem : payableLineItems) {
             netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
         }
-        log.info("Calculated netLineItemAmount for billDetail::referenceId ["+billDetail.getReferenceId()+"]");
         billDetail.setNetLineItemAmount(netLineItemAmount);
     }
 
@@ -183,7 +180,7 @@ public class PurchaseBillGeneratorService {
                 expense = expense.add(amount);
             }
         }
-        log.info("Calculated expense for billDetail::referenceId ["+billDetail.getReferenceId()+"]");
+
         // Calculate total deduction on top of expense
         for(LineItem lineItem :lineItems) {
             String headCode = lineItem.getHeadCode();
@@ -209,7 +206,6 @@ public class PurchaseBillGeneratorService {
                 billDetail.addPayableLineItems(buildPayableLineItem(tempDeduction,tenantId,headCode));
             }
         }
-        log.info("Calculated deduction for billDetail::referenceId ["+billDetail.getReferenceId()+"]");
         billDetail.addPayableLineItems(buildPayableLineItem(expense.subtract(deduction),tenantId,"PURCHASE"));
     }
 
@@ -296,7 +292,7 @@ public class PurchaseBillGeneratorService {
 
     private String getHeadCodeCategory(String headCode, List<HeadCode> headCodes) {
         for(HeadCode hCode : headCodes) {
-            if(hCode.getCode().equalsIgnoreCase(headCode) && hCode.getService().equalsIgnoreCase(config.getPurchaseBusinessService())){
+            if(hCode.getCode().equalsIgnoreCase(headCode)){
                 String category = hCode.getCategory();
                 if (StringUtils.isBlank(category)) {
                     log.error("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +"] and service ["+config.getPurchaseBusinessService()+"]");
