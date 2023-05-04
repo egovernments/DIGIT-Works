@@ -22,6 +22,7 @@ class GetGlobalConfig {
 
         globalurl = script.attributes['src'];
 
+        print(globalurl);
         // Extract the URL from the src attribute
       }
       var response = await dio.get(kIsWeb
