@@ -26,7 +26,6 @@ const getCreatePaymentPayload = (data) => {
   payment.tenantId = Digit.ULBService.getCurrentTenantId()
   payment.netPayableAmount = 0
   payment.netPaidAmount = 0
-  //payment.status = "INITIATED"
   payment.additionalDetails = {}
 
   payment.bills = []
@@ -36,7 +35,6 @@ const getCreatePaymentPayload = (data) => {
     billObj.tenantId = item?.original?.tenantId
     billObj.totalAmount = item?.original?.totalAmount
     billObj.totalPaidAmount = item?.original?.totalPaidAmount
-    //billObj.status = "INITIATED"
     billObj.billDetails = []
     if(item?.original?.billDetails?.length > 0) {
       item?.original?.billDetails?.forEach(detail => {
@@ -44,13 +42,11 @@ const getCreatePaymentPayload = (data) => {
         billDetailObj.billDetailId = detail?.id
         billDetailObj.totalAmount = detail?.totalAmount
         billDetailObj.totalPaidAmount = detail?.totalPaidAmount
-        //billDetailObj.status = "INITIATED"
         billDetailObj.payableLineItems = detail?.payableLineItems?.map(item => (
           {
             lineItemId: item?.id,
             tenantId: item?.tenantId,
-            paidAmount: item?.paidAmount,
-            //status: "INITIATED"
+            paidAmount: item?.paidAmount
           }
         ))
         billDetailObj.additionalDetails = {}
