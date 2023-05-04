@@ -11,7 +11,8 @@ class Client {
   Dio init() {
     final Dio dio = Dio();
     dio.interceptors.add(ApiInterceptors());
-    dio.options.baseUrl = kIsWeb ? apiBaseUrl : envConfig.variables.baseUrl;
+    dio.options.baseUrl =
+        kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl;
 
     return dio;
   }

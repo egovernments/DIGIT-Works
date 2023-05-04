@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:works_shg_app/Env/app_config.dart';
 import 'package:works_shg_app/models/file_store/file_store_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
@@ -22,7 +23,7 @@ class CoreRepository {
     Map? respStr;
 
     var postUri = Uri.parse(
-        "${envConfig.variables.baseUrl}${Urls.commonServices.fileUpload}");
+        "${kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl}${Urls.commonServices.fileUpload}");
     var request = http.MultipartRequest("POST", postUri);
     if (paths != null && paths.isNotEmpty) {
       if (paths is List<PlatformFile>) {
@@ -110,7 +111,7 @@ class CoreRepository {
     FileStoreListModel? fileStoreListModel;
 
     var res = await http.get(Uri.parse(
-        '${envConfig.variables.baseUrl}${Urls.commonServices.fileFetch}?tenantId=$tenantId&fileStoreIds=${storeId.join(',')}'));
+        '${kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl}${Urls.commonServices.fileFetch}?tenantId=$tenantId&fileStoreIds=${storeId.join(',')}'));
 
     if (res != null) {
       fileStoreListModel = FileStoreListModelMapper.fromMap(
