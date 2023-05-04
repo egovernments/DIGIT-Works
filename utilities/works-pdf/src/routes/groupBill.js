@@ -66,7 +66,6 @@ router.post(
       };
       let paymentResp = await search_payment_details(paymentRequest);
       if (!paymentResp?.payments?.length) {
-        console.log(error)
         return renderError(res, `Failed to query for payment search. Check the Payment id.`);
       }
     } catch (error) {
@@ -210,8 +209,8 @@ const getFileStoreIds = (
         message: `error occured while searching records in DB : ${error.message}`
       });
     } else {
+      var searchresult = [];
       if (results && results.rows.length > 0) {
-        var searchresult = [];
         results.rows.map(crow => {
           searchresult.push({
             "id": crow.id,
@@ -232,7 +231,7 @@ const getFileStoreIds = (
         callback({ status: 200, message: "Success", searchresult });
       } else {
         logger.error("no result found in DB search");
-        callback({ status: 404, message: "no matching result found" });
+        callback({ status: 200, message: "no matching result found", searchresult });
       }
     }
   });
