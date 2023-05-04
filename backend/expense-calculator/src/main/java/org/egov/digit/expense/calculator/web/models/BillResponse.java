@@ -23,7 +23,7 @@ import java.util.List;
 @Builder
 public class BillResponse {
 
-	@JsonProperty("responseInfo")
+	@JsonProperty("ResponseInfo")
 	@Valid
 	private ResponseInfo responseInfo;
 

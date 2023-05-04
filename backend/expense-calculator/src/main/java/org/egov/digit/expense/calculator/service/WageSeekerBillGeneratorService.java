@@ -95,11 +95,9 @@ public class WageSeekerBillGeneratorService {
                     // Build BillDetail
                     log.info("Building billDetail for referenceId ["+referenceId+"] and musterRollNumber ["+musterRollNumber+"]");
                     BillDetail billDetail = BillDetail.builder()
-                                                //.referenceId(individualId)
                                                 .billId(null)
                                                 .referenceId(cboId)
                                                 .tenantId(tenantId)
-                                                .paymentStatus("PENDING")
                                                 .fromPeriod(musterRoll.getStartDate().longValue())
                                                 .toPeriod(musterRoll.getEndDate().longValue())
                                                 .payee(payee)
@@ -118,17 +116,12 @@ public class WageSeekerBillGeneratorService {
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
                         .billDate(Instant.now().toEpochMilli())
-                      //  .netPayableAmount(netPayableAmount)
                         .referenceId(referenceId +CONCAT_CHAR_CONSTANT+ musterRollNumber)
-                        //.businessService(configs.getWageBusinessService())
-                        .businessService("EXPENSE.WAGES")
+                        .businessService(configs.getWageBusinessService())
                         .fromPeriod(musterRoll.getStartDate().longValue())
                         .toPeriod(musterRoll.getEndDate().longValue())
                         .payer(payer)
-                        .paymentStatus("PENDING")
-                        .status("ACTIVE")
                         .billDetails(billDetails)
-                        //.additionalDetails(new Object())
                         .build();
 
                 bills.add(bill);
@@ -268,18 +261,18 @@ public class WageSeekerBillGeneratorService {
 
     private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
 
-        return new Double(150);
-//        String skill =  getWageSeekerSkill(individualEntry);
-//        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
-//        for(LabourCharge labourCharge : labourCharges){
-//            if(labourCharge.getCode().equalsIgnoreCase(skill)
-//                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
-//                return labourCharge.getAmount();
-//            }
-//        }
-//
-//        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
-//        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+       // return new Double(150);
+        String skill =  getWageSeekerSkill(individualEntry);
+        String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
+        for(LabourCharge labourCharge : labourCharges){
+            if(labourCharge.getCode().equalsIgnoreCase(skill)
+                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
+                return labourCharge.getAmount();
+            }
+        }
+
+        log.error("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
+        throw new CustomException("SKILL_CODE_MISSING_IN_MDMS","Skill code "+ skill+" is missing in MDMS");
     }
 
     private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
