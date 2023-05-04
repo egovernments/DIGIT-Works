@@ -10,6 +10,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.Workflow;
+import org.egov.web.models.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -38,8 +39,9 @@ public class WorkflowService {
         ProcessInstance processInstance = getProcessInstanceForMusterRoll(musterRollRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(musterRollRequest.getRequestInfo(), Collections.singletonList(processInstance));
         ProcessInstance processInstanceResponse = callWorkFlow(workflowRequest);
+        musterRollRequest.getMusterRoll().setMusterRollStatus(processInstanceResponse.getState().getState());
         //musterRollStatus
-        musterRollRequest.getMusterRoll().setMusterRollStatus(processInstanceResponse.getState().getApplicationStatus());
+        musterRollRequest.getMusterRoll().setStatus(Status.fromValue(processInstanceResponse.getState().getApplicationStatus()));
         // Fetch currentProcessInstance from workflow process search for inbox config
         musterRollRequest.getMusterRoll().setProcessInstance(processInstanceResponse);
         return processInstanceResponse.getState().getApplicationStatus();
