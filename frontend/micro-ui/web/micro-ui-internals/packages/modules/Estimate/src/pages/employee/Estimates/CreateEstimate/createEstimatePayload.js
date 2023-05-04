@@ -158,7 +158,7 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
                 }
             },
             workflow:{
-                "action":"RE-SUBMITTED" ,
+                "action":"RE-SUBMIT" ,
                 "comment": filteredFormData?.comments,
                 "assignees": [
                     filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid: undefined 
