@@ -3,7 +3,7 @@ const searchConfigMukta = () => {
             "label": "WORKS_SEARCH_ESTIMATES",
             "type": "search",
             "apiDetails": {
-                "serviceName": "/estimate-service/estimate/v1/_search",
+                "serviceName": "/estimate/v1/_search",
                 "requestParam": {},
                 "requestBody": {},
                 "minParametersForSearchForm": 1,

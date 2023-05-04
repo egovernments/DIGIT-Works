@@ -35,13 +35,13 @@ const Urls = {
 
   works: {
     create: "/loi-service/v1/_create",
-    estimateSearch: "/estimate-service/estimate/v1/_search",
+    estimateSearch: "/estimate/v1/_search",
     loiSearch: "/loi-service/v1/_search",
-    createEstimate: "/estimate-service/estimate/v1/_create",
-    approvedEstimateSearch: "/estimate-service/estimate/v1/_search",
-    searchEstimate: "/estimate-service/estimate/v1/_search",
+    createEstimate: "/estimate/v1/_create",
+    approvedEstimateSearch: "/estimate/v1/_search",
+    searchEstimate: "/estimate/v1/_search",
     updateLOI: "/loi-service/v1/_update",
-    updateEstimate: "/estimate-service/estimate/v1/_update",
+    updateEstimate: "/estimate/v1/_update",
     download_pdf: "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     createProject: "/project/v1/_create",
     searchProject: "/project/v1/_search",
@@ -49,9 +49,9 @@ const Urls = {
   },
 
   contracts: {
-    createWO: "/contract-service/contract/v1/_create",
-    search: "/contract-service/contract/v1/_search",
-    update: "/contract-service/contract/v1/_update",
+    createWO: "/contract/v1/_create",
+    search: "/contract/v1/_search",
+    update: "/contract/v1/_update",
   },
 
   fsm: {
