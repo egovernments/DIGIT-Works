@@ -265,6 +265,7 @@ import UploadFileComposer from "./hoc/UploadFileComposer";
 import WorkflowTimeline from "./atoms/WorkflowTimeline";
 import WorkflowActions from "./atoms/WorkflowActions";
 import Amount from "./atoms/Amount";
+import Paragraph from "./atoms/Paragraph";
 export {
   Button,
   ViewImages,
@@ -296,6 +297,7 @@ export {
   SearchableDropdown,
   TextInput,
   TextArea,
+  Paragraph,
   Banner,
   CardSubHeader,
   CardSectionHeader,

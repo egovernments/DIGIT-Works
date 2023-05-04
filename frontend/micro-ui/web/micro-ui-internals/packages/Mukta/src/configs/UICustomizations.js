@@ -325,7 +325,7 @@ export const UICustomizations = {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
           let city = location?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(location?.city)}`) : "";
-          return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+          return <p>{`${ward ? ward + ", " : ""}${city}`}</p>;
         }
         return <p>{"NA"}</p>;
       }
@@ -1080,7 +1080,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"works.purchase" },
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
         body: {},
         config: {
           enabled: true,
@@ -1187,7 +1187,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"works.purchase" },
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
         body: {},
         config: {
           enabled: true,
