@@ -18,19 +18,19 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$BusinessWorkflowEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
+    required TResult Function(String tenantId, String businessService) get,
     required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
+    TResult? Function(String tenantId, String businessService)? get,
     TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
+    TResult Function(String tenantId, String businessService)? get,
     TResult Function()? dispose,
     required TResult orElse(),
   }) =>
@@ -81,7 +81,7 @@ abstract class _$$GetBusinessWorkflowEventCopyWith<$Res> {
           $Res Function(_$GetBusinessWorkflowEvent) then) =
       __$$GetBusinessWorkflowEventCopyWithImpl<$Res>;
   @useResult
-  $Res call({String tenantId, String musterRollNumber});
+  $Res call({String tenantId, String businessService});
 }
 
 /// @nodoc
@@ -97,16 +97,16 @@ class __$$GetBusinessWorkflowEventCopyWithImpl<$Res>
   @override
   $Res call({
     Object? tenantId = null,
-    Object? musterRollNumber = null,
+    Object? businessService = null,
   }) {
     return _then(_$GetBusinessWorkflowEvent(
       tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
               as String,
-      musterRollNumber: null == musterRollNumber
-          ? _value.musterRollNumber
-          : musterRollNumber // ignore: cast_nullable_to_non_nullable
+      businessService: null == businessService
+          ? _value.businessService
+          : businessService // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -116,16 +116,16 @@ class __$$GetBusinessWorkflowEventCopyWithImpl<$Res>
 
 class _$GetBusinessWorkflowEvent implements GetBusinessWorkflowEvent {
   const _$GetBusinessWorkflowEvent(
-      {required this.tenantId, required this.musterRollNumber});
+      {required this.tenantId, required this.businessService});
 
   @override
   final String tenantId;
   @override
-  final String musterRollNumber;
+  final String businessService;
 
   @override
   String toString() {
-    return 'BusinessWorkflowEvent.get(tenantId: $tenantId, musterRollNumber: $musterRollNumber)';
+    return 'BusinessWorkflowEvent.get(tenantId: $tenantId, businessService: $businessService)';
   }
 
   @override
@@ -135,12 +135,12 @@ class _$GetBusinessWorkflowEvent implements GetBusinessWorkflowEvent {
             other is _$GetBusinessWorkflowEvent &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
-            (identical(other.musterRollNumber, musterRollNumber) ||
-                other.musterRollNumber == musterRollNumber));
+            (identical(other.businessService, businessService) ||
+                other.businessService == businessService));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, tenantId, musterRollNumber);
+  int get hashCode => Object.hash(runtimeType, tenantId, businessService);
 
   @JsonKey(ignore: true)
   @override
@@ -153,30 +153,30 @@ class _$GetBusinessWorkflowEvent implements GetBusinessWorkflowEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
+    required TResult Function(String tenantId, String businessService) get,
     required TResult Function() dispose,
   }) {
-    return get(tenantId, musterRollNumber);
+    return get(tenantId, businessService);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
+    TResult? Function(String tenantId, String businessService)? get,
     TResult? Function()? dispose,
   }) {
-    return get?.call(tenantId, musterRollNumber);
+    return get?.call(tenantId, businessService);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
+    TResult Function(String tenantId, String businessService)? get,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (get != null) {
-      return get(tenantId, musterRollNumber);
+      return get(tenantId, businessService);
     }
     return orElse();
   }
@@ -216,10 +216,10 @@ class _$GetBusinessWorkflowEvent implements GetBusinessWorkflowEvent {
 abstract class GetBusinessWorkflowEvent implements BusinessWorkflowEvent {
   const factory GetBusinessWorkflowEvent(
       {required final String tenantId,
-      required final String musterRollNumber}) = _$GetBusinessWorkflowEvent;
+      required final String businessService}) = _$GetBusinessWorkflowEvent;
 
   String get tenantId;
-  String get musterRollNumber;
+  String get businessService;
   @JsonKey(ignore: true)
   _$$GetBusinessWorkflowEventCopyWith<_$GetBusinessWorkflowEvent>
       get copyWith => throw _privateConstructorUsedError;
@@ -267,7 +267,7 @@ class _$DisposeBusinessWorkflowEvent implements DisposeBusinessWorkflowEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
+    required TResult Function(String tenantId, String businessService) get,
     required TResult Function() dispose,
   }) {
     return dispose();
@@ -276,7 +276,7 @@ class _$DisposeBusinessWorkflowEvent implements DisposeBusinessWorkflowEvent {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
+    TResult? Function(String tenantId, String businessService)? get,
     TResult? Function()? dispose,
   }) {
     return dispose?.call();
@@ -285,7 +285,7 @@ class _$DisposeBusinessWorkflowEvent implements DisposeBusinessWorkflowEvent {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
+    TResult Function(String tenantId, String businessService)? get,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {

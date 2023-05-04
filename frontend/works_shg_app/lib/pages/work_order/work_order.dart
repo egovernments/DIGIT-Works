@@ -96,9 +96,6 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                       context, error.toString(), 'ERROR'),
                   loaded: (ContractsModel? contracts) {
                     workOrderList = contracts!.contracts!
-                        .where((e) =>
-                            e.wfStatus == 'APPROVED' ||
-                            e.wfStatus == 'ACCEPTED')
                         .map((e) => {
                               'cardDetails': {
                                 i18.workOrder.workOrderNo:
@@ -171,67 +168,64 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                         onPressed: () {
                                           setState(() {
                                             inProgress = true;
-                                            workOrderList = contractsModel!
-                                                .contracts!
-                                                .where((e) =>
-                                                    e.wfStatus == 'APPROVED' ||
-                                                    e.wfStatus == 'ACCEPTED')
-                                                .map((e) => {
-                                                      'cardDetails': {
-                                                        i18.workOrder
-                                                                .workOrderNo:
-                                                            e.contractNumber ??
+                                            workOrderList =
+                                                contractsModel!.contracts!
+                                                    .map((e) => {
+                                                          'cardDetails': {
+                                                            i18.workOrder
+                                                                    .workOrderNo:
+                                                                e.contractNumber ??
+                                                                    'NA',
+                                                            i18.attendanceMgmt
+                                                                .projectDesc: e
+                                                                    .additionalDetails
+                                                                    ?.projectDesc ??
                                                                 'NA',
-                                                        i18.attendanceMgmt
-                                                            .projectDesc: e
-                                                                .additionalDetails
-                                                                ?.projectDesc ??
-                                                            'NA',
-                                                        i18.workOrder.roleOfCBO:
-                                                            AppLocalizations.of(
-                                                                    context)
-                                                                .translate(
-                                                                    e.executingAuthority ??
-                                                                        'NA'),
-                                                        i18.attendanceMgmt
-                                                            .engineerInCharge: e
-                                                                .additionalDetails
-                                                                ?.officerInChargeName
-                                                                ?.name ??
-                                                            'NA',
-                                                        i18.workOrder
-                                                            .contractIssueDate: e
-                                                                    .issueDate !=
-                                                                null
-                                                            ? DateFormats
-                                                                .timeStampToDate(
+                                                            i18.workOrder
+                                                                    .roleOfCBO:
+                                                                AppLocalizations.of(
+                                                                        context)
+                                                                    .translate(
+                                                                        e.executingAuthority ??
+                                                                            'NA'),
+                                                            i18.attendanceMgmt
+                                                                .engineerInCharge: e
+                                                                    .additionalDetails
+                                                                    ?.officerInChargeName
+                                                                    ?.name ??
+                                                                'NA',
+                                                            i18.workOrder
+                                                                .contractIssueDate: e
+                                                                        .issueDate !=
+                                                                    null
+                                                                ? DateFormats.timeStampToDate(
                                                                     e.issueDate,
                                                                     format:
                                                                         "dd/MM/yyyy")
-                                                            : 'NA',
-                                                        i18.workOrder.dueDate: e
-                                                                    .issueDate !=
-                                                                null
-                                                            ? DateFormats.getFilteredDate(DateTime
-                                                                    .fromMillisecondsSinceEpoch(
-                                                                        e.issueDate ??
-                                                                            0)
-                                                                .add(
-                                                                    const Duration(
+                                                                : 'NA',
+                                                            i18.workOrder
+                                                                .dueDate: e
+                                                                        .issueDate !=
+                                                                    null
+                                                                ? DateFormats.getFilteredDate(DateTime
+                                                                        .fromMillisecondsSinceEpoch(
+                                                                            e.issueDate ??
+                                                                                0)
+                                                                    .add(const Duration(
                                                                         days:
                                                                             7))
-                                                                .toLocal()
-                                                                .toString())
-                                                            : 'NA',
-                                                        i18.workOrder
-                                                                .workOrderAmount:
-                                                            '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                                        i18.common.status:
-                                                            e.wfStatus,
-                                                      },
-                                                      'payload': e.toMap()
-                                                    })
-                                                .toList();
+                                                                    .toLocal()
+                                                                    .toString())
+                                                                : 'NA',
+                                                            i18.workOrder
+                                                                    .workOrderAmount:
+                                                                '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
+                                                            i18.common.status:
+                                                                e.wfStatus,
+                                                          },
+                                                          'payload': e.toMap()
+                                                        })
+                                                    .toList();
                                           });
                                         },
                                       ),

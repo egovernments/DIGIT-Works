@@ -43,6 +43,7 @@ import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
 import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
+import 'blocs/muster_rolls/get_business_workflow.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
 import 'blocs/muster_rolls/muster_roll_pdf.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
@@ -201,6 +202,7 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => AttendanceLogCreateBloc()),
         BlocProvider(create: (context) => MusterCreateBloc()),
         BlocProvider(create: (context) => MusterGetWorkflowBloc()),
+        BlocProvider(create: (context) => BusinessWorkflowBloc()),
         BlocProvider(create: (context) => SearchMyWorksBloc()),
         BlocProvider(create: (context) => SearchMyBillsBloc()),
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
