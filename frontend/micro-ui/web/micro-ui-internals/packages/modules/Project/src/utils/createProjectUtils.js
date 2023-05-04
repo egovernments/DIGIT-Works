@@ -108,7 +108,6 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
         project_details = data?.withSubProject;
       }
     }
-    console.log("dataaa :", project_details);
     //iterate till all sub-projects. For noSubProject Case, this will iterate only once
     for(let index=1; index<=total_projects; index++) {
         // In case of Sub Projects having Parent ID, project_details will be each sub-project

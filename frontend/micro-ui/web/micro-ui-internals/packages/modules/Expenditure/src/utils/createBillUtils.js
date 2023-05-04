@@ -1,16 +1,7 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
-
-//form data input name (with cropped prefix) mapping with file category Name
-const documentType = {
-    "vendor_invoice" : "Vendor Invoice",
-    "material_utilisation_log" : "Material Utilisation Log",
-    "measurement_book" : "Measurement Book",
-    "others" : "Others"
-}
-
-
+import _ from "lodash";
 const createDocObject = (document, docType, otherDocFileName="Others", isActive, docConfigData) =>{
-  console.log("config data :", docConfigData);
+
    let documentType = docConfigData?.works?.DocumentConfig?.[0]?.documents;
     //handle empty Category Name in File Type
     if((otherDocFileName.trim()).length === 0) {

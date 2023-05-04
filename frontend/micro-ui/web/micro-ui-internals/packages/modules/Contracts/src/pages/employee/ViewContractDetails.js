@@ -85,7 +85,7 @@ const ViewContractDetails = () => {
 
     useEffect(() => {
         let isUserBillCreator = loggedInUserRoles?.includes("BILL_CREATOR");
-        if (data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" && isUserBillCreator){
+        if (data?.applicationData?.wfStatus === "ACTIVE" && data?.applicationData?.status === "ACTIVE" && isUserBillCreator){
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_PURCHASE_BILL"
             }]))
@@ -156,7 +156,7 @@ const ViewContractDetails = () => {
                         url={Digit.Utils.Urls.contracts.update}
                         moduleCode="Contract"
                     />
-                    {data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" ?
+                    {data?.applicationData?.wfStatus === "ACTIVE" && data?.applicationData?.status === "ACTIVE" ?
                         <ActionBar>
 
                             {showActions ? <Menu
