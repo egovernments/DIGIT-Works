@@ -55,7 +55,8 @@ public class WorkflowService {
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getMusterRollWFModuleName());
         processInstance.setTenantId(musterRoll.getTenantId());
-        processInstance.setBusinessService(getBusinessService(request).getBusinessService());
+        //processInstance.setBusinessService(getBusinessService(request).getBusinessService());
+        processInstance.setBusinessService(serviceConfiguration.getMusterRollWFBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 
