@@ -35,7 +35,7 @@ const EstimateTemplate = (props) => {
                 <div style={{ alignSelf: 'flex-start', marginLeft: "1rem" }} >
                     <SubmitBar
                         label={t("WORKS_ADD")}
-                        onSubmit={() => console.log("Selected Template")}
+                        onSubmit={() => {}}
                     />
                 </div>
             </LabelFieldPair>

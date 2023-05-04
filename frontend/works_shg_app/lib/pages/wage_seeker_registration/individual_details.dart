@@ -164,6 +164,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         },
                       ),
                       DigitTextFormField(
+                        padding: const EdgeInsets.only(top: 0),
                         formControlName: nameKey,
                         isRequired: true,
                         label: t.translate(i18.common.nameLabel),
@@ -218,6 +219,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       ),
                       DigitDateFormPicker(
                         label: t.translate(i18.common.dateOfBirth),
+                        padding: EdgeInsets.only(top: 32.0),
                         isRequired: true,
                         icon: Icons.info_outline_rounded,
                         toolTipMsg: t.translate(i18.wageSeeker.ageValidation),
@@ -258,6 +260,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       ),
                       DigitTextFormField(
                         label: t.translate(i18.common.mobileNumber),
+                        padding: EdgeInsets.only(top: 32),
                         formControlName: mobileKey,
                         prefixText: '+91 - ',
                         isRequired: true,

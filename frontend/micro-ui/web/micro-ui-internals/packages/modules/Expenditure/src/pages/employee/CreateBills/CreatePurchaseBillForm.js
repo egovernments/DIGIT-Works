@@ -111,11 +111,9 @@ const CreatePurchaseBillForm = ({
 
         await CreatePurchaseBillMutation(payload, {
             onError: async (error, variables) => {
-                console.log(error);
                 sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
             },
             onSuccess: async (responseData, variables) => {
-                console.log(responseData);
               //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
               sendDataToResponsePage("billNumber", tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
             },
