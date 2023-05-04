@@ -75,7 +75,8 @@ public class WorksCalculatorApiController {
 		RequestInfo requestInfo=calculatorSearchRequest.getRequestInfo();
 		List<BillMapper> bills = expenseCalculatorService.search(calculatorSearchRequest);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculatorSearchRequest.getRequestInfo(), true);
-		BillMapperSearchResponse billResponse= BillMapperSearchResponse.builder().responseInfo(responseInfo).billMappers(bills).build();
+		BillMapperSearchResponse billResponse= BillMapperSearchResponse.builder().responseInfo(responseInfo).billMappers(bills)
+				.pagination(calculatorSearchRequest.getPagination()).build();
 		return new ResponseEntity<BillMapperSearchResponse>(billResponse, HttpStatus.OK);
 	}
 

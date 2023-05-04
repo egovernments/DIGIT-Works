@@ -139,11 +139,11 @@ public class ExpenseCalculatorUtil {
         List<String> billIds = expenseCalculatorRepository.getBills(contractId, tenantId);
 
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
-        //Pagination pagination = Pagination.builder().limit(100).offSet(0).order(Order.ASC).build();
+        Pagination pagination = Pagination.builder().limit(configs.getDefaultLimit()).offSet(configs.getDefaultOffset()).order(Order.ASC).build();
         BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
                 .ids(new HashSet<>(billIds)).build();
         BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
-                .billCriteria(billCriteria).tenantId(tenantId).build();
+                .billCriteria(billCriteria).tenantId(tenantId).pagination(pagination).build();
         Object responseObj = restRepo.fetchResult(url, billSearchRequest);
         BillResponse response = mapper.convertValue(responseObj, BillResponse.class);
         return response != null ? response.getBills() : null;
@@ -155,10 +155,11 @@ public class ExpenseCalculatorUtil {
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         List<Bill> bills=new ArrayList<>();
 
-            BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
+        Pagination pagination = Pagination.builder().limit(configs.getDefaultLimit()).offSet(configs.getDefaultOffset()).order(Order.ASC).build();
+        BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
                     .ids(new HashSet<>(billIds)).build();
             BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
-                    .billCriteria(billCriteria).tenantId(tenantId).build();
+                    .billCriteria(billCriteria).tenantId(tenantId).pagination(pagination).build();
             Object responseObj = restRepo.fetchResult(url, billSearchRequest);
 
         BillResponse response = mapper.convertValue(responseObj, BillResponse.class);

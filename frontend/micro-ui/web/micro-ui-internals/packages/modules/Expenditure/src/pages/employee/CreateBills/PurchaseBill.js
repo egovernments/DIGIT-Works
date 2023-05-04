@@ -33,6 +33,19 @@ const PurchaseBill = () => {
     //local config
     // let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
 
+    const tenant = Digit.ULBService.getStateId();
+
+    const { isLoadin: isDocConfigLoading, data : docConfigData } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "works",
+        [
+            {
+                "name": "DocumentConfig",
+                "filter": `[?(@.module=='Expenditure')]`
+            }
+        ]
+    );
+
     //fetching contract data
     const { isLoading: isContractLoading,data : contract } = Digit.Hooks.contracts.useContractSearch({
         tenantId,
@@ -72,12 +85,12 @@ const PurchaseBill = () => {
     }
 
     useEffect(()=>{
-        if((contract && configs && !isOrgSearchLoading && !isContractLoading)) {
-            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract});
+        if((contract && configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading)) {
+            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData});
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
             setIsFormReady(true);
         }
-    },[isContractLoading, isOrgSearchLoading]);
+    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading]);
 
     
     //if(isConfigLoading) return <Loader></Loader>
@@ -93,6 +106,7 @@ const PurchaseBill = () => {
                 contract={contract} 
                 preProcessData={{nameOfVendor}}
                 isModify={isModify} 
+                docConfigData={docConfigData}
                 ></CreatePurchaseBillForm>
             }
         </React.Fragment>

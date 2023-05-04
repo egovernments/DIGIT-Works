@@ -3,15 +3,17 @@ import { ConvertEpochToDate } from "../../../../libraries/src/services/atoms/Uti
 //This handler creates a FormData for Docs defaultValues
 //This will add 'id' for all the docs, as they are coming from response
 //These Ids will be used when user will modify or delete a doc of certain criteria
-export const handleModifyProjectFiles = (uploadedDocs) => {
+export const handleModifyProjectFiles = (uploadedDocs, docConfigData) => {
   
   //form data inout name mapping with file category Name
-  let fileKeyMappings = [
-    {key : "noSubProject_doc_feasibility_analysis", value : "Feasiblity Analysis"},
-    {key : "noSubProject_doc_finalized_worklist", value : "Finalized Worklist"},
-    {key : "noSubProject_doc_others", value : "Other"},
-    {key : "noSubProject_doc_project_proposal", value : "Project Proposal"},
-  ]
+  let fileKeyMappings = [];
+  let docMDMS = docConfigData?.works?.DocumentConfig?.[0]?.documents;
+  docMDMS?.forEach((doc)=>{
+    fileKeyMappings?.push({
+      key : doc?.name,
+      value : doc?.code
+    })
+  });
 
   let documentObject = {};
 
@@ -33,7 +35,7 @@ export const handleModifyProjectFiles = (uploadedDocs) => {
   return documentObject;
 }
 
-export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, project, headerLocale}) => {
+export const updateDefaultValues = ({configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, project, headerLocale, docConfigData}) => {
   if(!isModify) {
       //clear defaultValues from 'config' ( this case can come when user navigates from Create Screen to Modify Screen )
       let validDefaultValues = ["basicDetails_dateOfProposal", "noSubProject_ulb"];
@@ -66,7 +68,7 @@ export const updateDefaultValues = ({configs, isModify, sessionFormData, setSess
       configs.defaultValues.noSubProject_ward = project?.address?.boundary ?  { code : project?.address?.boundary, name : project?.address?.boundary, i18nKey: `${headerLocale}_ADMIN_${project?.address?.boundary}`}  : "";
       configs.defaultValues.noSubProject_locality = project?.additionalDetails?.locality ? { code : project?.additionalDetails?.locality , name : project?.additionalDetails?.locality, i18nKey: `${headerLocale}_ADMIN_${project?.additionalDetails?.locality}`}  : "";
       // configs.defaultValues.noSubProject_fund = project?.additionalDetails?.fund ? { code : project?.additionalDetails?.fund, name : `COMMON_MASTERS_FUND_${Digit.Utils.locale.getTransformedLocale(project?.additionalDetails?.fund)}`}  : "";
-      configs.defaultValues.noSubProject_docs = project?.documents ? handleModifyProjectFiles(project?.documents) : "";
+      configs.defaultValues.noSubProject_docs = project?.documents ? handleModifyProjectFiles(project?.documents, docConfigData) : "";
    
       setSessionFormData({...configs?.defaultValues});
     }

@@ -179,6 +179,7 @@ public class ContractServiceValidator {
         //validateDocumentTypeAgainstMDMS(mdmsData, contract.getDocuments());
 
         // Validate Officer In Charge role against MDMS data
+        
         validateOfficerInChargeRoleAgainstMDMS(mdmsData, contractRequest);
 
         log.info("Request Fields validated against MDMS");
