@@ -382,17 +382,17 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"ESTIMATE" },
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate") },
         body: {
          
         },
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
-                "i18nKey":`WF_ESTIMATE_STATUS_${state?.applicationStatus}`,
-                "wfStatus":state?.applicationStatus
+                "i18nKey":`WF_ESTIMATE_STATUS_${state?.state}`,
+                "wfStatus":state?.state
               }
             })
             return states  
@@ -635,17 +635,17 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"MR" },
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll") },
         body: {
          
         },
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
-                "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
-                "wfStatus":state?.applicationStatus
+                "i18nKey":`WF_MUSTOR_${state?.state}`,
+                "wfStatus":state?.state
               }
             })
             return states  
@@ -1118,16 +1118,16 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
+        params: { tenantId, businessServices:Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
         body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
-                "code": state?.applicationStatus,
-                "i18nKey":`WF_BILL_${state?.applicationStatus}`,
-                "wfStatus":state?.applicationStatus
+                "code": state?.state,
+                "i18nKey":`WF_BILL_${state?.state}`,
+                "wfStatus":state?.state
               }
             })
             return states  
@@ -1238,16 +1238,16 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
+        params: { tenantId, businessServices:Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
         body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
-                "code": state?.applicationStatus,
-                "i18nKey":`WF_BILL_${state?.applicationStatus}`,
-                "wfStatus":state?.applicationStatus
+                "code": state?.state,
+                "i18nKey":`WF_BILL_${state?.state}`,
+                "wfStatus":state?.state
               }
             })
             return states  
@@ -1352,16 +1352,16 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"muster-roll-approval" },
+        params: { tenantId, businessServices:Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
         body: {},
         config: {
           enabled: true,
           select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
-                "code": state?.applicationStatus,
-                "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
-                "wfStatus":state?.applicationStatus
+                "code": state?.state,
+                "i18nKey":`WF_MUSTOR_${state?.state}`,
+                "wfStatus":state?.state
               }
             })
             return states  
