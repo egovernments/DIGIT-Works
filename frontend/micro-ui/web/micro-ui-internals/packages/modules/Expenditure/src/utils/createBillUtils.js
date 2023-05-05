@@ -60,7 +60,7 @@ export const createBillPayload = (data, contract,  docConfigData) => {
     let payload = {
         bill: {
             "tenantId": tenantId,
-            "invoiceDate": convertDateToEpoch(data?.invoice_date),
+            "invoiceDate": convertDateToEpoch(data?.invoiceDetails_invoiceDate),
             "invoiceNumber": data?.invoiceDetails_invoiceNumber,
             "contractNumber": data?.basicDetails_workOrderNumber,
             "projectId": data?.basicDetails_projectID,
