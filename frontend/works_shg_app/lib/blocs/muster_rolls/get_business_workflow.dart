@@ -32,9 +32,8 @@ class BusinessWorkflowBloc
               options:
                   Options(extra: {"accessToken": GlobalVariables.authToken}),
               queryParameters: {
-            "history": "true",
             "tenantId": event.tenantId,
-            "businessServices": "muster-roll-approval",
+            "businessServices": event.businessService,
           });
       await Future.delayed(const Duration(seconds: 2));
       emit(BusinessGetWorkflowState.loaded(
@@ -53,10 +52,9 @@ class BusinessWorkflowBloc
 
 @freezed
 class BusinessWorkflowEvent with _$BusinessWorkflowEvent {
-  const factory BusinessWorkflowEvent.get({
-    required String tenantId,
-    required String musterRollNumber,
-  }) = GetBusinessWorkflowEvent;
+  const factory BusinessWorkflowEvent.get(
+      {required String tenantId,
+      required String businessService}) = GetBusinessWorkflowEvent;
   const factory BusinessWorkflowEvent.dispose() = DisposeBusinessWorkflowEvent;
 }
 

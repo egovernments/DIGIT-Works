@@ -1,4 +1,5 @@
 import AttendanceService from "../../elements/Attendance";
+import { WorksService } from "../../elements/Works";
 
 const attendanceTypes = {
   0 : 'zero',
@@ -27,8 +28,9 @@ const getWeekAttendance = (data) => {
   return weekAttendance
 }
 
-const getAttendanceTableData = (data, skills, t) => {
+const getAttendanceTableData = async(data, skills, t, expenseCalculations) => {
   let tableData = {}
+
   if(data?.individualEntries?.length > 0) {
     data?.individualEntries.forEach((item, index) => {
       let tableRow = {}
@@ -40,7 +42,7 @@ const getAttendanceTableData = (data, skills, t) => {
       tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
       tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || t("NA")
       tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || 0
-      tableRow.modifiedAmount = (item?.modifiedTotalAttendance ? (skills[item?.additionalDetails?.skillCode]?.amount * item?.modifiedTotalAttendance) : tableRow?.amount) || 0
+      tableRow.modifiedAmount = expenseCalculations?.filter(data=>data?.referenceId === item?.individualId)?.[0]?.lineItems?.[0]?.amount || 0;
       tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
       tableRow.bankAccountDetails = {
         accountNo : item?.additionalDetails?.bankDetails || t("NA"),
@@ -73,20 +75,24 @@ const getAttendanceTableData = (data, skills, t) => {
   return tableData
 }
 
-const transformViewDataToApplicationDetails = (t, data, skills) => {
+const transformViewDataToApplicationDetails = async (t, data, skills) => {
+
+  const expenseCalculatorPayload = {
+    criteria : {
+      "tenantId": "pg.citya",
+      "musterRollId": [ data?.musterRolls?.[0]?.id ]
+    }
+  }
+
+  let expenseCalculationsResponse  =  await WorksService.fetchEstimateExpenseCalculator(expenseCalculatorPayload);
+  let expenseCalculations = expenseCalculationsResponse?.calculation?.estimates?.[0]?.calcDetails;
+
   if(data?.musterRolls?.length === 0) throw new Error('No data found');
   
   const musterRoll = data.musterRolls[0]
-  const attendanceTableData = getAttendanceTableData(musterRoll, skills, t)
+  const attendanceTableData = await getAttendanceTableData(musterRoll, skills, t, expenseCalculations)
   
-  const totalAmount = Object.keys(attendanceTableData).reduce((acc,key) => {
-    if(key !== 'total'){
-    return attendanceTableData[key].modifiedAmount + acc
-    }
-    else {
-    return 0 + acc
-    }
-  },0)
+  const totalAmount = expenseCalculationsResponse?.calculation?.totalAmount;
   const weekDates = getWeekDates(musterRoll)
   const registrationDetails = {
     applicationData: musterRoll,
@@ -116,8 +122,13 @@ const workflowDataDetails = async (tenantId, businessIds) => {
 
 const getWageSeekerSkills = async () => {
   const skills = {}
-  const response = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "common-masters", [{"name": "WageSeekerSkills"}])
-  response?.['common-masters']?.WageSeekerSkills.forEach(item => (skills[item.code] = item))
+  const skillResponse = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "common-masters", [{"name": "WageSeekerSkills"}])
+  const labourChangesResponse = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "expense", [{"name": "LabourCharges"}])
+  skillResponse?.['common-masters']?.WageSeekerSkills.forEach(item => {
+    let amount = labourChangesResponse?.["expense"]?.LabourCharges?.find(charge => charge?.code === item?.code)?.amount
+    let skillWithAmount = {...item, amount}
+    skills[item.code] = skillWithAmount
+  })
   return skills
 }
 

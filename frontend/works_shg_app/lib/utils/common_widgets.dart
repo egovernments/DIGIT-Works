@@ -49,15 +49,18 @@ class CommonWidgets {
   }
 
   static Widget downloadButton(String label, void Function()? onPressed) {
-    return TextButton.icon(
-        onPressed: onPressed,
-        icon: Icon(
-          Icons.download_sharp,
-          color: DigitTheme.instance.colorScheme.primary,
-        ),
-        label: Text(
-          label,
-          style: TextStyle(color: DigitTheme.instance.colorScheme.primary),
-        ));
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0, right: 8.0),
+      child: TextButton.icon(
+          onPressed: onPressed,
+          icon: Icon(
+            Icons.download_sharp,
+            color: DigitTheme.instance.colorScheme.primary,
+          ),
+          label: Text(
+            label,
+            style: TextStyle(color: DigitTheme.instance.colorScheme.primary),
+          )),
+    );
   }
 }

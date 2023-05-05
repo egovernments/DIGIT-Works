@@ -4,6 +4,7 @@ import { ArrowBack, ArrowForward, ArrowToFirst, ArrowToLast, SortDown, SortUp, D
 import CheckBox from "./CheckBox";
 import ActionBar from "./ActionBar";
 import SubmitBar from "./SubmitBar";
+import Toast from "./Toast";
 
 const noop = () => {};
 
@@ -56,7 +57,7 @@ const Table = ({
   tableTopComponent,
   tableRef,
   isReportTable = false,
-  showCheckbox = false,
+  showCheckBox = false,
   actionLabel = 'CS_COMMON_DOWNLOAD',
   tableSelectionHandler = () => {}
 }) => {
@@ -104,25 +105,29 @@ const Table = ({
     usePagination,
     useRowSelect,
     hooks => {
-      showCheckbox && hooks.visibleColumns.push(columns => [
-        {
-          id: 'selection',
-          Header: ({ getToggleAllPageRowsSelectedProps }) => (
-            <div>
-              <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
-            </div>
-          ),
-          Cell: ({ row }) => (
-            <div>
-              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
-            </div>
-          ),
-        },
-        ...columns,
-      ])
+      if(showCheckBox) {
+        hooks.visibleColumns.push(columns => [
+          {
+            id: 'selection',
+            Header: ({ getToggleAllPageRowsSelectedProps }) => (
+              <div>
+                <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+              </div>
+            ),
+            Cell: ({ row }) => (
+              <div>
+                <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+              </div>
+            ),
+          },
+          ...columns,
+        ])
+      }
     }
   );
   let isTotalColSpanRendered = false;
+  const [toast, setToast] = useState({show : false, label : "", error : false});
+
   useEffect(() => {
     onSort(sortBy);
   }, [onSort, sortBy]);
@@ -130,10 +135,23 @@ const Table = ({
 
   useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter,data]);
   
-  const handleSelection = () => {
-    tableSelectionHandler()
-    console.log('SELECTED ROWS', {selectedRowIds, rows})
+  const handleSelection = async () => {
+    const selectedRows = rows?.filter(ele => Object.keys(selectedRowIds)?.includes(ele?.id))
+    const response = await tableSelectionHandler(selectedRows)
+    setToast({show: true, label: t(response?.label), error: !response?.isSuccess})
   }
+
+  const handleToastClose = () => {
+    setToast({show : false, label : "", error : false})
+  }
+
+  useEffect(()=>{
+    if(toast?.show) {
+      setTimeout(()=>{
+        handleToastClose();
+      },3000);
+    }
+  },[toast?.show])
 
   //note -> adding data prop in dependency array to trigger filter whenever state of the table changes
   //use case -> without this if we enter string to search and then click on it's attendence checkbox or skill selector for that matter then the global filtering resets and whole table is shown
@@ -243,6 +261,7 @@ const Table = ({
           </span>
           <SubmitBar label={t(actionLabel)} onSubmit={handleSelection} />
         </ActionBar>)}
+      {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
     </React.Fragment>
   );
 };

@@ -35,6 +35,7 @@ const inboxModuleNameMap = {
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
+    
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
         comment: data.comments,
@@ -110,6 +111,31 @@ export const UICustomizations = {
         workflow,
       };
     }
+    if(businessService === businessServiceMap?.["works.purchase"]){
+      const workflow = {
+        comment: data.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
+
+      return {
+        bill: applicationDetails,
+        workflow,
+      };
+    }
   },
   enableModalSubmit:(businessService,action,setModalSubmit,data)=>{
     if(businessService === businessServiceMap?.["muster roll"] && action.action==="APPROVE"){
@@ -142,8 +168,8 @@ export const UICustomizations = {
     else if (moduleCode?.includes("works.purchase")) {
       return businessServiceMap?.["works.purchase"];
     }
-    else if (moduleCode?.includes("works.wage")) {
-      return businessServiceMap?.["works.wage"];
+    else if (moduleCode?.includes("works.wages")) {
+      return businessServiceMap?.["works.wages"];
     }
     else if (moduleCode?.includes("works.supervision")) {
       return businessServiceMap?.["works.supervision"];

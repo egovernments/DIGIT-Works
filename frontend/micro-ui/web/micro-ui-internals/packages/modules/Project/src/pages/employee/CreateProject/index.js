@@ -7,7 +7,6 @@ import CreateProjectForm from "./CreateProjectForm";
 import { updateDefaultValues } from "../../../utils/modifyProjectUtils";
 
 const CreateProject = () => {
-
     const {t} = useTranslation();
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -18,6 +17,19 @@ const CreateProject = () => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
+
+    const tenant = Digit.ULBService.getStateId();
+
+    const { isLoadin: isDocConfigLoading, data : docConfigData } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "works",
+        [
+            {
+                "name": "DocumentConfig",
+                "filter": `[?(@.module=='Project')]`
+            }
+        ]
+    );
 
     const searchParams = {
       Projects : [
@@ -92,17 +104,17 @@ const CreateProject = () => {
     },[])
 
     useEffect(()=>{
-      if(configs && !isProjectLoading) {
-        updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, project, headerLocale })
+      if(configs && !isProjectLoading && !isDocConfigLoading) {
+        updateDefaultValues({ configs, isModify, sessionFormData, setSessionFormData, findCurrentDate, ULBOptions, project, headerLocale, docConfigData })
         setIsFormReady(true);
       }
-    },[configs, isProjectLoading]);
+    },[configs, isProjectLoading, isDocConfigLoading]);
 
     // if(isLoading) return <Loader />
     return (
       <React.Fragment>
         {isFormReady && 
-          <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={configs} isModify={isModify} modify_projectID={project?.id} modify_projectNumber={queryStrings?.projectNumber} modify_addressID={project?.address?.id}></CreateProjectForm>
+          <CreateProjectForm t={t} sessionFormData={sessionFormData} setSessionFormData={setSessionFormData} clearSessionFormData={clearSessionFormData} createProjectConfig={configs} isModify={isModify} modify_projectID={project?.id} modify_projectNumber={queryStrings?.projectNumber} modify_addressID={project?.address?.id} docConfigData={docConfigData}></CreateProjectForm>
         }
         </React.Fragment>
     )

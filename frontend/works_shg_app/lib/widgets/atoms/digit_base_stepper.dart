@@ -127,16 +127,11 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
     }
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        widget.nextPreviousButtonsDisabled
-            ? _previousButton()
-            : const SizedBox.shrink(),
         Expanded(
           child: _stepperBuilder(),
         ),
-        widget.nextPreviousButtonsDisabled
-            ? _nextButton()
-            : const SizedBox.shrink(),
       ],
     );
   }
@@ -150,7 +145,7 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
           ? const NeverScrollableScrollPhysics()
           : const ClampingScrollPhysics(),
       child: Container(
-        margin: const EdgeInsets.only(left: 0.0, right: 8.0),
+        margin: const EdgeInsets.only(left: 0.0, right: 0.0),
         // padding: const EdgeInsets.all(8.0),
         child: Row(children: _buildSteps()),
       ),
@@ -166,7 +161,13 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              _customizedLine(index, Axis.horizontal, index != 0),
+              index != 0
+                  ? _customizedLine(index, Axis.horizontal, index != 0)
+                  : const Padding(
+                      padding:
+                          EdgeInsets.only(left: 24.0, top: 8.0, bottom: 8.0),
+                      child: SizedBox.shrink(),
+                    ),
               _customizedIndicator(index),
               _customizedLine(index, Axis.horizontal,
                   index != (widget.children!.length - 1)),
@@ -187,6 +188,7 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
   Widget _customizedIndicator(int index) {
     return DigitIndicator(
       isSelected: _selectedIndex == index,
+      isCompleted: index < _selectedIndex,
       onPressed: widget.stepTappingDisabled
           ? () {
               if (widget.steppingEnabled && index < widget.activeStep) {
@@ -208,11 +210,17 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
       padding: widget.padding,
       margin: widget.margin,
       activeBorderWidth: widget.activeStepBorderWidth,
-      textChild: widget.textChildren![index],
+      textChild: index == 0 || index == (widget.children?.length ?? 1 - 1)
+          ? widget.textChildren![index]
+          : Container(
+              alignment: Alignment.centerRight,
+              child: widget.textChildren![index],
+            ),
       child: index < _selectedIndex
           ? Icon(
-              Icons.check_circle,
-              color: DigitTheme.instance.colorScheme.primary,
+              Icons.check,
+              color: const DigitColors().white,
+              size: 16,
             )
           : widget.children![index],
     );

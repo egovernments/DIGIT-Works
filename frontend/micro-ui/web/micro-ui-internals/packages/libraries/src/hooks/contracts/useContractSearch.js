@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { WorksService } from "../../services/elements/Works";
 
-//using this hook for searching only one estimate with estimateNumber
+//using this hook for searching only one WO with WO Number
 const useContractSearch = ({ tenantId, filters, config = {} }) => {
     
     return useQuery(

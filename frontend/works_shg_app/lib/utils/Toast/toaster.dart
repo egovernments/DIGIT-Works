@@ -36,11 +36,11 @@ class ToastUtils {
                   ? MediaQuery.of(context).size.width / 2.55
                   : 0,
               child: (Material(
-                elevation: 10.0,
+                elevation: 5.0,
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
                   padding: const EdgeInsets.only(
-                      left: 10, right: 10, top: 13, bottom: 10),
+                      left: 4, right: 10, top: 13, bottom: 10),
                   decoration: BoxDecoration(
                       color: type == 'ERROR'
                           ? Colors.red
@@ -52,16 +52,19 @@ class ToastUtils {
                     child: SlideInToastMessageAnimation(Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
-                          type == 'ERROR' || type == 'INFO'
-                              ? Icons.info_outline_rounded
-                              : Icons.check_circle_outline_rounded,
-                          color: Colors.white,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: Icon(
+                            type == 'ERROR' || type == 'INFO'
+                                ? Icons.info_outline_rounded
+                                : Icons.check_circle_outline_rounded,
+                            color: Colors.white,
+                          ),
                         ),
                         Expanded(
                           child: Text(
                             AppLocalizations.of(context).translate(message),
-                            textAlign: TextAlign.center,
+                            textAlign: TextAlign.start,
                             softWrap: true,
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,

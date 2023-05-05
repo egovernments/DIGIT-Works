@@ -78,7 +78,9 @@ dependencies:
   flutter_downloader: ^1.10.2
   permission_handler: ^8.1.4+2
   dropdown_search: ^5.0.6
+  flutter_dotenv: ^5.0.2
   open_filex: ^4.3.2
+  js: ^0.6.3
   flutter_localizations:
     sdk: flutter
 
@@ -118,6 +120,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - .env
     - assets/png/
     - assets/svg/
   fonts:

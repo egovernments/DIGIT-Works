@@ -123,7 +123,6 @@ config:
         dockerfile: frontend/micro-ui/web/works/Dockerfile
         image-name: core-ui
 
-
   - name: builds/digit-works/frontend/works-shg-app
     build:
       - work-dir: frontend/works_shg_app/
@@ -143,4 +142,3 @@ config:
       - work-dir: "utilities/expense-cronjob"
         image-name: "expense-cronjob"
         dockerfile: "utilities/expense-cronjob/Dockerfile"
-        

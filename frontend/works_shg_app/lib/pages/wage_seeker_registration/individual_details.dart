@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/models/wage_seeker/financial_details_model.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/utils/models/file_picker_data.dart';
 import 'package:works_shg_app/widgets/atoms/radio_button_list.dart';
 
@@ -163,6 +164,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         },
                       ),
                       DigitTextFormField(
+                        padding: const EdgeInsets.only(top: 0),
                         formControlName: nameKey,
                         isRequired: true,
                         label: t.translate(i18.common.nameLabel),
@@ -217,6 +219,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       ),
                       DigitDateFormPicker(
                         label: t.translate(i18.common.dateOfBirth),
+                        padding: EdgeInsets.only(top: 32.0),
                         isRequired: true,
                         icon: Icons.info_outline_rounded,
                         toolTipMsg: t.translate(i18.wageSeeker.ageValidation),
@@ -257,6 +260,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       ),
                       DigitTextFormField(
                         label: t.translate(i18.common.mobileNumber),
+                        padding: EdgeInsets.only(top: 32),
                         formControlName: mobileKey,
                         prefixText: '+91 - ',
                         isRequired: true,

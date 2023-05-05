@@ -35,7 +35,7 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
                 "orgIds": [
                   GlobalVariables.organisationListModel?.organisations?.first.id
                 ],
-                "wfStatus": ['ACCEPTED', "APPROVED"],
+                "wfStatus": event.searchCriteria,
                 "pagination": {
                   "limit": "100",
                   "offSet": "0",
@@ -59,7 +59,8 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
 
 @freezed
 class SearchMyWorksEvent with _$SearchMyWorksEvent {
-  const factory SearchMyWorksEvent.search() = MyWorksSearchEvent;
+  const factory SearchMyWorksEvent.search(List<String>? searchCriteria) =
+      MyWorksSearchEvent;
 }
 
 @freezed

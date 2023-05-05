@@ -4,6 +4,9 @@ var url = require("url");
 var producer = require("./producer").producer;
 var logger = require("./logger").logger;
 const { Pool } = require('pg');
+const get = require('lodash/get');
+var FormData = require("form-data");
+const uuidv4 = require("uuid/v4");
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -209,6 +212,108 @@ function checkIfCitizen(requestinfo) {
   }
 }
 
+function search_expense_bill(request, limit, offset) {
+  return new Promise((resolve, reject) => {
+    let newRequest = JSON.parse(JSON.stringify(request))
+    newRequest["pagination"] = { limit, offset }
+    let promise = new axios({
+      method: "POST",
+      url: url.resolve(config.host.expense, config.paths.expense_bill_search),
+      data: newRequest,
+    });
+    promise.then((data) => {
+      resolve(data.data)
+    }).catch((err) => reject(err))
+  })
+}
+
+function search_bank_account_details(request) {
+  return new Promise((resolve, reject) => {
+    let newRequest = JSON.parse(JSON.stringify(request))
+    let promise = new axios({
+      method: "POST",
+      url: url.resolve(config.host.bankaccount, config.paths.bankaccount_search),
+      data: newRequest,
+    });
+    promise.then((data) => {
+      resolve(data.data)
+    }).catch((err) => reject(err))
+  })
+}
+
+function search_payment_details(request) {
+  return new Promise((resolve, reject) => {
+    let newRequest = JSON.parse(JSON.stringify(request))
+    let promise = new axios({
+      method: "POST",
+      url: url.resolve(config.host.expense, config.paths.expense_payment_search),
+      data: newRequest,
+    });
+    promise.then((data) => {
+      resolve(data.data)
+    }).catch((err) => reject(err))
+  })
+}
+
+/**
+ *
+ * @param {*} filename -name of localy stored temporary file
+ * @param {*} tenantId - tenantID
+ */
+async function upload_file_using_filestore(filename, tenantId, fileData) {
+  try {
+    var url = `${config.host.filestore}/filestore/v1/files?tenantId=${tenantId}&module=billgen&tag=works-billgen`;
+    var form = new FormData();
+    form.append("file", fileData, {
+      filename: filename,
+      contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+    let response = await axios.post(url, form, {
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
+      headers: {
+        ...form.getHeaders()
+      }
+    });
+    return get(response.data, "files[0].fileStoreId");
+  } catch (error) {
+    console.log(error);
+    throw(error)
+  }
+};
+
+async function create_eg_payments_excel(paymentId, tenantId, userId) {
+  try {
+    var id = uuidv4();
+    const insertQuery = 'INSERT INTO eg_payments_excel(id, paymentid, tenantId, status, numberofbills, numberofbeneficialy, totalamount, filestoreid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
+    const status = 'INPROGRESS';
+    const curentTimeStamp = new Date().getTime();
+    await pool.query(insertQuery, [id, paymentId, tenantId, status, 0, 0, 0, null, userId, userId, curentTimeStamp, curentTimeStamp]);
+  } catch (error) {
+    throw(error)
+  }
+}
+
+async function reset_eg_payments_excel(paymentId, userId) {
+  try {
+    const status = 'INPROGRESS';
+    const updateQuery = 'UPDATE eg_payments_excel SET status =  $1, numberofbills = $2, numberofbeneficialy = $3, totalamount = $4, filestoreid = $5, lastmodifiedby = $6, lastmodifiedtime = $7 WHERE paymentid = $8';
+    const curentTimeStamp = new Date().getTime();
+    await pool.query(updateQuery,[status, 0, 0, 0, null, userId, curentTimeStamp, paymentId]);
+    return;
+  } catch (error) {
+    throw(error)
+  }
+}
+
+async function exec_query_eg_payments_excel(query, queryParams) {
+  try {
+    return pool.query(query, queryParams);
+  } catch (error) {
+    throw(error)
+  }
+}
+
 
 /**
  * It generates bill of property tax and merge into single PDF file
@@ -330,6 +435,7 @@ async function create_bulk_pdf_pt(kafkaData) {
 }
 
 module.exports = {
+  pool,
   create_pdf,
   create_pdf_and_upload,
   search_mdms,
@@ -340,5 +446,12 @@ module.exports = {
   search_musterRoll,
   search_contract,
   search_mdmsWageSeekerSkills,
-  search_organisation
+  search_organisation,
+  search_expense_bill,
+  search_payment_details,
+  search_bank_account_details,
+  upload_file_using_filestore,
+  create_eg_payments_excel,
+  reset_eg_payments_excel,
+  exec_query_eg_payments_excel
 };

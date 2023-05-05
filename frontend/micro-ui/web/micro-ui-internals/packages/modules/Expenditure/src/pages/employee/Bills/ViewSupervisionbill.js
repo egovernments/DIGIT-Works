@@ -1,14 +1,16 @@
 import React, { Fragment } from "react";
 import ApplicationDetails from "../../../../../templates/ApplicationDetails";
 import { useTranslation } from "react-i18next";
-import { Header } from "@egovernments/digit-ui-react-components";
+import { Header,Loader } from "@egovernments/digit-ui-react-components";
 
 const ViewSupervisionbill = ({ ...props }) => {
   const { t } = useTranslation();
   const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
   const { tenantId,billNumber } = Digit.Hooks.useQueryParams();
 
-  const { isLoading, data: applicationDetails, isError } = Digit.Hooks.bills.useSupervisionBillScreen({ t });
+  const { isLoading, data: applicationDetails, isError } = Digit.Hooks.bills.useSupervisionBillScreen({ t,tenantId,billNumber });
+
+  if(isLoading) return <Loader />
 
   return (
     <>
@@ -19,7 +21,7 @@ const ViewSupervisionbill = ({ ...props }) => {
         applicationData={applicationDetails?.applicationData}
         moduleCode="Expenditure"
         showTimeLine={false}
-        timelineStatusPrefix={"WF_ESTIMATE_STATUS_"}
+        timelineStatusPrefix={`WF_${businessService}_`}
         businessService={businessService}
         // forcedActionPrefix={"ACTION_"}
         tenantId={tenantId}
@@ -32,12 +34,12 @@ const ViewSupervisionbill = ({ ...props }) => {
         isLoading={isLoading}
         applicationData={applicationDetails?.applicationData}
         moduleCode="Expenditure"
-        showTimeLine={false}
-        timelineStatusPrefix={"WF_ESTIMATE_STATUS_"}
+        showTimeLine={true}
+        timelineStatusPrefix={`WF_${businessService}_`}
         businessService={businessService}
         // forcedActionPrefix={"ACTION_"}
         tenantId={tenantId}
-        applicationNo={""}
+        applicationNo={billNumber}
         statusAttribute={"state"}
       />
     </>

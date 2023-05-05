@@ -29,6 +29,7 @@ import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
 import 'Env/app_config.dart';
+import 'Env/env_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_initilization/app_initilization.dart';
 import 'blocs/attendance/attendance_create_log.dart';
@@ -36,14 +37,17 @@ import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
 import 'blocs/attendance/de_enroll_attendee.dart';
+import 'blocs/attendance/muster_submission_mdms.dart';
 import 'blocs/attendance/search_projects/search_individual_project.dart';
 import 'blocs/auth/auth.dart';
 import 'blocs/localization/app_localization.dart';
 import 'blocs/localization/localization.dart';
 import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
+import 'blocs/muster_rolls/get_business_workflow.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
 import 'blocs/muster_rolls/muster_roll_pdf.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
+import 'blocs/my_bills/search_my_bills.dart';
 import 'blocs/organisation/org_financial_bloc.dart';
 import 'blocs/organisation/org_search_bloc.dart';
 import 'blocs/user/user_search.dart';
@@ -53,18 +57,23 @@ import 'blocs/wage_seeker_registration/wage_seeker_location_bloc.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import 'blocs/work_orders/accept_work_order.dart';
+import 'blocs/work_orders/my_works_search_criteria.dart';
 import 'blocs/work_orders/search_individual_work.dart';
 import 'blocs/work_orders/search_my_works.dart';
 import 'blocs/work_orders/work_order_pdf.dart';
 import 'data/remote_client.dart';
 import 'data/repositories/remote/localization.dart';
 import 'data/repositories/remote/mdms.dart';
-import 'models/UserDetails/user_details_model.dart';
+import 'models/user_details/user_details_model.dart';
 
-void main() {
+void main() async {
   HttpOverrides.global = MyHttpOverrides();
   setPathUrlStrategy();
-  setEnvironment(Environment.dev);
+  if (kIsWeb && !kDebugMode) {
+    setEnvironment(Environment.dev);
+  } else {
+    await envConfig.initialize();
+  }
   Bloc.observer = AppBlocObserver();
   runZonedGuarded(() async {
     FlutterError.onError = (FlutterErrorDetails details) {
@@ -194,8 +203,11 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => AttendanceLogCreateBloc()),
         BlocProvider(create: (context) => MusterCreateBloc()),
         BlocProvider(create: (context) => MusterGetWorkflowBloc()),
+        BlocProvider(create: (context) => BusinessWorkflowBloc()),
         BlocProvider(create: (context) => SearchMyWorksBloc()),
+        BlocProvider(create: (context) => SearchMyBillsBloc()),
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
+        BlocProvider(create: (context) => MyWorksSearchCriteriaBloc()),
         BlocProvider(create: (context) => DeclineWorkOrderBloc()),
         BlocProvider(create: (context) => SearchIndividualWorkBloc()),
         BlocProvider(create: (context) => WageSeekerBloc()),
@@ -221,6 +233,10 @@ class _MainApplicationState extends State<MainApplication> {
             create: (context) => AttendanceHoursBloc(
                 const AttendanceHoursState.initial(),
                 MdmsRepository(client.init()))),
+        BlocProvider(
+            create: (context) => MusterSubmissionBloc(
+                const MusterSubmissionState.initial(),
+                MdmsRepository(client.init()))),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
           builder: (context, appInitState) {
@@ -237,7 +253,7 @@ class _MainApplicationState extends State<MainApplication> {
                               LocalizationRepository(client.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
                                 module:
-                                    'rainmaker-common,rainmaker-common-masters',
+                                    'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),
