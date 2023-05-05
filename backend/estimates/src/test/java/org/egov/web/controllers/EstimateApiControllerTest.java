@@ -62,7 +62,7 @@ public class EstimateApiControllerTest {
                 .thenReturn(responseInfo);
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(estimateRequest);
-        MvcResult result = mockMvc.perform(post("/estimate/v1/_create").contentType(MediaType
+        MvcResult result = mockMvc.perform(post("/v1/_create").contentType(MediaType
                         .APPLICATION_JSON_UTF8).content(content))
                 .andExpect(status().isOk()).andReturn();
         String responseStr = result.getResponse().getContentAsString();
@@ -83,7 +83,7 @@ public class EstimateApiControllerTest {
                 .thenReturn(responseInfo);
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(musterRollRequest);
-        MvcResult result = mockMvc.perform(post("/estimate/v1/_create").contentType(MediaType
+        MvcResult result = mockMvc.perform(post("/v1/_create").contentType(MediaType
                         .APPLICATION_JSON_UTF8).content(content))
                 .andExpect(status().isBadRequest()).andReturn();
         String responseStr = result.getResponse().getContentAsString();
@@ -102,14 +102,14 @@ public class EstimateApiControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(requestInfoWrapper);
 
-        mockMvc.perform(post("/estimate/v1/_search").contentType(MediaType
+        mockMvc.perform(post("/v1/_search").contentType(MediaType
                         .APPLICATION_JSON_UTF8).content(content).param("tenantId", "pb.amritsar"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void fetchtheEstimateSbasedonthesearchcriteriausedFailure() throws Exception {
-        mockMvc.perform(post("/estimate/v1/_search").contentType(MediaType
+        mockMvc.perform(post("/v1/_search").contentType(MediaType
                         .APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
@@ -124,7 +124,7 @@ public class EstimateApiControllerTest {
                 .thenReturn(responseInfo);
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(estimateRequest);
-        MvcResult result = mockMvc.perform(post("/estimate/v1/_update").contentType(MediaType
+        MvcResult result = mockMvc.perform(post("/v1/_update").contentType(MediaType
                         .APPLICATION_JSON_UTF8).content(content))
                 .andExpect(status().isOk()).andReturn();
 
@@ -138,7 +138,7 @@ public class EstimateApiControllerTest {
 
     @Test
     public void updateanestimateFailure() throws Exception {
-        mockMvc.perform(post("/estimate/v1/_update").contentType(MediaType
+        mockMvc.perform(post("/v1/_update").contentType(MediaType
                         .APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
