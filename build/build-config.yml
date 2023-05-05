@@ -60,9 +60,9 @@ config:
     build:
       - work-dir: "backend/contracts"
         dockerfile: "build/maven/Dockerfile"
-        image-name: "contract"
+        image-name: "contracts"
       - work-dir: "backend/contracts/src/main/resources/db"
-        image-name: "contract-db"
+        image-name: "contracts-db"
         
   - name: "builds/digit-works/backend/bankaccounts"
     build:
