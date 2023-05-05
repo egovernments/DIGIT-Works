@@ -1,6 +1,6 @@
 # Local Setup
 
-To set up the estimate-service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works).
+To set up the bank account service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works).
 
 ## Dependencies
 

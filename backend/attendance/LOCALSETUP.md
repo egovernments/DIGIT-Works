@@ -1,7 +1,7 @@
 # Local Setup
 
 
-To set up the estimate-service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works). Also clone 
+To set up the attendance service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works). Also clone 
 the DIGIT core repo - https://github.com/egovernments/Digit-Core - to run the persister service locally. 
 
 ## Dependencies

@@ -26,7 +26,7 @@ import java.util.List;
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-02-01T15:45:33.268+05:30")
 
 @Controller
-@RequestMapping("/contract/v1")
+@RequestMapping("/v1")
 public class ContractApiController {
 
     @Autowired
