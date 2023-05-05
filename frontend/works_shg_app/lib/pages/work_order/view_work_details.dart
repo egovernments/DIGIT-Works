@@ -18,6 +18,7 @@ import '../../models/works/contracts_model.dart';
 import '../../router/app_router.dart';
 import '../../utils/common_methods.dart';
 import '../../utils/common_widgets.dart';
+import '../../utils/constants.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
@@ -103,7 +104,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
             loading: () => shg_loader.Loaders.circularLoader(context),
             loaded: (ContractsModel? contracts) {
               return workOrderList.isNotEmpty &&
-                      workOrderList.first['payload']['wfStatus'] == 'APPROVED'
+                      workOrderList.first['payload']['wfStatus'] == Constants.pendingForAcceptance
                   ? SizedBox(
                       height: 100,
                       child: DigitCard(
