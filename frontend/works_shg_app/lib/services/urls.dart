@@ -62,8 +62,8 @@ class UserServices {
 
 class WorkServices {
   const WorkServices();
-  String get myWorks => 'contract-service/contract/v1/_search';
-  String get updateWorkOrder => 'contract-service/contract/v1/_update';
+  String get myWorks => 'contract/v1/_search';
+  String get updateWorkOrder => 'contract/v1/_update';
 }
 
 class MusterRollServices {

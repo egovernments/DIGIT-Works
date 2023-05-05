@@ -60,12 +60,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -119,12 +118,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -178,12 +176,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -237,12 +234,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -296,12 +292,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -355,12 +350,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -414,12 +408,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -473,12 +466,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -523,12 +515,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -573,12 +564,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -623,12 +613,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -673,12 +662,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -723,12 +711,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -773,12 +760,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -823,12 +809,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -873,12 +858,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -922,12 +906,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -972,12 +955,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1022,12 +1004,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1072,12 +1053,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1122,12 +1102,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1179,12 +1158,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1236,12 +1214,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1293,12 +1270,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1350,12 +1326,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1409,12 +1384,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1468,12 +1442,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1527,12 +1500,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1586,12 +1558,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1645,12 +1616,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -1706,7 +1676,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiInfo\": {\r\n            \"id\": \"estimate-service\",\r\n            \"version\": \"string\",\r\n            \"path\": \"string\"\r\n        },\r\n        \"deviceDetail\": {\r\n            \"id\": \"string\",\r\n            \"signature\": \"string\"\r\n        },\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{token}}\",\r\n        \"userInfo\": {\r\n        \"id\": 285,\r\n        \"uuid\": \"e4514f7a-a4b0-43ac-b2bc-195100737f45\",\r\n        \"userName\": \"super-es-wo\",\r\n        \"name\": \"supereswo\",\r\n        \"mobileNumber\": \"9000012345\",\r\n        \"emailId\": null,\r\n        \"locale\": null,\r\n        \"type\": \"EMPLOYEE\",\r\n        \"roles\": [\r\n            {\r\n                \"name\": \"HRMS Admin\",\r\n                \"code\": \"HRMS_ADMIN\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"Employee\",\r\n                \"code\": \"EMPLOYEE\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"ESTIMATE VERIFIER\",\r\n                \"code\": \"ESTIMATE_VERIFIER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"WORK ORDER CREATOR\",\r\n                \"code\": \"WORK_ORDER_CREATOR\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"ESTIMATE APPROVER\",\r\n                \"code\": \"ESTIMATE_APPROVER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"CBO ADMIN\",\r\n                \"code\": \"CBO_ADMIN\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"WORK ORDER VERIFIER\",\r\n                \"code\": \"WORK_ORDER_VERIFIER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"Organization admin\",\r\n                \"code\": \"ORG_ADMIN\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"Organization staff\",\r\n                \"code\": \"ORG_STAFF\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"OFFICER IN CHARGE\",\r\n                \"code\": \"OFFICER_IN_CHARGE\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"TECHNICAL SANCTIONER\",\r\n                \"code\": \"TECHNICAL_SANCTIONER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"WORK ORDER APPROVER\",\r\n                \"code\": \"WORK_ORDER_APPROVER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"ESTIMATE CREATOR\",\r\n                \"code\": \"ESTIMATE_CREATOR\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"SUPER USER\",\r\n                \"code\": \"SUPERUSER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            }\r\n        ],\r\n        \"active\": true,\r\n        \"tenantId\": \"pg.citya\",\r\n        \"permanentCity\": null\r\n    },\r\n        \"signature\": \"string\"\r\n    },\r\n    \"estimate\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"projectId\": \"{{projectId}}\",\r\n        \"proposalDate\": 1658222690000,\r\n        \"status\": \"DRAFT\",\r\n        \"wfStatus\": \"CREATED\",\r\n        \"name\": \"Construct new schools v22209-inboxv1\",\r\n        \"referenceNumber\": \"File-1348430283v233209testv1\",\r\n        \"description\": \"Construct new schools\",\r\n        \"executingDepartment\": \"ADM\",\r\n        \"address\": {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"latitude\": 0,\r\n            \"longitude\": 0,\r\n            \"addressNumber\": \"kormangla v2233209v1\",\r\n            \"addressLine1\": \"forum 123\",\r\n            \"addressLine2\": \"string 123\",\r\n            \"landmark\": \"circle\",\r\n            \"city\": \"bangalore\",\r\n            \"pincode\": \"560250\",\r\n            \"detail\": \"string\"\r\n        },\r\n        \"estimateDetails\": [\r\n            {\r\n                \"category\": \"SOR\",\r\n                \"sorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\r\n                \"name\": \"string\",\r\n                \"description\": \"string\",\r\n                \"unitRate\": 0,\r\n                \"noOfunit\": 0,\r\n                \"uom\": \"string\",\r\n                \"uomValue\": 0,\r\n                \"amountDetail\": [\r\n                    {\r\n                        \"type\": \"Gst v209v1, cess v2, charge \",\r\n                        \"amount\": 89657,\r\n                        \"additionalDetails\": {}\r\n                    }\r\n                ],\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"additionalDetails\": {}\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"SUBMIT\",\r\n        \"comment\": \"string\" \r\n    }\r\n}",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiInfo\": {\r\n            \"id\": \"estimates\",\r\n            \"version\": \"string\",\r\n            \"path\": \"string\"\r\n        },\r\n        \"deviceDetail\": {\r\n            \"id\": \"string\",\r\n            \"signature\": \"string\"\r\n        },\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{token}}\",\r\n        \"userInfo\": {\r\n        \"id\": 285,\r\n        \"uuid\": \"e4514f7a-a4b0-43ac-b2bc-195100737f45\",\r\n        \"userName\": \"super-es-wo\",\r\n        \"name\": \"supereswo\",\r\n        \"mobileNumber\": \"9000012345\",\r\n        \"emailId\": null,\r\n        \"locale\": null,\r\n        \"type\": \"EMPLOYEE\",\r\n        \"roles\": [\r\n            {\r\n                \"name\": \"HRMS Admin\",\r\n                \"code\": \"HRMS_ADMIN\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"Employee\",\r\n                \"code\": \"EMPLOYEE\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"ESTIMATE VERIFIER\",\r\n                \"code\": \"ESTIMATE_VERIFIER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"WORK ORDER CREATOR\",\r\n                \"code\": \"WORK_ORDER_CREATOR\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"ESTIMATE APPROVER\",\r\n                \"code\": \"ESTIMATE_APPROVER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"CBO ADMIN\",\r\n                \"code\": \"CBO_ADMIN\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"WORK ORDER VERIFIER\",\r\n                \"code\": \"WORK_ORDER_VERIFIER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"Organization admin\",\r\n                \"code\": \"ORG_ADMIN\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"Organization staff\",\r\n                \"code\": \"ORG_STAFF\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"OFFICER IN CHARGE\",\r\n                \"code\": \"OFFICER_IN_CHARGE\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"TECHNICAL SANCTIONER\",\r\n                \"code\": \"TECHNICAL_SANCTIONER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"WORK ORDER APPROVER\",\r\n                \"code\": \"WORK_ORDER_APPROVER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"ESTIMATE CREATOR\",\r\n                \"code\": \"ESTIMATE_CREATOR\",\r\n                \"tenantId\": \"pg.citya\"\r\n            },\r\n            {\r\n                \"name\": \"SUPER USER\",\r\n                \"code\": \"SUPERUSER\",\r\n                \"tenantId\": \"pg.citya\"\r\n            }\r\n        ],\r\n        \"active\": true,\r\n        \"tenantId\": \"pg.citya\",\r\n        \"permanentCity\": null\r\n    },\r\n        \"signature\": \"string\"\r\n    },\r\n    \"estimate\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"projectId\": \"{{projectId}}\",\r\n        \"proposalDate\": 1658222690000,\r\n        \"status\": \"DRAFT\",\r\n        \"wfStatus\": \"CREATED\",\r\n        \"name\": \"Construct new schools v22209-inboxv1\",\r\n        \"referenceNumber\": \"File-1348430283v233209testv1\",\r\n        \"description\": \"Construct new schools\",\r\n        \"executingDepartment\": \"ADM\",\r\n        \"address\": {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"latitude\": 0,\r\n            \"longitude\": 0,\r\n            \"addressNumber\": \"kormangla v2233209v1\",\r\n            \"addressLine1\": \"forum 123\",\r\n            \"addressLine2\": \"string 123\",\r\n            \"landmark\": \"circle\",\r\n            \"city\": \"bangalore\",\r\n            \"pincode\": \"560250\",\r\n            \"detail\": \"string\"\r\n        },\r\n        \"estimateDetails\": [\r\n            {\r\n                \"category\": \"SOR\",\r\n                \"sorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\r\n                \"name\": \"string\",\r\n                \"description\": \"string\",\r\n                \"unitRate\": 0,\r\n                \"noOfunit\": 0,\r\n                \"uom\": \"string\",\r\n                \"uomValue\": 0,\r\n                \"amountDetail\": [\r\n                    {\r\n                        \"type\": \"Gst v209v1, cess v2, charge \",\r\n                        \"amount\": 89657,\r\n                        \"additionalDetails\": {}\r\n                    }\r\n                ],\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"additionalDetails\": {}\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"SUBMIT\",\r\n        \"comment\": \"string\" \r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1714,12 +1684,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/estimate-service/estimate/v1/_create",
+							"raw": "{{base_url}}/estimate/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"estimate-service",
 								"estimate",
 								"v1",
 								"_create"
@@ -1742,7 +1711,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://works-dev.digit.org/estimate-service/estimate/v1/_create",
+									"raw": "https://works-dev.digit.org/estimate/v1/_create",
 									"protocol": "https",
 									"host": [
 										"works-dev",
@@ -1750,7 +1719,6 @@
 										"org"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_create"
@@ -1844,12 +1812,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_create",
+									"raw": "{{devHost}}/estimate/v1/_create",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_create"
@@ -1943,12 +1910,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_create",
+									"raw": "{{devHost}}/estimate/v1/_create",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
+										
 										"estimate",
 										"v1",
 										"_create"
@@ -2042,12 +2009,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_create",
+									"raw": "{{devHost}}/estimate/v1/_create",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_create"
@@ -2133,7 +2099,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiInfo\": {\r\n            \"id\": \"estimate-service\",\r\n            \"version\": \"string\",\r\n            \"path\": \"string\"\r\n        },\r\n        \"deviceDetail\": {\r\n            \"id\": \"string\",\r\n            \"signature\": \"string\"\r\n        },\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\",\r\n        \"userInfo\": {\r\n            \"id\": 109,\r\n            \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\r\n            \"userName\": \"Nipsyyyy\",\r\n            \"name\": \"Nipun \",\r\n            \"mobileNumber\": \"9667076655\",\r\n            \"emailId\": null,\r\n            \"locale\": null,\r\n            \"type\": \"EMPLOYEE\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST_CHECKER\",\r\n                    \"code\": \"EST_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization admin\",\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_TECH_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"HRMS Admin\",\r\n                    \"code\": \"HRMS_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization staff\",\r\n                    \"code\": \"ORG_STAFF\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST CREATOR\",\r\n                    \"code\": \"EST_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI APPROVER\",\r\n                    \"code\": \"LOI_APPROVER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST FIN SANC\",\r\n                    \"code\": \"EST_FIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CREATOR\",\r\n                    \"code\": \"LOI_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"SUPER USER\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_ADMIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"MUNICIPAL ENGINEER\",\r\n                    \"code\": \"MUNICIPAL_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CHECKER\",\r\n                    \"code\": \"LOI_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"JUNIOR ENGINEER\",\r\n                    \"code\": \"JUNIOR_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pb.amritsar\",\r\n            \"permanentCity\": \"Amritsar\"\r\n        },\r\n        \"signature\": \"string\"\r\n    },\r\n    \"estimate\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"projectId\": \"{{projectId}}\",\r\n        \"proposalDate\": 1658222690000,\r\n        \"status\": \"ACTIVE\",\r\n        \"wfStatus\": \"CREATED\",\r\n        \"name\": \"Construct new schools v222\",\r\n        \"referenceNumber\": \"File-1348430283v2332\",\r\n        \"description\": \"Construct new schools\",\r\n        \"executingDepartment\": \"DEPT_1\",\r\n        \"address\": {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"latitude\": 0,\r\n            \"longitude\": 0,\r\n            \"addressNumber\": \"kormangla v22332\",\r\n            \"addressLine1\": \"forum 123\",\r\n            \"addressLine2\": \"string 123\",\r\n            \"landmark\": \"circle\",\r\n            \"city\": \"bangalore\",\r\n            \"pincode\": \"560250\",\r\n            \"detail\": \"string\"\r\n        },\r\n        \"estimateDetails\": [\r\n            {\r\n                \"category\": \"Overhead, SOR, non-SOR\",\r\n                \"sorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\r\n                \"name\": \"string\",\r\n                \"description\": \"string\",\r\n                \"unitRate\": 0,\r\n                \"noOfunit\": 0,\r\n                \"uom\": \"string\",\r\n                \"uomValue\": 0,\r\n                \"amountDetail\": [\r\n                    {\r\n                        \"type\": \"Gst v2, cess v2, charge \",\r\n                        \"amount\": 56789,\r\n                        \"additionalDetails\": {}\r\n                    }\r\n                ],\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"additionalDetails\": {}\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"CREATE\",\r\n        \"comment\": \"string\",\r\n        \"assignees\": [\r\n            \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\"\r\n        ]\r\n    }\r\n}",
+									"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiInfo\": {\r\n            \"id\": \"estimates\",\r\n            \"version\": \"string\",\r\n            \"path\": \"string\"\r\n        },\r\n        \"deviceDetail\": {\r\n            \"id\": \"string\",\r\n            \"signature\": \"string\"\r\n        },\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\",\r\n        \"userInfo\": {\r\n            \"id\": 109,\r\n            \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\r\n            \"userName\": \"Nipsyyyy\",\r\n            \"name\": \"Nipun \",\r\n            \"mobileNumber\": \"9667076655\",\r\n            \"emailId\": null,\r\n            \"locale\": null,\r\n            \"type\": \"EMPLOYEE\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST_CHECKER\",\r\n                    \"code\": \"EST_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization admin\",\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_TECH_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"HRMS Admin\",\r\n                    \"code\": \"HRMS_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization staff\",\r\n                    \"code\": \"ORG_STAFF\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST CREATOR\",\r\n                    \"code\": \"EST_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI APPROVER\",\r\n                    \"code\": \"LOI_APPROVER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST FIN SANC\",\r\n                    \"code\": \"EST_FIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CREATOR\",\r\n                    \"code\": \"LOI_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"SUPER USER\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_ADMIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"MUNICIPAL ENGINEER\",\r\n                    \"code\": \"MUNICIPAL_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CHECKER\",\r\n                    \"code\": \"LOI_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"JUNIOR ENGINEER\",\r\n                    \"code\": \"JUNIOR_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pb.amritsar\",\r\n            \"permanentCity\": \"Amritsar\"\r\n        },\r\n        \"signature\": \"string\"\r\n    },\r\n    \"estimate\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"projectId\": \"{{projectId}}\",\r\n        \"proposalDate\": 1658222690000,\r\n        \"status\": \"ACTIVE\",\r\n        \"wfStatus\": \"CREATED\",\r\n        \"name\": \"Construct new schools v222\",\r\n        \"referenceNumber\": \"File-1348430283v2332\",\r\n        \"description\": \"Construct new schools\",\r\n        \"executingDepartment\": \"DEPT_1\",\r\n        \"address\": {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"latitude\": 0,\r\n            \"longitude\": 0,\r\n            \"addressNumber\": \"kormangla v22332\",\r\n            \"addressLine1\": \"forum 123\",\r\n            \"addressLine2\": \"string 123\",\r\n            \"landmark\": \"circle\",\r\n            \"city\": \"bangalore\",\r\n            \"pincode\": \"560250\",\r\n            \"detail\": \"string\"\r\n        },\r\n        \"estimateDetails\": [\r\n            {\r\n                \"category\": \"Overhead, SOR, non-SOR\",\r\n                \"sorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\r\n                \"name\": \"string\",\r\n                \"description\": \"string\",\r\n                \"unitRate\": 0,\r\n                \"noOfunit\": 0,\r\n                \"uom\": \"string\",\r\n                \"uomValue\": 0,\r\n                \"amountDetail\": [\r\n                    {\r\n                        \"type\": \"Gst v2, cess v2, charge \",\r\n                        \"amount\": 56789,\r\n                        \"additionalDetails\": {}\r\n                    }\r\n                ],\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"additionalDetails\": {}\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"CREATE\",\r\n        \"comment\": \"string\",\r\n        \"assignees\": [\r\n            \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\"\r\n        ]\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2141,12 +2107,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_create",
+									"raw": "{{devHost}}/estimate/v1/_create",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_create"
@@ -2232,7 +2197,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiInfo\": {\r\n            \"id\": \"estimate-service\",\r\n            \"version\": \"string\",\r\n            \"path\": \"string\"\r\n        },\r\n        \"deviceDetail\": {\r\n            \"id\": \"string\",\r\n            \"signature\": \"string\"\r\n        },\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\",\r\n        \"userInfo\": {\r\n            \"id\": 109,\r\n            \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\r\n            \"userName\": \"Nipsyyyy\",\r\n            \"name\": \"Nipun \",\r\n            \"mobileNumber\": \"9667076655\",\r\n            \"emailId\": null,\r\n            \"locale\": null,\r\n            \"type\": \"EMPLOYEE\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST_CHECKER\",\r\n                    \"code\": \"EST_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization admin\",\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_TECH_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"HRMS Admin\",\r\n                    \"code\": \"HRMS_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization staff\",\r\n                    \"code\": \"ORG_STAFF\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST CREATOR\",\r\n                    \"code\": \"EST_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI APPROVER\",\r\n                    \"code\": \"LOI_APPROVER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST FIN SANC\",\r\n                    \"code\": \"EST_FIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CREATOR\",\r\n                    \"code\": \"LOI_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"SUPER USER\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_ADMIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"MUNICIPAL ENGINEER\",\r\n                    \"code\": \"MUNICIPAL_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CHECKER\",\r\n                    \"code\": \"LOI_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"JUNIOR ENGINEER\",\r\n                    \"code\": \"JUNIOR_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pb.amritsar\",\r\n            \"permanentCity\": \"Amritsar\"\r\n        },\r\n        \"signature\": \"string\"\r\n    },\r\n    \"estimate\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"projectId\": \"{{projectId}}\",\r\n        \"proposalDate\": 1658222690000,\r\n        \"status\": \"ACTIVE\",\r\n        \"wfStatus\": \"CREATED\",\r\n        \"name\": \"Construct new schools v22209-inboxv1\",\r\n        \"referenceNumber\": \"File-1348430283v233209testv1\",\r\n        \"description\": \"Construct new schools\",\r\n        \"executingDepartment\": \"DEPT_1\",\r\n        \"address\": {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"latitude\": 0,\r\n            \"longitude\": 0,\r\n            \"addressNumber\": \"kormangla v2233209v1\",\r\n            \"addressLine1\": \"forum 123\",\r\n            \"addressLine2\": \"string 123\",\r\n            \"landmark\": \"circle\",\r\n            \"city\": \"bangalore\",\r\n            \"pincode\": \"560250\",\r\n            \"detail\": \"string\"\r\n        },\r\n        \"estimateDetails\": [\r\n            {\r\n                \"category\": \"Overhead, SOR, non-SOR\",\r\n                \"sorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\r\n                \"name\": \"string\",\r\n                \"description\": \"string\",\r\n                \"unitRate\": 0,\r\n                \"noOfunit\": 0,\r\n                \"uom\": \"string\",\r\n                \"uomValue\": 0,\r\n                \"amountDetail\": [\r\n                    {\r\n                        \"type\": \"Gst v209v1, cess v2, charge \",\r\n                        \"amount\": 89657,\r\n                        \"additionalDetails\": {}\r\n                    }\r\n                ],\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"additionalDetails\": {}\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"CREATE\",\r\n        \"comment\": \"string\",\r\n        \"assignees\": [\r\n            \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\"\r\n        ]\r\n    }\r\n}",
+									"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiInfo\": {\r\n            \"id\": \"estimates\",\r\n            \"version\": \"string\",\r\n            \"path\": \"string\"\r\n        },\r\n        \"deviceDetail\": {\r\n            \"id\": \"string\",\r\n            \"signature\": \"string\"\r\n        },\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\",\r\n        \"userInfo\": {\r\n            \"id\": 109,\r\n            \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\r\n            \"userName\": \"Nipsyyyy\",\r\n            \"name\": \"Nipun \",\r\n            \"mobileNumber\": \"9667076655\",\r\n            \"emailId\": null,\r\n            \"locale\": null,\r\n            \"type\": \"EMPLOYEE\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST_CHECKER\",\r\n                    \"code\": \"EST_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization admin\",\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_TECH_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"HRMS Admin\",\r\n                    \"code\": \"HRMS_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization staff\",\r\n                    \"code\": \"ORG_STAFF\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST CREATOR\",\r\n                    \"code\": \"EST_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI APPROVER\",\r\n                    \"code\": \"LOI_APPROVER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST FIN SANC\",\r\n                    \"code\": \"EST_FIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CREATOR\",\r\n                    \"code\": \"LOI_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"SUPER USER\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_ADMIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"MUNICIPAL ENGINEER\",\r\n                    \"code\": \"MUNICIPAL_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CHECKER\",\r\n                    \"code\": \"LOI_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"JUNIOR ENGINEER\",\r\n                    \"code\": \"JUNIOR_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pb.amritsar\",\r\n            \"permanentCity\": \"Amritsar\"\r\n        },\r\n        \"signature\": \"string\"\r\n    },\r\n    \"estimate\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"projectId\": \"{{projectId}}\",\r\n        \"proposalDate\": 1658222690000,\r\n        \"status\": \"ACTIVE\",\r\n        \"wfStatus\": \"CREATED\",\r\n        \"name\": \"Construct new schools v22209-inboxv1\",\r\n        \"referenceNumber\": \"File-1348430283v233209testv1\",\r\n        \"description\": \"Construct new schools\",\r\n        \"executingDepartment\": \"DEPT_1\",\r\n        \"address\": {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"latitude\": 0,\r\n            \"longitude\": 0,\r\n            \"addressNumber\": \"kormangla v2233209v1\",\r\n            \"addressLine1\": \"forum 123\",\r\n            \"addressLine2\": \"string 123\",\r\n            \"landmark\": \"circle\",\r\n            \"city\": \"bangalore\",\r\n            \"pincode\": \"560250\",\r\n            \"detail\": \"string\"\r\n        },\r\n        \"estimateDetails\": [\r\n            {\r\n                \"category\": \"Overhead, SOR, non-SOR\",\r\n                \"sorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\r\n                \"name\": \"string\",\r\n                \"description\": \"string\",\r\n                \"unitRate\": 0,\r\n                \"noOfunit\": 0,\r\n                \"uom\": \"string\",\r\n                \"uomValue\": 0,\r\n                \"amountDetail\": [\r\n                    {\r\n                        \"type\": \"Gst v209v1, cess v2, charge \",\r\n                        \"amount\": 89657,\r\n                        \"additionalDetails\": {}\r\n                    }\r\n                ],\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"additionalDetails\": {}\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"CREATE\",\r\n        \"comment\": \"string\",\r\n        \"assignees\": [\r\n            \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\"\r\n        ]\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2240,12 +2205,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_create",
+									"raw": "{{devHost}}/estimate/v1/_create",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_create"
@@ -2331,7 +2295,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiInfo\": {\r\n            \"id\": \"estimate-service\",\r\n            \"version\": \"string\",\r\n            \"path\": \"string\"\r\n        },\r\n        \"deviceDetail\": {\r\n            \"id\": \"string\",\r\n            \"signature\": \"string\"\r\n        },\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\",\r\n        \"userInfo\": {\r\n            \"id\": 109,\r\n            \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\r\n            \"userName\": \"Nipsyyyy\",\r\n            \"name\": \"Nipun \",\r\n            \"mobileNumber\": \"9667076655\",\r\n            \"emailId\": null,\r\n            \"locale\": null,\r\n            \"type\": \"EMPLOYEE\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST_CHECKER\",\r\n                    \"code\": \"EST_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization admin\",\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_TECH_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"HRMS Admin\",\r\n                    \"code\": \"HRMS_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization staff\",\r\n                    \"code\": \"ORG_STAFF\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST CREATOR\",\r\n                    \"code\": \"EST_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI APPROVER\",\r\n                    \"code\": \"LOI_APPROVER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST FIN SANC\",\r\n                    \"code\": \"EST_FIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CREATOR\",\r\n                    \"code\": \"LOI_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"SUPER USER\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_ADMIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"MUNICIPAL ENGINEER\",\r\n                    \"code\": \"MUNICIPAL_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CHECKER\",\r\n                    \"code\": \"LOI_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"JUNIOR ENGINEER\",\r\n                    \"code\": \"JUNIOR_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pb.amritsar\",\r\n            \"permanentCity\": \"Amritsar\"\r\n        },\r\n        \"signature\": \"string\"\r\n    },\r\n    \"estimate\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"projectId\": \"{{projectId}}\",\r\n        \"proposalDate\": 1658222690000,\r\n        \"status\": \"DRAFT\",\r\n        \"wfStatus\": \"CREATED\",\r\n        \"name\": \"Construct new schools v22209-inboxv1\",\r\n        \"referenceNumber\": \"File-1348430283v233209testv1\",\r\n        \"description\": \"Construct new schools\",\r\n        \"executingDepartment\": \"DEPT_2\",\r\n        \"address\": {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"latitude\": 0,\r\n            \"longitude\": 0,\r\n            \"addressNumber\": \"kormangla v2233209v1\",\r\n            \"addressLine1\": \"forum 123\",\r\n            \"addressLine2\": \"string 123\",\r\n            \"landmark\": \"circle\",\r\n            \"city\": \"bangalore\",\r\n            \"pincode\": \"560250\",\r\n            \"detail\": \"string\"\r\n        },\r\n        \"estimateDetails\": [\r\n            {\r\n                \"category\": \"Overhead, SOR, non-SOR\",\r\n                \"sorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\r\n                \"name\": \"string\",\r\n                \"description\": \"string\",\r\n                \"unitRate\": 0,\r\n                \"noOfunit\": 0,\r\n                \"uom\": \"string\",\r\n                \"uomValue\": 0,\r\n                \"amountDetail\": [\r\n                    {\r\n                        \"type\": \"Gst v209v1, cess v2, charge \",\r\n                        \"amount\": 89657,\r\n                        \"additionalDetails\": {}\r\n                    }\r\n                ],\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"additionalDetails\": {}\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"CREATE\",\r\n        \"comment\": \"string\" \r\n    }\r\n}",
+									"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiInfo\": {\r\n            \"id\": \"estimates\",\r\n            \"version\": \"string\",\r\n            \"path\": \"string\"\r\n        },\r\n        \"deviceDetail\": {\r\n            \"id\": \"string\",\r\n            \"signature\": \"string\"\r\n        },\r\n        \"ts\": 0,\r\n        \"action\": \"string\",\r\n        \"key\": \"string\",\r\n        \"msgId\": \"string\",\r\n        \"requesterId\": \"string\",\r\n        \"authToken\": \"{{authToken}}\",\r\n        \"userInfo\": {\r\n            \"id\": 109,\r\n            \"uuid\": \"be99b2c2-5780-4b1c-8e41-e3f8a972ebda\",\r\n            \"userName\": \"Nipsyyyy\",\r\n            \"name\": \"Nipun \",\r\n            \"mobileNumber\": \"9667076655\",\r\n            \"emailId\": null,\r\n            \"locale\": null,\r\n            \"type\": \"EMPLOYEE\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST_CHECKER\",\r\n                    \"code\": \"EST_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization admin\",\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_TECH_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"HRMS Admin\",\r\n                    \"code\": \"HRMS_ADMIN\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"Organization staff\",\r\n                    \"code\": \"ORG_STAFF\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST CREATOR\",\r\n                    \"code\": \"EST_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI APPROVER\",\r\n                    \"code\": \"LOI_APPROVER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST FIN SANC\",\r\n                    \"code\": \"EST_FIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CREATOR\",\r\n                    \"code\": \"LOI_CREATOR\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"SUPER USER\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"EST TECH SANC\",\r\n                    \"code\": \"EST_ADMIN_SANC\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"MUNICIPAL ENGINEER\",\r\n                    \"code\": \"MUNICIPAL_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"LOI CHECKER\",\r\n                    \"code\": \"LOI_CHECKER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                },\r\n                {\r\n                    \"name\": \"JUNIOR ENGINEER\",\r\n                    \"code\": \"JUNIOR_ENGINEER\",\r\n                    \"tenantId\": \"pb.amritsar\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pb.amritsar\",\r\n            \"permanentCity\": \"Amritsar\"\r\n        },\r\n        \"signature\": \"string\"\r\n    },\r\n    \"estimate\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"projectId\": \"{{projectId}}\",\r\n        \"proposalDate\": 1658222690000,\r\n        \"status\": \"DRAFT\",\r\n        \"wfStatus\": \"CREATED\",\r\n        \"name\": \"Construct new schools v22209-inboxv1\",\r\n        \"referenceNumber\": \"File-1348430283v233209testv1\",\r\n        \"description\": \"Construct new schools\",\r\n        \"executingDepartment\": \"DEPT_2\",\r\n        \"address\": {\r\n            \"tenantId\": \"{{tenantId}}\",\r\n            \"latitude\": 0,\r\n            \"longitude\": 0,\r\n            \"addressNumber\": \"kormangla v2233209v1\",\r\n            \"addressLine1\": \"forum 123\",\r\n            \"addressLine2\": \"string 123\",\r\n            \"landmark\": \"circle\",\r\n            \"city\": \"bangalore\",\r\n            \"pincode\": \"560250\",\r\n            \"detail\": \"string\"\r\n        },\r\n        \"estimateDetails\": [\r\n            {\r\n                \"category\": \"Overhead, SOR, non-SOR\",\r\n                \"sorId\": \"251c51eb-e970-4e01-a99a-70136c47a934\",\r\n                \"name\": \"string\",\r\n                \"description\": \"string\",\r\n                \"unitRate\": 0,\r\n                \"noOfunit\": 0,\r\n                \"uom\": \"string\",\r\n                \"uomValue\": 0,\r\n                \"amountDetail\": [\r\n                    {\r\n                        \"type\": \"Gst v209v1, cess v2, charge \",\r\n                        \"amount\": 89657,\r\n                        \"additionalDetails\": {}\r\n                    }\r\n                ],\r\n                \"additionalDetails\": {}\r\n            }\r\n        ],\r\n        \"additionalDetails\": {}\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"CREATE\",\r\n        \"comment\": \"string\" \r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2339,12 +2303,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_create",
+									"raw": "{{devHost}}/estimate/v1/_create",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_create"
@@ -2463,12 +2426,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/estimate-service/estimate/v1/_update",
+							"raw": "{{base_url}}/estimate/v1/_update",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"estimate-service",
 								"estimate",
 								"v1",
 								"_update"
@@ -2491,12 +2453,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_update",
+									"raw": "{{devHost}}/estimate/v1/_update",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_update"
@@ -2590,12 +2551,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_update",
+									"raw": "{{devHost}}/estimate/v1/_update",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_update"
@@ -2715,12 +2675,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/estimate-service/estimate/v1/_update",
+							"raw": "{{base_url}}/estimate/v1/_update",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"estimate-service",
 								"estimate",
 								"v1",
 								"_update"
@@ -2743,12 +2702,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_update",
+									"raw": "{{devHost}}/estimate/v1/_update",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_update"
@@ -2842,12 +2800,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_update",
+									"raw": "{{devHost}}/estimate/v1/_update",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_update"
@@ -2960,12 +2917,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/estimate-service/estimate/v1/_update",
+							"raw": "{{base_url}}/estimate/v1/_update",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"estimate-service",
 								"estimate",
 								"v1",
 								"_update"
@@ -2988,12 +2944,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_update",
+									"raw": "{{devHost}}/estimate/v1/_update",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_update"
@@ -3087,12 +3042,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{devHost}}/estimate-service/estimate/v1/_update",
+									"raw": "{{devHost}}/estimate/v1/_update",
 									"host": [
 										"{{devHost}}"
 									],
 									"path": [
-										"estimate-service",
 										"estimate",
 										"v1",
 										"_update"
@@ -3228,12 +3182,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_create",
+							"raw": "{{base_url}}/contract/v1/_create",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_create"
@@ -3256,12 +3209,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/contract-service/contract/v1/_create",
+									"raw": "{{base_url}}/contract/v1/_create",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"contract-service",
 										"contract",
 										"v1",
 										"_create"
@@ -3386,12 +3338,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_update",
+							"raw": "{{base_url}}/contract/v1/_update",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_update"
@@ -3444,12 +3395,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_update",
+							"raw": "{{base_url}}/contract/v1/_update",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_update"
@@ -3635,12 +3585,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_update",
+							"raw": "{{base_url}}/contract/v1/_update",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_update"
@@ -3677,12 +3626,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/contract-service/contract/v1/_search?tenantId=pg.citya",
+							"raw": "{{base_url}}/contract/v1/_search?tenantId=pg.citya",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"contract-service",
 								"contract",
 								"v1",
 								"_search"
