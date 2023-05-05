@@ -39,6 +39,8 @@ router.post(
                     var pdfResponse;
                     var pdfkey = config.pdf.project_details_template;
                     
+                    // Adding project as Projects because it's updating on create_pdf
+                    project["Projects"] = project.Project;
 
                     try {
                         pdfResponse = await create_pdf(
