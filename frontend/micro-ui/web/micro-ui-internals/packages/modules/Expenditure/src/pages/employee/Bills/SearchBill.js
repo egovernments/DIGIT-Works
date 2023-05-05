@@ -4,6 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Header, InboxSearchComposer, Loader, Button, DownloadImgIcon} from "@egovernments/digit-ui-react-components";
 import { SearchBillConfig } from '../../../configs/SearchBillConfig';
 import { SearchBillWMSConfig } from '../../../configs/SearchBillWMSConfig';
+import { SearchExpenseBillConfig } from '../../../configs/SearchExpenseBillConfig';
 
 const SearchBill = () => {
   const { t } = useTranslation();
