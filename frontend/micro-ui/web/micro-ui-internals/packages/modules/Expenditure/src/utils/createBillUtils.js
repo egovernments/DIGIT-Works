@@ -85,7 +85,7 @@ export const createBillPayload = (data, contract,  docConfigData) => {
                   {
                     "tenantId": tenantId,
                     "headCode": "MC",
-                    "amount": data?.invoiceDetails_materialCost,
+                    "amount": data?.invoiceDetails_materialCost || 0,
                     "type": "PAYABLE", 
                     "paidAmount": 0,
                     "status": "ACTIVE"
@@ -93,7 +93,7 @@ export const createBillPayload = (data, contract,  docConfigData) => {
                   {
                     "tenantId": tenantId,
                     "headCode": "GST",
-                    "amount": data?.invoiceDetails_gst,
+                    "amount": data?.invoiceDetails_gst || 0,
                     "type": "PAYABLE",
                     "paidAmount": 0,
                     "status": "ACTIVE"

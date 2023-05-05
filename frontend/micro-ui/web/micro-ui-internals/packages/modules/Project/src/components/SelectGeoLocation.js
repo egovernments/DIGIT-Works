@@ -6,9 +6,9 @@ const SelectGeoLocation = ({ onSelect, config, formData }) => {
   const { t } = useTranslation();
   const [showLocationSearch, setShowLocationSearch] = useState(false);
   const [position, setPosition] = useState();
+  const [postionInputField, setPositionInputField] = useState();
   const onChange = (pincode, position) => {
     setPosition(position);
-    onSelect(config?.key, position);
   }
 
   const handleShowLocationSearch = () => {
@@ -19,6 +19,12 @@ const SelectGeoLocation = ({ onSelect, config, formData }) => {
     setShowLocationSearch(false);
   }
 
+  const actionSaveOnSubmit = () => {
+    onSelect(config?.key, position);
+    setPositionInputField(position);
+    actionCancelOnSubmit();
+  }
+
   return (
     <Fragment>
       <LabelFieldPair>
@@ -26,11 +32,11 @@ const SelectGeoLocation = ({ onSelect, config, formData }) => {
         {
           !showLocationSearch && 
           <div className="field">
-            <TextInput customIcon="geolocation" disable={true} onIconSelection={handleShowLocationSearch} value={position?.latitude && position?.longitude ? `${position?.latitude}, ${position?.longitude}` : ''}></TextInput>
+            <TextInput customIcon="geolocation" disable={true} onIconSelection={handleShowLocationSearch} value={postionInputField?.latitude && postionInputField?.longitude ? `${position?.latitude}, ${position?.longitude}` : ''}></TextInput>
           </div>
         }
         {showLocationSearch && 
-          <Modal actionCancelLabel={t("WORKS_CANCEL")} actionCancelOnSubmit={actionCancelOnSubmit} hideSubmit={true} >
+          <Modal actionCancelLabel={t("WORKS_CANCEL")} actionSaveLabel={t("WORKS_APPLY")} actionCancelOnSubmit={actionCancelOnSubmit} actionSaveOnSubmit={actionSaveOnSubmit} hideSubmit={false} >
               <LocationSearch position={{ latitude: formData?.noSubProject_geoLocation?.latitude, longitude: formData?.noSubProject_geoLocation?.longitude }} onChange={onChange} />
           </Modal>
         }

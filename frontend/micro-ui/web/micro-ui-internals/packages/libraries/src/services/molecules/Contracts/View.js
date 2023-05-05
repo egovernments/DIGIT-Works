@@ -50,7 +50,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
                         }
                         //WO FILES
                         return {
-                            title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
+                            title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : t(`CONTRACT_${document?.documentType}`),
                             documentType: document?.documentType,
                             documentUid: document?.fileStore,
                             fileStoreId: document?.fileStore,
