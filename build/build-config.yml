@@ -60,9 +60,9 @@ config:
     build:
       - work-dir: "backend/contracts"
         dockerfile: "build/maven/Dockerfile"
-        image-name: "contracts"
+        image-name: "contract"
       - work-dir: "backend/contracts/src/main/resources/db"
-        image-name: "contracts-db"
+        image-name: "contract-db"
         
   - name: "builds/digit-works/backend/bankaccounts"
     build:
@@ -134,4 +134,11 @@ config:
     build:
       - work-dir: "utilities/works-pdf"
         image-name: "works-pdf"  
+      - work-dir: "utilities/works-pdf/migration"
+        image-name: "works-pdf-db"
         
+  - name: "builds/digit-works/utilities/expense-cronjob"
+    build:
+      - work-dir: "utilities/expense-cronjob"
+        image-name: "expense-cronjob"
+        dockerfile: "utilities/expense-cronjob/Dockerfile"

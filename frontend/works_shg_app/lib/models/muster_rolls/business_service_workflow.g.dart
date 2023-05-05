@@ -27,10 +27,10 @@ _$_BusinessServices _$$_BusinessServicesFromJson(Map<String, dynamic> json) =>
       businessService: json['businessService'] as String?,
       business: json['business'] as String?,
       businessServiceSla: json['businessServiceSla'] as int?,
-      workflowState: (json['states'] as List<dynamic>?)
-          ?.map(
-              (e) => BusinessWorkflowState.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      workflowState: json['states'] == null
+          ? null
+          : BusinessWorkflowState.fromJson(
+              json['states'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_BusinessServicesToJson(_$_BusinessServices instance) =>
