@@ -1131,7 +1131,7 @@ export const UICustomizations = {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
                 "code": state?.state,
-                "i18nKey":`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")}_STATUS_${state?.state}`,
+                "i18nKey":`WF_${Digit.Utils.locale.getTransformedLocale(Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase"))}_STATUS_${state?.state}`,
                 "wfStatus":state?.state
               }
             })
@@ -1253,7 +1253,7 @@ export const UICustomizations = {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
                 "code": state?.state,
-                "i18nKey":`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")}_STATUS_${state?.state}`,
+                "i18nKey":`WF_${Digit.Utils.locale.getTransformedLocale(Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase"))}_STATUS_${state?.state}`,
                 "wfStatus":state?.state
               }
             })
@@ -1367,7 +1367,7 @@ export const UICustomizations = {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
                 "code": state?.state,
-                "i18nKey":`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")}_STATUS_${state?.state}`,
+                "i18nKey":`WF_${Digit.Utils.locale.getTransformedLocale(Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase"))}_STATUS_${state?.state}`,
                 "wfStatus":state?.state
               }
             })
