@@ -81,7 +81,7 @@ const ViewPurchaseBill = ({props}) => {
                   applicationNo={billNumber}
                   tenantId={tenantId}
                   applicationDetails={data?.applicationData}
-                  url={""} //TODO: @hariom Add the update api of bills here
+                  url={Digit.Utils.Urls.bills.updatePurchaseBill} //TODO: @hariom Add the update api of bills here
                   setStateChanged={setStateChanged}
                   moduleCode="Expenditure"
                   editApplicationNumber={""}

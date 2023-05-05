@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb, AppContainer } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
@@ -35,9 +35,9 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         isBack: fromScreen && true,
       },
       {
-        path: `/${window.contextPath}/employee/expenditure/create-bill`,
+        path: `/${window.contextPath}/employee/expenditure/create-purchase-bill`,
         content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_BILL")}` : t("EXP_CREATE_BILL"),
-        show: location.pathname.includes("/expenditure/create-bill") ? true : false,
+        show: location.pathname.includes("/expenditure/create-purchase-bill") ? true : false,
         isBack: fromScreen && true,
       },
       {
@@ -92,6 +92,16 @@ const App = ({ path }) => {
     const PurchaseBillResponse = Digit?.ComponentRegistryService?.getComponent("CreatePurchaseBillResponse");
     const ViewWageBill = Digit?.ComponentRegistryService?.getComponent("ViewWageBill");
     const DownloadBill = Digit?.ComponentRegistryService?.getComponent("DownloadBill");
+
+    const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
+    const [sessionFormData, clearSessionFormData] = PurchaseBillSession;
+  
+    //remove session form data if user navigates away from the project create screen
+    useEffect(()=>{
+        if (!window.location.href.includes("create-purchase-bill") && sessionFormData && Object.keys(sessionFormData) != 0) {
+          clearSessionFormData();
+        }
+    },[location]);
 
     return (
       <Switch>
