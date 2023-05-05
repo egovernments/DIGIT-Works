@@ -43,12 +43,15 @@ class MusterSubmissionBloc
             }
           ]);
 
-      if (result != null) {
+      if (result.musterSubmission != null &&
+          result.musterSubmission!.isNotEmpty) {
         emit(MusterSubmissionState.loaded(result.musterSubmission
                 ?.where((e) => e.code == 'END_OF_WEEK')
                 .first
                 .active ??
-            true));
+            false));
+      } else {
+        emit(const MusterSubmissionState.loaded(false));
       }
     } on DioError catch (e) {
       emit(MusterSubmissionState.error(e.response?.data['Errors'][0]['code']));

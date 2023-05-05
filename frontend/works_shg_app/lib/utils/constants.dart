@@ -4,7 +4,7 @@ class Constants {
   static const String mdmsApiEndPoint = 'egov-mdms-service/v1/_search';
   static final navKey = GlobalKey<NavigatorState>();
   static const String active = 'ACTIVE';
-  static const String accepted = 'PENDING_FOR_ACCEPTANCE';
+  static const String pendingForAcceptance = 'PENDING_FOR_ACCEPTANCE';
   static const String rejected = 'REJECTED';
   static const String sentBack = 'SENTBACKTOCBO';
   static const muktaIcon = 'assets/svg/mukta.svg';
