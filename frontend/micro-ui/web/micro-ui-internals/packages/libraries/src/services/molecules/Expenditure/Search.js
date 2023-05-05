@@ -295,7 +295,7 @@ export const BillsSearch = {
     }
 
     let netPayableAmtCalc = billAmount - totalDeductions;
-    console.log(billAmount, totalDeductions, netPayableAmtCalc);
+    
     const netPayableAmt = {
         "title": " ",
         "asSectionHeader": true,
