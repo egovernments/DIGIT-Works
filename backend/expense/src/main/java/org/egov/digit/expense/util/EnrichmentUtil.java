@@ -53,7 +53,8 @@ public class EnrichmentUtil {
         bill.getPayer().setId(UUID.randomUUID().toString());
         bill.getPayer().setAuditDetails(audit);
         bill.getPayer().setParentId(bill.getId());
-
+        bill.getPayer().setStatus(Status.ACTIVE);
+        
         for (BillDetail billDetail : bill.getBillDetails()) {
 
             billDetail.setId(UUID.randomUUID().toString());
@@ -64,7 +65,8 @@ public class EnrichmentUtil {
             billDetail.getPayee().setId(UUID.randomUUID().toString());
             billDetail.getPayee().setParentId(billDetail.getBillId());
             billDetail.getPayee().setAuditDetails(audit);
-
+            billDetail.getPayee().setStatus(Status.ACTIVE);
+            
             for (LineItem lineItem : billDetail.getLineItems()) {
                 lineItem.setId(UUID.randomUUID().toString());
                 lineItem.setAuditDetails(audit);
