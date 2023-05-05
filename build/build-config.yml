@@ -133,5 +133,12 @@ config:
   - name: "builds/digit-works/utilities/works-pdf"
     build:
       - work-dir: "utilities/works-pdf"
-        image-name: "works-pdf"  
+        image-name: "works-pdf"
+      - work-dir: "utilities/works-pdf/migration"
+        image-name: "works-pdf-db"
         
+  - name: "builds/digit-works/utilities/expense-cronjob"
+    build:
+      - work-dir: "utilities/expense-cronjob"
+        image-name: "expense-cronjob"
+        dockerfile: "utilities/expense-cronjob/Dockerfile"

@@ -27,26 +27,31 @@ const getCreatePaymentPayload = (data) => {
   payment.netPayableAmount = 0
   payment.netPaidAmount = 0
   payment.additionalDetails = {}
+  //payment.status = 'INITIATED'
 
   payment.bills = []
   data?.forEach(item => {
+    const bill = item?.original?.bill
     let billObj = {}
-    billObj.billId = item?.original?.id
-    billObj.tenantId = item?.original?.tenantId
-    billObj.totalAmount = item?.original?.totalAmount
-    billObj.totalPaidAmount = item?.original?.totalPaidAmount
+    billObj.billId = bill?.id
+    billObj.tenantId = bill?.tenantId
+    billObj.totalAmount = bill?.totalAmount
+    billObj.totalPaidAmount = bill?.totalPaidAmount
+    //billObj.status = 'INITIATED'
     billObj.billDetails = []
-    if(item?.original?.billDetails?.length > 0) {
-      item?.original?.billDetails?.forEach(detail => {
+    if(bill?.billDetails?.length > 0) {
+      bill?.billDetails?.forEach(detail => {
         let billDetailObj = {}
-        billDetailObj.billDetailId = detail?.id
+        billDetailObj.billDetailId = detail?.id //billId
         billDetailObj.totalAmount = detail?.totalAmount
         billDetailObj.totalPaidAmount = detail?.totalPaidAmount
+        //billDetailObj.status = 'INITIATED'
         billDetailObj.payableLineItems = detail?.payableLineItems?.map(item => (
           {
             lineItemId: item?.id,
             tenantId: item?.tenantId,
-            paidAmount: item?.amount
+            paidAmount: item?.amount,
+            //status: 'INITIATED'
           }
         ))
         billDetailObj.additionalDetails = {}
@@ -1192,14 +1197,15 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      let tenantId = Digit.ULBService.getCurrentTenantId()
       if (key === "WORKS_BILL_NUMBER") {
-        const billType = getBillType(row?.businessService)
+        const billType = getBillType(row?.bill?.businessService)
         return (
           <span className="link">
             <Link
               to={`/${
                 window.contextPath
-              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.businessObject?.tenantId}&billNumber=${value}`}
+              }/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
@@ -1207,7 +1213,7 @@ export const UICustomizations = {
         );
       }
       if (key === "WORKS_BILL_TYPE") {
-        return value ? `COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}` : t("ES_COMMON_NA")
+        return value ? t(`COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}`) : t("ES_COMMON_NA")
       }
       if (key === "EXP_BILL_AMOUNT") {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
@@ -1216,8 +1222,9 @@ export const UICustomizations = {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId)
-        return t(`TENANT_TENANTS_${headerLocale}`)
+        const location = value;
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
+        return location ? t(`TENANT_TENANTS_${headerLocale}`) : t("ES_COMMON_NA")
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {
