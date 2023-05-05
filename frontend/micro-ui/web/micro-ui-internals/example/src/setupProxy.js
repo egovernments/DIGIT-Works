@@ -64,7 +64,7 @@ module.exports = function (app) {
     "/inbox/v1/dss/_search",
     "/loi-service",
     "/estimate",
-    "/contract-service",
+    "/contract",
     "/loi-service",
     "/works-inbox-service/v2/_search",
     "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
@@ -86,8 +86,7 @@ module.exports = function (app) {
     "/egov-pdf/bill/_search",
     "/expense-calculator/v1/_search",
     "/expense/payment/v1/_create",
-    "/expense-calculator/",
-    "/contract"
+    "/expense-calculator/"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

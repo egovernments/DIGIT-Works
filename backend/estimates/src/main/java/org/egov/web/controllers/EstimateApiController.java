@@ -22,7 +22,7 @@ import java.util.List;
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-12-30T13:05:25.880+05:30")
 
 @Controller
-@RequestMapping("/estimate/v1")
+@RequestMapping("/v1")
 public class EstimateApiController {
 
     @Autowired

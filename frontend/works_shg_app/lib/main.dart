@@ -57,6 +57,7 @@ import 'blocs/wage_seeker_registration/wage_seeker_location_bloc.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
 import 'blocs/work_orders/accept_work_order.dart';
+import 'blocs/work_orders/my_works_search_criteria.dart';
 import 'blocs/work_orders/search_individual_work.dart';
 import 'blocs/work_orders/search_my_works.dart';
 import 'blocs/work_orders/work_order_pdf.dart';
@@ -206,6 +207,7 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => SearchMyWorksBloc()),
         BlocProvider(create: (context) => SearchMyBillsBloc()),
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
+        BlocProvider(create: (context) => MyWorksSearchCriteriaBloc()),
         BlocProvider(create: (context) => DeclineWorkOrderBloc()),
         BlocProvider(create: (context) => SearchIndividualWorkBloc()),
         BlocProvider(create: (context) => WageSeekerBloc()),

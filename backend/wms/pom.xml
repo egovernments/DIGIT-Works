@@ -8,8 +8,8 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.egov</groupId>
-	<artifactId>wms</artifactId>
-	<version>0.1.0</version>
+	<artifactId>works-management-service</artifactId>
+	<version>0.1.1</version>
 	<name>Works Management Services</name>
 	<description>Works Management Services</description>
 
