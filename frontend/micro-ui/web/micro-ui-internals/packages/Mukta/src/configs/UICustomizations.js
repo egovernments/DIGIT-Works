@@ -644,7 +644,7 @@ export const UICustomizations = {
           select: (data) => {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
-                "i18nKey":`WF_MUSTOR_${state?.state}`,
+                "i18nKey":`WF_MUSTOR_STATUS_${state?.state}`,
                 "wfStatus":state?.state
               }
             })
@@ -1126,7 +1126,7 @@ export const UICustomizations = {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
                 "code": state?.state,
-                "i18nKey":`WF_BILL_${state?.state}`,
+                "i18nKey":`WF_BILL_STATUS_${state?.state}`,
                 "wfStatus":state?.state
               }
             })
@@ -1246,7 +1246,7 @@ export const UICustomizations = {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
                 "code": state?.state,
-                "i18nKey":`WF_BILL_${state?.state}`,
+                "i18nKey":`WF_BILL_STATUS_${state?.state}`,
                 "wfStatus":state?.state
               }
             })
@@ -1360,7 +1360,7 @@ export const UICustomizations = {
             const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
               return {
                 "code": state?.state,
-                "i18nKey":`WF_MUSTOR_${state?.state}`,
+                "i18nKey":`WF_MUSTOR_STATUS_${state?.state}`,
                 "wfStatus":state?.state
               }
             })
