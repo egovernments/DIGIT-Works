@@ -1,12 +1,6 @@
 # Local Setup
 
-<<<<<<<< HEAD:backend/attendance/LOCALSETUP.md
-
-To set up the estimate-service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works). Also clone 
-the DIGIT core repo - https://github.com/egovernments/Digit-Core - to run the persister service locally. 
-========
 To set up the muster roll service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works).
->>>>>>>> b0028753 (PFM2839 :: Mukta v0.1.1 changes merged from develop to master (#870)):backend/muster-roll/LOCALSETUP.md
 
 ## Dependencies
 
@@ -20,7 +14,7 @@ To set up the muster roll service in your local system, clone the git repo(https
 
 - [X] Postgres DB
 - [ ] Redis
-- [ ] Elasticsearch (needed if there is indexer
+- [ ] Elasticsearch
 - [X] Kafka
 
 ## Running Locally
