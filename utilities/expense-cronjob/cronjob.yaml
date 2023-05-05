@@ -1,0 +1,21 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: daily
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: daily
+            image: egovio/expense-cronjob
+            command: ["python3","cronJobAPIConfig.py"]
+            args: ["daily"]  
+            env:
+              - name: JOB_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.name
+          restartPolicy: OnFailure            
