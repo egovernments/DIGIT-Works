@@ -28,12 +28,17 @@ _$_CommonUIConfigModel _$$_CommonUIConfigModelFromJson(
           ?.map((e) =>
               CBOHomeScreenConfigModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      cboMyWorksSearchCriteria: (json['CBOMyWorks'] as List<dynamic>?)
+          ?.map((e) =>
+              CBOMyWorksSearchCriteriaModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$_CommonUIConfigModelToJson(
         _$_CommonUIConfigModel instance) =>
     <String, dynamic>{
       'CBOHomeScreenConfig': instance.cboHomeScreenConfig,
+      'CBOMyWorks': instance.cboMyWorksSearchCriteria,
     };
 
 _$_CBOHomeScreenConfigModel _$$_CBOHomeScreenConfigModelFromJson(

@@ -1013,7 +1013,12 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                             .translate(i18
                                                                 .attendanceMgmt
                                                                 .addNewWageSeeker),
-                                                        () {},
+                                                            () {
+                                                          context
+                                                              .router
+                                                              .push(
+                                                              const RegisterIndividualRoute());
+                                                        },
                                                         align: Alignment.center,
                                                       ),
                                                     ],

@@ -24,6 +24,7 @@ import '../router/app_router.dart';
 import '../utils/common_methods.dart';
 import '../utils/models.dart';
 import '../utils/notifiers.dart';
+import '../widgets/ButtonLink.dart';
 import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/auto_complete_search_bar.dart';
@@ -331,7 +332,20 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                 shg_loader.Loaders.circularLoader(context),
                             initial: () {
                               existingAttendeeList.clear();
-                              return const EmptyImage(align: Alignment.center);
+                              return Column(
+                                children: [
+                                  const EmptyImage(align: Alignment.center),
+                                  ButtonLink(
+                                    AppLocalizations.of(context).translate(
+                                        i18.attendanceMgmt.addNewWageSeeker),
+                                    () {
+                                      context.router.push(
+                                          const RegisterIndividualRoute());
+                                    },
+                                    align: Alignment.center,
+                                  ),
+                                ],
+                              );
                             },
                             loaded: (IndividualListModel? individualListModel) {
                               userList = individualListModel!
@@ -508,7 +522,22 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                             ),
                                           ),
                                         ])
-                                  : const EmptyImage(align: Alignment.center);
+                                  : Column(
+                                      children: [
+                                        const EmptyImage(
+                                            align: Alignment.center),
+                                        ButtonLink(
+                                          AppLocalizations.of(context)
+                                              .translate(i18.attendanceMgmt
+                                                  .addNewWageSeeker),
+                                          () {
+                                            context.router.push(
+                                                const RegisterIndividualRoute());
+                                          },
+                                          align: Alignment.center,
+                                        ),
+                                      ],
+                                    );
                             },
                             error: (String? error) => Container(),
                             orElse: () => Container());

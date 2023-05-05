@@ -62,8 +62,11 @@ class _DropDownDialogState extends State<DropDownDialog> {
                     SizedBox(
                       width: 80,
                       child: Text(
-                        AppLocalizations.of(context).translate(
-                            'COMMON_MASTERS_SKILLS_${widget.selectedOption}'),
+                        widget.selectedOption != null &&
+                                widget.selectedOption.isNotEmpty
+                            ? AppLocalizations.of(context).translate(
+                                'COMMON_MASTERS_SKILLS_${widget.selectedOption}')
+                            : '',
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             fontSize: 12,
@@ -124,10 +127,8 @@ class _DropDownDialogState extends State<DropDownDialog> {
                           horizontal: VisualDensity.minimumDensity,
                           vertical: VisualDensity.minimumDensity),
                       title: Text(
-                          option != null && option.isNotEmpty
-                              ? AppLocalizations.of(context)
-                                  .translate('COMMON_MASTERS_SKILLS_$option')
-                              : '',
+                          AppLocalizations.of(context)
+                              .translate('COMMON_MASTERS_SKILLS_$option'),
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w400)),
                       value: option,
