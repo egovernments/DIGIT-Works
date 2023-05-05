@@ -8,6 +8,7 @@ import { Loader } from "./Loader";
 import Toast from "./Toast";
 import { useHistory } from "react-router-dom";
 const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback }) => {
+  
   const history = useHistory()
   const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
@@ -117,7 +118,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       onError:(error,variables)=>{
         setIsEnableLoader(false)
         //show error toast acc to selectAction
-        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${moduleCode.toUpperCase()}_${selectAction.action}`, isDleteBtn:true })
+        setShowToast({ error: true, label: Digit.Utils.locale.getTransformedLocale(`WF_UPDATE_ERROR_${businessService}_${selectAction.action}`), isDleteBtn:true })
         
 
         
@@ -126,7 +127,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       onSuccess:(data,variables) => {
         setIsEnableLoader(false)
         //show success toast acc to selectAction
-        setShowToast({ label: `WF_UPDATE_SUCCESS_${moduleCode.toUpperCase()}_${selectAction.action}` })
+        setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`WF_UPDATE_SUCCESS_${businessService}_${selectAction.action}`) })
         
 
         // to refetch updated workflowData and re-render timeline and actions
