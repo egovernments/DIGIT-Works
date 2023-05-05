@@ -191,24 +191,10 @@ export const createProjectConfigMUKTA = {
           "head": "ES_COMMON_LOCATION_DETAILS",
           "body": [
             {
-              "inline": true,
-              "label": "WORKS_GEO_LOCATION",
-              "isMandatory": false,
+              "type": "component",
+              "component": "SelectGeoLocation",
+              "withoutLabel": true,
               "key": "noSubProject_geoLocation",
-              "type": "text",
-              "disable": false,
-              "preProcess": {
-                "convertStringToRegEx": [
-                  "populators.validation.pattern"
-                ]
-              },
-              "populators": {
-                "name": "noSubProject_geoLocation",
-                "error": "COMMON_ENTER_VALID_GEO_LOCATION",
-                "validation": {
-                  "pattern": "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)\\s*,\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$"
-                }
-              }
             },
             {
               "isMandatory": false,

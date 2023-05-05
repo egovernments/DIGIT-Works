@@ -181,6 +181,12 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    MyBillsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const MyBillsPage(),
+      );
+    },
   };
 
   @override
@@ -275,6 +281,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               SuccessResponseRoute.name,
               path: 'success',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              MyBillsRoute.name,
+              path: 'my-bills',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -717,4 +728,16 @@ class SuccessResponseRouteArgs {
   String toString() {
     return 'SuccessResponseRouteArgs{key: $key, header: $header, subHeader: $subHeader, subText: $subText, subTitle: $subTitle, callBack: $callBack, callBackWhatsapp: $callBackWhatsapp, callBackDownload: $callBackDownload, callBackPrint: $callBackPrint, backButton: $backButton, buttonLabel: $buttonLabel, isWithoutLogin: $isWithoutLogin, downloadLabel: $downloadLabel, printLabel: $printLabel, whatsAppLabel: $whatsAppLabel, backButtonLabel: $backButtonLabel}';
   }
+}
+
+/// generated route for
+/// [MyBillsPage]
+class MyBillsRoute extends PageRouteInfo<void> {
+  const MyBillsRoute()
+      : super(
+          MyBillsRoute.name,
+          path: 'my-bills',
+        );
+
+  static const String name = 'MyBillsRoute';
 }

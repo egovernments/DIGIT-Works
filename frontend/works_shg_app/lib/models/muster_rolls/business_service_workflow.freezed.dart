@@ -195,7 +195,7 @@ mixin _$BusinessServices {
   String? get business => throw _privateConstructorUsedError;
   int? get businessServiceSla => throw _privateConstructorUsedError;
   @JsonKey(name: 'states')
-  BusinessWorkflowState? get workflowState =>
+  List<BusinessWorkflowState>? get workflowState =>
       throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -216,9 +216,7 @@ abstract class $BusinessServicesCopyWith<$Res> {
       String? businessService,
       String? business,
       int? businessServiceSla,
-      @JsonKey(name: 'states') BusinessWorkflowState? workflowState});
-
-  $BusinessWorkflowStateCopyWith<$Res>? get workflowState;
+      @JsonKey(name: 'states') List<BusinessWorkflowState>? workflowState});
 }
 
 /// @nodoc
@@ -265,20 +263,8 @@ class _$BusinessServicesCopyWithImpl<$Res, $Val extends BusinessServices>
       workflowState: freezed == workflowState
           ? _value.workflowState
           : workflowState // ignore: cast_nullable_to_non_nullable
-              as BusinessWorkflowState?,
+              as List<BusinessWorkflowState>?,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $BusinessWorkflowStateCopyWith<$Res>? get workflowState {
-    if (_value.workflowState == null) {
-      return null;
-    }
-
-    return $BusinessWorkflowStateCopyWith<$Res>(_value.workflowState!, (value) {
-      return _then(_value.copyWith(workflowState: value) as $Val);
-    });
   }
 }
 
@@ -296,10 +282,7 @@ abstract class _$$_BusinessServicesCopyWith<$Res>
       String? businessService,
       String? business,
       int? businessServiceSla,
-      @JsonKey(name: 'states') BusinessWorkflowState? workflowState});
-
-  @override
-  $BusinessWorkflowStateCopyWith<$Res>? get workflowState;
+      @JsonKey(name: 'states') List<BusinessWorkflowState>? workflowState});
 }
 
 /// @nodoc
@@ -342,9 +325,9 @@ class __$$_BusinessServicesCopyWithImpl<$Res>
           : businessServiceSla // ignore: cast_nullable_to_non_nullable
               as int?,
       workflowState: freezed == workflowState
-          ? _value.workflowState
+          ? _value._workflowState
           : workflowState // ignore: cast_nullable_to_non_nullable
-              as BusinessWorkflowState?,
+              as List<BusinessWorkflowState>?,
     ));
   }
 }
@@ -358,7 +341,9 @@ class _$_BusinessServices implements _BusinessServices {
       this.businessService,
       this.business,
       this.businessServiceSla,
-      @JsonKey(name: 'states') this.workflowState});
+      @JsonKey(name: 'states')
+          final List<BusinessWorkflowState>? workflowState})
+      : _workflowState = workflowState;
 
   factory _$_BusinessServices.fromJson(Map<String, dynamic> json) =>
       _$$_BusinessServicesFromJson(json);
@@ -373,9 +358,16 @@ class _$_BusinessServices implements _BusinessServices {
   final String? business;
   @override
   final int? businessServiceSla;
+  final List<BusinessWorkflowState>? _workflowState;
   @override
   @JsonKey(name: 'states')
-  final BusinessWorkflowState? workflowState;
+  List<BusinessWorkflowState>? get workflowState {
+    final value = _workflowState;
+    if (value == null) return null;
+    if (_workflowState is EqualUnmodifiableListView) return _workflowState;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
@@ -396,14 +388,20 @@ class _$_BusinessServices implements _BusinessServices {
                 other.business == business) &&
             (identical(other.businessServiceSla, businessServiceSla) ||
                 other.businessServiceSla == businessServiceSla) &&
-            (identical(other.workflowState, workflowState) ||
-                other.workflowState == workflowState));
+            const DeepCollectionEquality()
+                .equals(other._workflowState, _workflowState));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, tenantId, uuid, businessService,
-      business, businessServiceSla, workflowState);
+  int get hashCode => Object.hash(
+      runtimeType,
+      tenantId,
+      uuid,
+      businessService,
+      business,
+      businessServiceSla,
+      const DeepCollectionEquality().hash(_workflowState));
 
   @JsonKey(ignore: true)
   @override
@@ -421,13 +419,14 @@ class _$_BusinessServices implements _BusinessServices {
 
 abstract class _BusinessServices implements BusinessServices {
   const factory _BusinessServices(
-      {required final String tenantId,
-      required final String uuid,
-      final String? businessService,
-      final String? business,
-      final int? businessServiceSla,
-      @JsonKey(name: 'states')
-          final BusinessWorkflowState? workflowState}) = _$_BusinessServices;
+          {required final String tenantId,
+          required final String uuid,
+          final String? businessService,
+          final String? business,
+          final int? businessServiceSla,
+          @JsonKey(name: 'states')
+              final List<BusinessWorkflowState>? workflowState}) =
+      _$_BusinessServices;
 
   factory _BusinessServices.fromJson(Map<String, dynamic> json) =
       _$_BusinessServices.fromJson;
@@ -444,7 +443,7 @@ abstract class _BusinessServices implements BusinessServices {
   int? get businessServiceSla;
   @override
   @JsonKey(name: 'states')
-  BusinessWorkflowState? get workflowState;
+  List<BusinessWorkflowState>? get workflowState;
   @override
   @JsonKey(ignore: true)
   _$$_BusinessServicesCopyWith<_$_BusinessServices> get copyWith =>

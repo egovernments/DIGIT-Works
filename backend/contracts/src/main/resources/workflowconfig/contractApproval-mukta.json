@@ -1,0 +1,249 @@
+{
+  "RequestInfo": {
+    "apiId": "contract-service",
+    "action": "",
+    "did": 1,
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "requesterId": "",
+    "ts": 1513579888683,
+    "ver": "1.0.0",
+    "authToken": "94ecb06f-8e5b-4798-af8f-56a987560209",
+    "userInfo": {
+      "uuid": "7e46e32c-187c-4fb4-9d6b-1ac70fa8f011"
+    }
+  },
+  "BusinessServices": [
+    {
+      "tenantId": "pg",
+      "businessService": "CONTRACT",
+      "business": "contract-service",
+      "businessServiceSla": 604800000,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CREATE",
+              "nextState": "PENDING_FOR_VERIFICATION",
+              "roles": [
+                "WORK_ORDER_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "PENDING_FOR_VERIFICATION",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "VERIFY_AND_FORWARD",
+              "nextState": "PENDING_FOR_APPROVAL",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
+              ]
+            },
+            {
+              "action": "SEND_BACK",
+              "nextState": "PENDING_FOR_CORRECTION",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "PENDING_FOR_APPROVAL",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "PENDING_FOR_ACCEPTANCE",
+              "roles": [
+                "WORK_ORDER_APPROVER"
+              ]
+            },
+            {
+              "action": "SEND_BACK",
+              "nextState": "PENDING_FOR_REVERIFICATION",
+              "roles": [
+                "WORK_ORDER_APPROVER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "WORK_ORDER_APPROVER"
+              ]
+            },
+            {
+              "action": "SEND_BACK_TO_ORIGINATOR",
+              "nextState": "PENDING_FOR_CORRECTION",
+              "roles": [
+                "WORK_ORDER_APPROVER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 604800000,
+          "state": "PENDING_FOR_ACCEPTANCE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "ACCEPT",
+              "nextState": "ACCEPTED",
+              "roles": [
+                "ORG_ADMIN"
+              ]
+            },
+            {
+              "action": "DECLINE",
+              "nextState": "PENDING_FOR_REASSIGNMENT",
+              "roles": [
+                "ORG_ADMIN"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "ORG_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "PENDING_FOR_CORRECTION",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "EDIT",
+              "nextState": "PENDING_FOR_VERIFICATION",
+              "roles": [
+                "WORK_ORDER_CREATOR"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "WORK_ORDER_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "PENDING_FOR_REASSIGNMENT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "EDIT",
+              "nextState": "PENDING_FOR_VERIFICATION",
+              "roles": [
+                "WORK_ORDER_CREATOR"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "WORK_ORDER_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "PENDING_FOR_REVERIFICATION",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "VERIFY_AND_FORWARD",
+              "nextState": "PENDING_FOR_APPROVAL",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
+              ]
+            },
+            {
+              "action": "SEND_BACK",
+              "nextState": "PENDING_FOR_CORRECTION",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "WORK_ORDER_VERIFIER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "ACCEPTED",
+          "applicationStatus": "ACTIVE",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": []
+        },
+        {
+          "sla": null,
+          "state": "REJECTED",
+          "applicationStatus": "INACTIVE",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": []
+        }
+      ]
+    }
+  ]
+}

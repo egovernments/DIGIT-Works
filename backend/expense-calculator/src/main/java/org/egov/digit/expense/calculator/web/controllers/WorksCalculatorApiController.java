@@ -1,11 +1,11 @@
 package org.egov.digit.expense.calculator.web.controllers;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
@@ -28,7 +28,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Controller
 @RequestMapping("")
 public class WorksCalculatorApiController {
-
 	@Autowired
 	private final ObjectMapper objectMapper;
 	@Autowired
@@ -47,11 +46,11 @@ public class WorksCalculatorApiController {
 	@RequestMapping(value = "/v1/_calculate", method = RequestMethod.POST)
 	public ResponseEntity<BillResponse> worksCalculatorV1CalculatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody CalculationRequest calculationRequest) {
-		List<Bill> bills = expenseCalculatorService.createBills(calculationRequest);
+		List<Bill> bills = expenseCalculatorService.createWageOrSupervisionBills(calculationRequest);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculationRequest.getRequestInfo(), true);
 		BillResponse billResponse = BillResponse.builder()
 				.responseInfo(responseInfo)
-				.bill(bills)
+				.bills(bills)
 				.build();
 
 		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.OK);
@@ -67,8 +66,18 @@ public class WorksCalculatorApiController {
 																	 .responseInfo(responseInfo)
 				                                                     .calculation(calculation)
 				                                                     .build();
-
 		return new ResponseEntity<CalculationResponse>(calculationResponse, HttpStatus.OK);
+	}
+
+
+	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
+	public ResponseEntity<BillMapperSearchResponse> search(@Valid @RequestBody CalculatorSearchRequest calculatorSearchRequest) {
+		RequestInfo requestInfo=calculatorSearchRequest.getRequestInfo();
+		List<BillMapper> bills = expenseCalculatorService.search(calculatorSearchRequest);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(calculatorSearchRequest.getRequestInfo(), true);
+		BillMapperSearchResponse billResponse= BillMapperSearchResponse.builder().responseInfo(responseInfo).billMappers(bills)
+				.pagination(calculatorSearchRequest.getPagination()).build();
+		return new ResponseEntity<BillMapperSearchResponse>(billResponse, HttpStatus.OK);
 	}
 
 }

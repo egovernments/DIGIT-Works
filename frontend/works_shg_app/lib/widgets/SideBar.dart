@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/auth/auth.dart';
 import 'package:works_shg_app/icons/shg_icons.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/app_localization.dart';
@@ -99,7 +100,7 @@ class _SideBar extends State<SideBar> {
               context.router.currentPath == '/'
                   ? Container(
                       alignment: Alignment.centerLeft,
-                      height: 50,
+                      height: 60,
                       width: 9,
                       color: const DigitColors().burningOrange,
                     )
@@ -130,11 +131,6 @@ class _SideBar extends State<SideBar> {
                                 AppInitializationSetupEvent(
                                     selectedLangIndex:
                                         data.value != 'en_IN' ? 1 : 0));
-
-                            await AppLocalizations(
-                              Locale(data.value.split('_').first,
-                                  data.value.split('_').last),
-                            ).load();
                             context.read<LocalizationBloc>().add(
                                 OnLoadLocalizationEvent(
                                     module: widget.module,

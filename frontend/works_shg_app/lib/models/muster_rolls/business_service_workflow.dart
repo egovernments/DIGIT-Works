@@ -23,7 +23,7 @@ class BusinessServices with _$BusinessServices {
     String? businessService,
     String? business,
     int? businessServiceSla,
-    @JsonKey(name: 'states') BusinessWorkflowState? workflowState,
+    @JsonKey(name: 'states') List<BusinessWorkflowState>? workflowState,
   }) = _BusinessServices;
 
   factory BusinessServices.fromJson(

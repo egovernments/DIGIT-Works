@@ -46,7 +46,7 @@ export const createOrganizationConfigMUKTA = {
                     },
                     {
                         label: "MASTERS_REGISTERED_BY_DEPT",
-                        isMandatory: true,
+                        isMandatory: false,
                         key: "basicDetails_regDept",
                         type: "text",
                         disable: false,
@@ -61,7 +61,7 @@ export const createOrganizationConfigMUKTA = {
                     },
                     {
                         label: "MASTERS_REGISTRATION_NUMBER",
-                        isMandatory: true,
+                        isMandatory: false,
                         key: "basicDetails_regDeptNo",
                         type: "text",
                         disable: false,
