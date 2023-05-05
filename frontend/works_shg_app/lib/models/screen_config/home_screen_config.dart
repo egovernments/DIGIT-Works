@@ -2,6 +2,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../works/my_works_search_criteria.dart';
+
 part 'home_screen_config.freezed.dart';
 part 'home_screen_config.g.dart';
 
@@ -22,6 +24,8 @@ class CommonUIConfigModel with _$CommonUIConfigModel {
   const factory CommonUIConfigModel({
     @JsonKey(name: 'CBOHomeScreenConfig')
         List<CBOHomeScreenConfigModel>? cboHomeScreenConfig,
+    @JsonKey(name: 'CBOMyWorks')
+        List<CBOMyWorksSearchCriteriaModel>? cboMyWorksSearchCriteria,
   }) = _CommonUIConfigModel;
 
   factory CommonUIConfigModel.fromJson(

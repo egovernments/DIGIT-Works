@@ -115,8 +115,7 @@ const CreatePurchaseBillForm = ({
                 sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
             },
             onSuccess: async (responseData, variables) => {
-              //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
-              sendDataToResponsePage("billNumber", tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
+              sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
             },
           });
     }

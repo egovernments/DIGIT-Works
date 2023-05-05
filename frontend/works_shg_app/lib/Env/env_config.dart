@@ -23,7 +23,6 @@ class EnvironmentConfiguration {
     _dotEnv = DotEnv();
     try {
       await _dotEnv.load();
-      print('DotENv: ');
       _variables = Variables(dotEnv: _dotEnv);
     } catch (error) {
       print('catch Error');
