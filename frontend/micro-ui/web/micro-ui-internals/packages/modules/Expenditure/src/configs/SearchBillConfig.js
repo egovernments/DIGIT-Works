@@ -162,7 +162,7 @@ export const SearchBillConfig = {
                         columns: [
                             {
                                 label: "WORKS_BILL_NUMBER",
-                                jsonPath: "billNumber",
+                                jsonPath: "bill.billNumber",
                                 additionalCustomization:true 
                             },
                             {
@@ -171,7 +171,7 @@ export const SearchBillConfig = {
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "tenantId",
+                                jsonPath: "bill.tenantId",
                                 additionalCustomization:true 
                             },
                             {
