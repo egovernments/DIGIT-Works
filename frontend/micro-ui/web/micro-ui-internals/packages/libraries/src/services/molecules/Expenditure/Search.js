@@ -190,6 +190,7 @@ export const BillsSearch = {
   viewPurchaseBillDetails: async ({tenantId, t, billCriteria, pagination, headerLocale, metaData= {}}) => {
 
     //Bill search
+    
     const billResponse = await WorksService?.searchBill({billCriteria, pagination});
     const billData = billResponse?.bills?.[0]; //TODO: Index with update once API is done.
     const WONumber = billData?.referenceId.split("_")[0];
@@ -329,7 +330,7 @@ export const BillsSearch = {
 
     return {
         applicationDetails: details,
-        applicationData: [], //TODO: @hariom send the search response object here(required by WorkflowActions)
+        applicationData: billData, //TODO: @hariom send the search response object here(required by WorkflowActions)
         isNoDataFound : false //TODO:
     }
   }
