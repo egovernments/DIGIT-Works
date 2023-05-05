@@ -12,6 +12,7 @@ const ViewAttendance = () => {
   const [modify, setModify] = useState(false);
   const [cardState,setCardState] = useState([])
   const [saveAttendanceState, setSaveAttendanceState] = useState({ displaySave : false, updatePayload: []})
+  const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
 
   const [isStateChanged, setStateChanged] = useState(``)
 
@@ -24,7 +25,7 @@ const ViewAttendance = () => {
   const { mutate } = Digit.Hooks.attendance.useUpdateAttendance();
 
   const HandleDownloadPdf = () => {
-    Digit.Utils.downloadEgovPDF('musterRoll/muster-roll',{musterRollNumber,tenantId},`muster-roll-${musterRollNumber}.pdf`)
+    Digit.Utils.downloadEgovPDF('musterRoll/muster-roll',{musterRollNumber,tenantId},`Muster-roll-${musterRollNumber}.pdf`)
   }
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const ViewAttendance = () => {
                   { title: "WORKS_PROJECT_ID", value: muster?.additionalDetails?.projectId || t("ES_COMMON_NA") },
                   { title: "PROJECTS_DESCRIPTION", value: muster?.additionalDetails?.projectDesc || t("ES_COMMON_NA")},
                   { title: "COMMON_NAME_OF_CBO", value: muster?.additionalDetails?.orgName || t("ES_COMMON_NA") },
-                  { title: "COMMON_ROLE_OF_CBO", value: muster?.additionalDetails?.cboRole || t("ES_COMMON_NA") },
+                  { title: "COMMON_ROLE_OF_CBO", value: t(`COMMON_MASTERS_${muster?.additionalDetails?.executingAuthority}`) || t("ES_COMMON_NA") },
                   { title: "ES_COMMON_MUSTER_ROLL_PERIOD", value: `${Digit.DateUtils.ConvertTimestampToDate(muster?.startDate, 'dd/MM/yyyy')} - ${Digit.DateUtils.ConvertTimestampToDate(muster?.endDate, 'dd/MM/yyyy')}` },
                   { title: "MUSTER_ROLLS_NO_OF_WAGE_SEEKERS", value: muster?.individualEntries.length || t("ES_COMMON_NA") },
                   { title: "MUSTER_ROLLS_TOTAL_ATTENDANCE_IN_DAYS", value: muster?.individualEntries?.reduce((acc,row)=>acc + (row?.actualTotalAttendance || row?.modifiedTotalAttendance || 0),0) || t("ES_COMMON_NA") },
@@ -56,7 +57,6 @@ const ViewAttendance = () => {
     }, [data])
 
   if(isLoading) return <Loader />
-
   return (
     <React.Fragment>
       <div className={"employee-application-details"} >
@@ -78,9 +78,9 @@ const ViewAttendance = () => {
           moduleCode="AttendenceMgmt"
           isDataLoading={false}
           showTimeLine={true}
-          timelineStatusPrefix={"ATM_"}
-          businessService={"muster-roll-approval"}
-          forcedActionPrefix={"ATM"}
+          timelineStatusPrefix={`WF_${businessService}_`}
+          businessService={businessService}
+          forcedActionPrefix={`WF_${businessService}_ACTION`}
           mutate={mutate}
           showToast={showToast}
           setShowToast={setShowToast}
@@ -96,9 +96,9 @@ const ViewAttendance = () => {
 
       {isSuccess && !modify &&
         <WorkflowActions
-          forcedActionPrefix={"ATM"}
-          businessService={"muster-roll-approval"}
-          applicationNo={musterRollNumber}
+        forcedActionPrefix={`WF_${businessService}_ACTION`}
+        businessService={businessService}
+        applicationNo={musterRollNumber}
           tenantId={tenantId}
           applicationDetails={data?.applicationData}
           url={Digit.Utils.Urls.attendencemgmt.mustorRoll.update}

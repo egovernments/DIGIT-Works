@@ -79,15 +79,16 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
-    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
-    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
+    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
     setDisplayMenu(false)
     setSelectedAction(action)
 
     //here check if actin is edit then do a history.push acc to the businessServ and action
     //send appropriate states over
-    if(bsEstimate === businessService && action?.action === "RE-SUBMITTED"){
+    
+    if(bsEstimate === businessService && action?.action === "RE-SUBMIT"){
         history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
         return 
     }
@@ -142,14 +143,13 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   if(isEnableLoader){
     return <Loader />
   }
-
   return (
     <React.Fragment>
       {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && (
         <ActionBar style={{ ...ActionBarStyle }}>
           {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
             <Menu
-              localeKeyPrefix={forcedActionPrefix || `WORKS_${businessService?.toUpperCase()}`}
+              localeKeyPrefix={forcedActionPrefix || `WF_${businessService?.toUpperCase()}_ACTION`}
               options={actions}
               optionKey={"action"}
               t={t}
@@ -168,7 +168,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
             name={actions?.[0]?.action}
             value={actions?.[0]?.action}
             onClick={(e) => { onActionSelect(actions?.[0] || {}) }}>
-            {t(`${forcedActionPrefix || `WF_EMPLOYEE_${businessService?.toUpperCase()}`}_${actions?.[0]?.action}`)}
+            {t( Digit.Utils.locale.getTransformedLocale(`${forcedActionPrefix || `WF_${businessService?.toUpperCase()}_ACTION`}_${actions?.[0]?.action}`))}
           </button>
         </ActionBar>
       )}

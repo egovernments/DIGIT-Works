@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
+import org.egov.digit.expense.calculator.web.models.MusterRollConsumerError;
 import org.egov.digit.expense.calculator.web.models.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -33,7 +34,11 @@ public class ExpenseCalculatorConsumer {
 			expenseCalculatorService.createAndPostWageSeekerBill(request);
 		} catch (Exception exception) {
 			log.error("Error occurred while processing the consumed muster record from topic : " + topic, exception);
-			producer.push(configs.getCalculatorErrorTopic(),request);
+			final MusterRollConsumerError error = MusterRollConsumerError.builder()
+					.musterRollRequest(request)
+					.exception(exception)
+					.build();
+			producer.push(configs.getCalculatorErrorTopic(),error);
 			//throw new RuntimeException(exception);
 		}
 	}

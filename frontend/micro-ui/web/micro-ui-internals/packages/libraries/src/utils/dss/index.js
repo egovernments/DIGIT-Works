@@ -59,6 +59,13 @@ export const formatterWithoutRound = (value, symbol, unit, commaSeparated = true
   }
 };
 
+export const convertFormatterToNumber = (value) => {
+  if (!value && value !== 0) return "";
+  else {
+    return parseFloat(value? String(value).replaceAll(/,/g, '') : value);
+  }
+};
+
 export const getDuration = (startDate, endDate) => {
   let noOfDays = (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24);
   if (noOfDays > 91) {

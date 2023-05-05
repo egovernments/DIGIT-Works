@@ -10,9 +10,13 @@ const configEstimateModal = (
     moduleCode
 ) => {
     const {action:actionString} = action
+    const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
+    const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll");
+    const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     
     const configMap = {
-        "mukta-estimate": {
+        [bsEstimate]: {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -24,7 +28,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "REJECT": {
@@ -84,7 +89,7 @@ const configEstimateModal = (
                 }
             }
         },
-        "contract-approval-mukta": {
+        [bsContract]: {
             "default":{
                 comments:{
                     isMandatory:false,
@@ -96,7 +101,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "REJECT": {
@@ -170,7 +176,7 @@ const configEstimateModal = (
                 }
             },
         },
-        "muster-roll-approval":{
+        [bsMuster]:{
             "default":{
                 comments:{
                     isMandatory:false,
@@ -182,7 +188,8 @@ const configEstimateModal = (
                 },
                 upload:{
                     isMandatory:false,
-                    show:true
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             },
             "APPROVE": {
@@ -247,6 +254,50 @@ const configEstimateModal = (
                 acceptTerms: {
                     isMandatory:false,
                     show:false
+                }
+            }
+        },
+        [bsPurchaseBill]:{
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "VERIFY_AND_FORWARD":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
+                }
+            },
+            "REJECT":{
+                comments:{
+                    isMandatory:true,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true
                 }
             }
         }
@@ -328,7 +379,9 @@ const configEstimateModal = (
                             name: "documents",
                             allowedMaxSizeInMB: 5,
                             maxFilesAllowed: 1,
-                            allowedFileTypes: /(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv)$/i,
+                            allowedFileTypes:configMap?.[businessService]?.default?.upload?.allowedFileTypes,
+                            hintText:t("WORKS_DOC_UPLOAD_HINT"),
+                            showHintBelow:true,
                             customClass: "upload-margin-bottom",
                             errorMessage: t("WORKS_FILE_UPLOAD_CUSTOM_ERROR_MSG"),
                             hideInForm:!fetchIsShow("upload")

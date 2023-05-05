@@ -38,6 +38,9 @@
                 }
             }
             }
+            &.download {
+                grid-template-columns: 100%
+            }
             .section {
                 min-height: 10rem;
                 background-color: white;

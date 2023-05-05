@@ -14,7 +14,7 @@ const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse }) 
       setStatusMap(inboxResponse.statusMap?.map(row => {
        return {
          uuid:row.statusid,
-         state: row.applicationstatus
+         state: row.state || row.applicationstatus
        }
       }))
     }

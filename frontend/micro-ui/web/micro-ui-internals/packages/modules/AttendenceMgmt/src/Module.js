@@ -14,7 +14,7 @@ import ViewAttendance from "./pages/employee/viewAttendance/ViewAttendances";
 
 export const AttendenceMgmtModule = ({ stateCode, userType, tenants }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const moduleCode = ["AttendenceMgmt","common-masters",tenantId];
+  const moduleCode = ["AttendenceMgmt","common-masters","workflow",tenantId];
   const { path, url } = useRouteMatch();
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({

@@ -65,7 +65,8 @@ public class WorkflowService {
         ProcessInstance processInstance = getProcessInstanceForEstimate(estimateRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(estimateRequest.getRequestInfo(), Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
-        estimateRequest.getEstimate().setWfStatus(state.getApplicationStatus());
+        estimateRequest.getEstimate().setWfStatus(state.getState());        
+        estimateRequest.getEstimate().setStatus(Estimate.StatusEnum.fromValue(state.getApplicationStatus()));
         return state.getApplicationStatus();
     }
 
@@ -174,7 +175,7 @@ public class WorkflowService {
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getEstimateWFModuleName());
         processInstance.setTenantId(estimate.getTenantId());
-        processInstance.setBusinessService(getBusinessService(request).getBusinessService());
+        processInstance.setBusinessService(serviceConfiguration.getEstimateWFBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 

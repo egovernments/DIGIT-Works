@@ -28,7 +28,7 @@ public enum LineItemType {
 	@JsonCreator
 	public static LineItemType fromValue(String text) {
 		for (LineItemType b : LineItemType.values()) {
-			if (String.valueOf(b.value).equals(text)) {
+			if (String.valueOf(b.value).equalsIgnoreCase(text)) {
 				return b;
 			}
 		}

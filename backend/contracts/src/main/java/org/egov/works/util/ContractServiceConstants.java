@@ -59,16 +59,20 @@ public class ContractServiceConstants {
 
     public static final String CONTRACTS_APPROVE_CBO_LOCALIZATION_CODE = "CONTRACTS_NOTIFICATION_TO_CBOADMIN_WORKFLOW_APPROVE_ACTION";
 
+    public static final String CONTRACTS_DECLINE_CREATOR_LOCALIZATION_CODE = "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_DECLINE_ACTION";
+
+    public static final String CONTRACTS_ACCEPT_CREATOR_LOCALIZATION_CODE = "CONTRACTS_NOTIFICATION_TO_CREATOR_WORKFLOW_ACCEPT_ACTION";
+
 
     public static final String CONTRACTS_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
     public static final String CONTRACTS_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
 
     //Project service Constants
-    public static final String PROJECT_NAME_CODE ="$.Projects.*.name";
+    public static final String PROJECT_NAME_CODE ="$.Project.*.name";
 
-    public static final String PROJECT_BOUNDARY_CODE ="$.Projects.*.address.boundary";
+    public static final String PROJECT_BOUNDARY_CODE ="$.Project.*.address.boundary";
 
-    public static final String PROJECT_BOUNDARY_TYPE_CODE ="$.Projects.*.address.boundaryType";
+    public static final String PROJECT_BOUNDARY_TYPE_CODE ="$.Project.*.address.boundaryType";
 
     //Location Service Constants
     public static final String LOCATION_BOUNDARY_NAME_CODE ="$.*.*.boundary.*.name";

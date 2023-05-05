@@ -1,7 +1,8 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 
 import '../../blocs/attendance/search_projects/search_projects.dart';
@@ -49,10 +50,27 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer: DrawerWrapper( Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
           module: CommonMethods.getLocaleModules(),
         ))),
+        bottomNavigationBar: BlocBuilder<AttendanceProjectsSearchBloc,
+            AttendanceProjectsSearchState>(builder: (context, state) {
+          return state.maybeWhen(
+              orElse: () => Container(),
+              loading: () => shg_loader.Loaders.circularLoader(context),
+              loaded: (AttendanceRegistersModel? attendanceModel) {
+                return projectList.isEmpty || projectList.length == 1
+                    ? const SizedBox(
+                        height: 30,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              });
+        }),
         body: SingleChildScrollView(
             child: BlocListener<AttendanceProjectsSearchBloc,
                 AttendanceProjectsSearchState>(
@@ -141,7 +159,16 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
                                       AppLocalizations.of(context).translate(
                                           i18.attendanceMgmt.updateAttendance),
                                   attendanceRegistersModel: attendanceRegisters,
+                                ),
+                          const SizedBox(
+                            height: 16.0,
+                          ),
+                          projectList.isNotEmpty && projectList.length > 1
+                              ? const Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: PoweredByDigit(),
                                 )
+                              : const SizedBox.shrink()
                         ]);
                   });
             },

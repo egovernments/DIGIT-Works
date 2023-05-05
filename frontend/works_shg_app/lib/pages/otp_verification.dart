@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 import '../blocs/auth/auth.dart';
 import '../data/remote_client.dart';
@@ -15,6 +16,7 @@ import '../services/urls.dart';
 import '../utils/notifiers.dart';
 import '../widgets/Back.dart';
 import '../widgets/LabelText.dart';
+import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/resend_otp.dart';
 import '../widgets/atoms/sub_label.dart';
 
@@ -52,6 +54,19 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
     localizationText = localizationText.replaceFirst(
         '{mobileNumber}', '+91 - ${widget.mobileNumber}');
     return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 16,
+        title: const AppBarLogo(),
+        automaticallyImplyLeading: false,
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        padding: const EdgeInsets.all(8.0),
+        child: const Align(
+          alignment: Alignment.bottomCenter,
+          child: PoweredByDigit(),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(children: [
           Back(
@@ -167,10 +182,6 @@ class _OTPVerificationPage extends State<OTPVerificationPage> {
               ],
             ),
           ),
-          const Align(
-            alignment: Alignment.bottomCenter,
-            child: PoweredByDigit(),
-          )
         ]),
       ),
     );

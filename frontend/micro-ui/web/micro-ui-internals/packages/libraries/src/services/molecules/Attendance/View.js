@@ -122,8 +122,13 @@ const workflowDataDetails = async (tenantId, businessIds) => {
 
 const getWageSeekerSkills = async () => {
   const skills = {}
-  const response = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "common-masters", [{"name": "WageSeekerSkills"}])
-  response?.['common-masters']?.WageSeekerSkills.forEach(item => (skills[item.code] = item))
+  const skillResponse = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "common-masters", [{"name": "WageSeekerSkills"}])
+  const labourChangesResponse = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "expense", [{"name": "LabourCharges"}])
+  skillResponse?.['common-masters']?.WageSeekerSkills.forEach(item => {
+    let amount = labourChangesResponse?.["expense"]?.LabourCharges?.find(charge => charge?.code === item?.code)?.amount
+    let skillWithAmount = {...item, amount}
+    skills[item.code] = skillWithAmount
+  })
   return skills
 }
 
@@ -135,7 +140,6 @@ export const fetchAttendanceDetails = async (t, tenantId, searchParams) => {
     
     return transformViewDataToApplicationDetails(t, response, skills)
   } catch (error) {
-      console.log('error', error);
       throw new Error(error?.response?.data?.Errors[0].message);
   }
 };

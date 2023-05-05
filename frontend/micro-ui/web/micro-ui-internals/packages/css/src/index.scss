@@ -898,7 +898,7 @@ input[type="number"] {
 .search-instruction-header {
   margin-bottom: 1rem;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   color: theme(colors.text.secondary);
 }
 
@@ -930,6 +930,14 @@ input[type="number"] {
   display: flex;
   padding-top: 10px;
   background-color: #fff;
+}
+
+.fc-paragraph {
+    text-align: justify;
+    padding-left: 6px;
+    margin-bottom: 4%;
+    display: block;
+    padding-top: 5px;
 }
 
 .disabled-text-field {
@@ -1010,12 +1018,42 @@ input[type="number"] {
   }
 }
 .h1 {&.works-header-search{
-font-size: 30px;
+font-size: 36px;
 }
 &.works-header-create{
-  font-size: 30px;
+  font-size: 36px;
 }
 &.works-header-view{
-  font-size: 30px;
+  font-size: 36px;
 }
+}
+.submit-bar header{
+  font-family: Roboto;
+}
+input[type=“date”]::-webkit-calendar-picker-indicator {
+  width: 24px;
+  height: 24px;
+}
+
+.actionBarWrapper {
+  display: flex;
+  column-gap: 24px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.table-instruction-wrapper {
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.table-instruction-header {
+  font-size: 16px;
+  font-weight: 400;
+  color: theme(colors.text.secondary);
 }

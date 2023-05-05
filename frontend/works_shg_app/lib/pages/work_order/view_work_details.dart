@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:works_shg_app/blocs/work_orders/work_order_pdf.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -92,8 +93,8 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
         titleSpacing: 0,
         title: const AppBarLogo(),
       ),
-      drawer: DrawerWrapper(Drawer(
-          child: SideBar(module: CommonMethods.getLocaleModules()))),
+      drawer: DrawerWrapper(
+          Drawer(child: SideBar(module: CommonMethods.getLocaleModules()))),
       bottomNavigationBar:
           BlocBuilder<SearchIndividualWorkBloc, SearchIndividualWorkState>(
               builder: (context, workState) {
@@ -104,79 +105,100 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
               return workOrderList.isNotEmpty &&
                       workOrderList.first['payload']['wfStatus'] == 'APPROVED'
                   ? SizedBox(
-                      height: 120,
+                      height: 100,
                       child: DigitCard(
+                          padding: const EdgeInsets.all(8.0),
+                          margin: const EdgeInsets.all(0),
                           child: Column(
-                        children: [
-                          DigitElevatedButton(
-                            onPressed: () {
-                              context.read<AcceptWorkOrderBloc>().add(
-                                    WorkOrderAcceptEvent(
-                                        contractsModel:
-                                            workOrderList.first['payload'],
-                                        action: 'ACCEPT',
-                                        comments: 'Accept contract'),
-                                  );
-                            },
-                            child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 4.0),
-                                child: Text(t.translate(i18.common.accept),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16,
-                                        color: DigitTheme
-                                            .instance.colorScheme.onPrimary))),
-                          ),
-                          Center(
-                            child: ButtonLink(
-                              t.translate(i18.common.decline),
-                              () => DigitDialog.show(context,
-                                  options: DigitDialogOptions(
-                                      titleText: AppLocalizations.of(context)
-                                          .translate(i18.common.warning),
-                                      contentText: AppLocalizations.of(context)
-                                          .translate(i18.workOrder.warningMsg),
-                                      primaryAction: DigitDialogActions(
-                                        label: AppLocalizations.of(context)
-                                            .translate(i18.common.confirm),
-                                        action: (BuildContext context) {
-                                          context
-                                              .read<DeclineWorkOrderBloc>()
-                                              .add(
-                                                WorkOrderDeclineEvent(
-                                                    contractsModel:
-                                                        workOrderList
-                                                            .first['payload'],
-                                                    action: 'DECLINE',
-                                                    comments:
-                                                        'DECLINE contract'),
-                                              );
-                                          Navigator.of(context,
-                                                  rootNavigator: true)
-                                              .pop();
-                                        },
-                                      ),
-                                      secondaryAction: DigitDialogActions(
-                                        label: AppLocalizations.of(context)
-                                            .translate(i18.common.back),
-                                        action: (BuildContext context) =>
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
-                                                .pop(),
-                                      ))),
-                              align: Alignment.center,
-                            ),
-                          )
-                        ],
-                      )),
+                            children: [
+                              DigitElevatedButton(
+                                onPressed: () {
+                                  context.read<AcceptWorkOrderBloc>().add(
+                                        WorkOrderAcceptEvent(
+                                            contractsModel:
+                                                workOrderList.first['payload'],
+                                            action: 'ACCEPT',
+                                            comments: 'Accept contract'),
+                                      );
+                                },
+                                child: Center(
+                                  child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 4.0),
+                                      child:
+                                          Text(t.translate(i18.common.accept),
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 16,
+                                                color: DigitTheme.instance
+                                                    .colorScheme.onPrimary,
+                                              ))),
+                                ),
+                              ),
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: ButtonLink(
+                                    t.translate(i18.common.decline),
+                                    () => DigitDialog.show(context,
+                                        options: DigitDialogOptions(
+                                            titleText: AppLocalizations.of(
+                                                    context)
+                                                .translate(i18.common.warning),
+                                            contentText: AppLocalizations.of(
+                                                    context)
+                                                .translate(
+                                                    i18.workOrder.warningMsg),
+                                            primaryAction: DigitDialogActions(
+                                              label:
+                                                  AppLocalizations.of(context)
+                                                      .translate(
+                                                          i18.common.confirm),
+                                              action: (BuildContext context) {
+                                                context
+                                                    .read<
+                                                        DeclineWorkOrderBloc>()
+                                                    .add(
+                                                      WorkOrderDeclineEvent(
+                                                          contractsModel:
+                                                              workOrderList
+                                                                      .first[
+                                                                  'payload'],
+                                                          action: 'DECLINE',
+                                                          comments:
+                                                              'DECLINE contract'),
+                                                    );
+                                                Navigator.of(context,
+                                                        rootNavigator: true)
+                                                    .pop();
+                                              },
+                                            ),
+                                            secondaryAction: DigitDialogActions(
+                                              label: AppLocalizations.of(
+                                                      context)
+                                                  .translate(i18.common.back),
+                                              action: (BuildContext context) =>
+                                                  Navigator.of(context,
+                                                          rootNavigator: true)
+                                                      .pop(),
+                                            ))),
+                                    align: Alignment.center,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            ],
+                          )),
                     )
                   : workOrderList.isNotEmpty &&
                           workOrderList.first['payload']['wfStatus'] ==
                               'ACCEPTED'
                       ? SizedBox(
-                          height: 90,
+                          height: 60,
                           child: DigitCard(
+                            padding: const EdgeInsets.all(8.0),
+                            margin: const EdgeInsets.all(0.0),
                             child: DigitElevatedButton(
                               onPressed: () {
                                 context.router.push(
@@ -233,7 +255,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                   i18.attendanceMgmt.projectId:
                                       e.additionalDetails?.projectId ?? 'NA',
                                   i18.common.location:
-                                      '${e.additionalDetails?.locality}, ${e.additionalDetails?.ward}',
+                                      '${t.translate('${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}')}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
                                   i18.attendanceMgmt.projectType:
                                       e.additionalDetails?.projectType ?? 'NA',
                                   i18.attendanceMgmt.projectName:
@@ -264,7 +286,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                           'NA'),
                                   i18.workOrder.completionPeriod:
                                       '${e.completionPeriod} ${t.translate(i18.common.days)}',
-                                  i18.workOrder.contractAmount:
+                                  i18.workOrder.workOrderAmount:
                                       '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                   i18.common.status: e.wfStatus,
                                 },
@@ -289,13 +311,16 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .toString())
                                       : 'NA',
                                   i18.workOrder.workStartDate: e.startDate !=
-                                          null && e.startDate != 0
+                                              null &&
+                                          e.startDate != 0
                                       ? DateFormats.getFilteredDate(
                                           DateTime.fromMillisecondsSinceEpoch(
                                                   e.startDate ?? 0)
                                               .toString())
                                       : 'NA',
-                                  i18.workOrder.workEndDate: e.endDate != null && e.endDate != 0
+                                  i18.workOrder.workEndDate: e.endDate !=
+                                              null &&
+                                          e.endDate != 0
                                       ? DateFormats.getFilteredDate(
                                           DateTime.fromMillisecondsSinceEpoch(
                                                   e.endDate ?? 0)
@@ -346,7 +371,11 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.only(
+                                        left: 8.0,
+                                        right: 16.0,
+                                        top: 16.0,
+                                        bottom: 16.0),
                                     child: Text(
                                       '${AppLocalizations.of(context).translate(i18.workOrder.workOrderDetails)}',
                                       style: DigitTheme.instance.mobileTheme
@@ -412,68 +441,63 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                             )),
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(4.0),
+                                                  const EdgeInsets.all(8.0),
                                               child: ButtonLink(
-                                                t.translate(i18
-                                                    .common.termsAndConditions),
+                                                t.translate(i18.common
+                                                    .viewTermsAndConditions),
                                                 () => DigitDialog.show(context,
                                                     options: DigitDialogOptions(
                                                         title: Text(t.translate(i18.common.termsAndConditions),
                                                             style: const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontSize: 16,
+                                                                fontWeight: FontWeight
+                                                                    .w700,
+                                                                fontSize: 24,
                                                                 fontFamily:
                                                                     'Roboto Condensed',
                                                                 fontStyle: FontStyle
                                                                     .normal,
                                                                 color: Color.fromRGBO(
-                                                                    11,
-                                                                    12,
-                                                                    12,
-                                                                    1))),
-                                                        content: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            for (var i = 0;
-                                                                i <
-                                                                    termsNCond
-                                                                        .length;
-                                                                i++)
-                                                              Align(
-                                                                alignment: Alignment
-                                                                    .centerLeft,
-                                                                child: Text(
-                                                                  '${i + 1}. ${termsNCond[i]}',
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              )
-                                                          ],
-                                                        ),
-                                                        titlePadding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
-                                                        contentPadding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
+                                                                    11, 12, 12, 1))),
+                                                        content:
+                                                            termsNCond
+                                                                    .isNotEmpty
+                                                                ? Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      for (var i =
+                                                                              0;
+                                                                          i < termsNCond.length;
+                                                                          i++)
+                                                                        Align(
+                                                                          alignment:
+                                                                              Alignment.centerLeft,
+                                                                          child:
+                                                                              Text(
+                                                                            '${i + 1}. ${termsNCond[i]}',
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontSize: 16,
+                                                                              fontWeight: FontWeight.w700,
+                                                                            ),
+                                                                            textAlign:
+                                                                                TextAlign.start,
+                                                                          ),
+                                                                        )
+                                                                    ],
+                                                                  )
+                                                                : const EmptyImage(
+                                                                    align: Alignment
+                                                                        .center),
+                                                        titlePadding: const EdgeInsets.all(
+                                                            8.0),
+                                                        contentPadding: const EdgeInsets.all(
+                                                            8.0),
                                                         barrierDismissible:
                                                             true,
                                                         primaryAction: DigitDialogActions(
-                                                            label: t.translate(
-                                                                i18.common.close),
+                                                            label: t.translate(i18.common.close),
                                                             action: (context) => Navigator.of(context, rootNavigator: true).pop()),
                                                         isScrollable: true)),
                                                 align: Alignment.centerLeft,
@@ -486,6 +510,13 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                               .workOrder.noWorkOrderAssigned),
                                           align: Alignment.center,
                                         ),
+                                  const SizedBox(
+                                    height: 16.0,
+                                  ),
+                                  const Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: PoweredByDigit(),
+                                  )
                                 ]),
                           ]);
                     } else {

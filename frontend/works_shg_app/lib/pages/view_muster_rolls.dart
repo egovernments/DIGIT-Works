@@ -2,7 +2,8 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/WorkDetailsCard.dart';
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
@@ -49,10 +50,28 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
           titleSpacing: 0,
           title: const AppBarLogo(),
         ),
-        drawer:  DrawerWrapper(Drawer(
+        drawer: DrawerWrapper(Drawer(
             child: SideBar(
           module: CommonMethods.getLocaleModules(),
         ))),
+        bottomNavigationBar:
+            BlocBuilder<MusterRollSearchBloc, MusterRollSearchState>(
+                builder: (context, state) {
+          return state.maybeWhen(
+              orElse: () => Container(),
+              loading: () => shg_loader.Loaders.circularLoader(context),
+              loaded: (MusterRollsModel? musterRollsModel) {
+                return musterList.isEmpty || musterList.length == 1
+                    ? const SizedBox(
+                        height: 30,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              });
+        }),
         body: SingleChildScrollView(
             child: BlocListener<MusterRollSearchBloc, MusterRollSearchState>(
           listener: (context, state) {
@@ -118,7 +137,16 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                 musterRollsModel: musters,
                                 elevatedButtonLabel:
                                     t.translate(i18.common.viewDetails),
+                              ),
+                        const SizedBox(
+                          height: 16.0,
+                        ),
+                        musterList.isNotEmpty && musterList.length > 1
+                            ? const Align(
+                                alignment: Alignment.bottomCenter,
+                                child: PoweredByDigit(),
                               )
+                            : const SizedBox.shrink()
                       ]);
                 },
                 orElse: () => Container());

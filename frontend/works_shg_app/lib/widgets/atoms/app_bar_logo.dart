@@ -14,16 +14,18 @@ class AppBarLogo extends StatelessWidget {
           Image(
               width: 130,
               image: NetworkImage(
-                GlobalVariables.stateInfoListModel!.logoUrlWhite!,
+                GlobalVariables.stateInfoListModel!.logoUrlWhite ?? '',
               )),
           Padding(
               padding: const EdgeInsets.only(right: 8.0, top: 4.0, bottom: 4.0),
               child: Column(
                 children: [
                   Text(
-                    GlobalVariables
-                            .organisationListModel?.organisations?.first.name ??
-                        'NA',
+                    GlobalVariables.organisationListModel != null
+                        ? GlobalVariables.organisationListModel?.organisations
+                                ?.first.name ??
+                            ''
+                        : '',
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
@@ -33,7 +35,7 @@ class AppBarLogo extends StatelessWidget {
                   Text(
                     GlobalVariables.organisationListModel?.organisations?.first
                             .orgNumber ??
-                        'NA',
+                        '',
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 12,

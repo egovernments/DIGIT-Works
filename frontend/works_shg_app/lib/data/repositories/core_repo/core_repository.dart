@@ -7,11 +7,12 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:works_shg_app/Env/app_config.dart';
 import 'package:works_shg_app/models/file_store/file_store_model.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
-import '../../../Env/app_config.dart';
+import '../../../Env/env_config.dart';
 import '../../../utils/common_methods.dart';
 import '../../../utils/models.dart';
 import '../../../utils/save_file_mobile.dart';
@@ -21,7 +22,8 @@ class CoreRepository {
       List<dynamic>? paths, String moduleName) async {
     Map? respStr;
 
-    var postUri = Uri.parse("$apiBaseUrl${Urls.commonServices.fileUpload}");
+    var postUri = Uri.parse(
+        "${kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl}${Urls.commonServices.fileUpload}");
     var request = http.MultipartRequest("POST", postUri);
     if (paths != null && paths.isNotEmpty) {
       if (paths is List<PlatformFile>) {
@@ -109,11 +111,7 @@ class CoreRepository {
     FileStoreListModel? fileStoreListModel;
 
     var res = await http.get(Uri.parse(
-        '$apiBaseUrl${Urls.commonServices.fileFetch}?tenantId=$tenantId&fileStoreIds=${storeId.join(',')}'));
-    // await makeRequest(
-    //     url:
-    //         '${Urls.commonServices.fileFetch}?tenantId=${commonProvider.userDetails!.selectedtenant!.code!}&fileStoreIds=${storeId.join(',')}',
-    //     method: RequestType.GET);
+        '${kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl}${Urls.commonServices.fileFetch}?tenantId=$tenantId&fileStoreIds=${storeId.join(',')}'));
 
     if (res != null) {
       fileStoreListModel = FileStoreListModelMapper.fromMap(

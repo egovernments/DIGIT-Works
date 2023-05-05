@@ -1,12 +1,68 @@
 import { Link } from "react-router-dom";
 import _ from "lodash";
 import React from "react";
-import { Amount } from "@egovernments/digit-ui-react-components";
+import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares
 var Digit = window.Digit || {};
+
+const getBillType = (businessService) => {
+  switch(businessService) {
+    case "EXPENSE.WAGES":
+      return 'wage'
+    case "EXPENSE.PURCHASE":
+      return 'purchase'
+    case "EXPENSE.SUPERVISION":
+      return 'supervision'
+    default:
+      return 'wage';
+  }
+}
+
+const getCreatePaymentPayload = (data) => {
+  let payment = {}
+  payment.tenantId = Digit.ULBService.getCurrentTenantId()
+  payment.netPayableAmount = 0
+  payment.netPaidAmount = 0
+  payment.additionalDetails = {}
+  //payment.status = 'INITIATED'
+
+  payment.bills = []
+  data?.forEach(item => {
+    const bill = item?.original?.bill
+    let billObj = {}
+    billObj.billId = bill?.id
+    billObj.tenantId = bill?.tenantId
+    billObj.totalAmount = bill?.totalAmount
+    billObj.totalPaidAmount = bill?.totalPaidAmount
+    //billObj.status = 'INITIATED'
+    billObj.billDetails = []
+    if(bill?.billDetails?.length > 0) {
+      bill?.billDetails?.forEach(detail => {
+        let billDetailObj = {}
+        billDetailObj.billDetailId = detail?.id //billId
+        billDetailObj.totalAmount = detail?.totalAmount
+        billDetailObj.totalPaidAmount = detail?.totalPaidAmount
+        //billDetailObj.status = 'INITIATED'
+        billDetailObj.payableLineItems = detail?.payableLineItems?.map(item => (
+          {
+            lineItemId: item?.id,
+            tenantId: item?.tenantId,
+            paidAmount: item?.amount,
+            //status: 'INITIATED'
+          }
+        ))
+        billDetailObj.additionalDetails = {}
+        billObj.billDetails.push(billDetailObj)
+      })
+    }
+    payment.bills.push(billObj)
+  })
+  let payload = {payment}
+  return payload
+}
 
 export const UICustomizations = {
   EstimateInboxConfig: {
@@ -71,7 +127,7 @@ export const UICustomizations = {
           return <span>{t(`WF_EST_${value}`)}</span>;
 
          case "WORKS_ESTIMATED_AMOUNT":
-          return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+          return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
 
          case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
@@ -300,7 +356,7 @@ export const UICustomizations = {
         );
       }
       if (key === "WORKS_ESTIMATED_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS"){
         return t(`WF_ESTIMATE_STATUS_${value}`)
@@ -312,7 +368,7 @@ export const UICustomizations = {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
           let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
           let city = location?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(location?.city)}`) : "";
-          return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+          return <p>{`${ward ? ward + ", " : ""}${city}`}</p>;
         }
         return <p>{"NA"}</p>;
       }
@@ -331,7 +387,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"mukta-estimate" },
+        params: { tenantId, businessServices:"ESTIMATE" },
         body: {
          
         },
@@ -446,7 +502,7 @@ export const UICustomizations = {
          ); }
 
       case "PROJECT_ESTIMATED_COST_IN_RS":
-        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
 
       case "ES_COMMON_LOCATION":    
       { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
@@ -584,7 +640,7 @@ export const UICustomizations = {
 
       return {
         url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:"muster-roll-approval" },
+        params: { tenantId, businessServices:"MR" },
         body: {
          
         },
@@ -664,7 +720,7 @@ export const UICustomizations = {
           return <span>{t(`WF_WO_${value}`)}</span>;
 
         case "ES_COMMON_AMOUNT":
-          return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+          return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
 
         case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
@@ -732,7 +788,7 @@ export const UICustomizations = {
           </span>
         );
       case "ES_COMMON_AMOUNT":
-        return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       case "COMMON_ROLE_OF_CBO": 
         return <span>{t(`COMMON_MASTERS_${value}`)}</span>;
 
@@ -767,6 +823,14 @@ export const UICustomizations = {
     }
   },
   SearchWageSeekerConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     preProcess: (data) => {
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
 
@@ -826,7 +890,7 @@ export const UICustomizations = {
         case "MASTERS_SOCIAL_CATEGORY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
 
-        case "MASTERS_ULB":
+        case "CORE_COMMON_PROFILE_CITY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_WARD":
@@ -861,6 +925,14 @@ export const UICustomizations = {
     }
   },
   SearchOrganisationConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
     preProcess: (data) => {  
         let requestBody = { ...data.body.SearchCriteria };
         const pathConfig = {
@@ -947,6 +1019,397 @@ export const UICustomizations = {
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    }
+  },
+  SearchBillWMSConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+    preProcess: (data) => {
+      let requestBody = { ...data.body.inbox.moduleSearchCriteria };
+      const dateConfig = {
+        createdFrom: "daystart",
+        createdTo: "dayend",
+      };
+      const selectConfig = {
+        billType: "billType.businessService",
+        ward: "ward[0].code",
+        status: "status[0].code",
+      };
+      const textConfig = ["projectName", "billNumber"]
+
+      let SearchCriteria = Object.keys(requestBody)
+      .map((key) => {
+        if (selectConfig[key]) {
+          requestBody[key] = _.get(requestBody, selectConfig[key], null);
+        } else if (typeof requestBody[key] == "object") {
+          requestBody[key] = requestBody[key]?.code;
+        } else if (textConfig?.includes(key)) {
+          requestBody[key] = requestBody[key]?.trim()
+        }
+        return key;
+      })
+      .filter((key) => requestBody[key])
+      .reduce((acc, curr) => {
+        if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+          _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+        } else {
+          _.set(acc, curr, requestBody[curr]);
+        }
+        return acc;
+      }, {});
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      if (key === "WORKS_BILL_NUMBER") {
+        const billType = getBillType(row?.businessService)
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.businessObject?.tenantId}&billNumber=${value}`}
+            >
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (key === "EXP_BILL_AMOUNT") {
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+      }
+      if(key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+      if(key === "ES_COMMON_LOCATION") {
+        const location = value;
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+        if (location) {
+          let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
+          let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
+          let city = location?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(location?.city)}`) : "";
+          return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+        }
+        return <p>{"NA"}</p>;
+      }
+      if(key === "WORKS_BILL_TYPE") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(value)
+        return value ? t(`COMMON_MASTERS_BILL_TYPE_${headerLocale}`) : t("ES_COMMON_NA")
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "WORKS_BILL_NUMBER")
+          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    populateReqCriteria: () => {
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
+        body: {},
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+              return {
+                "code": state?.applicationStatus,
+                "i18nKey":`WF_BILL_${state?.applicationStatus}`,
+                "wfStatus":state?.applicationStatus
+              }
+            })
+            return states  
+          },
+        },
+      };
+    },
+    selectionHandler: async (selectedRows) => {
+      const payload = getCreatePaymentPayload(selectedRows);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      try {
+        const response = await Digit.PaymentService.createPayment(payload);
+        return responseToReturn
+      } catch (error) {
+        responseToReturn.isSuccess = false
+        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        return responseToReturn
+      }
+    }
+  },
+  SearchBillConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+    preProcess: (data) => {
+      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdFrom,"daystart");
+      if(createdFromDate) data.body.searchCriteria.createdFrom = createdFromDate
+      const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdTo);
+      if(createdToDate) data.body.searchCriteria.createdTo = createdToDate
+      
+      const status = data?.body?.searchCriteria?.status?.[0]?.code
+      delete data?.body?.searchCriteria?.status
+      if(status){
+        data.body.searchCriteria.status = status
+      }
+
+      const billType = data?.body?.searchCriteria?.billType?.code;
+      delete data?.body?.searchCriteria?.billType
+      delete data?.body?.searchCriteria?.billTypes
+      if(billType) data.body.searchCriteria.billTypes = [billType]
+
+      const ward =  data?.body?.searchCriteria?.ward?.[0]?.code
+      delete data?.body?.searchCriteria?.ward
+      if(ward) data.body.searchCriteria.ward = ward
+
+      const billNumber = data?.body?.searchCriteria?.billNumber?.trim()
+      delete data?.body?.searchCriteria?.billNumber
+      delete data?.body?.searchCriteria?.billNumbers
+      if(billNumber) data.body.searchCriteria.billNumbers = [billNumber]
+    
+      const projectNumber = data?.body?.searchCriteria?.projectNumber?.trim()
+      delete data?.body?.searchCriteria?.projectNumber
+      delete data?.body?.searchCriteria?.projectNumbers
+      if(projectNumber) data.body.searchCriteria.projectNumbers = [projectNumber]
+
+      data.body.searchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      let tenantId = Digit.ULBService.getCurrentTenantId()
+      if (key === "WORKS_BILL_NUMBER") {
+        const billType = getBillType(row?.bill?.businessService)
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}
+            >
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (key === "WORKS_BILL_TYPE") {
+        return value ? t(`COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}`) : t("ES_COMMON_NA")
+      }
+      if (key === "EXP_BILL_AMOUNT") {
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+      }
+      if(key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+      if(key === "ES_COMMON_LOCATION") {
+        const location = value;
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId)
+        return location ? t(`TENANT_TENANTS_${headerLocale}`) : t("ES_COMMON_NA")
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "WORKS_BILL_NUMBER")
+          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    populateReqCriteria: () => {
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices:"EXPENSE.PURCHASE" },
+        body: {},
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+              return {
+                "code": state?.applicationStatus,
+                "i18nKey":`WF_BILL_${state?.applicationStatus}`,
+                "wfStatus":state?.applicationStatus
+              }
+            })
+            return states  
+          },
+        },
+      };
+    },
+    selectionHandler: async (selectedRows) => {
+      const payload = getCreatePaymentPayload(selectedRows);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      try {
+        const response = await Digit.PaymentService.createPayment(payload);
+        return responseToReturn
+      } catch (error) {
+        responseToReturn.isSuccess = false
+        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        return responseToReturn
+      }
+    }
+  },
+  SearchExpenseBillConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+    preProcess: (data) => {
+      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.billCriteria?.createdFrom,"daystart");
+      if(createdFromDate) data.body.billCriteria.createdFrom = createdFromDate
+      const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.billCriteria?.createdTo);
+      if(createdToDate) data.body.billCriteria.createdTo = createdToDate
+
+      const status = data?.body?.billCriteria?.status?.[0]?.code
+      delete data?.body?.billCriteria?.status
+      if(status){
+        data.body.billCriteria.status = status
+      }
+
+      const billType = data?.body?.billCriteria?.billType?.code;
+      delete data?.body?.billCriteria?.billType
+      if(billType) data.body.billCriteria.businessService = billType
+
+      const ward =  data?.body?.billCriteria?.ward?.[0]?.code
+      delete data?.body?.billCriteria?.ward
+      if(ward) data.body.billCriteria.ward = ward
+
+      const billNumber = data?.body?.billCriteria?.billNumber?.trim()
+      delete data?.body?.billCriteria?.billNumber
+      delete data?.body?.billCriteria?.billNumbers
+      if(billNumber) data.body.billCriteria.billNumbers = [billNumber]
+      
+      data.body.billCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      if (key === "WORKS_BILL_NUMBER") {
+        const billType = getBillType(row?.businessService)
+        return (
+          <span className="link">
+            <Link
+              to={`/${
+                window.contextPath
+              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.tenantId}&billNumber=${value}`}
+            >
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+        );
+      }
+      if (key === "WORKS_BILL_TYPE") {
+        return value ? `COMMON_MASTERS_BILL_TYPE_${Digit.Utils.locale.getTransformedLocale(value)}` : t("ES_COMMON_NA")
+      }
+      if (key === "EXP_BILL_AMOUNT") {
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+      }
+      if(key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+      if(key === "ES_COMMON_LOCATION") {
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId)
+        return t(`TENANT_TENANTS_${headerLocale}`)
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "WORKS_BILL_NUMBER")
+          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    populateReqCriteria: () => {
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices:"muster-roll-approval" },
+        body: {},
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.applicationStatus)?.map(state=> {
+              return {
+                "code": state?.applicationStatus,
+                "i18nKey":`WF_MUSTOR_${state?.applicationStatus}`,
+                "wfStatus":state?.applicationStatus
+              }
+            })
+            return states  
+          },
+        },
+      };
+    },
+    selectionHandler: async (selectedRows) => {
+      const payload = getCreatePaymentPayload(selectedRows);
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      try {
+        const response = await Digit.PaymentService.createPayment(payload);
+        return responseToReturn
+      } catch (error) {
+        responseToReturn.isSuccess = false
+        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        return responseToReturn
+      }
+    }
+  },
+  DownloadBillConfig: {
+    preProcess: (data) => {
+      data.params.tenantId = Digit.ULBService.getCurrentTenantId();
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      if (key === "ES_COMMON_TOTAL_AMOUNT") {
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+      }
+      if(key === "CORE_COMMON_STATUS") {
+        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+      }
+      if(key === "ES_COMMON_DATE") {
+        return value ? Digit.DateUtils.ConvertTimestampToDate(parseInt(value), "dd/MM/yyyy") : t("ES_COMMON_NA")
+      }
+      if(key === "CS_COMMON_ACTION") {
+        return value ?  
+        <LinkLabel onClick={() => { }}>
+          {t("CS_COMMON_DOWNLOAD")}
+        </LinkLabel> :
+        t("ES_COMMON_NA")
       }
     }
   },

@@ -1,19 +1,30 @@
-import React, { useState, useEffect, Fragment }from 'react';
+import React, { useState, useEffect, Fragment, useRef }from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
-import { Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast, MultiLink } from '@egovernments/digit-ui-react-components';
+import { Menu, Header, ActionBar, SubmitBar,ViewDetailsCard , HorizontalNav, Loader, WorkflowActions, Toast, MultiLink } from '@egovernments/digit-ui-react-components';
 
 
 const ViewContractDetails = () => {
     const { t } = useTranslation();
+    const history = useHistory();
+    const [showActions, setShowActions] = useState(false);
     const [showToast, setShowToast] = useState(null);
+    const menuRef = useRef();
     const queryStrings = Digit.Hooks.useQueryParams();
     const contractId = queryStrings?.workOrderNumber;
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts")
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const ContractSession = Digit.Hooks.useSessionStorage("CONTRACT_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
+
+    const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
+    const [actionsMenu, setActionsMenu] = useState([]);
+
+    const closeMenu = () => {
+        setShowActions(false);
+    }
+    Digit.Hooks.useClickOutside(menuRef, closeMenu, showActions);
 
     const payload = {
         tenantId : queryStrings?.tenantId || tenantId,
@@ -72,8 +83,24 @@ const ViewContractDetails = () => {
         }
     },[isProjectError]);
 
+    useEffect(() => {
+        let isUserBillCreator = loggedInUserRoles?.includes("BILL_CREATOR");
+        if (data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" && isUserBillCreator){
+            setActionsMenu((prevState => [...prevState,{
+                name:"CREATE_PURCHASE_BILL"
+            }]))
+        }
+
+    }, [data])
+
     const HandleDownloadPdf = () => {
-        Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`workOrder-${contractId}.pdf`)
+        Digit.Utils.downloadEgovPDF('workOrder/work-order',{contractId,tenantId},`WorkOrder-${contractId}.pdf`)
+    }
+
+    const handleActionBar = (option) => {
+        if (option?.name === "CREATE_PURCHASE_BILL") {
+            history.push(`/${window.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&workOrderNumber=${contractId}`);
+        }
     }
 
     const handleToastClose = () => {
@@ -104,11 +131,13 @@ const ViewContractDetails = () => {
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
-            <MultiLink
-                   onHeadClick={() => HandleDownloadPdf()}
-                   downloadBtnClassName={"employee-download-btn-className"}
-                   label={t("CS_COMMON_DOWNLOAD")}
-            />
+            {(data?.applicationData?.wfStatus === "APPROVED" || data?.applicationData?.wfStatus === "ACCEPTED") && 
+               <MultiLink
+                 onHeadClick={() => HandleDownloadPdf()}
+                 downloadBtnClassName={"employee-download-btn-className"}
+                 label={t("CS_COMMON_DOWNLOAD")}
+               />
+            }
           </div>
           {project && <ViewDetailsCard cardState={cardState} t={t} />}
           {
@@ -119,7 +148,7 @@ const ViewContractDetails = () => {
                         {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
                     </HorizontalNav>
                     <WorkflowActions
-                        forcedActionPrefix={"WF_CONTRACT_ACTION"}
+                        forcedActionPrefix={`WF_${businessService}_ACTION`}
                         businessService={businessService}
                         applicationNo={queryStrings?.workOrderNumber}
                         tenantId={tenantId}
@@ -127,6 +156,20 @@ const ViewContractDetails = () => {
                         url={Digit.Utils.Urls.contracts.update}
                         moduleCode="Contract"
                     />
+                    {data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" ?
+                        <ActionBar>
+
+                            {showActions ? <Menu
+                                localeKeyPrefix={`WF_CONTRACT_ACTION`}
+                                options={actionsMenu}
+                                optionKey={"name"}
+                                t={t}
+                                onSelect={handleActionBar}
+                            />:null} 
+                            <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)} />
+                        </ActionBar>
+                        : null
+                    }
                 </>
           }
         </div>
