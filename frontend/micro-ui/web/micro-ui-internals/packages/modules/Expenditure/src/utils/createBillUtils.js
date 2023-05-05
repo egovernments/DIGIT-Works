@@ -105,7 +105,9 @@ export const createBillPayload = (data, contract,  docConfigData) => {
               }
             ],
             "additionalDetails": {
-                "totalBillAmount" : String(Digit.Utils.dss.convertFormatterToNumber(data?.billDetails_billAmt))
+                "totalBillAmount" : String(Digit.Utils.dss.convertFormatterToNumber(data?.billDetails_billAmt)),
+                "invoiceNumber" : data?.invoiceDetails_invoiceNumber,
+                "invoiceDate" : data?.invoice_date
             },
             "documents": fetchDocuments(
               data?.uploadedDocs,

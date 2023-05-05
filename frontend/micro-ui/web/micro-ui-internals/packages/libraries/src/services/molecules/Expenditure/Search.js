@@ -205,7 +205,7 @@ export const BillsSearch = {
     //Org Search
     const orgPayload = {
       SearchCriteria: {
-        id: [billData?.billDetails?.[0]?.payee?.identifier], //b9838d9c-b079-4cdb-b061-3d9addac9d40
+        orgNumber: billData?.billDetails?.[0]?.payee?.identifier, //b9838d9c-b079-4cdb-b061-3d9addac9d40
         tenantId
       }
     }
@@ -242,8 +242,8 @@ export const BillsSearch = {
             { title: "EXP_VENDOR_ID", value: orgData?.orgNumber || "NA" },
             { title: "EXP_INVOICE_NUMBER", value: billData?.additionalDetails?.invoiceNumber || "NA" },
             { title: "EXP_INVOICE_DATE", value: Digit.Utils.pt.convertEpochToDate(billData?.additionalDetails?.invoiceDate ) || "NA"}, 
-            { title: "EXP_MATERIALCOST_RS", value: mcDetails.amount || "NA" }, 
-            { title: "EXP_GST_RS", value: gstDetails.amount || "NA" },
+            { title: "EXP_MATERIALCOST_RS", value: Digit.Utils.dss.formatterWithoutRound(mcDetails.amount, "number") || "NA" }, 
+            { title: "EXP_GST_RS", value: Digit.Utils.dss.formatterWithoutRound(gstDetails.amount,  "number") || "NA" },
         ]
     };
 
@@ -253,13 +253,14 @@ export const BillsSearch = {
         title: "EXP_INVOICE_DETAILS",
         asSectionHeader: true,
         values: [
-            { title: "EXP_BILL_AMOUNT", value: (billAmount) || "NA" },
+            { title: "EXP_BILL_AMOUNT", value: (Digit.Utils.dss.formatterWithoutRound(billAmount, "number")) || "NA" },
         ]
     };
     //totalDeductions = sum of amount in the table
     let totalDeductions = 0;
     const deductionsTableRows = [t("WORKS_SNO"), t("EXP_DEDUCTION_NAME"), t("EXP_PERCENTAGE_OR_FIXED"), t("ES_COMMON_AMOUNT"), t("WF_COMMON_COMMENTS")];
-    const deductionsTableData = lineItems?.map((lineItem, index)=>{
+    let index = 0;
+    const deductionsTableData = lineItems?.map((lineItem)=>{
       if(lineItem?.type === "DEDUCTION") {
 
         let masterDeduction = metaData?.filter(data=>data?.code === lineItem?.headCode)[0];
@@ -272,12 +273,12 @@ export const BillsSearch = {
           t(`EXP_${lineItem?.headCode}`),
           percentageOrFixed,
           lineItem?.amount,
-          lineItem?.additionalDetails?.comments
+          lineItem?.additionalDetails?.comments || "NA"
         ]
       }
      })
 
-    deductionsTableData?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalDeductions, 'number')]);
+    deductionsTableData?.push(["","","",t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalDeductions, 'number')]);
 
     const deductionsTable = {
         title: "EXP_DEDUCTIONS",
@@ -293,11 +294,12 @@ export const BillsSearch = {
     }
 
     let netPayableAmtCalc = billAmount - totalDeductions;
+    console.log(billAmount, totalDeductions, netPayableAmtCalc);
     const netPayableAmt = {
         "title": " ",
         "asSectionHeader": true,
         "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
-        "value": Digit.Utils.dss.formatterWithoutRound(t(netPayableAmtCalc))
+        "value": Digit.Utils.dss.formatterWithoutRound(netPayableAmtCalc, "number")
     }
 
     const documentDetails = {
@@ -307,7 +309,7 @@ export const BillsSearch = {
             documents: [{
                 title: "WORKS_RELEVANT_DOCS",
                 BS: 'Works',
-                values: currentProject?.documents?.map((document) => {
+                values: billData?.additionalDetails?.documents?.map((document) => {
                   if(document?.status !== "INACTIVE") {
                       return {
                           title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
