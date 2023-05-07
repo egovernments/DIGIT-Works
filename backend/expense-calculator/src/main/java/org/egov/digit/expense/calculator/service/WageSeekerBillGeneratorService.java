@@ -265,8 +265,11 @@ public class WageSeekerBillGeneratorService {
         String skill =  getWageSeekerSkill(individualEntry);
         String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
         for(LabourCharge labourCharge : labourCharges){
-            if(labourCharge.getCode().equalsIgnoreCase(skill)
-                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
+//            if(labourCharge.getCode().equalsIgnoreCase(skill)
+//                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
+        	//TODO: Removing the unit check here. 
+        	 if(labourCharge.getCode().equalsIgnoreCase(skill))
+        	{
                 return labourCharge.getAmount();
             }
         }

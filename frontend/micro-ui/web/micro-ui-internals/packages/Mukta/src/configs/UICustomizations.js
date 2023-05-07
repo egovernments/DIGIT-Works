@@ -1163,25 +1163,29 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
+      
       const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdFrom,"daystart");
-      if(createdFromDate) data.body.searchCriteria.createdFrom = createdFromDate
+      delete data?.body?.searchCriteria?.createdFrom
+      // if(createdFromDate) data.body.searchCriteria.createdFrom = createdFromDate
       const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.searchCriteria?.createdTo);
-      if(createdToDate) data.body.searchCriteria.createdTo = createdToDate
+      delete data?.body?.searchCriteria?.createdTo
+
+      // if(createdToDate) data.body.searchCriteria.createdTo = createdToDate
       
       const status = data?.body?.searchCriteria?.status?.[0]?.code
       delete data?.body?.searchCriteria?.status
-      if(status){
-        data.body.searchCriteria.status = status
-      }
+      // if(status){
+      //   data.body.searchCriteria.status = status
+      // }
 
       const billType = data?.body?.searchCriteria?.billType?.code;
       delete data?.body?.searchCriteria?.billType
       delete data?.body?.searchCriteria?.billTypes
       if(billType) data.body.searchCriteria.billTypes = [billType]
 
-      const ward =  data?.body?.searchCriteria?.ward?.[0]?.code
+      // const ward =  data?.body?.searchCriteria?.ward?.[0]?.code
       delete data?.body?.searchCriteria?.ward
-      if(ward) data.body.searchCriteria.ward = ward
+      // if(ward) data.body.searchCriteria.ward = ward
 
       const billNumber = data?.body?.searchCriteria?.billNumber?.trim()
       delete data?.body?.searchCriteria?.billNumber
@@ -1190,16 +1194,29 @@ export const UICustomizations = {
     
       const projectNumber = data?.body?.searchCriteria?.projectNumber?.trim()
       delete data?.body?.searchCriteria?.projectNumber
-      delete data?.body?.searchCriteria?.projectNumbers
       if(projectNumber) data.body.searchCriteria.projectNumbers = [projectNumber]
 
       data.body.searchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      delete data.body.searchCriteria.ward
+      
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       let tenantId = Digit.ULBService.getCurrentTenantId()
       if (key === "WORKS_BILL_NUMBER") {
-        const billType = getBillType(row?.bill?.businessService)
+        let billType = ""
+        const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+        const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
+        const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
+        if(row?.bill?.businessService === bsPurchaseBill ){
+          billType = "purchase"
+        }
+        if(row?.bill?.businessService === bsSupervisionBill ){
+          billType = "supervision"
+        }
+        if(row?.bill?.businessService === bsWageBill ){
+          billType = "wage"
+        }
         return (
           <span className="link">
             <Link
@@ -1219,7 +1236,7 @@ export const UICustomizations = {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+        return value ? t(Digit.Uitls.locale.getTransformedLocale(`WF_${row?.bill?.businessService}_STATUS_${value}`)) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
         const location = value;

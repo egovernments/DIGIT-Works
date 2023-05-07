@@ -110,6 +110,11 @@ export const createBillPayload = (data, contract,  docConfigData) => {
                 "invoiceDate" : data?.invoice_date,
                 "projectDesc" : data?.basicDetails_projectDesc,
                 "projectId": data?.basicDetails_projectID,
+                "locality":contract.additionalDetails.locality,
+                "ward":contract.additionalDetails.ward,
+                "orgName":contract.additionalDetails.orgName,
+                "projectName":contract.additionalDetails.projectName
+
             },
             "documents": fetchDocuments(
               data?.uploadedDocs,
