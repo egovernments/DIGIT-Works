@@ -79,7 +79,7 @@ const transformViewDataToApplicationDetails = async (t, data, skills) => {
 
   const expenseCalculatorPayload = {
     criteria : {
-      "tenantId": "pg.citya",
+      "tenantId": data?.musterRolls?.[0]?.tenantId,
       "musterRollId": [ data?.musterRolls?.[0]?.id ]
     }
   }

@@ -8,7 +8,7 @@ export const BillsSearch = {
     
     const supervisionBillSearch = await WorksService.searchBill({
       "billCriteria": {
-        "tenantId": "pg.citya",
+        "tenantId": tenantId,
         // "ids": ["dc3b3bcd-d31a-4fd7-87bb-47484596050c"],
         "businessService": "works.supervision",
         // "referenceIds": [],
@@ -41,7 +41,7 @@ export const BillsSearch = {
     const referenceIdsToSearch = supervisionBill?.billDetails?.map(row => row?.referenceId)
     const tableBillSearch = await WorksService.searchBill({
       "billCriteria": {
-        "tenantId": "pg.citya",
+        "tenantId": tenantId,
         "ids": referenceIdsToSearch,
     },
        "pagination": {
