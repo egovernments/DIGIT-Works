@@ -28,7 +28,10 @@ public class MdmsUtils {
 
     public Object fetchMDMSForValidation(RequestInfo requestInfo, String tenantId) {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSValidationRequest(requestInfo, tenantId);
-        return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
+        log.info("MDMS Criteria Req:" + mdmsCriteriaReq.toString());
+        Object response = serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
+        log.info("Fetched MDMS response: " + response.toString());
+        return response;
     }
 
     public Object getPayersForTypeFromMDMS(RequestInfo requestInfo, String type, String tenantId){
