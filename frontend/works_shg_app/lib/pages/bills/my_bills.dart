@@ -62,12 +62,16 @@ class _MyBillsPage extends State<MyBillsPage> {
                   error: (String? error) => Notifiers.getToastMessage(
                       context, error.toString(), 'ERROR'),
                   loaded: (MyBillsModel? myBillsModel) {
-                    workOrderList = myBillsModel!.bills!
-                        .map((e) => {
-                              i18.workOrder.workOrderNo:
-                                  e.billDetails?.first.paymentStatus ?? 'NA',
-                            })
-                        .toList();
+                    workOrderList = myBillsModel!.bills!.map((e) {
+                      if (e.businessservice == 'EXPENSE') {
+                        return {
+                          i18.workOrder.workOrderNo:
+                              e.billDetails?.first.paymentStatus ?? 'NA',
+                        };
+                      } else {
+                        return {i18.workOrder.workOrderNo: e.status};
+                      }
+                    }).toList();
                   });
             },
             child: BlocBuilder<SearchMyBillsBloc, SearchMyBillsState>(

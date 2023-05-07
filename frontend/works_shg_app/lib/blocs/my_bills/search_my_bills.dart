@@ -30,10 +30,13 @@ class SearchMyBillsBloc extends Bloc<SearchMyBillsEvent, SearchMyBillsState> {
           await MyBillsRepository(client.init()).searchMyBills(
               url: Urls.billServices.searchMyBills,
               body: {
-                "billCriteria": {
+                "searchCriteria": {
                   "tenantId": GlobalVariables
-                      .organisationListModel!.organisations!.first.tenantId,
-                  "businessService": "WORKS-MUSTERROLE",
+                      .organisationListModel?.organisations?.first.tenantId,
+                  "orgNumbers": [
+                    GlobalVariables
+                        .organisationListModel?.organisations?.first.id
+                  ]
                 },
                 "pagination": {
                   "limit": "100",

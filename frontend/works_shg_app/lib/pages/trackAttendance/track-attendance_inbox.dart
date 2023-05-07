@@ -97,7 +97,7 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
                                 'NA',
                             i18.attendanceMgmt.projectDesc: e
                                     .attendanceRegisterAdditionalDetails
-                                    ?.projectName ??
+                                    ?.projectDesc ??
                                 'NA',
                             i18.attendanceMgmt.individualsCount:
                                 e.attendeesEntries != null
