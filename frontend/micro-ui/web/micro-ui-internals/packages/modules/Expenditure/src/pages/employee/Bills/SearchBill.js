@@ -13,8 +13,8 @@ const SearchBill = () => {
   const stateTenant = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  /*
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+  
+  const { isLoading, data:configs } = Digit.Hooks.useCustomMDMS(
       stateTenant,
       Digit.Utils.getConfigModuleName(),
       [
@@ -24,30 +24,33 @@ const SearchBill = () => {
       ],
       {
         select: (data) => {
-            return data?.[Digit.Utils.getConfigModuleName()]?.SearchBillConfig[0];
+            const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchBillConfig[0];
+            const configs =  Digit.Utils.preProcessMDMSConfigInboxSearch(t, result, "sections.search.uiConfig.fields",{
+              updateDependent : [
+               {
+                 key : "createdFrom",
+                 value : [new Date().toISOString().split("T")[0]]
+               },
+               {
+                 key : "createdTo",
+                 value : [new Date().toISOString().split("T")[0]]
+               }
+             ]
+           })
+           configs.sections.searchResult.uiConfig.showCheckBox = Digit.Utils.didEmployeeHasRole(configs?.actionRole)
+           return configs
         },
       }
   );
-  */
+  
 
   //For local Update data to access searchConfig or searchWMS config
-  const data = SearchBillConfig?.SearchBillConfig?.[0]
+  // const configs = SearchBillConfig?.SearchBillConfig?.[0]
 
-  let configs = useMemo(
-    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
-       updateDependent : [
-        {
-          key : "createdFrom",
-          value : [new Date().toISOString().split("T")[0]]
-        },
-        {
-          key : "createdTo",
-          value : [new Date().toISOString().split("T")[0]]
-        }
-      ]
-    }));
+  
 
-  //if(isLoading) return <Loader />
+  if(isLoading) return <Loader />
+
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">

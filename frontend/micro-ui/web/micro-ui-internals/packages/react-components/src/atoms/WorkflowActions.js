@@ -150,7 +150,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         <ActionBar style={{ ...ActionBarStyle }}>
           {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
             <Menu
-              localeKeyPrefix={forcedActionPrefix || `WF_${businessService?.toUpperCase()}_ACTION`}
+              localeKeyPrefix={forcedActionPrefix || Digit.Utils.locale.getTransformedLocale(`WF_${businessService?.toUpperCase()}_ACTION`)}
               options={actions}
               optionKey={"action"}
               t={t}
