@@ -303,8 +303,9 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                           '${e.completionPeriod} ${t.translate(i18.common.days)}',
                                       i18.workOrder.workOrderAmount:
                                           '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                      i18.common.status: e.wfStatus,
-                                      Constants.activeInboxStatus: 'true'
+                                      i18.common.status: t.translate(
+                                          'WF_CONTRACT_STATUS_${e.wfStatus.toString()}'),
+                                      Constants.activeInboxStatus: e.wfStatus == acceptCode ? 'true' : 'false'
                                     },
                                     'payload': e.toMap()
                                   })
