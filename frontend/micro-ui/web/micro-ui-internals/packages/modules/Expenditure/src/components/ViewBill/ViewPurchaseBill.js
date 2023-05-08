@@ -2,8 +2,10 @@ import { Header, Toast, WorkflowActions } from "@egovernments/digit-ui-react-com
 import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
+import { useHistory } from "react-router-dom";
 
 const ViewPurchaseBill = ({props}) => {
+    const history = useHistory()
     const [showActions, setShowActions] = useState(false);
     const menuRef = useRef();
     const [actionsMenu, setActionsMenu] = useState([]);
@@ -84,7 +86,7 @@ const ViewPurchaseBill = ({props}) => {
                   url={Digit.Utils.Urls.bills.updatePurchaseBill} //TODO: @hariom Add the update api of bills here
                   setStateChanged={setStateChanged}
                   moduleCode="Expenditure"
-                  editApplicationNumber={""}
+                  editApplicationNumber={billNumber}
                 />
               {data?.applicationData?.wfStatus === "APPROVED" ?
                   <ActionBar>

@@ -1,5 +1,57 @@
 
-export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract,  docConfigData, billData, setIsFormReady}) => {
+const setDefaultDocs = (bill) => {
+  console.log(bill);
+  const documentsObj = {}
+  bill?.additionalDetails?.documents.forEach((doc,idx) => {
+    
+     documentsObj[`doc_${doc.documentType}`.toLowerCase()] = [
+      [
+        `${doc.additionalDetails.fileName}`,
+        {
+          "file":{},
+          "fileStoreId":{
+            "fileStoreId":doc.fileStore,
+            "tenantId":bill.tenantId
+          }
+        }
+      ]
+    ]
+  })
+
+  return documentsObj
+  
+}
+
+const setGSTCost = (bill) => {
+  const amount = bill?.billDetails?.[0]?.lineItems?.filter(row=>row?.type==="PAYABLE" && row?.headCode==="GST")
+  return amount?.[0]?.amount
+
+}
+
+const setMaterialCost = (bill) => {
+  const amount = bill?.billDetails?.[0]?.lineItems?.filter(row=>row?.type==="PAYABLE" && row?.headCode==="MC")
+  
+  return amount?.[0]?.amount
+}
+
+
+const setDeductionTableData = (bill,charges,t) => {
+  const deductions = bill?.billDetails?.[0]?.lineItems?.filter(row=>row?.type==="DEDUCTION").map((row,idx)=>{
+    const chargesObject = charges.filter(charge => charge.code === row.headCode)
+    return {
+      "percentage": chargesObject?.calculationType==="percentage"?`${chargesObject.value} ${t("WORKS_PERCENT")}`:`${t("EXP_FIXED")}`,
+      "amount": row?.amount,
+      "comments": row?.additionalDetails?.comments,
+      "name":{
+        "name": `COMMON_MASTERS_DEDUCTIONS_${row.headCode}`,
+        ...chargesObject?.[0]
+      }
+  }
+  })
+  return [null,...deductions]
+}
+
+export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract,  docConfigData, billData, setIsFormReady,charges}) => {
   const bill = billData?.bills?.[0]
   if(!sessionFormData?.basicDetails_workOrderNumber || !sessionFormData.basicDetails_projectID || !sessionFormData.basicDetails_projectDesc || !sessionFormData.basicDetails_location) {  
     configs.defaultValues.billDetails_billDate = isModify ? Digit.DateUtils.ConvertTimestampToDate(bill?.billDate, 'yyyy-MM-dd') : findCurrentDate(); 
@@ -16,6 +68,7 @@ export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isMo
     configs.defaultValues.invoiceDetails_invoiceDate = bill?.billDate ? Digit.DateUtils.ConvertTimestampToDate(bill?.billDate, 'yyyy-MM-dd') : ""
 
     if(isModify) {
+      
       configs.defaultValues.basicDetails_purchaseBillNumber = bill?.billNumber ? bill?.billNumber  : "";
       configs.defaultValues.basicDetails_workOrderNumber = bill?.referenceId ? bill?.referenceId?.split("_")?.[0] : t("NA");
       configs.defaultValues.basicDetails_projectID = bill?.additionalDetails?.projectId ? bill?.additionalDetails?.projectId : t("NA");
@@ -24,6 +77,14 @@ export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isMo
         String(
           `${t(Digit.Utils.locale.getCityLocale(tenantId))}, ${t(Digit.Utils.locale.getMohallaLocale(contract?.additionalDetails?.ward, tenantId))}`
       )  : t("NA"); 
+      
+    
+    configs.defaultValues.uploadedDocs = setDefaultDocs(bill)
+    configs.defaultValues.deductionDetails = setDeductionTableData(bill,charges,t)
+    configs.defaultValues.invoiceDetails_gst = setGSTCost(bill)
+    configs.defaultValues.invoiceDetails_materialCost = setMaterialCost(bill)
+    
+    debugger
     }
     setSessionFormData({...sessionFormData, ...configs?.defaultValues});
   }
