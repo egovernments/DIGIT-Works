@@ -85,7 +85,7 @@ public class BillValidator {
         List<Bill> billsFromSearch = getBillsForValidation(billRequest, false);
         if(CollectionUtils.isEmpty(billsFromSearch))
         	throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
-        			+ " businessService : " + bill.getId() + " and refernceId : " + bill.getTenantId());
+        			+ " id : " + bill.getId() + " and refernceId : " + bill.getTenantId());
         
         validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap); 
         
