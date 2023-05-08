@@ -96,6 +96,21 @@ public class WorkflowUtil {
         return response.getProcessInstances().get(0).getState();
     }
     
+	public ProcessInstanceResponse searchWorkflowForBusinessIds(List<String> businessIds, String tenantId, RequestInfo requestInfo) {
+    	
+    	StringBuilder url = new StringBuilder().append(configs.getWfHost());
+    	url.append(configs.getWfProcessInstanceSearchPath());
+    	url.append("?tenantId=");
+    	url.append(tenantId);
+    	url.append("&businessIds=");
+    	url.append(businessIds);
+    	
+    	RequestInfoWrapper infoWrapper = new RequestInfoWrapper();
+    	infoWrapper.setRequestInfo(requestInfo);
+    	Object optional = repository.fetchResult(url, infoWrapper);
+    	return mapper.convertValue(optional, ProcessInstanceResponse.class);
+    }
+    
     public ProcessInstanceRequest prepareWorkflowRequestForBill(BillRequest billRequest) {
     	
     	Bill bill = billRequest.getBill();
