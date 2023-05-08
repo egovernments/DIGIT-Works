@@ -130,7 +130,9 @@ public class PaymentValidator {
 			amountToBePaid = amountToBePaid.add(bill.getTotalAmount().subtract(bill.getTotalPaidAmount()));
 		}
 
-		if (isCreate && amountToBePaid.compareTo(amountToBePaid) != 0) {
+		if (isCreate && 
+				(payment.getNetPayableAmount().compareTo(amountToBePaid) != 0 
+				|| payment.getNetPaidAmount().compareTo(amountToBePaid) != 0)) {
 			throw new CustomException("EG_PAYMENT_INVALID_PAYMENT_ERROR",
 					"The netPayableAmount and netPaidAmount should be equal to pending amount : " + amountToBePaid
 							+ " of the bills provided in the payment ");
