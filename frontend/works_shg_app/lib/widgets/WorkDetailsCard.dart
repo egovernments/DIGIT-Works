@@ -81,8 +81,9 @@ class WorkDetailsCard extends StatelessWidget {
               child: getCardDetails(context, detailsList[i]['cardDetails'],
                   payload: detailsList[i]['payload'],
                   isAccept: acceptWorkOrderCode != null &&
-                          detailsList[i]['cardDetails'][i18.common.status]
-                              .contains(acceptWorkOrderCode)
+                          detailsList[i]['cardDetails']
+                                  [Constants.activeInboxStatus] ==
+                              'true'
                       ? false
                       : true,
                   contractNumber: detailsList[i]['cardDetails']
@@ -155,12 +156,18 @@ class WorkDetailsCard extends StatelessWidget {
                 ? AppLocalizations.of(context)
                     .translate(cardDetails.values.elementAt(j).toString())
                 : cardDetails.values.elementAt(j).toString(),
-        isActiveStatus:
-            cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+        isActiveStatus: (isWorkOrderInbox || viewWorkOrder) &&
+                cardDetails.keys.elementAt(j).toString() == i18.common.status
+            ? true
+            : !(isWorkOrderInbox || viewWorkOrder) &&
+                cardDetails.keys.elementAt(j).toString() == i18.common.status &&
                 ((cardDetails.values.elementAt(j + 1) == 'true') ||
                     (cardDetails.values.elementAt(j) == Constants.active)),
-        isRejectStatus:
-            cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+        isRejectStatus: (isWorkOrderInbox || viewWorkOrder) &&
+                cardDetails.keys.elementAt(j).toString() == i18.common.status
+            ? false
+            : !(isWorkOrderInbox || viewWorkOrder) &&
+                cardDetails.keys.elementAt(j).toString() == i18.common.status &&
                 (cardDetails.values.elementAt(j + 1) == 'false'),
       ));
     }
