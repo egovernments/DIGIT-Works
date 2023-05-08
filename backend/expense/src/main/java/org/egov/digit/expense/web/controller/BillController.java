@@ -38,7 +38,7 @@ public class BillController {
 
 	@PostMapping(value = "_update")
 	public ResponseEntity<BillResponse> update(@Valid @RequestBody BillRequest billRequest) {
-		BillResponse response = service.update(billRequest);
+		BillResponse response = service.update(billRequest, true);
 		return new ResponseEntity<BillResponse>(response, HttpStatus.ACCEPTED);
 	}
 

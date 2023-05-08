@@ -91,22 +91,23 @@ public class BillService {
 	 * @param billRequest
 	 * @return
 	 */
-	public BillResponse update(BillRequest billRequest) {
+	public BillResponse update(BillRequest billRequest, boolean isRequestFromController) {
 
 		Bill bill = billRequest.getBill();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 		BillResponse response = null;
 
-		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
-		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+		if (isRequestFromController) {
+			
+			List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
+			enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+		}
 		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-		} else {
-			bill.setStatus(Status.ACTIVE);
-		}
+		} 
 		
 		producer.push(config.getBillUpdateTopic(), billRequest);
 		response = BillResponse.builder()

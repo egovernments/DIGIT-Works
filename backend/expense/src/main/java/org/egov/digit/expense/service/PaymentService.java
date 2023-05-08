@@ -179,7 +179,7 @@ public class PaymentService {
                     .bill(bill)
                     .requestInfo(requestInfo)
                     .build();
-            billService.update(billRequest);
+            billService.update(billRequest, false);
 
         }
     }
