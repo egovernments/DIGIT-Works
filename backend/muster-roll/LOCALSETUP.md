@@ -1,12 +1,13 @@
 # Local Setup
 
-To set up the estimate-service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works).
+To set up the muster roll service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works).
 
 ## Dependencies
 
 - MDMS
 - IDGen
-- workflow service
+- Workflow service
+- Individual
 
 
 ### Infra Dependency
@@ -15,7 +16,6 @@ To set up the estimate-service in your local system, clone the git repo(https://
 - [ ] Redis
 - [ ] Elasticsearch
 - [X] Kafka
-  - [X] Producer
 
 ## Running Locally
 

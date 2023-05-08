@@ -3,7 +3,7 @@
         label: "ACTION_TEST_ESTIMATE_INBOX",
         type: 'inbox',
         apiDetails: {
-            serviceName: "/estimate-service/estimate/v1/_search",
+            serviceName: "/estimate/v1/_search",
             requestParam: {
 
             },

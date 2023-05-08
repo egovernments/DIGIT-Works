@@ -1,8 +1,6 @@
 # Local Setup
 
-
-To set up the estimate-service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works). Also clone 
-the DIGIT core repo - https://github.com/egovernments/Digit-Core - to run the persister service locally. 
+To set up the muster roll service in your local system, clone the git repo(https://github.com/egovernments/DIGIT-Works).
 
 ## Dependencies
 

@@ -131,8 +131,15 @@ export const UICustomizations = {
         if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
       });
 
+      const additionalFieldsToSet = {
+        projectId:applicationDetails.additionalDetails.projectId,
+        invoiceDate:applicationDetails.billDate,
+        invoiceNumber:applicationDetails.referenceId.split('_')?.[1],
+        contractNumber:applicationDetails.referenceId.split('_')?.[0],
+        documents:applicationDetails.additionalDetails.documents
+      }
       return {
-        bill: applicationDetails,
+        bill: {...applicationDetails,...additionalFieldsToSet},
         workflow,
       };
     }
