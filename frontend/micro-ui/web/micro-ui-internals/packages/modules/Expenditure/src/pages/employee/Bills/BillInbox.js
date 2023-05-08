@@ -9,8 +9,8 @@ const BillInbox = () => {
   const { state } = useLocation()
   const stateTenant = Digit.ULBService.getStateId();
 
-  /*
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+  
+  const { isLoading, data:configs } = Digit.Hooks.useCustomMDMS(
       stateTenant,
       Digit.Utils.getConfigModuleName(),
       [
@@ -20,20 +20,19 @@ const BillInbox = () => {
       ],
       {
         select: (data) => {
-            return data?.[Digit.Utils.getConfigModuleName()]?.InboxBillConfig[0];
+            const config =  data?.[Digit.Utils.getConfigModuleName()]?.InboxBillConfig[0];
+            const updatedConfig = Digit.Utils.preProcessMDMSConfigInboxSearch(t, config, "sections.search.uiConfig.fields",{})
+            return updatedConfig
         },
       }
   );
-
-  let configs = useMemo(
-    () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{}));
-  */
+  
 
   //For local
-  let configs = useMemo( () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, InboxBillConfig?.InboxBillConfig?.[0], "sections.search.uiConfig.fields",{}));
+  // let configs = useMemo( () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, InboxBillConfig?.InboxBillConfig?.[0], "sections.search.uiConfig.fields",{}));
 
 
-  //if(isLoading) return <Loader />
+  if(isLoading) return <Loader />
   return (
       <React.Fragment>
           <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}{state?.count ? <span className="inbox-count">{state?.count}</span> : null}</Header>

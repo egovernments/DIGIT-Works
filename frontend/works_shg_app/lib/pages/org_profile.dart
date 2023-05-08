@@ -11,6 +11,7 @@ import '../blocs/organisation/org_search_bloc.dart';
 import '../models/organisation/organisation_model.dart';
 import '../models/wage_seeker/banking_details_model.dart';
 import '../utils/common_methods.dart';
+import '../utils/constants.dart';
 import '../utils/global_variables.dart';
 import '../widgets/Back.dart';
 import '../widgets/SideBar.dart';
@@ -86,7 +87,10 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                     DateFormats.timeStampToDate(
                                         e.dateOfIncorporation),
                                 i18.common.status:
-                                    t.translate(e.applicationStatus.toString())
+                                    t.translate(e.applicationStatus.toString()),
+                                Constants.activeInboxStatus : e.applicationStatus != Constants.active
+                                    ? 'false'
+                                    : 'true'
                               })
                           .toList();
                       functionalDetails = organisationListModel.organisations!

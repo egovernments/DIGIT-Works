@@ -99,13 +99,10 @@ public class BillService {
 
 		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
-		
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-		} else {
-			bill.setStatus(Status.ACTIVE);
 		}
 		
 		producer.push(config.getBillUpdateTopic(), billRequest);

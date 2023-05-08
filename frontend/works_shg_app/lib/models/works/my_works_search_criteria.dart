@@ -22,7 +22,8 @@ class MyWorksSearchCriteriaModel with _$MyWorksSearchCriteriaModel {
 @freezed
 class CBOMyWorksSearchCriteriaModel with _$CBOMyWorksSearchCriteriaModel {
   const factory CBOMyWorksSearchCriteriaModel(
-      {final List<String>? searchCriteria}) = _CBOMyWorksSearchCriteriaModel;
+      {final List<String>? searchCriteria,
+      final String? acceptCode}) = _CBOMyWorksSearchCriteriaModel;
   factory CBOMyWorksSearchCriteriaModel.fromJson(Map<String, dynamic> json) =>
       _$CBOMyWorksSearchCriteriaModelFromJson(json);
 }

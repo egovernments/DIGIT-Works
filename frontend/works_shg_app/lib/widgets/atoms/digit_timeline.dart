@@ -131,65 +131,29 @@ class DigitTimeline extends StatelessWidget {
                               )
                             : const SizedBox.shrink(),
                         SizedBox(
-                          height: index != timelineOptions.length - 1
-                              ? timelineOptions[index].mobileNumber != null &&
-                                      timelineOptions[index].assignee != null
-                                  ? 18
-                                  : timelineOptions[index].mobileNumber ==
-                                              null &&
-                                          timelineOptions[index].assignee !=
-                                              null
-                                      ? 36
-                                      : timelineOptions[index].mobileNumber !=
-                                                  null &&
-                                              timelineOptions[index].assignee ==
-                                                  null
-                                          ? 32
-                                          : 48
-                              : 0,
-                        )
+                            height: index != timelineOptions.length - 1
+                                ? timelineOptions[index].mobileNumber != null &&
+                                        timelineOptions[index].assignee != null
+                                    ? 18
+                                    : timelineOptions[index].mobileNumber ==
+                                                null &&
+                                            timelineOptions[index].assignee !=
+                                                null
+                                        ? 36
+                                        : timelineOptions[index].mobileNumber !=
+                                                    null &&
+                                                timelineOptions[index]
+                                                        .assignee ==
+                                                    null
+                                            ? 32
+                                            : 40
+                                : 0)
                       ],
                     ),
                   )),
         )
       ],
     );
-
-    // Column(
-    //     children: List.generate(
-    //   timelineOptions.length,
-    //   (index) => Column(
-    //     mainAxisAlignment: MainAxisAlignment.end,
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       Row(
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         children: [
-    //           Icon(
-    //             Icons.circle_rounded,
-    //             size: 25,
-    //             color: timelineOptions[index].isCurrentState
-    //                 ? DigitTheme.instance.colorScheme.primary
-    //                 : const DigitColors().cloudGray,
-    //           ),
-    //         ],
-    //       ),
-    //       index == timelineOptions.length - 1
-    //           ? const SizedBox.shrink()
-    //           : Container(
-    //               alignment: Alignment.centerLeft,
-    //               margin: const EdgeInsets.only(
-    //                 left: 12.0,
-    //               ),
-    //               height: 60,
-    //               width: 2,
-    //               color: timelineOptions[index].isCurrentState
-    //                   ? const DigitColors().burningOrange
-    //                   : const DigitColors().cloudGray,
-    //             ),
-    //     ],
-    //   ),
-    // ));
   }
 }
 
