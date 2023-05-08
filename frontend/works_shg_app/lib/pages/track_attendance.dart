@@ -23,6 +23,7 @@ import '../blocs/attendance/skills/skills_bloc.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import '../blocs/muster_rolls/get_muster_workflow.dart';
+import '../blocs/muster_rolls/muster_inbox_status_bloc.dart';
 import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../models/attendance/attendance_registry_model.dart';
 import '../models/attendance/attendee_model.dart';
@@ -103,6 +104,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     context.read<AttendanceHoursBloc>().add(
           const AttendanceHoursEvent(),
         );
+    context.read<MusterInboxStatusBloc>().add(
+      const MusterInboxStatusEvent(),
+    );
     context.read<MusterSubmissionBloc>().add(
       const MusterSubmissionEvent(),
     );
@@ -119,6 +123,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
     context.read<MusterGetWorkflowBloc>().add(
           const DisposeMusterRollWorkflowEvent(),
         ); // Change the state of the widget when it is no longer visible
+
     super.deactivate();
   }
 
@@ -172,864 +177,875 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                             .map((e) => EntryExitModel(
                                 hours: int.parse(e.value), code: e.code))
                             .toList();
-                        return BlocBuilder<
-                                AttendanceIndividualProjectSearchBloc,
-                                AttendanceIndividualProjectSearchState>(
-                            builder: (context, state) {
-                          return state.maybeWhen(
-                              loading: () =>
-                                  shg_loader.Loaders.circularLoader(context),
-                              error: (String? error) =>
-                                  Notifiers.getToastMessage(
-                                      context, error.toString(), 'ERROR'),
-                              loaded: (AttendanceRegistersModel?
-                                  individualAttendanceRegisterModel) {
-                                registerId = individualAttendanceRegisterModel!
-                                    .attendanceRegister!.first.id;
-                                registerStartDate =
-                                    individualAttendanceRegisterModel
-                                        .attendanceRegister!.first.startDate;
-                                registerEndDate =
-                                    individualAttendanceRegisterModel
-                                        .attendanceRegister!.first.endDate;
-                                cardDetails = individualAttendanceRegisterModel
-                                    .attendanceRegister!
-                                    .map((e) => {
-                                          i18.workOrder.workOrderNo:
-                                              e.attendanceRegisterAdditionalDetails
-                                                      ?.contractId ??
-                                                  'NA',
-                                          i18.attendanceMgmt.registerId:
-                                              e.registerNumber,
-                                          i18.attendanceMgmt.projectId:
-                                              e.attendanceRegisterAdditionalDetails
-                                                      ?.projectId ??
-                                                  'NA',
-                                          i18.attendanceMgmt.projectDesc:
-                                              e.attendanceRegisterAdditionalDetails
-                                                      ?.projectDesc ??
-                                                  'NA',
-                                          i18.attendanceMgmt.individualsCount: e
-                                                      .attendeesEntries !=
-                                                  null
-                                              ? e.attendeesEntries
-                                                  ?.where((att) =>
-                                                      att.denrollmentDate ==
-                                                          null ||
-                                                      !(att.denrollmentDate! <=
-                                                          DateTime.now().millisecondsSinceEpoch))
-                                                  .toList()
-                                                  .length
-                                              : 0,
-                                          i18.common.startDate:
-                                              DateFormats.timeStampToDate(
-                                                  e.startDate,
-                                                  format: "dd/MM/yyyy"),
-                                          i18.common.endDate:
-                                              DateFormats.timeStampToDate(
-                                                  e.endDate,
-                                                  format: "dd/MM/yyyy"),
-                                        })
-                                    .toList();
-                                return Stack(children: [
-                                  Container(
-                                    color:
-                                        const Color.fromRGBO(238, 238, 238, 1),
-                                    padding: const EdgeInsets.only(
-                                        left: 8, right: 8, bottom: 16),
-                                    height: MediaQuery.of(context).size.height,
-                                    child: CustomScrollView(slivers: [
-                                      SliverList(
-                                          delegate: SliverChildListDelegate([
-                                        Back(
-                                          backLabel:
-                                              AppLocalizations.of(context)
-                                                  .translate(i18.common.back),
-                                        ),
-                                        WorkDetailsCard(cardDetails),
-                                      ])),
-                                      SliverToBoxAdapter(
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                            const SizedBox(
-                                              height: 20,
+                        return BlocBuilder<MusterInboxStatusBloc, MusterInboxStatusState>(
+                            builder: (context, musterStatusState) {
+                              return musterStatusState.maybeWhen(orElse: () => Container(),
+                                  loading: () =>
+                                      shg_loader.Loaders.circularLoader(context),
+                             loaded: (String? sentBackToCBOCode) => BlocBuilder<
+                                    AttendanceIndividualProjectSearchBloc,
+                                    AttendanceIndividualProjectSearchState>(
+                                builder: (context, state) {
+                              return state.maybeWhen(
+                                  loading: () =>
+                                      shg_loader.Loaders.circularLoader(context),
+                                  error: (String? error) =>
+                                      Notifiers.getToastMessage(
+                                          context, error.toString(), 'ERROR'),
+                                  loaded: (AttendanceRegistersModel?
+                                      individualAttendanceRegisterModel) {
+                                    registerId = individualAttendanceRegisterModel!
+                                        .attendanceRegister!.first.id;
+                                    registerStartDate =
+                                        individualAttendanceRegisterModel
+                                            .attendanceRegister!.first.startDate;
+                                    registerEndDate =
+                                        individualAttendanceRegisterModel
+                                            .attendanceRegister!.first.endDate;
+                                    cardDetails = individualAttendanceRegisterModel
+                                        .attendanceRegister!
+                                        .map((e) => {
+                                              i18.workOrder.workOrderNo:
+                                                  e.attendanceRegisterAdditionalDetails
+                                                          ?.contractId ??
+                                                      'NA',
+                                              i18.attendanceMgmt.registerId:
+                                                  e.registerNumber,
+                                              i18.attendanceMgmt.projectId:
+                                                  e.attendanceRegisterAdditionalDetails
+                                                          ?.projectId ??
+                                                      'NA',
+                                              i18.attendanceMgmt.projectDesc:
+                                                  e.attendanceRegisterAdditionalDetails
+                                                          ?.projectDesc ??
+                                                      'NA',
+                                              i18.attendanceMgmt.individualsCount: e
+                                                          .attendeesEntries !=
+                                                      null
+                                                  ? e.attendeesEntries
+                                                      ?.where((att) =>
+                                                          att.denrollmentDate ==
+                                                              null ||
+                                                          !(att.denrollmentDate! <=
+                                                              DateTime.now().millisecondsSinceEpoch))
+                                                      .toList()
+                                                      .length
+                                                  : 0,
+                                              i18.common.startDate:
+                                                  DateFormats.timeStampToDate(
+                                                      e.startDate,
+                                                      format: "dd/MM/yyyy"),
+                                              i18.common.endDate:
+                                                  DateFormats.timeStampToDate(
+                                                      e.endDate,
+                                                      format: "dd/MM/yyyy"),
+                                            })
+                                        .toList();
+                                    return Stack(children: [
+                                      Container(
+                                        color:
+                                            const Color.fromRGBO(238, 238, 238, 1),
+                                        padding: const EdgeInsets.only(
+                                            left: 8, right: 8, bottom: 16),
+                                        height: MediaQuery.of(context).size.height,
+                                        child: CustomScrollView(slivers: [
+                                          SliverList(
+                                              delegate: SliverChildListDelegate([
+                                            Back(
+                                              backLabel:
+                                                  AppLocalizations.of(context)
+                                                      .translate(i18.common.back),
                                             ),
-                                            // DigitSearchBar(borderRadious: 0,),
-                                            // DateRangePicker(label: 'Mark attendance for the week'),
-                                            DateRangePicker(
-                                              label: AppLocalizations.of(
-                                                      context)
-                                                  .translate(i18.attendanceMgmt
-                                                      .markAttendanceForTheWeek),
-                                              controller: dateController,
-                                              onChangeOfDate: _onDateChange,
-                                              rangePickerController:
-                                                  rangePickerController,
-                                              onViewChange: _onViewChangedDate,
-                                              selectionMode:
-                                                  DateRangePickerSelectionMode
-                                                      .range,
-                                              onSubmit: () => onSubmit(
-                                                  individualAttendanceRegisterModel
-                                                      .attendanceRegister!
-                                                      .first
-                                                      .id
-                                                      .toString()),
-                                              onCancel: () {
-                                                dateController.text = '';
-                                                selectedDateRange = null;
-                                              },
-                                              applyLabel: AppLocalizations.of(
-                                                      context)
-                                                  .translate(i18.common.apply),
-                                              cancelLabel: AppLocalizations.of(
-                                                      context)
-                                                  .translate(i18.common.cancel),
-                                            ),
-                                            CustomInfoCard(title: AppLocalizations.of(context)
-                                                .translate(i18.common.info), description: AppLocalizations.of(context)
-                                                .translate(i18.attendanceMgmt.toMarkAttendance),
-                                            child: Column(
-                                              children: entryExitList!.length > 2  ? [
-                                                Row(children:  [
-                                                  CircularButton(icon: Icons.circle_rounded,
-                                                      size: 15,
-                                                      color: const Color.fromRGBO(0, 100, 0, 1),
-                                                      index: 1,
-                                                      isNotGreyed: false,
-                                                    onTap: () {},),
-                                                   Padding(
-                                                     padding: const EdgeInsets.only(left: 4.0),
-                                                     child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
-                                                   )
-                                                ],),
-                                                const SizedBox(height: 4,),
-                                                Row(children: [
-                                                  CircularButton(icon: Icons.circle_rounded,
-                                                    size: 15,
-                                                    color: const Color.fromRGBO(0, 100, 0, 1),
-                                                    index: 0.5,
-                                                    isNotGreyed: false,
-                                                    onTap: () {},),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 4.0),
-                                                    child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
-                                                  )
-                                                ],),
-                                                const SizedBox(height: 4,),
-                                                Row(children:  [
-                                                  CircularButton(icon: Icons.circle_rounded,
-                                                    size: 15,
-                                                    color: const Color.fromRGBO(0, 100, 0, 1),
-                                                    index: 0,
-                                                    isNotGreyed: false,
-                                                  onTap: () {},),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 4.0),
-                                                    child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
-                                                  )
-                                                ],)
-                                              ] : [
-                                                Row(
-                                                  children:  [
-                                                  CircularButton(icon: Icons.circle_rounded,
-                                                    size: 15,
-                                                    color: const Color.fromRGBO(0, 100, 0, 1),
-                                                    index: 1,
-                                                    isNotGreyed: false,
-                                                    onTap: () {},),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 4.0),
-                                                    child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
-                                                  )
-                                                ],),
-                                                const SizedBox(height: 4,),
-                                                Row(children:  [
-                                                  CircularButton(icon: Icons.circle_rounded,
-                                                    size: 15,
-                                                    color: const Color.fromRGBO(0, 100, 0, 1),
-                                                    index: 0,
-                                                    isNotGreyed: false,
-                                                    onTap: () {},),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 4.0),
-                                                    child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
-                                                  )
-                                                ],)
-                                              ],
-                                            ),),
-                                            Container(
-                                                margin:
-                                                    const EdgeInsets.all(8.0),
-                                                child: TextFormField(
-                                                  controller: searchController,
-                                                  autofocus: false,
-                                                  decoration: InputDecoration(
-                                                    hintText:
-                                                        AppLocalizations.of(
-                                                                context)
-                                                            .translate(i18
-                                                                .common
-                                                                .searchByName),
-                                                    border:
-                                                        const OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.zero,
-                                                    ),
-                                                    filled: true,
-                                                    fillColor: Colors.white,
-                                                    prefixIconConstraints:
-                                                        const BoxConstraints(
-                                                            minWidth: 0,
-                                                            minHeight: 0),
-                                                    prefixStyle: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: Theme.of(context)
-                                                            .primaryColorDark),
-                                                    prefixIcon: const Padding(
-                                                        padding:
-                                                            EdgeInsets.all(8.0),
-                                                        child: Icon(Icons
-                                                            .search_sharp)),
-                                                  ),
-                                                  onChanged: (val) =>
-                                                      onTextSearch(),
-                                                )),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            individualAttendanceRegisterModel
-                                                        .attendanceRegister!
-                                                        .first
-                                                        .attendeesEntries !=
-                                                    null
-                                                ? BlocListener<
-                                                        MusterRollFromToDateSearchBloc,
-                                                        MusterRollFromToDateSearchState>(
-                                                    listener: (context,
-                                                        musterSearch) {
-                                                    musterSearch.maybeWhen(
-                                                        orElse: () =>
-                                                            Container(),
-                                                        loading: () =>
-                                                            shg_loader.Loaders
-                                                                .circularLoader(
-                                                                    context),
-                                                        loaded: (MusterRollsModel?
-                                                            musterRollsSearch) {
-                                                          if (musterRollsSearch!
-                                                                      .musterRoll !=
-                                                                  null &&
-                                                              musterRollsSearch
-                                                                  .musterRoll!
-                                                                  .isNotEmpty) {
-                                                            existingSkills =
-                                                                musterRollsSearch
-                                                                    .musterRoll!
-                                                                    .first
-                                                                    .individualEntries!
-                                                                    .map((e) =>
-                                                                        IndividualSkills(
-                                                                          individualId:
-                                                                              e.individualId,
-                                                                          skillCode:
-                                                                              e.musterIndividualAdditionalDetails?.skillCode ?? '',
-                                                                          name: e.musterIndividualAdditionalDetails?.userName ??
-                                                                              e.individualId ??
-                                                                              '',
-                                                                          aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ??
-                                                                              e.individualId ??
-                                                                              '',
-                                                                          individualGaurdianName:
-                                                                              e.musterIndividualAdditionalDetails?.fatherName ?? '',
-                                                                          id: e
-                                                                              .id,
-                                                                        ))
-                                                                    .toList();
-                                                            context
-                                                                .read<
-                                                                    MusterGetWorkflowBloc>()
-                                                                .add(
-                                                                  GetMusterWorkflowEvent(
-                                                                      tenantId:
-                                                                          widget
-                                                                              .tenantId,
-                                                                      musterRollNumber: musterRollsSearch
-                                                                          .musterRoll!
-                                                                          .first
-                                                                          .musterRollNumber
-                                                                          .toString()),
-                                                                );
-                                                          } else {
-                                                            existingSkills
-                                                                .clear();
-                                                          }
-                                                        });
-                                                  }, child: BlocBuilder<
-                                                        MusterRollEstimateBloc,
-                                                        MusterRollEstimateState>(
-                                                    builder:
-                                                        (context, musterState) {
-                                                      return musterState
-                                                          .maybeWhen(
-                                                        orElse: () =>
-                                                            Container(),
-                                                        loading: () =>
-                                                            shg_loader.Loaders
-                                                                .circularLoader(
-                                                                    context),
-                                                        loaded:
-                                                            (EstimateMusterRollsModel?
-                                                                musterRollsModel) {
-                                                          List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel
-                                                              .attendanceRegister!
-                                                              .first
-                                                              .attendeesEntries!
-                                                              .where((e) =>
-                                                                  e.denrollmentDate == null ||
-                                                                  !(e.denrollmentDate! <=
-                                                                      DateTime.now()
-                                                                          .millisecondsSinceEpoch))
-                                                              .toList()
-                                                              .map((e) => AttendeesTrackList(
-                                                                  name: e.additionalDetails?.individualName ??
-                                                                      '',
-                                                                  aadhaar:
-                                                                      e.additionalDetails?.identifierId ??
-                                                                          '',
-                                                                  individualId:
-                                                                      e.individualId,
-                                                                  individualGaurdianName: e.additionalDetails?.individualGaurdianName ?? ''))
-                                                              .toList();
-                                                          if (attendeeList !=
-                                                                  null &&
-                                                              attendeeList
-                                                                  .isNotEmpty) {
-                                                            if (musterRollsModel
-                                                                        ?.musterRoll !=
-                                                                    null &&
-                                                                musterRollsModel!
-                                                                    .musterRoll!
-                                                                    .isNotEmpty &&
-                                                                musterRollsModel
-                                                                    .musterRoll!
-                                                                    .first
-                                                                    .individualEntries!
-                                                                    .isNotEmpty) {
-                                                              List<EstimateIndividualEntries>?
-                                                                  estimateMusterRoll =
-                                                                  musterRollsModel
+                                            WorkDetailsCard(cardDetails),
+                                          ])),
+                                          SliverToBoxAdapter(
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                // DigitSearchBar(borderRadious: 0,),
+                                                // DateRangePicker(label: 'Mark attendance for the week'),
+                                                DateRangePicker(
+                                                  label: AppLocalizations.of(
+                                                          context)
+                                                      .translate(i18.attendanceMgmt
+                                                          .markAttendanceForTheWeek),
+                                                  controller: dateController,
+                                                  onChangeOfDate: _onDateChange,
+                                                  rangePickerController:
+                                                      rangePickerController,
+                                                  onViewChange: _onViewChangedDate,
+                                                  selectionMode:
+                                                      DateRangePickerSelectionMode
+                                                          .range,
+                                                  onSubmit: () => onSubmit(
+                                                      individualAttendanceRegisterModel
+                                                          .attendanceRegister!
+                                                          .first
+                                                          .id
+                                                          .toString()),
+                                                  onCancel: () {
+                                                    dateController.text = '';
+                                                    selectedDateRange = null;
+                                                  },
+                                                  applyLabel: AppLocalizations.of(
+                                                          context)
+                                                      .translate(i18.common.apply),
+                                                  cancelLabel: AppLocalizations.of(
+                                                          context)
+                                                      .translate(i18.common.cancel),
+                                                ),
+                                                CustomInfoCard(title: AppLocalizations.of(context)
+                                                    .translate(i18.common.info), description: AppLocalizations.of(context)
+                                                    .translate(i18.attendanceMgmt.toMarkAttendance),
+                                                child: Column(
+                                                  children: entryExitList!.length > 2  ? [
+                                                    Row(children:  [
+                                                      CircularButton(icon: Icons.circle_rounded,
+                                                          size: 15,
+                                                          color: const Color.fromRGBO(0, 100, 0, 1),
+                                                          index: 1,
+                                                          isNotGreyed: false,
+                                                        onTap: () {},),
+                                                       Padding(
+                                                         padding: const EdgeInsets.only(left: 4.0),
+                                                         child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                       )
+                                                    ],),
+                                                    const SizedBox(height: 4,),
+                                                    Row(children: [
+                                                      CircularButton(icon: Icons.circle_rounded,
+                                                        size: 15,
+                                                        color: const Color.fromRGBO(0, 100, 0, 1),
+                                                        index: 0.5,
+                                                        isNotGreyed: false,
+                                                        onTap: () {},),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 4.0),
+                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
+                                                      )
+                                                    ],),
+                                                    const SizedBox(height: 4,),
+                                                    Row(children:  [
+                                                      CircularButton(icon: Icons.circle_rounded,
+                                                        size: 15,
+                                                        color: const Color.fromRGBO(0, 100, 0, 1),
+                                                        index: 0,
+                                                        isNotGreyed: false,
+                                                      onTap: () {},),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 4.0),
+                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                      )
+                                                    ],)
+                                                  ] : [
+                                                    Row(
+                                                      children:  [
+                                                      CircularButton(icon: Icons.circle_rounded,
+                                                        size: 15,
+                                                        color: const Color.fromRGBO(0, 100, 0, 1),
+                                                        index: 1,
+                                                        isNotGreyed: false,
+                                                        onTap: () {},),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 4.0),
+                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                      )
+                                                    ],),
+                                                    const SizedBox(height: 4,),
+                                                    Row(children:  [
+                                                      CircularButton(icon: Icons.circle_rounded,
+                                                        size: 15,
+                                                        color: const Color.fromRGBO(0, 100, 0, 1),
+                                                        index: 0,
+                                                        isNotGreyed: false,
+                                                        onTap: () {},),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 4.0),
+                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                      )
+                                                    ],)
+                                                  ],
+                                                ),),
+                                                Container(
+                                                    margin:
+                                                        const EdgeInsets.all(8.0),
+                                                    child: TextFormField(
+                                                      controller: searchController,
+                                                      autofocus: false,
+                                                      decoration: InputDecoration(
+                                                        hintText:
+                                                            AppLocalizations.of(
+                                                                    context)
+                                                                .translate(i18
+                                                                    .common
+                                                                    .searchByName),
+                                                        border:
+                                                            const OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.zero,
+                                                        ),
+                                                        filled: true,
+                                                        fillColor: Colors.white,
+                                                        prefixIconConstraints:
+                                                            const BoxConstraints(
+                                                                minWidth: 0,
+                                                                minHeight: 0),
+                                                        prefixStyle: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: Theme.of(context)
+                                                                .primaryColorDark),
+                                                        prefixIcon: const Padding(
+                                                            padding:
+                                                                EdgeInsets.all(8.0),
+                                                            child: Icon(Icons
+                                                                .search_sharp)),
+                                                      ),
+                                                      onChanged: (val) =>
+                                                          onTextSearch(),
+                                                    )),
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                individualAttendanceRegisterModel
+                                                            .attendanceRegister!
+                                                            .first
+                                                            .attendeesEntries !=
+                                                        null
+                                                    ? BlocListener<
+                                                            MusterRollFromToDateSearchBloc,
+                                                            MusterRollFromToDateSearchState>(
+                                                        listener: (context,
+                                                            musterSearch) {
+                                                        musterSearch.maybeWhen(
+                                                            orElse: () =>
+                                                                Container(),
+                                                            loading: () =>
+                                                                shg_loader.Loaders
+                                                                    .circularLoader(
+                                                                        context),
+                                                            loaded: (MusterRollsModel?
+                                                                musterRollsSearch) {
+                                                              if (musterRollsSearch!
+                                                                          .musterRoll !=
+                                                                      null &&
+                                                                  musterRollsSearch
                                                                       .musterRoll!
-                                                                      .first
-                                                                      .individualEntries;
-                                                              attendeeList = individualAttendanceRegisterModel
+                                                                      .isNotEmpty) {
+                                                                existingSkills =
+                                                                    musterRollsSearch
+                                                                        .musterRoll!
+                                                                        .first
+                                                                        .individualEntries!
+                                                                        .map((e) =>
+                                                                            IndividualSkills(
+                                                                              individualId:
+                                                                                  e.individualId,
+                                                                              skillCode:
+                                                                                  e.musterIndividualAdditionalDetails?.skillCode ?? '',
+                                                                              name: e.musterIndividualAdditionalDetails?.userName ??
+                                                                                  e.individualId ??
+                                                                                  '',
+                                                                              aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ??
+                                                                                  e.individualId ??
+                                                                                  '',
+                                                                              individualGaurdianName:
+                                                                                  e.musterIndividualAdditionalDetails?.fatherName ?? '',
+                                                                              id: e
+                                                                                  .id,
+                                                                            ))
+                                                                        .toList();
+                                                                context
+                                                                    .read<
+                                                                        MusterGetWorkflowBloc>()
+                                                                    .add(
+                                                                      GetMusterWorkflowEvent(
+                                                                          tenantId:
+                                                                              widget
+                                                                                  .tenantId,
+                                                                          musterRollNumber: musterRollsSearch
+                                                                              .musterRoll!
+                                                                              .first
+                                                                              .musterRollNumber
+                                                                              .toString(),
+                                                                      musterSentBackCode: sentBackToCBOCode ?? Constants.sentBack),
+                                                                    );
+                                                              } else {
+                                                                existingSkills
+                                                                    .clear();
+                                                              }
+                                                            });
+                                                      }, child: BlocBuilder<
+                                                            MusterRollEstimateBloc,
+                                                            MusterRollEstimateState>(
+                                                        builder:
+                                                            (context, musterState) {
+                                                          return musterState
+                                                              .maybeWhen(
+                                                            orElse: () =>
+                                                                Container(),
+                                                            loading: () =>
+                                                                shg_loader.Loaders
+                                                                    .circularLoader(
+                                                                        context),
+                                                            loaded:
+                                                                (EstimateMusterRollsModel?
+                                                                    musterRollsModel) {
+                                                              List<AttendeesTrackList> attendeeList = individualAttendanceRegisterModel
                                                                   .attendanceRegister!
                                                                   .first
                                                                   .attendeesEntries!
+                                                                  .where((e) =>
+                                                                      e.denrollmentDate == null ||
+                                                                      !(e.denrollmentDate! <=
+                                                                          DateTime.now()
+                                                                              .millisecondsSinceEpoch))
+                                                                  .toList()
                                                                   .map((e) => AttendeesTrackList(
-                                                                      name: existingSkills.isNotEmpty
-                                                                          ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name
-                                                                          : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
-                                                                              ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.userName
-                                                                              : e.additionalDetails?.individualName ?? '',
-                                                                      aadhaar: existingSkills.isNotEmpty
-                                                                          ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).aadhaar
-                                                                          : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
-                                                                              ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.aadharNumber
-                                                                              : e.additionalDetails?.identifierId ?? '',
-                                                                      individualGaurdianName: existingSkills.isNotEmpty
-                                                                          ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).individualGaurdianName
-                                                                          : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
-                                                                              ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.fatherName
-                                                                              : e.additionalDetails?.individualGaurdianName ?? '',
-                                                                      individualId: e.individualId,
-                                                                      skillCodeList: estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.skillCode ?? [] : [],
-                                                                      id: existingSkills.isNotEmpty
-                                                                          ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id
-                                                                          : estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
-                                                                              ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.id
-                                                                              : '',
-                                                                      skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
-                                                                      monEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
-                                                                      monExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
-                                                                      monIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1 : -1,
-                                                                      tueEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
-                                                                      tueExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
-                                                                      tueIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendance ?? -1 : -1,
-                                                                      wedEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
-                                                                      wedExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
-                                                                      wedIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendance ?? -1 : -1,
-                                                                      thuEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
-                                                                      thuExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
-                                                                      thursIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendance ?? -1 : -1,
-                                                                      friEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
-                                                                      friExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
-                                                                      friIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendance ?? -1 : -1,
-                                                                      satEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
-                                                                      satExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
-                                                                      satIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? -1 : -1,
-                                                                      sunEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
-                                                                      sunExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
-                                                                      sunIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? -1 : -1,
-                                                                      auditDetails: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.first.auditDetails : null))
+                                                                      name: e.additionalDetails?.individualName ??
+                                                                          '',
+                                                                      aadhaar:
+                                                                          e.additionalDetails?.identifierId ??
+                                                                              '',
+                                                                      individualId:
+                                                                          e.individualId,
+                                                                      individualGaurdianName: e.additionalDetails?.individualGaurdianName ?? ''))
                                                                   .toList();
-                                                              if (newList
-                                                                  .isEmpty) {
-                                                                for (var i = 0;
-                                                                    i <
-                                                                        attendeeList
-                                                                            .length;
-                                                                    i++) {
-                                                                  var item1 =
-                                                                      attendeeList[
-                                                                          i];
-                                                                  TrackAttendanceTableData
-                                                                      data =
-                                                                      TrackAttendanceTableData();
-                                                                  data.name =
-                                                                      item1.name ??
-                                                                          '';
-                                                                  data.aadhaar =
-                                                                      item1.aadhaar ??
-                                                                          '';
-                                                                  data.individualGaurdianName =
-                                                                      item1.individualGaurdianName ??
-                                                                          '';
-                                                                  data.individualId =
-                                                                      item1.individualId ??
-                                                                          '';
-                                                                  data.id =
-                                                                      item1.id ??
-                                                                          '';
-                                                                  data.skill =
-                                                                      item1.skill ??
-                                                                          '';
-                                                                  data.skillCodeList =
-                                                                      item1.skillCodeList ??
-                                                                          [];
-                                                                  data.monIndex =
-                                                                      item1
-                                                                          .monIndex;
-                                                                  data.monEntryId =
-                                                                      item1
-                                                                          .monEntryId;
-                                                                  data.monExitId =
-                                                                      item1
-                                                                          .monExitId;
-                                                                  data.tueIndex =
-                                                                      item1
-                                                                          .tueIndex;
-                                                                  data.tueEntryId =
-                                                                      item1
-                                                                          .tueEntryId;
-                                                                  data.tueExitId =
-                                                                      item1
-                                                                          .tueExitId;
-                                                                  data.wedIndex =
-                                                                      item1
-                                                                          .wedIndex;
-                                                                  data.wedEntryId =
-                                                                      item1
-                                                                          .wedEntryId;
-                                                                  data.wedExitId =
-                                                                      item1
-                                                                          .wedExitId;
-                                                                  data.thuIndex =
-                                                                      item1
-                                                                          .thursIndex;
-                                                                  data.thuEntryId =
-                                                                      item1
-                                                                          .thuEntryId;
-                                                                  data.thuExitId =
-                                                                      item1
-                                                                          .thuExitId;
-                                                                  data.friIndex =
-                                                                      item1
-                                                                          .friIndex;
-                                                                  data.friEntryId =
-                                                                      item1
-                                                                          .friEntryId;
-                                                                  data.friExitId =
-                                                                      item1
-                                                                          .friExitId;
-                                                                  data.satIndex =
-                                                                      item1
-                                                                          .satIndex;
-                                                                  data.satEntryId =
-                                                                      item1
-                                                                          .satEntryId;
-                                                                  data.satExitId =
-                                                                      item1
-                                                                          .satExitId;
-                                                                  data.sunIndex =
-                                                                      item1
-                                                                          .sunIndex;
-                                                                  data.sunEntryId =
-                                                                      item1
-                                                                          .sunEntryId;
-                                                                  data.sunExitId =
-                                                                      item1
-                                                                          .sunExitId;
-                                                                  data.auditDetails =
-                                                                      item1
-                                                                          .auditDetails;
-                                                                  newList.add(
-                                                                      data);
+                                                              if (attendeeList !=
+                                                                      null &&
+                                                                  attendeeList
+                                                                      .isNotEmpty) {
+                                                                if (musterRollsModel
+                                                                            ?.musterRoll !=
+                                                                        null &&
+                                                                    musterRollsModel!
+                                                                        .musterRoll!
+                                                                        .isNotEmpty &&
+                                                                    musterRollsModel
+                                                                        .musterRoll!
+                                                                        .first
+                                                                        .individualEntries!
+                                                                        .isNotEmpty) {
+                                                                  List<EstimateIndividualEntries>?
+                                                                      estimateMusterRoll =
+                                                                      musterRollsModel
+                                                                          .musterRoll!
+                                                                          .first
+                                                                          .individualEntries;
+                                                                  attendeeList = individualAttendanceRegisterModel
+                                                                      .attendanceRegister!
+                                                                      .first
+                                                                      .attendeesEntries!
+                                                                      .map((e) => AttendeesTrackList(
+                                                                          name: existingSkills.isNotEmpty
+                                                                              ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name
+                                                                              : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
+                                                                                  ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.userName
+                                                                                  : e.additionalDetails?.individualName ?? '',
+                                                                          aadhaar: existingSkills.isNotEmpty
+                                                                              ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).aadhaar
+                                                                              : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
+                                                                                  ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.aadharNumber
+                                                                                  : e.additionalDetails?.identifierId ?? '',
+                                                                          individualGaurdianName: existingSkills.isNotEmpty
+                                                                              ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).individualGaurdianName
+                                                                              : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
+                                                                                  ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.fatherName
+                                                                                  : e.additionalDetails?.individualGaurdianName ?? '',
+                                                                          individualId: e.individualId,
+                                                                          skillCodeList: estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.skillCode ?? [] : [],
+                                                                          id: existingSkills.isNotEmpty
+                                                                              ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id
+                                                                              : estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
+                                                                                  ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.id
+                                                                                  : '',
+                                                                          skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
+                                                                          monEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                          monExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
+                                                                          monIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1 : -1,
+                                                                          tueEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                          tueExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
+                                                                          tueIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendance ?? -1 : -1,
+                                                                          wedEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                          wedExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
+                                                                          wedIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendance ?? -1 : -1,
+                                                                          thuEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                          thuExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
+                                                                          thursIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendance ?? -1 : -1,
+                                                                          friEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                          friExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
+                                                                          friIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendance ?? -1 : -1,
+                                                                          satEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                          satExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
+                                                                          satIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? -1 : -1,
+                                                                          sunEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                          sunExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
+                                                                          sunIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? -1 : -1,
+                                                                          auditDetails: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.first.auditDetails : null))
+                                                                      .toList();
+                                                                  if (newList
+                                                                      .isEmpty) {
+                                                                    for (var i = 0;
+                                                                        i <
+                                                                            attendeeList
+                                                                                .length;
+                                                                        i++) {
+                                                                      var item1 =
+                                                                          attendeeList[
+                                                                              i];
+                                                                      TrackAttendanceTableData
+                                                                          data =
+                                                                          TrackAttendanceTableData();
+                                                                      data.name =
+                                                                          item1.name ??
+                                                                              '';
+                                                                      data.aadhaar =
+                                                                          item1.aadhaar ??
+                                                                              '';
+                                                                      data.individualGaurdianName =
+                                                                          item1.individualGaurdianName ??
+                                                                              '';
+                                                                      data.individualId =
+                                                                          item1.individualId ??
+                                                                              '';
+                                                                      data.id =
+                                                                          item1.id ??
+                                                                              '';
+                                                                      data.skill =
+                                                                          item1.skill ??
+                                                                              '';
+                                                                      data.skillCodeList =
+                                                                          item1.skillCodeList ??
+                                                                              [];
+                                                                      data.monIndex =
+                                                                          item1
+                                                                              .monIndex;
+                                                                      data.monEntryId =
+                                                                          item1
+                                                                              .monEntryId;
+                                                                      data.monExitId =
+                                                                          item1
+                                                                              .monExitId;
+                                                                      data.tueIndex =
+                                                                          item1
+                                                                              .tueIndex;
+                                                                      data.tueEntryId =
+                                                                          item1
+                                                                              .tueEntryId;
+                                                                      data.tueExitId =
+                                                                          item1
+                                                                              .tueExitId;
+                                                                      data.wedIndex =
+                                                                          item1
+                                                                              .wedIndex;
+                                                                      data.wedEntryId =
+                                                                          item1
+                                                                              .wedEntryId;
+                                                                      data.wedExitId =
+                                                                          item1
+                                                                              .wedExitId;
+                                                                      data.thuIndex =
+                                                                          item1
+                                                                              .thursIndex;
+                                                                      data.thuEntryId =
+                                                                          item1
+                                                                              .thuEntryId;
+                                                                      data.thuExitId =
+                                                                          item1
+                                                                              .thuExitId;
+                                                                      data.friIndex =
+                                                                          item1
+                                                                              .friIndex;
+                                                                      data.friEntryId =
+                                                                          item1
+                                                                              .friEntryId;
+                                                                      data.friExitId =
+                                                                          item1
+                                                                              .friExitId;
+                                                                      data.satIndex =
+                                                                          item1
+                                                                              .satIndex;
+                                                                      data.satEntryId =
+                                                                          item1
+                                                                              .satEntryId;
+                                                                      data.satExitId =
+                                                                          item1
+                                                                              .satExitId;
+                                                                      data.sunIndex =
+                                                                          item1
+                                                                              .sunIndex;
+                                                                      data.sunEntryId =
+                                                                          item1
+                                                                              .sunEntryId;
+                                                                      data.sunExitId =
+                                                                          item1
+                                                                              .sunExitId;
+                                                                      data.auditDetails =
+                                                                          item1
+                                                                              .auditDetails;
+                                                                      newList.add(
+                                                                          data);
+                                                                    }
+                                                                  }
+                                                                } else {
+                                                                  if (newList
+                                                                      .isEmpty) {
+                                                                    for (var i = 0;
+                                                                        i <
+                                                                            attendeeList
+                                                                                .length;
+                                                                        i++) {
+                                                                      var item1 =
+                                                                          attendeeList[
+                                                                              i];
+                                                                      TrackAttendanceTableData
+                                                                          data =
+                                                                          TrackAttendanceTableData();
+                                                                      data.name =
+                                                                          item1.name ??
+                                                                              '';
+                                                                      data.aadhaar =
+                                                                          item1.aadhaar ??
+                                                                              '';
+                                                                      data.individualGaurdianName =
+                                                                          item1.individualGaurdianName ??
+                                                                              '';
+                                                                      data.individualId =
+                                                                          item1.individualId ??
+                                                                              '';
+                                                                      data.id =
+                                                                          item1.id;
+                                                                      data.skill =
+                                                                          item1.skill ??
+                                                                              '';
+                                                                      data.skillCodeList =
+                                                                          item1.skillCodeList ??
+                                                                              [];
+                                                                      data.monIndex =
+                                                                          item1
+                                                                              .monIndex;
+                                                                      data.tueIndex =
+                                                                          item1
+                                                                              .tueIndex;
+                                                                      data.wedIndex =
+                                                                          item1
+                                                                              .wedIndex;
+                                                                      data.thuIndex =
+                                                                          item1
+                                                                              .thursIndex;
+                                                                      data.friIndex =
+                                                                          item1
+                                                                              .friIndex;
+                                                                      data.satIndex =
+                                                                          item1
+                                                                              .satIndex;
+                                                                      data.sunIndex =
+                                                                          item1
+                                                                              .sunIndex;
+                                                                      data.auditDetails =
+                                                                          item1
+                                                                              .auditDetails;
+                                                                      newList.add(
+                                                                          data);
+                                                                    }
+                                                                  }
                                                                 }
-                                                              }
-                                                            } else {
-                                                              if (newList
-                                                                  .isEmpty) {
-                                                                for (var i = 0;
-                                                                    i <
-                                                                        attendeeList
-                                                                            .length;
-                                                                    i++) {
-                                                                  var item1 =
-                                                                      attendeeList[
-                                                                          i];
-                                                                  TrackAttendanceTableData
-                                                                      data =
-                                                                      TrackAttendanceTableData();
-                                                                  data.name =
-                                                                      item1.name ??
-                                                                          '';
-                                                                  data.aadhaar =
-                                                                      item1.aadhaar ??
-                                                                          '';
-                                                                  data.individualGaurdianName =
-                                                                      item1.individualGaurdianName ??
-                                                                          '';
-                                                                  data.individualId =
-                                                                      item1.individualId ??
-                                                                          '';
-                                                                  data.id =
-                                                                      item1.id;
-                                                                  data.skill =
-                                                                      item1.skill ??
-                                                                          '';
-                                                                  data.skillCodeList =
-                                                                      item1.skillCodeList ??
-                                                                          [];
-                                                                  data.monIndex =
-                                                                      item1
-                                                                          .monIndex;
-                                                                  data.tueIndex =
-                                                                      item1
-                                                                          .tueIndex;
-                                                                  data.wedIndex =
-                                                                      item1
-                                                                          .wedIndex;
-                                                                  data.thuIndex =
-                                                                      item1
-                                                                          .thursIndex;
-                                                                  data.friIndex =
-                                                                      item1
-                                                                          .friIndex;
-                                                                  data.satIndex =
-                                                                      item1
-                                                                          .satIndex;
-                                                                  data.sunIndex =
-                                                                      item1
-                                                                          .sunIndex;
-                                                                  data.auditDetails =
-                                                                      item1
-                                                                          .auditDetails;
-                                                                  newList.add(
-                                                                      data);
-                                                                }
-                                                              }
-                                                            }
-                                                            tableData =
-                                                                getAttendanceData(
-                                                                    newList);
-                                                            return Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding:
-                                                                        const EdgeInsets.all(
-                                                                            8.0),
-                                                                    child: shg_app
-                                                                        .DigitTable(
-                                                                      headerList:
-                                                                          headerList,
-                                                                      tableData:
-                                                                          tableData,
-                                                                      leftColumnWidth:
-                                                                          width,
-                                                                      rightColumnWidth: skillsDisable
-                                                                          ? width *
-                                                                              9
-                                                                          : width *
-                                                                              10,
-                                                                      height: 58 +
-                                                                          (52.0 *
-                                                                              (tableData.length + 0.2)),
-                                                                      scrollPhysics:
-                                                                          const NeverScrollableScrollPhysics(),
-                                                                    ),
-                                                                  ),
-                                                                  Align(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .bottomCenter,
-                                                                    child:
-                                                                        Padding(
-                                                                      padding:
-                                                                          const EdgeInsets
-                                                                              .only(
-                                                                        left:
-                                                                            8.0,
-                                                                        right:
-                                                                            8.0,
+                                                                tableData =
+                                                                    getAttendanceData(
+                                                                        newList);
+                                                                return Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(
+                                                                                8.0),
+                                                                        child: shg_app
+                                                                            .DigitTable(
+                                                                          headerList:
+                                                                              headerList,
+                                                                          tableData:
+                                                                              tableData,
+                                                                          leftColumnWidth:
+                                                                              width,
+                                                                          rightColumnWidth: skillsDisable
+                                                                              ? width *
+                                                                                  9
+                                                                              : width *
+                                                                                  10,
+                                                                          height: 58 +
+                                                                              (52.0 *
+                                                                                  (tableData.length + 0.2)),
+                                                                          scrollPhysics:
+                                                                              const NeverScrollableScrollPhysics(),
+                                                                        ),
                                                                       ),
-                                                                      child: SizedBox(
-                                                                          height: isInWorkFlow ? 0 : 100,
-                                                                          child: BlocBuilder<MusterRollFromToDateSearchBloc, MusterRollFromToDateSearchState>(builder: (context, musterSearchState) {
-                                                                            return musterSearchState.maybeWhen(
-                                                                                orElse: () => Container(),
-                                                                                loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                                loaded: (MusterRollsModel? musterRollsSearch) {
-                                                                                  return BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
-                                                                                    listener: (context, workflowState) {
-                                                                                      workflowState.maybeWhen(
-                                                                                          error: () {
-                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.unableToCheckWorkflowStatus), 'ERROR');
-                                                                                          },
-                                                                                          loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                                          loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool inWorkFlow) {
-                                                                                            if (!inWorkFlow) {
-                                                                                              if (isInWorkFlow != false) {
-                                                                                                setState(() {
-                                                                                                  isInWorkFlow = false;
-                                                                                                });
-                                                                                              }
-                                                                                            } else {
-                                                                                              if (musterRollsSearch!.musterRoll!.isNotEmpty && selectedDateRange != null) {
-                                                                                                if (skillsDisable != false) {
-                                                                                                  setState(() {
-                                                                                                    skillsDisable = false;
-                                                                                                  });
-                                                                                                }
-                                                                                                if (isInWorkFlow != true) {
-                                                                                                  setState(() {
-                                                                                                    isInWorkFlow = true;
-                                                                                                  });
-                                                                                                }
-                                                                                              }
-                                                                                            }
-                                                                                            return Container();
-                                                                                          },
-                                                                                          orElse: () {
-                                                                                            return Container();
-                                                                                          });
-                                                                                    },
-                                                                                    child: BlocBuilder<MusterGetWorkflowBloc, MusterGetWorkflowState>(builder: (context, workflowState) {
-                                                                                      return isInWorkFlow
-                                                                                          ? Container()
-                                                                                          : BlocBuilder<MusterSubmissionBloc, MusterSubmissionState>(
-                                                                                          builder: (context, submissionState) {
-                                                                                              return submissionState.maybeWhen(orElse: () => Container(),
+                                                                      Align(
+                                                                        alignment:
+                                                                            Alignment
+                                                                                .bottomCenter,
+                                                                        child:
+                                                                            Padding(
+                                                                          padding:
+                                                                              const EdgeInsets
+                                                                                  .only(
+                                                                            left:
+                                                                                8.0,
+                                                                            right:
+                                                                                8.0,
+                                                                          ),
+                                                                          child: SizedBox(
+                                                                              height: isInWorkFlow ? 0 : 100,
+                                                                              child: BlocBuilder<MusterRollFromToDateSearchBloc, MusterRollFromToDateSearchState>(builder: (context, musterSearchState) {
+                                                                                return musterSearchState.maybeWhen(
+                                                                                    orElse: () => Container(),
+                                                                                    loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                                    loaded: (MusterRollsModel? musterRollsSearch) {
+                                                                                      return BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
+                                                                                        listener: (context, workflowState) {
+                                                                                          workflowState.maybeWhen(
+                                                                                              error: () {
+                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.unableToCheckWorkflowStatus), 'ERROR');
+                                                                                              },
                                                                                               loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                                              loaded : (bool isEndOfWeek) {
-                                                                                                return Column(
-                                                                                                  children: [
-                                                                                                    BlocListener<AttendanceLogCreateBloc, AttendanceLogCreateState>(
-                                                                                                      listener: (context, logState) {
-                                                                                                        SchedulerBinding.instance.addPostFrameCallback((_) {
-                                                                                                          logState.maybeWhen(
-                                                                                                              error: () {
-                                                                                                                if (!hasLoaded && selectedDateRange != null) {
-                                                                                                                  Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedFailed), 'ERROR');
-                                                                                                                  onSubmit(widget.id);
-                                                                                                                  hasLoaded = true;
+                                                                                              loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool inWorkFlow) {
+                                                                                                if (!inWorkFlow) {
+                                                                                                  if (isInWorkFlow != false) {
+                                                                                                    setState(() {
+                                                                                                      isInWorkFlow = false;
+                                                                                                    });
+                                                                                                  }
+                                                                                                } else {
+                                                                                                  if (musterRollsSearch!.musterRoll!.isNotEmpty && selectedDateRange != null) {
+                                                                                                    if (skillsDisable != false) {
+                                                                                                      setState(() {
+                                                                                                        skillsDisable = false;
+                                                                                                      });
+                                                                                                    }
+                                                                                                    if (isInWorkFlow != true) {
+                                                                                                      setState(() {
+                                                                                                        isInWorkFlow = true;
+                                                                                                      });
+                                                                                                    }
+                                                                                                  }
+                                                                                                }
+                                                                                                return Container();
+                                                                                              },
+                                                                                              orElse: () {
+                                                                                                return Container();
+                                                                                              });
+                                                                                        },
+                                                                                        child: BlocBuilder<MusterGetWorkflowBloc, MusterGetWorkflowState>(builder: (context, workflowState) {
+                                                                                          return workflowState.maybeWhen(orElse: () => Container(),
+                                                                                              error: () => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.unableToCheckWorkflowStatus), 'ERROR'),
+                                                                                          loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                                          loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool inWorkFlow) =>  isInWorkFlow
+                                                                                              ? Container()
+                                                                                              : BlocBuilder<MusterSubmissionBloc, MusterSubmissionState>(
+                                                                                              builder: (context, submissionState) {
+                                                                                                  return submissionState.maybeWhen(orElse: () => Container(),
+                                                                                                  loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                                                  loaded : (bool isEndOfWeek) {
+                                                                                                    return Column(
+                                                                                                      children: [
+                                                                                                        BlocListener<AttendanceLogCreateBloc, AttendanceLogCreateState>(
+                                                                                                          listener: (context, logState) {
+                                                                                                            SchedulerBinding.instance.addPostFrameCallback((_) {
+                                                                                                              logState.maybeWhen(
+                                                                                                                  error: () {
+                                                                                                                    if (!hasLoaded && selectedDateRange != null) {
+                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedFailed), 'ERROR');
+                                                                                                                      onSubmit(widget.id);
+                                                                                                                      hasLoaded = true;
+                                                                                                                    }
+                                                                                                                  },
+                                                                                                                  loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                                                                  loaded: () {
+                                                                                                                    if (!hasLoaded && selectedDateRange != null) {
+                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedSuccess), 'SUCCESS');
+                                                                                                                      onSubmit(widget.id);
+                                                                                                                      hasLoaded = true;
+                                                                                                                    }
+                                                                                                                  },
+                                                                                                                  orElse: () => Container());
+                                                                                                            });
+                                                                                                          },
+                                                                                                          child: OutlinedButton(
+                                                                                                              style: OutlinedButton.styleFrom(backgroundColor: Colors.white, side: BorderSide(width: 2, color: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? const Color.fromRGBO(149, 148, 148, 1) : DigitTheme.instance.colorScheme.secondary)),
+                                                                                                              onPressed: musterRollsSearch != null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
+                                                                                                                  ? null
+                                                                                                                  : () {
+                                                                                                                if (selectedDateRange == null) {
+                                                                                                                  Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
+                                                                                                                } else {
+                                                                                                                  hasLoaded = false;
+                                                                                                                  if (updateAttendeePayload.isNotEmpty && createAttendeePayload.isNotEmpty) {
+                                                                                                                    context.read<AttendanceLogCreateBloc>().add(UpdateAttendanceLogEvent(attendanceList: updateAttendeePayload));
+                                                                                                                    context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
+                                                                                                                  } else if (updateAttendeePayload.isNotEmpty) {
+                                                                                                                    context.read<AttendanceLogCreateBloc>().add(UpdateAttendanceLogEvent(attendanceList: updateAttendeePayload));
+                                                                                                                  } else if (createAttendeePayload.isNotEmpty) {
+                                                                                                                    context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
+                                                                                                                  }
                                                                                                                 }
                                                                                                               },
-                                                                                                              loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                                                              loaded: () {
-                                                                                                                if (!hasLoaded && selectedDateRange != null) {
-                                                                                                                  Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedSuccess), 'SUCCESS');
-                                                                                                                  onSubmit(widget.id);
-                                                                                                                  hasLoaded = true;
-                                                                                                                }
-                                                                                                              },
-                                                                                                              orElse: () => Container());
-                                                                                                        });
-                                                                                                      },
-                                                                                                      child: OutlinedButton(
-                                                                                                          style: OutlinedButton.styleFrom(backgroundColor: Colors.white, side: BorderSide(width: 2, color: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? const Color.fromRGBO(149, 148, 148, 1) : DigitTheme.instance.colorScheme.secondary)),
-                                                                                                          onPressed: musterRollsSearch != null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
-                                                                                                              ? null
-                                                                                                              : () {
-                                                                                                            if (selectedDateRange == null) {
-                                                                                                              Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
-                                                                                                            } else {
-                                                                                                              hasLoaded = false;
-                                                                                                              if (updateAttendeePayload.isNotEmpty && createAttendeePayload.isNotEmpty) {
-                                                                                                                context.read<AttendanceLogCreateBloc>().add(UpdateAttendanceLogEvent(attendanceList: updateAttendeePayload));
-                                                                                                                context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
+                                                                                                              child: Center(
+                                                                                                                  child: Text(
+                                                                                                                    AppLocalizations.of(context).translate(i18.common.saveAsDraft),
+                                                                                                                    style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1)) : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
+                                                                                                                  ))),
+                                                                                                        ),
+                                                                                                        const SizedBox(
+                                                                                                          height: 10,
+                                                                                                        ),
+                                                                                                        BlocListener<MusterCreateBloc, MusterCreateState>(
+                                                                                                          listener: (context, musterCreateState) {
+                                                                                                            musterCreateState.maybeWhen(
+                                                                                                                error: () {
+                                                                                                                  if (!createMusterLoaded && selectedDateRange != null) {
+                                                                                                                    Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.musterCreateFailed), 'ERROR');
+                                                                                                                    // onSubmit(registerId.toString());
+                                                                                                                    createMusterLoaded = true;
+                                                                                                                    context.router.popAndPush(TrackAttendanceRoute(
+                                                                                                                      tenantId: widget.tenantId.toString(),
+                                                                                                                      id: widget.id.toString(),
+                                                                                                                    ));
+                                                                                                                  }
+                                                                                                                },
+                                                                                                                loaded: (MusterRollsModel? createdMuster) {
+                                                                                                                  if (!createMusterLoaded && selectedDateRange != null) {
+                                                                                                                    Notifiers.getToastMessage(context, ' ${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.musterSentForApproval)}', 'SUCCESS');
+                                                                                                                    createMusterLoaded = true;
+                                                                                                                    // onSubmit(registerId.toString());
+                                                                                                                    context.router.popAndPush(TrackAttendanceRoute(
+                                                                                                                      tenantId: widget.tenantId.toString(),
+                                                                                                                      id: widget.id.toString(),
+                                                                                                                    ));
+                                                                                                                  }
+                                                                                                                },
+                                                                                                                orElse: () => Container());
+                                                                                                          },
+                                                                                                          child: DigitElevatedButton(
+                                                                                                            onPressed: isEndOfWeek && selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch
+                                                                                                                ? null
+                                                                                                                : musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.first.individualEntries != null && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty
+                                                                                                                ? musterRollsSearch?.musterRoll != null && musterRollsSearch!.musterRoll!.isNotEmpty
+                                                                                                                ? isInWorkFlow == false
+                                                                                                                ? () {
+                                                                                                              if (selectedDateRange == null) {
+                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                               } else if (updateAttendeePayload.isNotEmpty) {
-                                                                                                                context.read<AttendanceLogCreateBloc>().add(UpdateAttendanceLogEvent(attendanceList: updateAttendeePayload));
-                                                                                                              } else if (createAttendeePayload.isNotEmpty) {
-                                                                                                                context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
+                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
+                                                                                                              } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null && e.skill.toString().isEmpty)) {
+                                                                                                                setState(() {
+                                                                                                                  skillsDisable = false;
+                                                                                                                });
+                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
+                                                                                                              } else {
+                                                                                                                createMusterLoaded = false;
+                                                                                                                context.read<MusterCreateBloc>().add(UpdateMusterEvent(tenantId: widget.tenantId, id: musterRollsSearch.musterRoll!.first.id.toString(), orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', reSubmitAction: musterWorkFlowModel?.processInstances?.first.nextActions?.first.action, contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', skillsList: skillsPayLoad));
                                                                                                               }
                                                                                                             }
-                                                                                                          },
-                                                                                                          child: Center(
-                                                                                                              child: Text(
-                                                                                                                AppLocalizations.of(context).translate(i18.common.saveAsDraft),
-                                                                                                                style: createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1)) : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
-                                                                                                              ))),
-                                                                                                    ),
-                                                                                                    const SizedBox(
-                                                                                                      height: 10,
-                                                                                                    ),
-                                                                                                    BlocListener<MusterCreateBloc, MusterCreateState>(
-                                                                                                      listener: (context, musterCreateState) {
-                                                                                                        musterCreateState.maybeWhen(
-                                                                                                            error: () {
-                                                                                                              if (!createMusterLoaded && selectedDateRange != null) {
-                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.musterCreateFailed), 'ERROR');
-                                                                                                                // onSubmit(registerId.toString());
-                                                                                                                createMusterLoaded = true;
-                                                                                                                context.router.popAndPush(TrackAttendanceRoute(
-                                                                                                                  tenantId: widget.tenantId.toString(),
-                                                                                                                  id: widget.id.toString(),
-                                                                                                                ));
+                                                                                                                : null
+                                                                                                                : () {
+                                                                                                              if (selectedDateRange == null) {
+                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
+                                                                                                              } else if (createAttendeePayload.isNotEmpty) {
+                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
+                                                                                                              } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null || e.skill.toString().isEmpty)) {
+                                                                                                                setState(() {
+                                                                                                                  skillsDisable = false;
+                                                                                                                });
+                                                                                                                Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
+                                                                                                              } else {
+                                                                                                                createMusterLoaded = false;
+                                                                                                                context.read<MusterCreateBloc>().add(CreateMusterEvent(tenantId: widget.tenantId, registerId: widget.id, startDate: selectedDateRange!.startDate, serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode, referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId, orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', executingAuthority: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.executingAuthority, registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '', projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '', projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '', projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '', locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '', ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '', amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500, skillsList: skillsPayLoad));
                                                                                                               }
-                                                                                                            },
-                                                                                                            loaded: (MusterRollsModel? createdMuster) {
-                                                                                                              if (!createMusterLoaded && selectedDateRange != null) {
-                                                                                                                Notifiers.getToastMessage(context, ' ${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.musterSentForApproval)}', 'SUCCESS');
-                                                                                                                createMusterLoaded = true;
-                                                                                                                // onSubmit(registerId.toString());
-                                                                                                                context.router.popAndPush(TrackAttendanceRoute(
-                                                                                                                  tenantId: widget.tenantId.toString(),
-                                                                                                                  id: widget.id.toString(),
-                                                                                                                ));
-                                                                                                              }
-                                                                                                            },
-                                                                                                            orElse: () => Container());
-                                                                                                      },
-                                                                                                      child: DigitElevatedButton(
-                                                                                                        onPressed: isEndOfWeek && selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch
-                                                                                                            ? null
-                                                                                                            : musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.first.individualEntries != null && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty
-                                                                                                            ? musterRollsSearch?.musterRoll != null && musterRollsSearch!.musterRoll!.isNotEmpty
-                                                                                                            ? isInWorkFlow == false
-                                                                                                            ? () {
-                                                                                                          if (selectedDateRange == null) {
-                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
-                                                                                                          } else if (updateAttendeePayload.isNotEmpty) {
-                                                                                                            Notifiers.getToastMessage(context, 'Attendance changed, Please click on Save as Draft first', 'INFO');
-                                                                                                          } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null && e.skill.toString().isEmpty)) {
-                                                                                                            setState(() {
-                                                                                                              skillsDisable = false;
-                                                                                                            });
-                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
-                                                                                                          } else {
-                                                                                                            createMusterLoaded = false;
-                                                                                                            context.read<MusterCreateBloc>().add(UpdateMusterEvent(tenantId: widget.tenantId, id: musterRollsSearch.musterRoll!.first.id.toString(), orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', skillsList: skillsPayLoad));
-                                                                                                          }
-                                                                                                        }
-                                                                                                            : null
-                                                                                                            : () {
-                                                                                                          if (selectedDateRange == null) {
-                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
-                                                                                                          } else if (createAttendeePayload.isNotEmpty) {
-                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
-                                                                                                          } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null || e.skill.toString().isEmpty)) {
-                                                                                                            setState(() {
-                                                                                                              skillsDisable = false;
-                                                                                                            });
-                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
-                                                                                                          } else {
-                                                                                                            createMusterLoaded = false;
-                                                                                                            context.read<MusterCreateBloc>().add(CreateMusterEvent(tenantId: widget.tenantId, registerId: widget.id, startDate: selectedDateRange!.startDate, serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode, referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId, orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', executingAuthority: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.executingAuthority, registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '', projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '', projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '', projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '', locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '', ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '', amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500, skillsList: skillsPayLoad));
-                                                                                                          }
-                                                                                                        }
-                                                                                                            : null,
-                                                                                                        child: Center(
-                                                                                                          child: Text(AppLocalizations.of(context).translate(i18.common.sendForApproval), style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
+                                                                                                            }
+                                                                                                                : null,
+                                                                                                            child: Center(
+                                                                                                              child: Text(AppLocalizations.of(context).translate(i18.common.sendForApproval), style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
+                                                                                                            ),
+                                                                                                          ),
                                                                                                         ),
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ],
-                                                                                                );
-                                                                                              });
-                                                                                            }
-                                                                                          );
-                                                                                    }),
-                                                                                  );
-                                                                                });
-                                                                          })),
+                                                                                                      ],
+                                                                                                    );
+                                                                                                  });
+                                                                                                }
+                                                                                              ));
+                                                                                        }),
+                                                                                      );
+                                                                                    });
+                                                                              })),
+                                                                        ),
+                                                                      )
+                                                                    ]);
+                                                              } else {
+                                                                return Column(
+                                                                  children: [
+                                                                    const EmptyImage(
+                                                                      align: Alignment
+                                                                          .center,
                                                                     ),
-                                                                  )
-                                                                ]);
-                                                          } else {
-                                                            return Column(
-                                                              children: [
-                                                                const EmptyImage(
-                                                                  align: Alignment
-                                                                      .center,
-                                                                ),
-                                                                ButtonLink(
-                                                                  AppLocalizations.of(
-                                                                          context)
-                                                                      .translate(i18
-                                                                          .attendanceMgmt
-                                                                          .addNewWageSeeker),
-                                                                  () {
-                                                                    context
-                                                                        .router
-                                                                        .push(
-                                                                            const RegisterIndividualRoute());
-                                                                  },
-                                                                  align: Alignment
-                                                                      .center,
-                                                                ),
-                                                              ],
-                                                            );
-                                                          }
+                                                                    ButtonLink(
+                                                                      AppLocalizations.of(
+                                                                              context)
+                                                                          .translate(i18
+                                                                              .attendanceMgmt
+                                                                              .addNewWageSeeker),
+                                                                      () {
+                                                                        context
+                                                                            .router
+                                                                            .push(
+                                                                                const RegisterIndividualRoute());
+                                                                      },
+                                                                      align: Alignment
+                                                                          .center,
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              }
+                                                            },
+                                                          );
                                                         },
-                                                      );
-                                                    },
-                                                  ))
-                                                : Column(
-                                                    children: [
-                                                      const EmptyImage(
-                                                        align: Alignment.center,
+                                                      ))
+                                                    : Column(
+                                                        children: [
+                                                          const EmptyImage(
+                                                            align: Alignment.center,
+                                                          ),
+                                                          ButtonLink(
+                                                            AppLocalizations.of(
+                                                                    context)
+                                                                .translate(i18
+                                                                    .attendanceMgmt
+                                                                    .addNewWageSeeker),
+                                                                () {
+                                                              context
+                                                                  .router
+                                                                  .push(
+                                                                  const RegisterIndividualRoute());
+                                                            },
+                                                            align: Alignment.center,
+                                                          ),
+                                                        ],
                                                       ),
-                                                      ButtonLink(
-                                                        AppLocalizations.of(
-                                                                context)
-                                                            .translate(i18
-                                                                .attendanceMgmt
-                                                                .addNewWageSeeker),
-                                                            () {
-                                                          context
-                                                              .router
-                                                              .push(
-                                                              const RegisterIndividualRoute());
-                                                        },
-                                                        align: Alignment.center,
-                                                      ),
-                                                    ],
-                                                  ),
-                                          ]))
-                                    ]),
-                                  ),
-                                ]);
-                              },
-                              orElse: () => Container());
-                        });
+                                              ]))
+                                        ]),
+                                      ),
+                                    ]);
+                                  },
+                                  orElse: () => Container());
+                            }));
+                          }
+                        );
                       },
                       loading: () =>
                           shg_loader.Loaders.circularLoader(context));

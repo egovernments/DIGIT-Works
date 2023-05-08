@@ -188,6 +188,7 @@ mixin _$ProcessInstances {
   String? get action => throw _privateConstructorUsedError;
   AuditDetails? get auditDetails => throw _privateConstructorUsedError;
   List<Assignees>? get assignes => throw _privateConstructorUsedError;
+  List<NextActions>? get nextActions => throw _privateConstructorUsedError;
   @JsonKey(name: 'state')
   WorkflowState? get workflowState => throw _privateConstructorUsedError;
 
@@ -211,6 +212,7 @@ abstract class $ProcessInstancesCopyWith<$Res> {
       String? action,
       AuditDetails? auditDetails,
       List<Assignees>? assignes,
+      List<NextActions>? nextActions,
       @JsonKey(name: 'state') WorkflowState? workflowState});
 
   $AuditDetailsCopyWith<$Res>? get auditDetails;
@@ -237,6 +239,7 @@ class _$ProcessInstancesCopyWithImpl<$Res, $Val extends ProcessInstances>
     Object? action = freezed,
     Object? auditDetails = freezed,
     Object? assignes = freezed,
+    Object? nextActions = freezed,
     Object? workflowState = freezed,
   }) {
     return _then(_value.copyWith(
@@ -268,6 +271,10 @@ class _$ProcessInstancesCopyWithImpl<$Res, $Val extends ProcessInstances>
           ? _value.assignes
           : assignes // ignore: cast_nullable_to_non_nullable
               as List<Assignees>?,
+      nextActions: freezed == nextActions
+          ? _value.nextActions
+          : nextActions // ignore: cast_nullable_to_non_nullable
+              as List<NextActions>?,
       workflowState: freezed == workflowState
           ? _value.workflowState
           : workflowState // ignore: cast_nullable_to_non_nullable
@@ -316,6 +323,7 @@ abstract class _$$_ProcessInstancesCopyWith<$Res>
       String? action,
       AuditDetails? auditDetails,
       List<Assignees>? assignes,
+      List<NextActions>? nextActions,
       @JsonKey(name: 'state') WorkflowState? workflowState});
 
   @override
@@ -342,6 +350,7 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
     Object? action = freezed,
     Object? auditDetails = freezed,
     Object? assignes = freezed,
+    Object? nextActions = freezed,
     Object? workflowState = freezed,
   }) {
     return _then(_$_ProcessInstances(
@@ -373,6 +382,10 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
           ? _value._assignes
           : assignes // ignore: cast_nullable_to_non_nullable
               as List<Assignees>?,
+      nextActions: freezed == nextActions
+          ? _value._nextActions
+          : nextActions // ignore: cast_nullable_to_non_nullable
+              as List<NextActions>?,
       workflowState: freezed == workflowState
           ? _value.workflowState
           : workflowState // ignore: cast_nullable_to_non_nullable
@@ -392,8 +405,10 @@ class _$_ProcessInstances implements _ProcessInstances {
       this.action,
       this.auditDetails,
       final List<Assignees>? assignes,
+      final List<NextActions>? nextActions,
       @JsonKey(name: 'state') this.workflowState})
-      : _assignes = assignes;
+      : _assignes = assignes,
+        _nextActions = nextActions;
 
   factory _$_ProcessInstances.fromJson(Map<String, dynamic> json) =>
       _$$_ProcessInstancesFromJson(json);
@@ -420,13 +435,23 @@ class _$_ProcessInstances implements _ProcessInstances {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<NextActions>? _nextActions;
+  @override
+  List<NextActions>? get nextActions {
+    final value = _nextActions;
+    if (value == null) return null;
+    if (_nextActions is EqualUnmodifiableListView) return _nextActions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey(name: 'state')
   final WorkflowState? workflowState;
 
   @override
   String toString() {
-    return 'ProcessInstances(tenantId: $tenantId, businessService: $businessService, id: $id, businessId: $businessId, action: $action, auditDetails: $auditDetails, assignes: $assignes, workflowState: $workflowState)';
+    return 'ProcessInstances(tenantId: $tenantId, businessService: $businessService, id: $id, businessId: $businessId, action: $action, auditDetails: $auditDetails, assignes: $assignes, nextActions: $nextActions, workflowState: $workflowState)';
   }
 
   @override
@@ -445,6 +470,8 @@ class _$_ProcessInstances implements _ProcessInstances {
             (identical(other.auditDetails, auditDetails) ||
                 other.auditDetails == auditDetails) &&
             const DeepCollectionEquality().equals(other._assignes, _assignes) &&
+            const DeepCollectionEquality()
+                .equals(other._nextActions, _nextActions) &&
             (identical(other.workflowState, workflowState) ||
                 other.workflowState == workflowState));
   }
@@ -460,6 +487,7 @@ class _$_ProcessInstances implements _ProcessInstances {
       action,
       auditDetails,
       const DeepCollectionEquality().hash(_assignes),
+      const DeepCollectionEquality().hash(_nextActions),
       workflowState);
 
   @JsonKey(ignore: true)
@@ -485,6 +513,7 @@ abstract class _ProcessInstances implements ProcessInstances {
           final String? action,
           final AuditDetails? auditDetails,
           final List<Assignees>? assignes,
+          final List<NextActions>? nextActions,
           @JsonKey(name: 'state') final WorkflowState? workflowState}) =
       _$_ProcessInstances;
 
@@ -506,11 +535,149 @@ abstract class _ProcessInstances implements ProcessInstances {
   @override
   List<Assignees>? get assignes;
   @override
+  List<NextActions>? get nextActions;
+  @override
   @JsonKey(name: 'state')
   WorkflowState? get workflowState;
   @override
   @JsonKey(ignore: true)
   _$$_ProcessInstancesCopyWith<_$_ProcessInstances> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+NextActions _$NextActionsFromJson(Map<String, dynamic> json) {
+  return _NextActions.fromJson(json);
+}
+
+/// @nodoc
+mixin _$NextActions {
+  String? get action => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $NextActionsCopyWith<NextActions> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $NextActionsCopyWith<$Res> {
+  factory $NextActionsCopyWith(
+          NextActions value, $Res Function(NextActions) then) =
+      _$NextActionsCopyWithImpl<$Res, NextActions>;
+  @useResult
+  $Res call({String? action});
+}
+
+/// @nodoc
+class _$NextActionsCopyWithImpl<$Res, $Val extends NextActions>
+    implements $NextActionsCopyWith<$Res> {
+  _$NextActionsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? action = freezed,
+  }) {
+    return _then(_value.copyWith(
+      action: freezed == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_NextActionsCopyWith<$Res>
+    implements $NextActionsCopyWith<$Res> {
+  factory _$$_NextActionsCopyWith(
+          _$_NextActions value, $Res Function(_$_NextActions) then) =
+      __$$_NextActionsCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? action});
+}
+
+/// @nodoc
+class __$$_NextActionsCopyWithImpl<$Res>
+    extends _$NextActionsCopyWithImpl<$Res, _$_NextActions>
+    implements _$$_NextActionsCopyWith<$Res> {
+  __$$_NextActionsCopyWithImpl(
+      _$_NextActions _value, $Res Function(_$_NextActions) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? action = freezed,
+  }) {
+    return _then(_$_NextActions(
+      action: freezed == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_NextActions implements _NextActions {
+  const _$_NextActions({this.action});
+
+  factory _$_NextActions.fromJson(Map<String, dynamic> json) =>
+      _$$_NextActionsFromJson(json);
+
+  @override
+  final String? action;
+
+  @override
+  String toString() {
+    return 'NextActions(action: $action)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_NextActions &&
+            (identical(other.action, action) || other.action == action));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, action);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_NextActionsCopyWith<_$_NextActions> get copyWith =>
+      __$$_NextActionsCopyWithImpl<_$_NextActions>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_NextActionsToJson(
+      this,
+    );
+  }
+}
+
+abstract class _NextActions implements NextActions {
+  const factory _NextActions({final String? action}) = _$_NextActions;
+
+  factory _NextActions.fromJson(Map<String, dynamic> json) =
+      _$_NextActions.fromJson;
+
+  @override
+  String? get action;
+  @override
+  @JsonKey(ignore: true)
+  _$$_NextActionsCopyWith<_$_NextActions> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

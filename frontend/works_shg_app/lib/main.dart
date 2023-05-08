@@ -45,6 +45,7 @@ import 'blocs/localization/localization.dart';
 import 'blocs/muster_rolls/from_to_date_search_muster_roll.dart';
 import 'blocs/muster_rolls/get_business_workflow.dart';
 import 'blocs/muster_rolls/get_muster_workflow.dart';
+import 'blocs/muster_rolls/muster_inbox_status_bloc.dart';
 import 'blocs/muster_rolls/muster_roll_pdf.dart';
 import 'blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'blocs/my_bills/search_my_bills.dart';
@@ -236,6 +237,10 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(
             create: (context) => MusterSubmissionBloc(
                 const MusterSubmissionState.initial(),
+                MdmsRepository(client.init()))),
+        BlocProvider(
+            create: (context) => MusterInboxStatusBloc(
+                const MusterInboxStatusState.initial(),
                 MdmsRepository(client.init()))),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(

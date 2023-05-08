@@ -5,6 +5,8 @@ class Constants {
   static final navKey = GlobalKey<NavigatorState>();
   static const String active = 'ACTIVE';
   static const String pendingForAcceptance = 'PENDING_FOR_ACCEPTANCE';
+  static const String pendingForCorrection = 'PENDINGFORCORRECTION';
+  static const String activeInboxStatus = 'ACTIVE_INBOX_CARD_STATUS';
   static const String rejected = 'REJECTED';
   static const String sentBack = 'SENTBACKTOCBO';
   static const muktaIcon = 'assets/svg/mukta.svg';

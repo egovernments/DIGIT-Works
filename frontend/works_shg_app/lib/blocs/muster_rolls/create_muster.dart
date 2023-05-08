@@ -87,8 +87,8 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
               "individualEntries": event.skillsList ?? []
             },
             "workflow": {
-              "action": "RE-SUBMIT",
-              "comments": "Resubmit muster roll",
+              "action": event.reSubmitAction ?? "RE-SUBMIT",
+              "comments": "Muster Roll ReSubmitted",
               "assignees": []
             }
           });
@@ -131,6 +131,7 @@ class MusterCreateEvent with _$MusterCreateEvent {
       required String contractId,
       required String registerNo,
       required String registerName,
+      String? reSubmitAction,
       List<Map<String, dynamic>>? skillsList}) = UpdateMusterEvent;
 }
 

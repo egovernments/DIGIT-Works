@@ -193,6 +193,7 @@ CBOMyWorksSearchCriteriaModel _$CBOMyWorksSearchCriteriaModelFromJson(
 /// @nodoc
 mixin _$CBOMyWorksSearchCriteriaModel {
   List<String>? get searchCriteria => throw _privateConstructorUsedError;
+  String? get acceptCode => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -208,7 +209,7 @@ abstract class $CBOMyWorksSearchCriteriaModelCopyWith<$Res> {
       _$CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res,
           CBOMyWorksSearchCriteriaModel>;
   @useResult
-  $Res call({List<String>? searchCriteria});
+  $Res call({List<String>? searchCriteria, String? acceptCode});
 }
 
 /// @nodoc
@@ -226,12 +227,17 @@ class _$CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res,
   @override
   $Res call({
     Object? searchCriteria = freezed,
+    Object? acceptCode = freezed,
   }) {
     return _then(_value.copyWith(
       searchCriteria: freezed == searchCriteria
           ? _value.searchCriteria
           : searchCriteria // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      acceptCode: freezed == acceptCode
+          ? _value.acceptCode
+          : acceptCode // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -245,7 +251,7 @@ abstract class _$$_CBOMyWorksSearchCriteriaModelCopyWith<$Res>
       __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<String>? searchCriteria});
+  $Res call({List<String>? searchCriteria, String? acceptCode});
 }
 
 /// @nodoc
@@ -262,12 +268,17 @@ class __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res>
   @override
   $Res call({
     Object? searchCriteria = freezed,
+    Object? acceptCode = freezed,
   }) {
     return _then(_$_CBOMyWorksSearchCriteriaModel(
       searchCriteria: freezed == searchCriteria
           ? _value._searchCriteria
           : searchCriteria // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      acceptCode: freezed == acceptCode
+          ? _value.acceptCode
+          : acceptCode // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -276,7 +287,8 @@ class __$$_CBOMyWorksSearchCriteriaModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_CBOMyWorksSearchCriteriaModel
     implements _CBOMyWorksSearchCriteriaModel {
-  const _$_CBOMyWorksSearchCriteriaModel({final List<String>? searchCriteria})
+  const _$_CBOMyWorksSearchCriteriaModel(
+      {final List<String>? searchCriteria, this.acceptCode})
       : _searchCriteria = searchCriteria;
 
   factory _$_CBOMyWorksSearchCriteriaModel.fromJson(
@@ -294,8 +306,11 @@ class _$_CBOMyWorksSearchCriteriaModel
   }
 
   @override
+  final String? acceptCode;
+
+  @override
   String toString() {
-    return 'CBOMyWorksSearchCriteriaModel(searchCriteria: $searchCriteria)';
+    return 'CBOMyWorksSearchCriteriaModel(searchCriteria: $searchCriteria, acceptCode: $acceptCode)';
   }
 
   @override
@@ -304,13 +319,15 @@ class _$_CBOMyWorksSearchCriteriaModel
         (other.runtimeType == runtimeType &&
             other is _$_CBOMyWorksSearchCriteriaModel &&
             const DeepCollectionEquality()
-                .equals(other._searchCriteria, _searchCriteria));
+                .equals(other._searchCriteria, _searchCriteria) &&
+            (identical(other.acceptCode, acceptCode) ||
+                other.acceptCode == acceptCode));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_searchCriteria));
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_searchCriteria), acceptCode);
 
   @JsonKey(ignore: true)
   @override
@@ -330,13 +347,16 @@ class _$_CBOMyWorksSearchCriteriaModel
 abstract class _CBOMyWorksSearchCriteriaModel
     implements CBOMyWorksSearchCriteriaModel {
   const factory _CBOMyWorksSearchCriteriaModel(
-      {final List<String>? searchCriteria}) = _$_CBOMyWorksSearchCriteriaModel;
+      {final List<String>? searchCriteria,
+      final String? acceptCode}) = _$_CBOMyWorksSearchCriteriaModel;
 
   factory _CBOMyWorksSearchCriteriaModel.fromJson(Map<String, dynamic> json) =
       _$_CBOMyWorksSearchCriteriaModel.fromJson;
 
   @override
   List<String>? get searchCriteria;
+  @override
+  String? get acceptCode;
   @override
   @JsonKey(ignore: true)
   _$$_CBOMyWorksSearchCriteriaModelCopyWith<_$_CBOMyWorksSearchCriteriaModel>
