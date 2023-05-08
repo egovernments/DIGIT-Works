@@ -18,19 +18,25 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$MusterGetWorkflowEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
+    required TResult Function(
+            String tenantId, String musterRollNumber, String musterSentBackCode)
+        get,
     required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
+    TResult? Function(String tenantId, String musterRollNumber,
+            String musterSentBackCode)?
+        get,
     TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
+    TResult Function(String tenantId, String musterRollNumber,
+            String musterSentBackCode)?
+        get,
     TResult Function()? dispose,
     required TResult orElse(),
   }) =>
@@ -81,7 +87,8 @@ abstract class _$$GetMusterWorkflowEventCopyWith<$Res> {
           $Res Function(_$GetMusterWorkflowEvent) then) =
       __$$GetMusterWorkflowEventCopyWithImpl<$Res>;
   @useResult
-  $Res call({String tenantId, String musterRollNumber});
+  $Res call(
+      {String tenantId, String musterRollNumber, String musterSentBackCode});
 }
 
 /// @nodoc
@@ -97,6 +104,7 @@ class __$$GetMusterWorkflowEventCopyWithImpl<$Res>
   $Res call({
     Object? tenantId = null,
     Object? musterRollNumber = null,
+    Object? musterSentBackCode = null,
   }) {
     return _then(_$GetMusterWorkflowEvent(
       tenantId: null == tenantId
@@ -107,6 +115,10 @@ class __$$GetMusterWorkflowEventCopyWithImpl<$Res>
           ? _value.musterRollNumber
           : musterRollNumber // ignore: cast_nullable_to_non_nullable
               as String,
+      musterSentBackCode: null == musterSentBackCode
+          ? _value.musterSentBackCode
+          : musterSentBackCode // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -115,16 +127,20 @@ class __$$GetMusterWorkflowEventCopyWithImpl<$Res>
 
 class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
   const _$GetMusterWorkflowEvent(
-      {required this.tenantId, required this.musterRollNumber});
+      {required this.tenantId,
+      required this.musterRollNumber,
+      required this.musterSentBackCode});
 
   @override
   final String tenantId;
   @override
   final String musterRollNumber;
+  @override
+  final String musterSentBackCode;
 
   @override
   String toString() {
-    return 'MusterGetWorkflowEvent.get(tenantId: $tenantId, musterRollNumber: $musterRollNumber)';
+    return 'MusterGetWorkflowEvent.get(tenantId: $tenantId, musterRollNumber: $musterRollNumber, musterSentBackCode: $musterSentBackCode)';
   }
 
   @override
@@ -135,11 +151,14 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.musterRollNumber, musterRollNumber) ||
-                other.musterRollNumber == musterRollNumber));
+                other.musterRollNumber == musterRollNumber) &&
+            (identical(other.musterSentBackCode, musterSentBackCode) ||
+                other.musterSentBackCode == musterSentBackCode));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, tenantId, musterRollNumber);
+  int get hashCode =>
+      Object.hash(runtimeType, tenantId, musterRollNumber, musterSentBackCode);
 
   @JsonKey(ignore: true)
   @override
@@ -151,30 +170,36 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
+    required TResult Function(
+            String tenantId, String musterRollNumber, String musterSentBackCode)
+        get,
     required TResult Function() dispose,
   }) {
-    return get(tenantId, musterRollNumber);
+    return get(tenantId, musterRollNumber, musterSentBackCode);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
+    TResult? Function(String tenantId, String musterRollNumber,
+            String musterSentBackCode)?
+        get,
     TResult? Function()? dispose,
   }) {
-    return get?.call(tenantId, musterRollNumber);
+    return get?.call(tenantId, musterRollNumber, musterSentBackCode);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
+    TResult Function(String tenantId, String musterRollNumber,
+            String musterSentBackCode)?
+        get,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (get != null) {
-      return get(tenantId, musterRollNumber);
+      return get(tenantId, musterRollNumber, musterSentBackCode);
     }
     return orElse();
   }
@@ -214,10 +239,12 @@ class _$GetMusterWorkflowEvent implements GetMusterWorkflowEvent {
 abstract class GetMusterWorkflowEvent implements MusterGetWorkflowEvent {
   const factory GetMusterWorkflowEvent(
       {required final String tenantId,
-      required final String musterRollNumber}) = _$GetMusterWorkflowEvent;
+      required final String musterRollNumber,
+      required final String musterSentBackCode}) = _$GetMusterWorkflowEvent;
 
   String get tenantId;
   String get musterRollNumber;
+  String get musterSentBackCode;
   @JsonKey(ignore: true)
   _$$GetMusterWorkflowEventCopyWith<_$GetMusterWorkflowEvent> get copyWith =>
       throw _privateConstructorUsedError;
@@ -266,7 +293,9 @@ class _$DisposeMusterRollWorkflowEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String tenantId, String musterRollNumber) get,
+    required TResult Function(
+            String tenantId, String musterRollNumber, String musterSentBackCode)
+        get,
     required TResult Function() dispose,
   }) {
     return dispose();
@@ -275,7 +304,9 @@ class _$DisposeMusterRollWorkflowEvent
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String tenantId, String musterRollNumber)? get,
+    TResult? Function(String tenantId, String musterRollNumber,
+            String musterSentBackCode)?
+        get,
     TResult? Function()? dispose,
   }) {
     return dispose?.call();
@@ -284,7 +315,9 @@ class _$DisposeMusterRollWorkflowEvent
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String tenantId, String musterRollNumber)? get,
+    TResult Function(String tenantId, String musterRollNumber,
+            String musterSentBackCode)?
+        get,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {

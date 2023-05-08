@@ -44,8 +44,11 @@ class MyWorksSearchCriteriaBloc extends Bloc<MyWorksSearchCriteriaBlocEvent,
             }
           ]);
 
-      emit(MyWorksSearchCriteriaBlocState.loaded(configModel
-          .commonUiConfig?.cboMyWorksSearchCriteria?.first.searchCriteria));
+      emit(MyWorksSearchCriteriaBlocState.loaded(
+          configModel
+              .commonUiConfig?.cboMyWorksSearchCriteria?.first.searchCriteria,
+          configModel
+              .commonUiConfig?.cboMyWorksSearchCriteria?.first.acceptCode));
     } on DioError catch (e) {
       emit(MyWorksSearchCriteriaBlocState.error(
           e.response?.data['Errors'][0]['code']));
@@ -65,6 +68,6 @@ class MyWorksSearchCriteriaBlocState with _$MyWorksSearchCriteriaBlocState {
   const factory MyWorksSearchCriteriaBlocState.initial() = _Initial;
   const factory MyWorksSearchCriteriaBlocState.loading() = _Loading;
   const factory MyWorksSearchCriteriaBlocState.loaded(
-      final List<String>? searchCriteria) = _Loaded;
+      final List<String>? searchCriteria, final String? acceptCode) = _Loaded;
   const factory MyWorksSearchCriteriaBlocState.error(String? error) = _Error;
 }

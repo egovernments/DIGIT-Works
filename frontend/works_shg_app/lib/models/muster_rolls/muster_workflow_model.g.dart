@@ -33,6 +33,9 @@ _$_ProcessInstances _$$_ProcessInstancesFromJson(Map<String, dynamic> json) =>
       assignes: (json['assignes'] as List<dynamic>?)
           ?.map((e) => Assignees.fromJson(e as Map<String, dynamic>))
           .toList(),
+      nextActions: (json['nextActions'] as List<dynamic>?)
+          ?.map((e) => NextActions.fromJson(e as Map<String, dynamic>))
+          .toList(),
       workflowState: json['state'] == null
           ? null
           : WorkflowState.fromJson(json['state'] as Map<String, dynamic>),
@@ -47,7 +50,18 @@ Map<String, dynamic> _$$_ProcessInstancesToJson(_$_ProcessInstances instance) =>
       'action': instance.action,
       'auditDetails': instance.auditDetails,
       'assignes': instance.assignes,
+      'nextActions': instance.nextActions,
       'state': instance.workflowState,
+    };
+
+_$_NextActions _$$_NextActionsFromJson(Map<String, dynamic> json) =>
+    _$_NextActions(
+      action: json['action'] as String?,
+    );
+
+Map<String, dynamic> _$$_NextActionsToJson(_$_NextActions instance) =>
+    <String, dynamic>{
+      'action': instance.action,
     };
 
 _$_Assignees _$$_AssigneesFromJson(Map<String, dynamic> json) => _$_Assignees(

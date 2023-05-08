@@ -44,7 +44,7 @@ class MusterGetWorkflowBloc
       emit(MusterGetWorkflowState.loaded(
           musterWorkFlowModel: musterWorkFlowModel,
           isInWorkflow: !(musterWorkFlowModel.processInstances!.isNotEmpty &&
-              state!.applicationStatus!.contains('BACKTOCBO'))));
+              state!.state == event.musterSentBackCode)));
     } on DioError catch (e) {
       emit(const MusterGetWorkflowState.error());
     }
@@ -58,10 +58,10 @@ class MusterGetWorkflowBloc
 
 @freezed
 class MusterGetWorkflowEvent with _$MusterGetWorkflowEvent {
-  const factory MusterGetWorkflowEvent.get({
-    required String tenantId,
-    required String musterRollNumber,
-  }) = GetMusterWorkflowEvent;
+  const factory MusterGetWorkflowEvent.get(
+      {required String tenantId,
+      required String musterRollNumber,
+      required String musterSentBackCode}) = GetMusterWorkflowEvent;
   const factory MusterGetWorkflowEvent.dispose() =
       DisposeMusterRollWorkflowEvent;
 }

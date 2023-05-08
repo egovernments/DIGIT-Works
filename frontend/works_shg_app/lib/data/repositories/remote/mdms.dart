@@ -9,6 +9,7 @@ import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 import '../../../models/attendance/muster_submission.dart';
 import '../../../models/mdms/attendance_hours.dart';
 import '../../../models/mdms/wage_seeker_mdms.dart';
+import '../../../models/muster_rolls/muster_inbox_status.dart';
 
 class MdmsRepository {
   final Dio _client;
@@ -32,6 +33,28 @@ class MdmsRepository {
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       throw Exception(ex);
+    }
+  }
+
+  Future<MusterInboxStatusList> musterInboxStatus({
+    required String apiEndPoint,
+    required String tenantId,
+    required List<Map> moduleDetails,
+  }) async {
+    try {
+      var response = await _client.post(apiEndPoint, data: {
+        "MdmsCriteria": {
+          "tenantId": tenantId,
+          "moduleDetails": moduleDetails,
+        },
+      });
+
+      return MusterInboxStatusList.fromJson(
+        json.decode(response.toString())['MdmsRes']['commonUiConfig'],
+      );
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
     }
   }
 

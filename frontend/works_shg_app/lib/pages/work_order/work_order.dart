@@ -16,6 +16,7 @@ import '../../blocs/work_orders/my_works_search_criteria.dart';
 import '../../blocs/work_orders/search_my_works.dart';
 import '../../models/works/contracts_model.dart';
 import '../../utils/common_methods.dart';
+import '../../utils/constants.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
@@ -94,7 +95,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
             searchCriteriaState.maybeWhen(
                 orElse: () => false,
                 loading: () => shg_loader.Loaders.circularLoader(context),
-                loaded: (List<String>? searchCriteria) =>
+                loaded: (List<String>? searchCriteria, String? acceptCode) =>
                     context.read<SearchMyWorksBloc>().add(
                           MyWorksSearchEvent(searchCriteria),
                         ),
@@ -109,9 +110,9 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                 error: (String? error) => Notifiers.getToastMessage(
                     context, error.toString(), 'ERROR'),
                 loaded:
-                    (List<String>? searchCriteria) => BlocListener<
-                            SearchMyWorksBloc,
-                            SearchMyWorksState>(listener: (context, state) {
+                    (List<String>? searchCriteria, String? acceptCode) =>
+                        BlocListener<SearchMyWorksBloc, SearchMyWorksState>(
+                            listener: (context, state) {
                           state.maybeWhen(
                               orElse: () => false,
                               loading: () =>
@@ -160,14 +161,16 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                 : 'NA',
                                             i18.workOrder.workOrderAmount:
                                                 '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                            i18.common.status: e.wfStatus,
+                                            i18.common.status: t.translate(
+                                                'WF_CONTRACT_STATUS_${e.wfStatus.toString()}'),
+                                            Constants.activeInboxStatus: 'true'
                                           },
                                           'payload': e.toMap()
                                         })
                                     .toList();
                               });
-                        }, child:
-                            BlocBuilder<SearchMyWorksBloc, SearchMyWorksState>(
+                        }, child: BlocBuilder<SearchMyWorksBloc,
+                                    SearchMyWorksState>(
                                 builder: (context, searchState) {
                           return searchState.maybeWhen(
                               orElse: () => Container(),
@@ -228,6 +231,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                                 i18.workOrder.dueDate: e.issueDate != null ? DateFormats.getFilteredDate(DateTime.fromMillisecondsSinceEpoch(e.issueDate ?? 0).add(const Duration(days: 7)).toLocal().toString()) : 'NA',
                                                                                 i18.workOrder.workOrderAmount: '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                                                                 i18.common.status: e.wfStatus,
+                                                                                Constants.activeInboxStatus: 'true'
                                                                               },
                                                                               'payload': e.toMap()
                                                                             })
@@ -254,6 +258,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                           workOrderList,
                                                           isWorkOrderInbox:
                                                               true,
+                                                          acceptWorkOrderCode: acceptCode,
                                                           elevatedButtonLabel:
                                                               AppLocalizations.of(
                                                                       context)
@@ -266,6 +271,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                   .translate(i18
                                                                       .common
                                                                       .decline),
+
                                                         )
                                                       : EmptyImage(
                                                           label: AppLocalizations

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'my_works_search_criteria.dart';
+part of 'muster_inbox_status_bloc.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,58 +15,55 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$MyWorksSearchCriteriaBlocEvent {
+mixin _$MusterInboxStatusMDMSEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() getSearchCriteria,
+    required TResult Function() onMusterInboxStatusMDMS,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? getSearchCriteria,
+    TResult? Function()? onMusterInboxStatusMDMS,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? getSearchCriteria,
+    TResult Function()? onMusterInboxStatusMDMS,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(GetMyWorksSearchCriteriaConfigEvent value)
-        getSearchCriteria,
+    required TResult Function(MusterInboxStatusEvent value)
+        onMusterInboxStatusMDMS,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetMyWorksSearchCriteriaConfigEvent value)?
-        getSearchCriteria,
+    TResult? Function(MusterInboxStatusEvent value)? onMusterInboxStatusMDMS,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetMyWorksSearchCriteriaConfigEvent value)?
-        getSearchCriteria,
+    TResult Function(MusterInboxStatusEvent value)? onMusterInboxStatusMDMS,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MyWorksSearchCriteriaBlocEventCopyWith<$Res> {
-  factory $MyWorksSearchCriteriaBlocEventCopyWith(
-          MyWorksSearchCriteriaBlocEvent value,
-          $Res Function(MyWorksSearchCriteriaBlocEvent) then) =
-      _$MyWorksSearchCriteriaBlocEventCopyWithImpl<$Res,
-          MyWorksSearchCriteriaBlocEvent>;
+abstract class $MusterInboxStatusMDMSEventCopyWith<$Res> {
+  factory $MusterInboxStatusMDMSEventCopyWith(MusterInboxStatusMDMSEvent value,
+          $Res Function(MusterInboxStatusMDMSEvent) then) =
+      _$MusterInboxStatusMDMSEventCopyWithImpl<$Res,
+          MusterInboxStatusMDMSEvent>;
 }
 
 /// @nodoc
-class _$MyWorksSearchCriteriaBlocEventCopyWithImpl<$Res,
-        $Val extends MyWorksSearchCriteriaBlocEvent>
-    implements $MyWorksSearchCriteriaBlocEventCopyWith<$Res> {
-  _$MyWorksSearchCriteriaBlocEventCopyWithImpl(this._value, this._then);
+class _$MusterInboxStatusMDMSEventCopyWithImpl<$Res,
+        $Val extends MusterInboxStatusMDMSEvent>
+    implements $MusterInboxStatusMDMSEventCopyWith<$Res> {
+  _$MusterInboxStatusMDMSEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -75,40 +72,36 @@ class _$MyWorksSearchCriteriaBlocEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$GetMyWorksSearchCriteriaConfigEventCopyWith<$Res> {
-  factory _$$GetMyWorksSearchCriteriaConfigEventCopyWith(
-          _$GetMyWorksSearchCriteriaConfigEvent value,
-          $Res Function(_$GetMyWorksSearchCriteriaConfigEvent) then) =
-      __$$GetMyWorksSearchCriteriaConfigEventCopyWithImpl<$Res>;
+abstract class _$$MusterInboxStatusEventCopyWith<$Res> {
+  factory _$$MusterInboxStatusEventCopyWith(_$MusterInboxStatusEvent value,
+          $Res Function(_$MusterInboxStatusEvent) then) =
+      __$$MusterInboxStatusEventCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$GetMyWorksSearchCriteriaConfigEventCopyWithImpl<$Res>
-    extends _$MyWorksSearchCriteriaBlocEventCopyWithImpl<$Res,
-        _$GetMyWorksSearchCriteriaConfigEvent>
-    implements _$$GetMyWorksSearchCriteriaConfigEventCopyWith<$Res> {
-  __$$GetMyWorksSearchCriteriaConfigEventCopyWithImpl(
-      _$GetMyWorksSearchCriteriaConfigEvent _value,
-      $Res Function(_$GetMyWorksSearchCriteriaConfigEvent) _then)
+class __$$MusterInboxStatusEventCopyWithImpl<$Res>
+    extends _$MusterInboxStatusMDMSEventCopyWithImpl<$Res,
+        _$MusterInboxStatusEvent>
+    implements _$$MusterInboxStatusEventCopyWith<$Res> {
+  __$$MusterInboxStatusEventCopyWithImpl(_$MusterInboxStatusEvent _value,
+      $Res Function(_$MusterInboxStatusEvent) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$GetMyWorksSearchCriteriaConfigEvent
-    implements GetMyWorksSearchCriteriaConfigEvent {
-  const _$GetMyWorksSearchCriteriaConfigEvent();
+class _$MusterInboxStatusEvent implements MusterInboxStatusEvent {
+  const _$MusterInboxStatusEvent();
 
   @override
   String toString() {
-    return 'MyWorksSearchCriteriaBlocEvent.getSearchCriteria()';
+    return 'MusterInboxStatusMDMSEvent.onMusterInboxStatusMDMS()';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GetMyWorksSearchCriteriaConfigEvent);
+        (other.runtimeType == runtimeType && other is _$MusterInboxStatusEvent);
   }
 
   @override
@@ -117,27 +110,27 @@ class _$GetMyWorksSearchCriteriaConfigEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() getSearchCriteria,
+    required TResult Function() onMusterInboxStatusMDMS,
   }) {
-    return getSearchCriteria();
+    return onMusterInboxStatusMDMS();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? getSearchCriteria,
+    TResult? Function()? onMusterInboxStatusMDMS,
   }) {
-    return getSearchCriteria?.call();
+    return onMusterInboxStatusMDMS?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? getSearchCriteria,
+    TResult Function()? onMusterInboxStatusMDMS,
     required TResult orElse(),
   }) {
-    if (getSearchCriteria != null) {
-      return getSearchCriteria();
+    if (onMusterInboxStatusMDMS != null) {
+      return onMusterInboxStatusMDMS();
     }
     return orElse();
   }
@@ -145,49 +138,44 @@ class _$GetMyWorksSearchCriteriaConfigEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(GetMyWorksSearchCriteriaConfigEvent value)
-        getSearchCriteria,
+    required TResult Function(MusterInboxStatusEvent value)
+        onMusterInboxStatusMDMS,
   }) {
-    return getSearchCriteria(this);
+    return onMusterInboxStatusMDMS(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetMyWorksSearchCriteriaConfigEvent value)?
-        getSearchCriteria,
+    TResult? Function(MusterInboxStatusEvent value)? onMusterInboxStatusMDMS,
   }) {
-    return getSearchCriteria?.call(this);
+    return onMusterInboxStatusMDMS?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetMyWorksSearchCriteriaConfigEvent value)?
-        getSearchCriteria,
+    TResult Function(MusterInboxStatusEvent value)? onMusterInboxStatusMDMS,
     required TResult orElse(),
   }) {
-    if (getSearchCriteria != null) {
-      return getSearchCriteria(this);
+    if (onMusterInboxStatusMDMS != null) {
+      return onMusterInboxStatusMDMS(this);
     }
     return orElse();
   }
 }
 
-abstract class GetMyWorksSearchCriteriaConfigEvent
-    implements MyWorksSearchCriteriaBlocEvent {
-  const factory GetMyWorksSearchCriteriaConfigEvent() =
-      _$GetMyWorksSearchCriteriaConfigEvent;
+abstract class MusterInboxStatusEvent implements MusterInboxStatusMDMSEvent {
+  const factory MusterInboxStatusEvent() = _$MusterInboxStatusEvent;
 }
 
 /// @nodoc
-mixin _$MyWorksSearchCriteriaBlocState {
+mixin _$MusterInboxStatusState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<String>? searchCriteria, String? acceptCode)
-        loaded,
+    required TResult Function(String? sentBackToCBOCode) loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -195,7 +183,7 @@ mixin _$MyWorksSearchCriteriaBlocState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult? Function(String? sentBackToCBOCode)? loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -203,7 +191,7 @@ mixin _$MyWorksSearchCriteriaBlocState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult Function(String? sentBackToCBOCode)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -236,19 +224,17 @@ mixin _$MyWorksSearchCriteriaBlocState {
 }
 
 /// @nodoc
-abstract class $MyWorksSearchCriteriaBlocStateCopyWith<$Res> {
-  factory $MyWorksSearchCriteriaBlocStateCopyWith(
-          MyWorksSearchCriteriaBlocState value,
-          $Res Function(MyWorksSearchCriteriaBlocState) then) =
-      _$MyWorksSearchCriteriaBlocStateCopyWithImpl<$Res,
-          MyWorksSearchCriteriaBlocState>;
+abstract class $MusterInboxStatusStateCopyWith<$Res> {
+  factory $MusterInboxStatusStateCopyWith(MusterInboxStatusState value,
+          $Res Function(MusterInboxStatusState) then) =
+      _$MusterInboxStatusStateCopyWithImpl<$Res, MusterInboxStatusState>;
 }
 
 /// @nodoc
-class _$MyWorksSearchCriteriaBlocStateCopyWithImpl<$Res,
-        $Val extends MyWorksSearchCriteriaBlocState>
-    implements $MyWorksSearchCriteriaBlocStateCopyWith<$Res> {
-  _$MyWorksSearchCriteriaBlocStateCopyWithImpl(this._value, this._then);
+class _$MusterInboxStatusStateCopyWithImpl<$Res,
+        $Val extends MusterInboxStatusState>
+    implements $MusterInboxStatusStateCopyWith<$Res> {
+  _$MusterInboxStatusStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -265,7 +251,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$MyWorksSearchCriteriaBlocStateCopyWithImpl<$Res, _$_Initial>
+    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -278,7 +264,7 @@ class _$_Initial extends _Initial {
 
   @override
   String toString() {
-    return 'MyWorksSearchCriteriaBlocState.initial()';
+    return 'MusterInboxStatusState.initial()';
   }
 
   @override
@@ -295,8 +281,7 @@ class _$_Initial extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<String>? searchCriteria, String? acceptCode)
-        loaded,
+    required TResult Function(String? sentBackToCBOCode) loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -307,7 +292,7 @@ class _$_Initial extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult? Function(String? sentBackToCBOCode)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -318,7 +303,7 @@ class _$_Initial extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult Function(String? sentBackToCBOCode)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -366,7 +351,7 @@ class _$_Initial extends _Initial {
   }
 }
 
-abstract class _Initial extends MyWorksSearchCriteriaBlocState {
+abstract class _Initial extends MusterInboxStatusState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -380,7 +365,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$MyWorksSearchCriteriaBlocStateCopyWithImpl<$Res, _$_Loading>
+    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -393,7 +378,7 @@ class _$_Loading extends _Loading {
 
   @override
   String toString() {
-    return 'MyWorksSearchCriteriaBlocState.loading()';
+    return 'MusterInboxStatusState.loading()';
   }
 
   @override
@@ -410,8 +395,7 @@ class _$_Loading extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<String>? searchCriteria, String? acceptCode)
-        loaded,
+    required TResult Function(String? sentBackToCBOCode) loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -422,7 +406,7 @@ class _$_Loading extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult? Function(String? sentBackToCBOCode)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -433,7 +417,7 @@ class _$_Loading extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult Function(String? sentBackToCBOCode)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -481,7 +465,7 @@ class _$_Loading extends _Loading {
   }
 }
 
-abstract class _Loading extends MyWorksSearchCriteriaBlocState {
+abstract class _Loading extends MusterInboxStatusState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -491,12 +475,12 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<String>? searchCriteria, String? acceptCode});
+  $Res call({String? sentBackToCBOCode});
 }
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$MyWorksSearchCriteriaBlocStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -504,17 +488,12 @@ class __$$_LoadedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? searchCriteria = freezed,
-    Object? acceptCode = freezed,
+    Object? sentBackToCBOCode = freezed,
   }) {
     return _then(_$_Loaded(
-      freezed == searchCriteria
-          ? _value._searchCriteria
-          : searchCriteria // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      freezed == acceptCode
-          ? _value.acceptCode
-          : acceptCode // ignore: cast_nullable_to_non_nullable
+      freezed == sentBackToCBOCode
+          ? _value.sentBackToCBOCode
+          : sentBackToCBOCode // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -523,26 +502,14 @@ class __$$_LoadedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Loaded extends _Loaded {
-  const _$_Loaded(final List<String>? searchCriteria, this.acceptCode)
-      : _searchCriteria = searchCriteria,
-        super._();
-
-  final List<String>? _searchCriteria;
-  @override
-  List<String>? get searchCriteria {
-    final value = _searchCriteria;
-    if (value == null) return null;
-    if (_searchCriteria is EqualUnmodifiableListView) return _searchCriteria;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
+  const _$_Loaded(this.sentBackToCBOCode) : super._();
 
   @override
-  final String? acceptCode;
+  final String? sentBackToCBOCode;
 
   @override
   String toString() {
-    return 'MyWorksSearchCriteriaBlocState.loaded(searchCriteria: $searchCriteria, acceptCode: $acceptCode)';
+    return 'MusterInboxStatusState.loaded(sentBackToCBOCode: $sentBackToCBOCode)';
   }
 
   @override
@@ -550,15 +517,12 @@ class _$_Loaded extends _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
-            const DeepCollectionEquality()
-                .equals(other._searchCriteria, _searchCriteria) &&
-            (identical(other.acceptCode, acceptCode) ||
-                other.acceptCode == acceptCode));
+            (identical(other.sentBackToCBOCode, sentBackToCBOCode) ||
+                other.sentBackToCBOCode == sentBackToCBOCode));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_searchCriteria), acceptCode);
+  int get hashCode => Object.hash(runtimeType, sentBackToCBOCode);
 
   @JsonKey(ignore: true)
   @override
@@ -571,11 +535,10 @@ class _$_Loaded extends _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<String>? searchCriteria, String? acceptCode)
-        loaded,
+    required TResult Function(String? sentBackToCBOCode) loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(searchCriteria, acceptCode);
+    return loaded(sentBackToCBOCode);
   }
 
   @override
@@ -583,10 +546,10 @@ class _$_Loaded extends _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult? Function(String? sentBackToCBOCode)? loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(searchCriteria, acceptCode);
+    return loaded?.call(sentBackToCBOCode);
   }
 
   @override
@@ -594,12 +557,12 @@ class _$_Loaded extends _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult Function(String? sentBackToCBOCode)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(searchCriteria, acceptCode);
+      return loaded(sentBackToCBOCode);
     }
     return orElse();
   }
@@ -642,13 +605,11 @@ class _$_Loaded extends _Loaded {
   }
 }
 
-abstract class _Loaded extends MyWorksSearchCriteriaBlocState {
-  const factory _Loaded(
-      final List<String>? searchCriteria, final String? acceptCode) = _$_Loaded;
+abstract class _Loaded extends MusterInboxStatusState {
+  const factory _Loaded(final String? sentBackToCBOCode) = _$_Loaded;
   const _Loaded._() : super._();
 
-  List<String>? get searchCriteria;
-  String? get acceptCode;
+  String? get sentBackToCBOCode;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -664,7 +625,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$MyWorksSearchCriteriaBlocStateCopyWithImpl<$Res, _$_Error>
+    extends _$MusterInboxStatusStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -693,7 +654,7 @@ class _$_Error extends _Error {
 
   @override
   String toString() {
-    return 'MyWorksSearchCriteriaBlocState.error(error: $error)';
+    return 'MusterInboxStatusState.error(error: $error)';
   }
 
   @override
@@ -718,8 +679,7 @@ class _$_Error extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<String>? searchCriteria, String? acceptCode)
-        loaded,
+    required TResult Function(String? sentBackToCBOCode) loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -730,7 +690,7 @@ class _$_Error extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult? Function(String? sentBackToCBOCode)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -741,7 +701,7 @@ class _$_Error extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<String>? searchCriteria, String? acceptCode)? loaded,
+    TResult Function(String? sentBackToCBOCode)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -789,7 +749,7 @@ class _$_Error extends _Error {
   }
 }
 
-abstract class _Error extends MyWorksSearchCriteriaBlocState {
+abstract class _Error extends MusterInboxStatusState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 
