@@ -97,36 +97,25 @@ public class SupervisionBillGeneratorService {
 
         List<Bill> bills = new ArrayList<>();
         if (null != calculation ) {
+        	
             CalcEstimate calcEstimate = calculation.getEstimates().get(0);
             CalcDetail calcDetail = calcEstimate.getCalcDetails().get(0);
+            //Transfer calculation details onto bill details
             List<BillDetail> billDetails = new ArrayList<>();
-
-            for (Bill expenseBill : expenseBills) {
-                BillDetail billDetail = null;
-                if (StringUtils.isNotBlank(expenseBill.getBusinessService()) &&
-                        (expenseBill.getBusinessService().equalsIgnoreCase(config.getWageBusinessService()) ||
-                                expenseBill.getBusinessService().equalsIgnoreCase(config.getPurchaseBusinessService()) )) {
-
-                    // Build BillDetail
-                    billDetail = BillDetail.builder()
-                            .billId(null)
-                            .referenceId(expenseBill.getId()) // wage billId or purchase billId
-                            .tenantId(criteria.getTenantId())
-                            .paymentStatus(expenseBill.getPaymentStatus())
-                            .fromPeriod(expenseBill.getFromPeriod().longValue())
-                            .toPeriod(expenseBill.getToPeriod().longValue())
-                            .payee(expenseBill.getBillDetails().get(0).getPayee())
-                            .lineItems(expenseBill.getBillDetails().get(0).getLineItems())
-                            .payableLineItems(expenseBill.getBillDetails().get(0).getPayableLineItems())
-                            .totalAmount(expenseBill.getTotalAmount())
-                            .build();
-                    billDetails.add(billDetail);
-                }
+            for(CalcDetail calc: calcEstimate.getCalcDetails()) {
+				BillDetail billDetail = null;
+				// Build BillDetail
+				billDetail = BillDetail.builder().billId(null).referenceId(calc.getBillId()) // wage billId or
+						.tenantId(criteria.getTenantId())
+						.payee(calcDetail.getPayee())
+						.lineItems(calcDetail.getLineItems())
+						.payableLineItems(calcDetail.getPayableLineItem()).build();
+				billDetails.add(billDetail);
 
             }
 
            // Party payer = buildPayee(config.getWagePayerId(),config.getWagePayerType(),criteria.getTenantId());
-
+            
             Party payer = this.buildParty(requestInfo, config.getPayerType(), criteria.getTenantId());
 
             //Supervision - Idgen
@@ -144,19 +133,14 @@ public class SupervisionBillGeneratorService {
             Bill bill = Bill.builder()
                     .tenantId(criteria.getTenantId())
                     .billDate(Instant.now().toEpochMilli())
-                    .totalAmount(calculation.getTotalAmount())
                     .referenceId(criteria.getContractId() +"_"+supervisionBillNumber)
                     .businessService(config.getSupervisionBusinessService())
-                    .fromPeriod(calcDetail.getFromPeriod().longValue())
-                    .toPeriod(calcDetail.getToPeriod().longValue())
                     .payer(payer)
-                    .paymentStatus("PENDING")
-                    .status("ACTIVE")
                     .billDetails(billDetails)
-                    //.additionalDetails(new Object())
                     .build();
 
             bills.add(bill);
+            log.info("Bill created:" + bill.toString());
         }
 
         return bills;
@@ -270,7 +254,7 @@ public class SupervisionBillGeneratorService {
        return  filteredBills;
     }
 
-    /** Calculates the supervision charge
+    /** Calculates the supervision charge. Used by both _estimate and _calculate APIs.
      * @param bills
      * @return
      */
@@ -279,44 +263,50 @@ public class SupervisionBillGeneratorService {
         //Search by contractId.
         Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, tenantId, contractId).get(0);
         String orgId = contract.getOrgId();
-        String executingAuthority = contract.getExecutingAuthority();
 
         //payee for supervision bill
         Party payee = buildParty(orgId,PAYEE_TYPE_SUPERVISIONBILL,tenantId);
 
         //calculate supervision charge
         BigDecimal supervisionRate = new BigDecimal(7.5); //TODO fetch from MDMS
-        BigDecimal totalWageBillAmount = calculateTotalBillAmount(bills,config.getWageBusinessService());
-        BigDecimal supervisionCharge = null;
 
-        if (StringUtils.isNotBlank(executingAuthority) && CBO_IMPLEMENTATION_AGENCY.equalsIgnoreCase(executingAuthority)) {
-           BigDecimal totalPurchaseBillAmount = calculateTotalBillAmount(bills, config.getPurchaseBusinessService());
-            supervisionCharge = (totalWageBillAmount.add(totalPurchaseBillAmount)).multiply(supervisionRate).divide(new BigDecimal(100));
-        } else if (StringUtils.isNotBlank(executingAuthority) && CBO_IMPLEMENTATION_PARTNER.equalsIgnoreCase(executingAuthority)) {
-            supervisionCharge = totalWageBillAmount.multiply(supervisionRate).divide(new BigDecimal(100));
-        }
-
-        // Build lineItem
-        LineItem lineItem = buildLineItem(tenantId,supervisionCharge);
-
-        // Build CalcDetails
+    
+//        if (StringUtils.isNotBlank(executingAuthority) && CBO_IMPLEMENTATION_AGENCY.equalsIgnoreCase(executingAuthority)) {
+//            BigDecimal totalPurchaseBillAmount = calculateTotalBillAmount(bills, config.getPurchaseBusinessService());
+//             supervisionCharge = (totalWageBillAmount.add(totalPurchaseBillAmount)).multiply(supervisionRate).divide(new BigDecimal(100));
+//         } else if (StringUtils.isNotBlank(executingAuthority) && CBO_IMPLEMENTATION_PARTNER.equalsIgnoreCase(executingAuthority)) {
+//             supervisionCharge = totalWageBillAmount.multiply(supervisionRate).divide(new BigDecimal(100));
+//         }
         List<CalcDetail> calcDetails = new ArrayList<>();
-        CalcDetail calcDetail = CalcDetail.builder()
-                .payee(payee)
-                .lineItems(Collections.singletonList(lineItem))
-                .payableLineItem(Collections.singletonList(lineItem))
-                .fromPeriod(contract.getStartDate())
-                .toPeriod(contract.getEndDate())
-                .referenceId(contractId).build();
-        calcDetails.add(calcDetail);
 
-        // Build CalcEstimates
+        //One lineItem per bill and one calcDetail per Bill for supervision bills
+        for(Bill bill: bills)
+        {
+        	
+        	if(shouldIncludeBill(contract,bill))
+        	{	
+        		// Build lineItem. Single line item per bill detail
+        		LineItem lineItem = buildLineItem(tenantId,bill, supervisionRate);
+
+        		// Build CalcDetails. This will be one per bill
+        		CalcDetail calcDetail = CalcDetail.builder()
+        				.payee(payee)
+        				.lineItems(Collections.singletonList(lineItem))
+        				.payableLineItem(Collections.singletonList(lineItem))
+        				.fromPeriod(new BigDecimal(bill.getBillDate()))
+        				.toPeriod(new BigDecimal(bill.getBillDate()))
+        				.referenceId(bill.getId()).build();
+        		calcDetails.add(calcDetail);
+        	}
+
+        }
+     
+        // Build CalcEstimates. Equivalent to the outer Bill object.
         List<CalcEstimate> calcEstimates = new ArrayList<>();
         CalcEstimate calcEstimate = CalcEstimate.builder()
                 .referenceId(contractId)
                 .fromPeriod(contract.getStartDate())
                 .toPeriod(contract.getEndDate())
-                .netPayableAmount(supervisionCharge)
                 .tenantId(tenantId)
                 .calcDetails(calcDetails)
                 .businessService(config.getSupervisionBusinessService())
@@ -328,11 +318,36 @@ public class SupervisionBillGeneratorService {
         Calculation calculation = Calculation.builder()
                 .tenantId(tenantId)
                 .estimates(calcEstimates)
-                .totalAmount(supervisionCharge)
                 .build();
 
         return calculation;
     }
+    
+    /**
+     * This method figures out whether a bill should be included for supervision
+     * bill calculation in a contract.If IA, then include purchase & wage bills. If IP,
+     * then include only wage bills.
+     * @param contract
+     * @param bill
+     * @return
+     */
+	private boolean shouldIncludeBill(Contract contract, Bill bill) {
+		String executingAuthority = contract.getExecutingAuthority();
+		boolean isIncluded = false;
+		// Check whether this bill should be included in calculation or not
+		if (StringUtils.isNotBlank(executingAuthority)
+				&& CBO_IMPLEMENTATION_AGENCY.equalsIgnoreCase(executingAuthority)) {
+			// If bill is of type purchase or wage, then incldue this.
+			if (bill.getBusinessService().equals(config.getPurchaseBusinessService())
+					|| bill.getBusinessService().equals(config.getWageBusinessService()))
+				isIncluded = true;
+		} else if (StringUtils.isNotBlank(executingAuthority)
+				&& CBO_IMPLEMENTATION_PARTNER.equalsIgnoreCase(executingAuthority)
+				&& bill.getBusinessService() == config.getWageBusinessService()) {
+			 isIncluded = true;
+		}
+		return true;
+	}
 
     /**
      * Calculates the total bill amount
@@ -376,13 +391,16 @@ public class SupervisionBillGeneratorService {
         throw new CustomException("PAYER_MISSING_IN_MDMS","Payer is missing in MDMS for type : "+type + " and tenantId : "+tenantId);
     }
 
-    private LineItem buildLineItem(String tenantId, BigDecimal actualAmountToPay) {
-        return LineItem.builder()
-                .amount(actualAmountToPay)
+    private LineItem buildLineItem(String tenantId, Bill bill, BigDecimal supervisionRate) {
+       BigDecimal billAmount = bill.getTotalAmount();
+       BigDecimal supervisionAmt = billAmount.multiply(supervisionRate).divide(new BigDecimal(100));
+       LineItem lineItem =  LineItem.builder()
+                .amount(supervisionAmt)
                 .headCode(HEAD_CODE_SUPERVISION) // TODO fetch from mdms
                 .tenantId(tenantId)
                 .type(LineItem.TypeEnum.PAYABLE)
                 .build();
+        return lineItem;
     }
 
     /**
