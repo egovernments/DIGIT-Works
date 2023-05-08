@@ -48,7 +48,6 @@ public class PaymentBillDetail {
 	private BigDecimal totalPaidAmount = BigDecimal.ZERO;
 	
 	@JsonProperty("status")
-	@NotNull
 	private PaymentStatus status;
 
 	@JsonProperty("payableLineItems")

@@ -2,6 +2,8 @@ package org.egov.digit.expense.service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -21,6 +23,8 @@ import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import digit.models.coremodels.ProcessInstance;
+import digit.models.coremodels.ProcessInstanceResponse;
 import digit.models.coremodels.State;
 import lombok.extern.slf4j.Slf4j;
 
@@ -122,7 +126,6 @@ public class BillService {
 		
 		BillCriteria billCriteria=billSearchRequest.getBillCriteria();
 
-		log.info("BillSearchRequest : "+billSearchRequest);
 		log.info("Validate billCriteria Parameters BillCriteria : "+billCriteria);
 		validator.validateSearchRequest(billSearchRequest);
 
@@ -132,12 +135,10 @@ public class BillService {
 		log.info("Search repository using billCriteria");
 		List<Bill> bills = billRepository.search(billSearchRequest);
 
-		log.info("update pagination object for total count : "+bills.size());
-		billSearchRequest.getPagination().setTotalCount(bills.size());
-
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
 		
+		enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
 		BillResponse response = BillResponse.builder()
 				.bills(bills)
 				.pagination(billSearchRequest.getPagination())
@@ -145,6 +146,17 @@ public class BillService {
 				.build();
 		return response;
 	}
-	
-	
+
+	private void enrichWfstatusForBills(List<Bill> bills, String tenantId, RequestInfo requestInfo) {
+
+		List<String> billNumbers = bills.stream().map(Bill::getBillNumber).collect(Collectors.toList());
+		ProcessInstanceResponse response = workflowUtil.searchWorkflowForBusinessIds(billNumbers, tenantId,
+				requestInfo);
+
+		Map<String, String> busnessIdToWfStatus = response.getProcessInstances().stream().collect(Collectors
+				.toMap(ProcessInstance::getBusinessId, processInstance -> processInstance.getState().getState()));
+		for (Bill bill : bills) {
+			bill.setWfStatus(busnessIdToWfStatus.get(bill.getBillNumber()));
+		}
+	}
 }

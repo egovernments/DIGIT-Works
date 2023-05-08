@@ -117,7 +117,7 @@ public class PaymentService {
         RequestInfo requestInfo = paymentRequest.getRequestInfo();
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, false);
+        AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, true);
         
         Boolean isPaymentCancelled = payment.getStatus().equals(PaymentStatus.CANCELLED);
 

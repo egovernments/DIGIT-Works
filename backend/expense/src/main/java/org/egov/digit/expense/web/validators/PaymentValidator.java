@@ -42,15 +42,54 @@ public class PaymentValidator {
 	
 	public List<Payment> validateUpdateRequest(PaymentRequest paymentRequest) {
 
+		Map<String, String> errorMap = new HashMap<>();
 		Payment payment = paymentRequest.getPayment();
+		
 		if (payment.getId() == null)
 			throw new CustomException("EG_EXPENSE_PAYMENT_UPDATE_ERROR", "Payment id is mandatory for update");
 		
+		if(null == paymentRequest.getPayment().getStatus()) {
+			throw new CustomException("EG_PAYMENT_UPDATE_STATUS_NOTNULL"," Payment status is mandatory in update request");
+		}
+		
 		PaymentSearchRequest searchRequest = getPaymentSearchRequest(paymentRequest);
-
 		List<Payment> payments = paymentService.search(searchRequest).getPayments();
 		if(CollectionUtils.isEmpty(payments))
 			throw new CustomException("EG_EXPENSE_PAYMENT_UPDATE_ERROR", "Payment id is invalid");
+		
+		validateBillForPayment(paymentRequest, errorMap, false);
+		
+		boolean isAnyStatusNull = false;
+		for (PaymentBill paymentBill : payment.getBills()) {
+
+			if(null == paymentBill.getStatus()) {
+				isAnyStatusNull = true;
+				break;
+			}
+			
+			for (PaymentBillDetail billDetail : paymentBill.getBillDetails()) {
+				
+				if(null == billDetail.getStatus()) {
+					isAnyStatusNull = true;
+					break;
+				}
+				
+				for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+					
+					if(null == lineItem.getStatus()) {
+						isAnyStatusNull = true;
+						break;
+					}			
+				}
+			}
+		}
+		
+		if(isAnyStatusNull)
+			errorMap.put("EG_EXPENSE_PAYMENT_UPDATE_STATUS_NOTNULL",
+					"Status is mandatory for the payment, bill, billdetails and lineitems in payment update request");
+		
+		if (!CollectionUtils.isEmpty(errorMap))
+			throw new CustomException(errorMap);
 		
 		return payments;
 	}
@@ -59,31 +98,43 @@ public class PaymentValidator {
 
 		Map<String, String> errorMap = new HashMap<>();
 		
-		validateBillForPayment(paymentRequest, errorMap);
-		
+		validateBillForPayment(paymentRequest, errorMap, true);
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
 	}
 
-	private void validateBillForPayment(PaymentRequest paymentRequest, Map<String, String> errorMap) {
+	private void validateBillForPayment(PaymentRequest paymentRequest, Map<String, String> errorMap, boolean isCreate) {
 		
 
 		Payment payment = paymentRequest.getPayment();
 		Set<String> billIds = payment.getBills().stream().map(PaymentBill::getBillId).collect(Collectors.toSet());
 		if (payment.getBills().size() != billIds.size())
 			throw new CustomException("EG_PAYMENT_DUPLICATE_BILLS_ERROR",
-					"The same bills cannot be repeated for payments");
+					"The same bills cannot be repeated in the payment request");
 
 		BillSearchRequest billSearchRequest = prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
 		List<Bill> billsFromSearch = billService.search(billSearchRequest).getBills();
 
 		Map<String, Bill> billMap = billsFromSearch.stream().filter(bill -> bill.getStatus().equals(Status.ACTIVE))
 				.collect(Collectors.toMap(Bill::getId, Function.identity()));
-
+		
 		if (payment.getBills().size() != billMap.size()) {
 			billIds.removeAll(billMap.keySet());
 			throw new CustomException("EG_PAYMENT_INVALID_BILLS_ERROR",
 					"The following bill ids are either Invalid or not ACTIVE in the system : " + billIds);
+		}
+		
+		BigDecimal amountToBePaid = BigDecimal.ZERO;
+		
+		for (Bill bill : billsFromSearch) {
+			amountToBePaid = amountToBePaid.add(bill.getTotalAmount().subtract(bill.getTotalPaidAmount()));
+		}
+
+		if (amountToBePaid.compareTo(payment.getNetPayableAmount()) != 0
+				|| amountToBePaid.compareTo(payment.getNetPaidAmount()) != 0) {
+			throw new CustomException("EG_PAYMENT_INVALID_PAYMENT_ERROR",
+					"The netPayableAmount and netPaidAmount should be equal to pending amount : " + amountToBePaid
+							+ " of the bills provided in the payment ");
 		}
 		
 		Map<String, BillDetail> billDetailMap = billsFromSearch.stream()
