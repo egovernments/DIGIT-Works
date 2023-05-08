@@ -40,7 +40,6 @@ public class PaymentBillDetail {
 	private String billDetailId;
 
 	@JsonProperty("totalAmount")
-	@NotNull
 	private BigDecimal totalAmount;
 
 	@JsonProperty("totalPaidAmount")
