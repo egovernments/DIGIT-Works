@@ -218,8 +218,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             .musterRoll!.first.endDate ??
                                             0);
                                     daysInRange = DateFormats.checkDaysInRange(
-                                        selectedDateRange!.startDate,
-                                        selectedDateRange!.endDate,
+                                        DateFormats.dateToTimeStamp(DateFormats.getDateFromTimestamp(selectedDateRange!.startDate)),
+                                        DateFormats.dateToTimeStamp(DateFormats.getDateFromTimestamp(selectedDateRange!.endDate)),
                                         individualMusterRollModel
                                             .musterRoll!.first.startDate!,
                                         individualMusterRollModel
@@ -845,14 +845,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                   },
                                                                   child:
                                                                       DigitElevatedButton(
-                                                                    onPressed: individualMusterRollModel
-                                                                                .musterRoll!
-                                                                                .first
-                                                                                .endDate! >
-                                                                            DateTime.now()
-                                                                                .millisecondsSinceEpoch
-                                                                        ? null
-                                                                        : !inWorkFlow
+                                                                    onPressed:!inWorkFlow
                                                                             ? () {
                                                                                 if (selectedDateRange ==
                                                                                     null) {
