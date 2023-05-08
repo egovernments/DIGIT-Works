@@ -27,10 +27,12 @@ _$_CBOMyWorksSearchCriteriaModel _$$_CBOMyWorksSearchCriteriaModelFromJson(
       searchCriteria: (json['searchCriteria'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      acceptCode: json['acceptCode'] as String?,
     );
 
 Map<String, dynamic> _$$_CBOMyWorksSearchCriteriaModelToJson(
         _$_CBOMyWorksSearchCriteriaModel instance) =>
     <String, dynamic>{
       'searchCriteria': instance.searchCriteria,
+      'acceptCode': instance.acceptCode,
     };

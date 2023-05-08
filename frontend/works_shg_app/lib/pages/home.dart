@@ -77,7 +77,7 @@ class _HomePage extends State<HomePage> {
                   context.read<LocalizationBloc>().add(
                         LocalizationEvent.onLoadLocalization(
                             module:
-                                'rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}',
+                                'rainmaker-contracts,rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}',
                             tenantId: GlobalVariables.globalConfigObject!
                                 .globalConfigs!.stateTenantId
                                 .toString(),

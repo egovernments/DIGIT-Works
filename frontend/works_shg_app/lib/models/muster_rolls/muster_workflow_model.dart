@@ -26,6 +26,7 @@ class ProcessInstances with _$ProcessInstances {
     String? action,
     AuditDetails? auditDetails,
     List<Assignees>? assignes,
+    List<NextActions>? nextActions,
     @JsonKey(name: 'state') WorkflowState? workflowState,
   }) = _ProcessInstances;
 
@@ -33,6 +34,18 @@ class ProcessInstances with _$ProcessInstances {
     Map<String, dynamic> json,
   ) =>
       _$ProcessInstancesFromJson(json);
+}
+
+@freezed
+class NextActions with _$NextActions {
+  const factory NextActions({
+    String? action,
+  }) = _NextActions;
+
+  factory NextActions.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$NextActionsFromJson(json);
 }
 
 @freezed

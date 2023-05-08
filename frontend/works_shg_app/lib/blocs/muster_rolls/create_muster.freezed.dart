@@ -52,6 +52,7 @@ mixin _$MusterCreateEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)
         update,
   }) =>
@@ -85,6 +86,7 @@ mixin _$MusterCreateEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
   }) =>
@@ -118,6 +120,7 @@ mixin _$MusterCreateEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
     required TResult orElse(),
@@ -519,6 +522,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)
         update,
   }) {
@@ -573,6 +577,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
   }) {
@@ -627,6 +632,7 @@ class _$CreateMusterEvent implements CreateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
     required TResult orElse(),
@@ -753,6 +759,7 @@ abstract class _$$UpdateMusterEventCopyWith<$Res>
       String contractId,
       String registerNo,
       String registerName,
+      String? reSubmitAction,
       List<Map<String, dynamic>>? skillsList});
 }
 
@@ -773,6 +780,7 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
     Object? contractId = null,
     Object? registerNo = null,
     Object? registerName = null,
+    Object? reSubmitAction = freezed,
     Object? skillsList = freezed,
   }) {
     return _then(_$UpdateMusterEvent(
@@ -800,6 +808,10 @@ class __$$UpdateMusterEventCopyWithImpl<$Res>
           ? _value.registerName
           : registerName // ignore: cast_nullable_to_non_nullable
               as String,
+      reSubmitAction: freezed == reSubmitAction
+          ? _value.reSubmitAction
+          : reSubmitAction // ignore: cast_nullable_to_non_nullable
+              as String?,
       skillsList: freezed == skillsList
           ? _value._skillsList
           : skillsList // ignore: cast_nullable_to_non_nullable
@@ -818,6 +830,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
       required this.contractId,
       required this.registerNo,
       required this.registerName,
+      this.reSubmitAction,
       final List<Map<String, dynamic>>? skillsList})
       : _skillsList = skillsList;
 
@@ -833,6 +846,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
   final String registerNo;
   @override
   final String registerName;
+  @override
+  final String? reSubmitAction;
   final List<Map<String, dynamic>>? _skillsList;
   @override
   List<Map<String, dynamic>>? get skillsList {
@@ -845,7 +860,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
 
   @override
   String toString() {
-    return 'MusterCreateEvent.update(tenantId: $tenantId, id: $id, orgName: $orgName, contractId: $contractId, registerNo: $registerNo, registerName: $registerName, skillsList: $skillsList)';
+    return 'MusterCreateEvent.update(tenantId: $tenantId, id: $id, orgName: $orgName, contractId: $contractId, registerNo: $registerNo, registerName: $registerName, reSubmitAction: $reSubmitAction, skillsList: $skillsList)';
   }
 
   @override
@@ -863,6 +878,8 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
                 other.registerNo == registerNo) &&
             (identical(other.registerName, registerName) ||
                 other.registerName == registerName) &&
+            (identical(other.reSubmitAction, reSubmitAction) ||
+                other.reSubmitAction == reSubmitAction) &&
             const DeepCollectionEquality()
                 .equals(other._skillsList, _skillsList));
   }
@@ -876,6 +893,7 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
       contractId,
       registerNo,
       registerName,
+      reSubmitAction,
       const DeepCollectionEquality().hash(_skillsList));
 
   @JsonKey(ignore: true)
@@ -914,11 +932,12 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)
         update,
   }) {
     return update(tenantId, id, orgName, contractId, registerNo, registerName,
-        skillsList);
+        reSubmitAction, skillsList);
   }
 
   @override
@@ -951,11 +970,12 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
   }) {
     return update?.call(tenantId, id, orgName, contractId, registerNo,
-        registerName, skillsList);
+        registerName, reSubmitAction, skillsList);
   }
 
   @override
@@ -988,13 +1008,14 @@ class _$UpdateMusterEvent implements UpdateMusterEvent {
             String contractId,
             String registerNo,
             String registerName,
+            String? reSubmitAction,
             List<Map<String, dynamic>>? skillsList)?
         update,
     required TResult orElse(),
   }) {
     if (update != null) {
       return update(tenantId, id, orgName, contractId, registerNo, registerName,
-          skillsList);
+          reSubmitAction, skillsList);
     }
     return orElse();
   }
@@ -1039,6 +1060,7 @@ abstract class UpdateMusterEvent implements MusterCreateEvent {
       required final String contractId,
       required final String registerNo,
       required final String registerName,
+      final String? reSubmitAction,
       final List<Map<String, dynamic>>? skillsList}) = _$UpdateMusterEvent;
 
   @override
@@ -1052,6 +1074,7 @@ abstract class UpdateMusterEvent implements MusterCreateEvent {
   String get registerNo;
   @override
   String get registerName;
+  String? get reSubmitAction;
   @override
   List<Map<String, dynamic>>? get skillsList;
   @override
