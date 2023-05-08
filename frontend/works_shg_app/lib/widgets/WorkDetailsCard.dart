@@ -36,6 +36,8 @@ class WorkDetailsCard extends StatelessWidget {
   final bool? showButtonLink;
   final String? linkLabel;
   final void Function()? onLinkPressed;
+  final String? acceptWorkOrderCode;
+  final String? musterBackToCBOCode;
 
   const WorkDetailsCard(this.detailsList,
       {this.isAttendanceInbox = false,
@@ -54,6 +56,8 @@ class WorkDetailsCard extends StatelessWidget {
       this.musterRollsModel,
       this.contractModel,
       this.orgProfile = false,
+      this.acceptWorkOrderCode,
+      this.musterBackToCBOCode,
       super.key});
 
   @override
@@ -76,8 +80,11 @@ class WorkDetailsCard extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: getCardDetails(context, detailsList[i]['cardDetails'],
                   payload: detailsList[i]['payload'],
-                  isAccept: detailsList[i]['cardDetails'][i18.common.status] ==
-                      'ACCEPTED',
+                  isAccept: acceptWorkOrderCode != null &&
+                          detailsList[i]['cardDetails'][i18.common.status]
+                              .contains(acceptWorkOrderCode)
+                      ? false
+                      : true,
                   contractNumber: detailsList[i]['cardDetails']
                       [i18.workOrder.workOrderNo])),
         ));
@@ -139,24 +146,23 @@ class WorkDetailsCard extends StatelessWidget {
       ));
     }
     for (int j = 0; j < cardDetails.length; j++) {
-      labelList.add(getItemWidget(context,
-          title: AppLocalizations.of(context)
-              .translate(cardDetails.keys.elementAt(j).toString()),
-          description: cardDetails.keys.elementAt(j).toString() ==
-                  i18.common.status
-              ? AppLocalizations.of(context)
-                  .translate(cardDetails.values.elementAt(j).toString())
-              : cardDetails.values.elementAt(j).toString(),
-          isActiveStatus:
-              cardDetails.keys.elementAt(j).toString() == i18.common.status &&
-                  (cardDetails.values.elementAt(j).toString() !=
-                          Constants.rejected ||
-                      cardDetails.values.elementAt(j).toString() !=
-                          Constants.sentBack),
-          isRejectStatus: cardDetails.values.elementAt(j).toString() ==
-                  Constants.rejected ||
-              cardDetails.values.elementAt(j).toString() ==
-                  Constants.sentBack));
+      labelList.add(getItemWidget(
+        context,
+        title: AppLocalizations.of(context)
+            .translate(cardDetails.keys.elementAt(j).toString()),
+        description:
+            cardDetails.keys.elementAt(j).toString() == i18.common.status
+                ? AppLocalizations.of(context)
+                    .translate(cardDetails.values.elementAt(j).toString())
+                : cardDetails.values.elementAt(j).toString(),
+        isActiveStatus:
+            cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+                ((cardDetails.values.elementAt(j + 1) == 'true') ||
+                    (cardDetails.values.elementAt(j) == Constants.active)),
+        isRejectStatus:
+            cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+                (cardDetails.values.elementAt(j + 1) == 'false'),
+      ));
     }
     if (isWorkOrderInbox && !isAccept!) {
       labelList.add(Column(
@@ -197,7 +203,8 @@ class WorkDetailsCard extends StatelessWidget {
                                 WorkOrderDeclineEvent(
                                     contractsModel: payload,
                                     action: 'DECLINE',
-                                    comments: 'DECLINE contract'),
+                                    comments:
+                                        'Work Order has been declined by CBO'),
                               );
                           Navigator.of(context, rootNavigator: true).pop();
                         },
@@ -213,7 +220,7 @@ class WorkDetailsCard extends StatelessWidget {
                       WorkOrderAcceptEvent(
                           contractsModel: payload,
                           action: 'ACCEPT',
-                          comments: 'Accept contract'),
+                          comments: 'Work Order has been accepted by CBO'),
                     );
               },
             ),
@@ -295,7 +302,8 @@ class WorkDetailsCard extends StatelessWidget {
                 );
             context.router.push(SHGInboxRoute(
                 tenantId: musterRoll.tenantId.toString(),
-                musterRollNo: musterRoll.musterRollNumber.toString()));
+                musterRollNo: musterRoll.musterRollNumber.toString(),
+                sentBackCode: musterBackToCBOCode ?? Constants.sentBack));
             context.read<MusterRollEstimateBloc>().add(
                   ViewEstimateMusterRollEvent(
                     tenantId: musterRoll.tenantId.toString(),
@@ -307,7 +315,7 @@ class WorkDetailsCard extends StatelessWidget {
           },
           child: Center(
             child: Text(
-                musterRoll!.musterRollStatus!.contains('BACKTOCBO')
+                musterRoll!.musterRollStatus == musterBackToCBOCode
                     ? AppLocalizations.of(context)
                         .translate(i18.attendanceMgmt.editMusterRoll)
                     : elevatedButtonLabel,
@@ -336,49 +344,52 @@ class WorkDetailsCard extends StatelessWidget {
       String subtitle = '',
       bool isActiveStatus = false,
       bool isRejectStatus = false}) {
-    return Container(
-        padding: const EdgeInsets.all(4.0),
-        child: (Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-                width: MediaQuery.of(context).size.width / 3,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                        textAlign: TextAlign.start,
-                      ),
-                      subtitle.trim.toString() != ''
-                          ? Text(
-                              subtitle,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Theme.of(context).primaryColorLight),
-                            )
-                          : const Text('')
-                    ])),
-            SizedBox(
-                width: MediaQuery.of(context).size.width / 2,
-                child: Text(
-                  description,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: isActiveStatus && !isRejectStatus
-                          ? DigitTheme.instance.colorScheme.onSurfaceVariant
-                          : isRejectStatus
-                              ? DigitTheme.instance.colorScheme.error
-                              : DigitTheme.instance.colorScheme.onSurface),
-                  textAlign: TextAlign.left,
-                ))
-          ],
-        )));
+    return title != Constants.activeInboxStatus
+        ? Container(
+            padding: const EdgeInsets.all(4.0),
+            child: (Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                    width: MediaQuery.of(context).size.width / 3,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w700),
+                            textAlign: TextAlign.start,
+                          ),
+                          subtitle.trim.toString() != ''
+                              ? Text(
+                                  subtitle,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color:
+                                          Theme.of(context).primaryColorLight),
+                                )
+                              : const Text('')
+                        ])),
+                SizedBox(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Text(
+                      description,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: isActiveStatus && !isRejectStatus
+                              ? DigitTheme.instance.colorScheme.onSurfaceVariant
+                              : isRejectStatus
+                                  ? DigitTheme.instance.colorScheme.error
+                                  : DigitTheme.instance.colorScheme.onSurface),
+                      textAlign: TextAlign.left,
+                    ))
+              ],
+            )))
+        : const SizedBox.shrink();
   }
 }

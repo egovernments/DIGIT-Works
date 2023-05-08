@@ -179,8 +179,7 @@ public class PaymentService {
                     .bill(bill)
                     .requestInfo(requestInfo)
                     .build();
-            billService.update(billRequest);
-
+            producer.push(config.getBillUpdateTopic(), billRequest);
         }
     }
 
