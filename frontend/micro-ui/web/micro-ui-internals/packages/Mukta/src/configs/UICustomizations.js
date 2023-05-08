@@ -30,21 +30,26 @@ const getCreatePaymentPayload = (data) => {
   //payment.status = 'INITIATED'
 
   payment.bills = []
+  
   data?.forEach(item => {
     const bill = item?.original?.bill
     let billObj = {}
     billObj.billId = bill?.id
     billObj.tenantId = bill?.tenantId
     billObj.totalAmount = bill?.totalAmount
-    billObj.totalPaidAmount = bill?.totalPaidAmount
+    /* temp fix for now  before jit integration*/
+    billObj.totalPaidAmount = bill?.totalAmount
     //billObj.status = 'INITIATED'
+    payment.netPayableAmount=payment.netPayableAmount+bill?.totalAmount;
     billObj.billDetails = []
     if(bill?.billDetails?.length > 0) {
       bill?.billDetails?.forEach(detail => {
         let billDetailObj = {}
         billDetailObj.billDetailId = detail?.id //billId
         billDetailObj.totalAmount = detail?.totalAmount
-        billDetailObj.totalPaidAmount = detail?.totalPaidAmount
+    /* temp fix for now  before jit integration*/
+
+        billDetailObj.totalPaidAmount = detail?.totalAmount
         //billDetailObj.status = 'INITIATED'
         billDetailObj.payableLineItems = detail?.payableLineItems?.map(item => (
           {
@@ -60,7 +65,9 @@ const getCreatePaymentPayload = (data) => {
     }
     payment.bills.push(billObj)
   })
+  payment.netPaidAmount=payment.netPayableAmount;
   let payload = {payment}
+  
   return payload
 }
 
