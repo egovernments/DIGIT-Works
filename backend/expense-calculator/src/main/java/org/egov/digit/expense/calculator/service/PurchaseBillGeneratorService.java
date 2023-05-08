@@ -131,8 +131,14 @@ public class PurchaseBillGeneratorService {
             // Calculate payable amount
             netPayableAmount = netPayableAmount.add(billDetail.getNetLineItemAmount());
         }
-        // Build payer
-        Party payer = buildParty(requestInfo, configs.getPayerType(), tenantId);
+
+        // Get the payer from providedPurchaseBill
+        Party payer = providedPurchaseBill.getParty();
+
+        // If payer is null then Build payer
+        if (payer == null) {
+            payer = buildParty(requestInfo, configs.getPayerType(), tenantId);
+        }
         // Populate additional details object with documents
         populateBillAdditionalDetails(providedPurchaseBill,DOCUMENTS_CONSTANT, documents);
         // Generate the bill
