@@ -108,7 +108,7 @@ const fetchDocuments = (docs) => {
             fileStoreId: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
             documentUid: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
             tenantId: docs?.[key]?.[0]?.[1]?.fileStoreId?.tenantId,
-            fileType: key?.includes("OTHERS") ? docs?.["ESTIMATE_DOC_OTHERS_name"] :`${key}`
+            fileType: key?.includes("OTHERS") ? "Others" :`${key}`
         }
         
     })
