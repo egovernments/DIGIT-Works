@@ -14,7 +14,8 @@ const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse }) 
       setStatusMap(inboxResponse.statusMap?.map(row => {
        return {
          uuid:row.statusid,
-         state: row.state || row.applicationstatus
+         state: row.state || row.applicationstatus,
+         businessService:row?.businessservice
        }
       }))
     }
@@ -37,7 +38,7 @@ const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse }) 
             }}
             value={row.uuid}
             checked={formData?.[populators.name]?.[row.uuid]}
-            label={t(`${populators.labelPrefix}${row?.state}`)}
+            label={t(Digit.Utils.locale.getTransformedLocale(`${populators.labelPrefix}${row?.businessService}_STATE_${row?.state}`))}
           />
         );
       })}
