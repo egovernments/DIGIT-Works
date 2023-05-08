@@ -134,12 +134,16 @@ public class BillValidator {
 				.collect(Collectors.toMap(LineItem::getId, Function.identity()));
 
 		if(CollectionUtils.isEmpty(details)) {
-    		bill.setBillDetails(detailsFromSearch);
+			errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_BILLDETAILS", "bill details cannot be empty for update request");
     	}else {
     		for (BillDetail currentDetail : details) {
     			
     			String currentDetailId = currentDetail.getId();
     			BillDetail currentDetailFromSearch = searchDetailsMap.get(currentDetailId);
+    			
+    			if(null == currentDetailId) {
+    				currentDetail.setStatus(Status.ACTIVE);
+    			}
 				if (null == currentDetailFromSearch) {
 					invalidDetailIds.add(currentDetailId);
 				}else {
@@ -153,8 +157,10 @@ public class BillValidator {
 						
 						String currentLineItemId = currentLineItem.getId();
 						LineItem searchLineItem = searchLineItemMap.get(currentLineItemId);
-						
-						if(null == searchLineItem) {
+						if(null == currentLineItemId) {
+							currentLineItem.setStatus(Status.ACTIVE);
+						}
+						else if(null == searchLineItem) {
 							invalidLineItemIds.add(currentLineItemId);
 						}else {
 							if(null == currentLineItem.getStatus())
@@ -167,7 +173,10 @@ public class BillValidator {
 						String currentPayableLineItemId = currentPayableLineItem.getId();
 						LineItem searchPayableLineItem = searchPayableLineItemMap.get(currentPayableLineItemId);
 						
-						if(null == searchPayableLineItem) {
+						if(null == currentPayableLineItemId) {
+							currentPayableLineItem.setStatus(Status.ACTIVE);
+						}
+						else if(null == searchPayableLineItem) {
 							invalidLineItemIds.add(currentPayableLineItemId);
 						}else {
 							if(null == currentPayableLineItem.getStatus())
