@@ -388,7 +388,7 @@ export const createOrganizationConfigMUKTA = {
                         label: "MASTERS_ACC_NO",
                         isMandatory: true,
                         key: "financeDetails_accountNumber",
-                        type: "number",
+                        type: "text",
                         disable: false,
                         preProcess : {
                             convertStringToRegEx : ["populators.validation.pattern"]

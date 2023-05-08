@@ -84,7 +84,7 @@ export const createProjectConfigMUKTA = {
                 "name": "basicDetails_projectDesc",
                 "error": "PROJECT_PATTERN_ERR_MSG_PROJECT_DESC",
                 "validation": {
-                  "pattern": "^[a-zA-Z0-9\\/{ \\/ .\\- _$@#\\'() } ]*$",
+                  "pattern": "^[a-zA-Z0-9\\/{ \\/ .\\- ,_$@#\\'() } ]*$",
                   "minlength": 2,
                   "maxlength" : 256
                 }
