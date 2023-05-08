@@ -42,15 +42,54 @@ public class PaymentValidator {
 	
 	public List<Payment> validateUpdateRequest(PaymentRequest paymentRequest) {
 
+		Map<String, String> errorMap = new HashMap<>();
 		Payment payment = paymentRequest.getPayment();
+		
 		if (payment.getId() == null)
 			throw new CustomException("EG_EXPENSE_PAYMENT_UPDATE_ERROR", "Payment id is mandatory for update");
 		
+		if(null == paymentRequest.getPayment().getStatus()) {
+			throw new CustomException("EG_PAYMENT_UPDATE_STATUS_NOTNULL"," Payment status is mandatory in update request");
+		}
+		
 		PaymentSearchRequest searchRequest = getPaymentSearchRequest(paymentRequest);
-
 		List<Payment> payments = paymentService.search(searchRequest).getPayments();
 		if(CollectionUtils.isEmpty(payments))
 			throw new CustomException("EG_EXPENSE_PAYMENT_UPDATE_ERROR", "Payment id is invalid");
+		
+		validateBillForPayment(paymentRequest, errorMap, false);
+		
+		boolean isAnyStatusNull = false;
+		for (PaymentBill paymentBill : payment.getBills()) {
+
+			if(null == paymentBill.getStatus()) {
+				isAnyStatusNull = true;
+				break;
+			}
+			
+			for (PaymentBillDetail billDetail : paymentBill.getBillDetails()) {
+				
+				if(null == billDetail.getStatus()) {
+					isAnyStatusNull = true;
+					break;
+				}
+				
+				for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+					
+					if(null == lineItem.getStatus()) {
+						isAnyStatusNull = true;
+						break;
+					}			
+				}
+			}
+		}
+		
+		if(isAnyStatusNull)
+			errorMap.put("EG_EXPENSE_PAYMENT_UPDATE_STATUS_NOTNULL",
+					"Status is mandatory for the payment, bill, billdetails and lineitems in payment update request");
+		
+		if (!CollectionUtils.isEmpty(errorMap))
+			throw new CustomException(errorMap);
 		
 		return payments;
 	}
@@ -59,31 +98,42 @@ public class PaymentValidator {
 
 		Map<String, String> errorMap = new HashMap<>();
 		
-		validateBillForPayment(paymentRequest, errorMap);
-		
+		validateBillForPayment(paymentRequest, errorMap, true);
 		if (!CollectionUtils.isEmpty(errorMap))
 			throw new CustomException(errorMap);
 	}
 
-	private void validateBillForPayment(PaymentRequest paymentRequest, Map<String, String> errorMap) {
+	private void validateBillForPayment(PaymentRequest paymentRequest, Map<String, String> errorMap, boolean isCreate) {
 		
 
 		Payment payment = paymentRequest.getPayment();
 		Set<String> billIds = payment.getBills().stream().map(PaymentBill::getBillId).collect(Collectors.toSet());
 		if (payment.getBills().size() != billIds.size())
 			throw new CustomException("EG_PAYMENT_DUPLICATE_BILLS_ERROR",
-					"The same bills cannot be repeated for payments");
+					"The same bills cannot be repeated in the payment request");
 
 		BillSearchRequest billSearchRequest = prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
-		List<Bill> billsFromSearch = billService.search(billSearchRequest).getBills();
+		List<Bill> billsFromSearch = billService.search(billSearchRequest, false).getBills();
 
 		Map<String, Bill> billMap = billsFromSearch.stream().filter(bill -> bill.getStatus().equals(Status.ACTIVE))
 				.collect(Collectors.toMap(Bill::getId, Function.identity()));
-
+		
 		if (payment.getBills().size() != billMap.size()) {
 			billIds.removeAll(billMap.keySet());
 			throw new CustomException("EG_PAYMENT_INVALID_BILLS_ERROR",
 					"The following bill ids are either Invalid or not ACTIVE in the system : " + billIds);
+		}
+		
+		BigDecimal amountToBePaid = BigDecimal.ZERO;
+		
+		for (Bill bill : billsFromSearch) {
+			amountToBePaid = amountToBePaid.add(bill.getTotalAmount().subtract(bill.getTotalPaidAmount()));
+		}
+
+		if (isCreate && amountToBePaid.compareTo(amountToBePaid) != 0) {
+			throw new CustomException("EG_PAYMENT_INVALID_PAYMENT_ERROR",
+					"The netPayableAmount and netPaidAmount should be equal to pending amount : " + amountToBePaid
+							+ " of the bills provided in the payment ");
 		}
 		
 		Map<String, BillDetail> billDetailMap = billsFromSearch.stream()
@@ -102,38 +152,38 @@ public class PaymentValidator {
 		for (PaymentBill paymentBill : payment.getBills()) {
 
 			Bill billFromSearch = billMap.get(paymentBill.getBillId());
-			BigDecimal totalBillPayment = paymentBill.getTotalPaidAmount().add(billFromSearch.getTotalPaidAmount());
-
 			/*
 			 * Paid amount of incoming bill of payment should be equal to the total Amount of the bill
 			 * 
 			 * since partial payment is not allowed
 			 */
-			if (paymentBill.getTotalPaidAmount().compareTo(billFromSearch.getTotalAmount()) > 0) {
+			BigDecimal remaningBillAmount = billFromSearch.getTotalAmount().subtract(billFromSearch.getTotalPaidAmount());
+			if(isCreate && null == paymentBill.getTotalAmount())
+				paymentBill.setTotalAmount(remaningBillAmount);
+			
+			if (isCreate && paymentBill.getTotalPaidAmount().compareTo(remaningBillAmount) != 0) {
 				
 				errorMap.put("EG_EXPENSE_PAYMENT_INVALID_BILL[" + billIndex + "]",
 						"The paid amount " + paymentBill.getTotalPaidAmount() + " for bill with id : "
-								+ paymentBill.getBillId() + " is greater than the actual amount : "
-								+ billFromSearch.getTotalAmount());
-			}
-			else if (totalBillPayment.compareTo(billFromSearch.getTotalAmount()) > 0) {
-
-				errorMap.put("EG_EXPENSE_PAYMENT_BILL_INVALID_AMOUNT[" + billIndex + "]",
-						"The total payment for bill with id : " + paymentBill.getBillId()
-								+ " is greater than the actual amount : " + billFromSearch.getTotalAmount());
+								+ paymentBill.getBillId() + " should be equal to the remining amount : "
+								+ remaningBillAmount);
 			}
 			int billDetailIndex = 0;
 			for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
 
-				validateBillDetail(billDetailMap, payableLineItemMap, paymentBillDetail, errorMap, billDetailIndex);
+				validateBillDetail(billDetailMap, payableLineItemMap, paymentBillDetail, errorMap, billDetailIndex, isCreate);
 				billDetailIndex++;
 			}
 			billIndex++;
 		}
+		
+		if (!CollectionUtils.isEmpty(errorMap)) {
+			throw new CustomException(errorMap);
+		}
 	}
 
 	private void validateBillDetail(Map<String, BillDetail> billDetailMap, Map<String, LineItem> payableLineItemMap,
-			PaymentBillDetail paymentBillDetail, Map<String, String> errorMap, int billDetailIndex) {
+			PaymentBillDetail paymentBillDetail, Map<String, String> errorMap, int billDetailIndex, boolean isCreate) {
 
 		BillDetail billDetailFromSearch = billDetailMap.get(paymentBillDetail.getBillDetailId());
 
@@ -150,7 +200,7 @@ public class PaymentValidator {
 		 * Skip amount validation if id of bill detail is invalid
 		 */
 		else {
-			BigDecimal totalBillDetailPayment = paymentBillDetail.getTotalPaidAmount().add(billDetailFromSearch.getTotalPaidAmount());
+			BigDecimal totalPendingAmount = billDetailFromSearch.getTotalAmount().subtract(billDetailFromSearch.getTotalPaidAmount());
 			/*
 			 * if bill detail is valid
 			 * 
@@ -159,18 +209,17 @@ public class PaymentValidator {
 			 * verify the amount of bill detail from search is equal 
 			 * with the paid amount of bill detail from payment
 			 */
-			if (paymentBillDetail.getTotalPaidAmount().compareTo(billDetailFromSearch.getTotalAmount()) > 0) {
+			if(isCreate && null == paymentBillDetail.getTotalAmount())
+				paymentBillDetail.setTotalAmount(totalPendingAmount);
+			
+			if (paymentBillDetail.getTotalPaidAmount().compareTo(totalPendingAmount) != 0
+					|| paymentBillDetail.getTotalAmount().compareTo(totalPendingAmount) != 0) {
 
-				errorMap.put("EG_EXPENSE_PAYMENT_BILLDETAIL_INVALID_AMOUNT[" + billDetailIndex + "]","The paid amount " + paymentBillDetail.getTotalPaidAmount()
+				errorMap.put("EG_EXPENSE_PAYMENT_BILLDETAIL_INVALID_AMOUNT[" + billDetailIndex + "]","The paid amount and total Amount "
 						+ " for billDetail with id : " + paymentBillDetail.getBillDetailId()
-						+ " is greater than the actual amount : " + billDetailFromSearch.getTotalAmount());
+						+ " should be the actual amount : " + totalPendingAmount);
 				
-			} else if(totalBillDetailPayment.compareTo(billDetailFromSearch.getTotalAmount()) > 0) {
-				
-				errorMap.put("EG_EXPENSE_PAYMENT_BILLDETAIL_INVALID_AMOUNT[" + billDetailIndex + "]","The total payment for billDetail with id : " + paymentBillDetail.getBillDetailId()
-				+ " is greater than the actual amount : " + billDetailFromSearch.getTotalAmount());
-			}
-
+			} 
 			int lineItemIndex = 0;
 			for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
 
@@ -188,21 +237,17 @@ public class PaymentValidator {
 			errorMap.put("EG_EXPENSE_PAYMENT_INVALID_LINEITEM[" + lineItemIndex + "]","The payable line item is invalid : " + payableLineItem.getLineItemId());
 		}else {
 			
-			BigDecimal totalLineItemPayment = payableLineItem.getPaidAmount().add(lineItemFromSearch.getPaidAmount());
+			BigDecimal totalPendingAmount = lineItemFromSearch.getAmount().subtract(lineItemFromSearch.getPaidAmount());
 			/*
 			 * Skip amount validation if id of bill detail is invalid
 			 */
-			if (payableLineItem.getPaidAmount().compareTo(lineItemFromSearch.getAmount()) > 0) {
+			if (payableLineItem.getPaidAmount().compareTo(totalPendingAmount) != 0) {
 
 				errorMap.put("EG_EXPENSE_PAYMENT_LINEITEM_INVALID_AMOUNT[" + lineItemIndex + "]",
 						"The paid line item amount " + payableLineItem.getPaidAmount() + " for line item with id : "
-								+ payableLineItem.getLineItemId() + "is greater than the actual amount : "
-								+ lineItemFromSearch.getAmount());
-			} else if (totalLineItemPayment.compareTo(lineItemFromSearch.getAmount()) > 0) {
+								+ payableLineItem.getLineItemId() + " should be equal to the actual pending amount : "
+								+ totalPendingAmount);
 
-				errorMap.put("EG_EXPENSE_PAYMENT_LINEITEM_INVALID_AMOUNT[" + lineItemIndex + "]",
-						"The total payment for line item with id : " + payableLineItem.getLineItemId()
-								+ " is greater than the actual amount : " + lineItemFromSearch.getAmount());
 			}
 		}
 	}
