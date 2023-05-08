@@ -126,7 +126,7 @@ public class PaymentService {
                 .collect(Collectors.toSet());
 
         BillSearchRequest billSearchRequest = validator.prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
-        List<Bill> billsFromSearch = billService.search(billSearchRequest).getBills();
+        List<Bill> billsFromSearch = billService.search(billSearchRequest, false).getBills();
 
         Map<String, Bill> billMap = billsFromSearch.stream()
                 .collect(Collectors.toMap(Bill::getId, Function.identity()));

@@ -122,7 +122,7 @@ public class BillService {
 	 * @param billSearchRequest
 	 * @return
 	 */
-	public BillResponse search(BillSearchRequest billSearchRequest) {
+	public BillResponse search(BillSearchRequest billSearchRequest, boolean isWfEncrichRequired) {
 		
 		BillCriteria billCriteria=billSearchRequest.getBillCriteria();
 
@@ -138,7 +138,9 @@ public class BillService {
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
 		
-		enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
+		if (isWfEncrichRequired)
+			enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
+		
 		BillResponse response = BillResponse.builder()
 				.bills(bills)
 				.pagination(billSearchRequest.getPagination())

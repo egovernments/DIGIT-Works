@@ -113,7 +113,7 @@ public class PaymentValidator {
 					"The same bills cannot be repeated in the payment request");
 
 		BillSearchRequest billSearchRequest = prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
-		List<Bill> billsFromSearch = billService.search(billSearchRequest).getBills();
+		List<Bill> billsFromSearch = billService.search(billSearchRequest, false).getBills();
 
 		Map<String, Bill> billMap = billsFromSearch.stream().filter(bill -> bill.getStatus().equals(Status.ACTIVE))
 				.collect(Collectors.toMap(Bill::getId, Function.identity()));
