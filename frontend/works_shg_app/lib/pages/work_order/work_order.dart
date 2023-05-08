@@ -163,7 +163,10 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                 '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                             i18.common.status: t.translate(
                                                 'WF_CONTRACT_STATUS_${e.wfStatus.toString()}'),
-                                            Constants.activeInboxStatus: 'true'
+                                            Constants.activeInboxStatus:
+                                                e.wfStatus != acceptCode
+                                                    ? 'false'
+                                                    : 'true'
                                           },
                                           'payload': e.toMap()
                                         })
@@ -258,7 +261,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                           workOrderList,
                                                           isWorkOrderInbox:
                                                               true,
-                                                          acceptWorkOrderCode: acceptCode,
+                                                          acceptWorkOrderCode:
+                                                              acceptCode,
                                                           elevatedButtonLabel:
                                                               AppLocalizations.of(
                                                                       context)
@@ -271,7 +275,6 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                   .translate(i18
                                                                       .common
                                                                       .decline),
-
                                                         )
                                                       : EmptyImage(
                                                           label: AppLocalizations
