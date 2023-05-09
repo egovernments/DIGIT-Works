@@ -143,7 +143,8 @@ public class ExpenseCalculatorUtil {
         }
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(configs.getDefaultLimit()).offSet(configs.getDefaultOffset()).order(Order.ASC).build();
-        BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
+        //Only fetch active bills
+        BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId).status("ACTIVE")
                 .ids(new HashSet<>(billIds)).build();
         BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
                 .billCriteria(billCriteria).tenantId(tenantId).pagination(pagination).build();

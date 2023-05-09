@@ -126,7 +126,11 @@ public class SupervisionBillGeneratorService {
 			}
 
 		}
-
+		log.info("Printing all existing bills for which supervision bill is created");
+		for(String s: existingBills) {
+			log.info("Bill ID: " + s);
+		}
+		
 		// There are n purchase and wage bills for a contract. n-2 of them are already
 		// accounted for in a supervision bill in
 		// existingBills. The remainder are the bills for which a supervision bill needs
@@ -139,6 +143,9 @@ public class SupervisionBillGeneratorService {
 		}
 		
 		log.info(String.format("There are %s bills for which a supervision bill needs to be raised", wageAndPurchaseBills.size()));
+		for(String s: wageAndPurchaseBills) {
+			log.info("Bill ID: " + s);
+		}
 		
 		// Create bills for what's remaining
 		
@@ -174,7 +181,7 @@ public class SupervisionBillGeneratorService {
 			List<Bill> expenseBills) {
 		log.info("Preparing supervision bill payload");	
 		List<Bill> bills = new ArrayList<>();
-		if (null != calculation) {
+		if (null != calculation && calculation.getEstimates()!=null){
 
 			CalcEstimate calcEstimate = calculation.getEstimates().get(0);
 			CalcDetail calcDetail = calcEstimate.getCalcDetails().get(0);
