@@ -93,6 +93,10 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                 setValue("cboID", formData.nameOfCBO?.orgNumber);
             }
 
+            if(formData.workOrderAmountRs){
+                setValue("workOrderAmountRs", Math.round(formData.workOrderAmountRs))
+            }
+
             setSessionFormData({ ...sessionFormData, ...formData });
         }
     }
