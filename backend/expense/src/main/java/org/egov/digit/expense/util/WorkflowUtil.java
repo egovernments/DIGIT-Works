@@ -118,6 +118,7 @@ public class WorkflowUtil {
     	List<User> assignes = new ArrayList<>();
     	
     	ProcessInstance processInstance = ProcessInstance.builder()
+    			.documents(workflowFromRequest.getVerificationDocuments())
     			.moduleName(configs.getExpenseWorkflowModuleName())
     			.businessService(bill.getBusinessService())
     			.comment(workflowFromRequest.getComments())
