@@ -255,6 +255,7 @@ public class BillValidator {
                 if (amount.compareTo(paidAmount) < 0)
 					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
+				item.setPaidAmount(paidAmount);
 			}
 
 			for (LineItem payableLineItem : billDetail.getPayableLineItems()) {
@@ -271,6 +272,7 @@ public class BillValidator {
 				if (amount.compareTo(paidAmount) < 0)
 					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
+				payableLineItem.setPaidAmount(paidAmount);
 			}
 
 			billDetail.setTotalAmount(billDetailAmount);
