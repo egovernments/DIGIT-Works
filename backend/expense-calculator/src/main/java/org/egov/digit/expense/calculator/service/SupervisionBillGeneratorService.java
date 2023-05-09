@@ -172,7 +172,7 @@ public class SupervisionBillGeneratorService {
 	 */
 	public List<Bill> createSupervisionBill(RequestInfo requestInfo, Criteria criteria, Calculation calculation,
 			List<Bill> expenseBills) {
-
+		log.info("Preparing supervision bill payload");	
 		List<Bill> bills = new ArrayList<>();
 		if (null != calculation) {
 
@@ -195,6 +195,7 @@ public class SupervisionBillGeneratorService {
 			// Supervision - Idgen
 			String rootTenantId = criteria.getTenantId().split("\\.")[0];
 			String supervisionBillNumber;
+			log.info("Generating ID for supervision bill referenceId");	
 			List<String> supervisionBillNumbers = getIdList(requestInfo, rootTenantId,
 					config.getIdGenSupervisionBillFormat(), "", 1); // idformat will be fetched by idGen service
 			if (supervisionBillNumbers != null && !supervisionBillNumbers.isEmpty()) {
