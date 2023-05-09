@@ -64,6 +64,7 @@ public class ExpenseCalculatorService {
             return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, labourCharges);
         } else {
             List<Bill> bills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
+            //TODO: Add check for empty bill list here and send back a response
             return supervisionBillGeneratorService.estimateBill(requestInfo, criteria, bills);
         }
     }

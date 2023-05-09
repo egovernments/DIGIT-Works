@@ -9,7 +9,6 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +22,7 @@ import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
 import org.egov.digit.expense.calculator.repository.IdGenRepository;
 import org.egov.digit.expense.calculator.util.CommonUtil;
+import org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants;
 import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
 import org.egov.digit.expense.calculator.util.MdmsUtils;
 import org.egov.digit.expense.calculator.web.models.Bill;
@@ -41,9 +41,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 
 @Slf4j
 @Component
@@ -95,8 +97,9 @@ public class SupervisionBillGeneratorService {
 			throw new CustomException("NO_WAGE_PURCHASE_BILL",
 					"Wage and purchase bill is not created. So Supervision bill cannot be calculated.");
 		}
-
-		// Create a hashmap of bill ID to Bill
+		
+	
+        // Create a hashmap of bill ID to Bill
 		Map<String, Bill> billMap = createMap(bills);
 
 		// A set to hold all existing wage/purchase bill Ids included in supervision
@@ -156,16 +159,6 @@ public class SupervisionBillGeneratorService {
 
 		// calculate supervision charge
 		return calculateSupervisionCharge(filteredBills, requestInfo, criteria.getTenantId(), criteria.getContractId());
-		// fetch the musterRolls of the contract
-//        List<String> contractMusterRollIds = expenseCalculatorUtil.fetchMusterByContractId(requestInfo, criteria.getTenantId() , criteria.getContractId());
-//
-//        //Check if the supervision bill is already created for all musterRollIds of the contract
-//        List<String> filteredMusters = new ArrayList<>();
-//        boolean supervisionbillExists = checkSupervisionBillExists(bills, criteria.getContractId(), criteria.getTenantId(), contractMusterRollIds, filteredMusters);
-//        if (supervisionbillExists) {
-//            log.error("SupervisionBillGeneratorService::calculateEstimate::Supervision bill already exists for all the musters of the contract - "+criteria.getContractId());
-//            throw new CustomException("DUPLICATE_SUPERVISIONBILL","Supervision bill already exists for all the musters of the contract - "+criteria.getContractId());
-//        }
 
 	}
 
@@ -184,7 +177,6 @@ public class SupervisionBillGeneratorService {
 		if (null != calculation && calculation.getEstimates()!=null){
 
 			CalcEstimate calcEstimate = calculation.getEstimates().get(0);
-			CalcDetail calcDetail = calcEstimate.getCalcDetails().get(0);
 			// Transfer calculation details onto bill details
 			List<BillDetail> billDetails = new ArrayList<>();
 			for (CalcDetail calc : calcEstimate.getCalcDetails()) {
@@ -195,8 +187,8 @@ public class SupervisionBillGeneratorService {
 						.totalAmount(new BigDecimal(0))
 						.totalPaidAmount(new BigDecimal(0))
 						.netLineItemAmount(new BigDecimal(0))
-						.tenantId(criteria.getTenantId()).payee(calcDetail.getPayee())
-						.lineItems(calcDetail.getLineItems()).payableLineItems(calcDetail.getPayableLineItem()).build();
+						.tenantId(criteria.getTenantId()).payee(calc.getPayee())
+						.lineItems(calc.getLineItems()).payableLineItems(calc.getPayableLineItem()).build();
 				billDetails.add(billDetail);
 
 			}
@@ -231,129 +223,17 @@ public class SupervisionBillGeneratorService {
 		return bills;
 	}
 
-	/**
-	 * Fetches the musterRolls for which wage bill is calculated
-	 * 
-	 * @param contractId
-	 * @return
-	 */
-	private List<String> fetchWagebillMusters(String contractId, String billType, String tenantId,
-			List<String> billIds) {
-		List<String> musterRollIds = expenseCalculatorRepository.getMusterRoll(contractId, billType, tenantId, billIds);
-		if (CollectionUtils.isEmpty(musterRollIds)) {
-			log.error(
-					"SupervisionBillGeneratorService::fetchWagebillMusters::Wage bill is not calculated for the contract id - "
-							+ contractId);
-			throw new CustomException("NO_WAGE_BILL",
-					"Wage bill is not calculated for the contract id - " + contractId);
+
+	private Map<String, Map<String, JSONArray>> getMasterDataForCalculator(RequestInfo reqInfo, String tenantId) {
+		
+		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtils.fetchMdmsData(reqInfo,
+				tenantId.split("\\.")[0], ExpenseCalculatorServiceConstants.EXPENSE_MODULE, ExpenseCalculatorServiceConstants.SUPERVISION_MASTER_NAMES);
+        
+		if(CollectionUtils.isEmpty(mdmsData)) {
+			throw new CustomException("EG_EXPENSE_MDMS_ERROR", "MDMS Data not found for the tenantid : " + tenantId);
 		}
-		return musterRollIds;
+		return mdmsData;
 	}
-
-	/**
-	 * Checks if the supervision bill already created for all the musterrolls ids
-	 * 
-	 * @param bills
-	 *
-	 * @param contractId
-	 * @param contractMusterRollIds
-	 * @param filteredMusters
-	 * @return
-	 */
-	private boolean checkInclusionOfWageBill(List<Bill> bills, String contractId, String tenantId,
-			List<String> contractMusterRollIds, List<String> filteredMusters) {
-
-		List<String> billIds = new ArrayList<>();
-
-		/*
-		 * Fetch the musterrollIds from supervisionBill to check if the supervision bill
-		 * is already created for the musterrollIds for which wage bill is calculated
-		 */
-		for (Bill bill : bills) {
-			if (StringUtils.isNotBlank(bill.getBusinessService())
-					&& config.getSupervisionBusinessService().equalsIgnoreCase(bill.getBusinessService())) {
-				List<BillDetail> billDetailList = bill.getBillDetails();
-				List<String> ids = billDetailList.stream().map(billDetail -> billDetail.getReferenceId())
-						.collect(Collectors.toList());
-				if (!CollectionUtils.isEmpty(ids)) {
-					billIds.addAll(ids); // wage billId and purchase billId of the existing supervision bill
-				}
-			}
-		}
-
-		// If billIds is empty , supervision bill is not created for any musterrollId
-		// return false
-		if (CollectionUtils.isEmpty(billIds)) {
-			return false;
-		}
-
-		// Fetch the musterrollIds of the corresponding billIds from calculator DB
-		List<String> wagebillMusterIds = fetchWagebillMusters(contractId, config.getWageBusinessService(), tenantId,
-				billIds);
-
-		for (String contractMusterRollId : contractMusterRollIds) {
-			if (!wagebillMusterIds.contains(contractMusterRollId)) {
-				filteredMusters.add(contractMusterRollId);
-			}
-		}
-
-		// Fetch purchase bills belonging to the contract
-
-		if (!CollectionUtils.isEmpty(filteredMusters)) { // there are musters in wage bill for which supervision bill
-															// need to be created
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Fetch the wageBill(s) and purchaseBill(s) for which supervision bill need to
-	 * be created
-	 * 
-	 * @param bills
-	 * @param filteredMusters
-	 * @return
-	 */
-//    private List<Bill> filterBills(List<Bill> bills, Set<String> billIds) {
-//       List<Bill> filteredBills = new ArrayList<>();
-//
-//       //fetch the wage bill(s)
-//       for (Bill bill : bills) {
-//          if (StringUtils.isNotBlank(bill.getBusinessService()) && bill.getBusinessService().equalsIgnoreCase(config.getWageBusinessService())) {
-//              if (!CollectionUtils.isEmpty(filteredMusters)) {
-//                  String musterNumBill = bill.getReferenceId().split("\\_")[1];
-//                  if (filteredMusters.contains(musterNumBill)) {
-//                      filteredBills.add(bill);
-//                  }
-//              } else {
-//                  filteredBills.add(bill);
-//              }
-//
-//          }
-//       }
-//
-//       //fetch the purchase bill(s)
-//        List<String> billIds = new ArrayList<>();
-//        for (Bill bill : bills) {
-//            if (StringUtils.isNotBlank(bill.getBusinessService()) && config.getSupervisionBusinessService().equalsIgnoreCase(bill.getBusinessService())) {
-//                List<BillDetail> billDetailList = bill.getBillDetails();
-//                List<String> ids = billDetailList.stream().map(billDetail -> billDetail.getReferenceId())
-//                        .collect(Collectors.toList());
-//                if (!CollectionUtils.isEmpty(ids)) {
-//                    billIds.addAll(ids); //wage billId and purchase billId of the existing supervision bill
-//                }
-//            }
-//        }
-//        for (Bill bill : bills) {
-//           if (StringUtils.isNotBlank(bill.getBusinessService()) && bill.getBusinessService().equalsIgnoreCase(config.getPurchaseBusinessService())
-//                 && !billIds.contains(bill.getId())) {
-//               filteredBills.add(bill);
-//           }
-//        }
-//
-//       return  filteredBills;
-//    }
 
 	/**
 	 * Calculates the supervision charge. Used by both _estimate and _calculate
@@ -376,24 +256,29 @@ public class SupervisionBillGeneratorService {
 		// here.
 		Party payee = buildParty(orgId, PAYEE_TYPE_SUPERVISIONBILL, tenantId);
 
-		// calculate supervision charge
-		BigDecimal supervisionRate = new BigDecimal(7.5); // TODO fetch from MDMS
+		// Fetch the supervision charge rate from MDMS
+		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForCalculator(requestInfo, tenantId);
+		String jsonFilter = String.format("$[?(@.code==\"%s\")].value",HEAD_CODE_SUPERVISION);
+        List<Object> superCharge = JsonPath.read(mdmsData.get(ExpenseCalculatorServiceConstants.EXPENSE_MODULE)
+        		.get(ExpenseCalculatorServiceConstants.MDMS_APPLICABLE_CHARGES),jsonFilter);
+        double temp = Double.valueOf((String)superCharge.get(0));
+        BigDecimal supervisionRate = new BigDecimal(temp); 
 
-
+		// Calculate supervision charge
 		List<CalcDetail> calcDetails = new ArrayList<>();
-
 		// One lineItem per bill and one calcDetail per Bill for supervision bills
 		for (Bill bill : bills) {
 			if (shouldIncludeBill(contract, bill)) {
 				log.info("Computing supervision for bill ID: " + bill.getBillNumber());
 				// Build lineItem. Single line item per bill detail
 				LineItem lineItem = buildLineItem(tenantId, bill, supervisionRate);
-
+				ArrayList<LineItem> items = new ArrayList<LineItem>();
+				items.add(lineItem);
 				// Build CalcDetails. This will be one per bill
-				CalcDetail calcDetail = CalcDetail.builder().payee(payee).lineItems(Collections.singletonList(lineItem))
-						.payableLineItem(Collections.singletonList(lineItem))
+				CalcDetail calcDetail = CalcDetail.builder().payee(payee).lineItems(items)
+						.payableLineItem(items)
 						.fromPeriod(new BigDecimal(bill.getBillDate())).toPeriod(new BigDecimal(bill.getBillDate()))
-						.referenceId(bill.getId()).build();
+						.referenceId(bill.getBillNumber()).build();
 				calcDetails.add(calcDetail);
 			}
 			else {
