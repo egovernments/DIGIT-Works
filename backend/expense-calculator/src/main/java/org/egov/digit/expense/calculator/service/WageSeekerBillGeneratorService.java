@@ -110,13 +110,14 @@ public class WageSeekerBillGeneratorService {
 
                 }
                 Party payer = buildParty(requestInfo, configs.getPayerType(), tenantId);
-
                 log.info("Building bill for musterRollNumber ["+musterRollNumber+"]");
+                // Generate id of wage bill
+                String wageBillId = generateWBId(requestInfo, tenantId);
                 // Build Bill
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
                         .billDate(Instant.now().toEpochMilli())
-                        .referenceId(referenceId +CONCAT_CHAR_CONSTANT+ musterRollNumber)
+                        .referenceId(referenceId +CONCAT_CHAR_CONSTANT+ musterRollNumber+CONCAT_CHAR_CONSTANT+wageBillId)
                         .businessService(configs.getWageBusinessService())
                         .fromPeriod(musterRoll.getStartDate().longValue())
                         .toPeriod(musterRoll.getEndDate().longValue())
@@ -199,12 +200,10 @@ public class WageSeekerBillGeneratorService {
                 calcDetails.add(calcDetail);
 
             }
-            // Generate id of wage bill
-            String wageBillId = generateWBId(requestInfo, tenantId);
             log.info("Create calcEstimate for musterRollNumber ["+musterRollNumber+"]");
             // Build CalcEstimate
             CalcEstimate calcEstimate = CalcEstimate.builder()
-                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber + CONCAT_CHAR_CONSTANT + wageBillId)
+//                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber)
                     .fromPeriod(musterRoll.getStartDate())
                     .toPeriod(musterRoll.getEndDate())
                     .netPayableAmount(netPayableAmount)
