@@ -117,6 +117,16 @@ public class WorkflowUtil {
     	Workflow workflowFromRequest = billRequest.getWorkflow();
     	List<User> assignes = new ArrayList<>();
     	
+    	for (String userId : workflowFromRequest.getAssignes()) {
+    		
+    		User user = User.builder()
+    				.tenantId(bill.getTenantId())
+    				.uuid(userId)
+    				.build();
+    		
+    		assignes.add(user);
+    	}
+    	
     	ProcessInstance processInstance = ProcessInstance.builder()
     			.documents(workflowFromRequest.getVerificationDocuments())
     			.moduleName(configs.getExpenseWorkflowModuleName())
