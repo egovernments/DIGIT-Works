@@ -111,11 +111,13 @@ public class WageSeekerBillGeneratorService {
                 }
                 Party payer = buildParty(requestInfo, configs.getPayerType(), tenantId);
                 log.info("Building bill for musterRollNumber ["+musterRollNumber+"]");
+                // Generate id of wage bill
+                String wageBillId = generateWBId(requestInfo, tenantId);
                 // Build Bill
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
                         .billDate(Instant.now().toEpochMilli())
-                        .referenceId(referenceId +CONCAT_CHAR_CONSTANT+ musterRollNumber)
+                        .referenceId(referenceId +CONCAT_CHAR_CONSTANT+ musterRollNumber+CONCAT_CHAR_CONSTANT+wageBillId)
                         .businessService(configs.getWageBusinessService())
                         .fromPeriod(musterRoll.getStartDate().longValue())
                         .toPeriod(musterRoll.getEndDate().longValue())
@@ -201,7 +203,7 @@ public class WageSeekerBillGeneratorService {
             log.info("Create calcEstimate for musterRollNumber ["+musterRollNumber+"]");
             // Build CalcEstimate
             CalcEstimate calcEstimate = CalcEstimate.builder()
-                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber)
+//                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber)
                     .fromPeriod(musterRoll.getStartDate())
                     .toPeriod(musterRoll.getEndDate())
                     .netPayableAmount(netPayableAmount)
@@ -307,8 +309,6 @@ public class WageSeekerBillGeneratorService {
      * @param tenantId
      * @return
      */
-    /*
-    Commenting the idgen because issue on flow
     private String generateWBId(RequestInfo requestInfo, String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
         List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, configs.getWageBillreferenceIdFormatKey(), "", 1);
@@ -316,5 +316,4 @@ public class WageSeekerBillGeneratorService {
         log.info("ReferenceId generated. Generated generatedUniqueId is ["+ generatedWBId + "]");
         return generatedWBId;
     }
-     */
 }
