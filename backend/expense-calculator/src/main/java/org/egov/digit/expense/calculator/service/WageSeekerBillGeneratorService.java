@@ -312,7 +312,7 @@ public class WageSeekerBillGeneratorService {
      */
     private String generateWBId(RequestInfo requestInfo, String tenantId) {
         String rootTenantId = tenantId.split("\\.")[0];
-        List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, configs.getPurchaseBillReferenceIdFormatKey(), "", 1);
+        List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, configs.getWageBillreferenceIdFormatKey(), "", 1);
         String generatedWBId = idList.get(0);
         log.info("ReferenceId generated. Generated generatedUniqueId is ["+ generatedWBId + "]");
         return generatedWBId;
