@@ -6,8 +6,7 @@ To set up the muster roll service in your local system, clone the git repo(https
 
 - MDMS
 - IDGen
-- Workflow service
-- Individual
+- workflow service
 
 
 ### Infra Dependency
@@ -16,6 +15,7 @@ To set up the muster roll service in your local system, clone the git repo(https
 - [ ] Redis
 - [ ] Elasticsearch
 - [X] Kafka
+  - [X] Producer
 
 ## Running Locally
 

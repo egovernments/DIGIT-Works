@@ -86,10 +86,6 @@ public class PurchaseBill {
 	@JsonProperty("workflow")
 	private Workflow workflow;
 
-	@JsonProperty("payer")
-	private Party party;
-
-
 	public PurchaseBill addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
 			this.documents = new ArrayList<>();

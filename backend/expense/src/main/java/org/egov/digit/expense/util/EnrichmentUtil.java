@@ -137,7 +137,7 @@ public class EnrichmentUtil {
 
             	BillDetail detailFromSearch = billDetailMap.get(billDetail.getId());
             	
-                billDetail.setAuditDetails(createAudit);
+                billDetail.setAuditDetails(updateAudit);
                 billDetail.getPayee().setId(detailFromSearch.getPayee().getId()); 
                 billDetail.getPayee().setAuditDetails(createAudit);
 
@@ -148,7 +148,7 @@ public class EnrichmentUtil {
                         lineItem.setId(UUID.randomUUID().toString());
                         lineItem.setAuditDetails(createAudit);
                     } else { /* updating line item */
-                        lineItem.setAuditDetails(createAudit);
+                        lineItem.setAuditDetails(updateAudit);
                     }
                 }
 
@@ -158,7 +158,7 @@ public class EnrichmentUtil {
                         payablelineItem.setId(UUID.randomUUID().toString());
                         payablelineItem.setAuditDetails(createAudit);
                     } else /* updating payable line item */
-                        payablelineItem.setAuditDetails(createAudit);
+                        payablelineItem.setAuditDetails(updateAudit);
                 }
             }
         }
@@ -226,7 +226,6 @@ public class EnrichmentUtil {
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         payment.setAuditDetails(getAuditDetails(createdBy, false));
-        
         return paymentRequest;
     }
 
