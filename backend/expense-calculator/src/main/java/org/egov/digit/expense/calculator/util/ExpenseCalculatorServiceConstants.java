@@ -38,7 +38,7 @@ public class ExpenseCalculatorServiceConstants {
     public static final String PAYEE_TYPE_SUPERVISIONBILL = "ORGANIZATION";
     public static final String CBO_IMPLEMENTATION_AGENCY = "IA";
     public static final String CBO_IMPLEMENTATION_PARTNER = "IP";
-    public static final String HEAD_CODE_SUPERVISION = "SUPERVISION";
+    public static final String HEAD_CODE_SUPERVISION = "SC";
     public static final String SUCCESSFUL_CONSTANT = "successful";
     public static final String SKILL_CODE_CONSTANT = "skillCode";
     public static final String PROJECT_ID_CONSTANT = "projectId";
@@ -52,4 +52,6 @@ public class ExpenseCalculatorServiceConstants {
     public static final String LUMPSUM_CONSTANT = "lumpsum";
     public static final String EXPENSE_CONSTANT = "expense";
     public static final String DOCUMENTS_CONSTANT = "documents";
+    public static final String LINEITEM_STATUS_ACTIVE = "ACTIVE";
+    public static final String LINEITEM_STATUS_INACTIVE = "INACTIVE";
 }

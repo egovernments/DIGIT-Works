@@ -103,7 +103,7 @@ public class WorkflowUtil {
     	url.append("?tenantId=");
     	url.append(tenantId);
     	url.append("&businessIds=");
-    	url.append(businessIds);
+		url.append(businessIds.toString().replace("[", "").replace("]", ""));
     	
     	RequestInfoWrapper infoWrapper = new RequestInfoWrapper();
     	infoWrapper.setRequestInfo(requestInfo);
