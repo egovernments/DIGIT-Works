@@ -17,23 +17,23 @@ const PurchaseBill = () => {
     const stateTenant = Digit.ULBService.getStateId();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
 
-    // const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
-    // stateTenant,
-    // Digit.Utils.getConfigModuleName(),
-    // [
-    //     {
-    //         "name": "CreatePurchaseBillConfig"
-    //     }
-    // ],
-    // {
-    //   select: (data) => {
-    //       return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
-    //   },
-    // }
-    // );
+    const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
+    stateTenant,
+    Digit.Utils.getConfigModuleName(),
+    [
+        {
+            "name": "CreatePurchaseBillConfig"
+        }
+    ],
+    {
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.CreatePurchaseBillConfig[0];
+      },
+    }
+    );
 
     //local config
-    let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
+    //let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
 
     const tenant = Digit.ULBService.getStateId();
 
@@ -116,14 +116,17 @@ const PurchaseBill = () => {
     );
 
     useEffect(()=>{
-        if((configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading && !isDocConfigLoading)) {
+        if((configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading && !isDocConfigLoading && !isBillSearchLoading)) {
             updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData, billData, setIsFormReady,charges});
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
         }
-    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading]);
+    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading,isConfigLoading]);
 
     
-    //if(isConfigLoading) return <Loader></Loader>
+    // if(isConfigLoading) return <Loader></Loader>
+
+    if(isContractLoading || isOrgSearchLoading || isDocConfigLoading || isBillSearchLoading || isChargesLoading || isConfigLoading) return <Loader />
+
     return (
         <React.Fragment>
             <Header styles={{fontSize: "32px"}}>{isModify ? t("EXP_MODIFY_PB") : t("ACTION_TEST_CREATE_PB")}</Header>

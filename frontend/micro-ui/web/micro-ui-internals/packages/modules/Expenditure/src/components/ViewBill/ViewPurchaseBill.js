@@ -1,4 +1,4 @@
-import { Header, Toast, WorkflowActions } from "@egovernments/digit-ui-react-components";
+import { Header, Toast, WorkflowActions,Loader } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
@@ -35,11 +35,15 @@ const ViewPurchaseBill = ({props}) => {
       }
     );
 
-    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {enabled : !isApplicableChargesLoading}, metaData);
+    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {enabled : !isApplicableChargesLoading,cacheTime:0}, metaData);
+    
     
     const handleActionBar = (option) => {
 
     }
+
+    if(isApplicableChargesLoading || isViewPurchaseBillDataLoading ) return <Loader /> 
+
     return (
         <>
             <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("COMMON_PURCHASE_BILL")}</Header>

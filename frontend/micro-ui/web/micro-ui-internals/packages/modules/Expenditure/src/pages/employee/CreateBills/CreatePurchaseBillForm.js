@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useHistory } from "react-router-dom";
 import { createBillPayload } from "../../../utils/createBillUtils";
+import { updateBillPayload } from "../../../utils/updateBillPayload";
 
 const navConfig =  [
     {
@@ -110,17 +111,21 @@ const CreatePurchaseBillForm = ({
     const onFormSubmit = async(data) => {
         //transform formdata to Payload
         const payload = createBillPayload(data, contract, docConfigData);
-        debugger
+        
         if(isModify){
-            const updatedBillObject = {...bill,...payload.bill}
-            const updatedPayload = {bill:updatedBillObject,workflow:payload.workflow}
+            
+            const updatedBillObject = updateBillPayload(bill,payload)
+            const updatedPayload = {bill:updatedBillObject,workflow:{
+                "action": "RE-SUBMIT",
+                "assignees": []
+              }}
             await UpdatePurchaseBillMutation(updatedPayload, {
                 onError: async (error, variables) => {
-                    debugger
+                    
                     sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
                 },
                 onSuccess: async (responseData, variables) => {
-                    debugger
+                    
                     sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
                 },
             });

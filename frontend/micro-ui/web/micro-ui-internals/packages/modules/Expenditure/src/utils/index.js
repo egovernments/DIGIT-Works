@@ -4,6 +4,10 @@ const setDefaultDocs = (bill) => {
   const documentsObj = {}
   bill?.additionalDetails?.documents.forEach((doc,idx) => {
     
+    if(doc?.documentType === "OTHERS") {
+      documentsObj["doc_others_name"] = doc?.additionalDetails?.fileName
+    }
+
      documentsObj[`doc_${doc.documentType}`.toLowerCase()] = [
       [
         `${doc.additionalDetails.fileName}`,
@@ -17,6 +21,8 @@ const setDefaultDocs = (bill) => {
       ]
     ]
   })
+
+
 
   return documentsObj
   
@@ -48,7 +54,9 @@ const setDeductionTableData = (bill,charges,t) => {
       }
   }
   })
-  return [null,...deductions]
+  
+  if(deductions.length>0) return [null,...deductions]
+  else return [null]
 }
 
 export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract,  docConfigData, billData, setIsFormReady,charges}) => {
@@ -84,7 +92,6 @@ export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isMo
     configs.defaultValues.invoiceDetails_gst = setGSTCost(bill)
     configs.defaultValues.invoiceDetails_materialCost = setMaterialCost(bill)
     
-    debugger
     }
     setSessionFormData({...sessionFormData, ...configs?.defaultValues});
   }
