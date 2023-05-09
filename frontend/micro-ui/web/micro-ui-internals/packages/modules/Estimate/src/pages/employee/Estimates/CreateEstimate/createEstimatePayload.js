@@ -202,7 +202,8 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
                     "locality":projectData?.projectDetails?.searchedProject?.basicDetails?.locality,
                     "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
                     "totalEstimatedAmount": data?.totalEstimateAmount,
-                    "tenantId": tenantId
+                    "tenantId": tenantId,
+                    "projectName":projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
                 }
             },
             workflow:{

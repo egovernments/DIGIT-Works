@@ -9,6 +9,7 @@ const configEstimateModal = (
     businessService,
     moduleCode
 ) => {
+    
     const {action:actionString} = action
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
     const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
@@ -323,8 +324,8 @@ const configEstimateModal = (
 
     return {
         label: {
-            heading: `WF_MODAL_HEADER_${moduleCode.toUpperCase()}_${action.action}`,
-            submit: `WF_MODAL_SUBMIT_${moduleCode.toUpperCase()}_${action.action}`,
+            heading: Digit.Utils.locale.getTransformedLocale(`WF_MODAL_HEADER_${businessService}_${action.action}`),
+            submit: Digit.Utils.locale.getTransformedLocale(`WF_MODAL_SUBMIT_${businessService}_${action.action}`),
             cancel: "WF_MODAL_CANCEL",
         },
         form: [
