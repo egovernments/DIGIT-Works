@@ -203,7 +203,7 @@ public class WageSeekerBillGeneratorService {
             log.info("Create calcEstimate for musterRollNumber ["+musterRollNumber+"]");
             // Build CalcEstimate
             CalcEstimate calcEstimate = CalcEstimate.builder()
-//                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber)
+                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber)
                     .fromPeriod(musterRoll.getStartDate())
                     .toPeriod(musterRoll.getEndDate())
                     .netPayableAmount(netPayableAmount)
