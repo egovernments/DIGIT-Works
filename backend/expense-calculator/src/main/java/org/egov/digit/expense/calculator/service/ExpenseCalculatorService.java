@@ -64,6 +64,7 @@ public class ExpenseCalculatorService {
             return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, labourCharges);
         } else {
             List<Bill> bills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
+            //TODO: Add check for empty bill list here and send back a response
             return supervisionBillGeneratorService.estimateBill(requestInfo, criteria, bills);
         }
     }
@@ -178,6 +179,7 @@ public class ExpenseCalculatorService {
         } else {
             log.info("Create supervision bill for contractId :"+criteria.getContractId() );
             List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
+            log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
             Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
             bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
         }

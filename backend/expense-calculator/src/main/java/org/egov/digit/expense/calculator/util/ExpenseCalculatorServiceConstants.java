@@ -1,5 +1,9 @@
 package org.egov.digit.expense.calculator.util;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class ExpenseCalculatorServiceConstants {
     public static final String MASTER_TENANTS = "tenants";
     public static final String FILTER_CODE = "$.*.code";
@@ -20,6 +24,8 @@ public class ExpenseCalculatorServiceConstants {
     public static final String MDMS_COMMON_MASTERS ="common-masters";
    // public static final String JSON_PATH_FOR_WAGE_SEEKERS_SKILLS = MDMS_RESP_CONSTANT+MDMS_COMMON_MASTERS + "." + WAGE_SEEKER_SKILLS;
     public static final String JSON_PATH_FOR_PAYER_LIST = MDMS_RESP_CONSTANT+EXPENSE_MODULE + "." + PAYER_MASTER;
+    public static final List<String> SUPERVISION_MASTER_NAMES = Collections
+			.unmodifiableList(Arrays.asList(MDMS_HEAD_CODES, MDMS_BUSINESS_SERVICE, MDMS_APPLICABLE_CHARGES));
     public static final String BUSINESS_SERVICE_SUPERVISION = "works.supervision";
     public static final String BUSINESS_SERVICE_PURCHASE = "works.purchase";
    // public static final String BILL_TYPE_WAGE = "works.wage";
