@@ -1243,7 +1243,7 @@ export const UICustomizations = {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
-        return value ? t(Digit.Uitls.locale.getTransformedLocale(`WF_${row?.bill?.businessService}_STATUS_${value}`)) : t("ES_COMMON_NA")
+        return value ? t(Digit.Utils.locale.getTransformedLocale(`WF_${row?.bill?.businessService}_STATUS_${value}`)) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
         const location = value;
