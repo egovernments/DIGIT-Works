@@ -103,7 +103,7 @@ public class WorkflowUtil {
     	url.append("?tenantId=");
     	url.append(tenantId);
     	url.append("&businessIds=");
-    	url.append(businessIds);
+		url.append(businessIds.toString().replace("[", "").replace("]", ""));
     	
     	RequestInfoWrapper infoWrapper = new RequestInfoWrapper();
     	infoWrapper.setRequestInfo(requestInfo);
@@ -117,7 +117,18 @@ public class WorkflowUtil {
     	Workflow workflowFromRequest = billRequest.getWorkflow();
     	List<User> assignes = new ArrayList<>();
     	
+    	for (String userId : workflowFromRequest.getAssignes()) {
+    		
+    		User user = User.builder()
+    				.tenantId(bill.getTenantId())
+    				.uuid(userId)
+    				.build();
+    		
+    		assignes.add(user);
+    	}
+    	
     	ProcessInstance processInstance = ProcessInstance.builder()
+    			.documents(workflowFromRequest.getVerificationDocuments())
     			.moduleName(configs.getExpenseWorkflowModuleName())
     			.businessService(bill.getBusinessService())
     			.comment(workflowFromRequest.getComments())
