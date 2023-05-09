@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PurchaseBill extends Bill {
+public class PurchaseBill {
 	@JsonProperty("id")
 	@Valid
 	private String id;
