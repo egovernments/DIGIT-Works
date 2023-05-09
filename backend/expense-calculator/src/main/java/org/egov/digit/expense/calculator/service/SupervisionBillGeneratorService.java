@@ -184,6 +184,9 @@ public class SupervisionBillGeneratorService {
 				BillDetail billDetail = null;
 				// Build BillDetail
 				billDetail = BillDetail.builder().billId(null).referenceId(calc.getBillId()) // wage billId or
+						.totalAmount(new BigDecimal(0))
+						.totalPaidAmount(new BigDecimal(0))
+						.netLineItemAmount(new BigDecimal(0))
 						.tenantId(criteria.getTenantId()).payee(calcDetail.getPayee())
 						.lineItems(calcDetail.getLineItems()).payableLineItems(calcDetail.getPayableLineItem()).build();
 				billDetails.add(billDetail);
@@ -209,6 +212,8 @@ public class SupervisionBillGeneratorService {
 			Bill bill = Bill.builder().tenantId(criteria.getTenantId()).billDate(Instant.now().toEpochMilli())
 					.referenceId(criteria.getContractId() + "_" + supervisionBillNumber)
 					.businessService(config.getSupervisionBusinessService()).payer(payer).billDetails(billDetails)
+					.totalAmount(new BigDecimal(0))
+					.totalPaidAmount(new BigDecimal(0))
 					.build();
 
 			bills.add(bill);
@@ -475,7 +480,7 @@ public class SupervisionBillGeneratorService {
 	private LineItem buildLineItem(String tenantId, Bill bill, BigDecimal supervisionRate) {
 		BigDecimal billAmount = bill.getTotalAmount();
 		BigDecimal supervisionAmt = billAmount.multiply(supervisionRate).divide(new BigDecimal(100));
-		LineItem lineItem = LineItem.builder().amount(supervisionAmt).headCode(HEAD_CODE_SUPERVISION) // TODO fetch from
+		LineItem lineItem = LineItem.builder().amount(supervisionAmt).paidAmount(new BigDecimal(0)).headCode(HEAD_CODE_SUPERVISION) // TODO fetch from
 																										// mdms
 				.tenantId(tenantId).type(LineItem.TypeEnum.PAYABLE).build();
 		return lineItem;
