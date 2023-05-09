@@ -85,7 +85,7 @@ export const createBillPayload = (data, contract,  docConfigData) => {
                   {
                     "tenantId": tenantId,
                     "headCode": "MC",
-                    "amount": data?.invoiceDetails_materialCost,
+                    "amount": data?.invoiceDetails_materialCost || 0,
                     "type": "PAYABLE", 
                     "paidAmount": 0,
                     "status": "ACTIVE"
@@ -93,7 +93,7 @@ export const createBillPayload = (data, contract,  docConfigData) => {
                   {
                     "tenantId": tenantId,
                     "headCode": "GST",
-                    "amount": data?.invoiceDetails_gst,
+                    "amount": data?.invoiceDetails_gst || 0,
                     "type": "PAYABLE",
                     "paidAmount": 0,
                     "status": "ACTIVE"
@@ -110,6 +110,11 @@ export const createBillPayload = (data, contract,  docConfigData) => {
                 "invoiceDate" : data?.invoice_date,
                 "projectDesc" : data?.basicDetails_projectDesc,
                 "projectId": data?.basicDetails_projectID,
+                "locality":contract.additionalDetails.locality,
+                "ward":contract.additionalDetails.ward,
+                "orgName":contract.additionalDetails.orgName,
+                "projectName":contract.additionalDetails.projectName
+
             },
             "documents": fetchDocuments(
               data?.uploadedDocs,
