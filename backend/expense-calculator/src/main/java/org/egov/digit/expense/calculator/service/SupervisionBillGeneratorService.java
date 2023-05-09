@@ -184,6 +184,7 @@ public class SupervisionBillGeneratorService {
 				BillDetail billDetail = null;
 				// Build BillDetail
 				billDetail = BillDetail.builder().billId(null).referenceId(calc.getReferenceId())// wage billId or
+
 						.totalAmount(new BigDecimal(0))
 						.totalPaidAmount(new BigDecimal(0))
 						.netLineItemAmount(new BigDecimal(0))
