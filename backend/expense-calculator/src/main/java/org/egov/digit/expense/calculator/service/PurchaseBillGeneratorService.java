@@ -186,13 +186,20 @@ public class PurchaseBillGeneratorService {
                 expense = expense.add(amount);
             }
         }
+        // If PayableLineItems is available in bill details then set each lineitem INACTIVE
+        if (billDetail.getPayableLineItems() != null && !billDetail.getPayableLineItems().isEmpty()) {
+            List<LineItem> payableLineItems = billDetail.getPayableLineItems();
+            payableLineItems.forEach((p) -> p.setStatus(LINEITEM_STATUS_INACTIVE));
+            billDetail.setPayableLineItems(payableLineItems);
+        }
 
         // Calculate total deduction on top of expense
         for(LineItem lineItem :lineItems) {
             String headCode = lineItem.getHeadCode();
             String category = getHeadCodeCategory(headCode,headCodes);
             BigDecimal tempDeduction = BigDecimal.ZERO;
-            if(DEDUCTION_CONSTANT.equalsIgnoreCase(category)) {
+            // Generate PayableLineItem only if status is ACTIVE and headCode category type is deduction
+            if(DEDUCTION_CONSTANT.equalsIgnoreCase(category) && LINEITEM_STATUS_ACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
                 String calculationType = getCalculationType(headCode,applicableCharges);
                 String value = getDeductionValue(headCode,applicableCharges);
                 if(PERCENTAGE_CONSTANT.equalsIgnoreCase(calculationType) && (value == null || "null".equalsIgnoreCase(value))) {
