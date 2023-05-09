@@ -367,6 +367,8 @@ public class SupervisionBillGeneratorService {
 		log.info("Calculating supervision charge for " + bills.size() + " bills");
 		// Search by contractId.
 		Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, tenantId, contractId).get(0);
+
+		//For purchase bill, this is not true. Payee is the vendor itself
 		String orgId = contract.getOrgId();
 
 		// Payee for supervision bill. Since one contract has only one vendor assigned
