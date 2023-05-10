@@ -26,7 +26,7 @@ class SearchMyBillsBloc extends Bloc<SearchMyBillsEvent, SearchMyBillsState> {
     try {
       emit(const SearchMyBillsState.loading());
 
-      MyBillsModel billsModel =
+      MyBillsListModel billsModel =
           await MyBillsRepository(client.init()).searchMyBills(
               url: Urls.billServices.searchMyBills,
               body: {
@@ -69,7 +69,7 @@ class SearchMyBillsState with _$SearchMyBillsState {
 
   const factory SearchMyBillsState.initial() = _Initial;
   const factory SearchMyBillsState.loading() = _Loading;
-  const factory SearchMyBillsState.loaded(MyBillsModel? contractsModel) =
+  const factory SearchMyBillsState.loaded(MyBillsListModel? contractsModel) =
       _Loaded;
   const factory SearchMyBillsState.error(String? error) = _Error;
 }

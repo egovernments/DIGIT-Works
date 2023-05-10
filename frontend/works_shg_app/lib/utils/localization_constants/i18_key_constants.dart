@@ -6,6 +6,7 @@ Home home = const Home();
 WorkOrder workOrder = const WorkOrder();
 WageSeeker wageSeeker = const WageSeeker();
 AttendanceMgmt attendanceMgmt = const AttendanceMgmt();
+MyBills myBills = const MyBills();
 
 class Login {
   const Login();
@@ -177,6 +178,17 @@ class WorkOrder {
   String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
   String get workStartDate => 'WORKS_START_DATE';
   String get workEndDate => 'WORKS_END_DATE';
+}
+
+class MyBills {
+  const MyBills();
+  String get billType => 'WORKS_BILL_TYPE';
+  String get billNumber => 'WORKS_BILL_NUMBER';
+  String get billDate => 'WORKS_BILL_DATE';
+  String get netPayable => 'EXP_NET_PAYABLE';
+  String get invoiceId => 'WORKS_INVOICE_ID';
+  String get invoiceDate => 'WORKS_INVOICE_DATE';
+  String get payeeName => 'WORKS_PAYEE_NAME';
 }
 
 class WageSeeker {
