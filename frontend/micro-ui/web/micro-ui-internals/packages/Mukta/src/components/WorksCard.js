@@ -23,6 +23,8 @@ const WorksCard = () => {
   const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
   const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll");
   const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+  const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
+  const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
   
 
   const { t } = useTranslation();
@@ -98,6 +100,30 @@ const WorksCard = () => {
 
   const { isLoading: isLoadingContract, data: dataContract } = Digit.Hooks.useCustomAPIHook(requestCriteriaContract);
 
+  const requestCriteriaBilling = {
+    url: "/inbox/v2/_search",
+    body: {
+      inbox: {
+        tenantId,
+        processSearchCriteria: {
+          businessService: [bsPurchaseBill,bsWageBill,bsSupervisionBill],
+          moduleName: "expense",
+        },
+        moduleSearchCriteria: {
+          tenantId,
+        },
+        limit: 10,
+        offset: 0,
+      },
+    },
+    config: {
+      enabled: Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.BILLS),
+    },
+    changeQueryName: "BillInbox",
+  };
+
+  const { isLoading: isLoadingBilling, data: dataBilling } = Digit.Hooks.useCustomAPIHook(requestCriteriaBilling);
+
   let links = [
     {
       label: t("ACTION_TEST_1PROJECT"),
@@ -126,7 +152,7 @@ const WorksCard = () => {
       label: t("ACTION_TEST_5BILLS"),
       link: `/${window?.contextPath}/employee/expenditure/billinbox`,
       roles: ROLES.BILLS,
-      count: isLoading ? "-" : data?.totalCount,
+      count: isLoadingBilling ? "-" : dataBilling?.totalCount,
     },
     {
       label: t("ACTION_TEST_6DASHBOARD"),

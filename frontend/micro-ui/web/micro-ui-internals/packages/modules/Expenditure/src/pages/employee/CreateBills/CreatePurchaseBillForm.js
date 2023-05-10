@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useHistory } from "react-router-dom";
 import { createBillPayload } from "../../../utils/createBillUtils";
+import { updateBillPayload } from "../../../utils/updateBillPayload";
 
 const navConfig =  [
     {
@@ -20,7 +21,8 @@ const CreatePurchaseBillForm = ({
     contract,  
     preProcessData,
     isModify,
-    docConfigData
+    docConfigData,
+    bill
 }) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
@@ -105,19 +107,39 @@ const CreatePurchaseBillForm = ({
     },[toast?.show]);
 
     const { mutate: CreatePurchaseBillMutation } = Digit.Hooks.bills.useCreatePurchaseBill();
-
+    const { mutate: UpdatePurchaseBillMutation } = Digit.Hooks.bills.useUpdatePurchaseBill();
     const onFormSubmit = async(data) => {
         //transform formdata to Payload
         const payload = createBillPayload(data, contract, docConfigData);
+        
+        if(isModify){
+            
+            const updatedBillObject = updateBillPayload(bill,payload)
+            const updatedPayload = {bill:updatedBillObject,workflow:{
+                "action": "RE-SUBMIT",
+                "assignees": []
+              }}
+            await UpdatePurchaseBillMutation(updatedPayload, {
+                onError: async (error, variables) => {
+                    
+                    sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
+                },
+                onSuccess: async (responseData, variables) => {
+                    
+                    sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
+                },
+            });
+        }else{
 
-        await CreatePurchaseBillMutation(payload, {
-            onError: async (error, variables) => {
-                sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
-            },
-            onSuccess: async (responseData, variables) => {
-              sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
-            },
-          });
+            await CreatePurchaseBillMutation(payload, {
+                onError: async (error, variables) => {
+                    sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
+                },
+                onSuccess: async (responseData, variables) => {
+                sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
+                },
+            });
+        }
     }
 
     const sendDataToResponsePage = (billNumber, tenantId, isSuccess, message, showID) => {
