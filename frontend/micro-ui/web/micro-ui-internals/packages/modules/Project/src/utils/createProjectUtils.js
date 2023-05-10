@@ -49,6 +49,7 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive,
 }
 
 const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, docConfigData) => {
+  
   let documents_payload_list = [];
   let documentDefaultValue = transformDefaultDocObject(configs?.defaultValues?.noSubProject_docs);
 
@@ -75,6 +76,7 @@ const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, 
           if(!uploadedDocObject?.id) {
             //if old file exists, make default value file as inactive
             let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE", tenantId, docConfigData); 
+            payload_modal.documentType = "INACTIVE"
             documents_payload_list.push(payload_modal);
           }
           isExist = true;
@@ -83,6 +85,7 @@ const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, 
       //if previous file does not exist in new formData ( Delete Case ), mark it as InActive
       if(!isExist && defaultDocKey !== "others_name") {
         let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE", tenantId); 
+        payload_modal.documentType = "INACTIVE"
         documents_payload_list.push(payload_modal);
       }
     }
