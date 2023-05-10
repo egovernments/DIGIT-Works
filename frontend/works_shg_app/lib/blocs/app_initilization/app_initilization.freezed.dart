@@ -16,21 +16,20 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AppInitializationEvent {
-  int get selectedLangIndex => throw _privateConstructorUsedError;
+  String get selectedLang => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int selectedLangIndex)
-        onapplicationInitializeSetup,
+    required TResult Function(String selectedLang) onapplicationInitializeSetup,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int selectedLangIndex)? onapplicationInitializeSetup,
+    TResult? Function(String selectedLang)? onapplicationInitializeSetup,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int selectedLangIndex)? onapplicationInitializeSetup,
+    TResult Function(String selectedLang)? onapplicationInitializeSetup,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -65,7 +64,7 @@ abstract class $AppInitializationEventCopyWith<$Res> {
           $Res Function(AppInitializationEvent) then) =
       _$AppInitializationEventCopyWithImpl<$Res, AppInitializationEvent>;
   @useResult
-  $Res call({int selectedLangIndex});
+  $Res call({String selectedLang});
 }
 
 /// @nodoc
@@ -82,13 +81,13 @@ class _$AppInitializationEventCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? selectedLangIndex = null,
+    Object? selectedLang = null,
   }) {
     return _then(_value.copyWith(
-      selectedLangIndex: null == selectedLangIndex
-          ? _value.selectedLangIndex
-          : selectedLangIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+      selectedLang: null == selectedLang
+          ? _value.selectedLang
+          : selectedLang // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -102,7 +101,7 @@ abstract class _$$AppInitializationSetupEventCopyWith<$Res>
       __$$AppInitializationSetupEventCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int selectedLangIndex});
+  $Res call({String selectedLang});
 }
 
 /// @nodoc
@@ -118,13 +117,13 @@ class __$$AppInitializationSetupEventCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? selectedLangIndex = null,
+    Object? selectedLang = null,
   }) {
     return _then(_$AppInitializationSetupEvent(
-      selectedLangIndex: null == selectedLangIndex
-          ? _value.selectedLangIndex
-          : selectedLangIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+      selectedLang: null == selectedLang
+          ? _value.selectedLang
+          : selectedLang // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -134,14 +133,14 @@ class __$$AppInitializationSetupEventCopyWithImpl<$Res>
 class _$AppInitializationSetupEvent
     with DiagnosticableTreeMixin
     implements AppInitializationSetupEvent {
-  const _$AppInitializationSetupEvent({required this.selectedLangIndex});
+  const _$AppInitializationSetupEvent({required this.selectedLang});
 
   @override
-  final int selectedLangIndex;
+  final String selectedLang;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AppInitializationEvent.onapplicationInitializeSetup(selectedLangIndex: $selectedLangIndex)';
+    return 'AppInitializationEvent.onapplicationInitializeSetup(selectedLang: $selectedLang)';
   }
 
   @override
@@ -150,7 +149,7 @@ class _$AppInitializationSetupEvent
     properties
       ..add(DiagnosticsProperty(
           'type', 'AppInitializationEvent.onapplicationInitializeSetup'))
-      ..add(DiagnosticsProperty('selectedLangIndex', selectedLangIndex));
+      ..add(DiagnosticsProperty('selectedLang', selectedLang));
   }
 
   @override
@@ -158,12 +157,12 @@ class _$AppInitializationSetupEvent
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AppInitializationSetupEvent &&
-            (identical(other.selectedLangIndex, selectedLangIndex) ||
-                other.selectedLangIndex == selectedLangIndex));
+            (identical(other.selectedLang, selectedLang) ||
+                other.selectedLang == selectedLang));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, selectedLangIndex);
+  int get hashCode => Object.hash(runtimeType, selectedLang);
 
   @JsonKey(ignore: true)
   @override
@@ -175,28 +174,27 @@ class _$AppInitializationSetupEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(int selectedLangIndex)
-        onapplicationInitializeSetup,
+    required TResult Function(String selectedLang) onapplicationInitializeSetup,
   }) {
-    return onapplicationInitializeSetup(selectedLangIndex);
+    return onapplicationInitializeSetup(selectedLang);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(int selectedLangIndex)? onapplicationInitializeSetup,
+    TResult? Function(String selectedLang)? onapplicationInitializeSetup,
   }) {
-    return onapplicationInitializeSetup?.call(selectedLangIndex);
+    return onapplicationInitializeSetup?.call(selectedLang);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(int selectedLangIndex)? onapplicationInitializeSetup,
+    TResult Function(String selectedLang)? onapplicationInitializeSetup,
     required TResult orElse(),
   }) {
     if (onapplicationInitializeSetup != null) {
-      return onapplicationInitializeSetup(selectedLangIndex);
+      return onapplicationInitializeSetup(selectedLang);
     }
     return orElse();
   }
@@ -235,10 +233,10 @@ class _$AppInitializationSetupEvent
 
 abstract class AppInitializationSetupEvent implements AppInitializationEvent {
   const factory AppInitializationSetupEvent(
-      {required final int selectedLangIndex}) = _$AppInitializationSetupEvent;
+      {required final String selectedLang}) = _$AppInitializationSetupEvent;
 
   @override
-  int get selectedLangIndex;
+  String get selectedLang;
   @override
   @JsonKey(ignore: true)
   _$$AppInitializationSetupEventCopyWith<_$AppInitializationSetupEvent>

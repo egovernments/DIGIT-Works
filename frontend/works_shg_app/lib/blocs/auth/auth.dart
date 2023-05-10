@@ -79,6 +79,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _onLogout(AuthLogoutEvent event, AuthEmitter emit) async {
+    if (kIsWeb) {
+      html.window.localStorage.clear();
+    } else {
+      await storage.deleteAll();
+    }
     emit(const AuthState.loaded(null, null));
     emit(const AuthState.initial());
   }

@@ -37,12 +37,24 @@ class TenantModel with _$TenantModel {
 class CommonMastersModel with _$CommonMastersModel {
   const factory CommonMastersModel({
     @JsonKey(name: 'StateInfo') List<StateInfoListModel>? stateInfoListModel,
+    @JsonKey(name: 'AppVersion') List<AppVersionModel>? appVersionModel,
   }) = _CommonMastersModel;
 
   factory CommonMastersModel.fromJson(
     Map<String, dynamic> json,
   ) =>
       _$CommonMastersModelFromJson(json);
+}
+
+@freezed
+class AppVersionModel with _$AppVersionModel {
+  const factory AppVersionModel(
+      {final String? version,
+      final String? packageName,
+      final String? iOSId}) = _AppVersionModel;
+
+  factory AppVersionModel.fromJson(Map<String, dynamic> json) =>
+      _$AppVersionModelFromJson(json);
 }
 
 @freezed

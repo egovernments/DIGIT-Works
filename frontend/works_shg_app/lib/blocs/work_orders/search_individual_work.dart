@@ -33,10 +33,8 @@ class SearchIndividualWorkBloc
     Client client = Client();
     try {
       if (event.contractNumber == null || event.contractNumber!.isEmpty) {
-        print('if');
         emit(const SearchIndividualWorkState.initial());
       } else {
-        print('else');
         emit(const SearchIndividualWorkState.loading());
         ContractsModel contractsModel =
             await MyWorksRepository(client.init()).searchMyWorks(

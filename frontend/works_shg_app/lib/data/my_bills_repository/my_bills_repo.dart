@@ -9,7 +9,7 @@ import '../../models/my_bills/my_bills_model.dart';
 class MyBillsRepository {
   final Dio _client;
   MyBillsRepository(this._client);
-  Future<MyBillsModel> searchMyBills({
+  Future<MyBillsListModel> searchMyBills({
     Map<String, String>? queryParameters,
     dynamic body,
     required Options options,
@@ -19,7 +19,8 @@ class MyBillsRepository {
       // var formData = FormData.fromMap(body);
       final response = await _client.post(url,
           queryParameters: queryParameters, data: body ?? {}, options: options);
-      return MyBillsModelMapper.fromMap(response.data as Map<String, dynamic>);
+      return MyBillsListModelMapper.fromMap(
+          response.data as Map<String, dynamic>);
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;

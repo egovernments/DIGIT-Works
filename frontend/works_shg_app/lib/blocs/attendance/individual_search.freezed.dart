@@ -19,6 +19,7 @@ mixin _$IndividualSearchEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, String name) nameSearch,
     required TResult Function(String tenant, List<String>? ids) idSearch,
     required TResult Function() dispose,
   }) =>
@@ -26,6 +27,7 @@ mixin _$IndividualSearchEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, String name)? nameSearch,
     TResult? Function(String tenant, List<String>? ids)? idSearch,
     TResult? Function()? dispose,
   }) =>
@@ -33,6 +35,7 @@ mixin _$IndividualSearchEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, String name)? nameSearch,
     TResult Function(String tenant, List<String>? ids)? idSearch,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -41,6 +44,7 @@ mixin _$IndividualSearchEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualNameEvent value) nameSearch,
     required TResult Function(SearchIndividualIdEvent value) idSearch,
     required TResult Function(DisposeSearchIndividualEvent value) dispose,
   }) =>
@@ -48,6 +52,7 @@ mixin _$IndividualSearchEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualNameEvent value)? nameSearch,
     TResult? Function(SearchIndividualIdEvent value)? idSearch,
     TResult? Function(DisposeSearchIndividualEvent value)? dispose,
   }) =>
@@ -55,6 +60,7 @@ mixin _$IndividualSearchEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualNameEvent value)? nameSearch,
     TResult Function(SearchIndividualIdEvent value)? idSearch,
     TResult Function(DisposeSearchIndividualEvent value)? dispose,
     required TResult orElse(),
@@ -168,6 +174,7 @@ class _$SearchIndividualEvent
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, String name) nameSearch,
     required TResult Function(String tenant, List<String>? ids) idSearch,
     required TResult Function() dispose,
   }) {
@@ -178,6 +185,7 @@ class _$SearchIndividualEvent
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, String name)? nameSearch,
     TResult? Function(String tenant, List<String>? ids)? idSearch,
     TResult? Function()? dispose,
   }) {
@@ -188,6 +196,7 @@ class _$SearchIndividualEvent
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, String name)? nameSearch,
     TResult Function(String tenant, List<String>? ids)? idSearch,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -202,6 +211,7 @@ class _$SearchIndividualEvent
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualNameEvent value) nameSearch,
     required TResult Function(SearchIndividualIdEvent value) idSearch,
     required TResult Function(DisposeSearchIndividualEvent value) dispose,
   }) {
@@ -212,6 +222,7 @@ class _$SearchIndividualEvent
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualNameEvent value)? nameSearch,
     TResult? Function(SearchIndividualIdEvent value)? idSearch,
     TResult? Function(DisposeSearchIndividualEvent value)? dispose,
   }) {
@@ -222,6 +233,7 @@ class _$SearchIndividualEvent
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualNameEvent value)? nameSearch,
     TResult Function(SearchIndividualIdEvent value)? idSearch,
     TResult Function(DisposeSearchIndividualEvent value)? dispose,
     required TResult orElse(),
@@ -243,6 +255,176 @@ abstract class SearchIndividualEvent implements IndividualSearchEvent {
   @JsonKey(ignore: true)
   _$$SearchIndividualEventCopyWith<_$SearchIndividualEvent> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SearchIndividualNameEventCopyWith<$Res> {
+  factory _$$SearchIndividualNameEventCopyWith(
+          _$SearchIndividualNameEvent value,
+          $Res Function(_$SearchIndividualNameEvent) then) =
+      __$$SearchIndividualNameEventCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String tenant, String name});
+}
+
+/// @nodoc
+class __$$SearchIndividualNameEventCopyWithImpl<$Res>
+    extends _$IndividualSearchEventCopyWithImpl<$Res,
+        _$SearchIndividualNameEvent>
+    implements _$$SearchIndividualNameEventCopyWith<$Res> {
+  __$$SearchIndividualNameEventCopyWithImpl(_$SearchIndividualNameEvent _value,
+      $Res Function(_$SearchIndividualNameEvent) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tenant = null,
+    Object? name = null,
+  }) {
+    return _then(_$SearchIndividualNameEvent(
+      tenant: null == tenant
+          ? _value.tenant
+          : tenant // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SearchIndividualNameEvent
+    with DiagnosticableTreeMixin
+    implements SearchIndividualNameEvent {
+  const _$SearchIndividualNameEvent({required this.tenant, required this.name});
+
+  @override
+  final String tenant;
+  @override
+  final String name;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IndividualSearchEvent.nameSearch(tenant: $tenant, name: $name)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'IndividualSearchEvent.nameSearch'))
+      ..add(DiagnosticsProperty('tenant', tenant))
+      ..add(DiagnosticsProperty('name', name));
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SearchIndividualNameEvent &&
+            (identical(other.tenant, tenant) || other.tenant == tenant) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, tenant, name);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchIndividualNameEventCopyWith<_$SearchIndividualNameEvent>
+      get copyWith => __$$SearchIndividualNameEventCopyWithImpl<
+          _$SearchIndividualNameEvent>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, String name) nameSearch,
+    required TResult Function(String tenant, List<String>? ids) idSearch,
+    required TResult Function() dispose,
+  }) {
+    return nameSearch(tenant, name);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, String name)? nameSearch,
+    TResult? Function(String tenant, List<String>? ids)? idSearch,
+    TResult? Function()? dispose,
+  }) {
+    return nameSearch?.call(tenant, name);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, String name)? nameSearch,
+    TResult Function(String tenant, List<String>? ids)? idSearch,
+    TResult Function()? dispose,
+    required TResult orElse(),
+  }) {
+    if (nameSearch != null) {
+      return nameSearch(tenant, name);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualNameEvent value) nameSearch,
+    required TResult Function(SearchIndividualIdEvent value) idSearch,
+    required TResult Function(DisposeSearchIndividualEvent value) dispose,
+  }) {
+    return nameSearch(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualNameEvent value)? nameSearch,
+    TResult? Function(SearchIndividualIdEvent value)? idSearch,
+    TResult? Function(DisposeSearchIndividualEvent value)? dispose,
+  }) {
+    return nameSearch?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualNameEvent value)? nameSearch,
+    TResult Function(SearchIndividualIdEvent value)? idSearch,
+    TResult Function(DisposeSearchIndividualEvent value)? dispose,
+    required TResult orElse(),
+  }) {
+    if (nameSearch != null) {
+      return nameSearch(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SearchIndividualNameEvent implements IndividualSearchEvent {
+  const factory SearchIndividualNameEvent(
+      {required final String tenant,
+      required final String name}) = _$SearchIndividualNameEvent;
+
+  String get tenant;
+  String get name;
+  @JsonKey(ignore: true)
+  _$$SearchIndividualNameEventCopyWith<_$SearchIndividualNameEvent>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -340,6 +522,7 @@ class _$SearchIndividualIdEvent
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, String name) nameSearch,
     required TResult Function(String tenant, List<String>? ids) idSearch,
     required TResult Function() dispose,
   }) {
@@ -350,6 +533,7 @@ class _$SearchIndividualIdEvent
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, String name)? nameSearch,
     TResult? Function(String tenant, List<String>? ids)? idSearch,
     TResult? Function()? dispose,
   }) {
@@ -360,6 +544,7 @@ class _$SearchIndividualIdEvent
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, String name)? nameSearch,
     TResult Function(String tenant, List<String>? ids)? idSearch,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -374,6 +559,7 @@ class _$SearchIndividualIdEvent
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualNameEvent value) nameSearch,
     required TResult Function(SearchIndividualIdEvent value) idSearch,
     required TResult Function(DisposeSearchIndividualEvent value) dispose,
   }) {
@@ -384,6 +570,7 @@ class _$SearchIndividualIdEvent
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualNameEvent value)? nameSearch,
     TResult? Function(SearchIndividualIdEvent value)? idSearch,
     TResult? Function(DisposeSearchIndividualEvent value)? dispose,
   }) {
@@ -394,6 +581,7 @@ class _$SearchIndividualIdEvent
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualNameEvent value)? nameSearch,
     TResult Function(SearchIndividualIdEvent value)? idSearch,
     TResult Function(DisposeSearchIndividualEvent value)? dispose,
     required TResult orElse(),
@@ -469,6 +657,7 @@ class _$DisposeSearchIndividualEvent
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String tenant, String mobileNumber) search,
+    required TResult Function(String tenant, String name) nameSearch,
     required TResult Function(String tenant, List<String>? ids) idSearch,
     required TResult Function() dispose,
   }) {
@@ -479,6 +668,7 @@ class _$DisposeSearchIndividualEvent
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String tenant, String mobileNumber)? search,
+    TResult? Function(String tenant, String name)? nameSearch,
     TResult? Function(String tenant, List<String>? ids)? idSearch,
     TResult? Function()? dispose,
   }) {
@@ -489,6 +679,7 @@ class _$DisposeSearchIndividualEvent
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String tenant, String mobileNumber)? search,
+    TResult Function(String tenant, String name)? nameSearch,
     TResult Function(String tenant, List<String>? ids)? idSearch,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -503,6 +694,7 @@ class _$DisposeSearchIndividualEvent
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(SearchIndividualEvent value) search,
+    required TResult Function(SearchIndividualNameEvent value) nameSearch,
     required TResult Function(SearchIndividualIdEvent value) idSearch,
     required TResult Function(DisposeSearchIndividualEvent value) dispose,
   }) {
@@ -513,6 +705,7 @@ class _$DisposeSearchIndividualEvent
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(SearchIndividualEvent value)? search,
+    TResult? Function(SearchIndividualNameEvent value)? nameSearch,
     TResult? Function(SearchIndividualIdEvent value)? idSearch,
     TResult? Function(DisposeSearchIndividualEvent value)? dispose,
   }) {
@@ -523,6 +716,7 @@ class _$DisposeSearchIndividualEvent
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(SearchIndividualEvent value)? search,
+    TResult Function(SearchIndividualNameEvent value)? nameSearch,
     TResult Function(SearchIndividualIdEvent value)? idSearch,
     TResult Function(DisposeSearchIndividualEvent value)? dispose,
     required TResult orElse(),

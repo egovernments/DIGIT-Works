@@ -25,6 +25,7 @@ import 'package:works_shg_app/data/repositories/attendance_mdms.dart';
 import 'package:works_shg_app/data/repositories/common_repository/common_repository.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
 import 'package:works_shg_app/router/app_router.dart';
+import 'package:works_shg_app/utils/common_methods.dart';
 import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
@@ -32,6 +33,7 @@ import 'Env/app_config.dart';
 import 'Env/env_config.dart';
 import 'blocs/app_bloc_observer.dart';
 import 'blocs/app_initilization/app_initilization.dart';
+import 'blocs/app_initilization/app_version_bloc.dart';
 import 'blocs/attendance/attendance_create_log.dart';
 import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
@@ -92,6 +94,7 @@ void main() async {
           );
     }
 
+    await CommonMethods.fetchPackageInfo();
     runApp(MainApplication(appRouter: AppRouter()));
   }, (Object error, StackTrace stack) {
     if (kDebugMode) {
@@ -171,12 +174,13 @@ class _MainApplicationState extends State<MainApplication> {
           create: (context) => AppInitializationBloc(
             const AppInitializationState(),
             MdmsRepository(client.init()),
-          )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
+          )..add(const AppInitializationSetupEvent(selectedLang: 'en_IN')),
           lazy: false,
         ),
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => OTPBloc()),
         BlocProvider(create: (context) => HomeScreenBloc()),
+        BlocProvider(create: (context) => AppVersionBloc()),
         BlocProvider(create: (context) => AttendanceRegisterCreateBloc()),
         BlocProvider(
           create: (_) => UserSearchBloc()..add(const SearchUserEvent()),

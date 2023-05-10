@@ -8,17 +8,8 @@ class DigitStepper extends StatelessWidget {
   final List<int>? numbers;
   final List<String>? headers;
 
-  /// Whether to enable or disable the next and previous buttons.
-  final bool enableNextPreviousButtons;
-
   /// Whether to allow tapping a step to move to that step or not.
   final bool enableStepTapping;
-
-  /// Icon to be used for the previous button.
-  final Icon? previousButtonIcon;
-
-  /// Icon to be used for the next button.
-  final Icon? nextButtonIcon;
 
   /// Determines what should happen when a step is reached. This callback provides the __index__ of the step that was reached.
   final OnStepReached? onStepReached;
@@ -83,10 +74,7 @@ class DigitStepper extends StatelessWidget {
     super.key,
     this.numbers,
     this.headers,
-    this.enableNextPreviousButtons = true,
     this.enableStepTapping = true,
-    this.previousButtonIcon,
-    this.nextButtonIcon,
     this.onStepReached,
     this.direction = Axis.horizontal,
     this.numberStyle = const TextStyle(color: Colors.black),
@@ -113,10 +101,7 @@ class DigitStepper extends StatelessWidget {
   Widget build(BuildContext context) {
     return DigitBaseStepper(
       textChildren: _headersWrappedInText(context),
-      nextPreviousButtonsDisabled: enableNextPreviousButtons,
       stepTappingDisabled: enableStepTapping,
-      previousButtonIcon: previousButtonIcon,
-      nextButtonIcon: nextButtonIcon,
       onStepReached: onStepReached,
       stepColor: stepColor,
       activeStepColor: activeStepColor,

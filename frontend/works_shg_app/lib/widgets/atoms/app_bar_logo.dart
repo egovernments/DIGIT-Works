@@ -11,11 +11,13 @@ class AppBarLogo extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image(
-              width: 130,
-              image: NetworkImage(
-                GlobalVariables.stateInfoListModel!.logoUrlWhite ?? '',
-              )),
+          GlobalVariables.stateInfoListModel?.logoUrlWhite != null
+              ? Image(
+                  width: 130,
+                  image: NetworkImage(
+                    GlobalVariables.stateInfoListModel!.logoUrlWhite ?? '',
+                  ))
+              : const SizedBox.shrink(),
           Padding(
               padding: const EdgeInsets.only(right: 8.0, top: 4.0, bottom: 4.0),
               child: Column(
