@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
-import org.egov.digit.expense.calculator.util.CommonUtil;
-import org.egov.digit.expense.calculator.util.ContractUtils;
-import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
-import org.egov.digit.expense.calculator.util.MdmsUtils;
+import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.web.models.*;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +37,9 @@ public class WageSeekerBillGeneratorService {
 
     @Autowired
     private ExpenseCalculatorConfiguration configs;
+
+    @Autowired
+    private IdgenUtil idgenUtil;
 
     public Calculation calculateEstimates(RequestInfo requestInfo , String tenantId, List<MusterRoll> musterRolls, List<LabourCharge> labourCharges) {
         // Calculate estimate for each muster roll
@@ -110,13 +110,14 @@ public class WageSeekerBillGeneratorService {
 
                 }
                 Party payer = buildParty(requestInfo, configs.getPayerType(), tenantId);
-
                 log.info("Building bill for musterRollNumber ["+musterRollNumber+"]");
+                // Generate id of wage bill
+                String wageBillId = generateWBId(requestInfo, tenantId);
                 // Build Bill
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
                         .billDate(Instant.now().toEpochMilli())
-                        .referenceId(referenceId +CONCAT_CHAR_CONSTANT+ musterRollNumber)
+                        .referenceId(referenceId +CONCAT_CHAR_CONSTANT+ musterRollNumber+CONCAT_CHAR_CONSTANT+wageBillId)
                         .businessService(configs.getWageBusinessService())
                         .fromPeriod(musterRoll.getStartDate().longValue())
                         .toPeriod(musterRoll.getEndDate().longValue())
@@ -202,7 +203,7 @@ public class WageSeekerBillGeneratorService {
             log.info("Create calcEstimate for musterRollNumber ["+musterRollNumber+"]");
             // Build CalcEstimate
             CalcEstimate calcEstimate = CalcEstimate.builder()
-                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber)
+//                    .referenceId(musterRoll.getReferenceId() + CONCAT_CHAR_CONSTANT+ musterRollNumber)
                     .fromPeriod(musterRoll.getStartDate())
                     .toPeriod(musterRoll.getEndDate())
                     .netPayableAmount(netPayableAmount)
@@ -300,5 +301,19 @@ public class WageSeekerBillGeneratorService {
             throw new CustomException("SKILL_CODE_MISSING_FOR_INDIVIDUAL","Skill code is missing for individual ["+individualId+"]");
         }
         return skillCodeOptional.get();
+    }
+
+    /**
+     * Generates the referenceId to be set on the tanentId object. This referenceId is a wage bill reference
+     * Example: WR_123
+     * @param tenantId
+     * @return
+     */
+    private String generateWBId(RequestInfo requestInfo, String tenantId) {
+        String rootTenantId = tenantId.split("\\.")[0];
+        List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, configs.getWageBillreferenceIdFormatKey(), "", 1);
+        String generatedWBId = idList.get(0);
+        log.info("ReferenceId generated. Generated generatedUniqueId is ["+ generatedWBId + "]");
+        return generatedWBId;
     }
 }

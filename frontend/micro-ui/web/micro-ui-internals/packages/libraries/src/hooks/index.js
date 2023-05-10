@@ -156,6 +156,8 @@ import useUpdateBankAccount from "./bankAccount/useUpdateBankAccount";
 import useCreateBankAccount from "./bankAccount/useCreateBankAccount";
 import useViewPurchaseBillDetails from "./bills/useViewPurchaseBillDetails";
 import useCreatePurchaseBill from "./bills/useCreatePurchaseBill";
+import useUpdatePurchaseBill from "./bills/useUpdatePurchaseBill";
+import useSearchBill from "./bills/useSearchBill";
 
 const works = {
   useViewEstimateDetails,
@@ -278,7 +280,9 @@ const bills = {
   useBillCreate,
   useViewPurchaseBillDetails,
   useSupervisionBillScreen,
-  useCreatePurchaseBill
+  useCreatePurchaseBill,
+  useUpdatePurchaseBill,
+  useSearchBill
 };
 const masters = {
   useViewOrg
