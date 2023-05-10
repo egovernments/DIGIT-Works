@@ -363,7 +363,7 @@ export const UICustomizations = {
         );
       }
       if (key === "WORKS_ESTIMATED_AMOUNT") {
-        return <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount>
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS"){
         return t(`WF_ESTIMATE_STATUS_${value}`)
