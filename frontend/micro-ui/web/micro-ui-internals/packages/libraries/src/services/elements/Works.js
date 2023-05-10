@@ -222,4 +222,14 @@ export const WorksService = {
       method: "POST",
       auth: true,
     }),
+  updatePurchaseBill: (details) =>
+    Request({
+      url: Urls.bills.updatePurchaseBill,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      auth: true,
+    }),
 };
