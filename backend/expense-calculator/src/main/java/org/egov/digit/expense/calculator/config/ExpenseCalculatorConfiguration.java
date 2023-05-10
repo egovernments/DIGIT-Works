@@ -152,9 +152,6 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.superbill.referenceId.format}")
 	private String supervisionBillreferenceIdFormatKey;
 
-	@Value("${egov.works.expense.wagebill.referenceId.format}")
-	private String wageBillreferenceIdFormatKey;
-
 	//search configs
 	@Value("${expense.billing.default.limit}")
 	private Integer defaultLimit;

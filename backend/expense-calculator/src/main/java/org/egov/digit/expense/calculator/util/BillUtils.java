@@ -41,10 +41,8 @@ public class BillUtils {
                 .bill(bill)
                 .workflow(workflow)
                 .build();
-        log.info("Posting Bill to expense service:" + requestInfoWrapper.toString());
+
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
-        if(responseObj!=null)
-        	log.info("Received Bill Response: " + responseObj.toString());
         return mapper.convertValue(responseObj, BillResponse.class);
     }
     private StringBuilder getBillCreateURI() {

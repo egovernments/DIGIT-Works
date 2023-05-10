@@ -141,7 +141,7 @@ public class BillValidator {
 			for (LineItem item : billDetail.getLineItems()) {
 
 				BigDecimal amount = item.getAmount();
-				BigDecimal paidAmount = item.getPaidAmount() != null ? item.getPaidAmount() : BigDecimal.ZERO;
+				BigDecimal paidAmount = item.getPaidAmount();
 
 				if (!headCodeList.contains(item.getHeadCode()))
 					missingHeadCodes.add(item.getHeadCode());
@@ -149,24 +149,21 @@ public class BillValidator {
                 if (amount.compareTo(paidAmount) < 0)
 					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
-				item.setPaidAmount(paidAmount);
 			}
 
-			for (LineItem payableLineItem : billDetail.getPayableLineItems()) {
+			for (LineItem item : billDetail.getPayableLineItems()) {
 
-				BigDecimal amount = payableLineItem.getAmount();
-				BigDecimal paidAmount = payableLineItem.getPaidAmount() != null ? payableLineItem.getPaidAmount()
-						: BigDecimal.ZERO;
+				BigDecimal amount = item.getAmount();
+				BigDecimal paidAmount = item.getPaidAmount();
 				billDetailAmount = billDetailAmount.add(amount);
 				billDetailPaidAmount = billDetailPaidAmount.add(paidAmount);
 
-				if (!headCodeList.contains(payableLineItem.getHeadCode()))
-					missingHeadCodes.add(payableLineItem.getHeadCode());
+				if (!headCodeList.contains(item.getHeadCode()))
+					missingHeadCodes.add(item.getHeadCode());
 
 				if (amount.compareTo(paidAmount) < 0)
 					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
-				payableLineItem.setPaidAmount(paidAmount);
 			}
 
 			billDetail.setTotalAmount(billDetailAmount);
