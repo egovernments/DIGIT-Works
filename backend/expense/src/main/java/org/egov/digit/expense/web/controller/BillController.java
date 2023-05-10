@@ -32,7 +32,7 @@ public class BillController {
 
 	@PostMapping(value = "_search")
 	public ResponseEntity<BillResponse> search(@Valid @RequestBody BillSearchRequest billSearchRequest) {
-		BillResponse billResponse = service.search(billSearchRequest);
+		BillResponse billResponse = service.search(billSearchRequest, true);
 		return new ResponseEntity<BillResponse>(billResponse, HttpStatus.ACCEPTED);
 	}
 

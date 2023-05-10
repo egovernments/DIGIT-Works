@@ -142,7 +142,7 @@
                     "updateDependent" : ["populators.max"]
                   },
                   "populators": { 
-                    "name": "invoice_date", 
+                    "name": "invoiceDetails_invoiceDate", 
                     "error": "WORKS_REQUIRED_ERR", 
                     "max" : "currentDate" 
                   }

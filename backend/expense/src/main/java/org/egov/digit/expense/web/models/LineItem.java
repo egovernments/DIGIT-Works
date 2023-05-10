@@ -17,7 +17,6 @@ import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -62,7 +61,7 @@ public class LineItem {
 
 	@JsonProperty("paidAmount")
 	@Valid
-	@Default
+	@Builder.Default
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 
 	@JsonProperty("status")

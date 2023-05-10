@@ -341,7 +341,8 @@ public class ExpenseCalculatorServiceValidator {
     private void validateRequestAgainstMDMS(RequestInfo requestInfo, String tenantId, String businessService) {
         //Fetch MDMS data
         Object mdmsData = fetchMDMSDataForValidation(requestInfo,tenantId);
-        // Validate tenantId against MDMS data
+        
+        log.info("MDMS Data response:" + mdmsData.toString());        // Validate tenantId against MDMS data
         validateTenantIdAgainstMDMS(mdmsData, tenantId);
         // Validate head code against MDMS data
         //validateHeadCodeAgainstMDMS(mdmsData, businessService);
@@ -376,7 +377,8 @@ public class ExpenseCalculatorServiceValidator {
     }
 
     private void validateTenantIdAgainstMDMS(Object mdmsData,String tenantId) {
-        List<Object> tenantRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);
+    	log.info("MDMS Response for tenantID:" + mdmsData.toString());        
+    	List<Object> tenantRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);
         if (CollectionUtils.isEmpty(tenantRes) || !tenantRes.contains(tenantId)){
             log.error("The tenant: " + tenantId + " is not present in MDMS");
             throw new CustomException("INVALID_TENANT","Invalid tenantId [" + tenantId + "]");

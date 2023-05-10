@@ -10,10 +10,12 @@ const PurchaseBill = () => {
     const queryStrings = Digit.Hooks.useQueryParams();
     const [contractNumber, setContractNumber] = useState(queryStrings?.workOrderNumber ? queryStrings?.workOrderNumber : "");
     const tenantId = queryStrings?.tenantId;
-    const isModify = queryStrings?.workOrderNumber ? false : true;
+    const billNumber = queryStrings?.billNumber
+    const isModify = billNumber ? true : false;
     const [nameOfVendor, setNameOfVendor] = useState([]);
     const [isFormReady, setIsFormReady] = useState(false);
     const stateTenant = Digit.ULBService.getStateId();
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
 
     const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
     stateTenant,
@@ -31,11 +33,11 @@ const PurchaseBill = () => {
     );
 
     //local config
-    // let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
+    //let configs = createPurchaseBillConfigMUKTA?.CreatePurchaseBillConfig[0];
 
     const tenant = Digit.ULBService.getStateId();
 
-    const { isLoadin: isDocConfigLoading, data : docConfigData } = Digit.Hooks.useCustomMDMS(
+    const { isLoading: isDocConfigLoading, data : docConfigData } = Digit.Hooks.useCustomMDMS(
         tenant,
         "works",
         [
@@ -51,7 +53,7 @@ const PurchaseBill = () => {
         tenantId,
         filters: { contractNumber, tenantId },
         config:{
-            enabled: !!(contractNumber),
+            enabled: true,
             cacheTime : 0
         }
     })
@@ -84,16 +86,47 @@ const PurchaseBill = () => {
         return vendorOptions?.organisations?.map(vendorOption => ( {code : vendorOption?.id, name : vendorOption?.name, applicationNumber : vendorOption?.applicationNumber, orgNumber : vendorOption?.orgNumber } ))
     }
 
-    useEffect(()=>{
-        if((contract && configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading)) {
-            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData});
-            setNameOfVendor(createNameOfVendorObject(vendorOptions));
-            setIsFormReady(true);
+    //bill search
+    const billPayload = {
+        billCriteria: {
+          tenantId,
+          billNumbers: [ billNumber ],
+          businessService: businessService,
+        },
+        pagination: { limit: 10, offSet: 0, sortBy: "ASC", order: "ASC"}
+      }
+    const { isLoading: isBillSearchLoading, data: billData} = Digit.Hooks.bills.useSearchBill({data: billPayload, config:{
+        enabled: isModify,
+        cacheTime:0
+    }})
+
+    const { isLoading : isChargesLoading, data : charges} = Digit.Hooks.useCustomMDMS( 
+    Digit.ULBService.getStateId(),
+    "expense",
+    [
+        {
+            "name": "ApplicableCharges"
         }
-    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading]);
+    ],
+    {
+      select: (data) => {
+        return data?.expense?.ApplicableCharges
+      },
+    }
+    );
+
+    useEffect(()=>{
+        if((configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading && !isDocConfigLoading && !isBillSearchLoading)) {
+            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData, billData, setIsFormReady,charges});
+            setNameOfVendor(createNameOfVendorObject(vendorOptions));
+        }
+    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading,isConfigLoading]);
 
     
-    if(isConfigLoading) return <Loader></Loader>
+    // if(isConfigLoading) return <Loader></Loader>
+
+    if(isContractLoading || isOrgSearchLoading || isDocConfigLoading || isBillSearchLoading || isChargesLoading || isConfigLoading) return <Loader />
+
     return (
         <React.Fragment>
             <Header styles={{fontSize: "32px"}}>{isModify ? t("EXP_MODIFY_PB") : t("ACTION_TEST_CREATE_PB")}</Header>
@@ -107,6 +140,7 @@ const PurchaseBill = () => {
                 preProcessData={{nameOfVendor}}
                 isModify={isModify} 
                 docConfigData={docConfigData}
+                bill={isModify?billData?.bills?.[0]:null}
                 ></CreatePurchaseBillForm>
             }
         </React.Fragment>
