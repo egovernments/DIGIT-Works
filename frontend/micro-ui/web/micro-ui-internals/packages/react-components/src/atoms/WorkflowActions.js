@@ -80,9 +80,13 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
+    
     const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
     const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
+    const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
+    
+    
     setDisplayMenu(false)
     setSelectedAction(action)
 
@@ -103,6 +107,10 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         return 
     }
 
+    if(bsPurchaseBill === businessService && action?.action==="RE-SUBMIT"){
+      history.push(`/${window?.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&billNumber=${editApplicationNumber}`);
+      return 
+    }
     //here we can add cases of toast messages,edit application and more...
     // the default result is setting the modal to show
     setShowModal(true)

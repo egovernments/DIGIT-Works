@@ -333,7 +333,8 @@ export const BillsSearch = {
     return {
         applicationDetails: details,
         applicationData: billData, //TODO: @hariom send the search response object here(required by WorkflowActions)
-        isNoDataFound : false //TODO:
+        isNoDataFound : false, //TODO:
+        contract:WOData  
     }
   }
 };

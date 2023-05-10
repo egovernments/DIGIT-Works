@@ -117,7 +117,7 @@ public class PaymentService {
         RequestInfo requestInfo = paymentRequest.getRequestInfo();
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, false);
+        AuditDetails auditDetails = enrichmentUtil.getAuditDetails(createdBy, true);
         
         Boolean isPaymentCancelled = payment.getStatus().equals(PaymentStatus.CANCELLED);
 
@@ -126,7 +126,7 @@ public class PaymentService {
                 .collect(Collectors.toSet());
 
         BillSearchRequest billSearchRequest = validator.prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
-        List<Bill> billsFromSearch = billService.search(billSearchRequest).getBills();
+        List<Bill> billsFromSearch = billService.search(billSearchRequest, false).getBills();
 
         Map<String, Bill> billMap = billsFromSearch.stream()
                 .collect(Collectors.toMap(Bill::getId, Function.identity()));
@@ -179,8 +179,7 @@ public class PaymentService {
                     .bill(bill)
                     .requestInfo(requestInfo)
                     .build();
-            billService.update(billRequest);
-
+            producer.push(config.getBillUpdateTopic(), billRequest);
         }
     }
 

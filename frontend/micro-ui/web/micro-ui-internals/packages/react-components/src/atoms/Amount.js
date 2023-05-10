@@ -1,8 +1,11 @@
 import React from "react";
 
-const Amount = ({t,...props}) => {
+  /* Amount component by default round offs and formats for amount   */
+
+const Amount = ({t,roundOff=true,...props}) => {
+    const value=roundOff?Math.round(props?.value):props?.value;
     return (
-        <p style={props?.customStyle}>{props?.value ? `${Digit?.Utils?.dss?.formatterWithoutRound(props?.value, "number")}` : t("ES_COMMON_NA")}</p>
+        <p style={props?.customStyle}>{value ? `${Digit?.Utils?.dss?.formatterWithoutRound(value, "number")}` : t("ES_COMMON_NA")}</p>
     )
 }
 

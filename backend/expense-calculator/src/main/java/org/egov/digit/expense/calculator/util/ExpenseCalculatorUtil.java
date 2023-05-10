@@ -134,17 +134,27 @@ public class ExpenseCalculatorUtil {
     }
 
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
-
-        // fetch the bill id from the calculator DB
+    	log.info("Fetching bills from the calculator repository for contractId " + contractId);
+    	// fetch the bill id from the calculator DB
         List<String> billIds = expenseCalculatorRepository.getBills(contractId, tenantId);
-
+        if(billIds.isEmpty()) {     
+        	log.info(String.format("There are 0 bills in the calculator for contractId %s and tenantId %s" ,contractId,tenantId));
+        	return null;
+        }
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(configs.getDefaultLimit()).offSet(configs.getDefaultOffset()).order(Order.ASC).build();
-        BillCriteria billCriteria = BillCriteria.builder().tenantId(tenantId)
-                .ids(new HashSet<>(billIds)).build();
+        
+        //Only fetch active bills
+        BillCriteria billCriteria = BillCriteria.builder()
+        		.tenantId(tenantId)
+        		.status("ACTIVE")
+                .ids(new HashSet<>(billIds))
+                .build();
         BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
                 .billCriteria(billCriteria).tenantId(tenantId).pagination(pagination).build();
+        log.info("Calling expense service search for billIds. Request is: " + billSearchRequest.toString());
         Object responseObj = restRepo.fetchResult(url, billSearchRequest);
+        log.info("Response from billing service is: " + responseObj.toString());
         BillResponse response = mapper.convertValue(responseObj, BillResponse.class);
         return response != null ? response.getBills() : null;
 

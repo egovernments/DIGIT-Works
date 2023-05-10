@@ -10,7 +10,7 @@ const ProjectDetailsNavDetails = ({activeLink, subProjects}) => {
         <>
         {
             (activeLink === "Project_Details") && (
-                <ViewProjectComponent></ViewProjectComponent>
+                <ViewProjectComponent module="project" ></ViewProjectComponent>
             )
         }
         {
