@@ -5,7 +5,7 @@ let get = require('lodash.get')
 
 async function processGroupBillFromPaymentCreateTopic(requestData) {
     logger.info("Started generating bill from payment topic.")
-    let userid = get(request, "RequestInfo.userInfo.uuid", null);
+    let userid = get(requestData, "RequestInfo.userInfo.uuid", null);
     let paymentId = get(requestData, "payment.id", null);
     try {
         let request = {}
