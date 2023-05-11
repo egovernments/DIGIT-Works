@@ -89,6 +89,46 @@ public class PurchaseBill {
 	@JsonProperty("payer")
 	private Party party;
 
+	/**
+	 * Copied fields bill which are not available in this Purchase model
+	 */
+	@JsonProperty("billDate")
+	@Valid
+	private Long billDate;
+
+	@JsonProperty("dueDate")
+	@Valid
+	private Long dueDate;
+
+	@JsonProperty("totalAmount")
+	@Valid
+	@Builder.Default
+	private BigDecimal totalAmount = BigDecimal.ZERO;
+
+	@JsonProperty("totalPaidAmount")
+	@Valid
+	@Builder.Default
+	private BigDecimal totalPaidAmount = BigDecimal.ZERO;
+
+	@JsonProperty("businessService")
+	@NotNull
+	@Size(min = 2, max = 128)
+	private String businessService;
+
+	@JsonProperty("fromPeriod")
+	@Valid
+	private Long fromPeriod;
+	@JsonProperty("toPeriod")
+	@Valid
+	private Long toPeriod;
+
+	@JsonProperty("paymentStatus")
+	@Size(min = 2, max = 64)
+	private String paymentStatus;
+	@JsonProperty("wfStatus")
+	@Size(min = 2, max = 64)
+	private String wfStatus;
+
 
 	public PurchaseBill addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
