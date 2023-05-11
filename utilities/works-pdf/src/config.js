@@ -51,6 +51,7 @@ module.exports = {
     expense: process.env.EXPENSE_SERVICE_HOST || 'http://localhost:8090',
     bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
+    expense_calculator: process.env.EGOV_EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -65,7 +66,8 @@ module.exports = {
     orgnisation_search: "/org-services/organisation/v1/_search",
     expense_bill_search: "/expense/bill/v1/_search",
     expense_payment_search: "/expense/payment/v1/_search",
-    bankaccount_search: "/bankaccount-service/bankaccount/v1/_search"
+    bankaccount_search: "/bankaccount-service/bankaccount/v1/_search",
+    expense_calculator_estimate: "/expense-calculator/v1/_estimate"
 
   },
 };
