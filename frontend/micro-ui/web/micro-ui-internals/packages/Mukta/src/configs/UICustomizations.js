@@ -1419,6 +1419,9 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      if(key === "WORKS_SNO"){
+        return <span>{searchResult?.findIndex(e=>e?.id==row?.id)+1}</span>
+      }
       if (key === "ES_COMMON_TOTAL_AMOUNT") {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
@@ -1430,7 +1433,16 @@ export const UICustomizations = {
       }
       if(key === "CS_COMMON_ACTION") {
         return value ?  
-        <LinkLabel onClick={() => { }}>
+        <LinkLabel onClick={async() => {       
+          let photo = ''
+          try {
+              photo = value&& await Digit.UploadServices.Filefetch([value], Digit.ULBService.getCurrentTenantId());
+              const imageLink = photo?.data?.fileStoreIds?.[0]?.url
+              downloadPdf(imageLink);
+          } catch (error) {
+            console.error(error,"downloaderror");
+          }
+      }}>
           {t("CS_COMMON_DOWNLOAD")}
         </LinkLabel> :
         t("ES_COMMON_NA")
@@ -1546,5 +1558,12 @@ export const UICustomizations = {
       });
       return link;
     },
+  }
+};
+
+const downloadPdf = (link, openIn = "_blank") => {
+  var win = window.open(link, openIn);
+  if (win) {
+    win.focus();
   }
 };
