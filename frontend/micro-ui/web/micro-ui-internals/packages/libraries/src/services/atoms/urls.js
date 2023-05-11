@@ -257,6 +257,7 @@ const Urls = {
 
   bill: {
     search: "/expense/bill/v1/_search",
+    searchCalculator: "/expense-calculator/v1/_search",
   },
 
   calculator: {
