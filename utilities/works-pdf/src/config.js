@@ -51,7 +51,7 @@ module.exports = {
     expense: process.env.EXPENSE_SERVICE_HOST || 'http://localhost:8090',
     bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
-    expense_calculator: process.env.EGOV_EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
+    expense_calculator: process.env.EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
