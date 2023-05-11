@@ -73,7 +73,7 @@ class AppInitializationBloc
               languages: [
         ...result.commonMastersModel!.stateInfoListModel![0].languages!
             .mapIndexed((i, element) {
-          if (i == event.selectedLangIndex) {
+          if (element.value == event.selectedLang) {
             return element.copyWith(isSelected: true);
           } else {
             return element;
@@ -122,7 +122,7 @@ class AppInitializationBloc
           languages: [
         ...GlobalVariables.stateInfoListModel!.languages!
             .mapIndexed((i, element) {
-          if (i == event.selectedLangIndex) {
+          if (element.value == event.selectedLang) {
             return element.copyWith(isSelected: true);
           } else {
             return element;
@@ -197,7 +197,7 @@ class AppInitializationBloc
 @freezed
 class AppInitializationEvent with _$AppInitializationEvent {
   const factory AppInitializationEvent.onapplicationInitializeSetup(
-      {required int selectedLangIndex}) = AppInitializationSetupEvent;
+      {required String selectedLang}) = AppInitializationSetupEvent;
 }
 
 @freezed

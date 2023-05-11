@@ -420,6 +420,9 @@ mixin _$CommonMastersModel {
   @JsonKey(name: 'StateInfo')
   List<StateInfoListModel>? get stateInfoListModel =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'AppVersion')
+  List<AppVersionModel>? get appVersionModel =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -434,8 +437,8 @@ abstract class $CommonMastersModelCopyWith<$Res> {
       _$CommonMastersModelCopyWithImpl<$Res, CommonMastersModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'StateInfo')
-          List<StateInfoListModel>? stateInfoListModel});
+      {@JsonKey(name: 'StateInfo') List<StateInfoListModel>? stateInfoListModel,
+      @JsonKey(name: 'AppVersion') List<AppVersionModel>? appVersionModel});
 }
 
 /// @nodoc
@@ -452,12 +455,17 @@ class _$CommonMastersModelCopyWithImpl<$Res, $Val extends CommonMastersModel>
   @override
   $Res call({
     Object? stateInfoListModel = freezed,
+    Object? appVersionModel = freezed,
   }) {
     return _then(_value.copyWith(
       stateInfoListModel: freezed == stateInfoListModel
           ? _value.stateInfoListModel
           : stateInfoListModel // ignore: cast_nullable_to_non_nullable
               as List<StateInfoListModel>?,
+      appVersionModel: freezed == appVersionModel
+          ? _value.appVersionModel
+          : appVersionModel // ignore: cast_nullable_to_non_nullable
+              as List<AppVersionModel>?,
     ) as $Val);
   }
 }
@@ -471,8 +479,8 @@ abstract class _$$_CommonMastersModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'StateInfo')
-          List<StateInfoListModel>? stateInfoListModel});
+      {@JsonKey(name: 'StateInfo') List<StateInfoListModel>? stateInfoListModel,
+      @JsonKey(name: 'AppVersion') List<AppVersionModel>? appVersionModel});
 }
 
 /// @nodoc
@@ -487,12 +495,17 @@ class __$$_CommonMastersModelCopyWithImpl<$Res>
   @override
   $Res call({
     Object? stateInfoListModel = freezed,
+    Object? appVersionModel = freezed,
   }) {
     return _then(_$_CommonMastersModel(
       stateInfoListModel: freezed == stateInfoListModel
           ? _value._stateInfoListModel
           : stateInfoListModel // ignore: cast_nullable_to_non_nullable
               as List<StateInfoListModel>?,
+      appVersionModel: freezed == appVersionModel
+          ? _value._appVersionModel
+          : appVersionModel // ignore: cast_nullable_to_non_nullable
+              as List<AppVersionModel>?,
     ));
   }
 }
@@ -502,8 +515,11 @@ class __$$_CommonMastersModelCopyWithImpl<$Res>
 class _$_CommonMastersModel implements _CommonMastersModel {
   const _$_CommonMastersModel(
       {@JsonKey(name: 'StateInfo')
-          final List<StateInfoListModel>? stateInfoListModel})
-      : _stateInfoListModel = stateInfoListModel;
+          final List<StateInfoListModel>? stateInfoListModel,
+      @JsonKey(name: 'AppVersion')
+          final List<AppVersionModel>? appVersionModel})
+      : _stateInfoListModel = stateInfoListModel,
+        _appVersionModel = appVersionModel;
 
   factory _$_CommonMastersModel.fromJson(Map<String, dynamic> json) =>
       _$$_CommonMastersModelFromJson(json);
@@ -520,9 +536,20 @@ class _$_CommonMastersModel implements _CommonMastersModel {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<AppVersionModel>? _appVersionModel;
+  @override
+  @JsonKey(name: 'AppVersion')
+  List<AppVersionModel>? get appVersionModel {
+    final value = _appVersionModel;
+    if (value == null) return null;
+    if (_appVersionModel is EqualUnmodifiableListView) return _appVersionModel;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   String toString() {
-    return 'CommonMastersModel(stateInfoListModel: $stateInfoListModel)';
+    return 'CommonMastersModel(stateInfoListModel: $stateInfoListModel, appVersionModel: $appVersionModel)';
   }
 
   @override
@@ -531,13 +558,17 @@ class _$_CommonMastersModel implements _CommonMastersModel {
         (other.runtimeType == runtimeType &&
             other is _$_CommonMastersModel &&
             const DeepCollectionEquality()
-                .equals(other._stateInfoListModel, _stateInfoListModel));
+                .equals(other._stateInfoListModel, _stateInfoListModel) &&
+            const DeepCollectionEquality()
+                .equals(other._appVersionModel, _appVersionModel));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_stateInfoListModel));
+      runtimeType,
+      const DeepCollectionEquality().hash(_stateInfoListModel),
+      const DeepCollectionEquality().hash(_appVersionModel));
 
   @JsonKey(ignore: true)
   @override
@@ -557,7 +588,9 @@ class _$_CommonMastersModel implements _CommonMastersModel {
 abstract class _CommonMastersModel implements CommonMastersModel {
   const factory _CommonMastersModel(
           {@JsonKey(name: 'StateInfo')
-              final List<StateInfoListModel>? stateInfoListModel}) =
+              final List<StateInfoListModel>? stateInfoListModel,
+          @JsonKey(name: 'AppVersion')
+              final List<AppVersionModel>? appVersionModel}) =
       _$_CommonMastersModel;
 
   factory _CommonMastersModel.fromJson(Map<String, dynamic> json) =
@@ -567,8 +600,183 @@ abstract class _CommonMastersModel implements CommonMastersModel {
   @JsonKey(name: 'StateInfo')
   List<StateInfoListModel>? get stateInfoListModel;
   @override
+  @JsonKey(name: 'AppVersion')
+  List<AppVersionModel>? get appVersionModel;
+  @override
   @JsonKey(ignore: true)
   _$$_CommonMastersModelCopyWith<_$_CommonMastersModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+AppVersionModel _$AppVersionModelFromJson(Map<String, dynamic> json) {
+  return _AppVersionModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$AppVersionModel {
+  String? get version => throw _privateConstructorUsedError;
+  String? get packageName => throw _privateConstructorUsedError;
+  String? get iOSId => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AppVersionModelCopyWith<AppVersionModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AppVersionModelCopyWith<$Res> {
+  factory $AppVersionModelCopyWith(
+          AppVersionModel value, $Res Function(AppVersionModel) then) =
+      _$AppVersionModelCopyWithImpl<$Res, AppVersionModel>;
+  @useResult
+  $Res call({String? version, String? packageName, String? iOSId});
+}
+
+/// @nodoc
+class _$AppVersionModelCopyWithImpl<$Res, $Val extends AppVersionModel>
+    implements $AppVersionModelCopyWith<$Res> {
+  _$AppVersionModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? version = freezed,
+    Object? packageName = freezed,
+    Object? iOSId = freezed,
+  }) {
+    return _then(_value.copyWith(
+      version: freezed == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String?,
+      packageName: freezed == packageName
+          ? _value.packageName
+          : packageName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      iOSId: freezed == iOSId
+          ? _value.iOSId
+          : iOSId // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_AppVersionModelCopyWith<$Res>
+    implements $AppVersionModelCopyWith<$Res> {
+  factory _$$_AppVersionModelCopyWith(
+          _$_AppVersionModel value, $Res Function(_$_AppVersionModel) then) =
+      __$$_AppVersionModelCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? version, String? packageName, String? iOSId});
+}
+
+/// @nodoc
+class __$$_AppVersionModelCopyWithImpl<$Res>
+    extends _$AppVersionModelCopyWithImpl<$Res, _$_AppVersionModel>
+    implements _$$_AppVersionModelCopyWith<$Res> {
+  __$$_AppVersionModelCopyWithImpl(
+      _$_AppVersionModel _value, $Res Function(_$_AppVersionModel) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? version = freezed,
+    Object? packageName = freezed,
+    Object? iOSId = freezed,
+  }) {
+    return _then(_$_AppVersionModel(
+      version: freezed == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String?,
+      packageName: freezed == packageName
+          ? _value.packageName
+          : packageName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      iOSId: freezed == iOSId
+          ? _value.iOSId
+          : iOSId // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_AppVersionModel implements _AppVersionModel {
+  const _$_AppVersionModel({this.version, this.packageName, this.iOSId});
+
+  factory _$_AppVersionModel.fromJson(Map<String, dynamic> json) =>
+      _$$_AppVersionModelFromJson(json);
+
+  @override
+  final String? version;
+  @override
+  final String? packageName;
+  @override
+  final String? iOSId;
+
+  @override
+  String toString() {
+    return 'AppVersionModel(version: $version, packageName: $packageName, iOSId: $iOSId)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_AppVersionModel &&
+            (identical(other.version, version) || other.version == version) &&
+            (identical(other.packageName, packageName) ||
+                other.packageName == packageName) &&
+            (identical(other.iOSId, iOSId) || other.iOSId == iOSId));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, version, packageName, iOSId);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_AppVersionModelCopyWith<_$_AppVersionModel> get copyWith =>
+      __$$_AppVersionModelCopyWithImpl<_$_AppVersionModel>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_AppVersionModelToJson(
+      this,
+    );
+  }
+}
+
+abstract class _AppVersionModel implements AppVersionModel {
+  const factory _AppVersionModel(
+      {final String? version,
+      final String? packageName,
+      final String? iOSId}) = _$_AppVersionModel;
+
+  factory _AppVersionModel.fromJson(Map<String, dynamic> json) =
+      _$_AppVersionModel.fromJson;
+
+  @override
+  String? get version;
+  @override
+  String? get packageName;
+  @override
+  String? get iOSId;
+  @override
+  @JsonKey(ignore: true)
+  _$$_AppVersionModelCopyWith<_$_AppVersionModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

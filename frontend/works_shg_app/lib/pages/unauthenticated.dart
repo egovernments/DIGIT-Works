@@ -22,7 +22,7 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
           create: (context) => AppInitializationBloc(
             const AppInitializationState(),
             MdmsRepository(client.init()),
-          )..add(const AppInitializationSetupEvent(selectedLangIndex: 0)),
+          )..add(const AppInitializationSetupEvent(selectedLang: 'en_IN')),
         ),
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(

@@ -14,6 +14,7 @@ import 'package:works_shg_app/widgets/molecules/digit_stepper.dart';
 
 import '../../blocs/app_initilization/app_initilization.dart';
 import '../../blocs/localization/app_localization.dart';
+import '../../blocs/localization/localization.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_location_bloc.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_mdms_bloc.dart';
 import '../../blocs/wage_seeker_registration/wage_seeker_registration_bloc.dart';
@@ -89,78 +90,85 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
       i18.common.financialDetails,
       i18.wageSeeker.summaryDetails
     ];
-    return Scaffold(
-        appBar: AppBar(
-          titleSpacing: 0,
-          title: const AppBarLogo(),
-        ),
-        drawer: DrawerWrapper(Drawer(
-            child: SideBar(
-          module: CommonMethods.getLocaleModules(),
-        ))),
-        body: SingleChildScrollView(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Back(),
-                BlocBuilder<AppInitializationBloc, AppInitializationState>(
-                    builder: (context, initState) {
-                  return DigitStepper(
-                    stepColor: const DigitColors().cloudGray,
-                    activeStepColor: const DigitColors().burningOrange,
-                    numberStyle: TextStyle(color: const DigitColors().white),
-                    lineDotRadius: 2.0,
-                    lineLength: MediaQuery.of(context).size.width / 10,
-                    activeStepBorderPadding: 0.0,
-                    lineColor: const DigitColors().regalBlue,
-                    activeStepBorderColor: const DigitColors().burningOrange,
-                    stepReachedAnimationEffect: Curves.ease,
-                    stepRadius: 12.0,
-                    numbers: stepNumbers,
-                    headers: stepHeaders
-                        .map((e) => t.translate(e).toString())
-                        .toList(),
-                    activeStep: currentStep,
-                    enableNextPreviousButtons: false,
-                    onStepReached: (index) {
-                      setState(() {
-                        currentStep = index;
-                      });
-                    },
-                  );
-                }),
-                const SizedBox(
-                  height: 16.0,
-                ),
-                BlocBuilder<WageSeekerMDMSBloc, WageSeekerMDMSState>(
-                    builder: (context, mdmsState) {
-                  return mdmsState.maybeWhen(
-                      orElse: () => Container(),
-                      loading: () => Loaders.circularLoader(context),
-                      loaded: (WageSeekerMDMS? wageSeekerMDMS) {
-                        return BlocBuilder<WageSeekerLocationBloc,
-                                WageSeekerLocationState>(
-                            builder: (context, locationState) {
-                          return locationState.maybeWhen(
-                              orElse: () => Container(),
-                              loaded: (Location? location) {
-                                return getFormConfig(wageSeekerMDMS, location);
-                              });
+    return BlocBuilder<LocalizationBloc, LocalizationState>(
+        builder: (context, localState) {
+      return Scaffold(
+          appBar: AppBar(
+            titleSpacing: 0,
+            title: const AppBarLogo(),
+          ),
+          drawer: DrawerWrapper(Drawer(
+              child: SideBar(
+            module: CommonMethods.getLocaleModules(),
+          ))),
+          body: SingleChildScrollView(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Back(),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  BlocBuilder<AppInitializationBloc, AppInitializationState>(
+                      builder: (context, initState) {
+                    return DigitStepper(
+                      stepColor: const DigitColors().cloudGray,
+                      activeStepColor: const DigitColors().burningOrange,
+                      numberStyle: TextStyle(color: const DigitColors().white),
+                      lineDotRadius: 2.0,
+                      lineLength: MediaQuery.of(context).size.width / 10,
+                      activeStepBorderPadding: 0.0,
+                      lineColor: const DigitColors().regalBlue,
+                      activeStepBorderColor: const DigitColors().burningOrange,
+                      stepReachedAnimationEffect: Curves.ease,
+                      stepRadius: 12.0,
+                      numbers: stepNumbers,
+                      headers: stepHeaders
+                          .map((e) => t.translate(e).toString())
+                          .toList(),
+                      activeStep: currentStep,
+                      // enableNextPreviousButtons: false,
+                      onStepReached: (index) {
+                        setState(() {
+                          currentStep = index;
                         });
                       },
-                      error: (String? error) => Notifiers.getToastMessage(
-                          context, error.toString(), 'ERROR'));
-                }),
-                const SizedBox(
-                  height: 16.0,
-                ),
-                const Align(
-                  alignment: Alignment.bottomCenter,
-                  child: PoweredByDigit(),
-                )
-              ]),
-        ));
+                    );
+                  }),
+                  const SizedBox(
+                    height: 16.0,
+                  ),
+                  BlocBuilder<WageSeekerMDMSBloc, WageSeekerMDMSState>(
+                      builder: (context, mdmsState) {
+                    return mdmsState.maybeWhen(
+                        orElse: () => Container(),
+                        loading: () => Loaders.circularLoader(context),
+                        loaded: (WageSeekerMDMS? wageSeekerMDMS) {
+                          return BlocBuilder<WageSeekerLocationBloc,
+                                  WageSeekerLocationState>(
+                              builder: (context, locationState) {
+                            return locationState.maybeWhen(
+                                orElse: () => Container(),
+                                loaded: (Location? location) {
+                                  return getFormConfig(
+                                      wageSeekerMDMS, location);
+                                });
+                          });
+                        },
+                        error: (String? error) => Notifiers.getToastMessage(
+                            context, error.toString(), 'ERROR'));
+                  }),
+                  const SizedBox(
+                    height: 16.0,
+                  ),
+                  const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: PoweredByDigit(),
+                  )
+                ]),
+          ));
+    });
   }
 
   Widget getFormConfig(WageSeekerMDMS? wageSeekerMDMS, Location? location) {

@@ -1,4 +1,5 @@
 import 'package:digit_components/digit_components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class DigitTimeline extends StatelessWidget {
@@ -65,7 +66,7 @@ class DigitTimeline extends StatelessWidget {
                         timelineOptions[index].subTitle != null &&
                                 timelineOptions[index].subTitle!.isNotEmpty
                             ? SizedBox(
-                                width: MediaQuery.of(context).size.width / 2,
+                                width: 200,
                                 child: Text(
                                   timelineOptions[index].subTitle ?? '',
                                   style: TextStyle(
@@ -78,7 +79,7 @@ class DigitTimeline extends StatelessWidget {
                         timelineOptions[index].assignee != null &&
                                 timelineOptions[index].assignee!.isNotEmpty
                             ? SizedBox(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: 200,
                                 child: Text(
                                   timelineOptions[index].assignee ?? '',
                                   style: TextStyle(
@@ -104,10 +105,7 @@ class DigitTimeline extends StatelessWidget {
                                       : const Text(''),
                                   timelineOptions[index].mobileNumber != null
                                       ? SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.5,
+                                          width: 200,
                                           child: Text(
                                             timelineOptions[index]
                                                             .mobileNumber !=
@@ -146,7 +144,9 @@ class DigitTimeline extends StatelessWidget {
                                                         .assignee ==
                                                     null
                                             ? 32
-                                            : 40
+                                            : kIsWeb
+                                                ? 40
+                                                : 48
                                 : 0)
                       ],
                     ),

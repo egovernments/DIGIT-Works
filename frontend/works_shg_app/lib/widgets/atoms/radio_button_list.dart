@@ -11,16 +11,14 @@ class DigitRadioButtonList<T> extends StatelessWidget {
   final List<T> options;
   final ValueChanged<T>? onValueChange;
   final bool? isEnabled;
-  final Widget? secondaryBox;
-  final T? refTextRadioBtn;
+  final Widget? secondaryWidget;
 
   const DigitRadioButtonList(
     this.context, {
     super.key,
     this.isEnabled,
     required this.formControlName,
-    this.secondaryBox,
-    this.refTextRadioBtn,
+    this.secondaryWidget,
     required this.valueMapper,
     this.labelText = '',
     this.isRequired = false,
@@ -74,10 +72,10 @@ class DigitRadioButtonList<T> extends StatelessWidget {
                             onValueChange?.call(value);
                           }
                         : null,
-                    secondary: data == refTextRadioBtn
+                    secondary: secondaryWidget != null
                         ? SizedBox(
                             width: MediaQuery.of(context).size.width / 2.8,
-                            child: secondaryBox)
+                            child: secondaryWidget)
                         : null,
                   );
                 },
