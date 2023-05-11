@@ -9,7 +9,6 @@ import '../pages/authenticated.dart';
 import '../pages/home.dart';
 import '../pages/language_selection_page.dart';
 import '../pages/login.dart';
-import '../pages/manage_attendance_register.dart';
 import '../pages/otp_verification.dart';
 import '../pages/shg_inbox.dart';
 import '../pages/trackAttendance/track-attendance_inbox.dart';
@@ -44,7 +43,7 @@ part 'app_router.gr.dart';
       page: AuthenticatedPageWrapper,
       path: '/',
       children: [
-        AutoRoute(page: HomePage, path: ''),
+        AutoRoute(page: HomePage, path: 'home', initial: true),
         AutoRoute(page: ORGProfilePage, path: 'orgProfile'),
         AutoRoute(
             page: AttendanceRegisterTablePage,
@@ -52,9 +51,8 @@ part 'app_router.gr.dart';
         AutoRoute(page: WorkOrderPage, path: 'work-orders'),
         AutoRoute(page: ViewMusterRollsPage, path: 'muster-rolls'),
         AutoRoute(
-            page: SHGInboxPage, path: 'shg-inbox/:tenantId/:musterRollNo/:sentBackCode'),
-        AutoRoute(
-            page: ManageAttendanceRegisterPage, path: 'manage-attendance'),
+            page: SHGInboxPage,
+            path: 'shg-inbox/:tenantId/:musterRollNo/:sentBackCode'),
         AutoRoute(
             page: TrackAttendanceInboxPage, path: 'track-attendance-inbox'),
         AutoRoute(

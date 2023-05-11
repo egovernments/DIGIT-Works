@@ -5,104 +5,220 @@
 
 part of 'my_bills_model.dart';
 
-class MyBillsModelMapper extends MapperBase<MyBillsModel> {
+class MyBillsListModelMapper extends MapperBase<MyBillsListModel> {
   static MapperContainer container = MapperContainer(
-    mappers: {MyBillsModelMapper()},
-  )..linkAll({BillModelMapper.container});
+    mappers: {MyBillsListModelMapper()},
+  )..linkAll({MyBillModelMapper.container});
 
   @override
-  MyBillsModelMapperElement createElement(MapperContainer container) {
-    return MyBillsModelMapperElement._(this, container);
+  MyBillsListModelMapperElement createElement(MapperContainer container) {
+    return MyBillsListModelMapperElement._(this, container);
   }
 
   @override
-  String get id => 'MyBillsModel';
+  String get id => 'MyBillsListModel';
 
-  static final fromMap = container.fromMap<MyBillsModel>;
-  static final fromJson = container.fromJson<MyBillsModel>;
+  static final fromMap = container.fromMap<MyBillsListModel>;
+  static final fromJson = container.fromJson<MyBillsListModel>;
 }
 
-class MyBillsModelMapperElement extends MapperElementBase<MyBillsModel> {
-  MyBillsModelMapperElement._(super.mapper, super.container);
+class MyBillsListModelMapperElement
+    extends MapperElementBase<MyBillsListModel> {
+  MyBillsListModelMapperElement._(super.mapper, super.container);
 
   @override
   Function get decoder => decode;
-  MyBillsModel decode(dynamic v) =>
+  MyBillsListModel decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
-  MyBillsModel fromMap(Map<String, dynamic> map) =>
-      MyBillsModel(bills: container.$getOpt(map, 'bills'));
+  MyBillsListModel fromMap(Map<String, dynamic> map) =>
+      MyBillsListModel(bills: container.$getOpt(map, 'bills'));
 
   @override
   Function get encoder => encode;
-  dynamic encode(MyBillsModel v) => toMap(v);
-  Map<String, dynamic> toMap(MyBillsModel m) =>
+  dynamic encode(MyBillsListModel v) => toMap(v);
+  Map<String, dynamic> toMap(MyBillsListModel m) =>
       {'bills': container.$enc(m.bills, 'bills')};
 
   @override
-  String stringify(MyBillsModel self) =>
-      'MyBillsModel(bills: ${container.asString(self.bills)})';
+  String stringify(MyBillsListModel self) =>
+      'MyBillsListModel(bills: ${container.asString(self.bills)})';
   @override
-  int hash(MyBillsModel self) => container.hash(self.bills);
+  int hash(MyBillsListModel self) => container.hash(self.bills);
   @override
-  bool equals(MyBillsModel self, MyBillsModel other) =>
+  bool equals(MyBillsListModel self, MyBillsListModel other) =>
       container.isEqual(self.bills, other.bills);
 }
 
-mixin MyBillsModelMappable {
-  String toJson() => MyBillsModelMapper.container.toJson(this as MyBillsModel);
+mixin MyBillsListModelMappable {
+  String toJson() =>
+      MyBillsListModelMapper.container.toJson(this as MyBillsListModel);
   Map<String, dynamic> toMap() =>
-      MyBillsModelMapper.container.toMap(this as MyBillsModel);
-  MyBillsModelCopyWith<MyBillsModel, MyBillsModel, MyBillsModel> get copyWith =>
-      _MyBillsModelCopyWithImpl(this as MyBillsModel, $identity, $identity);
+      MyBillsListModelMapper.container.toMap(this as MyBillsListModel);
+  MyBillsListModelCopyWith<MyBillsListModel, MyBillsListModel, MyBillsListModel>
+      get copyWith => _MyBillsListModelCopyWithImpl(
+          this as MyBillsListModel, $identity, $identity);
   @override
-  String toString() => MyBillsModelMapper.container.asString(this);
+  String toString() => MyBillsListModelMapper.container.asString(this);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (runtimeType == other.runtimeType &&
-          MyBillsModelMapper.container.isEqual(this, other));
+          MyBillsListModelMapper.container.isEqual(this, other));
   @override
-  int get hashCode => MyBillsModelMapper.container.hash(this);
+  int get hashCode => MyBillsListModelMapper.container.hash(this);
 }
 
-extension MyBillsModelValueCopy<$R, $Out extends MyBillsModel>
-    on ObjectCopyWith<$R, MyBillsModel, $Out> {
-  MyBillsModelCopyWith<$R, MyBillsModel, $Out> get asMyBillsModel =>
-      base.as((v, t, t2) => _MyBillsModelCopyWithImpl(v, t, t2));
+extension MyBillsListModelValueCopy<$R, $Out extends MyBillsListModel>
+    on ObjectCopyWith<$R, MyBillsListModel, $Out> {
+  MyBillsListModelCopyWith<$R, MyBillsListModel, $Out> get asMyBillsListModel =>
+      base.as((v, t, t2) => _MyBillsListModelCopyWithImpl(v, t, t2));
 }
 
-typedef MyBillsModelCopyWithBound = MyBillsModel;
+typedef MyBillsListModelCopyWithBound = MyBillsListModel;
 
-abstract class MyBillsModelCopyWith<$R, $In extends MyBillsModel,
-    $Out extends MyBillsModel> implements ObjectCopyWith<$R, $In, $Out> {
-  MyBillsModelCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends MyBillsModel>(
-      Then<MyBillsModel, $Out2> t, Then<$Out2, $R2> t2);
-  ListCopyWith<$R, BillModel, BillModelCopyWith<$R, BillModel, BillModel>>?
-      get bills;
-  $R call({List<BillModel>? bills});
+abstract class MyBillsListModelCopyWith<$R, $In extends MyBillsListModel,
+    $Out extends MyBillsListModel> implements ObjectCopyWith<$R, $In, $Out> {
+  MyBillsListModelCopyWith<$R2, $In, $Out2>
+      chain<$R2, $Out2 extends MyBillsListModel>(
+          Then<MyBillsListModel, $Out2> t, Then<$Out2, $R2> t2);
+  ListCopyWith<$R, MyBillModel,
+      MyBillModelCopyWith<$R, MyBillModel, MyBillModel>>? get bills;
+  $R call({List<MyBillModel>? bills});
 }
 
-class _MyBillsModelCopyWithImpl<$R, $Out extends MyBillsModel>
-    extends CopyWithBase<$R, MyBillsModel, $Out>
-    implements MyBillsModelCopyWith<$R, MyBillsModel, $Out> {
-  _MyBillsModelCopyWithImpl(super.value, super.then, super.then2);
+class _MyBillsListModelCopyWithImpl<$R, $Out extends MyBillsListModel>
+    extends CopyWithBase<$R, MyBillsListModel, $Out>
+    implements MyBillsListModelCopyWith<$R, MyBillsListModel, $Out> {
+  _MyBillsListModelCopyWithImpl(super.value, super.then, super.then2);
   @override
-  MyBillsModelCopyWith<$R2, MyBillsModel, $Out2>
-      chain<$R2, $Out2 extends MyBillsModel>(
-              Then<MyBillsModel, $Out2> t, Then<$Out2, $R2> t2) =>
-          _MyBillsModelCopyWithImpl($value, t, t2);
+  MyBillsListModelCopyWith<$R2, MyBillsListModel, $Out2>
+      chain<$R2, $Out2 extends MyBillsListModel>(
+              Then<MyBillsListModel, $Out2> t, Then<$Out2, $R2> t2) =>
+          _MyBillsListModelCopyWithImpl($value, t, t2);
 
   @override
-  ListCopyWith<$R, BillModel, BillModelCopyWith<$R, BillModel, BillModel>>?
+  ListCopyWith<$R, MyBillModel,
+          MyBillModelCopyWith<$R, MyBillModel, MyBillModel>>?
       get bills => $value.bills != null
           ? ListCopyWith(
               $value.bills!,
-              (v, t) => v.copyWith.chain<$R, BillModel>($identity, t),
+              (v, t) => v.copyWith.chain<$R, MyBillModel>($identity, t),
               (v) => call(bills: v))
           : null;
   @override
   $R call({Object? bills = $none}) =>
-      $then(MyBillsModel(bills: or(bills, $value.bills)));
+      $then(MyBillsListModel(bills: or(bills, $value.bills)));
+}
+
+class MyBillModelMapper extends MapperBase<MyBillModel> {
+  static MapperContainer container = MapperContainer(
+    mappers: {MyBillModelMapper()},
+  )..linkAll({BillModelMapper.container});
+
+  @override
+  MyBillModelMapperElement createElement(MapperContainer container) {
+    return MyBillModelMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'MyBillModel';
+
+  static final fromMap = container.fromMap<MyBillModel>;
+  static final fromJson = container.fromJson<MyBillModel>;
+}
+
+class MyBillModelMapperElement extends MapperElementBase<MyBillModel> {
+  MyBillModelMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  MyBillModel decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  MyBillModel fromMap(Map<String, dynamic> map) => MyBillModel(
+      bill: container.$getOpt(map, 'bill'),
+      musterRollNumber: container.$getOpt(map, 'musterRollNumber'),
+      contractNumber: container.$getOpt(map, 'contractNumber'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(MyBillModel v) => toMap(v);
+  Map<String, dynamic> toMap(MyBillModel m) => {
+        'bill': container.$enc(m.bill, 'bill'),
+        'musterRollNumber':
+            container.$enc(m.musterRollNumber, 'musterRollNumber'),
+        'contractNumber': container.$enc(m.contractNumber, 'contractNumber')
+      };
+
+  @override
+  String stringify(MyBillModel self) =>
+      'MyBillModel(contractNumber: ${container.asString(self.contractNumber)}, musterRollNumber: ${container.asString(self.musterRollNumber)}, bill: ${container.asString(self.bill)})';
+  @override
+  int hash(MyBillModel self) =>
+      container.hash(self.contractNumber) ^
+      container.hash(self.musterRollNumber) ^
+      container.hash(self.bill);
+  @override
+  bool equals(MyBillModel self, MyBillModel other) =>
+      container.isEqual(self.contractNumber, other.contractNumber) &&
+      container.isEqual(self.musterRollNumber, other.musterRollNumber) &&
+      container.isEqual(self.bill, other.bill);
+}
+
+mixin MyBillModelMappable {
+  String toJson() => MyBillModelMapper.container.toJson(this as MyBillModel);
+  Map<String, dynamic> toMap() =>
+      MyBillModelMapper.container.toMap(this as MyBillModel);
+  MyBillModelCopyWith<MyBillModel, MyBillModel, MyBillModel> get copyWith =>
+      _MyBillModelCopyWithImpl(this as MyBillModel, $identity, $identity);
+  @override
+  String toString() => MyBillModelMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          MyBillModelMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => MyBillModelMapper.container.hash(this);
+}
+
+extension MyBillModelValueCopy<$R, $Out extends MyBillModel>
+    on ObjectCopyWith<$R, MyBillModel, $Out> {
+  MyBillModelCopyWith<$R, MyBillModel, $Out> get asMyBillModel =>
+      base.as((v, t, t2) => _MyBillModelCopyWithImpl(v, t, t2));
+}
+
+typedef MyBillModelCopyWithBound = MyBillModel;
+
+abstract class MyBillModelCopyWith<$R, $In extends MyBillModel,
+    $Out extends MyBillModel> implements ObjectCopyWith<$R, $In, $Out> {
+  MyBillModelCopyWith<$R2, $In, $Out2> chain<$R2, $Out2 extends MyBillModel>(
+      Then<MyBillModel, $Out2> t, Then<$Out2, $R2> t2);
+  BillModelCopyWith<$R, BillModel, BillModel>? get bill;
+  $R call({BillModel? bill, String? musterRollNumber, String? contractNumber});
+}
+
+class _MyBillModelCopyWithImpl<$R, $Out extends MyBillModel>
+    extends CopyWithBase<$R, MyBillModel, $Out>
+    implements MyBillModelCopyWith<$R, MyBillModel, $Out> {
+  _MyBillModelCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  MyBillModelCopyWith<$R2, MyBillModel, $Out2>
+      chain<$R2, $Out2 extends MyBillModel>(
+              Then<MyBillModel, $Out2> t, Then<$Out2, $R2> t2) =>
+          _MyBillModelCopyWithImpl($value, t, t2);
+
+  @override
+  BillModelCopyWith<$R, BillModel, BillModel>? get bill =>
+      $value.bill?.copyWith.chain($identity, (v) => call(bill: v));
+  @override
+  $R call(
+          {Object? bill = $none,
+          Object? musterRollNumber = $none,
+          Object? contractNumber = $none}) =>
+      $then(MyBillModel(
+          bill: or(bill, $value.bill),
+          musterRollNumber: or(musterRollNumber, $value.musterRollNumber),
+          contractNumber: or(contractNumber, $value.contractNumber)));
 }
 
 class BillModelMapper extends MapperBase<BillModel> {
@@ -112,6 +228,7 @@ class BillModelMapper extends MapperBase<BillModel> {
       ContractAuditDetailsMapper.container,
       BillDetailsMapper.container,
       PayerMapper.container,
+      BillAdditionalDetailsMapper.container,
     });
 
   @override
@@ -135,7 +252,7 @@ class BillModelMapperElement extends MapperElementBase<BillModel> {
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   BillModel fromMap(Map<String, dynamic> map) => BillModel(
       id: container.$getOpt(map, 'id'),
-      tenantId: container.$getOpt(map, 'tenantId'),
+      tenantId: container.$get(map, 'tenantId'),
       referenceId: container.$getOpt(map, 'referenceId'),
       status: container.$getOpt(map, 'status'),
       dueDate: container.$getOpt(map, 'dueDate'),
@@ -143,12 +260,17 @@ class BillModelMapperElement extends MapperElementBase<BillModel> {
       paymentStatus: container.$getOpt(map, 'paymentStatus'),
       billDate: container.$getOpt(map, 'billDate'),
       billDetails: container.$getOpt(map, 'billDetails'),
-      businessservice: container.$getOpt(map, 'businessservice'),
+      businessService: container.$getOpt(map, 'businessService'),
       fromPeriod: container.$getOpt(map, 'fromPeriod'),
       netPaidAmount: container.$getOpt(map, 'netPaidAmount'),
       netPayableAmount: container.$getOpt(map, 'netPayableAmount'),
       payer: container.$getOpt(map, 'payer'),
-      toPeriod: container.$getOpt(map, 'toPeriod'));
+      toPeriod: container.$getOpt(map, 'toPeriod'),
+      billNumber: container.$getOpt(map, 'billNumber'),
+      wfStatus: container.$getOpt(map, 'wfStatus'),
+      additionalDetails: container.$getOpt(map, 'additionalDetails'),
+      totalAmount: container.$getOpt(map, 'totalAmount'),
+      totalPaidAmount: container.$getOpt(map, 'totalPaidAmount'));
 
   @override
   Function get encoder => encode;
@@ -163,18 +285,24 @@ class BillModelMapperElement extends MapperElementBase<BillModel> {
         'paymentStatus': container.$enc(b.paymentStatus, 'paymentStatus'),
         'billDate': container.$enc(b.billDate, 'billDate'),
         'billDetails': container.$enc(b.billDetails, 'billDetails'),
-        'businessservice': container.$enc(b.businessservice, 'businessservice'),
+        'businessService': container.$enc(b.businessService, 'businessService'),
         'fromPeriod': container.$enc(b.fromPeriod, 'fromPeriod'),
         'netPaidAmount': container.$enc(b.netPaidAmount, 'netPaidAmount'),
         'netPayableAmount':
             container.$enc(b.netPayableAmount, 'netPayableAmount'),
         'payer': container.$enc(b.payer, 'payer'),
-        'toPeriod': container.$enc(b.toPeriod, 'toPeriod')
+        'toPeriod': container.$enc(b.toPeriod, 'toPeriod'),
+        'billNumber': container.$enc(b.billNumber, 'billNumber'),
+        'wfStatus': container.$enc(b.wfStatus, 'wfStatus'),
+        'additionalDetails':
+            container.$enc(b.additionalDetails, 'additionalDetails'),
+        'totalAmount': container.$enc(b.totalAmount, 'totalAmount'),
+        'totalPaidAmount': container.$enc(b.totalPaidAmount, 'totalPaidAmount')
       };
 
   @override
   String stringify(BillModel self) =>
-      'BillModel(tenantId: ${container.asString(self.tenantId)}, id: ${container.asString(self.id)}, billDate: ${container.asString(self.billDate)}, dueDate: ${container.asString(self.dueDate)}, netPayableAmount: ${container.asString(self.netPayableAmount)}, netPaidAmount: ${container.asString(self.netPaidAmount)}, businessservice: ${container.asString(self.businessservice)}, referenceId: ${container.asString(self.referenceId)}, fromPeriod: ${container.asString(self.fromPeriod)}, toPeriod: ${container.asString(self.toPeriod)}, paymentStatus: ${container.asString(self.paymentStatus)}, status: ${container.asString(self.status)}, payer: ${container.asString(self.payer)}, billDetails: ${container.asString(self.billDetails)}, auditDetails: ${container.asString(self.auditDetails)})';
+      'BillModel(tenantId: ${container.asString(self.tenantId)}, id: ${container.asString(self.id)}, billDate: ${container.asString(self.billDate)}, dueDate: ${container.asString(self.dueDate)}, netPayableAmount: ${container.asString(self.netPayableAmount)}, netPaidAmount: ${container.asString(self.netPaidAmount)}, totalAmount: ${container.asString(self.totalAmount)}, totalPaidAmount: ${container.asString(self.totalPaidAmount)}, businessService: ${container.asString(self.businessService)}, billNumber: ${container.asString(self.billNumber)}, referenceId: ${container.asString(self.referenceId)}, fromPeriod: ${container.asString(self.fromPeriod)}, toPeriod: ${container.asString(self.toPeriod)}, paymentStatus: ${container.asString(self.paymentStatus)}, status: ${container.asString(self.status)}, wfStatus: ${container.asString(self.wfStatus)}, payer: ${container.asString(self.payer)}, additionalDetails: ${container.asString(self.additionalDetails)}, billDetails: ${container.asString(self.billDetails)}, auditDetails: ${container.asString(self.auditDetails)})';
   @override
   int hash(BillModel self) =>
       container.hash(self.tenantId) ^
@@ -183,13 +311,18 @@ class BillModelMapperElement extends MapperElementBase<BillModel> {
       container.hash(self.dueDate) ^
       container.hash(self.netPayableAmount) ^
       container.hash(self.netPaidAmount) ^
-      container.hash(self.businessservice) ^
+      container.hash(self.totalAmount) ^
+      container.hash(self.totalPaidAmount) ^
+      container.hash(self.businessService) ^
+      container.hash(self.billNumber) ^
       container.hash(self.referenceId) ^
       container.hash(self.fromPeriod) ^
       container.hash(self.toPeriod) ^
       container.hash(self.paymentStatus) ^
       container.hash(self.status) ^
+      container.hash(self.wfStatus) ^
       container.hash(self.payer) ^
+      container.hash(self.additionalDetails) ^
       container.hash(self.billDetails) ^
       container.hash(self.auditDetails);
   @override
@@ -200,13 +333,18 @@ class BillModelMapperElement extends MapperElementBase<BillModel> {
       container.isEqual(self.dueDate, other.dueDate) &&
       container.isEqual(self.netPayableAmount, other.netPayableAmount) &&
       container.isEqual(self.netPaidAmount, other.netPaidAmount) &&
-      container.isEqual(self.businessservice, other.businessservice) &&
+      container.isEqual(self.totalAmount, other.totalAmount) &&
+      container.isEqual(self.totalPaidAmount, other.totalPaidAmount) &&
+      container.isEqual(self.businessService, other.businessService) &&
+      container.isEqual(self.billNumber, other.billNumber) &&
       container.isEqual(self.referenceId, other.referenceId) &&
       container.isEqual(self.fromPeriod, other.fromPeriod) &&
       container.isEqual(self.toPeriod, other.toPeriod) &&
       container.isEqual(self.paymentStatus, other.paymentStatus) &&
       container.isEqual(self.status, other.status) &&
+      container.isEqual(self.wfStatus, other.wfStatus) &&
       container.isEqual(self.payer, other.payer) &&
+      container.isEqual(self.additionalDetails, other.additionalDetails) &&
       container.isEqual(self.billDetails, other.billDetails) &&
       container.isEqual(self.auditDetails, other.auditDetails);
 }
@@ -245,6 +383,8 @@ abstract class BillModelCopyWith<$R, $In extends BillModel,
   ListCopyWith<$R, BillDetails,
       BillDetailsCopyWith<$R, BillDetails, BillDetails>>? get billDetails;
   PayerCopyWith<$R, Payer, Payer>? get payer;
+  BillAdditionalDetailsCopyWith<$R, BillAdditionalDetails,
+      BillAdditionalDetails>? get additionalDetails;
   $R call(
       {String? id,
       String? tenantId,
@@ -255,12 +395,17 @@ abstract class BillModelCopyWith<$R, $In extends BillModel,
       String? paymentStatus,
       int? billDate,
       List<BillDetails>? billDetails,
-      String? businessservice,
+      String? businessService,
       int? fromPeriod,
       int? netPaidAmount,
       int? netPayableAmount,
       Payer? payer,
-      int? toPeriod});
+      int? toPeriod,
+      String? billNumber,
+      String? wfStatus,
+      BillAdditionalDetails? additionalDetails,
+      int? totalAmount,
+      int? totalPaidAmount});
 }
 
 class _BillModelCopyWithImpl<$R, $Out extends BillModel>
@@ -289,9 +434,14 @@ class _BillModelCopyWithImpl<$R, $Out extends BillModel>
   PayerCopyWith<$R, Payer, Payer>? get payer =>
       $value.payer?.copyWith.chain($identity, (v) => call(payer: v));
   @override
+  BillAdditionalDetailsCopyWith<$R, BillAdditionalDetails,
+          BillAdditionalDetails>?
+      get additionalDetails => $value.additionalDetails?.copyWith
+          .chain($identity, (v) => call(additionalDetails: v));
+  @override
   $R call(
           {Object? id = $none,
-          Object? tenantId = $none,
+          String? tenantId,
           Object? referenceId = $none,
           Object? status = $none,
           Object? dueDate = $none,
@@ -299,15 +449,20 @@ class _BillModelCopyWithImpl<$R, $Out extends BillModel>
           Object? paymentStatus = $none,
           Object? billDate = $none,
           Object? billDetails = $none,
-          Object? businessservice = $none,
+          Object? businessService = $none,
           Object? fromPeriod = $none,
           Object? netPaidAmount = $none,
           Object? netPayableAmount = $none,
           Object? payer = $none,
-          Object? toPeriod = $none}) =>
+          Object? toPeriod = $none,
+          Object? billNumber = $none,
+          Object? wfStatus = $none,
+          Object? additionalDetails = $none,
+          Object? totalAmount = $none,
+          Object? totalPaidAmount = $none}) =>
       $then(BillModel(
           id: or(id, $value.id),
-          tenantId: or(tenantId, $value.tenantId),
+          tenantId: tenantId ?? $value.tenantId,
           referenceId: or(referenceId, $value.referenceId),
           status: or(status, $value.status),
           dueDate: or(dueDate, $value.dueDate),
@@ -315,12 +470,17 @@ class _BillModelCopyWithImpl<$R, $Out extends BillModel>
           paymentStatus: or(paymentStatus, $value.paymentStatus),
           billDate: or(billDate, $value.billDate),
           billDetails: or(billDetails, $value.billDetails),
-          businessservice: or(businessservice, $value.businessservice),
+          businessService: or(businessService, $value.businessService),
           fromPeriod: or(fromPeriod, $value.fromPeriod),
           netPaidAmount: or(netPaidAmount, $value.netPaidAmount),
           netPayableAmount: or(netPayableAmount, $value.netPayableAmount),
           payer: or(payer, $value.payer),
-          toPeriod: or(toPeriod, $value.toPeriod)));
+          toPeriod: or(toPeriod, $value.toPeriod),
+          billNumber: or(billNumber, $value.billNumber),
+          wfStatus: or(wfStatus, $value.wfStatus),
+          additionalDetails: or(additionalDetails, $value.additionalDetails),
+          totalAmount: or(totalAmount, $value.totalAmount),
+          totalPaidAmount: or(totalPaidAmount, $value.totalPaidAmount)));
 }
 
 class PayerMapper extends MapperBase<Payer> {
@@ -652,6 +812,158 @@ class _BillDetailsCopyWithImpl<$R, $Out extends BillDetails>
           lineItems: or(lineItems, $value.lineItems),
           payableLineItems: or(payableLineItems, $value.payableLineItems),
           payee: or(payee, $value.payee)));
+}
+
+class BillAdditionalDetailsMapper extends MapperBase<BillAdditionalDetails> {
+  static MapperContainer container = MapperContainer(
+    mappers: {BillAdditionalDetailsMapper()},
+  );
+
+  @override
+  BillAdditionalDetailsMapperElement createElement(MapperContainer container) {
+    return BillAdditionalDetailsMapperElement._(this, container);
+  }
+
+  @override
+  String get id => 'BillAdditionalDetails';
+
+  static final fromMap = container.fromMap<BillAdditionalDetails>;
+  static final fromJson = container.fromJson<BillAdditionalDetails>;
+}
+
+class BillAdditionalDetailsMapperElement
+    extends MapperElementBase<BillAdditionalDetails> {
+  BillAdditionalDetailsMapperElement._(super.mapper, super.container);
+
+  @override
+  Function get decoder => decode;
+  BillAdditionalDetails decode(dynamic v) =>
+      checkedType(v, (Map<String, dynamic> map) => fromMap(map));
+  BillAdditionalDetails fromMap(Map<String, dynamic> map) =>
+      BillAdditionalDetails(
+          invoiceNumber: container.$getOpt(map, 'invoiceNumber'),
+          locality: container.$getOpt(map, 'locality'),
+          orgName: container.$getOpt(map, 'orgName'),
+          projectDesc: container.$getOpt(map, 'projectDesc'),
+          projectName: container.$getOpt(map, 'projectName'),
+          projectId: container.$getOpt(map, 'projectId'),
+          ward: container.$getOpt(map, 'ward'),
+          totalBillAmount: container.$getOpt(map, 'totalBillAmount'));
+
+  @override
+  Function get encoder => encode;
+  dynamic encode(BillAdditionalDetails v) => toMap(v);
+  Map<String, dynamic> toMap(BillAdditionalDetails b) => {
+        'invoiceNumber': container.$enc(b.invoiceNumber, 'invoiceNumber'),
+        'locality': container.$enc(b.locality, 'locality'),
+        'orgName': container.$enc(b.orgName, 'orgName'),
+        'projectDesc': container.$enc(b.projectDesc, 'projectDesc'),
+        'projectName': container.$enc(b.projectName, 'projectName'),
+        'projectId': container.$enc(b.projectId, 'projectId'),
+        'ward': container.$enc(b.ward, 'ward'),
+        'totalBillAmount': container.$enc(b.totalBillAmount, 'totalBillAmount')
+      };
+
+  @override
+  String stringify(BillAdditionalDetails self) =>
+      'BillAdditionalDetails(invoiceNumber: ${container.asString(self.invoiceNumber)}, locality: ${container.asString(self.locality)}, orgName: ${container.asString(self.orgName)}, projectDesc: ${container.asString(self.projectDesc)}, projectName: ${container.asString(self.projectName)}, projectId: ${container.asString(self.projectId)}, totalBillAmount: ${container.asString(self.totalBillAmount)}, ward: ${container.asString(self.ward)})';
+  @override
+  int hash(BillAdditionalDetails self) =>
+      container.hash(self.invoiceNumber) ^
+      container.hash(self.locality) ^
+      container.hash(self.orgName) ^
+      container.hash(self.projectDesc) ^
+      container.hash(self.projectName) ^
+      container.hash(self.projectId) ^
+      container.hash(self.totalBillAmount) ^
+      container.hash(self.ward);
+  @override
+  bool equals(BillAdditionalDetails self, BillAdditionalDetails other) =>
+      container.isEqual(self.invoiceNumber, other.invoiceNumber) &&
+      container.isEqual(self.locality, other.locality) &&
+      container.isEqual(self.orgName, other.orgName) &&
+      container.isEqual(self.projectDesc, other.projectDesc) &&
+      container.isEqual(self.projectName, other.projectName) &&
+      container.isEqual(self.projectId, other.projectId) &&
+      container.isEqual(self.totalBillAmount, other.totalBillAmount) &&
+      container.isEqual(self.ward, other.ward);
+}
+
+mixin BillAdditionalDetailsMappable {
+  String toJson() => BillAdditionalDetailsMapper.container
+      .toJson(this as BillAdditionalDetails);
+  Map<String, dynamic> toMap() => BillAdditionalDetailsMapper.container
+      .toMap(this as BillAdditionalDetails);
+  BillAdditionalDetailsCopyWith<BillAdditionalDetails, BillAdditionalDetails,
+          BillAdditionalDetails>
+      get copyWith => _BillAdditionalDetailsCopyWithImpl(
+          this as BillAdditionalDetails, $identity, $identity);
+  @override
+  String toString() => BillAdditionalDetailsMapper.container.asString(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (runtimeType == other.runtimeType &&
+          BillAdditionalDetailsMapper.container.isEqual(this, other));
+  @override
+  int get hashCode => BillAdditionalDetailsMapper.container.hash(this);
+}
+
+extension BillAdditionalDetailsValueCopy<$R, $Out extends BillAdditionalDetails>
+    on ObjectCopyWith<$R, BillAdditionalDetails, $Out> {
+  BillAdditionalDetailsCopyWith<$R, BillAdditionalDetails, $Out>
+      get asBillAdditionalDetails =>
+          base.as((v, t, t2) => _BillAdditionalDetailsCopyWithImpl(v, t, t2));
+}
+
+typedef BillAdditionalDetailsCopyWithBound = BillAdditionalDetails;
+
+abstract class BillAdditionalDetailsCopyWith<$R,
+        $In extends BillAdditionalDetails, $Out extends BillAdditionalDetails>
+    implements ObjectCopyWith<$R, $In, $Out> {
+  BillAdditionalDetailsCopyWith<$R2, $In, $Out2>
+      chain<$R2, $Out2 extends BillAdditionalDetails>(
+          Then<BillAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
+  $R call(
+      {String? invoiceNumber,
+      String? locality,
+      String? orgName,
+      String? projectDesc,
+      String? projectName,
+      String? projectId,
+      String? ward,
+      String? totalBillAmount});
+}
+
+class _BillAdditionalDetailsCopyWithImpl<$R, $Out extends BillAdditionalDetails>
+    extends CopyWithBase<$R, BillAdditionalDetails, $Out>
+    implements BillAdditionalDetailsCopyWith<$R, BillAdditionalDetails, $Out> {
+  _BillAdditionalDetailsCopyWithImpl(super.value, super.then, super.then2);
+  @override
+  BillAdditionalDetailsCopyWith<$R2, BillAdditionalDetails, $Out2>
+      chain<$R2, $Out2 extends BillAdditionalDetails>(
+              Then<BillAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2) =>
+          _BillAdditionalDetailsCopyWithImpl($value, t, t2);
+
+  @override
+  $R call(
+          {Object? invoiceNumber = $none,
+          Object? locality = $none,
+          Object? orgName = $none,
+          Object? projectDesc = $none,
+          Object? projectName = $none,
+          Object? projectId = $none,
+          Object? ward = $none,
+          Object? totalBillAmount = $none}) =>
+      $then(BillAdditionalDetails(
+          invoiceNumber: or(invoiceNumber, $value.invoiceNumber),
+          locality: or(locality, $value.locality),
+          orgName: or(orgName, $value.orgName),
+          projectDesc: or(projectDesc, $value.projectDesc),
+          projectName: or(projectName, $value.projectName),
+          projectId: or(projectId, $value.projectId),
+          ward: or(ward, $value.ward),
+          totalBillAmount: or(totalBillAmount, $value.totalBillAmount)));
 }
 
 class PayeeMapper extends MapperBase<Payee> {

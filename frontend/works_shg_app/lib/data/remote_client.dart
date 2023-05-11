@@ -2,9 +2,12 @@ import 'dart:async';
 
 import "package:dio/dio.dart";
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/Env/app_config.dart';
+import 'package:works_shg_app/utils/constants.dart';
 
 import '../Env/env_config.dart';
+import '../blocs/auth/auth.dart';
 import '../models/request_info/request_info_model.dart';
 
 class Client {
@@ -48,7 +51,10 @@ class ApiInterceptors extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     // ignore: no-empty-block
-    if (err.type == DioErrorType.response && err.response?.statusCode == 401) {
+    if (err.type == DioErrorType.response && err.response?.statusCode == 500) {
+      scaffoldMessengerKey.currentContext!
+          .read<AuthBloc>()
+          .add(const AuthLogoutEvent());
     } else {
       handler.next(err);
     }

@@ -73,6 +73,7 @@ class MusterAdditionalDetails with _$MusterAdditionalDetails {
     String? billType,
     String? projectId,
     String? projectName,
+    String? projectDesc,
     String? contractId,
   }) = _MusterAdditionalDetails;
 

@@ -5,45 +5,66 @@ import '../works/contracts_model.dart';
 part 'my_bills_model.mapper.dart';
 
 @MappableClass()
-class MyBillsModel with MyBillsModelMappable {
-  List<BillModel>? bills;
-  MyBillsModel({this.bills});
+class MyBillsListModel with MyBillsListModelMappable {
+  List<MyBillModel>? bills;
+  MyBillsListModel({this.bills});
+}
+
+@MappableClass()
+class MyBillModel with MyBillModelMappable {
+  String? contractNumber;
+  String? musterRollNumber;
+  BillModel? bill;
+  MyBillModel({this.bill,
+  this.musterRollNumber,
+  this.contractNumber,});
 }
 
 @MappableClass()
 class BillModel with BillModelMappable {
-  String? tenantId;
+  String tenantId;
   String? id;
   int? billDate;
   int? dueDate;
   int? netPayableAmount;
   int? netPaidAmount;
-  String? businessservice;
+  int? totalAmount;
+  int? totalPaidAmount;
+  String? businessService;
+  String? billNumber;
   String? referenceId;
   int? fromPeriod;
   int? toPeriod;
   String? paymentStatus;
   String? status;
+  String? wfStatus;
   Payer? payer;
+  BillAdditionalDetails? additionalDetails;
   List<BillDetails>? billDetails;
   ContractAuditDetails? auditDetails;
 
-  BillModel(
-      {this.id,
-      this.tenantId,
-      this.referenceId,
-      this.status,
-      this.dueDate,
-      this.auditDetails,
-      this.paymentStatus,
-      this.billDate,
-      this.billDetails,
-      this.businessservice,
-      this.fromPeriod,
-      this.netPaidAmount,
-      this.netPayableAmount,
-      this.payer,
-      this.toPeriod});
+  BillModel({
+    this.id,
+    required this.tenantId,
+    this.referenceId,
+    this.status,
+    this.dueDate,
+    this.auditDetails,
+    this.paymentStatus,
+    this.billDate,
+    this.billDetails,
+    this.businessService,
+    this.fromPeriod,
+    this.netPaidAmount,
+    this.netPayableAmount,
+    this.payer,
+    this.toPeriod,
+    this.billNumber,
+    this.wfStatus,
+    this.additionalDetails,
+    this.totalAmount,
+    this.totalPaidAmount,
+  });
 }
 
 @MappableClass()
@@ -86,6 +107,27 @@ class BillDetails with BillDetailsMappable {
       this.lineItems,
       this.payableLineItems,
       this.payee});
+}
+
+@MappableClass()
+class BillAdditionalDetails with BillAdditionalDetailsMappable {
+  String? invoiceNumber;
+  String? locality;
+  String? orgName;
+  String? projectDesc;
+  String? projectName;
+  String? projectId;
+  String? totalBillAmount;
+  String? ward;
+  BillAdditionalDetails(
+      {this.invoiceNumber,
+      this.locality,
+      this.orgName,
+      this.projectDesc,
+      this.projectName,
+      this.projectId,
+      this.ward,
+      this.totalBillAmount});
 }
 
 @MappableClass()

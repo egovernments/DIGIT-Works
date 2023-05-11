@@ -18,6 +18,7 @@ class IndividualSearchBloc
     extends Bloc<IndividualSearchEvent, IndividualSearchState> {
   IndividualSearchBloc(super.initialState) {
     on<SearchIndividualEvent>(_onSearch);
+    on<SearchIndividualNameEvent>(_onNameSearch);
     on<SearchIndividualIdEvent>(_onIdSearch);
     on<DisposeSearchIndividualEvent>(_onDispose);
   }
@@ -38,6 +39,31 @@ class IndividualSearchBloc
           },
               body: {
             "Individual": {"mobileNumber": event.mobileNumber}
+          });
+      emit(IndividualSearchState.loaded(individualListModel));
+    } on DioError catch (e) {
+      emit(IndividualSearchState.error(e.response?.data['Errors'][0]['code']));
+    }
+  }
+
+  FutureOr<void> _onNameSearch(
+      SearchIndividualNameEvent event, IndividualSearchEmitter emit) async {
+    Client client = Client();
+    try {
+      emit(const IndividualSearchState.initial());
+      emit(const IndividualSearchState.loading());
+      IndividualListModel individualListModel =
+          await IndividualRepository(client.init()).searchIndividual(
+              url: Urls.attendanceRegisterServices.individualSearch,
+              queryParameters: {
+            "offset": '0',
+            "limit": '100',
+            "tenantId": event.tenant.toString(),
+          },
+              body: {
+            "Individual": {
+              "name": {"givenName": event.name}
+            }
           });
       emit(IndividualSearchState.loaded(individualListModel));
     } on DioError catch (e) {
@@ -79,6 +105,9 @@ class IndividualSearchEvent with _$IndividualSearchEvent {
   const factory IndividualSearchEvent.search(
       {required String tenant,
       required String mobileNumber}) = SearchIndividualEvent;
+  const factory IndividualSearchEvent.nameSearch(
+      {required String tenant,
+      required String name}) = SearchIndividualNameEvent;
   const factory IndividualSearchEvent.idSearch(
       {required String tenant, List<String>? ids}) = SearchIndividualIdEvent;
   const factory IndividualSearchEvent.dispose() = DisposeSearchIndividualEvent;

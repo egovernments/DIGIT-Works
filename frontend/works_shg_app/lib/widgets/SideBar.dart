@@ -129,8 +129,7 @@ class _SideBar extends State<SideBar> {
                           onChanged: (data) async {
                             context.read<AppInitializationBloc>().add(
                                 AppInitializationSetupEvent(
-                                    selectedLangIndex:
-                                        data.value != 'en_IN' ? 1 : 0));
+                                    selectedLang: data.value));
                             context.read<LocalizationBloc>().add(
                                 OnLoadLocalizationEvent(
                                     module: widget.module,
@@ -142,8 +141,7 @@ class _SideBar extends State<SideBar> {
                                     locale: data.value));
                             context.read<AppInitializationBloc>().add(
                                 AppInitializationSetupEvent(
-                                    selectedLangIndex:
-                                        data.value != 'en_IN' ? 1 : 0));
+                                    selectedLang: data.value));
                             await AppLocalizations(
                               Locale(data.value.split('_').first,
                                   data.value.split('_').last),
