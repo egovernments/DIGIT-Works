@@ -31,7 +31,7 @@ class MyBillsPage extends StatefulWidget {
 class _MyBillsPage extends State<MyBillsPage> {
   bool hasLoaded = true;
   bool inProgress = true;
-  List<Map<String, dynamic>> workOrderList = [];
+  List<Map<String, dynamic>> billList = [];
 
   @override
   void initState() {
@@ -55,6 +55,21 @@ class _MyBillsPage extends State<MyBillsPage> {
         ),
         drawer: DrawerWrapper(
             Drawer(child: SideBar(module: CommonMethods.getLocaleModules()))),
+        bottomNavigationBar: BlocBuilder<SearchMyBillsBloc, SearchMyBillsState>(
+            builder: (context, state) {
+          return state.maybeWhen(
+              orElse: () => const SizedBox.shrink(),
+              loading: () => shg_loader.Loaders.circularLoader(context),
+              loaded: (MyBillsListModel? myBillsModel) {
+                return const SizedBox(
+                  height: 30,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: PoweredByDigit(),
+                  ),
+                );
+              });
+        }),
         body: SingleChildScrollView(
           child: BlocListener<SearchMyBillsBloc, SearchMyBillsState>(
             listener: (context, state) {
@@ -64,7 +79,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                   error: (String? error) => Notifiers.getToastMessage(
                       context, error.toString(), 'ERROR'),
                   loaded: (MyBillsListModel? myBillsModel) {
-                    workOrderList = myBillsModel!.bills!.map((e) {
+                    billList = myBillsModel!.bills!.map((e) {
                       if (e.bill?.businessService == 'EXPENSE.WAGES') {
                         return {
                           i18.myBills.billType: t.translate(
@@ -155,30 +170,31 @@ class _MyBillsPage extends State<MyBillsPage> {
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(
-                                      '${AppLocalizations.of(context).translate(i18.home.myWorks)} (${workOrderList.length})',
+                                      '${AppLocalizations.of(context).translate(i18.home.myWorks)} (${billList.length})',
                                       style: Theme.of(context)
                                           .textTheme
                                           .displayMedium,
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
-                                  workOrderList.isNotEmpty
+                                  billList.isNotEmpty
                                       ? WorkDetailsCard(
-                                          workOrderList,
+                                          billList,
                                         )
                                       : EmptyImage(
                                           label: AppLocalizations.of(context)
-                                              .translate(i18.workOrder
-                                                  .noWorkOrderAssigned),
+                                              .translate(i18.myBills.noBills),
                                           align: Alignment.center,
                                         ),
                                   const SizedBox(
                                     height: 16.0,
                                   ),
-                                  const Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: PoweredByDigit(),
-                                  )
+                                  billList.length > 1
+                                      ? const Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: PoweredByDigit(),
+                                        )
+                                      : const SizedBox.shrink()
                                 ]),
                           ]));
             }),
