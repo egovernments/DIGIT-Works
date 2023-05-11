@@ -109,12 +109,6 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
-    ManageAttendanceRegisterRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: const ManageAttendanceRegisterPage(),
-      );
-    },
     TrackAttendanceInboxRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
@@ -226,8 +220,15 @@ class _$AppRouter extends RootStackRouter {
           path: '/',
           children: [
             RouteConfig(
-              HomeRoute.name,
+              '#redirect',
               path: '',
+              parent: AuthenticatedRouteWrapper.name,
+              redirectTo: 'home',
+              fullMatch: true,
+            ),
+            RouteConfig(
+              HomeRoute.name,
+              path: 'home',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -253,11 +254,6 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               SHGInboxRoute.name,
               path: 'shg-inbox/:tenantId/:musterRollNo/:sentBackCode',
-              parent: AuthenticatedRouteWrapper.name,
-            ),
-            RouteConfig(
-              ManageAttendanceRegisterRoute.name,
-              path: 'manage-attendance',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -385,7 +381,7 @@ class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute()
       : super(
           HomeRoute.name,
-          path: '',
+          path: 'home',
         );
 
   static const String name = 'HomeRoute';
@@ -518,18 +514,6 @@ class SHGInboxRouteArgs {
   String toString() {
     return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, sentBackCode: $sentBackCode, key: $key}';
   }
-}
-
-/// generated route for
-/// [ManageAttendanceRegisterPage]
-class ManageAttendanceRegisterRoute extends PageRouteInfo<void> {
-  const ManageAttendanceRegisterRoute()
-      : super(
-          ManageAttendanceRegisterRoute.name,
-          path: 'manage-attendance',
-        );
-
-  static const String name = 'ManageAttendanceRegisterRoute';
 }
 
 /// generated route for

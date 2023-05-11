@@ -12,10 +12,7 @@ class DigitBaseStepper extends StatefulWidget {
     Key? key,
     this.children,
     this.textChildren,
-    this.nextPreviousButtonsDisabled = true,
     this.stepTappingDisabled = true,
-    this.previousButtonIcon,
-    this.nextButtonIcon,
     this.onStepReached,
     this.stepColor,
     this.activeStepColor,
@@ -52,10 +49,7 @@ class DigitBaseStepper extends StatefulWidget {
 
   final List<Widget>? children;
   final List<Widget>? textChildren;
-  final bool nextPreviousButtonsDisabled;
   final bool stepTappingDisabled;
-  final Icon? previousButtonIcon;
-  final Icon? nextButtonIcon;
   final OnStepReached? onStepReached;
   final Color? stepColor;
   final Color? activeStepColor;
@@ -265,56 +259,5 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
               color: Colors.grey.shade400,
             ))
         : Container();
-  }
-
-  /// The previous button.
-  Widget _previousButton() {
-    return IgnorePointer(
-      ignoring: _selectedIndex == 0,
-      child: IconButton(
-        visualDensity: VisualDensity.compact,
-        icon: widget.previousButtonIcon ?? const Icon(Icons.arrow_left),
-        onPressed: _goToPreviousStep,
-      ),
-    );
-  }
-
-  /// The next button.
-  Widget _nextButton() {
-    return IgnorePointer(
-      ignoring: _selectedIndex == widget.children!.length - 1,
-      child: IconButton(
-        visualDensity: VisualDensity.compact,
-        icon: widget.nextButtonIcon ?? const Icon(Icons.arrow_right),
-        onPressed: _goToNextStep,
-      ),
-    );
-  }
-
-  /// Contains the logic for going to the next step.
-  void _goToNextStep() {
-    if (_selectedIndex < widget.children!.length - 1 &&
-        widget.steppingEnabled) {
-      setState(() {
-        _selectedIndex++;
-
-        if (widget.onStepReached != null) {
-          widget.onStepReached!(_selectedIndex);
-        }
-      });
-    }
-  }
-
-  /// Controls the logic for going to the previous step.
-  void _goToPreviousStep() {
-    if (_selectedIndex > 0) {
-      setState(() {
-        _selectedIndex--;
-
-        if (widget.onStepReached != null) {
-          widget.onStepReached!(_selectedIndex);
-        }
-      });
-    }
   }
 }

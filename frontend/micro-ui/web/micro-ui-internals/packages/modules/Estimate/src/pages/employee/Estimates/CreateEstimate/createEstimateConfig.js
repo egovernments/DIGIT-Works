@@ -12,6 +12,9 @@ export const createEstimateConfig = () => {
             component: "ViewProject",
             withoutLabel: true,
             key: "projectDetails",
+            customProps:{
+              module:"estimate"
+            }
           },
         ],
       },

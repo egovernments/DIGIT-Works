@@ -85,7 +85,7 @@ const ApplicationDetails = (props) => {
         }
         
       } else if (!action?.redirectionUrl) {
-        if(action?.action === 'EDIT') {
+        if(action?.action === 'RE-SUBMIT') {
           setModify(true)
           setshowEditTitle(true)
         }
@@ -162,9 +162,9 @@ const ApplicationDetails = (props) => {
 
   const getAttendanceResponseHeaderAndMessage = (action) => {
     let response = {}
-    if (action?.includes("VERIFY")) {
-      response.header = t("ATM_ATTENDANCE_VERIFIED")
-      response.message = t("ATM_ATTENDANCE_VERIFIED_SUCCESS")
+    if (action?.includes("RE-SUBMIT")) {
+      response.header = t("ATM_ATTENDANCE_RESUBMITTED")
+      response.message = t("ATM_ATTENDANCE_RESUBMITTED_SUCCESS")
     } else if (action?.includes("REJECT")) {
       response.header = t("ATM_ATTENDANCE_REJECTED")
       response.message = t("ATM_ATTENDANCE_REJECTED_SUCCESS")

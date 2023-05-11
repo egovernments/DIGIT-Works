@@ -1,10 +1,14 @@
+import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:works_shg_app/services/local_storage.dart';
 
 import '../data/repositories/core_repo/core_repository.dart';
@@ -22,6 +26,80 @@ class CommonMethods {
 
   static String getExtension(String url) {
     return url.substring(0, url.indexOf('?')).split('/').last;
+  }
+
+  static Future<void> fetchPackageInfo() async {
+    try {
+      packageInfo = await PackageInfo.fromPlatform();
+    } catch (e, s) {
+      print(e);
+    }
+  }
+
+  void checkVersion(BuildContext context, String? packageName, String? iOSId,
+      String? latestAppVersion) async {
+    try {
+      if (latestAppVersion != null && !kIsWeb) {
+        if (int.parse(packageInfo!.version.split('.').join("").toString()) <
+            int.parse(latestAppVersion.split('.').join("").toString())) {
+          late Uri uri;
+
+          if (Platform.isAndroid) {
+            uri = Uri.https(
+                "play.google.com", "/store/apps/details", {"id": packageName});
+          } else {
+            uri = Uri.https("apps.apple.com", "/in/app/mgramseva/id$iOSId");
+          }
+
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return WillPopScope(
+                    child: AlertDialog(
+                      title: const Text('UPDATE AVAILABLE'),
+                      content: Text(
+                          'Please update the app from ${packageInfo?.version} to $latestAppVersion'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => launchPlayStore(uri, context),
+                            child: const Text('Update'))
+                      ],
+                    ),
+                    onWillPop: () async {
+                      if (Platform.isAndroid) {
+                        SystemNavigator.pop();
+                      } else if (Platform.isIOS) {
+                        exit(0);
+                      }
+                      return true;
+                    });
+              });
+        }
+      }
+    } catch (e) {}
+  }
+
+  void launchPlayStore(Uri appLink, BuildContext context) async {
+    try {
+      if (await canLaunchUrl(appLink)) {
+        await launchUrl(appLink);
+      } else {
+        throw 'Could not launch appStoreLink';
+      }
+    } catch (e) {
+      Navigator.pop(context);
+    }
+  }
+
+  bool containsOnlyLetters(String str) {
+    final regex = RegExp(r'^[a-zA-Z]+$');
+    return regex.hasMatch(str);
+  }
+
+  bool containsOnlyNumbers(String str) {
+    final regex = RegExp(r'^[0-9]+$');
+    return regex.hasMatch(str);
   }
 
   void onTapOfAttachment(
@@ -75,7 +153,7 @@ class CommonMethods {
   }
 
   static String getLocaleModules() {
-    return 'rainmaker-common,rainmaker-common-masters,rainmaker-contracts,rainmaker-attendencemgmt,rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}';
+    return 'rainmaker-common,rainmaker-common-masters,rainmaker-contracts,rainmaker-expenditure,rainmaker-attendencemgmt,rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}';
   }
 
   static DateTime firstDayOfWeek(DateTime date) {
