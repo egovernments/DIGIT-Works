@@ -75,6 +75,7 @@ class Common {
   String get searchByNameAadhaar => 'CORE_SEARCH_BY_NAME_AADHAAR';
   String get searchByName => 'CORE_SEARCH_BY_NAME';
   String get searchByMobileNumber => 'CORE_SEARCH_BY_MOBILE';
+  String get searchByNameMobileNumber => 'CORE_SEARCH_BY_NAME_MOBILE_NO';
   String get mon => 'CORE_MON';
   String get tue => 'CORE_TUE';
   String get wed => 'CORE_WED';

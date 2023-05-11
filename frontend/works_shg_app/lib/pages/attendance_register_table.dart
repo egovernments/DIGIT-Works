@@ -233,7 +233,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                           margin: const EdgeInsets.all(4.0),
                           child: AutoCompleteSearchBar(
                             hintText: AppLocalizations.of(context)
-                                .translate(i18.common.searchByMobileNumber),
+                                .translate(i18.common.searchByNameMobileNumber),
                             controller: searchController,
                             suggestionsBoxController: suggestionsBoxController,
                             onSuggestionSelected: onSuggestionSelected,
