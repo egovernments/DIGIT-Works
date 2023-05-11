@@ -134,7 +134,7 @@ export const UICustomizations = {
           return <span>{t(`WF_EST_${value}`)}</span>;
 
          case "WORKS_ESTIMATED_AMOUNT":
-          return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+          return <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount>
 
          case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;

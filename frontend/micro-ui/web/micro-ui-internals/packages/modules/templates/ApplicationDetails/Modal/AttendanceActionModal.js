@@ -61,11 +61,11 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
           })
         )
         break;
-      case "RESUBMIT":
+      case "RE-SUBMIT":
         submitBasedOnAction(action, 'Resubmit muster roll')
         break;
       case "SAVE":
-        submitBasedOnAction(action, 'Verify muster roll')
+        submitBasedOnAction(action, 'Muster roll Re-Submitted')
         break;
       default:
         break
@@ -86,7 +86,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     switch(selectedAction) {
       case "SAVE":
         musterRoll.individualEntries = saveAttendanceState?.updatePayload
-        workflow.action = 'VERIFYANDFORWARD'
+        workflow.action = 'RE-SUBMIT'
         break;
       case "RESUBMIT":
         musterRoll.additionalDetails = { computeAttendance : true } 
