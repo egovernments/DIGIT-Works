@@ -1419,7 +1419,6 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      console.log(key === "WORKS_SNO",'row, key, column, value, t, searchResult',searchResult?.findIndex(e=>e?.id==row?.id),searchResult?.findIndex(e=>e?.id==row?.id)+1);
       if(key === "WORKS_SNO"){
         return <span>{searchResult?.findIndex(e=>e?.id==row?.id)+1}</span>
       }
