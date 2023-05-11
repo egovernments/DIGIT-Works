@@ -23,7 +23,13 @@ export const DownloadBillConfig = {
                         columns: [
                             {
                                 label: "WORKS_SNO",
-                                jsonPath: ""
+                                jsonPath: "id",
+                                additionalCustomization:true
+                            },
+                            {
+                                label: "WORKS_SNO",
+                                jsonPath: "id",
+                                additionalCustomization:true
                             },
                             {
                                 label: "ES_COMMON_JOB_ID",
