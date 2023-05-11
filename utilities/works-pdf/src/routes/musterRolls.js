@@ -4,8 +4,9 @@ var url = require("url");
 var config = require("../config");
 
 var { search_musterRoll, create_pdf } = require("../api");
+var {searchEstimateFormusterRoll,create_pdf  }= require("../api");
 var { search_contract, create_pdf } = require("../api");
-var { search_mdmsWageSeekerSkills, create_pdf } = require("../api");
+var { search_mdmsWageSeekerSkills,create_pdf } = require("../api");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 
 function renderError(res, errorMessage, errorCode) {
@@ -20,6 +21,8 @@ router.post(
         var tenantId = req.query.tenantId;
         var musterRollNumber = req.query.musterRollNumber;
         var requestinfo = req.body;
+        var musterRollId = req.query.musterRollId;
+        
         if (requestinfo == undefined) {
             return renderError(res, "requestinfo can not be null", 400)
         }
@@ -36,7 +39,6 @@ router.post(
             }
             catch (ex) {
                 if (ex.response && ex.response.data) console.log(ex.response.data);
-
                 return renderError(res, "Failed to query details of the muster roll", 500);
             }
             try {
@@ -59,8 +61,19 @@ router.post(
             var muster = resMuster.data;
             var contract = resContract.data;
             var mdms = resMdms.data.MdmsRes['common-masters'].WageSeekerSkills
+            
+            var esrequestinfo = {}
+            var musterRollId = muster.musterRolls[0].id;
+            let criteria = {
+                "tenantId": tenantId,
+                "musterRollId": [musterRollId]
+            }
+            esrequestinfo['criteria'] = criteria
+            esrequestinfo['RequestInfo'] = requestinfo["RequestInfo"]
+            searchEstimateRes = await searchEstimateFormusterRoll(esrequestinfo);
+            totalWageAmount = searchEstimateRes.data.calculation.totalAmount;
 
-            if (muster && muster.musterRolls && muster.musterRolls.length > 0 && contract && contract.contracts && mdms && mdms.length > 0) {
+            if (muster && muster.musterRolls && muster.musterRolls.length > 0 && contract && contract.contracts && mdms && mdms.length > 0 && totalWageAmount) {
 
                 var pdfResponse;
                 var pdfkey = config.pdf.nominal_muster_roll_template;
@@ -69,17 +82,16 @@ router.post(
                     muster.musterRolls[0].projectDesc = contract.contracts[0].additionalDetails.projectDesc;
                     muster.musterRolls[0].cboName = contract.contracts[0].additionalDetails.cboName;
                     muster.musterRolls[0].projectId = contract.contracts[0].additionalDetails.projectId;
+                    muster.musterRolls[0].totalWageAmount = totalWageAmount;
                 }
                 else {
                     muster.musterRolls[0].rollOfCbo = 'NA';
                     muster.musterRolls[0].projectDesc = 'NA';
                     muster.musterRolls[0].cboName = 'NA';
-                    muster.musterRolls[0].projectId = 'NA';
-
-
-
+                    muster.musterRolls[0].projectId = 'NA'; 
+                    muster.musterRolls[0].totalWageAmount= 'NA';                  
                 }
-
+                
                 var mdms = mdms.reduce((modified, actual) => {
                     modified[actual.code] = actual.amount;
                     return modified;
@@ -90,7 +102,6 @@ router.post(
                 }))
 
                 try {
-
                     pdfResponse = await create_pdf(
                         tenantId,
                         pdfkey,
