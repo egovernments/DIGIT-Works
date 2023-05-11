@@ -27,11 +27,6 @@ export const DownloadBillConfig = {
                                 additionalCustomization:true
                             },
                             {
-                                label: "WORKS_SNO",
-                                jsonPath: "id",
-                                additionalCustomization:true
-                            },
-                            {
                                 label: "ES_COMMON_JOB_ID",
                                 jsonPath: "id"
                             },
