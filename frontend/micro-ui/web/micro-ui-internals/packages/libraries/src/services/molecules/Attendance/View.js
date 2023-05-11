@@ -30,7 +30,7 @@ const getWeekAttendance = (data) => {
 
 const getAttendanceTableData = async(data, skills, t, expenseCalculations) => {
   let tableData = {}
-
+  
   if(data?.individualEntries?.length > 0) {
     data?.individualEntries.forEach((item, index) => {
       let tableRow = {}
@@ -40,9 +40,9 @@ const getAttendanceTableData = async(data, skills, t, expenseCalculations) => {
       tableRow.actualWorkingDays = item?.actualTotalAttendance || 0
       tableRow.nameOfIndividual = item?.additionalDetails?.userName || t("NA")
       tableRow.guardianName = item?.additionalDetails?.fatherName  || t("NA")
-      tableRow.skill = skills[item?.additionalDetails?.skillCode]?.name || t("NA")
+      tableRow.skill = skills[item?.additionalDetails?.skillCode]?.code || t("NA")
       tableRow.amount = skills[item?.additionalDetails?.skillCode]?.amount * item?.actualTotalAttendance || 0
-      tableRow.modifiedAmount = expenseCalculations?.filter(data=>data?.referenceId === item?.individualId)?.[0]?.lineItems?.[0]?.amount || 0;
+      tableRow.modifiedAmount = expenseCalculations?.filter(data=>data?.payee?.identifier === item?.individualId)?.[0]?.lineItems?.[0]?.amount || 0;
       tableRow.modifiedWorkingDays = item?.modifiedTotalAttendance ? item?.modifiedTotalAttendance : item?.actualTotalAttendance
       tableRow.bankAccountDetails = {
         accountNo : item?.additionalDetails?.bankDetails || t("NA"),

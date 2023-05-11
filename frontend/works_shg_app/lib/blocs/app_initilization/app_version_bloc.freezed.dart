@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'search_my_bills.dart';
+part of 'app_version_bloc.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,52 +15,52 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$SearchMyBillsEvent {
+mixin _$AppVersionBlocEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function() getAppVersion,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function()? getAppVersion,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function()? getAppVersion,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(MyBillsSearchEvent value) search,
+    required TResult Function(GetAppVersionEvent value) getAppVersion,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(MyBillsSearchEvent value)? search,
+    TResult? Function(GetAppVersionEvent value)? getAppVersion,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(MyBillsSearchEvent value)? search,
+    TResult Function(GetAppVersionEvent value)? getAppVersion,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SearchMyBillsEventCopyWith<$Res> {
-  factory $SearchMyBillsEventCopyWith(
-          SearchMyBillsEvent value, $Res Function(SearchMyBillsEvent) then) =
-      _$SearchMyBillsEventCopyWithImpl<$Res, SearchMyBillsEvent>;
+abstract class $AppVersionBlocEventCopyWith<$Res> {
+  factory $AppVersionBlocEventCopyWith(
+          AppVersionBlocEvent value, $Res Function(AppVersionBlocEvent) then) =
+      _$AppVersionBlocEventCopyWithImpl<$Res, AppVersionBlocEvent>;
 }
 
 /// @nodoc
-class _$SearchMyBillsEventCopyWithImpl<$Res, $Val extends SearchMyBillsEvent>
-    implements $SearchMyBillsEventCopyWith<$Res> {
-  _$SearchMyBillsEventCopyWithImpl(this._value, this._then);
+class _$AppVersionBlocEventCopyWithImpl<$Res, $Val extends AppVersionBlocEvent>
+    implements $AppVersionBlocEventCopyWith<$Res> {
+  _$AppVersionBlocEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -69,43 +69,35 @@ class _$SearchMyBillsEventCopyWithImpl<$Res, $Val extends SearchMyBillsEvent>
 }
 
 /// @nodoc
-abstract class _$$MyBillsSearchEventCopyWith<$Res> {
-  factory _$$MyBillsSearchEventCopyWith(_$MyBillsSearchEvent value,
-          $Res Function(_$MyBillsSearchEvent) then) =
-      __$$MyBillsSearchEventCopyWithImpl<$Res>;
+abstract class _$$GetAppVersionEventCopyWith<$Res> {
+  factory _$$GetAppVersionEventCopyWith(_$GetAppVersionEvent value,
+          $Res Function(_$GetAppVersionEvent) then) =
+      __$$GetAppVersionEventCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$MyBillsSearchEventCopyWithImpl<$Res>
-    extends _$SearchMyBillsEventCopyWithImpl<$Res, _$MyBillsSearchEvent>
-    implements _$$MyBillsSearchEventCopyWith<$Res> {
-  __$$MyBillsSearchEventCopyWithImpl(
-      _$MyBillsSearchEvent _value, $Res Function(_$MyBillsSearchEvent) _then)
+class __$$GetAppVersionEventCopyWithImpl<$Res>
+    extends _$AppVersionBlocEventCopyWithImpl<$Res, _$GetAppVersionEvent>
+    implements _$$GetAppVersionEventCopyWith<$Res> {
+  __$$GetAppVersionEventCopyWithImpl(
+      _$GetAppVersionEvent _value, $Res Function(_$GetAppVersionEvent) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$MyBillsSearchEvent
-    with DiagnosticableTreeMixin
-    implements MyBillsSearchEvent {
-  const _$MyBillsSearchEvent();
+class _$GetAppVersionEvent implements GetAppVersionEvent {
+  const _$GetAppVersionEvent();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchMyBillsEvent.search()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'SearchMyBillsEvent.search'));
+  String toString() {
+    return 'AppVersionBlocEvent.getAppVersion()';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MyBillsSearchEvent);
+        (other.runtimeType == runtimeType && other is _$GetAppVersionEvent);
   }
 
   @override
@@ -114,27 +106,27 @@ class _$MyBillsSearchEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function() getAppVersion,
   }) {
-    return search();
+    return getAppVersion();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function()? getAppVersion,
   }) {
-    return search?.call();
+    return getAppVersion?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function()? getAppVersion,
     required TResult orElse(),
   }) {
-    if (search != null) {
-      return search();
+    if (getAppVersion != null) {
+      return getAppVersion();
     }
     return orElse();
   }
@@ -142,43 +134,43 @@ class _$MyBillsSearchEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(MyBillsSearchEvent value) search,
+    required TResult Function(GetAppVersionEvent value) getAppVersion,
   }) {
-    return search(this);
+    return getAppVersion(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(MyBillsSearchEvent value)? search,
+    TResult? Function(GetAppVersionEvent value)? getAppVersion,
   }) {
-    return search?.call(this);
+    return getAppVersion?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(MyBillsSearchEvent value)? search,
+    TResult Function(GetAppVersionEvent value)? getAppVersion,
     required TResult orElse(),
   }) {
-    if (search != null) {
-      return search(this);
+    if (getAppVersion != null) {
+      return getAppVersion(this);
     }
     return orElse();
   }
 }
 
-abstract class MyBillsSearchEvent implements SearchMyBillsEvent {
-  const factory MyBillsSearchEvent() = _$MyBillsSearchEvent;
+abstract class GetAppVersionEvent implements AppVersionBlocEvent {
+  const factory GetAppVersionEvent() = _$GetAppVersionEvent;
 }
 
 /// @nodoc
-mixin _$SearchMyBillsState {
+mixin _$AppVersionBlocState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MyBillsListModel? contractsModel) loaded,
+    required TResult Function(AppVersionModel? cboAppVersion) loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -186,7 +178,7 @@ mixin _$SearchMyBillsState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MyBillsListModel? contractsModel)? loaded,
+    TResult? Function(AppVersionModel? cboAppVersion)? loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -194,7 +186,7 @@ mixin _$SearchMyBillsState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MyBillsListModel? contractsModel)? loaded,
+    TResult Function(AppVersionModel? cboAppVersion)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -227,16 +219,16 @@ mixin _$SearchMyBillsState {
 }
 
 /// @nodoc
-abstract class $SearchMyBillsStateCopyWith<$Res> {
-  factory $SearchMyBillsStateCopyWith(
-          SearchMyBillsState value, $Res Function(SearchMyBillsState) then) =
-      _$SearchMyBillsStateCopyWithImpl<$Res, SearchMyBillsState>;
+abstract class $AppVersionBlocStateCopyWith<$Res> {
+  factory $AppVersionBlocStateCopyWith(
+          AppVersionBlocState value, $Res Function(AppVersionBlocState) then) =
+      _$AppVersionBlocStateCopyWithImpl<$Res, AppVersionBlocState>;
 }
 
 /// @nodoc
-class _$SearchMyBillsStateCopyWithImpl<$Res, $Val extends SearchMyBillsState>
-    implements $SearchMyBillsStateCopyWith<$Res> {
-  _$SearchMyBillsStateCopyWithImpl(this._value, this._then);
+class _$AppVersionBlocStateCopyWithImpl<$Res, $Val extends AppVersionBlocState>
+    implements $AppVersionBlocStateCopyWith<$Res> {
+  _$AppVersionBlocStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -253,7 +245,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$SearchMyBillsStateCopyWithImpl<$Res, _$_Initial>
+    extends _$AppVersionBlocStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -261,18 +253,12 @@ class __$$_InitialCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Initial extends _Initial with DiagnosticableTreeMixin {
+class _$_Initial extends _Initial {
   const _$_Initial() : super._();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchMyBillsState.initial()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'SearchMyBillsState.initial'));
+  String toString() {
+    return 'AppVersionBlocState.initial()';
   }
 
   @override
@@ -289,7 +275,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MyBillsListModel? contractsModel) loaded,
+    required TResult Function(AppVersionModel? cboAppVersion) loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -300,7 +286,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MyBillsListModel? contractsModel)? loaded,
+    TResult? Function(AppVersionModel? cboAppVersion)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -311,7 +297,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MyBillsListModel? contractsModel)? loaded,
+    TResult Function(AppVersionModel? cboAppVersion)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -359,7 +345,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Initial extends SearchMyBillsState {
+abstract class _Initial extends AppVersionBlocState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -373,7 +359,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$SearchMyBillsStateCopyWithImpl<$Res, _$_Loading>
+    extends _$AppVersionBlocStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -381,18 +367,12 @@ class __$$_LoadingCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loading extends _Loading with DiagnosticableTreeMixin {
+class _$_Loading extends _Loading {
   const _$_Loading() : super._();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchMyBillsState.loading()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'SearchMyBillsState.loading'));
+  String toString() {
+    return 'AppVersionBlocState.loading()';
   }
 
   @override
@@ -409,7 +389,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MyBillsListModel? contractsModel) loaded,
+    required TResult Function(AppVersionModel? cboAppVersion) loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -420,7 +400,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MyBillsListModel? contractsModel)? loaded,
+    TResult? Function(AppVersionModel? cboAppVersion)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -431,7 +411,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MyBillsListModel? contractsModel)? loaded,
+    TResult Function(AppVersionModel? cboAppVersion)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -479,7 +459,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loading extends SearchMyBillsState {
+abstract class _Loading extends AppVersionBlocState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -489,12 +469,14 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({MyBillsListModel? contractsModel});
+  $Res call({AppVersionModel? cboAppVersion});
+
+  $AppVersionModelCopyWith<$Res>? get cboAppVersion;
 }
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$SearchMyBillsStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$AppVersionBlocStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -502,36 +484,40 @@ class __$$_LoadedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? contractsModel = freezed,
+    Object? cboAppVersion = freezed,
   }) {
     return _then(_$_Loaded(
-      freezed == contractsModel
-          ? _value.contractsModel
-          : contractsModel // ignore: cast_nullable_to_non_nullable
-              as MyBillsListModel?,
+      freezed == cboAppVersion
+          ? _value.cboAppVersion
+          : cboAppVersion // ignore: cast_nullable_to_non_nullable
+              as AppVersionModel?,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AppVersionModelCopyWith<$Res>? get cboAppVersion {
+    if (_value.cboAppVersion == null) {
+      return null;
+    }
+
+    return $AppVersionModelCopyWith<$Res>(_value.cboAppVersion!, (value) {
+      return _then(_value.copyWith(cboAppVersion: value));
+    });
   }
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.contractsModel) : super._();
+class _$_Loaded extends _Loaded {
+  const _$_Loaded(this.cboAppVersion) : super._();
 
   @override
-  final MyBillsListModel? contractsModel;
+  final AppVersionModel? cboAppVersion;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchMyBillsState.loaded(contractsModel: $contractsModel)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'SearchMyBillsState.loaded'))
-      ..add(DiagnosticsProperty('contractsModel', contractsModel));
+  String toString() {
+    return 'AppVersionBlocState.loaded(cboAppVersion: $cboAppVersion)';
   }
 
   @override
@@ -539,12 +525,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
-            (identical(other.contractsModel, contractsModel) ||
-                other.contractsModel == contractsModel));
+            (identical(other.cboAppVersion, cboAppVersion) ||
+                other.cboAppVersion == cboAppVersion));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, contractsModel);
+  int get hashCode => Object.hash(runtimeType, cboAppVersion);
 
   @JsonKey(ignore: true)
   @override
@@ -557,10 +543,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MyBillsListModel? contractsModel) loaded,
+    required TResult Function(AppVersionModel? cboAppVersion) loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(contractsModel);
+    return loaded(cboAppVersion);
   }
 
   @override
@@ -568,10 +554,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MyBillsListModel? contractsModel)? loaded,
+    TResult? Function(AppVersionModel? cboAppVersion)? loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(contractsModel);
+    return loaded?.call(cboAppVersion);
   }
 
   @override
@@ -579,12 +565,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MyBillsListModel? contractsModel)? loaded,
+    TResult Function(AppVersionModel? cboAppVersion)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(contractsModel);
+      return loaded(cboAppVersion);
     }
     return orElse();
   }
@@ -627,11 +613,11 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loaded extends SearchMyBillsState {
-  const factory _Loaded(final MyBillsListModel? contractsModel) = _$_Loaded;
+abstract class _Loaded extends AppVersionBlocState {
+  const factory _Loaded(final AppVersionModel? cboAppVersion) = _$_Loaded;
   const _Loaded._() : super._();
 
-  MyBillsListModel? get contractsModel;
+  AppVersionModel? get cboAppVersion;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -647,7 +633,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$SearchMyBillsStateCopyWithImpl<$Res, _$_Error>
+    extends _$AppVersionBlocStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -668,23 +654,15 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error with DiagnosticableTreeMixin {
+class _$_Error extends _Error {
   const _$_Error(this.error) : super._();
 
   @override
   final String? error;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchMyBillsState.error(error: $error)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'SearchMyBillsState.error'))
-      ..add(DiagnosticsProperty('error', error));
+  String toString() {
+    return 'AppVersionBlocState.error(error: $error)';
   }
 
   @override
@@ -709,7 +687,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MyBillsListModel? contractsModel) loaded,
+    required TResult Function(AppVersionModel? cboAppVersion) loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -720,7 +698,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MyBillsListModel? contractsModel)? loaded,
+    TResult? Function(AppVersionModel? cboAppVersion)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -731,7 +709,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MyBillsListModel? contractsModel)? loaded,
+    TResult Function(AppVersionModel? cboAppVersion)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -779,7 +757,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Error extends SearchMyBillsState {
+abstract class _Error extends AppVersionBlocState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 

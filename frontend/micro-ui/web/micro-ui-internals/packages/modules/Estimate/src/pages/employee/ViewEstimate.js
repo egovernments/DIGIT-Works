@@ -98,7 +98,7 @@ const ViewEstimate = (props) => {
                 estimate && <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
                     {
                         (activeLink === "Project_Details") && (
-                            <ViewProject fromUrl={false} tenantId={tenantId} projectNumber={project?.projectNumber} />
+                            <ViewProject fromUrl={false} tenantId={tenantId} projectNumber={project?.projectNumber} module="estimate" />
                         )
                     }
                     {

@@ -29,8 +29,8 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
                 ]
             ]
         }
-        if(!(doc?.fileStoreId) && doc?.fileName==="Others"){
-            uploadedDocs["ESTIMATE_DOC_OTHERS_name"]="Others"
+        if((doc?.fileStoreId) && doc?.fileType==="Others"){
+            uploadedDocs["ESTIMATE_DOC_OTHERS_name"]=doc?.fileName
         }
     })
     

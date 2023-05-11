@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:works_shg_app/models/init_mdms/init_mdms_model.dart';
 
 import '../../../models/mdms/location_mdms.dart';
 import '../../../models/muster_rolls/business_service_workflow.dart';
@@ -47,6 +48,29 @@ class CommonRepository {
 
       return HomeScreenConfigModel.fromJson(
         json.decode(response.toString())['MdmsRes'],
+      );
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
+    }
+  }
+
+  Future<AppVersionModel> getAppVersion({
+    required String apiEndPoint,
+    required String tenantId,
+    required List<Map> moduleDetails,
+  }) async {
+    try {
+      var response = await _client.post(apiEndPoint, data: {
+        "MdmsCriteria": {
+          "tenantId": tenantId,
+          "moduleDetails": moduleDetails,
+        },
+      });
+
+      return AppVersionModel.fromJson(
+        json.decode(response.toString())['MdmsRes']['common-masters']
+            ['AppVersion'][0],
       );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object

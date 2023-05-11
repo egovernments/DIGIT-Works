@@ -45,12 +45,30 @@ _$_CommonMastersModel _$$_CommonMastersModelFromJson(
       stateInfoListModel: (json['StateInfo'] as List<dynamic>?)
           ?.map((e) => StateInfoListModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      appVersionModel: (json['AppVersion'] as List<dynamic>?)
+          ?.map((e) => AppVersionModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$_CommonMastersModelToJson(
         _$_CommonMastersModel instance) =>
     <String, dynamic>{
       'StateInfo': instance.stateInfoListModel,
+      'AppVersion': instance.appVersionModel,
+    };
+
+_$_AppVersionModel _$$_AppVersionModelFromJson(Map<String, dynamic> json) =>
+    _$_AppVersionModel(
+      version: json['version'] as String?,
+      packageName: json['packageName'] as String?,
+      iOSId: json['iOSId'] as String?,
+    );
+
+Map<String, dynamic> _$$_AppVersionModelToJson(_$_AppVersionModel instance) =>
+    <String, dynamic>{
+      'version': instance.version,
+      'packageName': instance.packageName,
+      'iOSId': instance.iOSId,
     };
 
 _$_StateInfoListModel _$$_StateInfoListModelFromJson(

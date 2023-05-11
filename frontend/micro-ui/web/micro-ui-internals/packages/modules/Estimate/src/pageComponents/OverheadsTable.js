@@ -52,7 +52,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
       ?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0), 0);
 
     setTotalAmount((prevState) => {
-      return result;
+      return Math.round(result);
     });
   };
 
@@ -85,13 +85,13 @@ const OverheadsTable = ({ control, watch, ...props }) => {
         obj = { width: "1rem" };
         break;
       case 2:
-        obj = { width: "60%" };
+        obj = { width: "45%" };
         break;
       case 3:
-        obj = { width: "30rem" };
+        obj = { width: "27rem" };
         break;
       case 4:
-        obj = { width: "30rem" };
+        obj = { width: "27rem" };
         break;
       case 5:
         obj = { width: "3%" };

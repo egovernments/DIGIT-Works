@@ -1,4 +1,4 @@
-import { Header, Toast, WorkflowActions,Loader } from "@egovernments/digit-ui-react-components";
+import { Header, Toast, WorkflowActions,Loader,ActionBar,SubmitBar } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
@@ -92,7 +92,7 @@ const ViewPurchaseBill = ({props}) => {
                   moduleCode="Expenditure"
                   editApplicationNumber={billNumber}
                 />
-              {data?.applicationData?.wfStatus === "APPROVED" ?
+              {/* {data?.applicationData?.wfStatus === "APPROVED" ?
                   <ActionBar>
 
                       {showActions ? <Menu
@@ -105,7 +105,7 @@ const ViewPurchaseBill = ({props}) => {
                       <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setShowActions(!showActions)} />
                   </ActionBar>
                   : null
-              }
+              } */}
             {toast?.show && <Toast label={toast?.label} error={toast?.error} isDleteBtn={true} onClose={handleToastClose}></Toast>}
         </>
       )

@@ -212,6 +212,17 @@ export const WorksService = {
       params: {},
     });
   },
+  searchBillCalculator: (details) => {
+    return Request({
+      url: Urls.bill.searchCalculator,
+      useCache: false,
+      data: details,
+      method: "POST",
+      auth: true,
+      userService: false,
+      params: {},
+    });
+  },
   createPurchaseBill: (details) =>
     Request({
       url: Urls.bills.createPurchaseBill,
