@@ -10,9 +10,9 @@ export const BillsSearch = {
       "billCriteria": {
         "tenantId": tenantId,
         // "ids": ["dc3b3bcd-d31a-4fd7-87bb-47484596050c"],
-        "businessService": "works.supervision",
+        "businessService": Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision"),
         // "referenceIds": [],
-        "billNumber":billNumber,
+        "billNumbers":[billNumber],
         // "status": ""
     },
        "pagination": {
@@ -38,12 +38,17 @@ export const BillsSearch = {
     const contract = contractSearch?.contracts?.[0]
 
     //fetch the list of ids from supervisionBill.billDetails then make a call to fetch those bills as well
+    const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+    const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
+    const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
     const referenceIdsToSearch = supervisionBill?.billDetails?.map(row => row?.referenceId)
-    const tableBillSearch = await WorksService.searchBill({
-      "billCriteria": {
+    const tableBillSearch = await WorksService.searchBillCalculator({
+      "searchCriteria": {
         "tenantId": tenantId,
-        "ids": referenceIdsToSearch,
-    },
+        "billNumbers": referenceIdsToSearch,
+        // "businessService":[bsPurchaseBill,bsWageBill,bsSupervisionBill]
+        // "businessService":bsPurchaseBill
+      },
        "pagination": {
         "limit": 10,
         "offSet": 0,
@@ -52,6 +57,7 @@ export const BillsSearch = {
       }
     })
     const tableBills = tableBillSearch?.bills
+    
     const billDetails = {
       title: " ",
       asSectionHeader: false,
@@ -89,41 +95,15 @@ export const BillsSearch = {
 
     const tableData = tableBills?.map(row => {
       return {
-        billNo: row?.billNumber,
-        billType: t(Digit.Utils.locale.getTransformedLocale(`COMMON_MASTERS_BILL_TYPE_${row?.businessService}`)),
-        billDate: Digit.DateUtils.ConvertEpochToDate(row?.fromPeriod),
-        status: t(`WF_BILL_${row?.status}`),
-        amount:  Digit.Utils.dss.formatterWithoutRound(row?.totalAmount,'number')|| t('NA'),
-        paymentStatus: row.paymentStatus ? t(`PAYMENT_STATUS_${row?.paymentStatus}`): t("NA"),
+        billNo: row?.bill?.billNumber,
+        billType: t(Digit.Utils.locale.getTransformedLocale(`COMMON_MASTERS_BILL_TYPE_${row?.bill?.businessService}`)),
+        billDate: Digit.DateUtils.ConvertEpochToDate(row?.bill?.fromPeriod),
+        status: t(`WF_BILL_${row?.bill?.status}`),
+        amount:  Digit.Utils.dss.formatterWithoutRound(row?.bill?.totalAmount,'number')|| t('NA'),
+        paymentStatus: row?.bill.paymentStatus ? t(`PAYMENT_STATUS_${row?.bill?.paymentStatus}`): t("NA"),
       }
     })
-    const dummyTableData = [
-      {
-        billNo: "LE/ENG/00002/10/2017-18",
-        billType: "Wage Bill",
-        billDate: "21-09-2021",
-        status: "Approve",
-        amount: "15500.00",
-        paymentStatus: "Payment In Process",
-      },
-      {
-        billNo: "LE/ENG/00002/10/2017-10",
-        billType: "Supervision Bill",
-        billDate: "21-09-2021",
-        status: "Approve",
-        amount: "14444.00",
-        paymentStatus: "Payment Completed",
-      },
-      {
-        billNo: "LE/ENG/00002/10/2017-20",
-        billType: "Wage Bill",
-        billDate: "21-09-2021",
-        status: "Approve",
-        amount: "123131.00",
-        paymentStatus: "Payment Failed",
-      },
-    ];
-
+    
     const tableRows = tableData.map((row, idx) => {
       return [
         {
@@ -152,7 +132,7 @@ export const BillsSearch = {
     };
 
     const totalAmount = Digit.Utils.dss.formatterWithoutRound(tableBills?.reduce((acc,row)=> {
-      return acc + (row?.totalAmount || 0)
+      return acc + (row?.bill?.totalAmount || 0)
     },0),"number")
     const totalBillAmt = {
       title: " ",

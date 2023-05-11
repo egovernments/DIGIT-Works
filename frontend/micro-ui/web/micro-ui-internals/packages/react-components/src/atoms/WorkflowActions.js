@@ -38,6 +38,8 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     }
   );
 
+  
+
   const menuRef = useRef();
 
   const userRoles = user?.info?.roles?.map((e) => e.code);
@@ -102,7 +104,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
       return 
   }
-    if(bsAttendance === businessService && action?.action === "EDIT"){
+    if(bsAttendance === businessService && action?.action === "RE-SUBMIT"){
         editCallback()
         return 
     }
