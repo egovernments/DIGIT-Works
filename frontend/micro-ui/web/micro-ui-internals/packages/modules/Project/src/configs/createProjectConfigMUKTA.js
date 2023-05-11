@@ -39,11 +39,13 @@ export const createProjectConfigMUKTA = {
               "type": "date",
               "disable": false,
               "preProcess" : {
-                "updateDependent" : ["populators.max"]
+                "updateDependent" : ["populators.validation.max"]
               },
               "populators": {
                 "name": "basicDetails_dateOfProposal",
-                "max" : "currentDate"
+                "validation":{
+                  "max":"currentDate"
+                }
               }
             },
             {
@@ -194,7 +196,7 @@ export const createProjectConfigMUKTA = {
               "type": "component",
               "component": "SelectGeoLocation",
               "withoutLabel": true,
-              "key": "noSubProject_geoLocation",
+              "key": "noSubProject_geoLocation"
             },
             {
               "isMandatory": false,

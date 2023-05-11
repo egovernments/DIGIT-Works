@@ -54,6 +54,7 @@ const fetchDeductions = (deductions, tenantId) => {
 }
 
 export const createBillPayload = (data, contract,  docConfigData) => {
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     const tenantId = Digit.ULBService.getCurrentTenantId()
     let DeductionsList = fetchDeductions(data?.deductionDetails, tenantId)
 
@@ -66,6 +67,7 @@ export const createBillPayload = (data, contract,  docConfigData) => {
             "projectId": data?.basicDetails_projectID,
             "billDate": convertDateToEpoch(data?.billDetails_billDate), 
             "status": "ACTIVE",
+            businessService,
             "billDetails": [
               { 
                 "tenantId": tenantId,	

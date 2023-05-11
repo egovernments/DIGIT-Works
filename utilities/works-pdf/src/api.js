@@ -112,6 +112,26 @@ async function search_mdmsWageSeekerSkills(tenantId, requestinfo) {
   });
 }
 
+async function searchEstimateFormusterRoll(requestinfo) {
+  var params = {  
+  limit: 1,
+    _offset: 0,
+    get offset() {
+      return this._offset;
+    },
+    set offset(value) {
+      this._offset = value;
+    },
+  };
+
+  var searchEndpoint = config.paths.expense_calculator_estimate;
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.expense_calculator, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params,
+  });
+}
 
 async function search_estimateDetails(tenantId, requestinfo, estimateNumber) {
   var params = {
@@ -450,6 +470,7 @@ module.exports = {
   search_expense_bill,
   search_payment_details,
   search_bank_account_details,
+  searchEstimateFormusterRoll,
   upload_file_using_filestore,
   create_eg_payments_excel,
   reset_eg_payments_excel,
