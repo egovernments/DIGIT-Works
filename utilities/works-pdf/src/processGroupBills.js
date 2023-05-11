@@ -44,7 +44,7 @@ async function processGroupBillFromPaymentId(requestData) {
             request.RequestInfo = requestData.RequestInfo;
             request.paymentCriteria = {
                 "tenantId": requestData.tenantId,
-                "referenceId": [requestData.paymentId]
+                "ids": [requestData.paymentId]
             };
             let paymentDetails = await search_payment_details(request);
             if (paymentDetails && paymentDetails?.payments?.length) {
