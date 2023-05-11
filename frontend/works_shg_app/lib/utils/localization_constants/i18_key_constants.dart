@@ -190,6 +190,7 @@ class MyBills {
   String get invoiceId => 'WORKS_INVOICE_ID';
   String get invoiceDate => 'WORKS_INVOICE_DATE';
   String get payeeName => 'WORKS_PAYEE_NAME';
+  String get noBills => 'EXP_NO_BILLS';
 }
 
 class WageSeeker {
