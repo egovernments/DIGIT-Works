@@ -549,29 +549,29 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                               DateTime.now()
                                                                                   .millisecondsSinceEpoch))
                                                                           .map((e) => AttendeesTrackList(
-                                                                              name: existingSkills.isNotEmpty
+                                                                              name: existingSkills.where((s) => s.individualId == e.individualId).toList().isNotEmpty
                                                                                   ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).name
                                                                                   : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
                                                                                       ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.userName
                                                                                       : e.additionalDetails?.individualName ?? '',
-                                                                              aadhaar: existingSkills.isNotEmpty
+                                                                              aadhaar: existingSkills.where((s) => s.individualId == e.individualId).toList().isNotEmpty
                                                                                   ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).aadhaar
                                                                                   : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
                                                                                       ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.aadharNumber
                                                                                       : e.additionalDetails?.identifierId ?? '',
-                                                                              individualGaurdianName: existingSkills.isNotEmpty
+                                                                              individualGaurdianName: existingSkills.where((s) => s.individualId == e.individualId).toList().isNotEmpty
                                                                                   ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).individualGaurdianName
                                                                                   : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
                                                                                       ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.fatherName
                                                                                       : e.additionalDetails?.individualGaurdianName ?? '',
                                                                               individualId: e.individualId,
                                                                               skillCodeList: estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.skillCode ?? [] : [],
-                                                                              id: existingSkills.isNotEmpty
+                                                                              id: existingSkills.where((s) => s.individualId == e.individualId).toList().isNotEmpty
                                                                                   ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).id
                                                                                   : estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
                                                                                       ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.id
                                                                                       : '',
-                                                                              skill: existingSkills.isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
+                                                                              skill: existingSkills.where((s) => s.individualId == e.individualId).toList().isNotEmpty ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).skillCode : '',
                                                                               monEntryId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
                                                                               monExitId: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                               monIndex: estimateMusterRoll.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1 : -1,
