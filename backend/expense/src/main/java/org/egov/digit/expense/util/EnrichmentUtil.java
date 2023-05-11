@@ -200,6 +200,13 @@ public class EnrichmentUtil {
         PaymentStatus defaultStatus = PaymentStatus.fromValue(config.getDefaultPaymentStatus());
         payment.setStatus(defaultStatus);
         
+		String paymentNumber = idgenUtil.getIdList(paymentRequest.getRequestInfo(),
+				payment.getTenantId().split("\\.")[0],
+				Constants.PAYMENT_ID_FORMAT_NAME,
+				null, // id-format is not needed, setting to null
+				1).get(0);
+		payment.setPaymentNumber(paymentNumber);		
+        
 		for (PaymentBill paymentBill : payment.getBills()) {
 
 			paymentBill.setId(UUID.randomUUID().toString());
