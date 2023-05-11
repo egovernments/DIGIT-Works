@@ -4,11 +4,12 @@ var logger = require("./logger").logger;
 let get = require('lodash.get')
 
 async function processGroupBillFromPaymentCreateTopic(requestData) {
+    logger.info("Started generating bill from payment topic.")
+    let userid = get(requestData, "RequestInfo.userInfo.uuid", null);
+    let paymentId = get(requestData, "payment.id", null);
     try {
         let request = {}
         let filestoreId = null;
-        let userid = null;
-        let paymentId = null;
         if (requestData.RequestInfo && requestData?.payment?.bills && requestData.payment.tenantId) {
             request.paymentId = requestData.payment.id;
             request.billIds = [];
@@ -23,6 +24,7 @@ async function processGroupBillFromPaymentCreateTopic(requestData) {
         }
         return filestoreId;
     } catch (error) {
+        logger.info("Exception Catched on processGroupBill from create topic.");
         logger.error(error.stack || error);
         await updatePaymentExcelIfJobFailed(paymentId, userid);
         return;
@@ -31,14 +33,14 @@ async function processGroupBillFromPaymentCreateTopic(requestData) {
 
 
 async function processGroupBillFromPaymentId(requestData) {
+    let userid =  get(requestData, "RequestInfo.userInfo.uuid", null);;
+    let paymentId = requestData?.paymentId;
     try {
         let filestoreId = null;
-        let userid = null;
-        let paymentId = null;
         if (requestData.RequestInfo && requestData?.paymentId && requestData.tenantId) {
             let request = {}
             userid = get(requestData, "RequestInfo.userInfo.uuid", null);
-            paymentId = requestData.paymentId;
+            // paymentId = requestData.paymentId;
             request.RequestInfo = requestData.RequestInfo;
             request.paymentCriteria = {
                 "tenantId": requestData.tenantId,
@@ -46,15 +48,15 @@ async function processGroupBillFromPaymentId(requestData) {
             };
             let paymentDetails = await search_payment_details(request);
             if (paymentDetails && paymentDetails?.payments?.length) {
-                let request = {} ;
-                request.RequestInfo = request.requestInfo;
+                let groupBillRequest = {} ;
+                groupBillRequest.RequestInfo = request.RequestInfo;
                 let payment = paymentDetails.payments[0];
-                request.paymentId = payment.id;
-                request.billIds = [];
-                request.billIds = payment.bills.map(bill => {return bill.billId})
-                request.RequestInfo = requestData.RequestInfo;
-                request.tenantId = payment.tenantId;
-                filestoreId = await processGroupBill(request);
+                groupBillRequest.paymentId = payment.id;
+                groupBillRequest.billIds = [];
+                groupBillRequest.billIds = payment.bills.map(bill => {return bill.billId})
+                groupBillRequest.RequestInfo = requestData.RequestInfo;
+                groupBillRequest.tenantId = payment.tenantId;
+                filestoreId = await processGroupBill(groupBillRequest);
             }
         }
         return filestoreId;
@@ -66,6 +68,7 @@ async function processGroupBillFromPaymentId(requestData) {
 }
 async function processGroupBill(requestData) {
     try {
+        logger.info("Started processGroupBill.")
         let paymentId = requestData.paymentId;
         let tenantId = requestData.tenantId;
         let userId = requestData?.RequestInfo?.userInfo?.uuid;
@@ -87,6 +90,7 @@ async function processGroupBill(requestData) {
                 beneficiaryIds.push(bill.beneficiaryId)
             }
         })
+        logger.info("Fetching bank details")
         let bankAccounts = await getBankAccountDetails(requestData, beneficiaryIds);
         bankAccounts.forEach((bankAccount) => { accountIdMap[bankAccount.id] = bankAccount });
         billsForExcel = billsForExcel.map((billDetails) => {
@@ -100,6 +104,7 @@ async function processGroupBill(requestData) {
             }
             return billDetails;
         })
+        logger.info("Creating excel.")
         let filestoreId = await createXlsxFromBills(billsForExcel, paymentId, tenantId);
         let billsLength = bills.length;
         let numberofbeneficialy = billsForExcel.length;
@@ -109,7 +114,9 @@ async function processGroupBill(requestData) {
                 totalAmount = totalAmount + bill?.totalAmount;
             }
         })
+        logger.info("Update file id and other details.")
         await updateForJobCompletion(paymentId, filestoreId, userId, billsLength, numberofbeneficialy, totalAmount);
+        logger.info("File generated and saved.")
         return filestoreId;
     } catch (error) {
         logger.error(error.stack || error);
@@ -156,21 +163,25 @@ const getBillDetails = async (requestData) => {
 const getBankAccountDetails = async (requestData, beneficiaryIds) => {
     let bankAccounts = []
     let defaultRequest = {}
-    defaultRequest['requestInfo'] = requestData['RequestInfo'];
+    defaultRequest['RequestInfo'] = requestData['RequestInfo'];
     defaultRequest["bankAccountDetails"] = {};
     defaultRequest["bankAccountDetails"]["tenantId"] = requestData?.tenantId;
-    defaultRequest["bankAccountDetails"]["ids"] = beneficiaryIds;
+    defaultRequest["bankAccountDetails"]["referenceId"] = beneficiaryIds;
     let total = beneficiaryIds.length;
     if (total) {
         let limit = total;
         let rounds = total / limit;
         let requests = [];
         for (let idx = 0; idx < rounds; idx++) {
-            let nRequest = {...defaultRequest}
+            let nRequest = {}
+            nRequest["bankAccountDetails"] = defaultRequest["bankAccountDetails"]
             nRequest['pagination'] = {
                 limit: limit,
-                offset: idx * limit
+                offSet: idx * limit,
+                sortBy: "createdTime",
+                order: {}
             }
+            nRequest['RequestInfo'] = defaultRequest["RequestInfo"]
             requests.push(nRequest);
         }
         let promises = [];
@@ -241,7 +252,6 @@ const getBillsForExcel = (bill) => {
         return [billObj];
     }
     let businessService = bill['businessService'];
-    console.log('businessService ' + businessService)
     if (businessService == 'EXPENSE.WAGES') {
         let wagesBills = getWagesBill(bill, billObj);
         bills = bills.concat(wagesBills);
@@ -346,7 +356,7 @@ let createXlsxFromBills = async (billsData, paymentId, tenantId) => {
         let filestoreId = await upload_file_using_filestore(filename, tenantId, buffer);
         return filestoreId;
     } catch (error) {
-        console.log('Error : ', error)
+        logger.error(error.stack || error);
         throw(error)
     }
 }
