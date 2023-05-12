@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.ProcessInstanceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.util.EstimateServiceConstant;
 import org.egov.util.ProjectUtil;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
@@ -79,7 +80,8 @@ public class DenormalizeAndEnrichEstimateService {
         log.info("DenormalizeAndEnrichEstimateService::denormalizeAndEnrichProject");
         Object projectRes = projectUtil.getProjectDetails(estimateRequest);
 
-        List<Project> projects = objectMapper.convertValue(((LinkedHashMap) projectRes).get("Projects"), new TypeReference<List<Project>>() {
+        //If project payload changes, this key needs to be modified!
+        List<Project> projects = objectMapper.convertValue(((LinkedHashMap) projectRes).get(EstimateServiceConstant.PROJECT_RESP_PAYLOAD_KEY), new TypeReference<List<Project>>() {
         })  ;
 
         if (projects != null && !projects.isEmpty()) {
