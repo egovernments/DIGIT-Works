@@ -94,6 +94,8 @@ public class WageSeekerBillGeneratorService {
                     metaInfo.put(individualId,String.valueOf(getWageSeekerSkillCodeId(individualEntry,labourCharges)));
                     // Build BillDetail
                     log.info("Building billDetail for referenceId ["+referenceId+"] and musterRollNumber ["+musterRollNumber+"]");
+                    
+                
                     BillDetail billDetail = BillDetail.builder()
                                                 .billId(null)
                                                 .referenceId(cboId)
@@ -113,6 +115,10 @@ public class WageSeekerBillGeneratorService {
                 log.info("Building bill for musterRollNumber ["+musterRollNumber+"]");
                 // Generate id of wage bill
                 String wageBillId = generateWBId(requestInfo, tenantId);
+                
+                //Fetch Contract additional details and pass onto Bill for the indexer
+    				Object additionalDetails = expenseCalculatorUtil.getContractAdditionalDetails(requestInfo, tenantId, musterRoll.getReferenceId());
+    		
                 // Build Bill
                 Bill bill = Bill.builder()
                         .tenantId(tenantId)
@@ -123,6 +129,7 @@ public class WageSeekerBillGeneratorService {
                         .toPeriod(musterRoll.getEndDate().longValue())
                         .payer(payer)
                         .billDetails(billDetails)
+                        .additionalDetails(additionalDetails)                       
                         .build();
 
                 bills.add(bill);

@@ -15,11 +15,14 @@ import org.egov.digit.expense.calculator.web.models.BillSearchRequest;
 import org.egov.digit.expense.calculator.web.models.Contract;
 import org.egov.digit.expense.calculator.web.models.ContractCriteria;
 import org.egov.digit.expense.calculator.web.models.ContractResponse;
+import org.egov.digit.expense.calculator.web.models.LineItem;
+import org.egov.digit.expense.calculator.web.models.LineItems;
 import org.egov.digit.expense.calculator.web.models.MusterRoll;
 import org.egov.digit.expense.calculator.web.models.MusterRollResponse;
 import org.egov.digit.expense.calculator.web.models.Order;
 import org.egov.digit.expense.calculator.web.models.Pagination;
 import org.egov.tracer.model.CustomException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -132,6 +135,29 @@ public class ExpenseCalculatorUtil {
         ContractResponse response = mapper.convertValue(responseObj, ContractResponse.class);
         return response != null ? response.getContracts() : null;
     }
+    
+   /**
+    * TODO:This needs to be revisited May 2023.
+    * We need to send the project name, ward, locality etc.. to the billing indexer. The way this has been 
+    * done is via additionalDetails object of the bill. The contract additionalDetails object holds all this info
+    * and we are now sending it onward to the Billing service. But if the UI implementation changes and these
+    * values are not sent via additionalDetails, then the Inbox/Search etc.. will fail. 
+    * @param requestInfo
+    * @param tenantId
+    * @param contractId
+    * @return
+    */
+    public Object getContractAdditionalDetails(RequestInfo requestInfo, String tenantId, String contractId){
+    	List<Contract> contracts = fetchContract(requestInfo,tenantId,contractId);
+    	Contract contract = contracts.get(0);
+    	Object additional = null;
+    	if(contract!=null) {
+    		additional = contract.getAdditionalDetails();
+    	}
+    	return additional;
+    }
+    
+    
 
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
     	log.info("Fetching bills from the calculator repository for contractId " + contractId);

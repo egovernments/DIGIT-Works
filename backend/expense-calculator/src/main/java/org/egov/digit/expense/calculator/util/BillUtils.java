@@ -47,6 +47,8 @@ public class BillUtils {
         	log.info("Received Bill Response: " + responseObj.toString());
         return mapper.convertValue(responseObj, BillResponse.class);
     }
+    
+   
     private StringBuilder getBillCreateURI() {
         StringBuilder builder = new StringBuilder(configs.getBillHost());
         builder.append(configs.getBillCreateEndPoint());
