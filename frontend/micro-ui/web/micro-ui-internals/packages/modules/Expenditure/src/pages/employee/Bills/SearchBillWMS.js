@@ -14,7 +14,7 @@ const SearchBillWMS = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   
-  const { isLoading, data:configss } = Digit.Hooks.useCustomMDMS(
+  const { isLoading, data:configs } = Digit.Hooks.useCustomMDMS(
       stateTenant,
       Digit.Utils.getConfigModuleName(),
       [
@@ -45,7 +45,7 @@ const SearchBillWMS = () => {
   
 
   //For local Update data to access searchConfig or searchWMS config
-  const configs = SearchBillWMSConfig?.SearchBillWMSConfig?.[0]
+  // const configs = SearchBillWMSConfig?.SearchBillWMSConfig?.[0]
 
   
 

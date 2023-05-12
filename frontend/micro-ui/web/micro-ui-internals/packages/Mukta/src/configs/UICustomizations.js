@@ -22,7 +22,6 @@ const getBillType = (businessService) => {
 }
 
 const getCreatePaymentPayload = (data) => {
-  debugger
   let payment = {}
   payment.tenantId = Digit.ULBService.getCurrentTenantId()
   payment.netPayableAmount = 0
