@@ -82,6 +82,7 @@ async function processGroupBill(requestData) {
             })
         }
         
+        
         let accountIdMap = {};
         let beneficiaryIds = []
         billsForExcel.forEach((bill) => {
@@ -92,7 +93,7 @@ async function processGroupBill(requestData) {
         })
         logger.info("Fetching bank details")
         let bankAccounts = await getBankAccountDetails(requestData, beneficiaryIds);
-        bankAccounts.forEach((bankAccount) => { accountIdMap[bankAccount.id] = bankAccount });
+        bankAccounts.forEach((bankAccount) => { accountIdMap[bankAccount.referenceId] = bankAccount });
         billsForExcel = billsForExcel.map((billDetails) => {
             if (accountIdMap[billDetails.beneficiaryId]) {
                 let accountDetails = accountIdMap[billDetails.beneficiaryId] || {};
@@ -360,6 +361,7 @@ let createXlsxFromBills = async (billsData, paymentId, tenantId) => {
         throw(error)
     }
 }
+
 
 async function updateForJobCompletion (paymentId, filestoreId, userId, billsLength, numberofbeneficialy, totalAmount) {
     try {
