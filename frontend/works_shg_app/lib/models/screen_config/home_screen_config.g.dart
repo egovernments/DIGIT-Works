@@ -44,8 +44,8 @@ Map<String, dynamic> _$$_CommonUIConfigModelToJson(
 _$_CBOHomeScreenConfigModel _$$_CBOHomeScreenConfigModelFromJson(
         Map<String, dynamic> json) =>
     _$_CBOHomeScreenConfigModel(
-      order: json['order'] as int?,
-      key: json['key'] as String?,
+      order: json['order'] as int,
+      key: json['key'] as String,
       displayName: json['displayName'] as String?,
       label: json['label'] as String?,
       active: json['active'] as bool?,

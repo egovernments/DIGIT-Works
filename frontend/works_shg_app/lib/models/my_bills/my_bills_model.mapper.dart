@@ -848,7 +848,8 @@ class BillAdditionalDetailsMapperElement
           projectName: container.$getOpt(map, 'projectName'),
           projectId: container.$getOpt(map, 'projectId'),
           ward: container.$getOpt(map, 'ward'),
-          totalBillAmount: container.$getOpt(map, 'totalBillAmount'));
+          totalBillAmount: container.$getOpt(map, 'totalBillAmount'),
+          invoiceDate: container.$getOpt(map, 'invoiceDate'));
 
   @override
   Function get encoder => encode;
@@ -861,15 +862,17 @@ class BillAdditionalDetailsMapperElement
         'projectName': container.$enc(b.projectName, 'projectName'),
         'projectId': container.$enc(b.projectId, 'projectId'),
         'ward': container.$enc(b.ward, 'ward'),
-        'totalBillAmount': container.$enc(b.totalBillAmount, 'totalBillAmount')
+        'totalBillAmount': container.$enc(b.totalBillAmount, 'totalBillAmount'),
+        'invoiceDate': container.$enc(b.invoiceDate, 'invoiceDate')
       };
 
   @override
   String stringify(BillAdditionalDetails self) =>
-      'BillAdditionalDetails(invoiceNumber: ${container.asString(self.invoiceNumber)}, locality: ${container.asString(self.locality)}, orgName: ${container.asString(self.orgName)}, projectDesc: ${container.asString(self.projectDesc)}, projectName: ${container.asString(self.projectName)}, projectId: ${container.asString(self.projectId)}, totalBillAmount: ${container.asString(self.totalBillAmount)}, ward: ${container.asString(self.ward)})';
+      'BillAdditionalDetails(invoiceNumber: ${container.asString(self.invoiceNumber)}, invoiceDate: ${container.asString(self.invoiceDate)}, locality: ${container.asString(self.locality)}, orgName: ${container.asString(self.orgName)}, projectDesc: ${container.asString(self.projectDesc)}, projectName: ${container.asString(self.projectName)}, projectId: ${container.asString(self.projectId)}, totalBillAmount: ${container.asString(self.totalBillAmount)}, ward: ${container.asString(self.ward)})';
   @override
   int hash(BillAdditionalDetails self) =>
       container.hash(self.invoiceNumber) ^
+      container.hash(self.invoiceDate) ^
       container.hash(self.locality) ^
       container.hash(self.orgName) ^
       container.hash(self.projectDesc) ^
@@ -880,6 +883,7 @@ class BillAdditionalDetailsMapperElement
   @override
   bool equals(BillAdditionalDetails self, BillAdditionalDetails other) =>
       container.isEqual(self.invoiceNumber, other.invoiceNumber) &&
+      container.isEqual(self.invoiceDate, other.invoiceDate) &&
       container.isEqual(self.locality, other.locality) &&
       container.isEqual(self.orgName, other.orgName) &&
       container.isEqual(self.projectDesc, other.projectDesc) &&
@@ -932,7 +936,8 @@ abstract class BillAdditionalDetailsCopyWith<$R,
       String? projectName,
       String? projectId,
       String? ward,
-      String? totalBillAmount});
+      String? totalBillAmount,
+      int? invoiceDate});
 }
 
 class _BillAdditionalDetailsCopyWithImpl<$R, $Out extends BillAdditionalDetails>
@@ -954,7 +959,8 @@ class _BillAdditionalDetailsCopyWithImpl<$R, $Out extends BillAdditionalDetails>
           Object? projectName = $none,
           Object? projectId = $none,
           Object? ward = $none,
-          Object? totalBillAmount = $none}) =>
+          Object? totalBillAmount = $none,
+          Object? invoiceDate = $none}) =>
       $then(BillAdditionalDetails(
           invoiceNumber: or(invoiceNumber, $value.invoiceNumber),
           locality: or(locality, $value.locality),
@@ -963,7 +969,8 @@ class _BillAdditionalDetailsCopyWithImpl<$R, $Out extends BillAdditionalDetails>
           projectName: or(projectName, $value.projectName),
           projectId: or(projectId, $value.projectId),
           ward: or(ward, $value.ward),
-          totalBillAmount: or(totalBillAmount, $value.totalBillAmount)));
+          totalBillAmount: or(totalBillAmount, $value.totalBillAmount),
+          invoiceDate: or(invoiceDate, $value.invoiceDate)));
 }
 
 class PayeeMapper extends MapperBase<Payee> {
@@ -1127,7 +1134,7 @@ class BillLineItemsMapperElement extends MapperElementBase<BillLineItems> {
   BillLineItems fromMap(Map<String, dynamic> map) => BillLineItems(
       id: container.$getOpt(map, 'id'),
       auditDetails: container.$getOpt(map, 'auditDetails'),
-      tenantId: container.$getOpt(map, 'tenantId'),
+      tenantId: container.$get(map, 'tenantId'),
       amount: container.$getOpt(map, 'amount'),
       type: container.$getOpt(map, 'type'),
       status: container.$getOpt(map, 'status'),
@@ -1247,7 +1254,7 @@ class _BillLineItemsCopyWithImpl<$R, $Out extends BillLineItems>
   $R call(
           {Object? id = $none,
           Object? auditDetails = $none,
-          Object? tenantId = $none,
+          String? tenantId,
           Object? amount = $none,
           Object? type = $none,
           Object? status = $none,
@@ -1258,7 +1265,7 @@ class _BillLineItemsCopyWithImpl<$R, $Out extends BillLineItems>
       $then(BillLineItems(
           id: or(id, $value.id),
           auditDetails: or(auditDetails, $value.auditDetails),
-          tenantId: or(tenantId, $value.tenantId),
+          tenantId: tenantId ?? $value.tenantId,
           amount: or(amount, $value.amount),
           type: or(type, $value.type),
           status: or(status, $value.status),
@@ -1296,7 +1303,7 @@ class PayableLineItemsMapperElement
   PayableLineItems fromMap(Map<String, dynamic> map) => PayableLineItems(
       id: container.$getOpt(map, 'id'),
       auditDetails: container.$getOpt(map, 'auditDetails'),
-      tenantId: container.$getOpt(map, 'tenantId'),
+      tenantId: container.$get(map, 'tenantId'),
       amount: container.$getOpt(map, 'amount'),
       type: container.$getOpt(map, 'type'),
       status: container.$getOpt(map, 'status'),
@@ -1416,7 +1423,7 @@ class _PayableLineItemsCopyWithImpl<$R, $Out extends PayableLineItems>
   $R call(
           {Object? id = $none,
           Object? auditDetails = $none,
-          Object? tenantId = $none,
+          String? tenantId,
           Object? amount = $none,
           Object? type = $none,
           Object? status = $none,
@@ -1427,7 +1434,7 @@ class _PayableLineItemsCopyWithImpl<$R, $Out extends PayableLineItems>
       $then(PayableLineItems(
           id: or(id, $value.id),
           auditDetails: or(auditDetails, $value.auditDetails),
-          tenantId: or(tenantId, $value.tenantId),
+          tenantId: tenantId ?? $value.tenantId,
           amount: or(amount, $value.amount),
           type: or(type, $value.type),
           status: or(status, $value.status),
