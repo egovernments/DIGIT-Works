@@ -1,4 +1,4 @@
-var { search_expense_bill, search_bank_account_details, upload_file_using_filestore, search_payment_details, create_eg_payments_excel, exec_query_eg_payments_excel, search_mdms } = require("./api");
+var { search_expense_bill, search_bank_account_details, upload_file_using_filestore, search_payment_details, create_eg_payments_excel, exec_query_eg_payments_excel, search_mdms, search_expense_calculator_bill } = require("./api");
 const XLSX = require('xlsx');
 var logger = require("./logger").logger;
 let get = require('lodash.get');
@@ -74,7 +74,9 @@ async function processGroupBill(requestData) {
         let paymentId = requestData.paymentId;
         let tenantId = requestData.tenantId;
         let userId = requestData?.RequestInfo?.userInfo?.uuid;
-        let bills = await getBillDetails(requestData);
+
+        let exBills = await getBillDetails(requestData);
+        let bills = await getBillDetailsUsingExCalc(requestData, exBills);
         let headCodes = await getHeadCodeFromMDMS(requestData);
         let headCodeMap = {};
         headCodes.forEach((headCode) => headCodeMap[headCode.code] = headCode);
@@ -100,6 +102,8 @@ async function processGroupBill(requestData) {
         let bankAccounts = await getBankAccountDetails(requestData, beneficiaryIds);
         bankAccounts.forEach((bankAccount) => { accountIdMap[bankAccount.referenceId] = bankAccount });
         billsForExcel = billsForExcel.map((billDetails) => {
+            // Set projectNumber as projectId
+
             if (accountIdMap[billDetails.beneficiaryId]) {
                 let accountDetails = accountIdMap[billDetails.beneficiaryId] || {};
                 let bankAccountDetails = get(accountDetails, 'bankAccountDetails[0]', {});
@@ -116,8 +120,8 @@ async function processGroupBill(requestData) {
         let numberofbeneficialy = billsForExcel.length;
         let totalAmount = 0;
         bills.forEach((bill) => {
-            if (bill?.totalAmount) {
-                totalAmount = totalAmount + bill?.totalAmount;
+            if (bill?.bill?.totalAmount) {
+                totalAmount = totalAmount + bill?.bill?.totalAmount;
             }
         })
         logger.info("Update file id and other details.")
@@ -192,6 +196,37 @@ const getBillDetails = async (requestData) => {
     return bills;
 }
 
+const getBillDetailsUsingExCalc = async (requestData, bills) => {
+    let calcBills = [];
+    try {
+        let request = {}
+        let billNumbers = bills.map(bill => {return bill.billNumber})
+        request['RequestInfo'] = requestData['RequestInfo']
+        request['searchCriteria'] = {
+            tenantId: requestData.tenantId,
+            billNumbers: billNumbers
+        }
+        // Get how many expenses are there
+        let total = billNumbers.length;
+        if (total) {
+            let limit = 100;
+            let rounds = total / limit;
+            let promises = [];
+            for (let idx = 0; idx < rounds; idx++) {
+                let offset = limit * idx;
+                promises.push(fetchBillDetailsFromExCalcByRequest(deepClone(request), limit, offset));
+            }
+            let billResponse = await Promise.all(promises)
+            for (let idx = 0; idx < billResponse.length; idx++) {
+                calcBills = calcBills.concat(billResponse[idx]);
+            }
+        }
+    } catch (error) {
+        logger.error(error.stack || error);
+    }
+    return calcBills;
+}
+
 const getBankAccountDetails = async (requestData, beneficiaryIds) => {
     let bankAccounts = []
     let defaultRequest = {}
@@ -245,6 +280,23 @@ const fetchBillDetailsByRequest = (request, limit, offset) => {
     })
 }
 
+const fetchBillDetailsFromExCalcByRequest = (request, limit, offset) => {
+    return new Promise((resolve, reject) => {
+        try {
+            search_expense_calculator_bill(deepClone(request), limit, offset).then((data) => {
+                if (data?.bills?.length) {
+                    resolve(data.bills)
+                } else {
+                    resolve([])
+                }
+            }).catch(err => reject(err))
+        } catch (error) {
+            reject(error)
+            logger.error(error.stack || error);
+        }
+    })
+}
+
 const fetchBankAccountDetailsByRequest = (request) => {
     return new Promise((resolve, reject) => {
         try {
@@ -263,11 +315,12 @@ const fetchBankAccountDetailsByRequest = (request) => {
 }
 
 
-const getBillsForExcel = (bill, headCodeMap) => {
+const getBillsForExcel = (billDetails, headCodeMap) => {
+    let bill = billDetails?.bill;
     let bills = []
     let billObj = {
-        "projectId" : "NA",
-        "workOrderId" : bill?.referenceId,
+        "projectId" : billDetails?.projectNumber,
+        "workOrderId" : billDetails?.contractNumber,
         "billNumber" : bill?.billNumber,
         "billType" :  bill?.businessService,
         "grossAmount" : 0,
@@ -305,8 +358,8 @@ let getWagesBill = (bill, billObj) => {
         let newBill = deepClone(billObj);
         newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
         newBill['beneficiaryType'] = billDetail?.payee?.type || "";
-        newBill['grossAmount'] = billDetail?.netLineItemAmount || 0;
-        newBill['payableAmount'] = billDetail?.netLineItemAmount || 0;
+        newBill['grossAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
+        newBill['payableAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
         newBill['headCode'] = billDetail?.payableLineItems[0]?.headCode || "";
         bills.push(newBill)
     });
@@ -318,14 +371,16 @@ let getPurchaseBill = (bill, billObj, headCodeMap) => {
     bill?.billDetails.forEach(billDetail => {
         if (billDetail?.payableLineItems?.length) {
             billDetail?.payableLineItems.forEach((payableLineItem) => {
-                let newBill = deepClone(billObj);
-                let headCodeBeneficiary = getBeneficiaryByHeadCode(payableLineItem, headCodeMap)
-                newBill['beneficiaryId'] = headCodeBeneficiary || billDetail?.payee?.identifier || "";
-                newBill['beneficiaryType'] = billDetail?.payee?.type || "";
-                newBill['grossAmount'] = payableLineItem?.amount || 0;
-                newBill['payableAmount'] = payableLineItem?.amount || 0;
-                newBill['headCode'] = payableLineItem?.headCode || "";
-                bills.push(newBill)
+                if (payableLineItem.status == "ACTIVE") {
+                    let newBill = deepClone(billObj);
+                    let headCodeBeneficiary = getBeneficiaryByHeadCode(payableLineItem, headCodeMap)
+                    newBill['beneficiaryId'] = headCodeBeneficiary || billDetail?.payee?.identifier || "";
+                    newBill['beneficiaryType'] = billDetail?.payee?.type || "";
+                    newBill['grossAmount'] = payableLineItem?.amount || 0;
+                    newBill['payableAmount'] = payableLineItem?.amount || 0;
+                    newBill['headCode'] = payableLineItem?.headCode || "";
+                    bills.push(newBill)
+                }
             })
         }
     });
@@ -357,8 +412,8 @@ let getSupervisionBill = (bill, billObj) => {
     let billDetail = get(bill, "billDetails[0]", {});
     newBill['beneficiaryId'] = get(billDetail,'payee.identifier', "");
     newBill['beneficiaryType'] = get(billDetail, "payee.type", "");
-    newBill['grossAmount'] = get(billDetail, 'netLineItemAmount', 0);
-    newBill['payableAmount'] = get(billDetail, 'netLineItemAmount', 0);
+    newBill['grossAmount'] = get(billDetail, 'payableLineItems[0].amount', 0);
+    newBill['payableAmount'] = get(billDetail, 'payableLineItems[0].amount', 0);
     newBill['headCode'] = get(billDetail, 'payableLineItems[0].headCode', "");
     bills.push(newBill)
     return bills;

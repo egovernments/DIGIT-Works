@@ -243,6 +243,21 @@ function search_expense_bill(request, limit, offset) {
   })
 }
 
+function search_expense_calculator_bill(request, limit, offset) {
+  return new Promise((resolve, reject) => {
+    let newRequest = JSON.parse(JSON.stringify(request))
+    newRequest["pagination"] = { limit, offset }
+    let promise = new axios({
+      method: "POST",
+      url: url.resolve(config.host.expense_calculator, config.paths.expense_calculator_search),
+      data: newRequest,
+    });
+    promise.then((data) => {
+      resolve(data.data)
+    }).catch((err) => reject(err))
+  })
+}
+
 function search_bank_account_details(request) {
   return new Promise((resolve, reject) => {
     let newRequest = JSON.parse(JSON.stringify(request))
@@ -465,6 +480,7 @@ module.exports = {
   search_mdmsWageSeekerSkills,
   search_organisation,
   search_expense_bill,
+  search_expense_calculator_bill,
   search_payment_details,
   search_bank_account_details,
   searchEstimateFormusterRoll,
