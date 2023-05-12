@@ -61,6 +61,7 @@ public class PaymentRowMapper implements ResultSetExtractor<List<Payment>>{
 					.status(PaymentStatus.fromValue(rs.getString("p_status")))
 					.netPayableAmount(rs.getBigDecimal("netpayableamount"))
 					.netPaidAmount(rs.getBigDecimal("netpaidamount"))
+					.paymentNumber(rs.getString("paymentnumber"))
 					.tenantId(rs.getString("p_tenantid"))
 					.auditDetails(auditDetails)
 					.id(paymentId)
