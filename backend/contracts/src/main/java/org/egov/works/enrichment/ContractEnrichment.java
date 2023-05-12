@@ -190,9 +190,12 @@ public class ContractEnrichment {
                 }
             }
             List<Document> documents = contract.getDocuments();
-            for (Document document : documents) {
-                if(document.getId() == null) {
-                    document.setId(String.valueOf(UUID.randomUUID()));
+            // Check if documents are available then do UUID generation
+            if (documents != null && !documents.isEmpty()) {
+                for (Document document : documents) {
+                    if(document.getId() == null) {
+                        document.setId(String.valueOf(UUID.randomUUID()));
+                    }
                 }
             }
         }
