@@ -137,7 +137,7 @@ public class EnrichmentUtil {
 
             	BillDetail detailFromSearch = billDetailMap.get(billDetail.getId());
             	
-                billDetail.setAuditDetails(updateAudit);
+                billDetail.setAuditDetails(createAudit);
                 billDetail.getPayee().setId(detailFromSearch.getPayee().getId()); 
                 billDetail.getPayee().setAuditDetails(createAudit);
 
@@ -148,7 +148,7 @@ public class EnrichmentUtil {
                         lineItem.setId(UUID.randomUUID().toString());
                         lineItem.setAuditDetails(createAudit);
                     } else { /* updating line item */
-                        lineItem.setAuditDetails(updateAudit);
+                        lineItem.setAuditDetails(createAudit);
                     }
                 }
 
@@ -158,7 +158,7 @@ public class EnrichmentUtil {
                         payablelineItem.setId(UUID.randomUUID().toString());
                         payablelineItem.setAuditDetails(createAudit);
                     } else /* updating payable line item */
-                        payablelineItem.setAuditDetails(updateAudit);
+                        payablelineItem.setAuditDetails(createAudit);
                 }
             }
         }
@@ -200,6 +200,13 @@ public class EnrichmentUtil {
         PaymentStatus defaultStatus = PaymentStatus.fromValue(config.getDefaultPaymentStatus());
         payment.setStatus(defaultStatus);
         
+		String paymentNumber = idgenUtil.getIdList(paymentRequest.getRequestInfo(),
+				payment.getTenantId().split("\\.")[0],
+				Constants.PAYMENT_ID_FORMAT_NAME,
+				null, // id-format is not needed, setting to null
+				1).get(0);
+		payment.setPaymentNumber(paymentNumber);		
+        
 		for (PaymentBill paymentBill : payment.getBills()) {
 
 			paymentBill.setId(UUID.randomUUID().toString());
@@ -226,6 +233,7 @@ public class EnrichmentUtil {
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         payment.setAuditDetails(getAuditDetails(createdBy, false));
+        
         return paymentRequest;
     }
 

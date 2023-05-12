@@ -38,7 +38,6 @@ public class PaymentLineItem   {
   @NotNull
   private BigDecimal paidAmount;
 
-  @NotNull
   @JsonProperty("status")
   private PaymentStatus status;
 

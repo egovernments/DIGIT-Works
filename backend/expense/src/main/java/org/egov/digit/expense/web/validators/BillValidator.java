@@ -6,11 +6,14 @@ import static org.egov.digit.expense.config.Constants.HEADCODE_MASTERNAME;
 import static org.egov.digit.expense.config.Constants.TENANT_MASTERNAME;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,6 +27,7 @@ import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.LineItem;
+import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,10 +85,9 @@ public class BillValidator {
         List<Bill> billsFromSearch = getBillsForValidation(billRequest, false);
         if(CollectionUtils.isEmpty(billsFromSearch))
         	throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
-        			+ " businessService : " + bill.getId() + " and refernceId : " + bill.getTenantId());
+        			+ " id : " + bill.getId() + " and refernceId : " + bill.getTenantId());
         
-        if(null == billRequest.getBill().getStatus())
-        	billRequest.getBill().setStatus(billsFromSearch.get(0).getStatus());
+        validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap); 
         
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
         validateTenantId(billRequest, mdmsData);
@@ -96,7 +99,110 @@ public class BillValidator {
         return billsFromSearch;
     }
 
-    public void validateSearchRequest(BillSearchRequest billSearchRequest) {
+    private void validateFieldsForUpdate(Bill bill, Bill billFromSearch, Map<String, String> errorMap) {
+
+    	List<String> invalidDetailIds = new ArrayList<>();
+    	List<String> invalidLineItemIds = new ArrayList<>();
+    	List<String> invalidPayableLineItemIds = new ArrayList<>();
+    	
+    	if(null == bill.getStatus()){
+    		bill.setStatus(billFromSearch.getStatus());
+    	}
+    	
+    	Party payer = bill.getPayer();
+    	Party payerFromSearch = billFromSearch.getPayer();
+    	
+    	if(null == payer) {
+    		bill.setPayer(payerFromSearch); 
+    	}else if(null == payer.getId()){
+    		errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_PAYER_ID", "Payer id is mandaotry for update request");
+    	}
+    	
+    	List<BillDetail> details = bill.getBillDetails();
+    	List<BillDetail> detailsFromSearch = billFromSearch.getBillDetails();
+		Map<String, BillDetail> searchDetailsMap = detailsFromSearch.stream()
+				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
+		
+		Map<String, LineItem> searchLineItemMap = detailsFromSearch.stream()
+				.map(BillDetail::getLineItems)
+				.flatMap(Collection::stream)
+				.collect(Collectors.toMap(LineItem::getId, Function.identity()));
+		
+		Map<String, LineItem> searchPayableLineItemMap = detailsFromSearch.stream()
+				.map(BillDetail::getPayableLineItems)
+				.flatMap(Collection::stream)
+				.collect(Collectors.toMap(LineItem::getId, Function.identity()));
+
+		if(CollectionUtils.isEmpty(details)) {
+			errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_BILLDETAILS", "bill details cannot be empty for update request");
+    	}else {
+    		for (BillDetail currentDetail : details) {
+    			
+    			String currentDetailId = currentDetail.getId();
+    			BillDetail currentDetailFromSearch = searchDetailsMap.get(currentDetailId);
+    			
+    			if(null == currentDetailId) {
+    				currentDetail.setStatus(Status.ACTIVE);
+    			}
+				if (null == currentDetailFromSearch) {
+					invalidDetailIds.add(currentDetailId);
+				}else {
+					if(currentDetail.getStatus() == null)
+						currentDetail.setStatus(currentDetailFromSearch.getStatus());
+					
+					List<LineItem> lineItems = currentDetail.getLineItems();
+					List<LineItem> payableLineItems = currentDetail.getPayableLineItems();
+					
+					for (LineItem currentLineItem : lineItems) {
+						
+						String currentLineItemId = currentLineItem.getId();
+						LineItem searchLineItem = searchLineItemMap.get(currentLineItemId);
+						if(null == currentLineItemId) {
+							currentLineItem.setStatus(Status.ACTIVE);
+						}
+						else if(null == searchLineItem) {
+							invalidLineItemIds.add(currentLineItemId);
+						}else {
+							if(null == currentLineItem.getStatus())
+								currentLineItem.setStatus(searchLineItem.getStatus());
+						}
+					}
+
+					for (LineItem currentPayableLineItem : payableLineItems) {
+
+						String currentPayableLineItemId = currentPayableLineItem.getId();
+						LineItem searchPayableLineItem = searchPayableLineItemMap.get(currentPayableLineItemId);
+						
+						if(null == currentPayableLineItemId) {
+							currentPayableLineItem.setStatus(Status.ACTIVE);
+						}
+						else if(null == searchPayableLineItem) {
+							invalidLineItemIds.add(currentPayableLineItemId);
+						}else {
+							if(null == currentPayableLineItem.getStatus())
+								currentPayableLineItem.setStatus(searchPayableLineItem.getStatus());
+						}
+					}
+				}
+    		}
+    		
+    		if(!CollectionUtils.isEmpty(invalidDetailIds))
+    		errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_BillDETAIL_ID",
+					"bill detail id is Invalid for the given ids of update request : " + invalidDetailIds);
+    		
+    		if(!CollectionUtils.isEmpty(invalidLineItemIds))
+        		errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_LINEITEM_ID",
+    					"bill detail id is Invalid for the given ids of update request : " + invalidLineItemIds);
+    		
+    		if(!CollectionUtils.isEmpty(invalidPayableLineItemIds))
+        		errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_PAYABLE_LINEITEM_ID",
+    					"bill detail id is Invalid for the given ids of update request : " + invalidPayableLineItemIds);
+    	}
+    	
+    	
+	}
+
+	public void validateSearchRequest(BillSearchRequest billSearchRequest) {
     	
     	BillCriteria billCriteria = billSearchRequest.getBillCriteria();
         if (StringUtils.isEmpty(billCriteria.getBusinessService())
@@ -141,7 +247,7 @@ public class BillValidator {
 			for (LineItem item : billDetail.getLineItems()) {
 
 				BigDecimal amount = item.getAmount();
-				BigDecimal paidAmount = item.getPaidAmount();
+				BigDecimal paidAmount = item.getPaidAmount() != null ? item.getPaidAmount() : BigDecimal.ZERO;
 
 				if (!headCodeList.contains(item.getHeadCode()))
 					missingHeadCodes.add(item.getHeadCode());
@@ -149,21 +255,24 @@ public class BillValidator {
                 if (amount.compareTo(paidAmount) < 0)
 					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
+				item.setPaidAmount(paidAmount);
 			}
 
-			for (LineItem item : billDetail.getPayableLineItems()) {
+			for (LineItem payableLineItem : billDetail.getPayableLineItems()) {
 
-				BigDecimal amount = item.getAmount();
-				BigDecimal paidAmount = item.getPaidAmount();
+				BigDecimal amount = payableLineItem.getAmount();
+				BigDecimal paidAmount = payableLineItem.getPaidAmount() != null ? payableLineItem.getPaidAmount()
+						: BigDecimal.ZERO;
 				billDetailAmount = billDetailAmount.add(amount);
 				billDetailPaidAmount = billDetailPaidAmount.add(paidAmount);
 
-				if (!headCodeList.contains(item.getHeadCode()))
-					missingHeadCodes.add(item.getHeadCode());
+				if (!headCodeList.contains(payableLineItem.getHeadCode()))
+					missingHeadCodes.add(payableLineItem.getHeadCode());
 
 				if (amount.compareTo(paidAmount) < 0)
 					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
+				payableLineItem.setPaidAmount(paidAmount);
 			}
 
 			billDetail.setTotalAmount(billDetailAmount);
