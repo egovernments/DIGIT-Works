@@ -173,7 +173,7 @@ export const SearchBillWMSConfig = {
                             },
                             {
                                 label: "ES_COMMON_LOCATION",
-                                jsonPath: "businessObject.additionalDetails.location",
+                                jsonPath: "businessObject.additionalDetails",
                                 additionalCustomization:true 
                             },
                             {
@@ -182,7 +182,7 @@ export const SearchBillWMSConfig = {
                             },
                             {
                                 label: "WORKS_BILL_TYPE",
-                                jsonPath: "businessObject.businessservice",
+                                jsonPath: "ProcessInstance.businessService",
                                 additionalCustomization:true
                             },
                             {
@@ -192,7 +192,7 @@ export const SearchBillWMSConfig = {
                             },
                             {
                                 label: "EXP_BILL_AMOUNT",
-                                jsonPath: "businessObject.netPayableAmount",
+                                jsonPath: "businessObject.totalAmount",
                                 additionalCustomization:true,
                                 headerAlign: "right"
                             }

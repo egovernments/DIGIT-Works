@@ -1039,13 +1039,14 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
+      
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
         createdFrom: "daystart",
         createdTo: "dayend",
       };
       const selectConfig = {
-        billType: "billType.businessService",
+        billType: "billType.code",
         ward: "ward[0].code",
         status: "status[0].code",
       };
@@ -1097,7 +1098,11 @@ export const UICustomizations = {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
-        const location = value;
+        const location = {
+          "ward":value?.ward,
+          "locality":value?.locality,
+          "city":row?.businessObject?.tenantId
+        };
         const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
         if (location) {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
