@@ -46,9 +46,11 @@ public class Payment {
 	@Valid
 	@NotNull
 	private List<PaymentBill> bills;
+	
+	@JsonProperty("paymentNumber")
+	private String paymentNumber;
 
 	@JsonProperty("status")
-	@NotNull
 	private PaymentStatus status;
 	
 	@JsonProperty("auditDetails")

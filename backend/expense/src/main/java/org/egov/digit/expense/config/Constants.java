@@ -26,6 +26,8 @@ public class Constants {
 	
 	public static final String BILL_ID_FORMAT_SUFFIX = ".bill.number";
 	
+	public static final String PAYMENT_ID_FORMAT_NAME = "expense.payment.number";
+	
 	public static final List<String> MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME, BUSINESS_SERVICE_MASTERNAME));
 
@@ -41,7 +43,7 @@ public class Constants {
 			+ " payment.id as p_id, payment.tenantid as p_tenantid, netpayableamount, netpaidamount,"
 			+ " payment.status as p_status, payment.createdby as p_createdby, payment.createdtime as p_createdtime,"
 			+ " payment.lastmodifiedby as p_lastmodifiedby, payment.lastmodifiedtime as p_lastmodifiedtime,"
-			+ " payment.additionaldetails as p_additionaldetails, "
+			+ " payment.additionaldetails as p_additionaldetails, paymentnumber, "
 			
 			+ " paymentbill.id as b_id, paymentbill.tenantid as b_tenantid, paymentid, billid,"
 			+ " paymentbill.totalamount as b_totalAmount, paymentbill.totalpaidamount as b_totalpaidAmount,"
