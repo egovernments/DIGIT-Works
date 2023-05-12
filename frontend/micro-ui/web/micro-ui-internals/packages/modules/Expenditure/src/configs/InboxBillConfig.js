@@ -237,7 +237,7 @@ export const InboxBillConfig = {
                 },
                 {
                   "label": "ES_COMMON_AMOUNT",
-                  "jsonPath": "businessObject.totalBillAmount",
+                  "jsonPath": "businessObject.additionalDetails.totalBillAmount",
                   "additionalCustomization": true
                 },
                 {
