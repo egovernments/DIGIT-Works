@@ -72,9 +72,14 @@ def getUser():
         user_search = os.getenv('USER_SEARCH')
         # # Call user search to fetch SYSTEM user
         user_url = "{}{}?tenantId={}".format(user_host, user_search, rootTenantId)
-        tenantId = "pg.citya"
-        uuid = os.getenv('USER_UUID')
-        user_payload = {"requestInfo":{"apiId":"ap.public","ver":"1","ts":45646456,"action":"POST","did":None,"key":None,"msgId":"8c11c5ca-03bd-11e7-93ae-92361f002671","userInfo":{"id":32},"authToken":"5eb3655f-31b1-4cd5-b8c2-4f9c033510d4"},"tenantId":tenantId,"uuid":[uuid],"pageSize":"1"}
+        # It will be active after adding role config
+        tenantId = rootTenantId
+        userName = os.getenv('USER_NAME')
+        user_payload = {"requestInfo":{"apiId":"ap.public","ver":"1","ts":45646456,"action":"POST","did":None,"key":None,"msgId":"8c11c5ca-03bd-11e7-93ae-92361f002671","userInfo":{"id":32},"authToken":"5eb3655f-31b1-4cd5-b8c2-4f9c033510d4"},"tenantId":tenantId,"userName":userName,"pageSize":"1"}
+
+        # tenantId = "pg.citya"
+        # uuid = os.getenv('USER_UUID')
+        # user_payload = {"requestInfo":{"apiId":"ap.public","ver":"1","ts":45646456,"action":"POST","did":None,"key":None,"msgId":"8c11c5ca-03bd-11e7-93ae-92361f002671","userInfo":{"id":32},"authToken":"5eb3655f-31b1-4cd5-b8c2-4f9c033510d4"},"tenantId":tenantId,"uuid":[uuid],"pageSize":"1"}
         user_payload = json.dumps(user_payload)
         user_headers = {'Content-Type': 'application/json'}
         user_response = requests.request("POST", user_url, headers=user_headers, data = user_payload)
@@ -107,25 +112,30 @@ def calculateExpense(contracts, requestInfo):
         payload["RequestInfo"] = requestInfo
         headers = {'Content-Type': 'application/json'}
         for contract in contracts:
-            contractId = contract.get("id")
-            logging.info("Generating expense for contract id : {}".format(contractId))
+            contractNumber = contract.get("contractNumber")
+            logging.info("Generating expense for contract : {}".format(contractNumber))
             criteria = {}
             criteria["tenantId"] = contract.get("tenantId")
-            criteria["contractId"] = contractId
+            criteria["contractId"] = contractNumber
             payload['criteria'] = criteria
             requestData = json.dumps(payload)
             try:
                 response = requests.request("POST", url, headers=headers, data = requestData)
                 logging.info("Response: {}".format(response.status_code))
-                if response.status_code == 201:
+                resp = response.json()
+                if response.status_code >= 200 and response.status_code < 300:
                     success = success + 1
                 else:
                     failed = failed + 1
-                    failedContractIds.append(contractId)
+                    failedContractIds.append(contractNumber)
+                    if response.status_code == 400 and len(resp.get("Errors")): 
+                        errors = resp.get("Errors")
+                        for error in errors:
+                            logging.info("Error Message: {}".format(error.get("message")))
             except Exception as ex:
-                logging.info("Exception while fetching contracts for tenant id: {}".format(contractId), exc_info=True)
+                logging.info("Exception while fetching contracts for tenant id: {}".format(contractNumber), exc_info=True)
                 failed = failed + 1
-                failedContractIds.append(contractId)
+                failedContractIds.append(contractNumber)
     except Exception as ex:
         logging.error("Exception while calculating expense", exc_info=True)
     
