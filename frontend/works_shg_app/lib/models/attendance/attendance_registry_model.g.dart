@@ -24,7 +24,7 @@ _$_AttendanceRegister _$$_AttendanceRegisterFromJson(
         Map<String, dynamic> json) =>
     _$_AttendanceRegister(
       id: json['id'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       registerNumber: json['registerNumber'] as String?,
       serviceCode: json['serviceCode'] as String?,
       referenceId: json['referenceId'] as String?,
@@ -136,7 +136,7 @@ Map<String, dynamic> _$$_StaffEntriesToJson(_$_StaffEntries instance) =>
 _$_AttendeesEntries _$$_AttendeesEntriesFromJson(Map<String, dynamic> json) =>
     _$_AttendeesEntries(
       id: json['id'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       registerId: json['registerId'] as String?,
       individualId: json['individualId'] as String?,
       enrollmentDate: json['enrollmentDate'] as int?,

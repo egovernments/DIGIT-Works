@@ -19,7 +19,7 @@ class OrganisationModel with _$OrganisationModel {
   const factory OrganisationModel({
     String? name,
     String? applicationNumber,
-    String? tenantId,
+    required String tenantId,
     String? id,
     String? orgNumber,
     String? applicationStatus,
@@ -57,7 +57,7 @@ class OrgAddress with _$OrgAddress {
   const factory OrgAddress({
     String? id,
     String? orgId,
-    String? tenantId,
+    required String tenantId,
     String? doorNo,
     String? plotNo,
     String? landmark,
@@ -84,7 +84,7 @@ class OrgContact with _$OrgContact {
   const factory OrgContact(
       {String? id,
       String? orgId,
-      String? tenantId,
+      required String tenantId,
       String? contactName,
       String? contactMobileNumber,
       String? contactEmail}) = _OrgContact;

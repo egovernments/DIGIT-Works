@@ -37,7 +37,7 @@ _$_UserRequestModel _$$_UserRequestModelFromJson(Map<String, dynamic> json) =>
       mobileNumber: json['mobileNumber'] as String?,
       name: json['name'] as String?,
       scope: json['scope'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       type: json['type'] as String?,
       userName: json['userName'] as String?,
       uuid: json['uuid'] as String?,

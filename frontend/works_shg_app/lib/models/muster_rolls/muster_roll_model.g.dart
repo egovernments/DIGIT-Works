@@ -23,7 +23,7 @@ Map<String, dynamic> _$$_MusterRollsModelToJson(_$_MusterRollsModel instance) =>
 _$_MusterRoll _$$_MusterRollFromJson(Map<String, dynamic> json) =>
     _$_MusterRoll(
       id: json['id'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       musterRollNumber: json['musterRollNumber'] as String?,
       registerId: json['registerId'] as String?,
       status: json['status'] as String?,

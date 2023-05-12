@@ -18,7 +18,7 @@ class GlobalConfigModel with _$GlobalConfigModel {
 @freezed
 class GlobalConfigs with _$GlobalConfigs {
   const factory GlobalConfigs({
-    @JsonKey(name: 'stateTenantId') final String? stateTenantId,
+    @JsonKey(name: 'stateTenantId') required final String stateTenantId,
     @JsonKey(name: 'gmaps_api_key') final String? gmaps_api_key,
     @JsonKey(name: 'finEnv') final String? finEnv,
     @JsonKey(name: 'contextPath') final String? contextPath,
