@@ -183,7 +183,7 @@ public class PurchaseBillGeneratorService {
             String headCode = lineItem.getHeadCode();
             BigDecimal amount = lineItem.getAmount();
             String category = getHeadCodeCategory(headCode,headCodes);
-            if(category != null && category.equalsIgnoreCase(EXPENSE_CONSTANT)) {
+            if(category != null && category.equalsIgnoreCase(EXPENSE_CONSTANT) && lineItem.getStatus().equals(LINEITEM_STATUS_ACTIVE)) {
                 expense = expense.add(amount);
             }
         }

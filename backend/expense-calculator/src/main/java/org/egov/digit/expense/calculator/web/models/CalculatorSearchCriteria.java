@@ -49,6 +49,15 @@ public class CalculatorSearchCriteria {
 
 	@JsonProperty("billRefIds")
 	private List<String> billReferenceIds;
+	
+	@JsonProperty("boundaryType")
+	private String boundaryType;
+	
+	@JsonProperty("boundaryCode")
+	private String boundaryCode;
+	
+	@JsonProperty("projectName")
+	private String projectName;
 
 }
 

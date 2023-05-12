@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.Project;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.*;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
@@ -157,6 +158,28 @@ public class ExpenseCalculatorUtil {
     	return additional;
     }
     
+    public List<Bill> fetchBillsByProject(RequestInfo requestInfo, String tenantId, List<String> projects) {
+    	//log.info("Fetching unique project numbers from the calculator repository for contractId " + contractId);
+    	// fetch the bill id from the calculator DB
+        List<String> billIds = expenseCalculatorRepository.getBillsByProjectNumber(tenantId, projects);
+        StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
+        Pagination pagination = Pagination.builder().limit(configs.getDefaultLimit()).offSet(configs.getDefaultOffset()).order(Order.ASC).build();
+        
+        //Only fetch active bills
+        BillCriteria billCriteria = BillCriteria.builder()
+        		.tenantId(tenantId)
+        		.status("ACTIVE")
+                .ids(new HashSet<>(billIds))
+                .build();
+        BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
+                .billCriteria(billCriteria).tenantId(tenantId).pagination(pagination).build();
+        log.info("Calling expense service search for billIds. Request is: " + billSearchRequest.toString());
+        Object responseObj = restRepo.fetchResult(url, billSearchRequest);
+        log.info("Response from billing service is: " + responseObj.toString());
+        BillResponse response = mapper.convertValue(responseObj, BillResponse.class);
+        return response != null ? response.getBills() : null;
+
+    }
     
 
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
