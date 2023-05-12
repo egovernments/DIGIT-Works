@@ -188,8 +188,8 @@ class MyBills {
   String get billNumber => 'WORKS_BILL_NUMBER';
   String get billDate => 'WORKS_BILL_DATE';
   String get netPayable => 'EXP_NET_PAYABLE';
-  String get invoiceId => 'WORKS_INVOICE_ID';
-  String get invoiceDate => 'WORKS_INVOICE_DATE';
+  String get invoiceId => 'EXP_INVOICE_NUMBER';
+  String get invoiceDate => 'EXP_INVOICE_DATE';
   String get payeeName => 'WORKS_PAYEE_NAME';
   String get noBills => 'EXP_NO_BILLS';
 }

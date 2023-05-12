@@ -98,6 +98,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
   }
 
   afterViewBuild() {
+    context.read<IndividualMusterRollSearchBloc>().add(
+      SearchIndividualMusterRollEvent(
+          musterRollNumber: widget.musterRollNo,
+          tenantId: widget.tenantId.toString()),
+    );
     context.read<MusterGetWorkflowBloc>().add(
           GetMusterWorkflowEvent(
               tenantId: widget.tenantId, musterRollNumber: widget.musterRollNo, musterSentBackCode: widget.sentBackCode),
@@ -195,7 +200,15 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                       state.maybeWhen(orElse: () => false,
                                       loading: () => shg_loader.Loaders.circularLoader(context),
                                       loaded: (MusterRollsModel? individualMusterRollModel) {
-                                        if(individualMusterRollModel?.musterRoll != null && individualMusterRollModel!.musterRoll!.isNotEmpty){
+                                        context.read<MusterRollEstimateBloc>().add(
+                                          ViewEstimateMusterRollEvent(
+                                            tenantId: widget.tenantId,
+                                            registerId: individualMusterRollModel!.musterRoll!.first.registerId.toString(),
+                                            startDate: individualMusterRollModel.musterRoll!.first.startDate ?? 0,
+                                            endDate: individualMusterRollModel.musterRoll!.first.endDate ?? 0,
+                                          ),
+                                        );
+                                        if(individualMusterRollModel.musterRoll != null && individualMusterRollModel.musterRoll!.isNotEmpty){
                                           projectDetails = individualMusterRollModel.musterRoll
                                               !.map((e) => {
                                             i18.attendanceMgmt.musterRollId:
@@ -821,40 +834,29 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                             MusterCreateState>(
                                                                         listener: (context,
                                                                             musterUpdateState) {
-                                                                          SchedulerBinding
-                                                                              .instance
-                                                                              .addPostFrameCallback(
-                                                                                  (_) {
                                                                             musterUpdateState
                                                                                 .maybeWhen(
                                                                                     error:
                                                                                         () {
-                                                                                      if (!updateLoaded) {
                                                                                         Notifiers.getToastMessage(
                                                                                             context,
                                                                                             AppLocalizations.of(context).translate(i18.attendanceMgmt.musterUpdateFailed),
                                                                                             'ERROR');
-                                                                                        onSubmit(
-                                                                                            registerId.toString());
-                                                                                        updateLoaded =
-                                                                                            true;
-                                                                                      }
+                                                                                        context.router.popAndPush(SHGInboxRoute(tenantId: widget.tenantId, musterRollNo: widget.musterRollNo, sentBackCode: widget.sentBackCode));
                                                                                     },
                                                                                     loaded: (MusterRollsModel?
                                                                                         createdMuster) {
-                                                                                      if (!updateLoaded) {
                                                                                         Notifiers.getToastMessage(
                                                                                             context,
                                                                                             '${createdMuster?.musterRoll?.first.musterRollNumber} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.musterSentForApproval)}',
                                                                                             'SUCCESS');
                                                                                         updateLoaded =
                                                                                             true;
-                                                                                        onSubmit(registerId.toString());
-                                                                                      }
+                                                                                        context.router.popAndPush(SHGInboxRoute(tenantId: widget.tenantId, musterRollNo: widget.musterRollNo, sentBackCode: widget.sentBackCode));
+
                                                                                     },
                                                                                     orElse: () =>
-                                                                                        Container());
-                                                                          });
+                                                                                        false);
                                                                         },
                                                                         child:
                                                                             DigitElevatedButton(
@@ -886,7 +888,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                             orgName: individualMusterRollModel.musterRoll!.first.musterAdditionalDetails!.contractId ?? 'NA',
                                                                                             skillsList: skillsPayLoad));
                                                                                         Future.delayed(
-                                                                                            const Duration(seconds: 2));
+                                                                                            const Duration(seconds: 1));
                                                                                       }
                                                                                     }
                                                                                   : null,
