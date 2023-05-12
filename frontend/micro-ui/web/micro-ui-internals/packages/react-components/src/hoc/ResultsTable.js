@@ -150,7 +150,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     if(!data) return <></>
     if (searchResult?.length === 0) return <NoResultsFound/>
     return (
-        <div style={{width : "fit-content"}}>
+        <div style={{width : "100%"}}>
             {config?.enableGlobalSearch && <div className='card' style={{ "padding": "0px", marginTop: "1rem" }}>
             <TextInput className="searchInput"  onChange={(e) => onSearch(e.target.value)} style={{ border: "none", borderRadius: "200px" }} />
              </div>}
@@ -163,7 +163,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
             {searchResult?.length > 0 && <Table
                 className={config?.tableClassName ? config?.tableClassName: "table"}
                 t={t}
-                //customTableWrapperClassName={"dss-table-wrapper"}
+                customTableWrapperClassName={"dss-table-wrapper"}
                 disableSort={config?.enableColumnSort ? false : true}
                 autoSort={config?.enableColumnSort ? true : false}
                 globalSearch={config?.enableGlobalSearch ? filterValue : undefined}
