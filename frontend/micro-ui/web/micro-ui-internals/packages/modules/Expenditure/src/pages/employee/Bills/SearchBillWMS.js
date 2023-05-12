@@ -19,12 +19,12 @@ const SearchBillWMS = () => {
       Digit.Utils.getConfigModuleName(),
       [
           {
-              "name": "SearchBillConfig"
+              "name": "SearchBillWMSConfig"
           }
       ],
       {
         select: (data) => {
-            const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchBillConfig[0];
+            const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchBillWMSConfig[0];
             const configs =  Digit.Utils.preProcessMDMSConfigInboxSearch(t, result, "sections.search.uiConfig.fields",{
               updateDependent : [
                {
