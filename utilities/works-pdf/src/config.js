@@ -70,4 +70,7 @@ module.exports = {
     expense_calculator_estimate: "/expense-calculator/v1/_estimate"
 
   },
+  constraints: {
+    "beneficiaryIdByHeadCode": "Deduction_{tanentId}_{headcode}"
+  }
 };
