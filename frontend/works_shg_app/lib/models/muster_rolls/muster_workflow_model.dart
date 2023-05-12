@@ -19,7 +19,7 @@ class MusterWorkFlowModel with _$MusterWorkFlowModel {
 @freezed
 class ProcessInstances with _$ProcessInstances {
   const factory ProcessInstances({
-    String? tenantId,
+    required String tenantId,
     String? businessService,
     String? id,
     String? businessId,

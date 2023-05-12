@@ -148,6 +148,7 @@ class Home {
   String get registerWageSeeker => 'REGISTER_WAGE_SEEKER';
   String get mukta => 'MUKTA';
   String get myWorks => 'MY_WORKS';
+  String get myBills => 'ACTION_TEST_MY_BILLS';
   String get manageWageSeekers => 'MANAGE_WAGE_SEEKERS';
   String get workOrder => 'ACTION_TEST_VIEW_WORK_ORDER';
   String get worksMgmt => 'WORKS_MGMT';

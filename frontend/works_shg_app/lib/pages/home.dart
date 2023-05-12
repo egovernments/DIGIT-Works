@@ -130,11 +130,11 @@ class _HomePage extends State<HomePage> {
                                                           Text(
                                                             t.translate(
                                                                 i18.home.mukta),
-                                                            style: const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontSize: 24),
+                                                            style: DigitTheme
+                                                                .instance
+                                                                .mobileTheme
+                                                                .textTheme
+                                                                .headlineLarge,
                                                           ),
                                                           SvgPicture.asset(
                                                               Constants

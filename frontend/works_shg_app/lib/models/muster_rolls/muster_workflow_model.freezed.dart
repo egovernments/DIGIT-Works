@@ -181,7 +181,7 @@ ProcessInstances _$ProcessInstancesFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ProcessInstances {
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get businessService => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   String? get businessId => throw _privateConstructorUsedError;
@@ -205,7 +205,7 @@ abstract class $ProcessInstancesCopyWith<$Res> {
       _$ProcessInstancesCopyWithImpl<$Res, ProcessInstances>;
   @useResult
   $Res call(
-      {String? tenantId,
+      {String tenantId,
       String? businessService,
       String? id,
       String? businessId,
@@ -232,7 +232,7 @@ class _$ProcessInstancesCopyWithImpl<$Res, $Val extends ProcessInstances>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? businessService = freezed,
     Object? id = freezed,
     Object? businessId = freezed,
@@ -243,10 +243,10 @@ class _$ProcessInstancesCopyWithImpl<$Res, $Val extends ProcessInstances>
     Object? workflowState = freezed,
   }) {
     return _then(_value.copyWith(
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       businessService: freezed == businessService
           ? _value.businessService
           : businessService // ignore: cast_nullable_to_non_nullable
@@ -316,7 +316,7 @@ abstract class _$$_ProcessInstancesCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? tenantId,
+      {String tenantId,
       String? businessService,
       String? id,
       String? businessId,
@@ -343,7 +343,7 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? businessService = freezed,
     Object? id = freezed,
     Object? businessId = freezed,
@@ -354,10 +354,10 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
     Object? workflowState = freezed,
   }) {
     return _then(_$_ProcessInstances(
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       businessService: freezed == businessService
           ? _value.businessService
           : businessService // ignore: cast_nullable_to_non_nullable
@@ -398,7 +398,7 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_ProcessInstances implements _ProcessInstances {
   const _$_ProcessInstances(
-      {this.tenantId,
+      {required this.tenantId,
       this.businessService,
       this.id,
       this.businessId,
@@ -414,7 +414,7 @@ class _$_ProcessInstances implements _ProcessInstances {
       _$$_ProcessInstancesFromJson(json);
 
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? businessService;
   @override
@@ -506,7 +506,7 @@ class _$_ProcessInstances implements _ProcessInstances {
 
 abstract class _ProcessInstances implements ProcessInstances {
   const factory _ProcessInstances(
-          {final String? tenantId,
+          {required final String tenantId,
           final String? businessService,
           final String? id,
           final String? businessId,
@@ -521,7 +521,7 @@ abstract class _ProcessInstances implements ProcessInstances {
       _$_ProcessInstances.fromJson;
 
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get businessService;
   @override

@@ -22,7 +22,7 @@ Map<String, dynamic> _$$_GlobalConfigModelToJson(
 
 _$_GlobalConfigs _$$_GlobalConfigsFromJson(Map<String, dynamic> json) =>
     _$_GlobalConfigs(
-      stateTenantId: json['stateTenantId'] as String?,
+      stateTenantId: json['stateTenantId'] as String,
       gmaps_api_key: json['gmaps_api_key'] as String?,
       finEnv: json['finEnv'] as String?,
       contextPath: json['contextPath'] as String?,

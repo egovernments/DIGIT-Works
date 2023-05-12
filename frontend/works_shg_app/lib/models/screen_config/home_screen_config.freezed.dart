@@ -389,8 +389,8 @@ CBOHomeScreenConfigModel _$CBOHomeScreenConfigModelFromJson(
 
 /// @nodoc
 mixin _$CBOHomeScreenConfigModel {
-  int? get order => throw _privateConstructorUsedError;
-  String? get key => throw _privateConstructorUsedError;
+  int get order => throw _privateConstructorUsedError;
+  String get key => throw _privateConstructorUsedError;
   String? get displayName => throw _privateConstructorUsedError;
   String? get label => throw _privateConstructorUsedError;
   bool? get active => throw _privateConstructorUsedError;
@@ -408,8 +408,8 @@ abstract class $CBOHomeScreenConfigModelCopyWith<$Res> {
       _$CBOHomeScreenConfigModelCopyWithImpl<$Res, CBOHomeScreenConfigModel>;
   @useResult
   $Res call(
-      {int? order,
-      String? key,
+      {int order,
+      String key,
       String? displayName,
       String? label,
       bool? active});
@@ -429,21 +429,21 @@ class _$CBOHomeScreenConfigModelCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? order = freezed,
-    Object? key = freezed,
+    Object? order = null,
+    Object? key = null,
     Object? displayName = freezed,
     Object? label = freezed,
     Object? active = freezed,
   }) {
     return _then(_value.copyWith(
-      order: freezed == order
+      order: null == order
           ? _value.order
           : order // ignore: cast_nullable_to_non_nullable
-              as int?,
-      key: freezed == key
+              as int,
+      key: null == key
           ? _value.key
           : key // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       displayName: freezed == displayName
           ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
@@ -470,8 +470,8 @@ abstract class _$$_CBOHomeScreenConfigModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? order,
-      String? key,
+      {int order,
+      String key,
       String? displayName,
       String? label,
       bool? active});
@@ -489,21 +489,21 @@ class __$$_CBOHomeScreenConfigModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? order = freezed,
-    Object? key = freezed,
+    Object? order = null,
+    Object? key = null,
     Object? displayName = freezed,
     Object? label = freezed,
     Object? active = freezed,
   }) {
     return _then(_$_CBOHomeScreenConfigModel(
-      order: freezed == order
+      order: null == order
           ? _value.order
           : order // ignore: cast_nullable_to_non_nullable
-              as int?,
-      key: freezed == key
+              as int,
+      key: null == key
           ? _value.key
           : key // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       displayName: freezed == displayName
           ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
@@ -524,15 +524,19 @@ class __$$_CBOHomeScreenConfigModelCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_CBOHomeScreenConfigModel implements _CBOHomeScreenConfigModel {
   const _$_CBOHomeScreenConfigModel(
-      {this.order, this.key, this.displayName, this.label, this.active});
+      {required this.order,
+      required this.key,
+      this.displayName,
+      this.label,
+      this.active});
 
   factory _$_CBOHomeScreenConfigModel.fromJson(Map<String, dynamic> json) =>
       _$$_CBOHomeScreenConfigModelFromJson(json);
 
   @override
-  final int? order;
+  final int order;
   @override
-  final String? key;
+  final String key;
   @override
   final String? displayName;
   @override
@@ -580,8 +584,8 @@ class _$_CBOHomeScreenConfigModel implements _CBOHomeScreenConfigModel {
 
 abstract class _CBOHomeScreenConfigModel implements CBOHomeScreenConfigModel {
   const factory _CBOHomeScreenConfigModel(
-      {final int? order,
-      final String? key,
+      {required final int order,
+      required final String key,
       final String? displayName,
       final String? label,
       final bool? active}) = _$_CBOHomeScreenConfigModel;
@@ -590,9 +594,9 @@ abstract class _CBOHomeScreenConfigModel implements CBOHomeScreenConfigModel {
       _$_CBOHomeScreenConfigModel.fromJson;
 
   @override
-  int? get order;
+  int get order;
   @override
-  String? get key;
+  String get key;
   @override
   String? get displayName;
   @override

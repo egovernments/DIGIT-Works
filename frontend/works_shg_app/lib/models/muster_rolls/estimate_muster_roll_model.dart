@@ -24,7 +24,7 @@ class EstimateMusterRollsModel with _$EstimateMusterRollsModel {
 class EstimateMusterRoll with _$EstimateMusterRoll {
   const factory EstimateMusterRoll({
     String? id,
-    String? tenantId,
+    required String tenantId,
     String? musterRollNumber,
     String? registerId,
     String? status,

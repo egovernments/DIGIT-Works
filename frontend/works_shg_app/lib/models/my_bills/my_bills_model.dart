@@ -15,9 +15,11 @@ class MyBillModel with MyBillModelMappable {
   String? contractNumber;
   String? musterRollNumber;
   BillModel? bill;
-  MyBillModel({this.bill,
-  this.musterRollNumber,
-  this.contractNumber,});
+  MyBillModel({
+    this.bill,
+    this.musterRollNumber,
+    this.contractNumber,
+  });
 }
 
 @MappableClass()
@@ -112,6 +114,7 @@ class BillDetails with BillDetailsMappable {
 @MappableClass()
 class BillAdditionalDetails with BillAdditionalDetailsMappable {
   String? invoiceNumber;
+  int? invoiceDate;
   String? locality;
   String? orgName;
   String? projectDesc;
@@ -119,15 +122,17 @@ class BillAdditionalDetails with BillAdditionalDetailsMappable {
   String? projectId;
   String? totalBillAmount;
   String? ward;
-  BillAdditionalDetails(
-      {this.invoiceNumber,
-      this.locality,
-      this.orgName,
-      this.projectDesc,
-      this.projectName,
-      this.projectId,
-      this.ward,
-      this.totalBillAmount});
+  BillAdditionalDetails({
+    this.invoiceNumber,
+    this.locality,
+    this.orgName,
+    this.projectDesc,
+    this.projectName,
+    this.projectId,
+    this.ward,
+    this.totalBillAmount,
+    this.invoiceDate,
+  });
 }
 
 @MappableClass()
@@ -151,7 +156,7 @@ class Payee with PayeeMappable {
 class BillLineItems with BillLineItemsMappable {
   String? id;
   String? billDetailId;
-  String? tenantId;
+  String tenantId;
   String? headCode;
   int? amount;
   String? type;
@@ -162,7 +167,7 @@ class BillLineItems with BillLineItemsMappable {
   BillLineItems(
       {this.id,
       this.auditDetails,
-      this.tenantId,
+      required this.tenantId,
       this.amount,
       this.type,
       this.status,
@@ -176,7 +181,7 @@ class BillLineItems with BillLineItemsMappable {
 class PayableLineItems with PayableLineItemsMappable {
   String? id;
   String? billDetailId;
-  String? tenantId;
+  String tenantId;
   String? headCode;
   int? amount;
   String? type;
@@ -187,7 +192,7 @@ class PayableLineItems with PayableLineItemsMappable {
   PayableLineItems(
       {this.id,
       this.auditDetails,
-      this.tenantId,
+      required this.tenantId,
       this.amount,
       this.type,
       this.status,
