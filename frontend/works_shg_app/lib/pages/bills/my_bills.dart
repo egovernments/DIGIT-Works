@@ -61,13 +61,15 @@ class _MyBillsPage extends State<MyBillsPage> {
               orElse: () => const SizedBox.shrink(),
               loading: () => shg_loader.Loaders.circularLoader(context),
               loaded: (MyBillsListModel? myBillsModel) {
-                return const SizedBox(
-                  height: 30,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: PoweredByDigit(),
-                  ),
-                );
+                return billList.length < 2
+                    ? const SizedBox(
+                        height: 30,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        ),
+                      )
+                    : const SizedBox.shrink();
               });
         }),
         body: SingleChildScrollView(
