@@ -182,15 +182,11 @@ async function search_workflow(applicationNumber, tenantId, requestinfo) {
   });
 }
 
-async function search_mdms(tenantId, module, master, requestinfo) {
+async function search_mdms(request) {
   return await axios({
     method: "post",
     url: url.resolve(config.host.mdms, config.paths.mdms_search),
-    data: requestinfo,
-    params: {
-      tenantId: tenantId,
-      ids: uuid,
-    },
+    data: request
   });
 }
 
@@ -302,13 +298,13 @@ async function upload_file_using_filestore(filename, tenantId, fileData) {
   }
 };
 
-async function create_eg_payments_excel(paymentId, tenantId, userId) {
+async function create_eg_payments_excel(paymentId, paymentNumber, tenantId, userId) {
   try {
     var id = uuidv4();
-    const insertQuery = 'INSERT INTO eg_payments_excel(id, paymentid, tenantId, status, numberofbills, numberofbeneficialy, totalamount, filestoreid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
+    const insertQuery = 'INSERT INTO eg_payments_excel(id, paymentid, paymentnumber, tenantId, status, numberofbills, numberofbeneficialy, totalamount, filestoreid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)';
     const status = 'INPROGRESS';
     const curentTimeStamp = new Date().getTime();
-    await pool.query(insertQuery, [id, paymentId, tenantId, status, 0, 0, 0, null, userId, userId, curentTimeStamp, curentTimeStamp]);
+    await pool.query(insertQuery, [id, paymentId, paymentNumber, tenantId, status, 0, 0, 0, null, userId, userId, curentTimeStamp, curentTimeStamp]);
   } catch (error) {
     throw(error)
   }
@@ -465,6 +461,7 @@ module.exports = {
   search_estimateDetails,
   search_musterRoll,
   search_contract,
+  search_mdms,
   search_mdmsWageSeekerSkills,
   search_organisation,
   search_expense_bill,
