@@ -37,6 +37,9 @@ public class OrganisationService {
     private UserService userService;
 
     @Autowired
+    private IndividualService individualService;
+
+    @Autowired
     private NotificationService notificationService;
 
 
@@ -49,7 +52,8 @@ public class OrganisationService {
         log.info("OrganisationService::createOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateCreateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
-        userService.createUser(orgRequest);
+        //userService.createUser(orgRequest);
+        individualService.createIndividual(orgRequest);
         producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
         notificationService.sendNotification(orgRequest,true);
         return orgRequest;
@@ -64,7 +68,8 @@ public class OrganisationService {
         log.info("OrganisationService::updateOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
-        userService.updateUser(orgRequest);
+        //userService.updateUser(orgRequest);
+        individualService.updateIndividual(orgRequest);
         producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
         notificationService.sendNotification(orgRequest,false);
         return orgRequest;
