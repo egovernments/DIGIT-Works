@@ -7,7 +7,8 @@ const ROLES = {
   ESTIMATE: ["ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER"],
   CONTRACT: ["WORK_ORDER_CREATOR", "WORK_ORDER_VERIFIER", "WORK_ORDER_APPROVER"],
   MASTERS: ["MUKTA_ADMIN"],
-  BILLS: ["BILL_CREATOR", "BILL_VIEWER"],
+  BILLS: ["BILL_CREATOR", "BILL_VIEWER","BILL_VERIFIER","BILL_APPROVER"],
+  PAYMENT: ["BILL_ACCOUNTANT"],
   MUSTERROLLS: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
   DSS: ["STADMIN"],
 };
@@ -153,6 +154,11 @@ const WorksCard = () => {
       link: `/${window?.contextPath}/employee/expenditure/billinbox`,
       roles: ROLES.BILLS,
       count: isLoadingBilling ? "-" : dataBilling?.totalCount,
+    },
+    {
+      label: t("ACTION_TEST_5PAYMENT"),
+      link: `/${window?.contextPath}/employee/masters/search-bill`,
+      roles: ROLES.PAYMENT,
     },
     {
       label: t("ACTION_TEST_6DASHBOARD"),
