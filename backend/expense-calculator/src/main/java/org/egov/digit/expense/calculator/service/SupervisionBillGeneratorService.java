@@ -208,14 +208,18 @@ public class SupervisionBillGeneratorService {
 						"Error occurred while generating supervision bill number from IdGen service");
 			}
 
+			//Fetch Contract additional details and pass onto Bill for the indexer
+			Object additionalDetails = expenseCalculatorUtil.getContractAdditionalDetails(requestInfo, criteria.getTenantId(), criteria.getContractId());
 			// Build Bill
 			Bill bill = Bill.builder().tenantId(criteria.getTenantId()).billDate(Instant.now().toEpochMilli())
 					.referenceId(criteria.getContractId() + "_" + supervisionBillNumber)
 					.businessService(config.getSupervisionBusinessService()).payer(payer).billDetails(billDetails)
 					.totalAmount(new BigDecimal(0))
 					.totalPaidAmount(new BigDecimal(0))
+					.additionalDetails(additionalDetails)			
 					.build();
-
+			//Add all the details from contract
+			if(additionalDetails!=null) bill.setAdditionalDetails(additionalDetails);
 			bills.add(bill);
 			log.info("Bill created:" + bill.toString());
 		}
