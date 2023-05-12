@@ -115,8 +115,8 @@ export const createBillPayload = (data, contract,  docConfigData) => {
                 "locality":contract.additionalDetails.locality,
                 "ward":contract.additionalDetails.ward,
                 "orgName":contract.additionalDetails.orgName,
-                "projectName":contract.additionalDetails.projectName
-
+                "projectName":contract.additionalDetails.projectName,
+                "invoiceDate": convertDateToEpoch(data?.invoiceDetails_invoiceDate)
             },
             "documents": fetchDocuments(
               data?.uploadedDocs,
