@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.ProcessInstanceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.util.EstimateServiceConstant;
 import org.egov.util.ProjectUtil;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
@@ -76,14 +77,18 @@ public class DenormalizeAndEnrichEstimateService {
      * @return
      */
     public EstimateRequest denormalizeAndEnrichProject(EstimateRequest estimateRequest) {
-        log.info("DenormalizeAndEnrichEstimateService::denormalizeAndEnrichProject");
+        log.info("DenormalizeAndEnrichEstimateService:: Enrich project details for estimate number %s", estimateRequest.getEstimate().getEstimateNumber());
         Object projectRes = projectUtil.getProjectDetails(estimateRequest);
 
-        List<Project> projects = objectMapper.convertValue(((LinkedHashMap) projectRes).get("Projects"), new TypeReference<List<Project>>() {
+        //If project payload changes, this key needs to be modified!
+        List<Project> projects = objectMapper.convertValue(((LinkedHashMap) projectRes).get(EstimateServiceConstant.PROJECT_RESP_PAYLOAD_KEY), new TypeReference<List<Project>>() {
         })  ;
 
         if (projects != null && !projects.isEmpty()) {
             estimateRequest.getEstimate().setProject(projects.get(0));
+        }
+        else {
+        	log.warn(String.format("Unable to enrich project details for estimate %s. Inbox and search will not function correctly!", estimateRequest.getEstimate().getEstimateNumber()));
         }
 
         return estimateRequest;

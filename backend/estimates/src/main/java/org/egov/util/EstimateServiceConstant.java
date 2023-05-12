@@ -40,6 +40,9 @@ public class EstimateServiceConstant {
     public static final String JSONPATH_PROJECT = "";
 
     //Project service Constants
+    
+    public static final String PROJECT_RESP_PAYLOAD_KEY ="Project";
+
     public static final String PROJECT_NAME_CODE ="$.Project.*.name";
 
     public static final String PROJECT_BOUNDARY_CODE ="$.Project.*.address.boundary";
