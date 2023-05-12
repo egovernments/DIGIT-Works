@@ -22,6 +22,7 @@ const getBillType = (businessService) => {
 }
 
 const getCreatePaymentPayload = (data) => {
+  debugger
   let payment = {}
   payment.tenantId = Digit.ULBService.getCurrentTenantId()
   payment.netPayableAmount = 0
@@ -32,7 +33,7 @@ const getCreatePaymentPayload = (data) => {
   payment.bills = []
   
   data?.forEach(item => {
-    const bill = item?.original?.bill
+    const bill = item
     let billObj = {}
     billObj.billId = bill?.id
     billObj.tenantId = bill?.tenantId
@@ -1153,7 +1154,26 @@ export const UICustomizations = {
       };
     },
     selectionHandler: async (selectedRows) => {
-      const payload = getCreatePaymentPayload(selectedRows);
+
+    /// here do expense calc search and get the response and send the list of bills to getCreatePaymentPayload
+      const ids = selectedRows?.map(row=> row?.original?.businessObject?.id)
+      
+      const result = await Digit.WorksService.searchBill({
+        "billCriteria": {
+          "tenantId": Digit.ULBService.getCurrentTenantId(),
+          ids,
+          // "businessService":[bsPurchaseBill,bsWageBill,bsSupervisionBill]
+          // "businessService":bsPurchaseBill
+        },
+         "pagination": {
+          "limit": 50,
+          "offSet": 0,
+          "sortBy": "ASC",
+          "order": "ASC"
+        }
+      })
+
+      const payload = getCreatePaymentPayload(result.bills);
       let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
       try {
         const response = await Digit.PaymentService.createPayment(payload);
