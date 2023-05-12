@@ -77,7 +77,7 @@ public class DenormalizeAndEnrichEstimateService {
      * @return
      */
     public EstimateRequest denormalizeAndEnrichProject(EstimateRequest estimateRequest) {
-        log.info("DenormalizeAndEnrichEstimateService::denormalizeAndEnrichProject");
+        log.info("DenormalizeAndEnrichEstimateService:: Enrich project details for estimate number %s", estimateRequest.getEstimate().getEstimateNumber());
         Object projectRes = projectUtil.getProjectDetails(estimateRequest);
 
         //If project payload changes, this key needs to be modified!
@@ -86,6 +86,9 @@ public class DenormalizeAndEnrichEstimateService {
 
         if (projects != null && !projects.isEmpty()) {
             estimateRequest.getEstimate().setProject(projects.get(0));
+        }
+        else {
+        	log.warn(String.format("Unable to enrich project details for estimate %s. Inbox and search will not function correctly!", estimateRequest.getEstimate().getEstimateNumber()));
         }
 
         return estimateRequest;
