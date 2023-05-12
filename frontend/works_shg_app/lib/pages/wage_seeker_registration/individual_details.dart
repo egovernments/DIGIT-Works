@@ -219,8 +219,10 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       ),
                       DigitDateFormPicker(
                         label: t.translate(i18.common.dateOfBirth),
-                        padding: EdgeInsets.only(top: 32.0),
+                        padding: const EdgeInsets.only(top: 32.0),
                         isRequired: true,
+                        cancelText: t.translate(i18.common.oK),
+                        confirmText: t.translate(i18.common.cancel),
                         icon: Icons.info_outline_rounded,
                         toolTipMsg: t.translate(i18.wageSeeker.ageValidation),
                         formControlName: dobKey,
@@ -260,7 +262,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       ),
                       DigitTextFormField(
                         label: t.translate(i18.common.mobileNumber),
-                        padding: EdgeInsets.only(top: 32),
+                        padding: const EdgeInsets.only(top: 32),
                         formControlName: mobileKey,
                         prefixText: '+91 - ',
                         isRequired: true,

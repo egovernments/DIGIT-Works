@@ -46,8 +46,6 @@ dependencies:
   json_annotation: ^4.8.0
   faker: ^2.0.0 # Library can be removed when no longer needed for fake data
   google_fonts: ^3.0.1
-  location: ^4.4.0
-  location_platform_interface: ^2.3.0
   http_mock_adapter: ^0.3.3
   pin_input_text_field: ^4.5.0
   logging: ^1.1.0
