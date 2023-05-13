@@ -263,8 +263,12 @@ public class BillValidator {
 				BigDecimal amount = payableLineItem.getAmount();
 				BigDecimal paidAmount = payableLineItem.getPaidAmount() != null ? payableLineItem.getPaidAmount()
 						: BigDecimal.ZERO;
-				billDetailAmount = billDetailAmount.add(amount);
-				billDetailPaidAmount = billDetailPaidAmount.add(paidAmount);
+				
+				if (payableLineItem.getStatus().equals(Status.ACTIVE)) {
+					
+					billDetailAmount = billDetailAmount.add(amount);
+					billDetailPaidAmount = billDetailPaidAmount.add(paidAmount);
+				}
 
 				if (!headCodeList.contains(payableLineItem.getHeadCode()))
 					missingHeadCodes.add(payableLineItem.getHeadCode());
@@ -277,8 +281,11 @@ public class BillValidator {
 
 			billDetail.setTotalAmount(billDetailAmount);
 			billDetail.setTotalPaidAmount(billDetailPaidAmount);
-			billAmount = billAmount.add(billDetailAmount);
-			billPaidAmount = billPaidAmount.add(billDetailPaidAmount);
+			if (billDetail.getStatus().equals(Status.ACTIVE)) {
+
+				billAmount = billAmount.add(billDetailAmount);
+				billPaidAmount = billPaidAmount.add(billDetailPaidAmount);
+			}
 		}
 		bill.setTotalAmount(billAmount);
 		bill.setTotalPaidAmount(billPaidAmount);
