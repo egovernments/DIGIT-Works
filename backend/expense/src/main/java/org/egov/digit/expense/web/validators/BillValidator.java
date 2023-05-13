@@ -68,7 +68,7 @@ public class BillValidator {
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
         validateBillAmountAndDate(bill, errorMap);
         validateTenantId(billRequest, mdmsData);
-        validateMasterData(billRequest, errorMap, mdmsData);
+        validateMasterData(billRequest, errorMap, mdmsData, true);
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
@@ -91,7 +91,7 @@ public class BillValidator {
         
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
         validateTenantId(billRequest, mdmsData);
-        validateMasterData(billRequest, errorMap, mdmsData);
+        validateMasterData(billRequest, errorMap, mdmsData, false);
 
         if (!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
@@ -221,7 +221,7 @@ public class BillValidator {
                     "The values of referenceIds or billNumbers should be provided along with businessService for a bill search");
     }
 
-    private void validateMasterData(BillRequest billRequest, Map<String, String> errorMap, Map<String, Map<String, JSONArray>> mdmsData) {
+    private void validateMasterData(BillRequest billRequest, Map<String, String> errorMap, Map<String, Map<String, JSONArray>> mdmsData, boolean isCreate) {
 
         Bill bill = billRequest.getBill();
         
@@ -264,7 +264,7 @@ public class BillValidator {
 				BigDecimal paidAmount = payableLineItem.getPaidAmount() != null ? payableLineItem.getPaidAmount()
 						: BigDecimal.ZERO;
 				
-				if (payableLineItem.getStatus().equals(Status.ACTIVE)) {
+				if (isCreate || (!isCreate && payableLineItem.getStatus().equals(Status.ACTIVE))) {
 					
 					billDetailAmount = billDetailAmount.add(amount);
 					billDetailPaidAmount = billDetailPaidAmount.add(paidAmount);
@@ -281,7 +281,7 @@ public class BillValidator {
 
 			billDetail.setTotalAmount(billDetailAmount);
 			billDetail.setTotalPaidAmount(billDetailPaidAmount);
-			if (billDetail.getStatus().equals(Status.ACTIVE)) {
+			if (isCreate || (!isCreate && billDetail.getStatus().equals(Status.ACTIVE))) {
 
 				billAmount = billAmount.add(billDetailAmount);
 				billPaidAmount = billPaidAmount.add(billDetailPaidAmount);
