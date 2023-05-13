@@ -1,24 +1,69 @@
 package org.egov.digit.expense.calculator.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.CONTRACT_ID_CONSTANT;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_APPLICABLE_CHARGES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_HEAD_CODES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_LABOUR_CHARGES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_PAYER;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_APPLICABLE_CHARGES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_BUSINESS_SERVICE;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_HEAD_CODES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_PAYER_LIST;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.PROJECT_ID_CONSTANT;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.PROJECT_ID_OF_CONSTANT;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.SUCCESSFUL_CONSTANT;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.WF_SUBMIT_ACTION_CONSTANT;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.Project;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.kafka.ExpenseCalculatorProducer;
 import org.egov.digit.expense.calculator.mapper.BillToMetaMapper;
-import org.egov.digit.expense.calculator.repository.*;
-import org.egov.digit.expense.calculator.util.*;
+import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
+import org.egov.digit.expense.calculator.util.BillUtils;
+import org.egov.digit.expense.calculator.util.CommonUtil;
+import org.egov.digit.expense.calculator.util.ExpenseCalculatorUtil;
+import org.egov.digit.expense.calculator.util.MdmsUtils;
+import org.egov.digit.expense.calculator.util.ProjectUtil;
 import org.egov.digit.expense.calculator.validator.ExpenseCalculatorServiceValidator;
-import org.egov.digit.expense.calculator.web.models.*;
-import org.egov.tracer.model.CustomException;
+import org.egov.digit.expense.calculator.web.models.ApplicableCharge;
+import org.egov.digit.expense.calculator.web.models.Bill;
+import org.egov.digit.expense.calculator.web.models.BillMapper;
+import org.egov.digit.expense.calculator.web.models.BillMetaRecords;
+import org.egov.digit.expense.calculator.web.models.BillResponse;
+import org.egov.digit.expense.calculator.web.models.BusinessService;
+import org.egov.digit.expense.calculator.web.models.Calculation;
+import org.egov.digit.expense.calculator.web.models.CalculationRequest;
+import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
+import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
+import org.egov.digit.expense.calculator.web.models.Contract;
+import org.egov.digit.expense.calculator.web.models.Criteria;
+import org.egov.digit.expense.calculator.web.models.HeadCode;
+import org.egov.digit.expense.calculator.web.models.LabourCharge;
+import org.egov.digit.expense.calculator.web.models.MusterRoll;
+import org.egov.digit.expense.calculator.web.models.MusterRollRequest;
+import org.egov.digit.expense.calculator.web.models.Payer;
+import org.egov.digit.expense.calculator.web.models.PurchaseBill;
+import org.egov.digit.expense.calculator.web.models.PurchaseBillRequest;
+import org.egov.digit.expense.calculator.web.models.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -41,6 +86,8 @@ public class ExpenseCalculatorService {
     @Autowired
     private BillUtils billUtils;
     @Autowired
+    private ProjectUtil projectUtils;
+    @Autowired
     private ObjectMapper mapper;
     @Autowired
     private CommonUtil commonUtil;
@@ -50,6 +97,9 @@ public class ExpenseCalculatorService {
     private BillToMetaMapper billToMetaMapper;
     @Autowired
     private ExpenseCalculatorRepository expenseCalculatorRepository;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
         expenseCalculatorServiceValidator.validateCalculatorEstimateRequest(calculationRequest);
@@ -178,11 +228,23 @@ public class ExpenseCalculatorService {
 
         } else {
             log.info("Create supervision bill for contractId :"+criteria.getContractId() );
-            List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId());
-            log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
+            List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId().trim());
+            if(expenseBills!=null)
+            		log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
             Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
             bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
-        }
+    		Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
+			Map<String, String> contractProjectMapping = new HashMap<>();
+
+			Object additionalDetails = contract.getAdditionalDetails();
+			Optional<String> projectIdOptional = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
+			Optional<String> contractIdOptional = commonUtil.findValue(additionalDetails, CONTRACT_ID_CONSTANT);
+			if (contractIdOptional.isPresent() && projectIdOptional.isPresent()) {
+				contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contractIdOptional.get(), projectIdOptional.get());
+			}
+			metaInfo.putAll(metaInfo);
+		}
+    		
 
         BillResponse billResponse = null;
         List<Bill> submittedBills = new ArrayList<>();
@@ -283,11 +345,32 @@ public class ExpenseCalculatorService {
         expenseCalculatorServiceValidator.validateCalculatorSearchRequest(calculatorSearchRequest);
 
         RequestInfo requestInfo=calculatorSearchRequest.getRequestInfo();
+        
+        CalculatorSearchCriteria searchCriteria = calculatorSearchRequest.getSearchCriteria();
 
-        String tenantId=calculatorSearchRequest.getSearchCriteria().getTenantId();
-
+        String tenantId=searchCriteria.getTenantId();
+        
+        //If we've got a project name or ward search, do this step first
+        if(searchCriteria.getProjectName()!=null || searchCriteria.getBoundaryCode()!=null) {
+        	//fetch all unique project numbers in the repo first
+        	List<String> projectNumbers = expenseCalculatorRepository.getUniqueProjectNumbers(tenantId);
+        	//Add the other search criteria and fetch the project numbers that match the criteria
+        	Object projectResults = projectUtils.getProjectDetails(calculatorSearchRequest, projectNumbers);
+        	
+        	 //If project payload changes, this key needs to be modified!
+            List<Project> projects = objectMapper.convertValue(((LinkedHashMap) projectResults).get("Project"), new TypeReference<List<Project>>() {
+            })  ;
+            
+            List<String> list = projects.stream()
+                    .map(t->t.getProjectNumber())
+                    .collect(Collectors.toList());
+            
+        	//Now go back and fetch the bill Ids that satisfy this criteria.
+        	searchCriteria.setProjectNumbers(list);
+        }
+        
         Map<String,BillMapper> billMappers=expenseCalculatorRepository.getBillMappers(calculatorSearchRequest);
-
+        List<String> billIds = billMappers.values().stream().map(m->m.getBillId()).collect(Collectors.toList());
         //set total count
         Integer totalCount= expenseCalculatorRepository.getBillCount(calculatorSearchRequest);
         calculatorSearchRequest.getPagination().setTotalCount(totalCount);
@@ -296,7 +379,7 @@ public class ExpenseCalculatorService {
         //checks if billIds are present
         List<Bill> bills=new ArrayList<>();
         if(!CollectionUtils.isEmpty(billMappers.keySet())) {
-             bills= expenseCalculatorUtil.fetchBillsWithBillIds(requestInfo, tenantId, new ArrayList<>(billMappers.keySet()));
+             bills= expenseCalculatorUtil.fetchBillsWithBillIds(requestInfo, tenantId, billIds);
         }
 
         //set bills in billMapper
@@ -308,6 +391,8 @@ public class ExpenseCalculatorService {
         return new ArrayList<>(billMappers.values());
     }
 
+
+  
 
 
     /**

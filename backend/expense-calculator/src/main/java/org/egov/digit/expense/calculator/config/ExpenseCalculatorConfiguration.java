@@ -139,6 +139,12 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${egov.works.expense.payer.type}")
 	private String payerType;
+	
+	@Value("${project.service.host}")
+	private String projectHost;
+	
+	@Value("${project.search.path}")
+	private String projectSearchPath;
 
 	//KAFKA topic
 	@Value("${expense.calculator.create.topic}")

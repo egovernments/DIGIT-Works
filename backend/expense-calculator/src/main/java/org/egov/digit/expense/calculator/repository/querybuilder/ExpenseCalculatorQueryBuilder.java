@@ -25,6 +25,8 @@ public class ExpenseCalculatorQueryBuilder {
 
     private static final String FETCH_BILL_ID_QUERY = "SELECT bill_id FROM eg_works_calculation ";
 
+    private static final String FETCH_PROJECT_ID_QUERY = "SELECT distinct project_number FROM eg_works_calculation ";
+
     private static final String FETCH_CALCULATE_BILL_IDS_QUERY = "SELECT bill_id,contract_number,musterroll_number," +
             "project_number,org_id FROM eg_works_calculation ";
 
@@ -84,6 +86,42 @@ public class ExpenseCalculatorQueryBuilder {
             queryBuilder.append(" tenant_id=? ");
             preparedStmtList.add(tenantId);
         }
+        return queryBuilder.toString();
+    }
+    
+    public String getUniqueProjectNumbersByTenant(String tenantId, List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = new StringBuilder(FETCH_PROJECT_ID_QUERY);
+
+        if (StringUtils.isNotBlank(tenantId)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" tenant_id=? ");
+            preparedStmtList.add(tenantId);
+        }
+        
+        return queryBuilder.toString();
+    }
+    
+    /**
+     * Fetches bill_ids based on project number search
+     * @param tenantId
+     * @param projectNumbers
+     * @param preparedStmtList
+     * @return
+     */
+    public String getBillsByProjectNumbers(String tenantId, List<String> projectNumbers, List<Object> preparedStmtList) {
+        StringBuilder queryBuilder = new StringBuilder(FETCH_BILL_ID_QUERY);
+
+        if (StringUtils.isNotBlank(tenantId)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" tenant_id=? ");
+            preparedStmtList.add(tenantId);
+        }
+        if (!CollectionUtils.isEmpty(projectNumbers)) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" project_number IN (").append(createQuery(projectNumbers)).append(")");
+            addToPreparedStatement(preparedStmtList,projectNumbers);
+        }
+        
         return queryBuilder.toString();
     }
 
