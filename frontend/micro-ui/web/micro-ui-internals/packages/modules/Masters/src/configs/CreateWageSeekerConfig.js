@@ -281,7 +281,7 @@ export const CreateWageSeekerConfig = {
               populators: { 
                 name: "locDetails_streetName", 
                 error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 128 }
+                validation: { pattern: "^[a-zA-Z0-9 .,\\/\\-_@#\\']*$", minlength : 2, maxlength: 128 }
               }
             },
             {
@@ -296,7 +296,7 @@ export const CreateWageSeekerConfig = {
               populators: { 
                 name: "locDetails_houseName", 
                 error: "MASTERS_PATTERN_ERR_MSG_WS_DETAILS",
-                validation: { pattern: "^[a-zA-Z0-9 .\\-_@#\\']*$", minlength : 2, maxlength: 8 }
+                validation: { pattern: "^[a-zA-Z0-9 .,\\/\\-_@#\\']*$", minlength : 2, maxlength: 8 }
               }
             }
           ]
@@ -331,8 +331,8 @@ export const CreateWageSeekerConfig = {
               },
               populators: { 
                 name: "financeDetails_accountNumber",
-                error: "WORKS_REQUIRED_ERR",
-                validation: {pattern: "^[0-9]{9,18}$"} 
+                error: "BANK_ACCOUNT_VALIDATION",
+                validation: {pattern: "^[0-9]{9,18}$", minlength : 9, maxlength: 18} 
               }
             },
             {

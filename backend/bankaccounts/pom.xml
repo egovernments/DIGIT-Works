@@ -5,7 +5,7 @@
     <artifactId>bankaccounts</artifactId>
     <packaging>jar</packaging>
     <name>bankaccounts</name>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.egov.services</groupId>
             <artifactId>services-common</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.egov</groupId>
@@ -104,6 +104,17 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>enc-client</artifactId>
+            <version>2.0.4-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.egov.services</groupId>
+                    <artifactId>tracer</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <repositories>

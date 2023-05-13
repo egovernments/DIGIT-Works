@@ -43,6 +43,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
+	@Value("${egov.idgen.supervision.reference.number}")
+	private String idGenSupervisionBillFormat;
+
 	// Workflow Config
 	@Value("${egov.workflow.host}")
 	private String wfHost;
@@ -70,12 +73,25 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
-	// Bill
+	// Contract service
+	@Value("${egov.contract.service.host}")
+	private String contractHost;
+
+	@Value("${egov.contract.service.search.endpoint}")
+	private String contractSearchEndPoint;
+
+	// Expense bill service
 	@Value("${egov.bill.host}")
 	private String billHost;
 
 	@Value("${egov.bill.create.endpoint}")
 	private String billCreateEndPoint;
+
+	@Value("${egov.bill.update.endpoint}")
+	private String billUpdateEndPoint;
+
+	@Value("${egov.expense.bill.service.search.endpoint}")
+	private String expenseBillSearchEndPoint;
 
 	// HRMS
 	@Value("${egov.hrms.host}")
@@ -106,8 +122,8 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.wage.head.code}")
 	private String wageHeadCode;
 
-	@Value("${egov.works.expense.wage.bill.type}")
-	private String wageBillType;
+	@Value("${egov.works.expense.wage.labour.charge.unit}")
+	private String wageLabourChargeUnit;
 
 	@Value("${egov.works.expense.wage.payee.type}")
 	private String wagePayeeType;
@@ -115,13 +131,38 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.works.expense.wage.business.service}")
 	private String wageBusinessService;
 
-	@Value("${egov.works.expense.wage.lineitem.type}")
-	private String wageLineItemType;
+	@Value("${egov.works.expense.purchase.business.service}")
+	private String purchaseBusinessService;
 
-	@Value("${egov.works.expense.wage.payer.type}")
-	private String wagePayerType;
+	@Value("${egov.works.expense.supervision.business.service}")
+	private String supervisionBusinessService;
 
-	@Value("${egov.works.expense.wage.payer.id}")
-	private String wagePayerId;
+	@Value("${egov.works.expense.payer.type}")
+	private String payerType;
+
+	//KAFKA topic
+	@Value("${expense.calculator.create.topic}")
+	private String calculatorCreateTopic;
+	
+	//Purchase bill referenceId IDGen format key
+	@Value("${egov.works.expense.purchasebill.referenceId.format}")
+	private String purchaseBillReferenceIdFormatKey;
+	
+	//Supervision bill referenceId IDGen format key
+	@Value("${egov.works.expense.superbill.referenceId.format}")
+	private String supervisionBillreferenceIdFormatKey;
+
+	@Value("${egov.works.expense.wagebill.referenceId.format}")
+	private String wageBillreferenceIdFormatKey;
+
+	//search configs
+	@Value("${expense.billing.default.limit}")
+	private Integer defaultLimit;
+
+	@Value("${expense.billing.default.offset}")
+	private Integer defaultOffset;
+
+	@Value("${expense.billing.search.max.limit}")
+	private Integer maxLimit;
 
 }

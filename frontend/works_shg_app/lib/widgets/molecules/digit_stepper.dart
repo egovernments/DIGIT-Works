@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
 
 import '../atoms/digit_base_stepper.dart';
 
@@ -7,17 +8,8 @@ class DigitStepper extends StatelessWidget {
   final List<int>? numbers;
   final List<String>? headers;
 
-  /// Whether to enable or disable the next and previous buttons.
-  final bool enableNextPreviousButtons;
-
   /// Whether to allow tapping a step to move to that step or not.
   final bool enableStepTapping;
-
-  /// Icon to be used for the previous button.
-  final Icon? previousButtonIcon;
-
-  /// Icon to be used for the next button.
-  final Icon? nextButtonIcon;
 
   /// Determines what should happen when a step is reached. This callback provides the __index__ of the step that was reached.
   final OnStepReached? onStepReached;
@@ -82,10 +74,7 @@ class DigitStepper extends StatelessWidget {
     super.key,
     this.numbers,
     this.headers,
-    this.enableNextPreviousButtons = true,
     this.enableStepTapping = true,
-    this.previousButtonIcon,
-    this.nextButtonIcon,
     this.onStepReached,
     this.direction = Axis.horizontal,
     this.numberStyle = const TextStyle(color: Colors.black),
@@ -103,7 +92,7 @@ class DigitStepper extends StatelessWidget {
     this.stepReachedAnimationEffect = Curves.bounceOut,
     this.stepReachedAnimationDuration = const Duration(seconds: 1),
     this.steppingEnabled = true,
-    this.scrollingDisabled = false,
+    this.scrollingDisabled = true,
     this.activeStep = 0,
     this.alignment = Alignment.center,
   });
@@ -111,11 +100,8 @@ class DigitStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DigitBaseStepper(
-      textChildren: _headersWrappedInText(),
-      nextPreviousButtonsDisabled: enableNextPreviousButtons,
+      textChildren: _headersWrappedInText(context),
       stepTappingDisabled: enableStepTapping,
-      previousButtonIcon: previousButtonIcon,
-      nextButtonIcon: nextButtonIcon,
       onStepReached: onStepReached,
       stepColor: stepColor,
       activeStepColor: activeStepColor,
@@ -144,21 +130,29 @@ class DigitStepper extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Text(
             '${numbers![index]}',
-            style: numberStyle.copyWith(fontSize: stepRadius / 1.1),
+            style: numberStyle.copyWith(fontSize: stepRadius / 1),
           ));
     });
   }
 
-  List<Widget> _headersWrappedInText() {
+  List<Widget> _headersWrappedInText(BuildContext context) {
     return List.generate(headers!.length, (index) {
-      return FittedBox(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            headers![index],
-            style: headerStyle.copyWith(fontSize: stepRadius),
-            softWrap: true,
-            maxLines: 2,
-          ));
+      return Container(
+        alignment: Alignment.center,
+        margin: index == 0 || index == headers!.length - 1
+            ? EdgeInsets.only(
+                left: index == 0 ? 8.0 : 0,
+                right: index == headers!.length - 1 ? 4.0 : 0)
+            : const EdgeInsets.only(left: 20.0),
+        width: 65,
+        child: Text(
+          AppLocalizations.of(context).translate(headers![index]),
+          style: headerStyle.copyWith(fontSize: stepRadius),
+          softWrap: true,
+          maxLines: 4,
+          textAlign: TextAlign.left,
+        ),
+      );
     });
   }
 }

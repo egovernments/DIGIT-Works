@@ -35,7 +35,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             title: "WORKS_LOCATION_DETAILS",
             asSectionHeader: true,
             values: [
-                { title: "WORKS_GEO_LOCATION",value: currentProject?.address?.addressLine1 || "NA" },
+                { title: "WORKS_GEO_LOCATION",value: (currentProject?.address?.latitude || currentProject?.address?.longitude ) ? `${currentProject?.address?.latitude}, ${currentProject?.address?.longitude}`  : "NA" },
                 { title: "WORKS_CITY",value: currentProject?.address?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`) : "NA" }, //will check with Backend
                 { title: "WORKS_WARD", value: currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "NA"  }, ///backend to update this
                 { title: "WORKS_LOCALITY",value: currentProject?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.locality}`) : "NA" },
@@ -60,10 +60,10 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                     values: currentProject?.documents?.map((document) => {
                         if(document?.status !== "INACTIVE") {
                             return {
-                                title: document?.documentType === "Other" ? document?.additionalDetails?.otherCategoryName : document?.documentType,
+                                title: document?.documentType === "Other" ? document?.additionalDetails?.otherCategoryName : t(`PROJECT_${document?.documentType}`),
                                 documentType: document?.documentType,
-                                documentUid: document?.fileStore,
-                                fileStoreId: document?.fileStore,
+                                documentUid: document?.fileStoreId,
+                                fileStoreId: document?.fileStoreId,
                             };
                         }
                         return {};
@@ -118,8 +118,8 @@ export const Search = {
             },
         }
 
-        if(response?.Projects) {
-            let projects = createProjectsArray(t, response?.Projects, searchParams, headerLocale);
+        if(response?.Project) {
+            let projects = createProjectsArray(t, response?.Project, searchParams, headerLocale);
         
             //searched Project details
             projectDetails.searchedProject['basicDetails'] = projects?.searchedProject?.basicDetails;
@@ -128,13 +128,13 @@ export const Search = {
         }
 
         return {
-            projectDetails : response?.Projects ? projectDetails : [],
-            response : response?.Projects,
+            projectDetails : response?.Project ? projectDetails : [],
+            response : response?.Project,
             processInstancesDetails: [],
             applicationData: {},
             workflowDetails: [],
             applicationData:{},
-            isNoDataFound : response?.Projects?.length === 0
+            isNoDataFound : response?.Project?.length === 0
         }
     },
     searchEstimate : async(tenantId, filters) => {

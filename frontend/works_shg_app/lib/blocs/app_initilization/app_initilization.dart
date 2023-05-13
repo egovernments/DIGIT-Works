@@ -36,83 +36,128 @@ class AppInitializationBloc
     AppInitializationSetupEvent event,
     AppInitializationEmitter emit,
   ) async {
-    GlobalConfigModel globalConfigModel =
-        await GetGlobalConfig().getGlobalConfig();
+    if (GlobalVariables.globalConfigObject == null ||
+        GlobalVariables.stateInfoListModel == null) {
+      GlobalConfigModel globalConfigModel =
+          await GetGlobalConfig().getGlobalConfig();
 
-    InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
-        apiEndPoint: Urls.initServices.mdms,
-        tenantId: globalConfigModel.globalConfigs!.stateTenantId.toString(),
-        moduleDetails: [
-          {
-            "moduleName": "common-masters",
-            "masterDetails": [
-              {
-                "name": "StateInfo",
-              },
-            ],
-          },
-          {
-            "moduleName": "tenant",
-            "masterDetails": [
-              {
-                "name": "tenants",
-              },
-              {
-                "name": "citymodule",
-              }
-            ],
-          },
-        ]);
-    GlobalVariables.globalConfigObject = globalConfigModel;
-    GlobalVariables.stateInfoListModel =
-        result.commonMastersModel!.stateInfoListModel!.first;
-    StateInfoListModel ss =
-        result.commonMastersModel!.stateInfoListModel!.first.copyWith(
-            languages: [
-      ...result.commonMastersModel!.stateInfoListModel![0].languages!
-          .mapIndexed((i, element) {
-        if (i == event.selectedLangIndex) {
-          return element.copyWith(isSelected: true);
-        } else {
-          return element;
-        }
-      })
-    ].toList());
-    if (kIsWeb) {
-      html.window.localStorage['initData'] = jsonEncode(result.toJson());
-      html.window.localStorage['StateInfo'] = jsonEncode(ss);
-      html.window.localStorage['languages'] = jsonEncode(ss.languages);
-      html.window.localStorage['tenantId'] = jsonEncode(ss.code);
+      InitMdmsModel result = await mdmsRepository.initMdmsRegistry(
+          apiEndPoint: Urls.initServices.mdms,
+          tenantId: globalConfigModel.globalConfigs!.stateTenantId.toString(),
+          moduleDetails: [
+            {
+              "moduleName": "common-masters",
+              "masterDetails": [
+                {
+                  "name": "StateInfo",
+                },
+              ],
+            },
+            {
+              "moduleName": "tenant",
+              "masterDetails": [
+                {
+                  "name": "tenants",
+                },
+                {
+                  "name": "citymodule",
+                }
+              ],
+            },
+          ]);
+      GlobalVariables.globalConfigObject = globalConfigModel;
+      GlobalVariables.stateInfoListModel =
+          result.commonMastersModel!.stateInfoListModel!.first;
+      StateInfoListModel ss =
+          result.commonMastersModel!.stateInfoListModel!.first.copyWith(
+              languages: [
+        ...result.commonMastersModel!.stateInfoListModel![0].languages!
+            .mapIndexed((i, element) {
+          if (element.value == event.selectedLang) {
+            return element.copyWith(isSelected: true);
+          } else {
+            return element;
+          }
+        })
+      ].toList());
+      if (kIsWeb) {
+        html.window.localStorage['initData'] = jsonEncode(result.toJson());
+        html.window.localStorage['StateInfo'] = jsonEncode(ss);
+        html.window.localStorage['languages'] = jsonEncode(ss.languages);
+        html.window.localStorage['tenantId'] = jsonEncode(ss.code);
+      } else {
+        await storage.write(
+            key: 'initData', value: jsonEncode(result.toJson()));
+        await storage.write(key: 'StateInfo', value: jsonEncode(ss.toJson()));
+        await storage.write(key: 'languages', value: jsonEncode(ss.languages));
+        await storage.write(key: 'tenantId', value: jsonEncode(ss.code));
+      }
+
+      dynamic localInitData;
+      dynamic localStateData;
+      dynamic localLanguageData;
+      if (kIsWeb) {
+        localInitData = html.window.localStorage['initData'];
+        localStateData = html.window.localStorage['StateInfo'];
+        localLanguageData = html.window.localStorage['languages'];
+      } else {
+        localInitData = await storage.read(key: 'initData');
+        localStateData = await storage.read(key: 'StateInfo');
+        localLanguageData = await storage.read(key: 'languages');
+      }
+
+      if (localInitData != null &&
+          localInitData.trim().isNotEmpty &&
+          localStateData != null &&
+          localLanguageData != null) {
+        initMdmsModelData = InitMdmsModel.fromJson(jsonDecode(localInitData));
+        stateInfoListModel =
+            StateInfoListModel.fromJson(jsonDecode(localStateData));
+        digitRowCardItems = jsonDecode(localLanguageData)
+            .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
+            .toList();
+      }
     } else {
-      await storage.write(key: 'initData', value: jsonEncode(result.toJson()));
-      await storage.write(key: 'StateInfo', value: jsonEncode(ss.toJson()));
-      await storage.write(key: 'languages', value: jsonEncode(ss.languages));
-      await storage.write(key: 'tenantId', value: jsonEncode(ss.code));
-    }
+      StateInfoListModel ss = GlobalVariables.stateInfoListModel!.copyWith(
+          languages: [
+        ...GlobalVariables.stateInfoListModel!.languages!
+            .mapIndexed((i, element) {
+          if (element.value == event.selectedLang) {
+            return element.copyWith(isSelected: true);
+          } else {
+            return element;
+          }
+        })
+      ].toList());
+      if (kIsWeb) {
+        html.window.localStorage['languages'] = jsonEncode(ss.languages);
+      } else {
+        await storage.write(key: 'languages', value: jsonEncode(ss.languages));
+      }
+      dynamic localInitData;
+      dynamic localStateData;
+      dynamic localLanguageData;
+      if (kIsWeb) {
+        localInitData = html.window.localStorage['initData'];
+        localStateData = html.window.localStorage['StateInfo'];
+        localLanguageData = html.window.localStorage['languages'];
+      } else {
+        localInitData = await storage.read(key: 'initData');
+        localStateData = await storage.read(key: 'StateInfo');
+        localLanguageData = await storage.read(key: 'languages');
+      }
 
-    dynamic localInitData;
-    dynamic localStateData;
-    dynamic localLanguageData;
-    if (kIsWeb) {
-      localInitData = html.window.localStorage['initData'];
-      localStateData = html.window.localStorage['StateInfo'];
-      localLanguageData = html.window.localStorage['languages'];
-    } else {
-      localInitData = await storage.read(key: 'initData');
-      localStateData = await storage.read(key: 'StateInfo');
-      localLanguageData = await storage.read(key: 'languages');
-    }
-
-    if (localInitData != null &&
-        localInitData.trim().isNotEmpty &&
-        localStateData != null &&
-        localLanguageData != null) {
-      initMdmsModelData = InitMdmsModel.fromJson(jsonDecode(localInitData));
-      stateInfoListModel =
-          StateInfoListModel.fromJson(jsonDecode(localStateData));
-      digitRowCardItems = jsonDecode(localLanguageData)
-          .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
-          .toList();
+      if (localInitData != null &&
+          localInitData.trim().isNotEmpty &&
+          localStateData != null &&
+          localLanguageData != null) {
+        initMdmsModelData = InitMdmsModel.fromJson(jsonDecode(localInitData));
+        stateInfoListModel =
+            StateInfoListModel.fromJson(jsonDecode(localStateData));
+        digitRowCardItems = jsonDecode(localLanguageData)
+            .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
+            .toList();
+      }
     }
     await AppLocalizations(
       Locale(
@@ -152,7 +197,7 @@ class AppInitializationBloc
 @freezed
 class AppInitializationEvent with _$AppInitializationEvent {
   const factory AppInitializationEvent.onapplicationInitializeSetup(
-      {required int selectedLangIndex}) = AppInitializationSetupEvent;
+      {required String selectedLang}) = AppInitializationSetupEvent;
 }
 
 @freezed

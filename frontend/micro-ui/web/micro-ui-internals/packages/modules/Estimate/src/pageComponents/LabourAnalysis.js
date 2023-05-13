@@ -23,10 +23,10 @@ const LabourAnalysis = ({watch,formState,...props}) => {
     const formFieldName = "analysis" // this will be the key under which the data for this table will be present on onFormSubmit
     const errorStyle = { marginBottom: "0px",width:"100%",fontSize:'12px' };
     // const inputStyle = { marginTop: "20px", marginBottom: "4px" };
-    const inputStyle = {marginBottom:'0px'};
+    const inputStyle = {marginBottom: "0px", textAlign: "right", paddingRight: "1rem"};
     
   return (
-      <Card style={{ backgroundColor: "#FAFAFA",marginTop:"2rem" }}>
+      <Card style={{ backgroundColor: "#FAFAFA",marginTop:"2rem",boxShadow:'none',border:'1px solid #D6D5D4' }}>
           <CardSectionHeader style={{ marginTop: "14px",marginBottom:"1rem" }}>{t(`ESTIMATE_LABOUR_ANALYSIS`)}</CardSectionHeader>
           <LabelFieldPair style={{marginBottom:'2rem'}}>
               <CardLabel style={{ fontSize: "16px", fontStyle: "bold", fontWeight: "600",marginBottom:"-10px" }}>{`${t(`ESTIMATE_LABOUR_COST`)}*`}</CardLabel>

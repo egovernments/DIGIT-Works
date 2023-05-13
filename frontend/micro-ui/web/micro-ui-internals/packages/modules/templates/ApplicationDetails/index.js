@@ -24,6 +24,7 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [isWarningPop, setWarningPopUp] = useState(false);
+  const [attendanceError, setAttendanceError] = useState({})
   
 
   const {
@@ -60,15 +61,13 @@ const ApplicationDetails = (props) => {
     setSaveAttendanceState
   } = props;
   
-  
   useEffect(() => {
     if (showToast) {
-      workflowDetails.revalidate();
+      workflowDetails?.revalidate();
     }
   }, [showToast]);
 
   function onActionSelect(action) {
-    
     if (action) {
       if(action?.isToast){
         setShowToast({ key: "error", error: { message: action?.toastMessage } });
@@ -86,7 +85,7 @@ const ApplicationDetails = (props) => {
         }
         
       } else if (!action?.redirectionUrl) {
-        if(action?.action === 'EDIT') {
+        if(action?.action === 'RE-SUBMIT') {
           setModify(true)
           setshowEditTitle(true)
         }
@@ -163,9 +162,9 @@ const ApplicationDetails = (props) => {
 
   const getAttendanceResponseHeaderAndMessage = (action) => {
     let response = {}
-    if (action?.includes("VERIFY")) {
-      response.header = t("ATM_ATTENDANCE_VERIFIED")
-      response.message = t("ATM_ATTENDANCE_VERIFIED_SUCCESS")
+    if (action?.includes("RE-SUBMIT")) {
+      response.header = t("ATM_ATTENDANCE_RESUBMITTED")
+      response.message = t("ATM_ATTENDANCE_RESUBMITTED_SUCCESS")
     } else if (action?.includes("REJECT")) {
       response.header = t("ATM_ATTENDANCE_REJECTED")
       response.message = t("ATM_ATTENDANCE_REJECTED_SUCCESS")
@@ -177,7 +176,11 @@ const ApplicationDetails = (props) => {
   }
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-    
+    if(data?.musterRoll && Object.values(attendanceError)?.filter(item => item === true)?.length > 0) {
+      setShowToast({ key: "error", error: { message: t("ES_COMMON_DAYS_LESS_THAN_SEVEN_ERROR") } })
+      setTimeout(closeToast, 3000);
+      return
+    }
     const performedAction = data?.workflow?.action
     setIsEnableLoader(true);
     if (mutate) {
@@ -326,6 +329,7 @@ const ApplicationDetails = (props) => {
             tenantId={props.tenantId}
             businessService={businessService}
             customClass={customClass}
+            setAttendanceError={setAttendanceError}
           />
           {showModal ? (
             <ActionModal

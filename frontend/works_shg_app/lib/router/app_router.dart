@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/pages/bills/my_bills.dart';
 import 'package:works_shg_app/pages/org_profile.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/register_individual.dart';
 
@@ -8,7 +9,6 @@ import '../pages/authenticated.dart';
 import '../pages/home.dart';
 import '../pages/language_selection_page.dart';
 import '../pages/login.dart';
-import '../pages/manage_attendance_register.dart';
 import '../pages/otp_verification.dart';
 import '../pages/shg_inbox.dart';
 import '../pages/trackAttendance/track-attendance_inbox.dart';
@@ -43,7 +43,7 @@ part 'app_router.gr.dart';
       page: AuthenticatedPageWrapper,
       path: '/',
       children: [
-        AutoRoute(page: HomePage, path: ''),
+        AutoRoute(page: HomePage, path: 'home', initial: true),
         AutoRoute(page: ORGProfilePage, path: 'orgProfile'),
         AutoRoute(
             page: AttendanceRegisterTablePage,
@@ -51,16 +51,16 @@ part 'app_router.gr.dart';
         AutoRoute(page: WorkOrderPage, path: 'work-orders'),
         AutoRoute(page: ViewMusterRollsPage, path: 'muster-rolls'),
         AutoRoute(
-            page: SHGInboxPage, path: 'shg-inbox/:tenantId/:musterRollNo'),
-        AutoRoute(
-            page: ManageAttendanceRegisterPage, path: 'manage-attendance'),
+            page: SHGInboxPage,
+            path: 'shg-inbox/:tenantId/:musterRollNo/:sentBackCode'),
         AutoRoute(
             page: TrackAttendanceInboxPage, path: 'track-attendance-inbox'),
         AutoRoute(
             page: TrackAttendancePage, path: 'track-attendance/:id/:tenantId'),
         AutoRoute(page: RegisterIndividualPage, path: 'register-individual'),
         AutoRoute(page: ViewWorkDetailsPage, path: 'view-work-order'),
-        AutoRoute(page: SuccessResponsePage, path: 'success')
+        AutoRoute(page: SuccessResponsePage, path: 'success'),
+        AutoRoute(page: MyBillsPage, path: 'my-bills')
       ],
     ),
   ],

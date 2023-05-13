@@ -1,12 +1,6 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 
 //form data input name (with cropped prefix) mapping with file category Name
-const documentType = {
-  "feasibility_analysis" : "Feasiblity Analysis",
-  "finalized_worklist" : "Finalized Worklist",
-  "project_proposal" : "Project Proposal",
-  "others" : "Other"
-}
 
 //This handler will trim all the doc keys to 'documentType' Keys -- check above object
 const transformDefaultDocObject = (documentDefaultValue) => {
@@ -30,36 +24,42 @@ const transformDefaultDocObject = (documentDefaultValue) => {
 
 //This handler will return the payload for doc according to API spec. 
 //This object will be later pushed to an array
-const createDocObject = (document, docType, otherDocFileName="Others", isActive) =>{
+const createDocObject = (document, docType, otherDocFileName="Others", isActive, tenantId, docConfigData) =>{
  
+  let documentType = docConfigData?.works?.DocumentConfig?.[0]?.documents;
+
   //handle empty Category Name in File Type
   if((otherDocFileName.trim()).length === 0) {
     otherDocFileName = "";
   }
 
   let payload_modal = {};
-  payload_modal.documentType = documentType?.[docType];
-  payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
-  payload_modal.documentUid = "";
+  payload_modal.documentType = documentType?.filter(doc=>doc?.name === docType)?.[0]?.code;
+  payload_modal.fileStoreId = document?.[1]?.['fileStoreId']?.['fileStoreId'];
+  payload_modal.documentUid = document?.[1]?.['fileStoreId']?.['fileStoreId'];
   payload_modal.status = isActive;
   payload_modal.id = document?.[1]?.['file']?.['id'];
   payload_modal.key = docType;
   payload_modal.additionalDetails = {
-    fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] : documentType?.[docType],
+    fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] :  documentType?.filter(doc=>doc?.name === docType)?.[0]?.code,
     otherCategoryName : otherDocFileName
   }
+  payload_modal.tenantId = tenantId;
   return payload_modal;
 }
 
-const createDocumentsPayload = (documents, otherDocFileName, configs) => {
+const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, docConfigData) => {
+  
   let documents_payload_list = [];
   let documentDefaultValue = transformDefaultDocObject(configs?.defaultValues?.noSubProject_docs);
 
   //new uploaded docs
   for(let docType of Object.keys(documents)) {
     for(let document of documents[docType]) {
-      let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE"); 
+      if(_.isArray(document)) {
+      let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE", tenantId, docConfigData); 
       documents_payload_list.push(payload_modal);
+      }
     }
   }
 
@@ -75,7 +75,8 @@ const createDocumentsPayload = (documents, otherDocFileName, configs) => {
           //new file being uploaded, if ID is undefined ( Update Case )
           if(!uploadedDocObject?.id) {
             //if old file exists, make default value file as inactive
-            let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
+            let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE", tenantId, docConfigData); 
+            payload_modal.documentType = "INACTIVE"
             documents_payload_list.push(payload_modal);
           }
           isExist = true;
@@ -83,7 +84,8 @@ const createDocumentsPayload = (documents, otherDocFileName, configs) => {
       }
       //if previous file does not exist in new formData ( Delete Case ), mark it as InActive
       if(!isExist && defaultDocKey !== "others_name") {
-        let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE"); 
+        let payload_modal = createDocObject(documentDefaultValue[defaultDocKey][0], defaultDocKey, otherDocFileName, "INACTIVE", tenantId); 
+        payload_modal.documentType = "INACTIVE"
         documents_payload_list.push(payload_modal);
       }
     }
@@ -93,7 +95,7 @@ const createDocumentsPayload = (documents, otherDocFileName, configs) => {
   return documents_payload_list;
 }
 
-function createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams, configs) {
+function createProjectList(data, selectedProjectType, parentProjectID, tenantId, docConfigData, modifyParams, configs) {
     
     let projects_payload = [];
     let project_details;
@@ -121,36 +123,33 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
           "projectNumber" : modifyParams?.modify_projectNumber,
           "name": parentProjectID ? project_details?.projectName : basic_details?.projectName,
           "projectType": project_details?.typeOfProject?.code, 
-          "projectSubType": project_details?.subTypeOfProject?.code , 
-          "department": project_details?.owningDepartment?.code,
+          "projectSubType": project_details?.subTypeOfProject?.code || "" , 
+          "department": project_details?.owningDepartment?.code || "",
           "description":  parentProjectID ? project_details?.projectDesc : basic_details?.projectDesc,
           "referenceID": project_details?.letterRefNoOrReqNo,
           "documents": createDocumentsPayload(
-            {
-            feasibility_analysis : project_details?.docs?.noSubProject_doc_feasibility_analysis, 
-             finalized_worklist : project_details?.docs?.noSubProject_doc_finalized_worklist, 
-             others : project_details?.docs?.noSubProject_doc_others, 
-             project_proposal : project_details?.docs?.noSubProject_doc_project_proposal
-            },
+            project_details?.docs,
             project_details?.docs?.noSubProject_doc_others_name,
-            configs
+            configs,
+            tenantId,
+            docConfigData
             ),
           "natureOfWork" : project_details?.natureOfWork?.code,
           "address": {
             "id" : modifyParams?.modify_addressID,
             "tenantId": tenantId,
-            "doorNo": "1", //Not being captured on UI
-            "latitude": 90, //Not being captured on UI
-            "longitude": 180, //Not being captured on UI
-            "locationAccuracy": 10000, //Not being captured on UI
-            "type": "Home", //Not being captured on UI
-            "addressLine1": project_details?.geoLocation,
-            "addressLine2": "Address Line 2", //Not being captured on UI
-            "landmark": "Area1", //Not being captured on UI
+            // "doorNo": "1", //Not being captured on UI
+            "latitude": project_details?.geoLocation?.latitude,
+            "longitude": project_details?.geoLocation?.longitude,
+            // "locationAccuracy": 10000, //Not being captured on UI
+            // "type": "Home", //Not being captured on UI
+            // "addressLine1": project_details?.geoLocation,
+            // "addressLine2": "Address Line 2", //Not being captured on UI
+            // "landmark": "Area1", //Not being captured on UI
             "city": project_details?.ulb?.code,
-            "pincode": "999999", //Not being captured on UI
-            "buildingName": "Test_Building", //Not being captured on UI
-            "street": "Test_Street", //Not being captured on UI
+            // "pincode": "999999", //Not being captured on UI
+            // "buildingName": "Test_Building", //Not being captured on UI
+            // "street": "Test_Street", //Not being captured on UI
             "boundary": project_details?.ward?.code, //ward code
             "boundaryType" : "Ward"
           },
@@ -180,9 +179,9 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
 
 const CreateProjectUtils = {
     payload : {
-        create : (data, selectedProjectType, parentProjectID, tenantId, modifyParams, configs) => {
+        create : (data, selectedProjectType, parentProjectID, tenantId, docConfigData, modifyParams, configs) => {
             return {
-                Projects : createProjectList(data, selectedProjectType, parentProjectID, tenantId, modifyParams, configs), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
+                Projects : createProjectList(data, selectedProjectType, parentProjectID, tenantId, docConfigData, modifyParams, configs), //if there is a Parent Project, then create list of sub-projects array, or only create one object for Parent Project.
                 apiOperation : "CREATE"
             }
         },

@@ -8,6 +8,7 @@ import { Loader } from "./Loader";
 import Toast from "./Toast";
 import { useHistory } from "react-router-dom";
 const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback }) => {
+  
   const history = useHistory()
   const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber 
@@ -36,6 +37,8 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       }
     }
   );
+
+  
 
   const menuRef = useRef();
 
@@ -79,15 +82,20 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   };
 
   const onActionSelect = (action) => {
-    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contracts");
+    
+    const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
     const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
-    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("attendencemgmt")
+    const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
+    const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
+    
+    
     setDisplayMenu(false)
     setSelectedAction(action)
 
     //here check if actin is edit then do a history.push acc to the businessServ and action
     //send appropriate states over
-    if(bsEstimate === businessService && action?.action === "RE-SUBMITTED"){
+    
+    if(bsEstimate === businessService && action?.action === "RE-SUBMIT"){
         history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
         return 
     }
@@ -96,11 +104,15 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
       return 
   }
-    if(bsAttendance === businessService && action?.action === "EDIT"){
+    if(bsAttendance === businessService && action?.action === "RE-SUBMIT"){
         editCallback()
         return 
     }
 
+    if(bsPurchaseBill === businessService && action?.action==="RE-SUBMIT"){
+      history.push(`/${window?.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&billNumber=${editApplicationNumber}`);
+      return 
+    }
     //here we can add cases of toast messages,edit application and more...
     // the default result is setting the modal to show
     setShowModal(true)
@@ -116,7 +128,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       onError:(error,variables)=>{
         setIsEnableLoader(false)
         //show error toast acc to selectAction
-        setShowToast({ error: true, label: `WF_UPDATE_ERROR_${moduleCode.toUpperCase()}_${selectAction.action}`, isDleteBtn:true })
+        setShowToast({ error: true, label: Digit.Utils.locale.getTransformedLocale(`WF_UPDATE_ERROR_${businessService}_${selectAction.action}`), isDleteBtn:true })
         
 
         
@@ -125,7 +137,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
       onSuccess:(data,variables) => {
         setIsEnableLoader(false)
         //show success toast acc to selectAction
-        setShowToast({ label: `WF_UPDATE_SUCCESS_${moduleCode.toUpperCase()}_${selectAction.action}` })
+        setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`WF_UPDATE_SUCCESS_${businessService}_${selectAction.action}`) })
         
 
         // to refetch updated workflowData and re-render timeline and actions
@@ -142,14 +154,13 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
   if(isEnableLoader){
     return <Loader />
   }
-
   return (
     <React.Fragment>
       {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && (
         <ActionBar style={{ ...ActionBarStyle }}>
           {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
             <Menu
-              localeKeyPrefix={forcedActionPrefix || `WORKS_${businessService?.toUpperCase()}`}
+              localeKeyPrefix={forcedActionPrefix || Digit.Utils.locale.getTransformedLocale(`WF_${businessService?.toUpperCase()}_ACTION`)}
               options={actions}
               optionKey={"action"}
               t={t}
@@ -168,7 +179,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
             name={actions?.[0]?.action}
             value={actions?.[0]?.action}
             onClick={(e) => { onActionSelect(actions?.[0] || {}) }}>
-            {t(`${forcedActionPrefix || `WF_EMPLOYEE_${businessService?.toUpperCase()}`}_${actions?.[0]?.action}`)}
+            {t( Digit.Utils.locale.getTransformedLocale(`${forcedActionPrefix || `WF_${businessService?.toUpperCase()}_ACTION`}_${actions?.[0]?.action}`))}
           </button>
         </ActionBar>
       )}

@@ -97,20 +97,16 @@ class _$AppRouter extends RootStackRouter {
           orElse: () => SHGInboxRouteArgs(
                 tenantId: pathParams.getString('tenantId'),
                 musterRollNo: pathParams.getString('musterRollNo'),
+                sentBackCode: pathParams.getString('sentBackCode'),
               ));
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: SHGInboxPage(
           args.tenantId,
           args.musterRollNo,
+          args.sentBackCode,
           key: args.key,
         ),
-      );
-    },
-    ManageAttendanceRegisterRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: const ManageAttendanceRegisterPage(),
       );
     },
     TrackAttendanceInboxRoute.name: (routeData) {
@@ -181,6 +177,12 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    MyBillsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const MyBillsPage(),
+      );
+    },
   };
 
   @override
@@ -218,8 +220,15 @@ class _$AppRouter extends RootStackRouter {
           path: '/',
           children: [
             RouteConfig(
-              HomeRoute.name,
+              '#redirect',
               path: '',
+              parent: AuthenticatedRouteWrapper.name,
+              redirectTo: 'home',
+              fullMatch: true,
+            ),
+            RouteConfig(
+              HomeRoute.name,
+              path: 'home',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -244,12 +253,7 @@ class _$AppRouter extends RootStackRouter {
             ),
             RouteConfig(
               SHGInboxRoute.name,
-              path: 'shg-inbox/:tenantId/:musterRollNo',
-              parent: AuthenticatedRouteWrapper.name,
-            ),
-            RouteConfig(
-              ManageAttendanceRegisterRoute.name,
-              path: 'manage-attendance',
+              path: 'shg-inbox/:tenantId/:musterRollNo/:sentBackCode',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -275,6 +279,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               SuccessResponseRoute.name,
               path: 'success',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              MyBillsRoute.name,
+              path: 'my-bills',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -372,7 +381,7 @@ class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute()
       : super(
           HomeRoute.name,
-          path: '',
+          path: 'home',
         );
 
   static const String name = 'HomeRoute';
@@ -464,18 +473,21 @@ class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
   SHGInboxRoute({
     required String tenantId,
     required String musterRollNo,
+    required String sentBackCode,
     Key? key,
   }) : super(
           SHGInboxRoute.name,
-          path: 'shg-inbox/:tenantId/:musterRollNo',
+          path: 'shg-inbox/:tenantId/:musterRollNo/:sentBackCode',
           args: SHGInboxRouteArgs(
             tenantId: tenantId,
             musterRollNo: musterRollNo,
+            sentBackCode: sentBackCode,
             key: key,
           ),
           rawPathParams: {
             'tenantId': tenantId,
             'musterRollNo': musterRollNo,
+            'sentBackCode': sentBackCode,
           },
         );
 
@@ -486,6 +498,7 @@ class SHGInboxRouteArgs {
   const SHGInboxRouteArgs({
     required this.tenantId,
     required this.musterRollNo,
+    required this.sentBackCode,
     this.key,
   });
 
@@ -493,24 +506,14 @@ class SHGInboxRouteArgs {
 
   final String musterRollNo;
 
+  final String sentBackCode;
+
   final Key? key;
 
   @override
   String toString() {
-    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, key: $key}';
+    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, sentBackCode: $sentBackCode, key: $key}';
   }
-}
-
-/// generated route for
-/// [ManageAttendanceRegisterPage]
-class ManageAttendanceRegisterRoute extends PageRouteInfo<void> {
-  const ManageAttendanceRegisterRoute()
-      : super(
-          ManageAttendanceRegisterRoute.name,
-          path: 'manage-attendance',
-        );
-
-  static const String name = 'ManageAttendanceRegisterRoute';
 }
 
 /// generated route for
@@ -717,4 +720,16 @@ class SuccessResponseRouteArgs {
   String toString() {
     return 'SuccessResponseRouteArgs{key: $key, header: $header, subHeader: $subHeader, subText: $subText, subTitle: $subTitle, callBack: $callBack, callBackWhatsapp: $callBackWhatsapp, callBackDownload: $callBackDownload, callBackPrint: $callBackPrint, backButton: $backButton, buttonLabel: $buttonLabel, isWithoutLogin: $isWithoutLogin, downloadLabel: $downloadLabel, printLabel: $printLabel, whatsAppLabel: $whatsAppLabel, backButtonLabel: $backButtonLabel}';
   }
+}
+
+/// generated route for
+/// [MyBillsPage]
+class MyBillsRoute extends PageRouteInfo<void> {
+  const MyBillsRoute()
+      : super(
+          MyBillsRoute.name,
+          path: 'my-bills',
+        );
+
+  static const String name = 'MyBillsRoute';
 }

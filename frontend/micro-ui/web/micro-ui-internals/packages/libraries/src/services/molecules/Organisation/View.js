@@ -19,7 +19,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       values: [
         { title: "MASTERS_ORG_ID", value: organisation?.orgNumber || t("NA")},
         { title: "MASTERS_NAME_OF_THE_ORG", value: organisation?.name || t("NA")},
-        { title: "MASTERS_REGISTERED_BY_DEPT", value: organisation?.additionalDetails?.registeredByDept ? t(`COMMON_MASTERS_DEPARTMENT_${organisation?.additionalDetails?.registeredByDept}`) : t("NA")},
+        { title: "MASTERS_REGISTERED_BY_DEPT", value: organisation?.additionalDetails?.registeredByDept || t("NA")},
         { title: "MASTERS_REGISTRATION_NUMBER", value: organisation?.additionalDetails?.deptRegistrationNum || t("NA")},
         { title: "MASTERS_DATE_OF_INCORPORATION", value: Digit.DateUtils.ConvertTimestampToDate(organisation?.dateOfIncorporation, 'dd/MM/yyyy') || t("NA")},
         { title: "CORE_COMMON_STATUS", value: t(`MASTERS_ORG_STATUS_${organisation?.applicationStatus}`) || t("NA")}
@@ -72,7 +72,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       { title: "ES_COMMON_BRANCH", value: item?.bankBranchIdentifier?.additionalDetails?.ifsccode || t("NA")},
       { title: "MASTERS_EFFECTIVE_FROM", value: Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.createdTime, 'dd/MM/yyyy') || t("NA")},
       { title: "MASTERS_EFFECTIVE_TO", value: item?.isActive && item?.isPrimary ? t("NA") : Digit.DateUtils.ConvertTimestampToDate(item?.auditDetails?.lastModifiedTime, 'dd/MM/yyyy')},
-      { title: "COMMON_MASTERS_TAXIDENTIFIER_PAN", value: PAN ? PAN?.value : t("NA") },
+      { title: "COMMON_MASTERS_TAXIDENTIFIER_PAN", value: PAN?.value === "XXXXX0123X" ? t("NA") : PAN?.value },
       { title: "COMMON_MASTERS_TAXIDENTIFIER_GSTIN", value: GSTIN ? GSTIN?.value : t("NA")}
     ]
     financialDetails.push(bankDetails)
@@ -112,7 +112,6 @@ export const View = {
           const response = await OrganisationService.search(data);
           return transformViewDataToApplicationDetails(t, response, tenantId)
       } catch (error) {
-          console.log('error', error);
           throw new Error(error?.response?.data?.Errors[0].message);
       }  
     },
@@ -122,7 +121,6 @@ export const View = {
         const response = await OrganisationService.search(data);
         return fetchBankDetails(response, tenantId)
       } catch (error) {
-        console.log('error', error)
         throw new Error(error?.response?.data?.Errors?.[0]?.message)
       }
     }

@@ -34,24 +34,24 @@ const Urls = {
   Shortener: "/egov-url-shortening/shortener",
 
   works: {
-    create:"/loi-service/v1/_create",
-    estimateSearch:"/estimate-service/estimate/v1/_search",
-    loiSearch:"/loi-service/v1/_search",
-    createEstimate:"/estimate-service/estimate/v1/_create",
-    approvedEstimateSearch:"/estimate-service/estimate/v1/_search",
-    searchEstimate:"/estimate-service/estimate/v1/_search",
-    updateLOI:"/loi-service/v1/_update",
-    updateEstimate:"/estimate-service/estimate/v1/_update",
-    download_pdf:"/egov-pdf/download/WORKSESTIMATE/estimatepdf",
-    createProject : "/pms/project/v1/_create",
-    searchProject : "/pms/project/v1/_search",
-    updateProject : "/pms/project/v1/_update",
+    create: "/loi-service/v1/_create",
+    estimateSearch: "/estimate/v1/_search",
+    loiSearch: "/loi-service/v1/_search",
+    createEstimate: "/estimate/v1/_create",
+    approvedEstimateSearch: "/estimate/v1/_search",
+    searchEstimate: "/estimate/v1/_search",
+    updateLOI: "/loi-service/v1/_update",
+    updateEstimate: "/estimate/v1/_update",
+    download_pdf: "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
+    createProject: "/project/v1/_create",
+    searchProject: "/project/v1/_search",
+    updateProject: "/project/v1/_update",
   },
 
-  contracts : {
-    createWO : "/contract-service/contract/v1/_create",
-    search: "/contract-service/contract/v1/_search",
-    update: "/contract-service/contract/v1/_update"
+  contracts: {
+    createWO: "/contract/v1/_create",
+    search: "/contract/v1/_search",
+    update: "/contract/v1/_update",
   },
 
   fsm: {
@@ -87,6 +87,7 @@ const Urls = {
     obps_Reciept_Search: "/collection-services/payments/_search",
     billAmendmentSearch: "/billing-service/amendment/_search",
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
+    createPayment: "/expense/payment/v1/_create"
   },
 
   pt: {
@@ -152,7 +153,7 @@ const Urls = {
     bpaRegUpdate: "/tl-services/v1/BPAREG/_update",
     receipt_download: "/egov-pdf/download/PAYMENT/consolidatedreceipt",
     edcrreportdownload: "/bpa-services/v1/bpa/_permitorderedcr",
-    getSearchDetails: "/inbox/v1/dss/_search"
+    getSearchDetails: "/inbox/v1/dss/_search",
   },
 
   edcr: {
@@ -187,7 +188,7 @@ const Urls = {
     wns_group_bill: "/egov-pdf/download/WNS/wnsgroupbill",
     cancel_group_bill: "/pdf-service/v1/_cancelProcess",
     wns_generate_pdf: "/egov-pdf/download/WNS/wnsbill",
-    water_applyAdhocTax : "/ws-calculator/waterCalculator/_applyAdhocTax",
+    water_applyAdhocTax: "/ws-calculator/waterCalculator/_applyAdhocTax",
     sewerage_applyAdhocTax: "/sw-calculator/sewerageCalculator/_applyAdhocTax",
     getSearchDetails: "/inbox/v1/dss/_search",
   },
@@ -214,15 +215,15 @@ const Urls = {
       estimate: "/muster-roll/v1/_estimate",
       create: "/muster-roll/v1/_create",
       update: "/muster-roll/v1/_update",
-      search: "/muster-roll/v1/_search"
-    }
+      search: "/muster-roll/v1/_search",
+    },
   },
 
   wageseeker: {
     create: "/individual/v1/_create",
     search: "/individual/v1/_search",
     update: "/individual/v1/_update",
-    delete: "/individual/v1/_delete"
+    delete: "/individual/v1/_delete",
   },
 
   noc: {
@@ -231,24 +232,37 @@ const Urls = {
   reports: {
     reportSearch: "/report/",
   },
-  bills:{
-    cancelBill:"/billing-service/bill/v2/_cancelbill"
+  bills: {
+    cancelBill: "/billing-service/bill/v2/_cancelbill",
+    createBill: "/expensebilling/demand/v1/_create",
+    searchBill: "/expense/bill/v1/_search",
+    createPurchaseBill: "/expense-calculator/purchase/v1/_createbill",
+    updatePurchaseBill:"/expense-calculator/purchase/v1/_updatebill"
   },
 
-  organisation : {
+  organisation: {
     search: "/org-services/organisation/v1/_search",
     create: "/org-services/organisation/v1/_create",
-    update: "/org-services/organisation/v1/_update"
+    update: "/org-services/organisation/v1/_update",
   },
-  
-  bankaccount : {
+
+  bankaccount: {
     create: "/bankaccount-service/bankaccount/v1/_create",
     search: "/bankaccount-service/bankaccount/v1/_search",
-    update: "/bankaccount-service/bankaccount/v1/_update"
+    update: "/bankaccount-service/bankaccount/v1/_update",
   },
 
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
+
+  bill: {
+    search: "/expense/bill/v1/_search",
+    searchCalculator: "/expense-calculator/v1/_search",
+  },
+
+  calculator: {
+    expenseBill: "/expense-calculator/v1/_estimate",
+  },
 };
 
 export default Urls;

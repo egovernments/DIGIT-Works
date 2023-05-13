@@ -231,7 +231,7 @@ const ViewEstimate = (props) => {
                     showToast={showToast}
                     setShowToast={setShowToast}
                     closeToast={closeToast}
-                    timelineStatusPrefix={`WORKS_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`}
+                    timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`}
                     // oldValue={res}
                     // isInfoLabel={true}
                     // clearDataDetails={clearDataDetails}

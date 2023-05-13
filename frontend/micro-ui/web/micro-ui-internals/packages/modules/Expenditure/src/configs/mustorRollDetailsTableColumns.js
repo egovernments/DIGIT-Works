@@ -1,4 +1,5 @@
 import React from "react";
+import { Amount } from '@egovernments/digit-ui-react-components'
 
 const GetCell = (value) => <span className="cell-text">{value}</span>;
 
@@ -52,38 +53,10 @@ export const mustorRollDetailsTableColumns = (t) => [
     },
   },
   {
-    Header: () => <p>{t("EXP_SKILL")}</p>,
-    accessor: "skill",
-    Cell: ({ value, column, row }) => {
-      return String(t(value));
-    }
-  },
-  // {
-  //   Header: () => <p>{t("EXP_DAYS_WORKED")}</p>,
-  //   accessor: "actualWorkingDays",
-  //   Cell: ({ value, column, row }) => {
-  //     return String(t(value));
-  //   }
-  // },
-  {
-    Header: () => <p>{ t("EXP_DAYS_MEASURED")}</p>,
-    accessor: "modifiedWorkingDays",
-    Cell: ({ value, column, row }) => {
-      return String(t(value));
-    }
-  },
-  {
-    Header: () => <p>{t("EXP_PER_DAY_WAGE")}</p>,
+    Header: () => <p>{t("EXP_TOTAL_WAGE")}</p>,
     accessor: "amount",
     Cell: ({ value, column, row }) => {
-      return Digit.Utils.dss.formatterWithoutRound(value, 'number');
-    }
-  },
-  {
-    Header: () => <p>{t("EXP_TOTAL_WAGE")}</p>,
-    accessor: "modifiedAmount",
-    Cell: ({ value, column, row }) => {
-      return Digit.Utils.dss.formatterWithoutRound(value, 'number');
+      return <Amount customStyle={{ textAlign: 'right'}} value={value}></Amount>
     }
   },
   {
@@ -93,71 +66,22 @@ export const mustorRollDetailsTableColumns = (t) => [
       return renderBankAccountDetails(value);
     }
   },
-  {
-    Header: () => <p>{t("ES_COMMON_PAYMENT_STATUS")}</p>,
-    accessor: "paymentStatus",
-    Cell: ({ value, column, row }) => {
-      if (row.original.type === "total") {
-        return String(t(value));
-      }
-      if(value === 'PAYMENT_SUCCESS') {
-        return <span style={{ "color":"#00703C"}}>{t(`BILL_STATUS_${value}`)}</span>
-      } 
-      else if(value==="PAYMENT_PENDING"){
-        return <span style={{ "color": "#F47738" }}>{t(`BILL_STATUS_${value}`)}</span>
-      }
-      else {
-        return <span style={{ "color":"#ff0000"}}>{t(`BILL_STATUS_${value}`)}</span>
-      }
-    }
-  },
   // {
-  //     Header: t("EXP_AADHAR_NO"),
-  //     accessor: "aadharNumber",
-  //     Cell: ({ value, column, row }) => {
+  //   Header: () => <p>{t("ES_COMMON_PAYMENT_STATUS")}</p>,
+  //   accessor: "paymentStatus",
+  //   Cell: ({ value, column, row }) => {
+  //     if (row.original.type === "total") {
   //       return String(t(value));
   //     }
-  // }    
+  //     if(value === 'PAYMENT_SUCCESS') {
+  //       return <span style={{ "color":"#00703C"}}>{t(`BILL_STATUS_${value}`)}</span>
+  //     } 
+  //     else if(value==="PAYMENT_PENDING"){
+  //       return <span style={{ "color": "#F47738" }}>{t(`BILL_STATUS_${value}`)}</span>
+  //     }
+  //     else {
+  //       return <span style={{ "color":"#ff0000"}}>{t(`BILL_STATUS_${value}`)}</span>
+  //     }
+  //   }
+  // }   
 ]
-
-/*
-export const mustorRollDetailsTableColumns = (t) => [
-    {
-        Header: t("EXP_SNO"),
-        accessor: "sno",
-        Cell: ({value, row}) => {
-            if (row.original.type === "total") {
-              return renderTotalLabel(t(value))
-            }
-            return GetCell(value)
-          },
-    },
-    {
-      Header: t("EXP_REG_ID"),
-      accessor: (row) => (GetCell(row?.registrationId)),
-    },
-    {
-        Header:t("EXP_NAME_OF_THE_INDIVIDUAL"),
-        accessor: (row) => (GetCell(row?.individualName)),
-    },
-    {
-        Header: t("EXP_FATHER_GUARDIAN_NAME"),
-        accessor: (row) => (GetCell(row?.guardianName)),
-    },
-    {
-        Header: t("EXP_MODIFIED_AMT_RS"),
-        accessor: (row) => (GetCell(row?.modifiedAmt)),
-    },
-    {
-        Header: t("EXP_BANK_ACCOUNT_DETAILS"),
-        accessor: "bankAccountDetails",
-        Cell: ({ value }) => {
-            return renderBankAccountDetails(value);
-        }
-    },
-    {
-        Header: t("EXP_AADHAR_NO"),
-        accessor: (row) => (GetCell(row?.aadhar)),
-    }    
-]
-*/

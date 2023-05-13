@@ -17,7 +17,7 @@ const navConfig =  [
     }
 ];
 
-const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItems, contractAuditDetails, contractNumber, roleOfCBOOptions}) => {
+const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSessionFormData, clearSessionFormData, tenantId, estimate, project, preProcessData, isModify, contractID, lineItems, contractAuditDetails, contractNumber, roleOfCBOOptions, docConfigData}) => {
     const {t} = useTranslation();
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
@@ -44,7 +44,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         // }
 
         // setApprovers(refactoredAppoversNames);
-    }, [employeeDatav1])
+    }, [employeeDatav1]);
 
     const fetchOfficerInChargeDesignation = (data) => {
         return data?.assignments?.filter(assignment=>assignment?.isCurrentAssignment)?.[0]?.designation;
@@ -91,6 +91,10 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
 
             if(formData.nameOfCBO) {
                 setValue("cboID", formData.nameOfCBO?.orgNumber);
+            }
+
+            if(formData.workOrderAmountRs){
+                setValue("workOrderAmountRs", Math.round(formData.workOrderAmountRs))
             }
 
             setSessionFormData({ ...sessionFormData, ...formData });
@@ -175,7 +179,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
     }
 
     const onModalSubmit = async (modalData) => {
-        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams});
+        const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams, docConfigData});
         if(isModify) {
             handleResponseForUpdate(payload);
         }else {

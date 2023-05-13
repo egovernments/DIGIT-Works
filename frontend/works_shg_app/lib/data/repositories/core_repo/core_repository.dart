@@ -3,27 +3,27 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:works_shg_app/Env/app_config.dart';
 import 'package:works_shg_app/models/file_store/file_store_model.dart';
 import 'package:works_shg_app/services/urls.dart';
-import 'package:works_shg_app/utils/constants.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
-import '../../../Env/app_config.dart';
+import '../../../Env/env_config.dart';
 import '../../../utils/common_methods.dart';
 import '../../../utils/models.dart';
-import '../../../utils/notifiers.dart';
+import '../../../utils/save_file_mobile.dart';
 
 class CoreRepository {
   Future<List<FileStoreModel>> uploadFiles(
       List<dynamic>? paths, String moduleName) async {
     Map? respStr;
 
-    var postUri = Uri.parse("$apiBaseUrl${Urls.commonServices.fileUpload}");
+    var postUri = Uri.parse(
+        "${kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl}${Urls.commonServices.fileUpload}");
     var request = http.MultipartRequest("POST", postUri);
     if (paths != null && paths.isNotEmpty) {
       if (paths is List<PlatformFile>) {
@@ -72,7 +72,6 @@ class CoreRepository {
   }
 
   Future<bool?> fileDownload(String url, [String? fileName]) async {
-    Map<String, String> downloadUrl = {};
     if (url.contains(',')) {
       url = url.split(',').first;
     }
@@ -95,22 +94,13 @@ class CoreRepository {
       if (!status.isGranted) {
         await Permission.storage.request();
       }
-
-      final response = await FlutterDownloader.enqueue(
-          url: url,
-          savedDir: downloadPath.toString(),
-          fileName: fileName,
-          showNotification: true,
-          openFileFromNotification: true,
-          saveInPublicStorage: true);
-      if (response != null) {
-        downloadUrl[response] = '$downloadPath/$fileName';
-        return true;
-      }
-      return false;
+      final response = await http.get(Uri.parse(url));
+      final bytes = response.bodyBytes;
+      await saveAndLaunchFile(bytes, fileName ?? 'Common.pdf');
     } catch (e, s) {
-      Notifiers.getToastMessage(
-          scaffoldMessengerKey.currentContext!, e.toString(), 'ERROR');
+      print(e);
+      // Notifiers.getToastMessage(
+      //     scaffoldMessengerKey.currentContext!, e.toString(), 'ERROR');
     }
     return false;
   }
@@ -121,11 +111,7 @@ class CoreRepository {
     FileStoreListModel? fileStoreListModel;
 
     var res = await http.get(Uri.parse(
-        '$apiBaseUrl${Urls.commonServices.fileFetch}?tenantId=$tenantId&fileStoreIds=${storeId.join(',')}'));
-    // await makeRequest(
-    //     url:
-    //         '${Urls.commonServices.fileFetch}?tenantId=${commonProvider.userDetails!.selectedtenant!.code!}&fileStoreIds=${storeId.join(',')}',
-    //     method: RequestType.GET);
+        '${kIsWeb && !kDebugMode ? apiBaseUrl : envConfig.variables.baseUrl}${Urls.commonServices.fileFetch}?tenantId=$tenantId&fileStoreIds=${storeId.join(',')}'));
 
     if (res != null) {
       fileStoreListModel = FileStoreListModelMapper.fromMap(

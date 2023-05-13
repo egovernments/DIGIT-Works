@@ -46,10 +46,12 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
                 "attendanceRegisterName": event.registerName,
                 "projectName": event.projectName ?? "",
                 "amount": event.amount ?? 14500,
+                "projectType": event.projectType ?? '',
                 "projectDesc": event.projectDesc ?? '',
                 "locality": event.locality ?? '',
                 "ward": event.ward ?? '',
-                "projectId": event.projectId ?? ''
+                "projectId": event.projectId ?? '',
+                "executingAuthority": event.executingAuthority
               },
               "individualEntries": event.skillsList ?? []
             },
@@ -85,8 +87,8 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
               "individualEntries": event.skillsList ?? []
             },
             "workflow": {
-              "action": "RESUBMIT",
-              "comments": "Resubmit muster roll",
+              "action": event.reSubmitAction ?? "RE-SUBMIT",
+              "comments": "Muster Roll ReSubmitted",
               "assignees": []
             }
           });
@@ -117,8 +119,10 @@ class MusterCreateEvent with _$MusterCreateEvent {
       String? projectDesc,
       String? locality,
       String? projectId,
+      String? projectType,
       String? ward,
       int? amount,
+      String? executingAuthority,
       List<Map<String, dynamic>>? skillsList}) = CreateMusterEvent;
   const factory MusterCreateEvent.update(
       {required String tenantId,
@@ -127,6 +131,7 @@ class MusterCreateEvent with _$MusterCreateEvent {
       required String contractId,
       required String registerNo,
       required String registerName,
+      String? reSubmitAction,
       List<Map<String, dynamic>>? skillsList}) = UpdateMusterEvent;
 }
 

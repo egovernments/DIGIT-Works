@@ -31,7 +31,7 @@ const whenHasSubProjectsHorizontalNavConfig =  [
   }
 ];
 
-const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig, isModify, modify_projectID, modify_projectNumber, modify_addressID}) => {
+const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSessionFormData, createProjectConfig, isModify, modify_projectID, modify_projectNumber, modify_addressID, docConfigData}) => {
 
     const [selectedProjectType, setSelectedProjectType] = useState(createProjectConfig?.defaultValues?.basicDetails_hasSubProjects ? createProjectConfig?.defaultValues?.basicDetails_hasSubProjects : {name : "COMMON_NO", code : "COMMON_NO"});
     const [navTypeConfig, setNavTypeConfig] = useState(whenHasProjectsHorizontalNavConfig);
@@ -220,7 +220,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       }
 
       //Final Payload
-      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId, modifyParams, createProjectConfig);
+      let payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, "", tenantId, docConfigData, modifyParams, createProjectConfig);
 
       if(!isModify) {
         handleResponseForCreate(payload);
@@ -237,8 +237,8 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
           if(selectedProjectType?.code === "COMMON_YES") {
-            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
-            let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
+            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Project[0]?.id, tenantId, docConfigData);
+            let parentProjectNumber = responseData?.Project[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
                   sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
@@ -247,7 +247,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
                 if(responseData?.ResponseInfo?.Errors) {
                   setToast(()=>({show : true, label : responseData?.ResponseInfo?.Errors?.[0]?.message, error : true}));
                 }else if(responseData?.ResponseInfo?.status){
-                  sendDataToResponsePage(responseData?.Projects?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
+                  sendDataToResponsePage(responseData?.Project?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
                   clearSessionFormData();
                 }else{
                   setToast(()=>({show : true, label : t("WORKS_ERROR_CREATING_PROJECTS"), error : true}));
@@ -258,7 +258,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
             if(responseData?.ResponseInfo?.Errors) {
               sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
             }else if(responseData?.ResponseInfo?.status){
-              sendDataToResponsePage(responseData?.Projects?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
+              sendDataToResponsePage(responseData?.Project?.[0]?.projectNumber, true, "WORKS_PROJECT_CREATED", true);
               clearSessionFormData();
             }else{
               sendDataToResponsePage("", false, "WORKS_PROJECT_CREATE_FAILURE", false);
@@ -276,8 +276,8 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
         onSuccess: async (responseData, variables) => {
           //for parent with sub-projects send another call for sub-projects array. Add the Parent ID in each sub-project.
           if(selectedProjectType?.code === "COMMON_YES") {
-            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Projects[0]?.id, tenantId);
-            let parentProjectNumber = responseData?.Projects[0]?.projectNumber;
+            payload = CreateProjectUtils.payload.create(transformedPayload, selectedProjectType, responseData?.Project[0]?.id, tenantId, docConfigData);
+            let parentProjectNumber = responseData?.Project[0]?.projectNumber;
             await CreateProjectMutation(payload, {
               onError :  async (error, variables) => {
                   sendDataToResponsePage(modify_projectNumber, false, "WORKS_PROJECT_MODIFICATION_FAILURE", true);
@@ -346,7 +346,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
 
     return (
         <React.Fragment>
-            <Header styles={{fontSize: "32px"}}>{isModify ? t("COMMON_MODIFY_PROJECT") : t("WORKS_CREATE_PROJECT")}</Header>
+            <Header className="works-header-create">{isModify ? t("COMMON_MODIFY_PROJECT") : t("WORKS_CREATE_PROJECT")}</Header>
           {
             createProjectConfig && (
               <FormComposer

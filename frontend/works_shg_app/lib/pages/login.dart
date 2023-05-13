@@ -4,8 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
 import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/Constants/i18_key_constants.dart' as i18;
 import 'package:works_shg_app/utils/global_variables.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:works_shg_app/widgets/atoms/app_logo.dart';
 
 import '../blocs/localization/app_localization.dart';
@@ -152,14 +153,16 @@ class _LoginPage extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+        ),
         body: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 720) {
             return MobileView(
               getLoginCard(context),
               GlobalVariables.stateInfoListModel!.bannerUrl.toString(),
-              logoBottomPosition: constraints.maxWidth / 3,
-              cardBottomPosition: constraints.maxWidth / 1.5,
+              logoBottomPosition: constraints.maxHeight / 8,
+              cardBottomPosition: constraints.maxHeight / 3,
             );
           } else {
             return DesktopView(getLoginCard(context),

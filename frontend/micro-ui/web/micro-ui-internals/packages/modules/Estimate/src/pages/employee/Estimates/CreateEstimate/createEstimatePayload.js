@@ -108,7 +108,7 @@ const fetchDocuments = (docs) => {
             fileStoreId: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
             documentUid: docs?.[key]?.[0]?.[1]?.fileStoreId?.fileStoreId,
             tenantId: docs?.[key]?.[0]?.[1]?.fileStoreId?.tenantId,
-            fileType: key?.includes("OTHERS") ? docs?.["ESTIMATE_DOC_OTHERS_name"] :`${key}`
+            fileType: key?.includes("OTHERS") ? "Others" :`${key}`
         }
         
     })
@@ -158,7 +158,7 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
                 }
             },
             workflow:{
-                "action":"RE-SUBMITTED" ,
+                "action":"RE-SUBMIT" ,
                 "comment": filteredFormData?.comments,
                 "assignees": [
                     filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid: undefined 
@@ -202,7 +202,8 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
                     "locality":projectData?.projectDetails?.searchedProject?.basicDetails?.locality,
                     "projectNumber": projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
                     "totalEstimatedAmount": data?.totalEstimateAmount,
-                    "tenantId": tenantId
+                    "tenantId": tenantId,
+                    "projectName":projectData?.projectDetails?.searchedProject?.basicDetails?.projectName
                 }
             },
             workflow:{

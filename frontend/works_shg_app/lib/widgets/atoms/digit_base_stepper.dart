@@ -12,10 +12,7 @@ class DigitBaseStepper extends StatefulWidget {
     Key? key,
     this.children,
     this.textChildren,
-    this.nextPreviousButtonsDisabled = true,
     this.stepTappingDisabled = true,
-    this.previousButtonIcon,
-    this.nextButtonIcon,
     this.onStepReached,
     this.stepColor,
     this.activeStepColor,
@@ -52,10 +49,7 @@ class DigitBaseStepper extends StatefulWidget {
 
   final List<Widget>? children;
   final List<Widget>? textChildren;
-  final bool nextPreviousButtonsDisabled;
   final bool stepTappingDisabled;
-  final Icon? previousButtonIcon;
-  final Icon? nextButtonIcon;
   final OnStepReached? onStepReached;
   final Color? stepColor;
   final Color? activeStepColor;
@@ -127,16 +121,11 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
     }
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        widget.nextPreviousButtonsDisabled
-            ? _previousButton()
-            : const SizedBox.shrink(),
         Expanded(
           child: _stepperBuilder(),
         ),
-        widget.nextPreviousButtonsDisabled
-            ? _nextButton()
-            : const SizedBox.shrink(),
       ],
     );
   }
@@ -150,7 +139,7 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
           ? const NeverScrollableScrollPhysics()
           : const ClampingScrollPhysics(),
       child: Container(
-        margin: const EdgeInsets.only(left: 0.0, right: 8.0),
+        margin: const EdgeInsets.only(left: 0.0, right: 0.0),
         // padding: const EdgeInsets.all(8.0),
         child: Row(children: _buildSteps()),
       ),
@@ -166,7 +155,13 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              _customizedLine(index, Axis.horizontal, index != 0),
+              index != 0
+                  ? _customizedLine(index, Axis.horizontal, index != 0)
+                  : const Padding(
+                      padding:
+                          EdgeInsets.only(left: 24.0, top: 8.0, bottom: 8.0),
+                      child: SizedBox.shrink(),
+                    ),
               _customizedIndicator(index),
               _customizedLine(index, Axis.horizontal,
                   index != (widget.children!.length - 1)),
@@ -187,6 +182,7 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
   Widget _customizedIndicator(int index) {
     return DigitIndicator(
       isSelected: _selectedIndex == index,
+      isCompleted: index < _selectedIndex,
       onPressed: widget.stepTappingDisabled
           ? () {
               if (widget.steppingEnabled && index < widget.activeStep) {
@@ -208,11 +204,17 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
       padding: widget.padding,
       margin: widget.margin,
       activeBorderWidth: widget.activeStepBorderWidth,
-      textChild: widget.textChildren![index],
+      textChild: index == 0 || index == (widget.children?.length ?? 1 - 1)
+          ? widget.textChildren![index]
+          : Container(
+              alignment: Alignment.centerRight,
+              child: widget.textChildren![index],
+            ),
       child: index < _selectedIndex
           ? Icon(
-              Icons.check_circle,
-              color: DigitTheme.instance.colorScheme.primary,
+              Icons.check,
+              color: const DigitColors().white,
+              size: 16,
             )
           : widget.children![index],
     );
@@ -257,56 +259,5 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
               color: Colors.grey.shade400,
             ))
         : Container();
-  }
-
-  /// The previous button.
-  Widget _previousButton() {
-    return IgnorePointer(
-      ignoring: _selectedIndex == 0,
-      child: IconButton(
-        visualDensity: VisualDensity.compact,
-        icon: widget.previousButtonIcon ?? const Icon(Icons.arrow_left),
-        onPressed: _goToPreviousStep,
-      ),
-    );
-  }
-
-  /// The next button.
-  Widget _nextButton() {
-    return IgnorePointer(
-      ignoring: _selectedIndex == widget.children!.length - 1,
-      child: IconButton(
-        visualDensity: VisualDensity.compact,
-        icon: widget.nextButtonIcon ?? const Icon(Icons.arrow_right),
-        onPressed: _goToNextStep,
-      ),
-    );
-  }
-
-  /// Contains the logic for going to the next step.
-  void _goToNextStep() {
-    if (_selectedIndex < widget.children!.length - 1 &&
-        widget.steppingEnabled) {
-      setState(() {
-        _selectedIndex++;
-
-        if (widget.onStepReached != null) {
-          widget.onStepReached!(_selectedIndex);
-        }
-      });
-    }
-  }
-
-  /// Controls the logic for going to the previous step.
-  void _goToPreviousStep() {
-    if (_selectedIndex > 0) {
-      setState(() {
-        _selectedIndex--;
-
-        if (widget.onStepReached != null) {
-          widget.onStepReached!(_selectedIndex);
-        }
-      });
-    }
   }
 }

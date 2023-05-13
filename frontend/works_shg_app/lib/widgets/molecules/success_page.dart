@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:works_shg_app/router/app_router.dart';
 
+import '../../utils/common_methods.dart';
 import '../Back.dart';
 import '../SideBar.dart';
 import '../atoms/app_bar_logo.dart';
@@ -51,6 +52,14 @@ class SuccessResponsePage extends StatelessWidget {
         return false;
       },
       child: Scaffold(
+          bottomNavigationBar: Container(
+            height: 60,
+            padding: const EdgeInsets.all(8.0),
+            child: const Align(
+              alignment: Alignment.bottomCenter,
+              child: PoweredByDigit(),
+            ),
+          ),
           appBar: isWithoutLogin
               ? AppBar(
                   title: const Text('MuktaSoft'),
@@ -62,9 +71,9 @@ class SuccessResponsePage extends StatelessWidget {
                 ),
           drawer: isWithoutLogin
               ? null
-              : DrawerWrapper(const Drawer(
+              : DrawerWrapper(Drawer(
                   child: SideBar(
-                  module: 'rainmaker-common,rainmaker-attendencemgmt',
+                  module: CommonMethods.getLocaleModules(),
                 ))),
           body: SingleChildScrollView(
               child: Column(
@@ -156,25 +165,22 @@ class SuccessResponsePage extends StatelessWidget {
                         ),
                         Visibility(
                           visible: !isWithoutLogin,
-                          child: DigitCard(
-                            child: DigitElevatedButton(
-                              onPressed: () {
-                                context.router.push(const HomeRoute());
-                              },
-                              child: Center(
-                                child: Text(buttonLabel ?? '',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .apply(color: Colors.white)),
-                              ),
+                          child: DigitElevatedButton(
+                            onPressed: () {
+                              context.router.push(const HomeRoute());
+                            },
+                            child: Center(
+                              child: Text(buttonLabel ?? '',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .apply(color: Colors.white)),
                             ),
                           ),
                         ),
                         const SizedBox(
                           height: 20,
                         ),
-                        const PoweredByDigit()
                       ],
                     ))
               ]))),

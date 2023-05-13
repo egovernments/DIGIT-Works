@@ -22,7 +22,7 @@ class MusterRollsModel with _$MusterRollsModel {
 class MusterRoll with _$MusterRoll {
   const factory MusterRoll({
     String? id,
-    String? tenantId,
+    required String tenantId,
     String? musterRollNumber,
     String? registerId,
     String? status,
@@ -73,6 +73,7 @@ class MusterAdditionalDetails with _$MusterAdditionalDetails {
     String? billType,
     String? projectId,
     String? projectName,
+    String? projectDesc,
     String? contractId,
   }) = _MusterAdditionalDetails;
 

@@ -19,13 +19,14 @@ class MusterWorkFlowModel with _$MusterWorkFlowModel {
 @freezed
 class ProcessInstances with _$ProcessInstances {
   const factory ProcessInstances({
-    String? tenantId,
+    required String tenantId,
     String? businessService,
     String? id,
     String? businessId,
     String? action,
     AuditDetails? auditDetails,
     List<Assignees>? assignes,
+    List<NextActions>? nextActions,
     @JsonKey(name: 'state') WorkflowState? workflowState,
   }) = _ProcessInstances;
 
@@ -33,6 +34,18 @@ class ProcessInstances with _$ProcessInstances {
     Map<String, dynamic> json,
   ) =>
       _$ProcessInstancesFromJson(json);
+}
+
+@freezed
+class NextActions with _$NextActions {
+  const factory NextActions({
+    String? action,
+  }) = _NextActions;
+
+  factory NextActions.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$NextActionsFromJson(json);
 }
 
 @freezed
@@ -56,12 +69,13 @@ class Assignees with _$Assignees {
 @freezed
 class WorkflowState with _$WorkflowState {
   const factory WorkflowState({
-    String? tenantId,
+    required String tenantId,
     String? businessServiceId,
     String? applicationStatus,
     String? state,
     bool? isStartState,
     bool? isTerminateState,
+    List<WorkflowActions>? actions,
     bool? isStateUpdatable,
   }) = _WorkflowState;
 
@@ -69,4 +83,14 @@ class WorkflowState with _$WorkflowState {
     Map<String, dynamic> json,
   ) =>
       _$WorkflowStateFromJson(json);
+}
+
+@freezed
+class WorkflowActions with _$WorkflowActions {
+  const factory WorkflowActions({List<String>? roles}) = _WorkflowActions;
+
+  factory WorkflowActions.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$WorkflowActionsFromJson(json);
 }

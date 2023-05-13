@@ -6,11 +6,24 @@ import _ from "lodash";
 // these functions will act as middlewares
 var Digit = window.Digit || {};
 
+// const businessServiceMap = {
+//   estimate: "ESTIMATE",
+//   contracts: "CONTRACT",
+//   attendencemgmt: "MR",
+//   expenditure:{
+//     WAGE_BILL:"EXPENSE.WAGE",
+//     PURCHASE_BILL:"EXPENSE.PURCHASE",
+//     SUPERVISION_BILL:"EXPENSE.SUPERVISION"
+//   }
+// };
+
 const businessServiceMap = {
-  estimate: "mukta-estimate",
-  contracts: "contract-approval-mukta",
-  attendencemgmt: "muster-roll-approval",
-  expenditure:""
+  estimate: "ESTIMATE",
+  contract: "CONTRACT",
+  "muster roll": "MR",
+  "works.wages":"EXPENSE.WAGES",
+  "works.purchase":"EXPENSE.PURCHASE",
+  "works.supervision":"EXPENSE.SUPERVISION"
 };
 
 const inboxModuleNameMap = {
@@ -22,6 +35,7 @@ const inboxModuleNameMap = {
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
+    
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
         comment: data.comments,
@@ -47,7 +61,7 @@ export const UICustomizations = {
         workflow,
       };
     }
-    if (businessService === businessServiceMap.contracts) {
+    if (businessService === businessServiceMap.contract) {
       const workflow = {
         comment: data?.comments,
         documents: data?.documents?.map((document) => {
@@ -72,7 +86,7 @@ export const UICustomizations = {
         workflow,
       };
     }
-    if (businessService === businessServiceMap.attendencemgmt) {
+    if (businessService === businessServiceMap?.["muster roll"]) {
       const workflow = {
         comment: data?.comments,
         documents: data?.documents?.map((document) => {
@@ -97,9 +111,41 @@ export const UICustomizations = {
         workflow,
       };
     }
+    if(businessService === businessServiceMap?.["works.purchase"]){
+      const workflow = {
+        comment: data.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
+
+      const additionalFieldsToSet = {
+        projectId:applicationDetails.additionalDetails.projectId,
+        invoiceDate:applicationDetails.billDate,
+        invoiceNumber:applicationDetails.referenceId.split('_')?.[1],
+        contractNumber:applicationDetails.referenceId.split('_')?.[0],
+        documents:applicationDetails.additionalDetails.documents
+      }
+      return {
+        bill: {...applicationDetails,...additionalFieldsToSet},
+        workflow,
+      };
+    }
   },
   enableModalSubmit:(businessService,action,setModalSubmit,data)=>{
-    if(businessService === businessServiceMap.attendencemgmt && action.action==="APPROVE"){
+    if(businessService === businessServiceMap?.["muster roll"] && action.action==="APPROVE"){
       setModalSubmit(data?.acceptTerms)
     }
   },
@@ -107,11 +153,14 @@ export const UICustomizations = {
     if (businessService === businessServiceMap.estimate) {
       return action.action.includes("TECHNICALSANCTION") || action.action.includes("VERIFYANDFORWARD");
     }
-    if (businessService === businessServiceMap.contracts) {
+    if (businessService === businessServiceMap.contract) {
       return action.action.includes("VERIFY_AND_FORWARD");
     }
-     if (businessService === businessServiceMap.attendencemgmt) {
+     if (businessService === businessServiceMap?.["muster roll"]) {
       return action.action.includes("VERIFY");
+    }
+    if(businessService === businessServiceMap?.["works.purchase"]){
+      return action.action.includes("VERIFY_AND_FORWARD")
     }
     return false;
   },
@@ -119,12 +168,20 @@ export const UICustomizations = {
     if (moduleCode?.includes("estimate")) {
       return businessServiceMap?.estimate;
     } else if (moduleCode?.includes("contract")) {
-      return businessServiceMap?.contracts;
-    } else if (moduleCode?.includes("attendence")) {
-      return businessServiceMap?.attendencemgmt;
-    }else if (moduleCode?.includes("expenditure")) {
-      return businessServiceMap?.expenditure;
-    }else {
+      return businessServiceMap?.contract;
+    } else if (moduleCode?.includes("muster roll")) {
+      return businessServiceMap?.["muster roll"];
+    }
+    else if (moduleCode?.includes("works.purchase")) {
+      return businessServiceMap?.["works.purchase"];
+    }
+    else if (moduleCode?.includes("works.wages")) {
+      return businessServiceMap?.["works.wages"];
+    }
+    else if (moduleCode?.includes("works.supervision")) {
+      return businessServiceMap?.["works.supervision"];
+    }
+    else {
       return businessServiceMap;
     }
   },
@@ -507,7 +564,7 @@ export const UICustomizations = {
         case "MASTERS_SOCIAL_CATEGORY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
 
-        case "MASTERS_ULB":
+        case "CORE_COMMON_PROFILE_CITY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_WARD":

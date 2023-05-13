@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const InboxLinks = ({logoIcon, headerText, links, customClass}) => {
-  console.log(logoIcon);
+ 
     const { t } = useTranslation();
     
     const GetLogo = () => <div className="header">

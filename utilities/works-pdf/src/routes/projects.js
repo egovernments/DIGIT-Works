@@ -35,10 +35,12 @@ router.post(
                 return renderError(res, "Failed to query details of the project", 500);
             }
             var project = resProject.data;
-            if (project && project.Projects && project.Projects.length > 0) {
+            if (project && project.Project && project.Project.length > 0) {
                     var pdfResponse;
                     var pdfkey = config.pdf.project_details_template;
                     
+                    // Adding project as Projects because it's updating on create_pdf
+                    project["Projects"] = project.Project;
 
                     try {
                         pdfResponse = await create_pdf(
@@ -49,7 +51,6 @@ router.post(
                         )
                     }
                     catch (ex) {
-                        console.log(ex)
                         if (ex.response && ex.response.data) console.log(ex.response.data);
                         return renderError(res, "Failed to generate PDF for project details", 500);
                     }

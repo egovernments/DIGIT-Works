@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import { useHistory, useLocation } from "react-router-dom";
+// import searchConfigMUKTA from "../../../configs/searchConfigMUKTA";
 
 const ProjectSearch = () => {
   const { t } = useTranslation();
@@ -24,6 +25,7 @@ const ProjectSearch = () => {
     }
     )
 
+  // const data = searchConfigMUKTA?.SearchProjectConfig?.[0];
   let configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
       updateDependent : [
@@ -50,7 +52,7 @@ const ProjectSearch = () => {
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">
-        <Header styles={{ fontSize: "32px" }}>{t(configs?.label)}</Header>
+        <Header className="works-header-search">{t(configs?.label)}</Header>
         {Digit.Utils.didEmployeeHasRole(configs?.actionRole) && (
           <Button
             label={t(configs?.actionLabel)}

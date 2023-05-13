@@ -22,7 +22,7 @@ Map<String, dynamic> _$$_MusterWorkFlowModelToJson(
 
 _$_ProcessInstances _$$_ProcessInstancesFromJson(Map<String, dynamic> json) =>
     _$_ProcessInstances(
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       businessService: json['businessService'] as String?,
       id: json['id'] as String?,
       businessId: json['businessId'] as String?,
@@ -32,6 +32,9 @@ _$_ProcessInstances _$$_ProcessInstancesFromJson(Map<String, dynamic> json) =>
           : AuditDetails.fromJson(json['auditDetails'] as Map<String, dynamic>),
       assignes: (json['assignes'] as List<dynamic>?)
           ?.map((e) => Assignees.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      nextActions: (json['nextActions'] as List<dynamic>?)
+          ?.map((e) => NextActions.fromJson(e as Map<String, dynamic>))
           .toList(),
       workflowState: json['state'] == null
           ? null
@@ -47,7 +50,18 @@ Map<String, dynamic> _$$_ProcessInstancesToJson(_$_ProcessInstances instance) =>
       'action': instance.action,
       'auditDetails': instance.auditDetails,
       'assignes': instance.assignes,
+      'nextActions': instance.nextActions,
       'state': instance.workflowState,
+    };
+
+_$_NextActions _$$_NextActionsFromJson(Map<String, dynamic> json) =>
+    _$_NextActions(
+      action: json['action'] as String?,
+    );
+
+Map<String, dynamic> _$$_NextActionsToJson(_$_NextActions instance) =>
+    <String, dynamic>{
+      'action': instance.action,
     };
 
 _$_Assignees _$$_AssigneesFromJson(Map<String, dynamic> json) => _$_Assignees(
@@ -73,12 +87,15 @@ Map<String, dynamic> _$$_AssigneesToJson(_$_Assignees instance) =>
 
 _$_WorkflowState _$$_WorkflowStateFromJson(Map<String, dynamic> json) =>
     _$_WorkflowState(
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       businessServiceId: json['businessServiceId'] as String?,
       applicationStatus: json['applicationStatus'] as String?,
       state: json['state'] as String?,
       isStartState: json['isStartState'] as bool?,
       isTerminateState: json['isTerminateState'] as bool?,
+      actions: (json['actions'] as List<dynamic>?)
+          ?.map((e) => WorkflowActions.fromJson(e as Map<String, dynamic>))
+          .toList(),
       isStateUpdatable: json['isStateUpdatable'] as bool?,
     );
 
@@ -90,5 +107,17 @@ Map<String, dynamic> _$$_WorkflowStateToJson(_$_WorkflowState instance) =>
       'state': instance.state,
       'isStartState': instance.isStartState,
       'isTerminateState': instance.isTerminateState,
+      'actions': instance.actions,
       'isStateUpdatable': instance.isStateUpdatable,
+    };
+
+_$_WorkflowActions _$$_WorkflowActionsFromJson(Map<String, dynamic> json) =>
+    _$_WorkflowActions(
+      roles:
+          (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    );
+
+Map<String, dynamic> _$$_WorkflowActionsToJson(_$_WorkflowActions instance) =>
+    <String, dynamic>{
+      'roles': instance.roles,
     };

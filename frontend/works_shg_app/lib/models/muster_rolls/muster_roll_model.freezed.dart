@@ -198,7 +198,7 @@ MusterRoll _$MusterRollFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$MusterRoll {
   String? get id => throw _privateConstructorUsedError;
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get musterRollNumber => throw _privateConstructorUsedError;
   String? get registerId => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
@@ -230,7 +230,7 @@ abstract class $MusterRollCopyWith<$Res> {
   @useResult
   $Res call(
       {String? id,
-      String? tenantId,
+      String tenantId,
       String? musterRollNumber,
       String? registerId,
       String? status,
@@ -264,7 +264,7 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
   @override
   $Res call({
     Object? id = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? musterRollNumber = freezed,
     Object? registerId = freezed,
     Object? status = freezed,
@@ -282,10 +282,10 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       musterRollNumber: freezed == musterRollNumber
           ? _value.musterRollNumber
           : musterRollNumber // ignore: cast_nullable_to_non_nullable
@@ -369,7 +369,7 @@ abstract class _$$_MusterRollCopyWith<$Res>
   @useResult
   $Res call(
       {String? id,
-      String? tenantId,
+      String tenantId,
       String? musterRollNumber,
       String? registerId,
       String? status,
@@ -403,7 +403,7 @@ class __$$_MusterRollCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? musterRollNumber = freezed,
     Object? registerId = freezed,
     Object? status = freezed,
@@ -421,10 +421,10 @@ class __$$_MusterRollCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       musterRollNumber: freezed == musterRollNumber
           ? _value.musterRollNumber
           : musterRollNumber // ignore: cast_nullable_to_non_nullable
@@ -478,7 +478,7 @@ class __$$_MusterRollCopyWithImpl<$Res>
 class _$_MusterRoll implements _MusterRoll {
   const _$_MusterRoll(
       {this.id,
-      this.tenantId,
+      required this.tenantId,
       this.musterRollNumber,
       this.registerId,
       this.status,
@@ -501,7 +501,7 @@ class _$_MusterRoll implements _MusterRoll {
   @override
   final String? id;
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? musterRollNumber;
   @override
@@ -608,7 +608,7 @@ class _$_MusterRoll implements _MusterRoll {
 abstract class _MusterRoll implements MusterRoll {
   const factory _MusterRoll(
       {final String? id,
-      final String? tenantId,
+      required final String tenantId,
       final String? musterRollNumber,
       final String? registerId,
       final String? status,
@@ -630,7 +630,7 @@ abstract class _MusterRoll implements MusterRoll {
   @override
   String? get id;
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get musterRollNumber;
   @override
@@ -963,6 +963,7 @@ mixin _$MusterAdditionalDetails {
   String? get billType => throw _privateConstructorUsedError;
   String? get projectId => throw _privateConstructorUsedError;
   String? get projectName => throw _privateConstructorUsedError;
+  String? get projectDesc => throw _privateConstructorUsedError;
   String? get contractId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -986,6 +987,7 @@ abstract class $MusterAdditionalDetailsCopyWith<$Res> {
       String? billType,
       String? projectId,
       String? projectName,
+      String? projectDesc,
       String? contractId});
 }
 
@@ -1011,6 +1013,7 @@ class _$MusterAdditionalDetailsCopyWithImpl<$Res,
     Object? billType = freezed,
     Object? projectId = freezed,
     Object? projectName = freezed,
+    Object? projectDesc = freezed,
     Object? contractId = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1046,6 +1049,10 @@ class _$MusterAdditionalDetailsCopyWithImpl<$Res,
           ? _value.projectName
           : projectName // ignore: cast_nullable_to_non_nullable
               as String?,
+      projectDesc: freezed == projectDesc
+          ? _value.projectDesc
+          : projectDesc // ignore: cast_nullable_to_non_nullable
+              as String?,
       contractId: freezed == contractId
           ? _value.contractId
           : contractId // ignore: cast_nullable_to_non_nullable
@@ -1071,6 +1078,7 @@ abstract class _$$_MusterAdditionalDetailsCopyWith<$Res>
       String? billType,
       String? projectId,
       String? projectName,
+      String? projectDesc,
       String? contractId});
 }
 
@@ -1094,6 +1102,7 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
     Object? billType = freezed,
     Object? projectId = freezed,
     Object? projectName = freezed,
+    Object? projectDesc = freezed,
     Object? contractId = freezed,
   }) {
     return _then(_$_MusterAdditionalDetails(
@@ -1129,6 +1138,10 @@ class __$$_MusterAdditionalDetailsCopyWithImpl<$Res>
           ? _value.projectName
           : projectName // ignore: cast_nullable_to_non_nullable
               as String?,
+      projectDesc: freezed == projectDesc
+          ? _value.projectDesc
+          : projectDesc // ignore: cast_nullable_to_non_nullable
+              as String?,
       contractId: freezed == contractId
           ? _value.contractId
           : contractId // ignore: cast_nullable_to_non_nullable
@@ -1149,6 +1162,7 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
       this.billType,
       this.projectId,
       this.projectName,
+      this.projectDesc,
       this.contractId});
 
   factory _$_MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =>
@@ -1171,11 +1185,13 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
   @override
   final String? projectName;
   @override
+  final String? projectDesc;
+  @override
   final String? contractId;
 
   @override
   String toString() {
-    return 'MusterAdditionalDetails(attendanceRegisterName: $attendanceRegisterName, attendanceRegisterNo: $attendanceRegisterNo, orgName: $orgName, amount: $amount, assignee: $assignee, billType: $billType, projectId: $projectId, projectName: $projectName, contractId: $contractId)';
+    return 'MusterAdditionalDetails(attendanceRegisterName: $attendanceRegisterName, attendanceRegisterNo: $attendanceRegisterNo, orgName: $orgName, amount: $amount, assignee: $assignee, billType: $billType, projectId: $projectId, projectName: $projectName, projectDesc: $projectDesc, contractId: $contractId)';
   }
 
   @override
@@ -1197,6 +1213,8 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
                 other.projectId == projectId) &&
             (identical(other.projectName, projectName) ||
                 other.projectName == projectName) &&
+            (identical(other.projectDesc, projectDesc) ||
+                other.projectDesc == projectDesc) &&
             (identical(other.contractId, contractId) ||
                 other.contractId == contractId));
   }
@@ -1213,6 +1231,7 @@ class _$_MusterAdditionalDetails implements _MusterAdditionalDetails {
       billType,
       projectId,
       projectName,
+      projectDesc,
       contractId);
 
   @JsonKey(ignore: true)
@@ -1241,6 +1260,7 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
       final String? billType,
       final String? projectId,
       final String? projectName,
+      final String? projectDesc,
       final String? contractId}) = _$_MusterAdditionalDetails;
 
   factory _MusterAdditionalDetails.fromJson(Map<String, dynamic> json) =
@@ -1262,6 +1282,8 @@ abstract class _MusterAdditionalDetails implements MusterAdditionalDetails {
   String? get projectId;
   @override
   String? get projectName;
+  @override
+  String? get projectDesc;
   @override
   String? get contractId;
   @override

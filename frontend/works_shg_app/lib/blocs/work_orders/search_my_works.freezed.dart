@@ -16,19 +16,20 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$SearchMyWorksEvent {
+  List<String>? get searchCriteria => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function(List<String>? searchCriteria) search,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function(List<String>? searchCriteria)? search,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function(List<String>? searchCriteria)? search,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -48,6 +49,10 @@ mixin _$SearchMyWorksEvent {
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $SearchMyWorksEventCopyWith<SearchMyWorksEvent> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -55,6 +60,8 @@ abstract class $SearchMyWorksEventCopyWith<$Res> {
   factory $SearchMyWorksEventCopyWith(
           SearchMyWorksEvent value, $Res Function(SearchMyWorksEvent) then) =
       _$SearchMyWorksEventCopyWithImpl<$Res, SearchMyWorksEvent>;
+  @useResult
+  $Res call({List<String>? searchCriteria});
 }
 
 /// @nodoc
@@ -66,13 +73,30 @@ class _$SearchMyWorksEventCopyWithImpl<$Res, $Val extends SearchMyWorksEvent>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? searchCriteria = freezed,
+  }) {
+    return _then(_value.copyWith(
+      searchCriteria: freezed == searchCriteria
+          ? _value.searchCriteria
+          : searchCriteria // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
-abstract class _$$MyWorksSearchEventCopyWith<$Res> {
+abstract class _$$MyWorksSearchEventCopyWith<$Res>
+    implements $SearchMyWorksEventCopyWith<$Res> {
   factory _$$MyWorksSearchEventCopyWith(_$MyWorksSearchEvent value,
           $Res Function(_$MyWorksSearchEvent) then) =
       __$$MyWorksSearchEventCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<String>? searchCriteria});
 }
 
 /// @nodoc
@@ -82,6 +106,19 @@ class __$$MyWorksSearchEventCopyWithImpl<$Res>
   __$$MyWorksSearchEventCopyWithImpl(
       _$MyWorksSearchEvent _value, $Res Function(_$MyWorksSearchEvent) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? searchCriteria = freezed,
+  }) {
+    return _then(_$MyWorksSearchEvent(
+      freezed == searchCriteria
+          ? _value._searchCriteria
+          : searchCriteria // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+    ));
+  }
 }
 
 /// @nodoc
@@ -89,52 +126,76 @@ class __$$MyWorksSearchEventCopyWithImpl<$Res>
 class _$MyWorksSearchEvent
     with DiagnosticableTreeMixin
     implements MyWorksSearchEvent {
-  const _$MyWorksSearchEvent();
+  const _$MyWorksSearchEvent(final List<String>? searchCriteria)
+      : _searchCriteria = searchCriteria;
+
+  final List<String>? _searchCriteria;
+  @override
+  List<String>? get searchCriteria {
+    final value = _searchCriteria;
+    if (value == null) return null;
+    if (_searchCriteria is EqualUnmodifiableListView) return _searchCriteria;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchMyWorksEvent.search()';
+    return 'SearchMyWorksEvent.search(searchCriteria: $searchCriteria)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'SearchMyWorksEvent.search'));
+    properties
+      ..add(DiagnosticsProperty('type', 'SearchMyWorksEvent.search'))
+      ..add(DiagnosticsProperty('searchCriteria', searchCriteria));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MyWorksSearchEvent);
+        (other.runtimeType == runtimeType &&
+            other is _$MyWorksSearchEvent &&
+            const DeepCollectionEquality()
+                .equals(other._searchCriteria, _searchCriteria));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_searchCriteria));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MyWorksSearchEventCopyWith<_$MyWorksSearchEvent> get copyWith =>
+      __$$MyWorksSearchEventCopyWithImpl<_$MyWorksSearchEvent>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() search,
+    required TResult Function(List<String>? searchCriteria) search,
   }) {
-    return search();
+    return search(searchCriteria);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? search,
+    TResult? Function(List<String>? searchCriteria)? search,
   }) {
-    return search?.call();
+    return search?.call(searchCriteria);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? search,
+    TResult Function(List<String>? searchCriteria)? search,
     required TResult orElse(),
   }) {
     if (search != null) {
-      return search();
+      return search(searchCriteria);
     }
     return orElse();
   }
@@ -169,7 +230,15 @@ class _$MyWorksSearchEvent
 }
 
 abstract class MyWorksSearchEvent implements SearchMyWorksEvent {
-  const factory MyWorksSearchEvent() = _$MyWorksSearchEvent;
+  const factory MyWorksSearchEvent(final List<String>? searchCriteria) =
+      _$MyWorksSearchEvent;
+
+  @override
+  List<String>? get searchCriteria;
+  @override
+  @JsonKey(ignore: true)
+  _$$MyWorksSearchEventCopyWith<_$MyWorksSearchEvent> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc

@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { PrivateRoute, BreadCrumb, AppContainer } from "@egovernments/digit-ui-react-components";
 import { Switch, useLocation } from "react-router-dom";
 import CreateBill from "./CreateBill";
 import ViewSupervisionbill from "./Bills/ViewSupervisionbill";
-
+import SearchBillWMS from "./Bills/SearchBillWMS";
 const ExpenditureBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
@@ -35,9 +35,9 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         isBack: fromScreen && true,
       },
       {
-        path: `/${window.contextPath}/employee/expenditure/create-bill`,
+        path: `/${window.contextPath}/employee/expenditure/create-purchase-bill`,
         content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_BILL")}` : t("EXP_CREATE_BILL"),
-        show: location.pathname.includes("/expenditure/create-bill") ? true : false,
+        show: location.pathname.includes("/expenditure/create-purchase-bill") ? true : false,
         isBack: fromScreen && true,
       },
       {
@@ -53,9 +53,9 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         isBack: fromScreen && true,
       },
       {
-        path: `/${window.contextPath}/employee/expenditure/view-bill`,
+        path: `/${window.contextPath}/employee/expenditure/wage-bill-details`,
         content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILL")}` : t("EXP_VIEW_BILL"),
-        show: location.pathname.includes("/expenditure/view-bill") ? true : false,
+        show: location.pathname.includes("/expenditure/wage-bill-details") ? true : false,
         isBack: fromScreen && true,
       },
       {
@@ -64,6 +64,18 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         show: location.pathname.includes("/expenditure/supervision-bill-details") ? true : false,
         isBack: fromScreen && true,
       },
+      {
+        path: `/${window.contextPath}/employee/expenditure/purchase-bill-details`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_PURCHASE_BILL")}` : t("EXP_CREATE_PURCHASE_BILL"),
+        show: location.pathname.includes("/expenditure/purchase-bill-details") ? true : false,
+        isBack: fromScreen && true,
+      },
+      {
+        path: `/${window.contextPath}/employee/expenditure/download-bill`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("ES_COMMON_DOWNLOADS")}` : t("ES_COMMON_DOWNLOADS"),
+        show: location.pathname.includes("/expenditure/download-bill") ? true : false,
+        isBack: fromScreen && true,
+      }
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 }
@@ -75,7 +87,21 @@ const App = ({ path }) => {
     const ViewBillsComponent = Digit?.ComponentRegistryService?.getComponent("ViewBills");
     const BillInbox = Digit?.ComponentRegistryService?.getComponent("BillInbox");
     const SearchBill = Digit?.ComponentRegistryService?.getComponent("SearchBill");
-    const ViewBill = Digit?.ComponentRegistryService?.getComponent("ViewBill");
+    const ViewPurchaseBillComponent = Digit?.ComponentRegistryService?.getComponent("ViewPurchaseBill");
+    const PurchaseBill = Digit?.ComponentRegistryService?.getComponent("PurchaseBill");
+    const PurchaseBillResponse = Digit?.ComponentRegistryService?.getComponent("CreatePurchaseBillResponse");
+    const ViewWageBill = Digit?.ComponentRegistryService?.getComponent("ViewWageBill");
+    const DownloadBill = Digit?.ComponentRegistryService?.getComponent("DownloadBill");
+
+    const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
+    const [sessionFormData, clearSessionFormData] = PurchaseBillSession;
+  
+    //remove session form data if user navigates away from the project create screen
+    useEffect(()=>{
+        if (!window.location.href.includes("create-purchase-bill") && sessionFormData && Object.keys(sessionFormData) != 0) {
+          clearSessionFormData();
+        }
+    },[location]);
 
     return (
       <Switch>
@@ -90,9 +116,14 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/create-bill`} component={() => <CreateBill parentRoute={path} />} />
 
           <PrivateRoute path={`${path}/inbox`} component={() => <BillInbox parentRoute={path} />} />
-          <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBill parentRoute={path} />} />
-          <PrivateRoute path={`${path}/view-bill`} component={() => <ViewBill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBillWMS parentRoute={path} />} />
+          <PrivateRoute path={`${path}/search-bill-plain`} component={() => <SearchBill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/wage-bill-details`} component={() => <ViewWageBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/supervision-bill-details`} component={() => <ViewSupervisionbill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/purchase-bill-details`} component={() => <ViewPurchaseBillComponent parentRoute={path} />}/>
+          <PrivateRoute path={`${path}/create-purchase-bill`} component={() => <PurchaseBill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/create-purchase-bill-response`} component={() => <PurchaseBillResponse parentRoute={path} />} />
+          <PrivateRoute path={`${path}/download-bill`} component={() => <DownloadBill parentRoute={path} />} />
         </AppContainer>
       </Switch>
     );

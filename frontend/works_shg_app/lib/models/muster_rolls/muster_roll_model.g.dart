@@ -23,7 +23,7 @@ Map<String, dynamic> _$$_MusterRollsModelToJson(_$_MusterRollsModel instance) =>
 _$_MusterRoll _$$_MusterRollFromJson(Map<String, dynamic> json) =>
     _$_MusterRoll(
       id: json['id'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       musterRollNumber: json['musterRollNumber'] as String?,
       registerId: json['registerId'] as String?,
       status: json['status'] as String?,
@@ -96,6 +96,7 @@ _$_MusterAdditionalDetails _$$_MusterAdditionalDetailsFromJson(
       billType: json['billType'] as String?,
       projectId: json['projectId'] as String?,
       projectName: json['projectName'] as String?,
+      projectDesc: json['projectDesc'] as String?,
       contractId: json['contractId'] as String?,
     );
 
@@ -110,6 +111,7 @@ Map<String, dynamic> _$$_MusterAdditionalDetailsToJson(
       'billType': instance.billType,
       'projectId': instance.projectId,
       'projectName': instance.projectName,
+      'projectDesc': instance.projectDesc,
       'contractId': instance.contractId,
     };
 

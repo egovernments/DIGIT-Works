@@ -96,7 +96,7 @@ const ProjectDetails = () => {
 
     const HandleDownloadPdf = () => {
         const projectId=searchParams?.Projects?.[0]?.projectNumber;
-        Digit.Utils.downloadEgovPDF('project/project-details',{projectId,tenantId:searchParams?.Projects?.[0]?.tenantId},`project-${projectId}.pdf`)
+        Digit.Utils.downloadEgovPDF('project/project-details',{projectId,tenantId:searchParams?.Projects?.[0]?.tenantId},`Project-${projectId}.pdf`)
     }
 
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
@@ -181,7 +181,7 @@ const ProjectDetails = () => {
     return (
         <div className={"employee-main-application-details"}>
             <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-                <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("WORKS_PROJECT_DETAILS")}</Header>
+                <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{t("WORKS_PROJECT_DETAILS")}</Header>
             <MultiLink
               onHeadClick={() => HandleDownloadPdf()}
               downloadBtnClassName={"employee-download-btn-className"}
@@ -189,16 +189,7 @@ const ProjectDetails = () => {
             />
             </div>
 
-            {/* <Card className={"employeeCard-override"} >
-                <StatusTable>
-                    <Row className="border-none" label={`${t("WORKS_PROJECT_ID")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectID} textStyle={{ whiteSpace: "pre" }} />
-                    <Row className="border-none" label={`${t("ES_COMMON_PROPOSAL_DATE")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectProposalDate} textStyle={{ whiteSpace: "pre" }} />
-                    <Row className="border-none" label={`${t("ES_COMMON_PROJECT_NAME")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectName} textStyle={{ whiteSpace: "pre" }} isMandotary={true} />
-                    <Row className="border-none" label={`${t("PROJECT_DESC")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectDesc} textStyle={{ whiteSpace: "pre" }} />
-                    <Row className="border-none" label={`${t("WORKS_THE_PROJECT_HAS_SUB_PROJECT_LABEL")}:`} text={t(data?.projectDetails?.searchedProject?.basicDetails?.projectHasSubProject)} textStyle={{ whiteSpace: "pre" }} />
-                    <Row className="border-none" label={`${t("WORKS_PARENT_PROJECT_ID")}:`} text={data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID} textStyle={{ whiteSpace: "pre" }} isValueLink={data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID === "NA" ? "" : data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID} navigateLinkHandler={()=>handleParentProjectSearch(data?.projectDetails?.searchedProject?.basicDetails?.projectParentProjectID)}/>
-                </StatusTable>
-            </Card> */}
+ 
             <HorizontalNav showNav={false} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>  
               <ProjectDetailsNavDetails 
                 activeLink={activeLink}

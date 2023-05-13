@@ -7,7 +7,8 @@ const ROLES = {
   ESTIMATE: ["ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER"],
   CONTRACT: ["WORK_ORDER_CREATOR", "WORK_ORDER_VERIFIER", "WORK_ORDER_APPROVER"],
   MASTERS: ["MUKTA_ADMIN"],
-  BILLS: ["BILL_CREATOR", "BILL_VIEWER"],
+  BILLS: ["BILL_CREATOR", "BILL_VIEWER","BILL_VERIFIER","BILL_APPROVER"],
+  PAYMENT: ["BILL_ACCOUNTANT"],
   MUSTERROLLS: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
   DSS: ["STADMIN"],
 };
@@ -18,8 +19,14 @@ const WorksCard = () => {
     return null;
   }
 
-  //getting the businessServiceMap
-  const businessServiceMap = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService();
+
+  const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
+  const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
+  const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll");
+  const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+  const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
+  const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
+  
 
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -29,7 +36,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.attendencemgmt],
+          businessService: [bsMuster],
           moduleName: "muster-roll-service",
         },
         moduleSearchCriteria: {
@@ -52,7 +59,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.estimate],
+          businessService: [bsEstimate],
           moduleName: "estimate-service",
         },
         moduleSearchCriteria: {
@@ -76,7 +83,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [businessServiceMap?.contracts],
+          businessService: [bsContract],
           moduleName: "contract-service",
         },
         moduleSearchCriteria: {
@@ -93,6 +100,30 @@ const WorksCard = () => {
   };
 
   const { isLoading: isLoadingContract, data: dataContract } = Digit.Hooks.useCustomAPIHook(requestCriteriaContract);
+
+  const requestCriteriaBilling = {
+    url: "/inbox/v2/_search",
+    body: {
+      inbox: {
+        tenantId,
+        processSearchCriteria: {
+          businessService: [bsPurchaseBill,bsWageBill,bsSupervisionBill],
+          moduleName: "expense",
+        },
+        moduleSearchCriteria: {
+          tenantId,
+        },
+        limit: 10,
+        offset: 0,
+      },
+    },
+    config: {
+      enabled: Digit.Utils.didEmployeeHasAtleastOneRole(ROLES.BILLS),
+    },
+    changeQueryName: "BillInbox",
+  };
+
+  const { isLoading: isLoadingBilling, data: dataBilling } = Digit.Hooks.useCustomAPIHook(requestCriteriaBilling);
 
   let links = [
     {
@@ -122,7 +153,12 @@ const WorksCard = () => {
       label: t("ACTION_TEST_5BILLS"),
       link: `/${window?.contextPath}/employee/expenditure/billinbox`,
       roles: ROLES.BILLS,
-      count: isLoading ? "-" : data?.totalCount,
+      count: isLoadingBilling ? "-" : dataBilling?.totalCount,
+    },
+    {
+      label: t("ACTION_TEST_5PAYMENT"),
+      link: `/${window?.contextPath}/employee/masters/search-bill`,
+      roles: ROLES.PAYMENT,
     },
     {
       label: t("ACTION_TEST_6DASHBOARD"),

@@ -283,7 +283,7 @@ const PDFSvg = ({
   className,
   width = 80,
   height = 80,
-  style = { background: "#f6f6f6", padding: "8px", boxShadow: "0px 2px 0px #d6d5d3", borderRadius: "2px" },
+  style = { background: "#f6f6f6", padding: "8px", boxShadow: "0px 2px 0px #d6d5d3", borderRadius: "4px" },
   viewBox = "0 0 80 80",
 }) => (
   <svg {...{ className, width, height, style, viewBox }} fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -842,7 +842,6 @@ const DeleteIcon = ({ style, fill }) => (
   </svg>
 );
 
-
 const CreateLoiIcon = ({ style, fill = "#F47738" }) => (
   <svg style={style} width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -1065,8 +1064,11 @@ const ValidityTimeIcon = ({ className, styles }) => (
 );
 
 const AddIcon = ({ styles, className, fill = "white" }) => (
-  <svg width="12" height="14" className={className} style={{ ...styles }} viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M11.8125 5.49609V8.4375H0.117188V5.49609H11.8125ZM7.57031 0.867188V13.2891H4.37109V0.867188H7.57031Z" fill={fill} />
+  <svg width="14" height="14" className={className} style={{ ...styles }} viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M11.7896 2.58402C9.24786 0.0490554 5.13886 0.0490554 2.59717 2.58402C0.0554699 5.11898 0.0554701 9.21709 2.59717 11.752C5.13886 14.287 9.24786 14.287 11.7896 11.752C14.3312 9.21709 14.3312 5.11898 11.7896 2.58402ZM7.84142 11.1057H6.5453V7.81438H3.24523L3.24523 6.52169H6.5453V3.23036H7.84142V6.52169H11.1415L11.1415 7.81438H7.84142V11.1057Z"
+      fill={fill}
+    />
   </svg>
 );
 
@@ -1686,7 +1688,16 @@ const MuktaHomeIcon = ({ className = "", fill = "none", style = {} }) => (
     <path d="M11.3346 22.6667V14.6667H16.668V22.6667H23.3346V12H27.3346L14.0013 0L0.667969 12H4.66797V22.6667H11.3346Z" fill="white" />
   </svg>
 );
-
+const DoubleTickIcon = ({ className = "", fill = "none", style = {} }) => (
+  <svg width="32" height="19" viewBox="0 0 32 19" className={className} style={style} fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <path d="M24.0002 2.33312L22.1202 0.453125L13.6669 8.90646L15.5469 10.7865L24.0002 2.33312ZM29.6535 0.453125L15.5469 14.5598L9.97354 8.99979L8.09354 10.8798L15.5469 18.3331L31.5469 2.33312L29.6535 0.453125ZM0.546875 10.8798L8.00021 18.3331L9.88021 16.4531L2.44021 8.99979L0.546875 10.8798Z" fill="#F47738"/>
+  </svg>
+)
+const InfoIcon = ({ className = "", fill = "none", style = {} }) => (
+  <svg width="20" height="20" viewBox="0 0 20 20" className={className} style={style} fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 5H11V7H9V5ZM9 9H11V15H9V9ZM10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM10 18C5.59 18 2 14.41 2 10C2 5.59 5.59 2 10 2C14.41 2 18 5.59 18 10C18 14.41 14.41 18 10 18Z" fill="#505A5F"/>
+  </svg>
+)
 const ExpenditureIcon = BillsIcon;
 
 export {
@@ -1834,4 +1845,6 @@ export {
   HelperIcon,
   DashboardIcon,
   ExpenditureIcon,
+  DoubleTickIcon,
+  InfoIcon
 };

@@ -1,10 +1,12 @@
 // ignore_for_file: avoid_dynamic_calls
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
 import '../../../models/works/contracts_model.dart';
+import '../../../models/works/my_works_search_criteria.dart';
 
 class MyWorksRepository {
   final Dio _client;
@@ -40,6 +42,28 @@ class MyWorksRepository {
 
       return ContractsModelMapper.fromMap(
           response.data as Map<String, dynamic>);
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
+    }
+  }
+
+  Future<MyWorksSearchCriteriaModel> getSearchCriteria({
+    required String apiEndPoint,
+    required String tenantId,
+    required List<Map> moduleDetails,
+  }) async {
+    try {
+      var response = await _client.post(apiEndPoint, data: {
+        "MdmsCriteria": {
+          "tenantId": tenantId,
+          "moduleDetails": moduleDetails,
+        },
+      });
+
+      return MyWorksSearchCriteriaModel.fromJson(
+        json.decode(response.toString())['MdmsRes'],
+      );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;

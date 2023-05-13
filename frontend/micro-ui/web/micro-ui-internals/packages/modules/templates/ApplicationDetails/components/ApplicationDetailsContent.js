@@ -65,7 +65,8 @@ function ApplicationDetailsContent({
   applicationNo,
   tenantId,
   businessService,
-  customClass
+  customClass,
+  setAttendanceError
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
@@ -207,7 +208,7 @@ function ApplicationDetailsContent({
       window.location.href.includes("employee/contracts") || 
       window.location.href.includes("employee/masters") ||
       window.location.href.includes("employee/project") ||
-      window.location.href.includes("employee/contracts") 
+      window.location.href.includes("employee/expenditure") 
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
     } else if (checkLocation) {
@@ -390,7 +391,7 @@ function ApplicationDetailsContent({
                   <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px", fontSize: "24px" }}>
                     {t(detail?.additionalDetails?.table?.weekTable?.tableHeader)}
                   </CardSectionHeader>
-                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} setSaveAttendanceState={setSaveAttendanceState} weekDates={detail?.additionalDetails?.table.weekTable.weekDates} workflowDetails={workflowDetails}/>}
+                  {detail?.additionalDetails?.table.weekTable.renderTable && <WeekAttendence state={state} dispatch={dispatch} modify={modify} setSaveAttendanceState={setSaveAttendanceState} weekDates={detail?.additionalDetails?.table.weekTable.weekDates} workflowDetails={workflowDetails} setAttendanceError={setAttendanceError}/>}
                 </>
               )
             : null}

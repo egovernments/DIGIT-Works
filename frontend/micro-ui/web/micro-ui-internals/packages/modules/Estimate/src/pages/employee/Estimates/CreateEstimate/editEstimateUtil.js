@@ -7,7 +7,7 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
     const formData = {}
     //pre populating the relevant formData
     //total estimate amount
-    formData.totalEstimateAmount = estimate?.additionalDetails?.totalEstimatedAmount
+    formData.totalEstimatedAmount = estimate?.additionalDetails?.totalEstimatedAmount
 
     //labour and material analysis
     formData.analysis = estimate?.additionalDetails?.labourMaterialAnalysis
@@ -29,8 +29,8 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
                 ]
             ]
         }
-        if(!(doc?.fileStoreId) && doc?.fileName==="Others"){
-            uploadedDocs["ESTIMATE_DOC_OTHERS_name"]="Others"
+        if((doc?.fileStoreId) && doc?.fileType==="Others"){
+            uploadedDocs["ESTIMATE_DOC_OTHERS_name"]=doc?.fileName
         }
     })
     
@@ -68,6 +68,7 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
     })
     formData["overheadDetails"] = overHeadItems
 
+    
+    
     return formData
-
 }
