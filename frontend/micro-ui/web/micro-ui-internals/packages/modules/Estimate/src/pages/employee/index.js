@@ -46,7 +46,7 @@ const EstimateBreadCrumbs = ({ location }) => {
             isBack: fromScreen && true,
         },
         {
-            path: `/${window.contextPath}/employee/estimate/search-estimate`,
+            path: `/${window.contextPath}/employee/estimate/inbox`,
             content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
             show: location.pathname.includes("/estimate/estimate-details") ? true : false,
             isBack: fromScreen && true,
