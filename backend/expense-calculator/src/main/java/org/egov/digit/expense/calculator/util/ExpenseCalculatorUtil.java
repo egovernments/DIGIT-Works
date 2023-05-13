@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.project.Project;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.*;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
@@ -15,11 +16,14 @@ import org.egov.digit.expense.calculator.web.models.BillSearchRequest;
 import org.egov.digit.expense.calculator.web.models.Contract;
 import org.egov.digit.expense.calculator.web.models.ContractCriteria;
 import org.egov.digit.expense.calculator.web.models.ContractResponse;
+import org.egov.digit.expense.calculator.web.models.LineItem;
+import org.egov.digit.expense.calculator.web.models.LineItems;
 import org.egov.digit.expense.calculator.web.models.MusterRoll;
 import org.egov.digit.expense.calculator.web.models.MusterRollResponse;
 import org.egov.digit.expense.calculator.web.models.Order;
 import org.egov.digit.expense.calculator.web.models.Pagination;
 import org.egov.tracer.model.CustomException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -132,6 +136,51 @@ public class ExpenseCalculatorUtil {
         ContractResponse response = mapper.convertValue(responseObj, ContractResponse.class);
         return response != null ? response.getContracts() : null;
     }
+    
+   /**
+    * TODO:This needs to be revisited May 2023.
+    * We need to send the project name, ward, locality etc.. to the billing indexer. The way this has been 
+    * done is via additionalDetails object of the bill. The contract additionalDetails object holds all this info
+    * and we are now sending it onward to the Billing service. But if the UI implementation changes and these
+    * values are not sent via additionalDetails, then the Inbox/Search etc.. will fail. 
+    * @param requestInfo
+    * @param tenantId
+    * @param contractId
+    * @return
+    */
+    public Object getContractAdditionalDetails(RequestInfo requestInfo, String tenantId, String contractId){
+    	List<Contract> contracts = fetchContract(requestInfo,tenantId,contractId);
+    	Contract contract = contracts.get(0);
+    	Object additional = null;
+    	if(contract!=null) {
+    		additional = contract.getAdditionalDetails();
+    	}
+    	return additional;
+    }
+    
+    public List<Bill> fetchBillsByProject(RequestInfo requestInfo, String tenantId, List<String> projects) {
+    	//log.info("Fetching unique project numbers from the calculator repository for contractId " + contractId);
+    	// fetch the bill id from the calculator DB
+        List<String> billIds = expenseCalculatorRepository.getBillsByProjectNumber(tenantId, projects);
+        StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
+        Pagination pagination = Pagination.builder().limit(configs.getDefaultLimit()).offSet(configs.getDefaultOffset()).order(Order.ASC).build();
+        
+        //Only fetch active bills
+        BillCriteria billCriteria = BillCriteria.builder()
+        		.tenantId(tenantId)
+        		.status("ACTIVE")
+                .ids(new HashSet<>(billIds))
+                .build();
+        BillSearchRequest billSearchRequest = BillSearchRequest.builder().requestInfo(requestInfo)
+                .billCriteria(billCriteria).tenantId(tenantId).pagination(pagination).build();
+        log.info("Calling expense service search for billIds. Request is: " + billSearchRequest.toString());
+        Object responseObj = restRepo.fetchResult(url, billSearchRequest);
+        log.info("Response from billing service is: " + responseObj.toString());
+        BillResponse response = mapper.convertValue(responseObj, BillResponse.class);
+        return response != null ? response.getBills() : null;
+
+    }
+    
 
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
     	log.info("Fetching bills from the calculator repository for contractId " + contractId);

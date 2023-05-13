@@ -1,7 +1,8 @@
-var { search_expense_bill, search_bank_account_details, upload_file_using_filestore, search_payment_details, create_eg_payments_excel, exec_query_eg_payments_excel } = require("./api");
+var { search_expense_bill, search_bank_account_details, upload_file_using_filestore, search_payment_details, create_eg_payments_excel, exec_query_eg_payments_excel, search_mdms, search_expense_calculator_bill } = require("./api");
 const XLSX = require('xlsx');
 var logger = require("./logger").logger;
-let get = require('lodash.get')
+let get = require('lodash.get');
+const config = require("./config");
 
 async function processGroupBillFromPaymentCreateTopic(requestData) {
     logger.info("Started generating bill from payment topic.")
@@ -12,6 +13,7 @@ async function processGroupBillFromPaymentCreateTopic(requestData) {
         let filestoreId = null;
         if (requestData.RequestInfo && requestData?.payment?.bills && requestData.payment.tenantId) {
             request.paymentId = requestData.payment.id;
+            let paymentNumber = requestData.payment.paymentNumber;
             request.billIds = [];
             request.billIds = requestData.payment.bills.map(bill => {return bill.billId})
             request.RequestInfo = requestData.RequestInfo;
@@ -19,7 +21,7 @@ async function processGroupBillFromPaymentCreateTopic(requestData) {
             // Get user uuid and payment id and create an entry on db
             userid = get(request, "RequestInfo.userInfo.uuid", null)
             paymentId = request.paymentId;
-            await create_eg_payments_excel(paymentId, request.tenantId, userid);
+            await create_eg_payments_excel(paymentId, paymentNumber, request.tenantId, userid);
             filestoreId = await processGroupBill(request);
         }
         return filestoreId;
@@ -72,15 +74,21 @@ async function processGroupBill(requestData) {
         let paymentId = requestData.paymentId;
         let tenantId = requestData.tenantId;
         let userId = requestData?.RequestInfo?.userInfo?.uuid;
-        let bills = await getBillDetails(requestData);
+
+        let exBills = await getBillDetails(requestData);
+        let bills = await getBillDetailsUsingExCalc(requestData, exBills);
+        let headCodes = await getHeadCodeFromMDMS(requestData);
+        let headCodeMap = {};
+        headCodes.forEach((headCode) => headCodeMap[headCode.code] = headCode);
         let billsForExcel = [];
         if (bills) {
             bills.forEach((bill, idx) => {
-                let nBills = getBillsForExcel(bill);
+                let nBills = getBillsForExcel(bill, headCodeMap);
                 if (nBills.length)
                 billsForExcel = billsForExcel.concat(nBills);
             })
         }
+        
         
         let accountIdMap = {};
         let beneficiaryIds = []
@@ -92,8 +100,10 @@ async function processGroupBill(requestData) {
         })
         logger.info("Fetching bank details")
         let bankAccounts = await getBankAccountDetails(requestData, beneficiaryIds);
-        bankAccounts.forEach((bankAccount) => { accountIdMap[bankAccount.id] = bankAccount });
+        bankAccounts.forEach((bankAccount) => { accountIdMap[bankAccount.referenceId] = bankAccount });
         billsForExcel = billsForExcel.map((billDetails) => {
+            // Set projectNumber as projectId
+
             if (accountIdMap[billDetails.beneficiaryId]) {
                 let accountDetails = accountIdMap[billDetails.beneficiaryId] || {};
                 let bankAccountDetails = get(accountDetails, 'bankAccountDetails[0]', {});
@@ -110,8 +120,8 @@ async function processGroupBill(requestData) {
         let numberofbeneficialy = billsForExcel.length;
         let totalAmount = 0;
         bills.forEach((bill) => {
-            if (bill?.totalAmount) {
-                totalAmount = totalAmount + bill?.totalAmount;
+            if (bill?.bill?.totalAmount) {
+                totalAmount = totalAmount + bill?.bill?.totalAmount;
             }
         })
         logger.info("Update file id and other details.")
@@ -124,6 +134,32 @@ async function processGroupBill(requestData) {
     }
 }
 
+const getHeadCodeFromMDMS = async (requestData) => {
+    try {
+        let request = {}
+        request['RequestInfo'] = requestData['RequestInfo']
+        request['MdmsCriteria'] = {
+            tenantId: requestData.tenantId.split(".")[0],
+            "moduleDetails": [
+                {
+                    "moduleName": "expense",
+                    "masterDetails": [
+                        {
+                            "name": "HeadCodes"
+                        }
+                    ]
+                }
+            ]
+        }
+        let mdmsHeadCode = await search_mdms(request);
+        let headCodes = get(mdmsHeadCode, "data.MdmsRes.expense.HeadCodes", [])
+        return headCodes;
+        
+    } catch (error) {
+        logger.error(error.stack || error);
+        return null;
+    }
+}
 
 
 const getBillDetails = async (requestData) => {
@@ -158,6 +194,37 @@ const getBillDetails = async (requestData) => {
         logger.error(error.stack || error);
     }
     return bills;
+}
+
+const getBillDetailsUsingExCalc = async (requestData, bills) => {
+    let calcBills = [];
+    try {
+        let request = {}
+        let billNumbers = bills.map(bill => {return bill.billNumber})
+        request['RequestInfo'] = requestData['RequestInfo']
+        request['searchCriteria'] = {
+            tenantId: requestData.tenantId,
+            billNumbers: billNumbers
+        }
+        // Get how many expenses are there
+        let total = billNumbers.length;
+        if (total) {
+            let limit = 100;
+            let rounds = total / limit;
+            let promises = [];
+            for (let idx = 0; idx < rounds; idx++) {
+                let offset = limit * idx;
+                promises.push(fetchBillDetailsFromExCalcByRequest(deepClone(request), limit, offset));
+            }
+            let billResponse = await Promise.all(promises)
+            for (let idx = 0; idx < billResponse.length; idx++) {
+                calcBills = calcBills.concat(billResponse[idx]);
+            }
+        }
+    } catch (error) {
+        logger.error(error.stack || error);
+    }
+    return calcBills;
 }
 
 const getBankAccountDetails = async (requestData, beneficiaryIds) => {
@@ -213,6 +280,23 @@ const fetchBillDetailsByRequest = (request, limit, offset) => {
     })
 }
 
+const fetchBillDetailsFromExCalcByRequest = (request, limit, offset) => {
+    return new Promise((resolve, reject) => {
+        try {
+            search_expense_calculator_bill(deepClone(request), limit, offset).then((data) => {
+                if (data?.bills?.length) {
+                    resolve(data.bills)
+                } else {
+                    resolve([])
+                }
+            }).catch(err => reject(err))
+        } catch (error) {
+            reject(error)
+            logger.error(error.stack || error);
+        }
+    })
+}
+
 const fetchBankAccountDetailsByRequest = (request) => {
     return new Promise((resolve, reject) => {
         try {
@@ -231,11 +315,12 @@ const fetchBankAccountDetailsByRequest = (request) => {
 }
 
 
-const getBillsForExcel = (bill) => {
+const getBillsForExcel = (billDetails, headCodeMap) => {
+    let bill = billDetails?.bill;
     let bills = []
     let billObj = {
-        "projectId" : "NA",
-        "workOrderId" : bill?.referenceId,
+        "projectId" : billDetails?.projectNumber,
+        "workOrderId" : billDetails?.contractNumber,
         "billNumber" : bill?.billNumber,
         "billType" :  bill?.businessService,
         "grossAmount" : 0,
@@ -256,7 +341,7 @@ const getBillsForExcel = (bill) => {
         let wagesBills = getWagesBill(bill, billObj);
         bills = bills.concat(wagesBills);
     } else if (businessService == 'EXPENSE.PURCHASE') {
-        let purchaseBills = getPurchaseBill(bill, billObj);
+        let purchaseBills = getPurchaseBill(bill, billObj, headCodeMap);
         bills = bills.concat(purchaseBills);
     } else if (businessService == 'EXPENSE.SUPERVISION') {
         let supervisionBills = getSupervisionBill(bill, billObj);
@@ -273,30 +358,52 @@ let getWagesBill = (bill, billObj) => {
         let newBill = deepClone(billObj);
         newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
         newBill['beneficiaryType'] = billDetail?.payee?.type || "";
-        newBill['grossAmount'] = billDetail?.netLineItemAmount || 0;
-        newBill['payableAmount'] = billDetail?.netLineItemAmount || 0;
+        newBill['grossAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
+        newBill['payableAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
         newBill['headCode'] = billDetail?.payableLineItems[0]?.headCode || "";
         bills.push(newBill)
     });
     return bills;
 }
 
-let getPurchaseBill = (bill, billObj) => {
+let getPurchaseBill = (bill, billObj, headCodeMap) => {
     let bills = [];
     bill?.billDetails.forEach(billDetail => {
         if (billDetail?.payableLineItems?.length) {
             billDetail?.payableLineItems.forEach((payableLineItem) => {
-                let newBill = deepClone(billObj);
-                newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
-                newBill['beneficiaryType'] = billDetail?.payee?.type || "";
-                newBill['grossAmount'] = payableLineItem?.amount || 0;
-                newBill['payableAmount'] = payableLineItem?.amount || 0;
-                newBill['headCode'] = payableLineItem?.headCode || "";
-                bills.push(newBill)
+                if (payableLineItem.status == "ACTIVE") {
+                    let newBill = deepClone(billObj);
+                    let headCodeBeneficiary = getBeneficiaryByHeadCode(payableLineItem, headCodeMap)
+                    newBill['beneficiaryId'] = headCodeBeneficiary || billDetail?.payee?.identifier || "";
+                    newBill['beneficiaryType'] = billDetail?.payee?.type || "";
+                    newBill['grossAmount'] = payableLineItem?.amount || 0;
+                    newBill['payableAmount'] = payableLineItem?.amount || 0;
+                    newBill['headCode'] = payableLineItem?.headCode || "";
+                    bills.push(newBill)
+                }
             })
         }
     });
     return bills;
+}
+
+// Get beneficiary by headcode 
+let getBeneficiaryByHeadCode = (payableLineItem, headCodeMap) => {
+    let beneficiaryIdFormate = config.constraints.beneficiaryIdByHeadCode;
+    if (payableLineItem && beneficiaryIdFormate) {
+        let plHeadCode = payableLineItem.headCode || "";
+        let headCode = headCodeMap[plHeadCode] 
+        // If headcode category is deduction then change beneficiaryId
+        if (headCode && headCode?.category == "deduction") {
+            beneficiaryIdFormate = beneficiaryIdFormate.replace("{tanentId}", payableLineItem.tenantId)
+            beneficiaryIdFormate = beneficiaryIdFormate.replace("{headcode}", plHeadCode)
+            return beneficiaryIdFormate;
+        } else {
+            return null
+        }
+    } else {
+        return null;
+    }
 }
 
 let getSupervisionBill = (bill, billObj) => {
@@ -305,8 +412,8 @@ let getSupervisionBill = (bill, billObj) => {
     let billDetail = get(bill, "billDetails[0]", {});
     newBill['beneficiaryId'] = get(billDetail,'payee.identifier', "");
     newBill['beneficiaryType'] = get(billDetail, "payee.type", "");
-    newBill['grossAmount'] = get(billDetail, 'netLineItemAmount', 0);
-    newBill['payableAmount'] = get(billDetail, 'netLineItemAmount', 0);
+    newBill['grossAmount'] = get(billDetail, 'payableLineItems[0].amount', 0);
+    newBill['payableAmount'] = get(billDetail, 'payableLineItems[0].amount', 0);
     newBill['headCode'] = get(billDetail, 'payableLineItems[0].headCode', "");
     bills.push(newBill)
     return bills;
@@ -360,6 +467,7 @@ let createXlsxFromBills = async (billsData, paymentId, tenantId) => {
         throw(error)
     }
 }
+
 
 async function updateForJobCompletion (paymentId, filestoreId, userId, billsLength, numberofbeneficialy, totalAmount) {
     try {

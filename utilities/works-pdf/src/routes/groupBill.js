@@ -34,7 +34,7 @@ router.post(
       );
     }
     let paymentId = criteria?.paymentId;
-    let billIds = criteria?.billIds;
+    let paymentNumber = null;
 
     if (!paymentId) {
       return renderError(
@@ -67,6 +67,8 @@ router.post(
       let paymentResp = await search_payment_details(paymentRequest);
       if (!paymentResp?.payments?.length) {
         return renderError(res, `Failed to query for payment search. Check the Payment id.`);
+      } else {
+        paymentNumber = paymentResp?.payments[0]?.paymentNumber;
       }
     } catch (error) {
       logger.error(error.stack || err);
@@ -95,7 +97,7 @@ router.post(
         const result = await exec_query_eg_payments_excel('select * from eg_payments_excel where paymentid = $1', [paymentId])
         var userId = requestinfo?.userInfo?.uuid;
         if (result.rowCount < 1) {
-          await create_eg_payments_excel(paymentId, tenantId, userId);
+          await create_eg_payments_excel(paymentId, paymentNumber, tenantId, userId);
         } else {
           await reset_eg_payments_excel(paymentId, userId);
         }
@@ -123,43 +125,48 @@ router.post(
   async (req, res) => {
     let requestInfo;
     try {
-      let tenantid = req.query.tenantid;
+      let tenantId = req.query.tenantId;
       let paymentId = req.query.paymentId;
+      let status = req.query.status;
       requestInfo = req.body?.RequestInfo;
       let userId = requestInfo?.userInfo?.uuid;
-      if (
-        (userId == undefined || userId.trim() == "") &&
-        (paymentId == undefined || paymentId.trim() == "")
-      ) {
+      let pagination = req.body?.pagination;
+      
+      if ((userId == undefined || userId.trim() == "") && (paymentId == undefined || paymentId.trim() == "")) {
         res.status(400);
         res.json({
           ResponseInfo: requestInfo,
           message: "paymentId and userId both can not be empty",
         });
       } else {
-        if (paymentId) {
-          if (paymentId.includes(",")) {
-            paymentId = paymentId.split(",");
-          } else {
-            paymentId = [paymentId];
-          }
-        }
         delete requestInfo['authToken']
         delete requestInfo['userInfo']
-        getFileStoreIds(
-          paymentId,
-          tenantid,
-          userId,
-          (responseBody) => {
-            // doc successfully created
-            res.status(responseBody.status);
-            delete responseBody.status;
-            res.json({
-              ResponseInfo: requestInfo,
-              ...responseBody
-            });
+        let {countQuery, searchQuery, countParams, searchParams, defPageObj} = getQuery(paymentId, tenantId, userId, status, pagination);
+        let total = 0;
+        try {
+          let countResp = await exec_query_eg_payments_excel(countQuery, countParams);
+          if (countResp && countResp.rows.length > 0) {
+            total = parseInt(countResp.rows[0]?.count) || 0;
           }
-        );
+        } catch (error) {
+          logger.error(error.stack || error);
+          throw(error)
+        }
+        // Set total as totalCount
+        defPageObj["totalCount"] = total;
+        try {
+          let searchResp = await exec_query_eg_payments_excel(searchQuery, searchParams);
+          if (searchResp && searchResp.rows.length > 0) {
+            let parsedResult = parseResult(searchResp)
+            res.status(200).send({ ResponseInfo: requestInfo, searchresult:parsedResult , pagination: defPageObj });
+          } else {
+            logger.error("no result found in DB search");
+            res.status(200).send({ ResponseInfo: requestInfo, searchresult: [], pagination: defPageObj });
+          }
+        } catch (error) {
+          logger.error(error.stack || error);
+          throw(error)
+        }
       }
     } catch (error) {
       logger.error(error.stack || error);
@@ -172,68 +179,101 @@ router.post(
   }
 );
 
-const getFileStoreIds = (
-  paymentId,
-  tenantId,
-  userId,
-  callback
-) => {
-  var searchquery = "";
-  var queryparams = [];
-  var next = 1;
-  var paymentIdPresent = false;
-  searchquery = "SELECT * FROM eg_payments_excel WHERE";
-
-  if (paymentId != undefined && paymentId.length > 0) {
-    searchquery += ` paymentId = ANY ($${next++})`;
-    queryparams.push(paymentId);
-    paymentIdPresent = true;
+const getQuery = (paymentId,  tenantId, userId, status, pagination) => {
+  let defPageObj = {"limit": 10, "offSet": 0, "sortBy": "createdtime", "order": "DESC"}
+  let tableName = "eg_payments_excel"
+  let countQuery = `select count(*) from ${tableName} WHERE `;
+  let searchQuery = `select * from ${tableName} WHERE `;
+  let countParams = []
+  let searchParams = []
+  var sNext = 1, cNext = 1;
+  let prevTrue = false;
+  if (paymentId != undefined && paymentId.trim() !== "") {
+    searchQuery += ` paymentId = ($${sNext++})`;
+    searchParams.push(paymentId);
+    countQuery += ` paymentId = ($${cNext++})`;
+    countParams.push(paymentId)
+    prevTrue = true;
   }
 
   if (tenantId != undefined && tenantId.trim() !== "") {
-    searchquery += ` and tenantId = ($${next++})`;
-    queryparams.push(tenantId);
+    if (prevTrue) {
+      searchQuery += ` and `;
+      countQuery += ` and `;
+    }
+    searchQuery += ` tenantId = ($${sNext++})`;
+    searchParams.push(tenantId);
+    countQuery += ` tenantId = ($${cNext++})`;
+    countParams.push(tenantId);
+    prevTrue = true;
   }
 
   if (userId != undefined && userId.trim() !== "") {
-    if (paymentIdPresent) searchquery += " and";
-    searchquery += ` createdby = ($${next++})`;
-    queryparams.push(userId);
+    if (prevTrue) {
+      searchQuery += " and ";
+      countQuery += " and ";
+    } 
+    searchQuery += ` createdby = ($${sNext++})`;
+    countQuery += ` createdby = ($${cNext++})`;
+    searchParams.push(userId);
+    countParams.push(userId);
+    prevTrue = true;
   }
-  
-  pool.query(searchquery, queryparams, (error, results) => {
-    if (error) {
-      logger.error(error.stack || error);
-      callback({
-        status: 400,
-        message: `error occured while searching records in DB : ${error.message}`
-      });
-    } else {
-      var searchresult = [];
-      if (results && results.rows.length > 0) {
-        results.rows.map(crow => {
-          searchresult.push({
-            "id": crow.id,
-            "paymentid": crow.paymentid,
-            "tenantId": crow.tenantId,
-            "status": crow.status,
-            "numberofbills": crow.numberofbills,
-            "numberofbeneficialy": crow.numberofbeneficialy,
-            "totalamount": crow.totalamount,
-            "filestoreid": crow.filestoreid,
-            "createdby": crow.createdby,
-            "lastmodifiedby": crow.lastmodifiedby,
-            "createdtime": crow.createdtime,
-            "lastmodifiedtime": crow.lastmodifiedtime,
-          });
-        });
-        logger.info(results.rows.length + " matching records found in search");
-        callback({ status: 200, message: "Success", searchresult });
-      } else {
-        logger.error("no result found in DB search");
-        callback({ status: 200, message: "no matching result found", searchresult });
-      }
+
+  if (status != undefined && status.trim() !== "") {
+    if (prevTrue) {
+      searchQuery += " and ";
+      countQuery += " and ";
     }
-  });
+    searchQuery += ` status = ($${sNext++})`;
+    searchParams.push(status);
+    countQuery += ` status = ($${cNext++})`;
+    countParams.push(status)
+  }
+
+  if (pagination) {
+    if (pagination?.sortBy && pagination?.sortBy.trim() != null) {
+      defPageObj.sortBy = pagination.sortBy.trim();
+    }
+    if (pagination?.order && pagination?.order.trim() != null) {
+      if (["ASC", "DESC"].indexOf(pagination.order.trim().toUpperCase()))
+      defPageObj.sortBy = pagination.sortBy.trim().toUpperCase();
+    }
+    if (pagination?.limit && parseInt(pagination.limit) != NaN) {
+      pagination.limit = parseInt(pagination.limit)
+      if (pagination.limit && pagination.limit <= 100)
+        defPageObj.limit = pagination.limit;
+    }
+    if (pagination?.offSet && parseInt(pagination.offSet) != NaN) {
+      defPageObj.offSet = parseInt(pagination.offSet)
+    }
+  }
+  searchQuery += ` ORDER BY ${defPageObj.sortBy} ${defPageObj.order} LIMIT ${defPageObj.limit} offset ${defPageObj.offSet}`;
+  return {countQuery, searchQuery, countParams, searchParams, defPageObj};
+}
+
+const parseResult = (results) => {
+  var searchresult = [];
+  if (results && results.rows.length > 0) {
+    results.rows.map(crow => {
+      searchresult.push({
+        "id": crow.id,
+        "paymentId": crow.paymentid,
+        "paymentNumber": crow.paymentnumber,
+        "tenantId": crow.tenantid,
+        "status": crow.status,
+        "numberofbills": crow.numberofbills,
+        "numberofbeneficialy": crow.numberofbeneficialy,
+        "totalamount": crow.totalamount,
+        "filestoreid": crow.filestoreid,
+        "createdby": crow.createdby,
+        "lastmodifiedby": crow.lastmodifiedby,
+        "createdtime": crow.createdtime,
+        "lastmodifiedtime": crow.lastmodifiedtime,
+      });
+    });
+    
+  }
+  return searchresult;
 };
 module.exports = router;

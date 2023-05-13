@@ -67,7 +67,11 @@ module.exports = {
     expense_bill_search: "/expense/bill/v1/_search",
     expense_payment_search: "/expense/payment/v1/_search",
     bankaccount_search: "/bankaccount-service/bankaccount/v1/_search",
-    expense_calculator_estimate: "/expense-calculator/v1/_estimate"
+    expense_calculator_estimate: "/expense-calculator/v1/_estimate",
+    expense_calculator_search: "/expense-calculator/v1/_search"
 
   },
+  constraints: {
+    "beneficiaryIdByHeadCode": "Deduction_{tanentId}_{headcode}"
+  }
 };

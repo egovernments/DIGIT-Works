@@ -4,6 +4,7 @@ import org.egov.digit.expense.calculator.repository.querybuilder.ExpenseCalculat
 import org.egov.digit.expense.calculator.repository.rowmapper.BillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorBillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorMusterRowMapper;
+import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorProjectRowMapper;
 import org.egov.digit.expense.calculator.web.models.BillMapper;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
@@ -23,6 +24,9 @@ public class ExpenseCalculatorRepository {
 
     @Autowired
     private ExpenseCalculatorBillRowMapper billRowMapper;
+    
+    @Autowired
+    private ExpenseCalculatorProjectRowMapper projectRowMapper;
 
     @Autowired
     private BillRowMapper billMapper;
@@ -45,6 +49,8 @@ public class ExpenseCalculatorRepository {
         List<String> musterrollIds = jdbcTemplate.query(query, musterRowMapper, preparedStmtList.toArray());
         return musterrollIds;
     }
+    
+    
 
     /**
      * Fetch the record from DB based on the search criteria
@@ -57,6 +63,21 @@ public class ExpenseCalculatorRepository {
         List<String> billIds = jdbcTemplate.query(query, billRowMapper, preparedStmtList.toArray());
         return billIds;
     }
+    
+    public List<String> getBillsByProjectNumber(String tenantId, List<String> projectNumbers) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getBillsByProjectNumbers(tenantId, projectNumbers, preparedStmtList);
+        List<String> result = jdbcTemplate.query(query, billRowMapper, preparedStmtList.toArray());
+        return result;
+    }
+    
+    public List<String> getUniqueProjectNumbers(String tenantId) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getUniqueProjectNumbersByTenant(tenantId,preparedStmtList);
+        List<String> result = jdbcTemplate.query(query, projectRowMapper, preparedStmtList.toArray());
+        return result;
+    }
+    
 
     /* Fetch the record from DB based on the calculatorSearchCritera
      * @param calculatorSearchRequest

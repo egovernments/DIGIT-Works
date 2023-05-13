@@ -415,7 +415,10 @@ public class ExpenseCalculatorServiceValidator {
                     || !CollectionUtils.isEmpty(searchCriteria.getMusterRollNumbers())
                     || !CollectionUtils.isEmpty(searchCriteria.getContractNumbers())
                     || !CollectionUtils.isEmpty(searchCriteria.getBillNumbers())
-                    || !CollectionUtils.isEmpty(searchCriteria.getBillReferenceIds())){
+                    || !CollectionUtils.isEmpty(searchCriteria.getBillReferenceIds())
+                    || searchCriteria.getProjectName()!=null
+                    || searchCriteria.getBoundaryCode()!=null
+                    ){
                 isValidRequest=true;
 
             }

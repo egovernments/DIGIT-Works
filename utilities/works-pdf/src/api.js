@@ -182,15 +182,11 @@ async function search_workflow(applicationNumber, tenantId, requestinfo) {
   });
 }
 
-async function search_mdms(tenantId, module, master, requestinfo) {
+async function search_mdms(request) {
   return await axios({
     method: "post",
     url: url.resolve(config.host.mdms, config.paths.mdms_search),
-    data: requestinfo,
-    params: {
-      tenantId: tenantId,
-      ids: uuid,
-    },
+    data: request
   });
 }
 
@@ -239,6 +235,21 @@ function search_expense_bill(request, limit, offset) {
     let promise = new axios({
       method: "POST",
       url: url.resolve(config.host.expense, config.paths.expense_bill_search),
+      data: newRequest,
+    });
+    promise.then((data) => {
+      resolve(data.data)
+    }).catch((err) => reject(err))
+  })
+}
+
+function search_expense_calculator_bill(request, limit, offset) {
+  return new Promise((resolve, reject) => {
+    let newRequest = JSON.parse(JSON.stringify(request))
+    newRequest["pagination"] = { limit, offset }
+    let promise = new axios({
+      method: "POST",
+      url: url.resolve(config.host.expense_calculator, config.paths.expense_calculator_search),
       data: newRequest,
     });
     promise.then((data) => {
@@ -302,13 +313,13 @@ async function upload_file_using_filestore(filename, tenantId, fileData) {
   }
 };
 
-async function create_eg_payments_excel(paymentId, tenantId, userId) {
+async function create_eg_payments_excel(paymentId, paymentNumber, tenantId, userId) {
   try {
     var id = uuidv4();
-    const insertQuery = 'INSERT INTO eg_payments_excel(id, paymentid, tenantId, status, numberofbills, numberofbeneficialy, totalamount, filestoreid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
+    const insertQuery = 'INSERT INTO eg_payments_excel(id, paymentid, paymentnumber, tenantId, status, numberofbills, numberofbeneficialy, totalamount, filestoreid, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)';
     const status = 'INPROGRESS';
     const curentTimeStamp = new Date().getTime();
-    await pool.query(insertQuery, [id, paymentId, tenantId, status, 0, 0, 0, null, userId, userId, curentTimeStamp, curentTimeStamp]);
+    await pool.query(insertQuery, [id, paymentId, paymentNumber, tenantId, status, 0, 0, 0, null, userId, userId, curentTimeStamp, curentTimeStamp]);
   } catch (error) {
     throw(error)
   }
@@ -465,9 +476,11 @@ module.exports = {
   search_estimateDetails,
   search_musterRoll,
   search_contract,
+  search_mdms,
   search_mdmsWageSeekerSkills,
   search_organisation,
   search_expense_bill,
+  search_expense_calculator_bill,
   search_payment_details,
   search_bank_account_details,
   searchEstimateFormusterRoll,

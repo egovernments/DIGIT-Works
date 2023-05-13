@@ -54,6 +54,19 @@ public class Configuration {
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
 
+    // Individual config
+    @Value("${works.individual.host}")
+    private String individualHost;
+
+    @Value("${works.individual.create.endpoint}")
+    private String individualCreateEndpoint;
+
+    @Value("${works.individual.search.endpoint}")
+    private String individualSearchEndpoint;
+
+    @Value("${works.individual.update.endpoint}")
+    private String individualUpdateEndpoint;
+
     // Idgen Config
     @Value("${egov.idgen.host}")
     private String idGenHost;
