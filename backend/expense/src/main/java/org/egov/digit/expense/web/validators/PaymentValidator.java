@@ -214,8 +214,8 @@ public class PaymentValidator {
 			if(isCreate && null == paymentBillDetail.getTotalAmount())
 				paymentBillDetail.setTotalAmount(totalPendingAmount);
 			
-			if (isCreate && paymentBillDetail.getTotalPaidAmount().compareTo(totalPendingAmount) != 0
-					|| paymentBillDetail.getTotalAmount().compareTo(totalPendingAmount) != 0) {
+			if (isCreate && (paymentBillDetail.getTotalPaidAmount().compareTo(totalPendingAmount) != 0
+					|| paymentBillDetail.getTotalAmount().compareTo(totalPendingAmount) != 0)) {
 
 				errorMap.put("EG_EXPENSE_PAYMENT_BILLDETAIL_INVALID_AMOUNT[" + billDetailIndex + "]","The paid amount and total Amount "
 						+ " for billDetail with id : " + paymentBillDetail.getBillDetailId()
