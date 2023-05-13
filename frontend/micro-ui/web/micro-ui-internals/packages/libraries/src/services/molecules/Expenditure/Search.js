@@ -115,10 +115,23 @@ export const BillsSearch = {
     })
     
     const tableRows = tableData.map((row, idx) => {
+      
+      let billType = ""
+        if(row.billNo.includes("PB")){
+          billType = "purchase"
+        }
+        else if(row.billNo.includes("SB") ){
+          billType = "supervision"
+        }
+        else if(row.billNo.includes("WB")){
+          billType = "wage"
+        }
+
       return [
         {
           type: "link",
           label: row?.billNo,
+          path:`/${window.contextPath}/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${row.billNo}`
         },
         row.billType,
         row?.billDate,
