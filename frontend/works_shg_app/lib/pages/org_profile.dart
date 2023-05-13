@@ -41,7 +41,8 @@ class _ORGProfilePage extends State<ORGProfilePage> {
   void initState() {
     super.initState();
     context.read<ORGSearchBloc>().add(
-          SearchORGEvent(GlobalVariables.userRequestModel!['mobileNumber']),
+          SearchORGEvent(
+              GlobalVariables.userRequestModel![Constants.userMobileNumberKey]),
         );
     context.read<ORGFinanceBloc>().add(
           FinanceORGEvent(
@@ -88,9 +89,10 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                         e.dateOfIncorporation),
                                 i18.common.status:
                                     t.translate(e.applicationStatus.toString()),
-                                Constants.activeInboxStatus : e.applicationStatus != Constants.active
-                                    ? 'false'
-                                    : 'true'
+                                Constants.activeInboxStatus:
+                                    e.applicationStatus != Constants.active
+                                        ? 'false'
+                                        : 'true'
                               })
                           .toList();
                       functionalDetails = organisationListModel.organisations!

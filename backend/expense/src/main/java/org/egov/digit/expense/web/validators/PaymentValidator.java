@@ -214,7 +214,7 @@ public class PaymentValidator {
 			if(isCreate && null == paymentBillDetail.getTotalAmount())
 				paymentBillDetail.setTotalAmount(totalPendingAmount);
 			
-			if (paymentBillDetail.getTotalPaidAmount().compareTo(totalPendingAmount) != 0
+			if (isCreate && paymentBillDetail.getTotalPaidAmount().compareTo(totalPendingAmount) != 0
 					|| paymentBillDetail.getTotalAmount().compareTo(totalPendingAmount) != 0) {
 
 				errorMap.put("EG_EXPENSE_PAYMENT_BILLDETAIL_INVALID_AMOUNT[" + billDetailIndex + "]","The paid amount and total Amount "
@@ -225,14 +225,14 @@ public class PaymentValidator {
 			int lineItemIndex = 0;
 			for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
 
-				validateLineItem(payableLineItemMap, payableLineItem, errorMap, lineItemIndex);
+				validateLineItem(payableLineItemMap, payableLineItem, errorMap, lineItemIndex, isCreate);
 				lineItemIndex++;
 			}
 		}
 	}
 
 	private void validateLineItem(Map<String, LineItem> payableLineItemMap, PaymentLineItem payableLineItem,
-			Map<String, String> errorMap, int lineItemIndex) {
+			Map<String, String> errorMap, int lineItemIndex, Boolean isCreate) {
 
 		LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemId());
 		if (null == lineItemFromSearch) {
@@ -243,7 +243,7 @@ public class PaymentValidator {
 			/*
 			 * Skip amount validation if id of bill detail is invalid
 			 */
-			if (payableLineItem.getPaidAmount().compareTo(totalPendingAmount) != 0) {
+			if (isCreate && payableLineItem.getPaidAmount().compareTo(totalPendingAmount) != 0) {
 
 				errorMap.put("EG_EXPENSE_PAYMENT_LINEITEM_INVALID_AMOUNT[" + lineItemIndex + "]",
 						"The paid line item amount " + payableLineItem.getPaidAmount() + " for line item with id : "

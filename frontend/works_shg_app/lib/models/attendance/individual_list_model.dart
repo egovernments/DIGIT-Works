@@ -18,7 +18,7 @@ class SingleIndividualModel with SingleIndividualModelMappable {
 class IndividualModel with IndividualModelMappable {
   String? id;
   String? individualId;
-  String? tenantId;
+  String tenantId;
   String? clientReferenceId;
   String? userId;
   IndividualName? name;
@@ -43,7 +43,7 @@ class IndividualModel with IndividualModelMappable {
   IndividualModel(
       {this.id,
       this.name,
-      this.tenantId,
+      required this.tenantId,
       this.auditDetails,
       this.skills,
       this.mobileNumber,

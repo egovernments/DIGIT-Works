@@ -294,7 +294,7 @@ packages:
     description:
       path: "packages/digit_components"
       ref: main-parallel
-      resolved-ref: e608897b7d5171f07b1ff6262a1cffe737cdf541
+      resolved-ref: be02ffacf09766ac1235c66e90437f869a50b529
       url: "https://github.com/egovernments/health-campaign-field-worker-app"
     source: git
     version: "0.0.1"
@@ -743,7 +743,7 @@ packages:
     source: hosted
     version: "2.0.1"
   location:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: location
       sha256: "9051959f6f2ccadd887b28b66e9cbbcc25b6838e37cf9e894c421ccc0ebf80b5"
@@ -751,7 +751,7 @@ packages:
     source: hosted
     version: "4.4.0"
   location_platform_interface:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: location_platform_interface
       sha256: "62eeaf1658e92e4459b727f55a3c328eccbac8ba043fa6d262ac5286ad48384c"

@@ -168,7 +168,10 @@ public class PurchaseBillGeneratorService {
         List<LineItem> payableLineItems = billDetail.getPayableLineItems();
         BigDecimal netLineItemAmount = BigDecimal.ZERO;
         for(LineItem lineItem : payableLineItems) {
-            netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
+            // Add netLineItemAmount only if status is not INACTIVE
+            if (!LINEITEM_STATUS_INACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
+                netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
+            }
         }
         billDetail.setNetLineItemAmount(netLineItemAmount);
     }

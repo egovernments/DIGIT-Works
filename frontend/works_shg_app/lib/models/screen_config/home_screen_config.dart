@@ -37,8 +37,8 @@ class CommonUIConfigModel with _$CommonUIConfigModel {
 @freezed
 class CBOHomeScreenConfigModel with _$CBOHomeScreenConfigModel {
   const factory CBOHomeScreenConfigModel(
-      {final int? order,
-      final String? key,
+      {required final int order,
+      required final String key,
       final String? displayName,
       final String? label,
       final bool? active}) = _CBOHomeScreenConfigModel;
