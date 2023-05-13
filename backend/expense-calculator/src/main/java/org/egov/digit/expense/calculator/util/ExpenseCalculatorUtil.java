@@ -180,6 +180,7 @@ public class ExpenseCalculatorUtil {
         return response != null ? response.getBills() : null;
 
     }
+
     
 
     public List<Bill> fetchBills(RequestInfo requestInfo, String tenantId, String contractId) {
