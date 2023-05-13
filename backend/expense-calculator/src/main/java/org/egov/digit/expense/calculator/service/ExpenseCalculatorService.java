@@ -233,15 +233,14 @@ public class ExpenseCalculatorService {
             		log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
             Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
             bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
-    		Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
-
+    		
+            //Construct meta object to persist in calculator db
+            Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
 			Map<String, String> contractProjectMapping = new HashMap<>();
-
 			Object additionalDetails = contract.getAdditionalDetails();
 			Optional<String> projectIdOptional = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
-			Optional<String> contractIdOptional = commonUtil.findValue(additionalDetails, CONTRACT_ID_CONSTANT);
-			if (contractIdOptional.isPresent() && projectIdOptional.isPresent()) {
-				contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contractIdOptional.get(), projectIdOptional.get());
+			if (contract.getContractNumber()!=null && projectIdOptional.isPresent()) {
+				contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contract.getContractNumber(), projectIdOptional.get());
 			}
 			metaInfo.putAll(contractProjectMapping);
 
@@ -257,11 +256,16 @@ public class ExpenseCalculatorService {
             billResponse = postCreateBill(requestInfo, bill,workflow);
             if(SUCCESSFUL_CONSTANT.equalsIgnoreCase( billResponse.getResponseInfo().getStatus()))
             {
-                List<Bill> respBills = billResponse.getBills();
+            	log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
+            	List<Bill> respBills = billResponse.getBills();
                 if(respBills != null && !respBills.isEmpty()) {
-                    persistMeta(respBills,metaInfo);
+                	log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
+                	persistMeta(respBills,metaInfo);
                     submittedBills.addAll(respBills);
                 }
+            }
+            else {
+            	log.info("Bill posting failed for bill " + bill.getBusinessService() + " reference ID " + bill.getReferenceId());  
             }
         }
         return submittedBills;
@@ -353,7 +357,7 @@ public class ExpenseCalculatorService {
         String tenantId=searchCriteria.getTenantId();
         
         //If we've got a project name or ward search, do this step first
-        if(searchCriteria.getProjectName()!=null || searchCriteria.getBoundaryCode()!=null) {
+        if(searchCriteria.getProjectName()!=null || searchCriteria.getBoundary()!=null) {
         	//fetch all unique project numbers in the repo first
         	List<String> projectNumbers = expenseCalculatorRepository.getUniqueProjectNumbers(tenantId);
         	//Add the other search criteria and fetch the project numbers that match the criteria

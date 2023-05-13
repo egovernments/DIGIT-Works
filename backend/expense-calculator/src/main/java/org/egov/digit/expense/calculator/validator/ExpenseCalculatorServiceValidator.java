@@ -417,7 +417,7 @@ public class ExpenseCalculatorServiceValidator {
                     || !CollectionUtils.isEmpty(searchCriteria.getBillNumbers())
                     || !CollectionUtils.isEmpty(searchCriteria.getBillReferenceIds())
                     || searchCriteria.getProjectName()!=null
-                    || searchCriteria.getBoundaryCode()!=null
+                    || searchCriteria.getBoundary()!=null
                     ){
                 isValidRequest=true;
 

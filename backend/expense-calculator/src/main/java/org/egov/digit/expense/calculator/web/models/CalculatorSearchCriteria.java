@@ -53,8 +53,8 @@ public class CalculatorSearchCriteria {
 	@JsonProperty("boundaryType")
 	private String boundaryType;
 	
-	@JsonProperty("boundaryCode")
-	private String boundaryCode;
+	@JsonProperty("boundary")
+	private String boundary;
 	
 	@JsonProperty("projectName")
 	private String projectName;

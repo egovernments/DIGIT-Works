@@ -32,13 +32,15 @@ public class ProjectUtil {
     public static final String LIMIT = "limit";
     public static final String OFFSET = "offset";
     public static final String AMPERSAND = "&";
-    public static final String DEFAULT_LIMIT = "1";
+    public static final String DEFAULT_LIMIT = "20";
     public static final String DEFAULT_OFFSET = "0";
 
     public static final String PROJECTS = "Projects";
     public static final String REQUEST_INFO = "RequestInfo";
     public static final String ID = "id";
     public static final String PROJECT_NUMBER = "projectNumber";
+    public static final String PROJECT_NAME = "name";
+    public static final String BOUNDARY_CODE = "boundary";
 
     public static final String EQUAL_TO = "=";
 
@@ -52,7 +54,9 @@ public class ProjectUtil {
         log.info("ProjectUtil::getProjectDetails");
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = request.getSearchCriteria().getTenantId();
-
+        String projectName = request.getSearchCriteria().getProjectName();
+        String boundaryCode = request.getSearchCriteria().getBoundary();
+        
         StringBuilder uriBuilder = getProjectUrl();
 
         //added the url param
@@ -67,14 +71,19 @@ public class ProjectUtil {
         ObjectNode projectSearchReqNode = mapper.createObjectNode();
         ArrayNode projectArrayNode = mapper.createArrayNode();
 
-        for(String projectNumber: projectNumbers)
-        {
+//        for(String projectNumber: projectNumbers)
+//        {
 	        ObjectNode projectObjNode = mapper.createObjectNode();
-	        projectObjNode.put(PROJECT_NUMBER, projectNumber);
 	        projectObjNode.put(TENANT_ID, tenantId);
-	
+	        if(projectName!=null)
+	        	projectObjNode.put(PROJECT_NAME, projectName);
+	        if(boundaryCode!=null) {
+		        ObjectNode addressObjNode = mapper.createObjectNode();
+	        	addressObjNode.put(BOUNDARY_CODE, boundaryCode);
+	        	projectObjNode.putPOJO("address", addressObjNode);
+	        }
 	        projectArrayNode.add(projectObjNode);
-        }
+        //}
 
         projectSearchReqNode.putPOJO(REQUEST_INFO, requestInfo);
         projectSearchReqNode.putPOJO(PROJECTS, projectArrayNode);
