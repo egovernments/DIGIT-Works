@@ -249,7 +249,7 @@ class IndividualModelMapperElement extends MapperElementBase<IndividualModel> {
   IndividualModel fromMap(Map<String, dynamic> map) => IndividualModel(
       id: container.$getOpt(map, 'id'),
       name: container.$getOpt(map, 'name'),
-      tenantId: container.$getOpt(map, 'tenantId'),
+      tenantId: container.$get(map, 'tenantId'),
       auditDetails: container.$getOpt(map, 'auditDetails'),
       skills: container.$getOpt(map, 'skills'),
       mobileNumber: container.$getOpt(map, 'mobileNumber'),
@@ -487,7 +487,7 @@ class _IndividualModelCopyWithImpl<$R, $Out extends IndividualModel>
   $R call(
           {Object? id = $none,
           Object? name = $none,
-          Object? tenantId = $none,
+          String? tenantId,
           Object? auditDetails = $none,
           Object? skills = $none,
           Object? mobileNumber = $none,
@@ -511,7 +511,7 @@ class _IndividualModelCopyWithImpl<$R, $Out extends IndividualModel>
       $then(IndividualModel(
           id: or(id, $value.id),
           name: or(name, $value.name),
-          tenantId: or(tenantId, $value.tenantId),
+          tenantId: tenantId ?? $value.tenantId,
           auditDetails: or(auditDetails, $value.auditDetails),
           skills: or(skills, $value.skills),
           mobileNumber: or(mobileNumber, $value.mobileNumber),

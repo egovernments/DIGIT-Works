@@ -31,7 +31,7 @@ class UserRequestModel with _$UserRequestModel {
     String? mobileNumber,
     String? name,
     String? scope,
-    String? tenantId,
+    required String tenantId,
     String? type,
     String? userName,
     String? uuid,

@@ -22,7 +22,7 @@ Map<String, dynamic> _$$_MusterWorkFlowModelToJson(
 
 _$_ProcessInstances _$$_ProcessInstancesFromJson(Map<String, dynamic> json) =>
     _$_ProcessInstances(
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       businessService: json['businessService'] as String?,
       id: json['id'] as String?,
       businessId: json['businessId'] as String?,

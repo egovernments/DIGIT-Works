@@ -61,13 +61,15 @@ class _MyBillsPage extends State<MyBillsPage> {
               orElse: () => const SizedBox.shrink(),
               loading: () => shg_loader.Loaders.circularLoader(context),
               loaded: (MyBillsListModel? myBillsModel) {
-                return const SizedBox(
-                  height: 30,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: PoweredByDigit(),
-                  ),
-                );
+                return billList.length < 2
+                    ? const SizedBox(
+                        height: 30,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        ),
+                      )
+                    : const SizedBox.shrink();
               });
         }),
         body: SingleChildScrollView(
@@ -80,7 +82,8 @@ class _MyBillsPage extends State<MyBillsPage> {
                       context, error.toString(), 'ERROR'),
                   loaded: (MyBillsListModel? myBillsModel) {
                     billList = myBillsModel!.bills!.map((e) {
-                      if (e.bill?.businessService == 'EXPENSE.WAGES') {
+                      if (e.bill?.businessService ==
+                          Constants.myBillsWageType) {
                         return {
                           i18.myBills.billType: t.translate(
                               'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}'),
@@ -94,16 +97,18 @@ class _MyBillsPage extends State<MyBillsPage> {
                               e.bill?.additionalDetails?.projectDesc ?? 'NA',
                           i18.attendanceMgmt.musterRollId:
                               e.musterRollNumber ?? 'NA',
-                          i18.attendanceMgmt.musterRollPeriod:
-                              e.musterRollNumber ?? 'NA',
-                          i18.myBills.netPayable: (e.bill?.totalAmount ?? 0) -
-                              (e.bill?.totalPaidAmount ?? 0),
+                          i18.attendanceMgmt.musterRollPeriod: e
+                                      .bill?.fromPeriod !=
+                                  null
+                              ? '${DateFormats.getDateFromTimestamp(e.bill?.fromPeriod ?? 0)} - ${DateFormats.getDateFromTimestamp(e.bill?.toPeriod ?? 0)}'
+                              : 'NA',
+                          i18.myBills.netPayable: (e.bill?.totalAmount ?? 0),
                           i18.common.status: t.translate(
-                              'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}'),
+                              'BILL_STATUS_${e.bill?.paymentStatus ?? 'NA'}'),
                           Constants.activeInboxStatus: 'true'
                         };
                       } else if (e.bill?.businessService ==
-                          'EXPENSE.PURCHASE') {
+                          Constants.myBillsPurchaseType) {
                         return {
                           i18.myBills.billType: t.translate(
                               'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}'),
@@ -117,15 +122,16 @@ class _MyBillsPage extends State<MyBillsPage> {
                               e.bill?.additionalDetails?.projectDesc ?? 'NA',
                           i18.myBills.invoiceId:
                               e.bill?.additionalDetails?.invoiceNumber,
-                          i18.myBills.invoiceDate: e.bill?.billDate != null
+                          i18.myBills.invoiceDate: e
+                                      .bill?.additionalDetails?.invoiceDate !=
+                                  null
                               ? DateFormats.getDateFromTimestamp(
-                                  e.bill?.billDate ?? 0)
+                                  e.bill?.additionalDetails?.invoiceDate ?? 0)
                               : 'NA',
                           i18.myBills.payeeName: e.bill?.payer?.identifier,
-                          i18.myBills.netPayable: (e.bill?.totalAmount ?? 0) -
-                              (e.bill?.totalPaidAmount ?? 0),
+                          i18.myBills.netPayable: (e.bill?.totalAmount ?? 0),
                           i18.common.status: t.translate(
-                              'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}'),
+                              'BILL_STATUS_${e.bill?.paymentStatus ?? 'NA'}'),
                           Constants.activeInboxStatus: 'true'
                         };
                       } else {
@@ -141,10 +147,9 @@ class _MyBillsPage extends State<MyBillsPage> {
                           i18.attendanceMgmt.projectDesc:
                               e.bill?.additionalDetails?.projectDesc ?? 'NA',
                           i18.myBills.payeeName: e.bill?.payer?.identifier,
-                          i18.myBills.netPayable: (e.bill?.totalAmount ?? 0) -
-                              (e.bill?.totalPaidAmount ?? 0),
+                          i18.myBills.netPayable: (e.bill?.totalAmount ?? 0),
                           i18.common.status: t.translate(
-                              'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}'),
+                              'BILL_STATUS_${e.bill?.paymentStatus ?? 'NA'}'),
                           Constants.activeInboxStatus: 'true'
                         };
                       }
@@ -170,7 +175,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(
-                                      '${AppLocalizations.of(context).translate(i18.home.myWorks)} (${billList.length})',
+                                      '${AppLocalizations.of(context).translate(i18.home.myBills)} (${billList.length})',
                                       style: Theme.of(context)
                                           .textTheme
                                           .displayMedium,

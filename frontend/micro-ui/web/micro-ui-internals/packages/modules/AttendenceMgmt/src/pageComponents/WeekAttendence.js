@@ -367,9 +367,24 @@ const WeekAttendence = ({ state, dispatch, modify, setSaveAttendanceState, weekD
           columns={tableColumns}
           isPaginationRequired={false}
           getCellProps={(cellInfo) => {
+            
             let tableProp = {};
             if(cellInfo.column.Header === "Modified Amount(Rs)") {
-              tableProp["data-modified-amt"] = "modified-amt";
+              tableProp["data-modified-amt"] = "modified-amt";   
+            }
+            if(cellInfo.column.id === "perDayWage") {
+              return {
+                style: {
+                  "textAlign":"right",
+                },
+              };
+            }
+            if(cellInfo.column.id === "modifiedAmount") {
+              return {
+                style: {
+                  "textAlign":"right"
+                },
+              };
             }
             if(cellInfo.value === undefined) {
               tableProp["data-radio-selection"] = "last-radio";

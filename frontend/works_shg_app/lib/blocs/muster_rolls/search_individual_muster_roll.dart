@@ -32,7 +32,10 @@ class IndividualMusterRollSearchBloc extends Bloc<
       MusterRollsModel individualMuster =
           await MusterRollRepository(client.init()).searchMusterRolls(
               url: Urls.musterRollServices.searchMusterRolls,
-              queryParameters: {"tenantId": event.tenantId, "ids": event.id},
+              queryParameters: {
+                "tenantId": event.tenantId,
+                "musterRollNumber": event.musterRollNumber
+              },
               options: Options(extra: {
                 "userInfo": GlobalVariables.userRequestModel,
                 "accessToken": GlobalVariables.authToken,
@@ -51,7 +54,7 @@ class IndividualMusterRollSearchBloc extends Bloc<
 @freezed
 class IndividualMusterRollSearchEvent with _$IndividualMusterRollSearchEvent {
   const factory IndividualMusterRollSearchEvent.individualSearch(
-      {@Default('') String id,
+      {@Default('') String musterRollNumber,
       @Default('') String tenantId}) = SearchIndividualMusterRollEvent;
 }
 

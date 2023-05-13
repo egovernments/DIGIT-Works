@@ -198,7 +198,7 @@ MusterRoll _$MusterRollFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$MusterRoll {
   String? get id => throw _privateConstructorUsedError;
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get musterRollNumber => throw _privateConstructorUsedError;
   String? get registerId => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
@@ -230,7 +230,7 @@ abstract class $MusterRollCopyWith<$Res> {
   @useResult
   $Res call(
       {String? id,
-      String? tenantId,
+      String tenantId,
       String? musterRollNumber,
       String? registerId,
       String? status,
@@ -264,7 +264,7 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
   @override
   $Res call({
     Object? id = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? musterRollNumber = freezed,
     Object? registerId = freezed,
     Object? status = freezed,
@@ -282,10 +282,10 @@ class _$MusterRollCopyWithImpl<$Res, $Val extends MusterRoll>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       musterRollNumber: freezed == musterRollNumber
           ? _value.musterRollNumber
           : musterRollNumber // ignore: cast_nullable_to_non_nullable
@@ -369,7 +369,7 @@ abstract class _$$_MusterRollCopyWith<$Res>
   @useResult
   $Res call(
       {String? id,
-      String? tenantId,
+      String tenantId,
       String? musterRollNumber,
       String? registerId,
       String? status,
@@ -403,7 +403,7 @@ class __$$_MusterRollCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? musterRollNumber = freezed,
     Object? registerId = freezed,
     Object? status = freezed,
@@ -421,10 +421,10 @@ class __$$_MusterRollCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       musterRollNumber: freezed == musterRollNumber
           ? _value.musterRollNumber
           : musterRollNumber // ignore: cast_nullable_to_non_nullable
@@ -478,7 +478,7 @@ class __$$_MusterRollCopyWithImpl<$Res>
 class _$_MusterRoll implements _MusterRoll {
   const _$_MusterRoll(
       {this.id,
-      this.tenantId,
+      required this.tenantId,
       this.musterRollNumber,
       this.registerId,
       this.status,
@@ -501,7 +501,7 @@ class _$_MusterRoll implements _MusterRoll {
   @override
   final String? id;
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? musterRollNumber;
   @override
@@ -608,7 +608,7 @@ class _$_MusterRoll implements _MusterRoll {
 abstract class _MusterRoll implements MusterRoll {
   const factory _MusterRoll(
       {final String? id,
-      final String? tenantId,
+      required final String tenantId,
       final String? musterRollNumber,
       final String? registerId,
       final String? status,
@@ -630,7 +630,7 @@ abstract class _MusterRoll implements MusterRoll {
   @override
   String? get id;
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get musterRollNumber;
   @override

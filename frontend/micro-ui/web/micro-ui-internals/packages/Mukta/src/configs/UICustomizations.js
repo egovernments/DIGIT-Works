@@ -32,7 +32,7 @@ const getCreatePaymentPayload = (data) => {
   payment.bills = []
   
   data?.forEach(item => {
-    const bill = item?.original?.bill
+    const bill = item
     let billObj = {}
     billObj.billId = bill?.id
     billObj.tenantId = bill?.tenantId
@@ -1039,13 +1039,14 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
+      
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
         createdFrom: "daystart",
         createdTo: "dayend",
       };
       const selectConfig = {
-        billType: "billType.businessService",
+        billType: "billType.code",
         ward: "ward[0].code",
         status: "status[0].code",
       };
@@ -1097,7 +1098,11 @@ export const UICustomizations = {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
-        const location = value;
+        const location = {
+          "ward":value?.ward,
+          "locality":value?.locality,
+          "city":row?.businessObject?.tenantId
+        };
         const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
         if (location) {
           let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
@@ -1148,7 +1153,26 @@ export const UICustomizations = {
       };
     },
     selectionHandler: async (selectedRows) => {
-      const payload = getCreatePaymentPayload(selectedRows);
+
+    /// here do expense calc search and get the response and send the list of bills to getCreatePaymentPayload
+      const ids = selectedRows?.map(row=> row?.original?.businessObject?.id)
+      
+      const result = await Digit.WorksService.searchBill({
+        "billCriteria": {
+          "tenantId": Digit.ULBService.getCurrentTenantId(),
+          ids,
+          // "businessService":[bsPurchaseBill,bsWageBill,bsSupervisionBill]
+          // "businessService":bsPurchaseBill
+        },
+         "pagination": {
+          "limit": 50,
+          "offSet": 0,
+          "sortBy": "ASC",
+          "order": "ASC"
+        }
+      })
+
+      const payload = getCreatePaymentPayload(result.bills);
       let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
       try {
         const response = await Digit.PaymentService.createPayment(payload);
