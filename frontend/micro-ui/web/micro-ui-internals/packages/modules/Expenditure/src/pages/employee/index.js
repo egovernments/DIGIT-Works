@@ -4,7 +4,7 @@ import { PrivateRoute, BreadCrumb, AppContainer } from "@egovernments/digit-ui-r
 import { Switch, useLocation } from "react-router-dom";
 import CreateBill from "./CreateBill";
 import ViewSupervisionbill from "./Bills/ViewSupervisionbill";
-
+import SearchBillWMS from "./Bills/SearchBillWMS";
 const ExpenditureBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
@@ -116,7 +116,8 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/create-bill`} component={() => <CreateBill parentRoute={path} />} />
 
           <PrivateRoute path={`${path}/inbox`} component={() => <BillInbox parentRoute={path} />} />
-          <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBillWMS parentRoute={path} />} />
+          <PrivateRoute path={`${path}/search-bill-plain`} component={() => <SearchBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/wage-bill-details`} component={() => <ViewWageBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/supervision-bill-details`} component={() => <ViewSupervisionbill parentRoute={path} />} />
           <PrivateRoute path={`${path}/purchase-bill-details`} component={() => <ViewPurchaseBillComponent parentRoute={path} />}/>

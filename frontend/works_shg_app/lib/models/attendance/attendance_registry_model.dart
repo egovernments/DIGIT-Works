@@ -22,7 +22,7 @@ class AttendanceRegistersModel with _$AttendanceRegistersModel {
 class AttendanceRegister with _$AttendanceRegister {
   const factory AttendanceRegister({
     String? id,
-    String? tenantId,
+    required String tenantId,
     String? registerNumber,
     String? serviceCode,
     String? referenceId,
@@ -98,7 +98,7 @@ class StaffEntries with _$StaffEntries {
 class AttendeesEntries with _$AttendeesEntries {
   const factory AttendeesEntries(
       {String? id,
-      String? tenantId,
+      required String tenantId,
       String? registerId,
       String? individualId,
       int? enrollmentDate,

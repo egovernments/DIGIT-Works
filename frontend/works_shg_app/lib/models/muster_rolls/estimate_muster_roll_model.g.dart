@@ -26,7 +26,7 @@ _$_EstimateMusterRoll _$$_EstimateMusterRollFromJson(
         Map<String, dynamic> json) =>
     _$_EstimateMusterRoll(
       id: json['id'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       musterRollNumber: json['musterRollNumber'] as String?,
       registerId: json['registerId'] as String?,
       status: json['status'] as String?,

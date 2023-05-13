@@ -16,21 +16,24 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$IndividualMusterRollSearchEvent {
-  String get id => throw _privateConstructorUsedError;
+  String get musterRollNumber => throw _privateConstructorUsedError;
   String get tenantId => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String id, String tenantId) individualSearch,
+    required TResult Function(String musterRollNumber, String tenantId)
+        individualSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String id, String tenantId)? individualSearch,
+    TResult? Function(String musterRollNumber, String tenantId)?
+        individualSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String id, String tenantId)? individualSearch,
+    TResult Function(String musterRollNumber, String tenantId)?
+        individualSearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -65,7 +68,7 @@ abstract class $IndividualMusterRollSearchEventCopyWith<$Res> {
       _$IndividualMusterRollSearchEventCopyWithImpl<$Res,
           IndividualMusterRollSearchEvent>;
   @useResult
-  $Res call({String id, String tenantId});
+  $Res call({String musterRollNumber, String tenantId});
 }
 
 /// @nodoc
@@ -82,13 +85,13 @@ class _$IndividualMusterRollSearchEventCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? musterRollNumber = null,
     Object? tenantId = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      musterRollNumber: null == musterRollNumber
+          ? _value.musterRollNumber
+          : musterRollNumber // ignore: cast_nullable_to_non_nullable
               as String,
       tenantId: null == tenantId
           ? _value.tenantId
@@ -107,7 +110,7 @@ abstract class _$$SearchIndividualMusterRollEventCopyWith<$Res>
       __$$SearchIndividualMusterRollEventCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String tenantId});
+  $Res call({String musterRollNumber, String tenantId});
 }
 
 /// @nodoc
@@ -123,13 +126,13 @@ class __$$SearchIndividualMusterRollEventCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? musterRollNumber = null,
     Object? tenantId = null,
   }) {
     return _then(_$SearchIndividualMusterRollEvent(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      musterRollNumber: null == musterRollNumber
+          ? _value.musterRollNumber
+          : musterRollNumber // ignore: cast_nullable_to_non_nullable
               as String,
       tenantId: null == tenantId
           ? _value.tenantId
@@ -144,18 +147,19 @@ class __$$SearchIndividualMusterRollEventCopyWithImpl<$Res>
 class _$SearchIndividualMusterRollEvent
     with DiagnosticableTreeMixin
     implements SearchIndividualMusterRollEvent {
-  const _$SearchIndividualMusterRollEvent({this.id = '', this.tenantId = ''});
+  const _$SearchIndividualMusterRollEvent(
+      {this.musterRollNumber = '', this.tenantId = ''});
 
   @override
   @JsonKey()
-  final String id;
+  final String musterRollNumber;
   @override
   @JsonKey()
   final String tenantId;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'IndividualMusterRollSearchEvent.individualSearch(id: $id, tenantId: $tenantId)';
+    return 'IndividualMusterRollSearchEvent.individualSearch(musterRollNumber: $musterRollNumber, tenantId: $tenantId)';
   }
 
   @override
@@ -164,7 +168,7 @@ class _$SearchIndividualMusterRollEvent
     properties
       ..add(DiagnosticsProperty(
           'type', 'IndividualMusterRollSearchEvent.individualSearch'))
-      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('musterRollNumber', musterRollNumber))
       ..add(DiagnosticsProperty('tenantId', tenantId));
   }
 
@@ -173,13 +177,14 @@ class _$SearchIndividualMusterRollEvent
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SearchIndividualMusterRollEvent &&
-            (identical(other.id, id) || other.id == id) &&
+            (identical(other.musterRollNumber, musterRollNumber) ||
+                other.musterRollNumber == musterRollNumber) &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, tenantId);
+  int get hashCode => Object.hash(runtimeType, musterRollNumber, tenantId);
 
   @JsonKey(ignore: true)
   @override
@@ -191,27 +196,30 @@ class _$SearchIndividualMusterRollEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String id, String tenantId) individualSearch,
+    required TResult Function(String musterRollNumber, String tenantId)
+        individualSearch,
   }) {
-    return individualSearch(id, tenantId);
+    return individualSearch(musterRollNumber, tenantId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String id, String tenantId)? individualSearch,
+    TResult? Function(String musterRollNumber, String tenantId)?
+        individualSearch,
   }) {
-    return individualSearch?.call(id, tenantId);
+    return individualSearch?.call(musterRollNumber, tenantId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String id, String tenantId)? individualSearch,
+    TResult Function(String musterRollNumber, String tenantId)?
+        individualSearch,
     required TResult orElse(),
   }) {
     if (individualSearch != null) {
-      return individualSearch(id, tenantId);
+      return individualSearch(musterRollNumber, tenantId);
     }
     return orElse();
   }
@@ -249,11 +257,11 @@ class _$SearchIndividualMusterRollEvent
 abstract class SearchIndividualMusterRollEvent
     implements IndividualMusterRollSearchEvent {
   const factory SearchIndividualMusterRollEvent(
-      {final String id,
+      {final String musterRollNumber,
       final String tenantId}) = _$SearchIndividualMusterRollEvent;
 
   @override
-  String get id;
+  String get musterRollNumber;
   @override
   String get tenantId;
   @override

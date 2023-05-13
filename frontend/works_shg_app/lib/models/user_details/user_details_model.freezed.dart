@@ -292,7 +292,7 @@ mixin _$UserRequestModel {
   String? get mobileNumber => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get scope => throw _privateConstructorUsedError;
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
   String? get userName => throw _privateConstructorUsedError;
   String? get uuid => throw _privateConstructorUsedError;
@@ -318,7 +318,7 @@ abstract class $UserRequestModelCopyWith<$Res> {
       String? mobileNumber,
       String? name,
       String? scope,
-      String? tenantId,
+      String tenantId,
       String? type,
       String? userName,
       String? uuid,
@@ -344,7 +344,7 @@ class _$UserRequestModelCopyWithImpl<$Res, $Val extends UserRequestModel>
     Object? mobileNumber = freezed,
     Object? name = freezed,
     Object? scope = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? type = freezed,
     Object? userName = freezed,
     Object? uuid = freezed,
@@ -375,10 +375,10 @@ class _$UserRequestModelCopyWithImpl<$Res, $Val extends UserRequestModel>
           ? _value.scope
           : scope // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -414,7 +414,7 @@ abstract class _$$_UserRequestModelCopyWith<$Res>
       String? mobileNumber,
       String? name,
       String? scope,
-      String? tenantId,
+      String tenantId,
       String? type,
       String? userName,
       String? uuid,
@@ -438,7 +438,7 @@ class __$$_UserRequestModelCopyWithImpl<$Res>
     Object? mobileNumber = freezed,
     Object? name = freezed,
     Object? scope = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? type = freezed,
     Object? userName = freezed,
     Object? uuid = freezed,
@@ -469,10 +469,10 @@ class __$$_UserRequestModelCopyWithImpl<$Res>
           ? _value.scope
           : scope // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -503,7 +503,7 @@ class _$_UserRequestModel implements _UserRequestModel {
       this.mobileNumber,
       this.name,
       this.scope,
-      this.tenantId,
+      required this.tenantId,
       this.type,
       this.userName,
       this.uuid,
@@ -526,7 +526,7 @@ class _$_UserRequestModel implements _UserRequestModel {
   @override
   final String? scope;
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? type;
   @override
@@ -609,7 +609,7 @@ abstract class _UserRequestModel implements UserRequestModel {
           final String? mobileNumber,
           final String? name,
           final String? scope,
-          final String? tenantId,
+          required final String tenantId,
           final String? type,
           final String? userName,
           final String? uuid,
@@ -632,7 +632,7 @@ abstract class _UserRequestModel implements UserRequestModel {
   @override
   String? get scope;
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get type;
   @override

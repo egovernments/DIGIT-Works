@@ -174,7 +174,7 @@ OrganisationModel _$OrganisationModelFromJson(Map<String, dynamic> json) {
 mixin _$OrganisationModel {
   String? get name => throw _privateConstructorUsedError;
   String? get applicationNumber => throw _privateConstructorUsedError;
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get id => throw _privateConstructorUsedError;
   String? get orgNumber => throw _privateConstructorUsedError;
   String? get applicationStatus => throw _privateConstructorUsedError;
@@ -202,7 +202,7 @@ abstract class $OrganisationModelCopyWith<$Res> {
   $Res call(
       {String? name,
       String? applicationNumber,
-      String? tenantId,
+      String tenantId,
       String? id,
       String? orgNumber,
       String? applicationStatus,
@@ -232,7 +232,7 @@ class _$OrganisationModelCopyWithImpl<$Res, $Val extends OrganisationModel>
   $Res call({
     Object? name = freezed,
     Object? applicationNumber = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? id = freezed,
     Object? orgNumber = freezed,
     Object? applicationStatus = freezed,
@@ -253,10 +253,10 @@ class _$OrganisationModelCopyWithImpl<$Res, $Val extends OrganisationModel>
           ? _value.applicationNumber
           : applicationNumber // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -325,7 +325,7 @@ abstract class _$$_OrganisationModelCopyWith<$Res>
   $Res call(
       {String? name,
       String? applicationNumber,
-      String? tenantId,
+      String tenantId,
       String? id,
       String? orgNumber,
       String? applicationStatus,
@@ -354,7 +354,7 @@ class __$$_OrganisationModelCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? applicationNumber = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? id = freezed,
     Object? orgNumber = freezed,
     Object? applicationStatus = freezed,
@@ -375,10 +375,10 @@ class __$$_OrganisationModelCopyWithImpl<$Res>
           ? _value.applicationNumber
           : applicationNumber // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -429,7 +429,7 @@ class _$_OrganisationModel implements _OrganisationModel {
   const _$_OrganisationModel(
       {this.name,
       this.applicationNumber,
-      this.tenantId,
+      required this.tenantId,
       this.id,
       this.orgNumber,
       this.applicationStatus,
@@ -453,7 +453,7 @@ class _$_OrganisationModel implements _OrganisationModel {
   @override
   final String? applicationNumber;
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? id;
   @override
@@ -580,7 +580,7 @@ abstract class _OrganisationModel implements OrganisationModel {
   const factory _OrganisationModel(
       {final String? name,
       final String? applicationNumber,
-      final String? tenantId,
+      required final String tenantId,
       final String? id,
       final String? orgNumber,
       final String? applicationStatus,
@@ -600,7 +600,7 @@ abstract class _OrganisationModel implements OrganisationModel {
   @override
   String? get applicationNumber;
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get id;
   @override
@@ -819,7 +819,7 @@ OrgAddress _$OrgAddressFromJson(Map<String, dynamic> json) {
 mixin _$OrgAddress {
   String? get id => throw _privateConstructorUsedError;
   String? get orgId => throw _privateConstructorUsedError;
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get doorNo => throw _privateConstructorUsedError;
   String? get plotNo => throw _privateConstructorUsedError;
   String? get landmark => throw _privateConstructorUsedError;
@@ -849,7 +849,7 @@ abstract class $OrgAddressCopyWith<$Res> {
   $Res call(
       {String? id,
       String? orgId,
-      String? tenantId,
+      String tenantId,
       String? doorNo,
       String? plotNo,
       String? landmark,
@@ -880,7 +880,7 @@ class _$OrgAddressCopyWithImpl<$Res, $Val extends OrgAddress>
   $Res call({
     Object? id = freezed,
     Object? orgId = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? doorNo = freezed,
     Object? plotNo = freezed,
     Object? landmark = freezed,
@@ -904,10 +904,10 @@ class _$OrgAddressCopyWithImpl<$Res, $Val extends OrgAddress>
           ? _value.orgId
           : orgId // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       doorNo: freezed == doorNo
           ? _value.doorNo
           : doorNo // ignore: cast_nullable_to_non_nullable
@@ -975,7 +975,7 @@ abstract class _$$_OrgAddressCopyWith<$Res>
   $Res call(
       {String? id,
       String? orgId,
-      String? tenantId,
+      String tenantId,
       String? doorNo,
       String? plotNo,
       String? landmark,
@@ -1004,7 +1004,7 @@ class __$$_OrgAddressCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? orgId = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? doorNo = freezed,
     Object? plotNo = freezed,
     Object? landmark = freezed,
@@ -1028,10 +1028,10 @@ class __$$_OrgAddressCopyWithImpl<$Res>
           ? _value.orgId
           : orgId // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       doorNo: freezed == doorNo
           ? _value.doorNo
           : doorNo // ignore: cast_nullable_to_non_nullable
@@ -1094,7 +1094,7 @@ class _$_OrgAddress implements _OrgAddress {
   const _$_OrgAddress(
       {this.id,
       this.orgId,
-      this.tenantId,
+      required this.tenantId,
       this.doorNo,
       this.plotNo,
       this.landmark,
@@ -1117,7 +1117,7 @@ class _$_OrgAddress implements _OrgAddress {
   @override
   final String? orgId;
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? doorNo;
   @override
@@ -1218,7 +1218,7 @@ abstract class _OrgAddress implements OrgAddress {
   const factory _OrgAddress(
       {final String? id,
       final String? orgId,
-      final String? tenantId,
+      required final String tenantId,
       final String? doorNo,
       final String? plotNo,
       final String? landmark,
@@ -1241,7 +1241,7 @@ abstract class _OrgAddress implements OrgAddress {
   @override
   String? get orgId;
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get doorNo;
   @override
@@ -1282,7 +1282,7 @@ OrgContact _$OrgContactFromJson(Map<String, dynamic> json) {
 mixin _$OrgContact {
   String? get id => throw _privateConstructorUsedError;
   String? get orgId => throw _privateConstructorUsedError;
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get contactName => throw _privateConstructorUsedError;
   String? get contactMobileNumber => throw _privateConstructorUsedError;
   String? get contactEmail => throw _privateConstructorUsedError;
@@ -1302,7 +1302,7 @@ abstract class $OrgContactCopyWith<$Res> {
   $Res call(
       {String? id,
       String? orgId,
-      String? tenantId,
+      String tenantId,
       String? contactName,
       String? contactMobileNumber,
       String? contactEmail});
@@ -1323,7 +1323,7 @@ class _$OrgContactCopyWithImpl<$Res, $Val extends OrgContact>
   $Res call({
     Object? id = freezed,
     Object? orgId = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? contactName = freezed,
     Object? contactMobileNumber = freezed,
     Object? contactEmail = freezed,
@@ -1337,10 +1337,10 @@ class _$OrgContactCopyWithImpl<$Res, $Val extends OrgContact>
           ? _value.orgId
           : orgId // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       contactName: freezed == contactName
           ? _value.contactName
           : contactName // ignore: cast_nullable_to_non_nullable
@@ -1368,7 +1368,7 @@ abstract class _$$_OrgContactCopyWith<$Res>
   $Res call(
       {String? id,
       String? orgId,
-      String? tenantId,
+      String tenantId,
       String? contactName,
       String? contactMobileNumber,
       String? contactEmail});
@@ -1387,7 +1387,7 @@ class __$$_OrgContactCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? orgId = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? contactName = freezed,
     Object? contactMobileNumber = freezed,
     Object? contactEmail = freezed,
@@ -1401,10 +1401,10 @@ class __$$_OrgContactCopyWithImpl<$Res>
           ? _value.orgId
           : orgId // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       contactName: freezed == contactName
           ? _value.contactName
           : contactName // ignore: cast_nullable_to_non_nullable
@@ -1427,7 +1427,7 @@ class _$_OrgContact implements _OrgContact {
   const _$_OrgContact(
       {this.id,
       this.orgId,
-      this.tenantId,
+      required this.tenantId,
       this.contactName,
       this.contactMobileNumber,
       this.contactEmail});
@@ -1440,7 +1440,7 @@ class _$_OrgContact implements _OrgContact {
   @override
   final String? orgId;
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? contactName;
   @override
@@ -1493,7 +1493,7 @@ abstract class _OrgContact implements OrgContact {
   const factory _OrgContact(
       {final String? id,
       final String? orgId,
-      final String? tenantId,
+      required final String tenantId,
       final String? contactName,
       final String? contactMobileNumber,
       final String? contactEmail}) = _$_OrgContact;
@@ -1506,7 +1506,7 @@ abstract class _OrgContact implements OrgContact {
   @override
   String? get orgId;
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get contactName;
   @override

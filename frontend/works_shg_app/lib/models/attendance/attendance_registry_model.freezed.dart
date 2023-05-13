@@ -186,7 +186,7 @@ AttendanceRegister _$AttendanceRegisterFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AttendanceRegister {
   String? get id => throw _privateConstructorUsedError;
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get registerNumber => throw _privateConstructorUsedError;
   String? get serviceCode => throw _privateConstructorUsedError;
   String? get referenceId => throw _privateConstructorUsedError;
@@ -221,7 +221,7 @@ abstract class $AttendanceRegisterCopyWith<$Res> {
   @useResult
   $Res call(
       {String? id,
-      String? tenantId,
+      String tenantId,
       String? registerNumber,
       String? serviceCode,
       String? referenceId,
@@ -258,7 +258,7 @@ class _$AttendanceRegisterCopyWithImpl<$Res, $Val extends AttendanceRegister>
   @override
   $Res call({
     Object? id = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? registerNumber = freezed,
     Object? serviceCode = freezed,
     Object? referenceId = freezed,
@@ -276,10 +276,10 @@ class _$AttendanceRegisterCopyWithImpl<$Res, $Val extends AttendanceRegister>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       registerNumber: freezed == registerNumber
           ? _value.registerNumber
           : registerNumber // ignore: cast_nullable_to_non_nullable
@@ -367,7 +367,7 @@ abstract class _$$_AttendanceRegisterCopyWith<$Res>
   @useResult
   $Res call(
       {String? id,
-      String? tenantId,
+      String tenantId,
       String? registerNumber,
       String? serviceCode,
       String? referenceId,
@@ -404,7 +404,7 @@ class __$$_AttendanceRegisterCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? registerNumber = freezed,
     Object? serviceCode = freezed,
     Object? referenceId = freezed,
@@ -422,10 +422,10 @@ class __$$_AttendanceRegisterCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       registerNumber: freezed == registerNumber
           ? _value.registerNumber
           : registerNumber // ignore: cast_nullable_to_non_nullable
@@ -480,7 +480,7 @@ class __$$_AttendanceRegisterCopyWithImpl<$Res>
 class _$_AttendanceRegister implements _AttendanceRegister {
   const _$_AttendanceRegister(
       {this.id,
-      this.tenantId,
+      required this.tenantId,
       this.registerNumber,
       this.serviceCode,
       this.referenceId,
@@ -505,7 +505,7 @@ class _$_AttendanceRegister implements _AttendanceRegister {
   @override
   final String? id;
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? registerNumber;
   @override
@@ -622,7 +622,7 @@ class _$_AttendanceRegister implements _AttendanceRegister {
 abstract class _AttendanceRegister implements AttendanceRegister {
   const factory _AttendanceRegister(
           {final String? id,
-          final String? tenantId,
+          required final String tenantId,
           final String? registerNumber,
           final String? serviceCode,
           final String? referenceId,
@@ -647,7 +647,7 @@ abstract class _AttendanceRegister implements AttendanceRegister {
   @override
   String? get id;
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get registerNumber;
   @override
@@ -1463,7 +1463,7 @@ AttendeesEntries _$AttendeesEntriesFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AttendeesEntries {
   String? get id => throw _privateConstructorUsedError;
-  String? get tenantId => throw _privateConstructorUsedError;
+  String get tenantId => throw _privateConstructorUsedError;
   String? get registerId => throw _privateConstructorUsedError;
   String? get individualId => throw _privateConstructorUsedError;
   int? get enrollmentDate => throw _privateConstructorUsedError;
@@ -1486,7 +1486,7 @@ abstract class $AttendeesEntriesCopyWith<$Res> {
   @useResult
   $Res call(
       {String? id,
-      String? tenantId,
+      String tenantId,
       String? registerId,
       String? individualId,
       int? enrollmentDate,
@@ -1511,7 +1511,7 @@ class _$AttendeesEntriesCopyWithImpl<$Res, $Val extends AttendeesEntries>
   @override
   $Res call({
     Object? id = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? registerId = freezed,
     Object? individualId = freezed,
     Object? enrollmentDate = freezed,
@@ -1523,10 +1523,10 @@ class _$AttendeesEntriesCopyWithImpl<$Res, $Val extends AttendeesEntries>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       registerId: freezed == registerId
           ? _value.registerId
           : registerId // ignore: cast_nullable_to_non_nullable
@@ -1574,7 +1574,7 @@ abstract class _$$_AttendeesEntriesCopyWith<$Res>
   @useResult
   $Res call(
       {String? id,
-      String? tenantId,
+      String tenantId,
       String? registerId,
       String? individualId,
       int? enrollmentDate,
@@ -1598,7 +1598,7 @@ class __$$_AttendeesEntriesCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? tenantId = freezed,
+    Object? tenantId = null,
     Object? registerId = freezed,
     Object? individualId = freezed,
     Object? enrollmentDate = freezed,
@@ -1610,10 +1610,10 @@ class __$$_AttendeesEntriesCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
-      tenantId: freezed == tenantId
+      tenantId: null == tenantId
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       registerId: freezed == registerId
           ? _value.registerId
           : registerId // ignore: cast_nullable_to_non_nullable
@@ -1643,7 +1643,7 @@ class __$$_AttendeesEntriesCopyWithImpl<$Res>
 class _$_AttendeesEntries implements _AttendeesEntries {
   const _$_AttendeesEntries(
       {this.id,
-      this.tenantId,
+      required this.tenantId,
       this.registerId,
       this.individualId,
       this.enrollmentDate,
@@ -1656,7 +1656,7 @@ class _$_AttendeesEntries implements _AttendeesEntries {
   @override
   final String? id;
   @override
-  final String? tenantId;
+  final String tenantId;
   @override
   final String? registerId;
   @override
@@ -1716,7 +1716,7 @@ class _$_AttendeesEntries implements _AttendeesEntries {
 abstract class _AttendeesEntries implements AttendeesEntries {
   const factory _AttendeesEntries(
           {final String? id,
-          final String? tenantId,
+          required final String tenantId,
           final String? registerId,
           final String? individualId,
           final int? enrollmentDate,
@@ -1731,7 +1731,7 @@ abstract class _AttendeesEntries implements AttendeesEntries {
   @override
   String? get id;
   @override
-  String? get tenantId;
+  String get tenantId;
   @override
   String? get registerId;
   @override

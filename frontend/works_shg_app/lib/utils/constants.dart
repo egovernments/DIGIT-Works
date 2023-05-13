@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class Constants {
   static const String mdmsApiEndPoint = 'egov-mdms-service/v1/_search';
   static final navKey = GlobalKey<NavigatorState>();
+  static const userMobileNumberKey = 'mobileNumber';
   static const String active = 'ACTIVE';
   static const String pendingForAcceptance = 'PENDING_FOR_ACCEPTANCE';
   static const String pendingForCorrection = 'PENDINGFORCORRECTION';
@@ -27,6 +28,9 @@ class Constants {
   static const homeMusterRolls = 'HOME_MUSTER_ROLLS';
   static const homeMyBills = 'HOME_MY_BILLS';
   static const homeRegisterWageSeeker = 'HOME_REGISTER_WAGE_SEEKER';
+  static const myBillsWageType = 'EXPENSE.WAGES';
+  static const myBillsPurchaseType = 'EXPENSE.PURCHASE';
+  static const myBillsSupervisionType = 'EXPENSE.WAGES';
 }
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();

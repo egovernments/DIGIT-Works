@@ -34,7 +34,7 @@ router.post(
       );
     }
     let paymentId = criteria?.paymentId;
-    let billIds = criteria?.billIds;
+    let paymentNumber = null;
 
     if (!paymentId) {
       return renderError(
@@ -67,6 +67,8 @@ router.post(
       let paymentResp = await search_payment_details(paymentRequest);
       if (!paymentResp?.payments?.length) {
         return renderError(res, `Failed to query for payment search. Check the Payment id.`);
+      } else {
+        paymentNumber = paymentResp?.payments[0]?.paymentNumber;
       }
     } catch (error) {
       logger.error(error.stack || err);
@@ -95,7 +97,7 @@ router.post(
         const result = await exec_query_eg_payments_excel('select * from eg_payments_excel where paymentid = $1', [paymentId])
         var userId = requestinfo?.userInfo?.uuid;
         if (result.rowCount < 1) {
-          await create_eg_payments_excel(paymentId, tenantId, userId);
+          await create_eg_payments_excel(paymentId, paymentNumber, tenantId, userId);
         } else {
           await reset_eg_payments_excel(paymentId, userId);
         }
@@ -256,8 +258,9 @@ const parseResult = (results) => {
     results.rows.map(crow => {
       searchresult.push({
         "id": crow.id,
-        "paymentid": crow.paymentid,
-        "tenantId": crow.tenantId,
+        "paymentId": crow.paymentid,
+        "paymentNumber": crow.paymentnumber,
+        "tenantId": crow.tenantid,
         "status": crow.status,
         "numberofbills": crow.numberofbills,
         "numberofbeneficialy": crow.numberofbeneficialy,
