@@ -14,6 +14,7 @@ const EstimateBreadCrumbs = ({ location }) => {
 
     const search = useLocation().search;
     const fromScreen = new URLSearchParams(search).get("from") || null;
+    
     const crumbs = [
         {
             path: `/${window?.contextPath}/employee`,
@@ -45,7 +46,7 @@ const EstimateBreadCrumbs = ({ location }) => {
             isBack: fromScreen && true,
         },
         {
-            path: `/${window.contextPath}/employee/estimate/estimate-details`,
+            path: `/${window.contextPath}/employee/estimate/inbox`,
             content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
             show: location.pathname.includes("/estimate/estimate-details") ? true : false,
             isBack: fromScreen && true,

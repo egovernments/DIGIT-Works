@@ -57,20 +57,30 @@ export const BillsSearch = {
       }
     })
     const tableBills = tableBillSearch?.bills
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
     
+    const location = {
+      "ward":contract?.additionalDetails?.ward?t(`${headerLocale}_ADMIN_${contract?.additionalDetails?.ward}`):null,
+      "locality":contract?.additionalDetails?.locality?t(`${headerLocale}_ADMIN_${contract?.additionalDetails?.locality}`):null,
+      "city":contract?.tenantId ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(contract?.tenantId)}`) :null
+    };
+    const locationString = `${location.locality ? location.locality + ", " : ""}${location.ward ? location.ward + ", " : ""}${location.city ? location.city : ""}`
+    
+
     const billDetails = {
       title: " ",
       asSectionHeader: false,
       values: [
         { title: "WORKS_BILL_NUMBER", value: supervisionBill.billNumber || t("NA") },
-        { title: "WORKS_BILL_DATE", value: Digit.DateUtils.ConvertEpochToDate(supervisionBill.fromPeriod) || t("NA") },
+        { title: "WORKS_BILL_DATE", value: Digit.DateUtils.ConvertEpochToDate(supervisionBill.billDate) || t("NA") },
         { title: "WORKS_ORDER_NO", value: contractNumber || t("NA") },
         { title: "WORKS_PROJECT_ID", value: contract?.additionalDetails?.projectId || t("NA") },
         {
           title: "PROJECTS_DESCRIPTION",
           value: contract?.additionalDetails?.projectDesc || t("NA"),
         },
-        { title: "ES_COMMON_LOCATION", value:t(Digit.Utils.locale.getTransformedLocale(`${tenantId}_ADMIN_${contract?.additionalDetails?.locality}`)) + `, Ward ${contract?.additionalDetails?.ward}` || t("NA") },
+        // { title: "ES_COMMON_LOCATION", value:t(Digit.Utils.locale.getTransformedLocale(`${tenantId}_ADMIN_${contract?.additionalDetails?.locality}`)) + `, Ward ${contract?.additionalDetails?.ward}` || t("NA") },
+        { title: "ES_COMMON_LOCATION", value:locationString}
       ],
     };
 
@@ -131,9 +141,9 @@ export const BillsSearch = {
       },
     };
 
-    const totalAmount = Digit.Utils.dss.formatterWithoutRound(tableBills?.reduce((acc,row)=> {
+    const totalAmount = Digit.Utils.dss.formatterWithoutRound(Math.round(tableBills?.reduce((acc,row)=> {
       return acc + (row?.bill?.totalAmount || 0)
-    },0),"number")
+    },0)),"number")
     const totalBillAmt = {
       title: " ",
       asSectionHeader: true,
@@ -151,7 +161,7 @@ export const BillsSearch = {
       title: " ",
       asSectionHeader: true,
       Component: Digit.ComponentRegistryService.getComponent("TotalBillAmountView"),
-      value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.totalAmount, "number") || t("NA"),
+      value: Digit.Utils.dss.formatterWithoutRound(Math.round(supervisionBill?.totalAmount), "number") || t("NA"),
       containerStyles: { justifyContent: "flex-start" },
       key: "BILLS_NET_PAYABLE",
     };
@@ -202,6 +212,15 @@ export const BillsSearch = {
     gstDetails.amount = lineItems?.filter(lineItem=>lineItem?.headCode === "GST")?.[0]?.amount;
 
     let currentProject = {};
+    // const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+    const location = {
+      "ward":billData?.additionalDetails?.ward?t(`${headerLocale}_ADMIN_${billData?.additionalDetails?.ward}`):null,
+      "locality":billData?.additionalDetails?.locality?t(`${headerLocale}_ADMIN_${billData?.additionalDetails?.locality}`):null,
+      "city":billData?.tenantId ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(billData?.tenantId)}`) :null
+    };
+    const locationString = `${location.locality ? location.locality + ", " : ""}${location.ward ? location.ward + ", " : ""}${location.city ? location.city : ""}`
+    
+
     const headerDetails = {
         title: " ",
         asSectionHeader: true,
@@ -211,7 +230,8 @@ export const BillsSearch = {
             { title: "WORKS_ORDER_NO", value: WOData?.contractNumber || "NA"},
             { title: "WORKS_PROJECT_ID", value: WOData?.additionalDetails?.projectId || "NA"},
             { title: "PROJECTS_DESCRIPTION", value: WOData?.additionalDetails?.projectDesc || "NA"}, 
-            { title: "ES_COMMON_LOCATION", value:  WOData?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${WOData?.additionalDetails?.locality}`) : "NA" },
+            // { title: "ES_COMMON_LOCATION", value:  WOData?.additionalDetails?.locality ? t(`${headerLocale}_ADMIN_${WOData?.additionalDetails?.locality}`) : "NA" },
+            { title: "ES_COMMON_LOCATION", value:locationString },
         ]
     };
 
@@ -239,7 +259,7 @@ export const BillsSearch = {
     };
     //totalDeductions = sum of amount in the table
     let totalDeductions = 0;
-    const deductionsTableRows = [t("WORKS_SNO"), t("EXP_DEDUCTION_NAME"), t("EXP_PERCENTAGE_OR_FIXED"), t("ES_COMMON_AMOUNT"), t("WF_COMMON_COMMENTS")];
+    const deductionsTableRows = [t("WORKS_SNO"), t("EXP_DEDUCTION_NAME"), t("EXP_PERCENTAGE_OR_FIXED"), t("WF_COMMON_COMMENTS"),t("ES_COMMON_AMOUNT")];
     let index = 0;
     const deductionsTableData = lineItems?.map((lineItem)=>{
       if(lineItem?.type === "DEDUCTION") {
@@ -253,8 +273,8 @@ export const BillsSearch = {
           index + 1,
           t(`EXP_${lineItem?.headCode}`),
           percentageOrFixed,
+          lineItem?.additionalDetails?.comments || "NA",
           lineItem?.amount,
-          lineItem?.additionalDetails?.comments || "NA"
         ]
       }
      })
@@ -270,7 +290,7 @@ export const BillsSearch = {
         state: {},
         tableStyles:{
             rowStyle:{},
-            cellStyle: [{}, { "width": "40vw" }, {}, {}, {  },{"textAlign":"right"}]
+            cellStyle: [{}, { "width": "40vw" }, {}, {},{"textAlign":"right"}]
         }
     }
 
@@ -280,7 +300,8 @@ export const BillsSearch = {
         "title": " ",
         "asSectionHeader": true,
         "Component": Digit.ComponentRegistryService.getComponent("ViewTotalEstAmount"),
-        "value": Digit.Utils.dss.formatterWithoutRound(netPayableAmtCalc, "number")
+        "value": Digit.Utils.dss.formatterWithoutRound(Math.round(netPayableAmtCalc), "number"),
+        "showTitle":"BILLS_NET_PAYABLE"
     }
 
     const documentDetails = {
