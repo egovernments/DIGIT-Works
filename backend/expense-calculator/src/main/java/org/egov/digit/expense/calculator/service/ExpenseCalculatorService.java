@@ -357,7 +357,7 @@ public class ExpenseCalculatorService {
         String tenantId=searchCriteria.getTenantId();
         
         //If we've got a project name or ward search, do this step first
-        if(searchCriteria.getProjectName()!=null || searchCriteria.getBoundaryCode()!=null) {
+        if(searchCriteria.getProjectName()!=null || searchCriteria.getBoundary()!=null) {
         	//fetch all unique project numbers in the repo first
         	List<String> projectNumbers = expenseCalculatorRepository.getUniqueProjectNumbers(tenantId);
         	//Add the other search criteria and fetch the project numbers that match the criteria
