@@ -40,13 +40,13 @@ const EstimateBreadCrumbs = ({ location }) => {
             isBack: fromScreen && true,
         },
         {
-            path: `/${window.contextPath}/employee/estimate/response`,
-            content: fromScreen ? `${t(fromScreen)} / ${t("COMMON_RESPONSE")}` : t("COMMON_RESPONSE"),
+            // path: `/${window.contextPath}/employee/estimate/response`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("ES_COMMON_RESPONSE")}` : t("ES_COMMON_RESPONSE"),
             show: location.pathname.includes("/estimate/response") ? true : false,
             isBack: fromScreen && true,
         },
         {
-            path: `/${window.contextPath}/employee/estimate/inbox`,
+            // path: `/${window.contextPath}/employee/estimate/inbox`,
             content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
             show: location.pathname.includes("/estimate/estimate-details") ? true : false,
             isBack: fromScreen && true,

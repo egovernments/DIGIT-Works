@@ -14,7 +14,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_PROJECT_ID", value: currentProject?.projectNumber || "NA"},
-                { title: "WORKS_DATE_PROPOSAL", value: Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA"},
+                { title: "ES_COMMON_PROPOSAL_DATE", value: Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA"},
                 { title: "WORKS_PROJECT_NAME", value: currentProject?.name || "NA"},
                 { title: "PROJECT_PROJECT_DESC", value: currentProject?.description || "NA"}
             ]
