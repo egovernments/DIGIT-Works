@@ -234,6 +234,7 @@ public class ExpenseCalculatorService {
             Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
             bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
     		Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
+
 			Map<String, String> contractProjectMapping = new HashMap<>();
 
 			Object additionalDetails = contract.getAdditionalDetails();
@@ -242,7 +243,8 @@ public class ExpenseCalculatorService {
 			if (contractIdOptional.isPresent() && projectIdOptional.isPresent()) {
 				contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contractIdOptional.get(), projectIdOptional.get());
 			}
-			metaInfo.putAll(metaInfo);
+			metaInfo.putAll(contractProjectMapping);
+
 		}
     		
 
