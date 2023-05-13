@@ -1077,14 +1077,27 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      let tenantId = Digit.ULBService.getCurrentTenantId()
       if (key === "WORKS_BILL_NUMBER") {
-        const billType = getBillType(row?.businessService)
+        let billType = ""
+        const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+        const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
+        const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
+        if(row?.ProcessInstance?.businessService === bsPurchaseBill ){
+          billType = "purchase"
+        }
+        if(row?.ProcessInstance?.businessService === bsSupervisionBill ){
+          billType = "supervision"
+        }
+        if(row?.ProcessInstance?.businessService === bsWageBill ){
+          billType = "wage"
+        }
         return (
           <span className="link">
             <Link
               to={`/${
                 window.contextPath
-              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.businessObject?.tenantId}&billNumber=${value}`}
+              }/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
