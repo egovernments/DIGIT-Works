@@ -196,7 +196,7 @@ export const BillsSearch = {
     //Org Search
     const orgPayload = {
       SearchCriteria: {
-        orgNumber: billData?.billDetails?.[0]?.payee?.identifier, //b9838d9c-b079-4cdb-b061-3d9addac9d40
+        id: [billData?.billDetails?.[0]?.payee?.identifier], //b9838d9c-b079-4cdb-b061-3d9addac9d40
         tenantId
       }
     }
