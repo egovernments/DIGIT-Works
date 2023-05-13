@@ -182,7 +182,7 @@ GlobalConfigs _$GlobalConfigsFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$GlobalConfigs {
   @JsonKey(name: 'stateTenantId')
-  String? get stateTenantId => throw _privateConstructorUsedError;
+  String get stateTenantId => throw _privateConstructorUsedError;
   @JsonKey(name: 'gmaps_api_key')
   String? get gmaps_api_key => throw _privateConstructorUsedError;
   @JsonKey(name: 'finEnv')
@@ -211,7 +211,7 @@ abstract class $GlobalConfigsCopyWith<$Res> {
       _$GlobalConfigsCopyWithImpl<$Res, GlobalConfigs>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'stateTenantId') String? stateTenantId,
+      {@JsonKey(name: 'stateTenantId') String stateTenantId,
       @JsonKey(name: 'gmaps_api_key') String? gmaps_api_key,
       @JsonKey(name: 'finEnv') String? finEnv,
       @JsonKey(name: 'contextPath') String? contextPath,
@@ -234,7 +234,7 @@ class _$GlobalConfigsCopyWithImpl<$Res, $Val extends GlobalConfigs>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? stateTenantId = freezed,
+    Object? stateTenantId = null,
     Object? gmaps_api_key = freezed,
     Object? finEnv = freezed,
     Object? contextPath = freezed,
@@ -244,10 +244,10 @@ class _$GlobalConfigsCopyWithImpl<$Res, $Val extends GlobalConfigs>
     Object? assetS3Bucket = freezed,
   }) {
     return _then(_value.copyWith(
-      stateTenantId: freezed == stateTenantId
+      stateTenantId: null == stateTenantId
           ? _value.stateTenantId
           : stateTenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       gmaps_api_key: freezed == gmaps_api_key
           ? _value.gmaps_api_key
           : gmaps_api_key // ignore: cast_nullable_to_non_nullable
@@ -289,7 +289,7 @@ abstract class _$$_GlobalConfigsCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'stateTenantId') String? stateTenantId,
+      {@JsonKey(name: 'stateTenantId') String stateTenantId,
       @JsonKey(name: 'gmaps_api_key') String? gmaps_api_key,
       @JsonKey(name: 'finEnv') String? finEnv,
       @JsonKey(name: 'contextPath') String? contextPath,
@@ -310,7 +310,7 @@ class __$$_GlobalConfigsCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? stateTenantId = freezed,
+    Object? stateTenantId = null,
     Object? gmaps_api_key = freezed,
     Object? finEnv = freezed,
     Object? contextPath = freezed,
@@ -320,10 +320,10 @@ class __$$_GlobalConfigsCopyWithImpl<$Res>
     Object? assetS3Bucket = freezed,
   }) {
     return _then(_$_GlobalConfigs(
-      stateTenantId: freezed == stateTenantId
+      stateTenantId: null == stateTenantId
           ? _value.stateTenantId
           : stateTenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       gmaps_api_key: freezed == gmaps_api_key
           ? _value.gmaps_api_key
           : gmaps_api_key // ignore: cast_nullable_to_non_nullable
@@ -360,7 +360,7 @@ class __$$_GlobalConfigsCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_GlobalConfigs implements _GlobalConfigs {
   const _$_GlobalConfigs(
-      {@JsonKey(name: 'stateTenantId') this.stateTenantId,
+      {@JsonKey(name: 'stateTenantId') required this.stateTenantId,
       @JsonKey(name: 'gmaps_api_key') this.gmaps_api_key,
       @JsonKey(name: 'finEnv') this.finEnv,
       @JsonKey(name: 'contextPath') this.contextPath,
@@ -374,7 +374,7 @@ class _$_GlobalConfigs implements _GlobalConfigs {
 
   @override
   @JsonKey(name: 'stateTenantId')
-  final String? stateTenantId;
+  final String stateTenantId;
   @override
   @JsonKey(name: 'gmaps_api_key')
   final String? gmaps_api_key;
@@ -454,7 +454,7 @@ class _$_GlobalConfigs implements _GlobalConfigs {
 abstract class _GlobalConfigs implements GlobalConfigs {
   const factory _GlobalConfigs(
       {@JsonKey(name: 'stateTenantId')
-          final String? stateTenantId,
+          required final String stateTenantId,
       @JsonKey(name: 'gmaps_api_key')
           final String? gmaps_api_key,
       @JsonKey(name: 'finEnv')
@@ -475,7 +475,7 @@ abstract class _GlobalConfigs implements GlobalConfigs {
 
   @override
   @JsonKey(name: 'stateTenantId')
-  String? get stateTenantId;
+  String get stateTenantId;
   @override
   @JsonKey(name: 'gmaps_api_key')
   String? get gmaps_api_key;

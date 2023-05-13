@@ -22,7 +22,7 @@ class MusterRollsModel with _$MusterRollsModel {
 class MusterRoll with _$MusterRoll {
   const factory MusterRoll({
     String? id,
-    String? tenantId,
+    required String tenantId,
     String? musterRollNumber,
     String? registerId,
     String? status,

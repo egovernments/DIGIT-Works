@@ -24,7 +24,7 @@ _$_OrganisationModel _$$_OrganisationModelFromJson(Map<String, dynamic> json) =>
     _$_OrganisationModel(
       name: json['name'] as String?,
       applicationNumber: json['applicationNumber'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       id: json['id'] as String?,
       orgNumber: json['orgNumber'] as String?,
       applicationStatus: json['applicationStatus'] as String?,
@@ -86,7 +86,7 @@ _$_OrgAddress _$$_OrgAddressFromJson(Map<String, dynamic> json) =>
     _$_OrgAddress(
       id: json['id'] as String?,
       orgId: json['orgId'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       doorNo: json['doorNo'] as String?,
       plotNo: json['plotNo'] as String?,
       landmark: json['landmark'] as String?,
@@ -126,7 +126,7 @@ _$_OrgContact _$$_OrgContactFromJson(Map<String, dynamic> json) =>
     _$_OrgContact(
       id: json['id'] as String?,
       orgId: json['orgId'] as String?,
-      tenantId: json['tenantId'] as String?,
+      tenantId: json['tenantId'] as String,
       contactName: json['contactName'] as String?,
       contactMobileNumber: json['contactMobileNumber'] as String?,
       contactEmail: json['contactEmail'] as String?,

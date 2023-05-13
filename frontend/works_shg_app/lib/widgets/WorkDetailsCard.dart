@@ -2,7 +2,6 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:works_shg_app/blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
     as i18;
@@ -10,7 +9,6 @@ import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
 import '../blocs/localization/app_localization.dart';
-import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../blocs/work_orders/accept_work_order.dart';
 import '../blocs/work_orders/decline_work_order.dart';
 import '../models/attendance/attendance_registry_model.dart';
@@ -302,23 +300,10 @@ class WorkDetailsCard extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: DigitElevatedButton(
           onPressed: () {
-            context.read<IndividualMusterRollSearchBloc>().add(
-                  SearchIndividualMusterRollEvent(
-                      id: musterRoll?.id ?? '',
-                      tenantId: musterRoll!.tenantId.toString()),
-                );
             context.router.push(SHGInboxRoute(
                 tenantId: musterRoll.tenantId.toString(),
                 musterRollNo: musterRoll.musterRollNumber.toString(),
                 sentBackCode: musterBackToCBOCode ?? Constants.sentBack));
-            context.read<MusterRollEstimateBloc>().add(
-                  ViewEstimateMusterRollEvent(
-                    tenantId: musterRoll.tenantId.toString(),
-                    registerId: musterRoll.registerId.toString(),
-                    startDate: musterRoll.startDate ?? 0,
-                    endDate: musterRoll.endDate ?? 0,
-                  ),
-                );
           },
           child: Center(
             child: Text(
