@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_TENANTS_VERIFICATION;
@@ -93,6 +90,8 @@ public class ExpenseCalculatorServiceValidator {
         RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
         PurchaseBill bill = purchaseBillRequest.getBill();
 
+        // Update payableLineItem in request
+        updatedBillPayableLineItemFromDB(requestInfo, purchaseBillRequest);
         // Validate the Request Info object
         validateRequestInfo(requestInfo);
         // Validate purchase request parameters
@@ -194,6 +193,39 @@ public class ExpenseCalculatorServiceValidator {
             throw new CustomException(errorMap);
         }
         log.info("Required request parameter validation done for purchase bill");
+    }
+
+    /**
+     * Update payableLineItem in bill details of request to resolve issue of duplicate payableLineItem
+     * @param requestInfo
+     * @param purchaseBillRequest
+     */
+    private void updatedBillPayableLineItemFromDB(RequestInfo requestInfo, PurchaseBillRequest purchaseBillRequest) {
+        // Get purchase bill from db and update payableLineItem into the request
+        PurchaseBill billRequest = purchaseBillRequest.getBill();
+        List<Bill> bills=new ArrayList<>();
+        List<String> billIds = new ArrayList<>(Arrays.asList(billRequest.getId()));
+        bills = expenseCalculatorUtil.fetchBillsWithBillIds(requestInfo, billRequest.getTenantId(), billIds);
+        if (bills != null && !bills.isEmpty()) {
+            Bill billFromDB = bills.get((0));
+            // Set payableLineItems ones
+            Map<String, BillDetail> billDetailMap = new HashMap<String, BillDetail>();
+            if (billFromDB != null && !billFromDB.getBillDetails().isEmpty() && !purchaseBillRequest.getBill().getBillDetails().isEmpty()) {
+                List<BillDetail> billDetailsFromDB = billFromDB.getBillDetails();
+                for (int idx = 0; idx < billDetailsFromDB.size(); idx++) {
+                    billDetailMap.put(billDetailsFromDB.get(idx).getId(), billDetailsFromDB.get(idx));
+                }
+
+                for (int idx = 0; idx < billRequest.getBillDetails().size(); idx++) {
+                    BillDetail billDetail = billRequest.getBillDetails().get(idx);
+                    if (billDetailMap.containsKey(billDetail.getId())) {
+                        billRequest.getBillDetails().get(idx).setPayableLineItems(billDetailMap.get(billDetail.getId()).getPayableLineItems());
+                    }
+                }
+            }
+            // Update purchase bill request with updated request
+            purchaseBillRequest.setBill(billRequest);
+        }
     }
 
     private void validateContractIdAgainstService(CalculationRequest calculationRequest) {
@@ -417,7 +449,7 @@ public class ExpenseCalculatorServiceValidator {
                     || !CollectionUtils.isEmpty(searchCriteria.getBillNumbers())
                     || !CollectionUtils.isEmpty(searchCriteria.getBillReferenceIds())
                     || searchCriteria.getProjectName()!=null
-                    || searchCriteria.getBoundaryCode()!=null
+                    || searchCriteria.getBoundary()!=null
                     ){
                 isValidRequest=true;
 
