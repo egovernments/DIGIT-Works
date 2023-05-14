@@ -1165,7 +1165,7 @@ export const UICustomizations = {
         },
       };
     },
-    selectionHandler: async (selectedRows) => {
+    selectionHandler: async (selectedRows,t) => {
 
     /// here do expense calc search and get the response and send the list of bills to getCreatePaymentPayload
       const ids = selectedRows?.map(row=> row?.original?.businessObject?.id)
@@ -1189,6 +1189,7 @@ export const UICustomizations = {
       let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
       try {
         const response = await Digit.PaymentService.createPayment(payload);
+        responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
@@ -1323,11 +1324,12 @@ export const UICustomizations = {
         },
       };
     },
-    selectionHandler: async (selectedRows) => {
-      const payload = getCreatePaymentPayload(selectedRows);
+    selectionHandler: async (selectedRows,t) => {
+      const payload = getCreatePaymentPayload(selectedRows,t);
       let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
       try {
         const response = await Digit.PaymentService.createPayment(payload);
+        responseToReturn.label=`${t(responseToReturn?.label)}  : ${response?.payments?.[0]?.paymentNumber}`
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
