@@ -1500,6 +1500,9 @@ export const UICustomizations = {
 
       const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim()
       if(projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId
+
+      const referenceId = data?.body?.inbox?.moduleSearchCriteria?.referenceId?.trim()
+      if(referenceId) data.body.inbox.moduleSearchCriteria.referenceId = referenceId;
       // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
 
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
