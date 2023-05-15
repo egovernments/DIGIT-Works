@@ -716,7 +716,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           apiKey: tableDataModel.individualGaurdianName),
       TableData(
           label: AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate(tableDataModel.skill.toString()),
+              .translate('COMMON_MASTERS_SKILLS_${tableDataModel.skill}'),
           apiKey: tableDataModel.skill),
       TableData(
           label: tableDataModel.mobileNumber,
