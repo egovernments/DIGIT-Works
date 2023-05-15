@@ -244,7 +244,7 @@ class DigitBaseStepperState extends State<DigitBaseStepper> {
       margin: widget.margin,
       activeBorderWidth: widget.activeStepBorderWidth,
       isTextWidget: true,
-      textChild: widget.textChildren![index],
+      textChild: SizedBox(height: 40, child: widget.textChildren![index]),
     );
   }
 

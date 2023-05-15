@@ -127,7 +127,7 @@ class CommonMethods {
 
   static Future<bool> isValidFileSize(int fileLength) async {
     var flag = true;
-    if (fileLength > 2000000) {
+    if (fileLength > 5000000) {
       flag = false;
     }
     return flag;
