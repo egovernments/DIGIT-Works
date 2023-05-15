@@ -72,7 +72,7 @@ let calculateAttendenceDetails = (musterIndvEntries, estimateCalc, labourCharges
             'attendance_of_tue': attendance_of_tue,
             'attendance_of_mon': attendance_of_mon,
             'bank_account_details': additionalDetails.bankDetails,
-            'aadhar_number': additionalDetails?.aadharNumber?.substr(8, 4),
+            'aadhar_number': additionalDetails?.aadharNumber,
             'skill': additionalDetails.skillCode,
             'background_color': i % 2 == 0 ? '' : '#eeeeee',
             'sl_no': i + 1,
