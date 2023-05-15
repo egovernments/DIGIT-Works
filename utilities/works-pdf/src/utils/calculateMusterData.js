@@ -47,7 +47,8 @@ let calculateAttendenceDetails = (musterIndvEntries, estimateCalc, labourCharges
 
         let musterEntity = musterIndvEntries[i];
         let additionalDetails = musterIndvEntries[i]?.additionalDetails || {};
-
+        // Sort by descending order
+        musterEntity.attendanceEntries = musterEntity.attendanceEntries.sort((a, b) => parseFloat(b.time) - parseFloat(a.time));
         var attendance_of_sun = getAttendance(musterEntity.attendanceEntries[0].attendance);
         var attendance_of_sat = getAttendance(musterEntity.attendanceEntries[1].attendance);
         var attendance_of_fri = getAttendance(musterEntity.attendanceEntries[2].attendance);
@@ -109,6 +110,8 @@ let calculateAttendenceTotal = (musterIndvEntries, estimateCalc) => {
     var sat_day_total_attendance = 0;
     if (musterIndvEntries) {
         for (var i = 0; i < musterIndvEntries.length; i++) {
+            // Sort by descending order
+            musterIndvEntries[i].attendanceEntries = musterIndvEntries[i].attendanceEntries.sort((a, b) => parseFloat(b.time) - parseFloat(a.time));
             mon_day_total_attendance = mon_day_total_attendance + musterIndvEntries[i].attendanceEntries[6].attendance;
             tue_day_total_attendance = tue_day_total_attendance + musterIndvEntries[i].attendanceEntries[5].attendance;
             wed_day_total_attendance = wed_day_total_attendance + musterIndvEntries[i].attendanceEntries[4].attendance;
