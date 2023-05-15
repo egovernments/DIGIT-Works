@@ -242,11 +242,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                   suggestionsBoxController,
                               onSuggestionSelected: onSuggestionSelected,
                               callBack: onSearchVendorList,
-                              minCharsForSuggestions: !(CommonMethods()
-                                      .containsOnlyNumbers(
-                                          searchController.text.trim()))
-                                  ? 3
-                                  : 10,
+                              minCharsForSuggestions: 3,
                               listTile: buildTile,
                               labelText: '',
                             );
@@ -641,17 +637,6 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   Future<List<dynamic>> onSearchVendorList(pattern) async {
     searchUser = true;
-    if (pattern.toString().length > 2 &&
-        pattern.toString().length <= 10 &&
-        CommonMethods().containsOnlyNumbers(pattern)) {
-      setState(() {
-        minCharForSuggestions = 10;
-      });
-    } else {
-      setState(() {
-        minCharForSuggestions = 3;
-      });
-    }
     if (pattern.toString().isNotEmpty &&
         pattern.toString().trim().length == 10 &&
         CommonMethods().containsOnlyNumbers(pattern)) {
