@@ -108,6 +108,8 @@ router.post(
                 }, {})
                 
                 if (get(muster, "musterRolls[0].individualEntries[0].attendanceEntries")) {
+                    // Sort by descending order
+                    muster.musterRolls[0].individualEntries[0].attendanceEntries = muster.musterRolls[0].individualEntries[0].attendanceEntries.sort((a, b) => parseFloat(b.time) - parseFloat(a.time));
                     muster.musterRolls[0].individualEntries[0].attendanceEntries = muster.musterRolls[0].individualEntries[0].attendanceEntries.map((attendence => {
                         if (attendence?.time) {
                             attendence["dateMonth"] = getDateMonth(attendence.time)
