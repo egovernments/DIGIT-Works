@@ -50,6 +50,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
         //     ],
         //   };
 
+        
         let documentDetails = {
             title: "",
             asSectionHeader: true,
@@ -62,8 +63,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                             return {
                                 title: document?.documentType === "Other" ? document?.additionalDetails?.otherCategoryName : t(`PROJECT_${document?.documentType}`),
                                 documentType: document?.documentType,
-                                documentUid: document?.fileStoreId,
-                                fileStoreId: document?.fileStoreId,
+                                documentUid: document?.fileStore,
+                                fileStoreId: document?.fileStore,
                             };
                         }
                         return {};
