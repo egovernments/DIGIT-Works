@@ -369,7 +369,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                               "skill": AppLocalizations.of(
                                                       context)
                                                   .translate(
-                                                      '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
+                                                      'COMMON_MASTERS_SKILLS_${e.skills!.first.level?.toUpperCase()}.${e.skills!.first.type?.toUpperCase()}'),
                                               "individualId": e.id,
                                               "uuid": e.id,
                                               "individualGaurdianName":
@@ -716,7 +716,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           apiKey: tableDataModel.individualGaurdianName),
       TableData(
           label: AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate('COMMON_MASTERS_SKILLS_${tableDataModel.skill}'),
+              .translate('${tableDataModel.skill}'),
           apiKey: tableDataModel.skill),
       TableData(
           label: tableDataModel.mobileNumber,
