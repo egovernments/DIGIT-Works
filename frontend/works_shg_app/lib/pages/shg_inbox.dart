@@ -349,78 +349,84 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                           const SizedBox(
                                                             height: 20,
                                                           ),
-                                                              CustomInfoCard(title: AppLocalizations.of(context)
-                                                                  .translate(i18.common.info), description: AppLocalizations.of(context)
-                                                                  .translate(i18.attendanceMgmt.toMarkAttendance),
-                                                                child: Column(
-                                                                  children: entryExitList!.length > 2  ? [
-                                                                    Row(children:  [
-                                                                      CircularButton(icon: Icons.circle_rounded,
-                                                                        size: 15,
-                                                                        color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                        index: 1,
-                                                                        isNotGreyed: false,
-                                                                        onTap: () {},),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 4.0),
-                                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
-                                                                      )
-                                                                    ],),
-                                                                    const SizedBox(height: 4,),
-                                                                    Row(children: [
-                                                                      CircularButton(icon: Icons.circle_rounded,
-                                                                        size: 15,
-                                                                        color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                        index: 0.5,
-                                                                        isNotGreyed: false,
-                                                                        onTap: () {},),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 4.0),
-                                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
-                                                                      )
-                                                                    ],),
-                                                                    const SizedBox(height: 4,),
-                                                                    Row(children:  [
-                                                                      CircularButton(icon: Icons.circle_rounded,
-                                                                        size: 15,
-                                                                        color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                        index: 0,
-                                                                        isNotGreyed: false,
-                                                                        onTap: () {},),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 4.0),
-                                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
-                                                                      )
-                                                                    ],)
-                                                                  ] : [
-                                                                    Row(
-                                                                      children:  [
-                                                                        CircularButton(icon: Icons.circle_rounded,
-                                                                          size: 15,
-                                                                          color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                          index: 1,
-                                                                          isNotGreyed: false,
-                                                                          onTap: () {},),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.only(left: 4.0),
-                                                                          child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
-                                                                        )
-                                                                      ],),
-                                                                    const SizedBox(height: 4,),
-                                                                    Row(children:  [
-                                                                      CircularButton(icon: Icons.circle_rounded,
-                                                                        size: 15,
-                                                                        color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                        index: 0,
-                                                                        isNotGreyed: false,
-                                                                        onTap: () {},),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 4.0),
-                                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
-                                                                      )
-                                                                    ],)
-                                                                  ],
-                                                                ),),
+                                                              BlocBuilder<MusterGetWorkflowBloc, MusterGetWorkflowState>(builder: (context, workflowState) {
+                                                                return workflowState.maybeWhen(
+                                                                  orElse: () => Container(),
+                                                                  loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                    loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkFlow) => musterWorkFlowModel?.processInstances?.first.workflowState?.state == widget.sentBackCode ? CustomInfoCard(title: AppLocalizations.of(context)
+                                                                      .translate(i18.common.info), description: AppLocalizations.of(context)
+                                                                      .translate(i18.attendanceMgmt.toMarkAttendance),
+                                                                    child: Column(
+                                                                      children: entryExitList!.length > 2  ? [
+                                                                        Row(children:  [
+                                                                          CircularButton(icon: Icons.circle_rounded,
+                                                                            size: 15,
+                                                                            color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                            index: 1,
+                                                                            isNotGreyed: false,
+                                                                            onTap: () {},),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left: 4.0),
+                                                                            child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                                          )
+                                                                        ],),
+                                                                        const SizedBox(height: 4,),
+                                                                        Row(children: [
+                                                                          CircularButton(icon: Icons.circle_rounded,
+                                                                            size: 15,
+                                                                            color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                            index: 0.5,
+                                                                            isNotGreyed: false,
+                                                                            onTap: () {},),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left: 4.0),
+                                                                            child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
+                                                                          )
+                                                                        ],),
+                                                                        const SizedBox(height: 4,),
+                                                                        Row(children:  [
+                                                                          CircularButton(icon: Icons.circle_rounded,
+                                                                            size: 15,
+                                                                            color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                            index: 0,
+                                                                            isNotGreyed: false,
+                                                                            onTap: () {},),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left: 4.0),
+                                                                            child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                                          )
+                                                                        ],)
+                                                                      ] : [
+                                                                        Row(
+                                                                          children:  [
+                                                                            CircularButton(icon: Icons.circle_rounded,
+                                                                              size: 15,
+                                                                              color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                              index: 1,
+                                                                              isNotGreyed: false,
+                                                                              onTap: () {},),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(left: 4.0),
+                                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                                            )
+                                                                          ],),
+                                                                        const SizedBox(height: 4,),
+                                                                        Row(children:  [
+                                                                          CircularButton(icon: Icons.circle_rounded,
+                                                                            size: 15,
+                                                                            color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                            index: 0,
+                                                                            isNotGreyed: false,
+                                                                            onTap: () {},),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left: 4.0),
+                                                                            child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                                          )
+                                                                        ],)
+                                                                      ],
+                                                                    ),) : const SizedBox.shrink());
+                                                                }
+                                                              ),
                                                           Container(
                                                               margin:
                                                                   const EdgeInsets.all(8.0),
