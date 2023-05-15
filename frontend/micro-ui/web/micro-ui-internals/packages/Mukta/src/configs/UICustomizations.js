@@ -750,7 +750,7 @@ export const UICustomizations = {
       const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom);
       const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo);
       const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
-      const status = data.body.inbox?.moduleSearchCriteria?.contractStatus?.code;
+      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
       const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
       const projectName = data.body.inbox?.moduleSearchCriteria?.projectName?.trim();
       const ward = data.body.inbox?.moduleSearchCriteria?.ward;
@@ -763,11 +763,11 @@ export const UICustomizations = {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           ward,
           workOrderNumber,
-          status,
           projectType,
           projectName,
           startDate,
           endDate,
+          status
         },
       };
       return data;
@@ -827,7 +827,31 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    }
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract") },
+        body: {
+         
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
+              return {
+                "i18nKey":`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")}_STATUS_${state?.state}`,
+                "wfStatus":state?.state
+              }
+            })
+            return states  
+          },
+        },
+      };
+    },
   },
   SearchWageSeekerConfig: {
     customValidationCheck: (data) => {
