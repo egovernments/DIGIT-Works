@@ -140,9 +140,14 @@ public class SupervisionBillGeneratorService {
 		// to be created. Find the diff by using set operations.
 		wageAndPurchaseBills.removeAll(existingBills);
 
-		if (wageAndPurchaseBills.isEmpty()) {
+		if (wageAndPurchaseBills.isEmpty()) 
+		{
 			log.error("There are no bills for which supervision bill needs to be created");
-			return new Calculation();
+			log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. "
+					+ " So Supervision bill cannot be calculated.");
+			throw new CustomException("NO_WAGE_PURCHASE_BILL",
+					"Wage and purchase bill is not created. So Supervision bill cannot be calculated.");
+			
 		}
 		
 		log.info(String.format("There are %s bills for which a supervision bill needs to be raised", wageAndPurchaseBills.size()));

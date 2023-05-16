@@ -56,6 +56,7 @@ import org.egov.digit.expense.calculator.web.models.Payer;
 import org.egov.digit.expense.calculator.web.models.PurchaseBill;
 import org.egov.digit.expense.calculator.web.models.PurchaseBillRequest;
 import org.egov.digit.expense.calculator.web.models.Workflow;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -226,26 +227,29 @@ public class ExpenseCalculatorService {
             metaInfo.putAll(contractProjectMapping);
             bills = wageSeekerBillGeneratorService.createWageSeekerBills(requestInfo,musterRolls,labourCharges,metaInfo);
 
-        } else {
-            log.info("Create supervision bill for contractId :"+criteria.getContractId() );
-            List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId().trim());
-            if(expenseBills!=null)
-            		log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
-            Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
-            bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
-    		
-            //Construct meta object to persist in calculator db
-            Contract contract = expenseCalculatorUtil.fetchContract(requestInfo, criteria.getTenantId(),criteria.getContractId()).get(0);
+		} else {
+			log.info("Create supervision bill for contractId :" + criteria.getContractId());
+			List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId().trim());
+			if (expenseBills != null)
+				log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
+
+			Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
+			bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria, calculation,
+					expenseBills);
+
+			// Construct meta object to persist in calculator db
+			Contract contract = expenseCalculatorUtil
+					.fetchContract(requestInfo, criteria.getTenantId(), criteria.getContractId()).get(0);
 			Map<String, String> contractProjectMapping = new HashMap<>();
 			Object additionalDetails = contract.getAdditionalDetails();
 			Optional<String> projectIdOptional = commonUtil.findValue(additionalDetails, PROJECT_ID_CONSTANT);
-			if (contract.getContractNumber()!=null && projectIdOptional.isPresent()) {
-				contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contract.getContractNumber(), projectIdOptional.get());
+			if (contract.getContractNumber() != null && projectIdOptional.isPresent()) {
+				contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contract.getContractNumber(),
+						projectIdOptional.get());
 			}
 			metaInfo.putAll(contractProjectMapping);
 
 		}
-    		
 
         BillResponse billResponse = null;
         List<Bill> submittedBills = new ArrayList<>();
