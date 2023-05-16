@@ -78,7 +78,7 @@ let calculateAttendenceDetails = (musterIndvEntries, estimateCalc, labourCharges
             'sl_no': i + 1,
             'name_of_the_individual': additionalDetails.userName,
             'guardian_name': additionalDetails.fatherName || "",
-            'actualTotalAttendance': musterEntity.actualTotalAttendance,
+            'actualTotalAttendance': musterEntity.modifiedTotalAttendance == null ? musterEntity.actualTotalAttendance: musterEntity.modifiedTotalAttendance,
             'attendance': musterEntity.attendanceEntries[0].attendance,
             'sat_color_of_attendance': color(attendance_of_sat),
             'mon_color_of_attendance': color(attendance_of_mon),
