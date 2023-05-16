@@ -53,7 +53,7 @@ const fetchDeductions = (deductions, tenantId) => {
     return deductionsList
 }
 
-export const createBillPayload = (data, contract,  docConfigData) => {
+export const createBillPayload = (data, contract,  docConfigData,workflowDetails) => {
   
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     const tenantId = Digit.ULBService.getCurrentTenantId()
@@ -127,7 +127,8 @@ export const createBillPayload = (data, contract,  docConfigData) => {
           },
         workflow: {
             "action": "SUBMIT",
-            "assignees": []
+            "assignees": workflowDetails.assignees,
+            "comment":workflowDetails.comment
           }
     };
     return payload;

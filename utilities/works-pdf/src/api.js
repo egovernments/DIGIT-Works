@@ -478,7 +478,6 @@ module.exports = {
   search_contract,
   search_mdms,
   search_mdmsLabourCharges,
-  search_mdmsWageSeekerSkills,
   search_organisation,
   search_expense_bill,
   search_expense_calculator_bill,

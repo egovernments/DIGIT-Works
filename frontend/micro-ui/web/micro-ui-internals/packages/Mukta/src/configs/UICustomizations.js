@@ -20,6 +20,7 @@ const getBillType = (businessService) => {
       return 'wage';
   }
 }
+const PAYMENT_UPDATE_STATUS="SUCCESSFUL";
 
 const getCreatePaymentPayload = (data) => {
   let payment = {}
@@ -70,6 +71,48 @@ const getCreatePaymentPayload = (data) => {
   
   return payload
 }
+const getUpdatePaymentPayload = (payment={}) =>{
+  if(payment?.status){
+    payment.status=PAYMENT_UPDATE_STATUS;
+  }
+  if(payment?.bills){
+    payment.bills=payment?.bills?.map(bill=>{
+      if(bill?.status){
+        bill.status=PAYMENT_UPDATE_STATUS;
+      }
+      bill.billDetails= bill.billDetails?.map(billDetail=>{
+        if(billDetail?.status){
+          billDetail.status=PAYMENT_UPDATE_STATUS;
+        }
+        return {...billDetail}
+      })
+      return {...bill}
+    })
+  }
+  return {payment};
+}
+
+const RetryComponent = ({row,t})=> <LinkLabel
+  onClick={async () => {
+    try {
+      const pdfRegenerateResponse =
+        row?.paymentId &&
+        (await Digit.ExpenseService.regeneratePDF(
+          {
+            Criteria: {
+              paymentId: row?.paymentId,
+            },
+          },
+          row?.tenantId
+        ));
+      console.info(pdfRegenerateResponse);
+    } catch (error) {
+      console.error(error, "downloaderror");
+    }
+  }}
+>
+  {t("CS_COMMON_RETRY")}
+</LinkLabel>;
 
 export const UICustomizations = {
   EstimateInboxConfig: {
@@ -750,7 +793,7 @@ export const UICustomizations = {
       const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom);
       const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo);
       const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
-      const status = data.body.inbox?.moduleSearchCriteria?.contractStatus?.code;
+      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
       const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
       const projectName = data.body.inbox?.moduleSearchCriteria?.projectName?.trim();
       const ward = data.body.inbox?.moduleSearchCriteria?.ward;
@@ -763,11 +806,11 @@ export const UICustomizations = {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           ward,
           workOrderNumber,
-          status,
           projectType,
           projectName,
           startDate,
           endDate,
+          status
         },
       };
       return data;
@@ -827,7 +870,31 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
-    }
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract") },
+        body: {
+         
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
+              return {
+                "i18nKey":`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")}_STATUS_${state?.state}`,
+                "wfStatus":state?.state
+              }
+            })
+            return states  
+          },
+        },
+      };
+    },
   },
   SearchWageSeekerConfig: {
     customValidationCheck: (data) => {
@@ -1188,7 +1255,7 @@ export const UICustomizations = {
       const payload = getCreatePaymentPayload(result.bills);
       let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
       try {
-        const response = await Digit.PaymentService.createPayment(payload);
+        const response = await Digit.ExpenseService.createPayment(payload);
         responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
         return responseToReturn
       } catch (error) {
@@ -1471,20 +1538,44 @@ export const UICustomizations = {
         return value ? Digit.DateUtils.ConvertTimestampToDate(parseInt(value), "dd/MM/yyyy") : t("ES_COMMON_NA")
       }
       if(key === "CS_COMMON_ACTION") {
-        return value ?  
-        <LinkLabel onClick={async() => {       
-          let photo = ''
-          try {
-              photo = value&& await Digit.UploadServices.Filefetch([value], Digit.ULBService.getCurrentTenantId());
-              const imageLink = photo?.data?.fileStoreIds?.[0]?.url
-              downloadPdf(imageLink);
-          } catch (error) {
-            console.error(error,"downloaderror");
-          }
-      }}>
-          {t("CS_COMMON_DOWNLOAD")}
-        </LinkLabel> :
-        t("ES_COMMON_NA")
+        switch (row?.status) {
+          case "COMPLETED":
+            return value ? (
+              <LinkLabel
+                onClick={async () => {
+                  let photo = "";
+                  try {
+                    photo = value && (await Digit.UploadServices.Filefetch([value], Digit.ULBService.getCurrentTenantId()));
+                    const imageLink = photo?.data?.fileStoreIds?.[0]?.url;
+                    downloadPdf(imageLink);
+                    const paySearchResponse =
+                      row?.paymentNumber &&
+                      (await Digit.ExpenseService.searchPayment({
+                        paymentCriteria: {
+                          tenantId: row?.tenantId,
+                          paymentNumbers: [row?.paymentNumber],
+                        },
+                      }));
+                    if (paySearchResponse && paySearchResponse?.payments?.[0]) {
+                      const payUpdateResponse = await Digit.ExpenseService.updatePayment(getUpdatePaymentPayload(paySearchResponse?.payments?.[0]));
+                    }
+                  } catch (error) {
+                    console.error(error, "downloaderror");
+                  }
+                }}
+              >
+                {t("CS_COMMON_DOWNLOAD")}
+              </LinkLabel>
+            ) : <RetryComponent row={row} t={t}/>;
+          case "INPROGRESS":
+            return t("CS_COMMON_NA");
+          case "FAILED":
+            return <RetryComponent row={row} t={t}/>
+          default:
+            return t("CS_COMMON_NA");
+        }
+       
+        
       }
     }
   },
