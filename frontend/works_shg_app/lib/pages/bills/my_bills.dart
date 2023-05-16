@@ -104,7 +104,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                               : 'NA',
                           i18.myBills.netPayable: (e.bill?.totalAmount ?? 0),
                           i18.common.status: t.translate(
-                              'BILL_STATUS_${e.bill?.paymentStatus ?? 'NA'}'),
+                              'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}'),
                           Constants.activeInboxStatus: 'true'
                         };
                       } else if (e.bill?.businessService ==
