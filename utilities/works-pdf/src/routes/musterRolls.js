@@ -6,8 +6,10 @@ var config = require("../config");
 var { search_musterRoll, create_pdf } = require("../api");
 var {searchEstimateFormusterRoll,create_pdf  }= require("../api");
 var { search_contract, create_pdf } = require("../api");
-var { search_mdmsWageSeekerSkills,create_pdf } = require("../api");
+var { search_mdmsLabourCharges, create_pdf } = require("../api");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
+const { calculateAttendenceDetails, calculateAttendenceTotal, getDateMonth } = require("../utils/calculateMusterData");
+const get = require("lodash.get");
 
 function renderError(res, errorMessage, errorCode) {
     if (errorCode == undefined) errorCode = 500;
@@ -51,7 +53,7 @@ router.post(
             }
             try {
 
-                resMdms = await search_mdmsWageSeekerSkills(tenantId, requestinfo);
+                resMdms = await search_mdmsLabourCharges(tenantId, requestinfo);
 
             }
             catch (ex) {
@@ -60,20 +62,28 @@ router.post(
             }
             var muster = resMuster.data;
             var contract = resContract.data;
-            var mdms = resMdms.data.MdmsRes['common-masters'].WageSeekerSkills
+            var mdms = get(resMdms, 'data.MdmsRes.expense.LabourCharges', []);
             
-            var esrequestinfo = {}
-            var musterRollId = muster.musterRolls[0].id;
-            let criteria = {
-                "tenantId": tenantId,
-                "musterRollId": [musterRollId]
+            // Get estimate using expense calculator
+            let estimateCalc = {}
+            try {
+                var esrequestinfo = {}
+                var musterRollId = muster.musterRolls[0].id;
+                let criteria = {
+                    "tenantId": tenantId,
+                    "musterRollId": [musterRollId]
+                }
+                esrequestinfo['criteria'] = criteria
+                esrequestinfo['RequestInfo'] = requestinfo["RequestInfo"]
+                let calculateEstResp = await searchEstimateFormusterRoll(esrequestinfo);
+                estimateCalc = calculateEstResp?.data?.calculation || {};
             }
-            esrequestinfo['criteria'] = criteria
-            esrequestinfo['RequestInfo'] = requestinfo["RequestInfo"]
-            searchEstimateRes = await searchEstimateFormusterRoll(esrequestinfo);
-            totalWageAmount = searchEstimateRes.data.calculation.totalAmount;
-
-            if (muster && muster.musterRolls && muster.musterRolls.length > 0 && contract && contract.contracts && mdms && mdms.length > 0 && totalWageAmount) {
+            catch (ex) {
+                if (ex.response && ex.response.data) console.log(ex.response.data);
+                return renderError(res, "Failed to query details of the calculate estimate.", 500);
+            }
+            
+            if (muster && muster.musterRolls && muster.musterRolls.length > 0 && contract && contract.contracts && mdms && mdms.length > 0) {
 
                 var pdfResponse;
                 var pdfkey = config.pdf.nominal_muster_roll_template;
@@ -82,7 +92,7 @@ router.post(
                     muster.musterRolls[0].projectDesc = contract.contracts[0].additionalDetails.projectDesc;
                     muster.musterRolls[0].cboName = contract.contracts[0].additionalDetails.cboName;
                     muster.musterRolls[0].projectId = contract.contracts[0].additionalDetails.projectId;
-                    muster.musterRolls[0].totalWageAmount = totalWageAmount;
+                    muster.musterRolls[0].totalWageAmount = estimateCalc?.totalAmount;
                 }
                 else {
                     muster.musterRolls[0].rollOfCbo = 'NA';
@@ -92,14 +102,24 @@ router.post(
                     muster.musterRolls[0].totalWageAmount= 'NA';                  
                 }
                 
-                var mdms = mdms.reduce((modified, actual) => {
+                var labourCharges = mdms.reduce((modified, actual) => {
                     modified[actual.code] = actual.amount;
                     return modified;
                 }, {})
-                muster.musterRolls[0].individualEntries = muster.musterRolls[0].individualEntries.map(individualEntrie => ({
-                    ...individualEntrie, perDayWage: mdms[individualEntrie.additionalDetails.skillCode],
-                    totalWage: individualEntrie.actualTotalAttendance * mdms[individualEntrie.additionalDetails.skillCode]
-                }))
+                
+                if (get(muster, "musterRolls[0].individualEntries[0].attendanceEntries")) {
+                    // Sort by descending order
+                    muster.musterRolls[0].individualEntries[0].attendanceEntries = muster.musterRolls[0].individualEntries[0].attendanceEntries.sort((a, b) => parseFloat(b.time) - parseFloat(a.time));
+                    muster.musterRolls[0].individualEntries[0].attendanceEntries = muster.musterRolls[0].individualEntries[0].attendanceEntries.map((attendence => {
+                        if (attendence?.time) {
+                            attendence["dateMonth"] = getDateMonth(attendence.time)
+                        }
+                        return attendence;
+                    }))
+                }
+
+                muster.musterRolls[0].attendanceDetails = calculateAttendenceDetails(muster.musterRolls[0].individualEntries, estimateCalc, labourCharges)
+                muster.musterRolls[0].attendanceTotal = calculateAttendenceTotal(muster.musterRolls[0].individualEntries, estimateCalc)
 
                 try {
                     pdfResponse = await create_pdf(
