@@ -48,6 +48,7 @@ module.exports = {
     musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
     contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086',
     organisation: process.env.EGOV_ORGANISATION_HOST || 'http://localhost:8087',
+    localization: process.env.EGOV_LOCALIZATION_HOST || 'http://localhost:8088',
     expense: process.env.EXPENSE_SERVICE_HOST || 'http://localhost:8090',
     bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
@@ -68,8 +69,8 @@ module.exports = {
     expense_payment_search: "/expense/payment/v1/_search",
     bankaccount_search: "/bankaccount-service/bankaccount/v1/_search",
     expense_calculator_estimate: "/expense-calculator/v1/_estimate",
-    expense_calculator_search: "/expense-calculator/v1/_search"
-
+    expense_calculator_search: "/expense-calculator/v1/_search",
+    localization_search: "/localization/messages/v1/_search"
   },
   constraints: {
     "beneficiaryIdByHeadCode": "Deduction_{tanentId}_{headcode}"

@@ -23,7 +23,7 @@ function rupeeFormat(amount) {
     return val
 };
 
-let calculateAttendenceDetails = (musterIndvEntries, estimateCalc, labourCharges) => {
+let calculateAttendenceDetails = (musterIndvEntries, estimateCalc, labourCharges, localizationMap) => {
     var y = [];
     let calcDetails = get(estimateCalc, 'estimates[0].calcDetails', [])
     var estIdentifierMap = {}
@@ -73,7 +73,7 @@ let calculateAttendenceDetails = (musterIndvEntries, estimateCalc, labourCharges
             'attendance_of_mon': attendance_of_mon,
             'bank_account_details': additionalDetails.bankDetails,
             'aadhar_number': additionalDetails?.aadharNumber,
-            'skill': additionalDetails.skillCode,
+            'skill': getLocalizedSkill(additionalDetails.skillCode, localizationMap),
             'background_color': i % 2 == 0 ? '' : '#eeeeee',
             'sl_no': i + 1,
             'name_of_the_individual': additionalDetails.userName,
@@ -94,6 +94,11 @@ let calculateAttendenceDetails = (musterIndvEntries, estimateCalc, labourCharges
         });
     }
     return y;
+}
+
+let getLocalizedSkill = (skillCode, localizationMap) => {
+    let prefix = "COMMON_MASTERS_SKILLS_";
+    return localizationMap[prefix + skillCode] || skillCode;
 }
 
 let calculateAttendenceTotal = (musterIndvEntries, estimateCalc) => {

@@ -3,7 +3,7 @@ var router = express.Router();
 var url = require("url");
 var config = require("../config");
 
-var { search_musterRoll, create_pdf } = require("../api");
+var { search_musterRoll, create_pdf, search_localization } = require("../api");
 var {searchEstimateFormusterRoll,create_pdf  }= require("../api");
 var { search_contract, create_pdf } = require("../api");
 var { search_mdmsLabourCharges, create_pdf } = require("../api");
@@ -82,6 +82,31 @@ router.post(
                 if (ex.response && ex.response.data) console.log(ex.response.data);
                 return renderError(res, "Failed to query details of the calculate estimate.", 500);
             }
+            let lang = "en_IN";
+            let localizationMap = {};
+            try {
+                let localizationReq = {};
+                localizationReq['RequestInfo'] = requestinfo["RequestInfo"];
+                let msgId = get(requestinfo, "RequestInfo.msgId", null)
+                if (msgId) {
+                    msgId = msgId.split("|")
+                    lang = msgId.length == 2 ? msgId[1] : lang;
+                }
+                let params = {
+                    "locale": lang,
+                    "module": "rainmaker-common,rainmaker-common-masters",
+                    "tenantId": tenantId.split(".")[0]
+                }
+                let localizations = await search_localization(localizationReq, params);
+                if (localizations?.data?.messages?.length) {
+                    localizations.data.messages.forEach(localObj => {
+                        localizationMap[localObj.code] = localObj.message;
+                    });
+                }
+            }
+            catch (ex) {
+                if (ex.response && ex.response.data) console.log(ex.response.data);
+            }
             
             if (muster && muster.musterRolls && muster.musterRolls.length > 0 && contract && contract.contracts && mdms && mdms.length > 0) {
 
@@ -118,7 +143,7 @@ router.post(
                     }))
                 }
 
-                muster.musterRolls[0].attendanceDetails = calculateAttendenceDetails(muster.musterRolls[0].individualEntries, estimateCalc, labourCharges)
+                muster.musterRolls[0].attendanceDetails = calculateAttendenceDetails(muster.musterRolls[0].individualEntries, estimateCalc, labourCharges, localizationMap)
                 muster.musterRolls[0].attendanceTotal = calculateAttendenceTotal(muster.musterRolls[0].individualEntries, estimateCalc)
 
                 try {
