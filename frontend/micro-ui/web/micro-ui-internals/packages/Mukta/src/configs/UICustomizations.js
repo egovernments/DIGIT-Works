@@ -1077,14 +1077,27 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      let tenantId = Digit.ULBService.getCurrentTenantId()
       if (key === "WORKS_BILL_NUMBER") {
-        const billType = getBillType(row?.businessService)
+        let billType = ""
+        const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+        const bsSupervisionBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.supervision");
+        const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
+        if(row?.ProcessInstance?.businessService === bsPurchaseBill ){
+          billType = "purchase"
+        }
+        if(row?.ProcessInstance?.businessService === bsSupervisionBill ){
+          billType = "supervision"
+        }
+        if(row?.ProcessInstance?.businessService === bsWageBill ){
+          billType = "wage"
+        }
         return (
           <span className="link">
             <Link
               to={`/${
                 window.contextPath
-              }/employee/expenditure/${billType}-bill-details?tenantId=${row?.businessObject?.tenantId}&billNumber=${value}`}
+              }/employee/expenditure/${billType}-bill-details?tenantId=${tenantId}&billNumber=${value}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
@@ -1152,7 +1165,7 @@ export const UICustomizations = {
         },
       };
     },
-    selectionHandler: async (selectedRows) => {
+    selectionHandler: async (selectedRows,t) => {
 
     /// here do expense calc search and get the response and send the list of bills to getCreatePaymentPayload
       const ids = selectedRows?.map(row=> row?.original?.businessObject?.id)
@@ -1176,6 +1189,7 @@ export const UICustomizations = {
       let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
       try {
         const response = await Digit.PaymentService.createPayment(payload);
+        responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
@@ -1310,11 +1324,12 @@ export const UICustomizations = {
         },
       };
     },
-    selectionHandler: async (selectedRows) => {
-      const payload = getCreatePaymentPayload(selectedRows);
+    selectionHandler: async (selectedRows,t) => {
+      const payload = getCreatePaymentPayload(selectedRows,t);
       let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
       try {
         const response = await Digit.PaymentService.createPayment(payload);
+        responseToReturn.label=`${t(responseToReturn?.label)}  : ${response?.payments?.[0]?.paymentNumber}`
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
@@ -1485,6 +1500,9 @@ export const UICustomizations = {
 
       const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim()
       if(projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId
+
+      const referenceId = data?.body?.inbox?.moduleSearchCriteria?.referenceId?.trim()
+      if(referenceId) data.body.inbox.moduleSearchCriteria.referenceId = referenceId;
       // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
 
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
