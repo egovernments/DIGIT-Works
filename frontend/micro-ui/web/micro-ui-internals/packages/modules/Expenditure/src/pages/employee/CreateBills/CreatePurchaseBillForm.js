@@ -122,11 +122,11 @@ const CreatePurchaseBillForm = ({
             await UpdatePurchaseBillMutation(updatedPayload, {
                 onError: async (error, variables) => {
                     
-                    sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
+                    sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_MODIFIED_FORWARDED", false);
                 },
                 onSuccess: async (responseData, variables) => {
                     
-                    sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
+                    sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_MODIFIED_FORWARDED", true);
                 },
             });
         }else{

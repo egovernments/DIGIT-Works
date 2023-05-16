@@ -47,6 +47,7 @@ class AttendanceRegisterTablePage extends StatefulWidget {
 
 class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   var searchController = TextEditingController();
+  int minCharForSuggestions = 3;
   var suggestionsBoxController = SuggestionsBoxController();
   List<Map<String, dynamic>> userList = [];
   List<Map<String, dynamic>> filteredUserList = [];
@@ -231,17 +232,25 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                       Container(
                           alignment: Alignment.centerLeft,
                           margin: const EdgeInsets.all(4.0),
-                          child: AutoCompleteSearchBar(
-                            hintText: AppLocalizations.of(context)
-                                .translate(i18.common.searchByNameMobileNumber),
-                            controller: searchController,
-                            suggestionsBoxController: suggestionsBoxController,
-                            onSuggestionSelected: onSuggestionSelected,
-                            callBack: onSearchVendorList,
-                            minCharsForSuggestions: 3,
-                            listTile: buildTile,
-                            labelText: '',
-                          )),
+                          child:
+                              StatefulBuilder(builder: (context, setAutoState) {
+                            return AutoCompleteSearchBar(
+                              hintText: AppLocalizations.of(context).translate(
+                                  i18.common.searchByNameMobileNumber),
+                              controller: searchController,
+                              suggestionsBoxController:
+                                  suggestionsBoxController,
+                              onSuggestionSelected: onSuggestionSelected,
+                              callBack: onSearchVendorList,
+                              minCharsForSuggestions: !(CommonMethods()
+                                      .containsOnlyNumbers(
+                                          searchController.text.trim()))
+                                  ? 3
+                                  : 10,
+                              listTile: buildTile,
+                              labelText: '',
+                            );
+                          })),
                       const SizedBox(
                         height: 10,
                       ),
@@ -632,7 +641,19 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   Future<List<dynamic>> onSearchVendorList(pattern) async {
     searchUser = true;
+    if (pattern.toString().length > 2 &&
+        pattern.toString().length <= 10 &&
+        CommonMethods().containsOnlyNumbers(pattern)) {
+      setState(() {
+        minCharForSuggestions = 10;
+      });
+    } else {
+      setState(() {
+        minCharForSuggestions = 3;
+      });
+    }
     if (pattern.toString().isNotEmpty &&
+        pattern.toString().trim().length == 10 &&
         CommonMethods().containsOnlyNumbers(pattern)) {
       context.read<IndividualSearchBloc>().add(
             SearchIndividualEvent(

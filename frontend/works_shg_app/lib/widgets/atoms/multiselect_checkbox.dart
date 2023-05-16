@@ -121,7 +121,7 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                     children: widget.selectedOptions
                         .map((option) => Chip(
                               label: Text(AppLocalizations.of(context)
-                                  .translate(option)),
+                                  .translate('COMMON_MASTERS_SKILLS_$option')),
                               padding: const EdgeInsets.all(2.0),
                               deleteIcon: const Icon(Icons.cancel),
                               onDeleted: () {

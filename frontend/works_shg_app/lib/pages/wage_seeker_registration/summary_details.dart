@@ -244,7 +244,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                         color: const DigitColors().burningOrange,
                       ),
                       onTap: () {
-                        widget.onPressed(2);
+                        widget.onPressed(1);
                       },
                     )
                   ],
@@ -317,7 +317,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                         color: const DigitColors().burningOrange,
                       ),
                       onTap: () {
-                        widget.onPressed(3);
+                        widget.onPressed(2);
                       },
                     )
                   ],
