@@ -94,14 +94,14 @@ async function search_organisation(tenantId, requestinfo, orgId) {
   });
 }
 
-async function search_mdmsWageSeekerSkills(tenantId, requestinfo) {
+async function search_mdmsLabourCharges(tenantId, requestinfo) {
   var params = {
     tenantId: tenantId.split(".")[0],
-    moduleName: "common-masters",
-    masterName: "WageSeekerSkills",
+    moduleName: "expense",
+    masterName: "LabourCharges",
   };
 
-  var searchEndpoint = config.paths.mdmsWageSeekerSkills_search;
+  var searchEndpoint = config.paths.mdms_get;
 
   return await axios({
     method: "post",
@@ -477,7 +477,7 @@ module.exports = {
   search_musterRoll,
   search_contract,
   search_mdms,
-  search_mdmsWageSeekerSkills,
+  search_mdmsLabourCharges,
   search_organisation,
   search_expense_bill,
   search_expense_calculator_bill,
