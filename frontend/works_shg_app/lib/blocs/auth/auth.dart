@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -79,6 +80,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _onLogout(AuthLogoutEvent event, AuthEmitter emit) async {
+    List<DigitRowCardModel>? languages = await GlobalVariables.getLanguages();
+    languages?.forEach((e) async {
+      if (kIsWeb) {
+        html.window.localStorage.remove(e.value);
+      } else {
+        await storage.delete(key: e.value);
+      }
+    });
     emit(const AuthState.loaded(null, null));
     emit(const AuthState.initial());
   }

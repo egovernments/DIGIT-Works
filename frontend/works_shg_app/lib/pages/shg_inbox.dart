@@ -265,7 +265,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                       left: 8, right: 8, bottom: 16),
                                                   height: inWorkFlow
                                                       ? MediaQuery.of(context).size.height
-                                                      : MediaQuery.of(context).size.height - 150,
+                                                      : MediaQuery.of(context).size.height - 180,
                                                   child: CustomScrollView(slivers: [
                                                     SliverList(
                                                         delegate: SliverChildListDelegate([
@@ -650,6 +650,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                     ),
                                                                   ],
                                                                 ),
+                                                              const Align(
+                                                                alignment: Alignment.bottomCenter,
+                                                                child: PoweredByDigit(),
+                                                              )
                                                         ]))
                                                   ]),
                                                 ),
@@ -668,58 +672,58 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                             left: 8.0,
                                                             right: 8.0,
                                                           ),
-                                                          child: SizedBox(
-                                                            height: inWorkFlow ? 0 :  100,
-                                                            child: BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
-                                                              listener: (context, workflowState) {
-                                                                workflowState.maybeWhen(
-                                                                    loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                    error: () {
-                                                                      Notifiers.getToastMessage(
-                                                                          context,
-                                                                          AppLocalizations.of(
-                                                                                  context)
-                                                                              .translate(i18
-                                                                                  .attendanceMgmt
-                                                                                  .unableToCheckWorkflowStatus),
-                                                                          'ERROR');
-                                                                    },
-                                                                    loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkFlow) {
-                                                                      if (!isInWorkFlow) {
-                                                                        if(inWorkFlow != false){
+                                                          child: BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
+                                                            listener: (context, workflowState) {
+                                                              workflowState.maybeWhen(
+                                                                  loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                  error: () {
+                                                                    Notifiers.getToastMessage(
+                                                                        context,
+                                                                        AppLocalizations.of(
+                                                                                context)
+                                                                            .translate(i18
+                                                                                .attendanceMgmt
+                                                                                .unableToCheckWorkflowStatus),
+                                                                        'ERROR');
+                                                                  },
+                                                                  loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkFlow) {
+                                                                    if (!isInWorkFlow) {
+                                                                      if(inWorkFlow != false){
+                                                                        setState(() {
+                                                                          inWorkFlow = false;
+                                                                        });
+                                                                      }
+                                                                    } else {
+                                                                      if (individualMusterRollModel
+                                                                          .musterRoll!
+                                                                          .isNotEmpty) {
+                                                                        if(inWorkFlow != true) {
                                                                           setState(() {
-                                                                            inWorkFlow = false;
+                                                                            inWorkFlow = true;
                                                                           });
                                                                         }
-                                                                      } else {
-                                                                        if (individualMusterRollModel
-                                                                            .musterRoll!
-                                                                            .isNotEmpty) {
-                                                                          if(inWorkFlow != true) {
-                                                                            setState(() {
-                                                                              inWorkFlow = true;
-                                                                            });
-                                                                          }
-                                                                        }
                                                                       }
-                                                                    },
-                                                                    orElse: () =>
-                                                                        Container());
-                                                              },
-                                                              child: BlocBuilder<
-                                                                      MusterGetWorkflowBloc,
-                                                                      MusterGetWorkflowState>(
-                                                                  builder: (context,
-                                                                      workFlowState) {
-                                                                    return workFlowState.maybeWhen(orElse: () => Container(),
-                                                                        error: () => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.unableToCheckWorkflowStatus), 'ERROR'),
-                                                                        loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                        loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool inWorkFlow) => inWorkFlow ? Container() : Column(
-                                                                  children: [
-                                                                    BlocListener<
+                                                                    }
+                                                                  },
+                                                                  orElse: () =>
+                                                                      Container());
+                                                            },
+                                                            child: BlocBuilder<
+                                                                    MusterGetWorkflowBloc,
+                                                                    MusterGetWorkflowState>(
+                                                                builder: (context,
+                                                                    workFlowState) {
+                                                                  return workFlowState.maybeWhen(orElse: () => Container(),
+                                                                      error: () => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.unableToCheckWorkflowStatus), 'ERROR'),
+                                                                      loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                      loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool inWorkFlow) => inWorkFlow ? Container() : SizedBox(
+                                                                        height: 100,
+                                                                        child: Column(
+                                                                children: [
+                                                                  BlocListener<
                                                                         AttendanceLogCreateBloc,
                                                                         AttendanceLogCreateState>(
-                                                                      listener: (context,
+                                                                    listener: (context,
                                                                           logState) {
                                                                         SchedulerBinding
                                                                             .instance
@@ -759,8 +763,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                               orElse: () =>
                                                                                   Container());
                                                                         });
-                                                                      },
-                                                                      child: OutlinedButton(
+                                                                    },
+                                                                    child: OutlinedButton(
                                                                           style: OutlinedButton.styleFrom(
                                                                               backgroundColor:
                                                                                   Colors
@@ -831,11 +835,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1))
                                                                                 : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
                                                                           ))),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height: 10,
-                                                                    ),
-                                                                    BlocListener<
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  BlocListener<
                                                                             MusterCreateBloc,
                                                                             MusterCreateState>(
                                                                         listener: (context,
@@ -906,10 +910,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                       .resubmitMusterRoll),
                                                                               style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
                                                                         )),
-                                                                  ],
-                                                                ));
-                                                                    }),
-                                                            ),
+                                                                ],
+                                                              ),
+                                                                      ));
+                                                                  }),
                                                           ),
                                                         ),
                                                       )
