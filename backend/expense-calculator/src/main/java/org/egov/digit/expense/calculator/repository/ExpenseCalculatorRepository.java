@@ -5,6 +5,7 @@ import org.egov.digit.expense.calculator.repository.rowmapper.BillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorBillRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorMusterRowMapper;
 import org.egov.digit.expense.calculator.repository.rowmapper.ExpenseCalculatorProjectRowMapper;
+import org.egov.digit.expense.calculator.util.BillUtils;
 import org.egov.digit.expense.calculator.web.models.BillMapper;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchCriteria;
 import org.egov.digit.expense.calculator.web.models.CalculatorSearchRequest;
@@ -12,11 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Repository
+@Slf4j
 public class ExpenseCalculatorRepository {
 
     @Autowired
@@ -60,6 +64,7 @@ public class ExpenseCalculatorRepository {
     public List<String> getBills(String contractId, String tenantId) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getBillsOfContract(contractId, tenantId, preparedStmtList);
+        log.info("Query:" + query);
         List<String> billIds = jdbcTemplate.query(query, billRowMapper, preparedStmtList.toArray());
         return billIds;
     }

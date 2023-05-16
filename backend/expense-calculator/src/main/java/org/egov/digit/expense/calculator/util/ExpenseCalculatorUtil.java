@@ -191,6 +191,8 @@ public class ExpenseCalculatorUtil {
         	log.info(String.format("There are 0 bills in the calculator for contractId %s and tenantId %s" ,contractId,tenantId));
         	return null;
         }
+        log.info(String.format("Fetched %s bill Ids from the calculator DB for contractId %s and tenantId %s", billIds.size(), contractId, tenantId));      //billIds.add("93e3bf0f-e946-400d-adc1-15b7c70604b9");
+
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(configs.getDefaultLimit()).offSet(configs.getDefaultOffset()).order(Order.ASC).build();
         

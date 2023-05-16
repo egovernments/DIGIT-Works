@@ -78,14 +78,15 @@ public class ExpenseCalculatorQueryBuilder {
         if (StringUtils.isNotBlank(contractId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" contract_number=? ");
-            preparedStmtList.add(contractId);
+            preparedStmtList.add(contractId.trim());
         }
 
         if (StringUtils.isNotBlank(tenantId)) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
             queryBuilder.append(" tenant_id=? ");
-            preparedStmtList.add(tenantId);
+            preparedStmtList.add(tenantId.trim());
         }
+        
         return queryBuilder.toString();
     }
     
