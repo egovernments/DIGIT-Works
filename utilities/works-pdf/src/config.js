@@ -62,7 +62,7 @@ module.exports = {
     estimate_search: "/estimate/v1/_search",
     musterRoll_search: "/muster-roll/v1/_search",
     contract_search: "/contract/v1/_search",
-    mdmsWageSeekerSkills_search: "/egov-mdms-service/v1/_get",
+    mdms_get: "/egov-mdms-service/v1/_get",
     orgnisation_search: "/org-services/organisation/v1/_search",
     expense_bill_search: "/expense/bill/v1/_search",
     expense_payment_search: "/expense/payment/v1/_search",

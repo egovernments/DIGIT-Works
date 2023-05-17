@@ -140,11 +140,15 @@ public class SupervisionBillGeneratorService {
 		// to be created. Find the diff by using set operations.
 		wageAndPurchaseBills.removeAll(existingBills);
 
-		if (wageAndPurchaseBills.isEmpty()) {
-			log.error("There are no bills for which supervision bill needs to be created");
-			throw new CustomException("NO_WAGE_PURCHASE_BILL",
+
+			// If the bill is empty or null, return empty response
+			if (wageAndPurchaseBills == null || CollectionUtils.isEmpty(wageAndPurchaseBills)) {
+				log.info("There are no wage and purchase bills for which supervision needs to be calculated.");
+				throw new CustomException("NO_WAGE_PURCHASE_BILL",
 					String.format("Supervision bills have been created for all existing wage and purchase bills for contract %s", criteria.getContractId()));
-		}
+
+			}
+
 		
 		log.info(String.format("There are %s bills for contract %s for which a supervision bill needs to be raised", wageAndPurchaseBills.size(), criteria.getContractId()));
 		for(String s: wageAndPurchaseBills) {
