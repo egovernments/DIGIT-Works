@@ -51,6 +51,7 @@ class Common {
   String get accept => 'CORE_BUTTON_ACCEPT';
   String get viewTermsAndConditions => 'COMMON_TERMS_AND_CONDITIONS';
   String get termsAndConditions => 'WORK_ORDER_TERMS_AND_CONDITIONS';
+  String get noTermsNConditions => 'NO_TERMS_AND_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
   String get back => 'CORE_BACK_BUTTON';
   String get sendForApproval => 'SEND_FOR_APPROVAL';
@@ -140,6 +141,7 @@ class Common {
   String get effectiveTo => 'MASTERS_EFFECTIVE_TO';
   String get validPhotoGraph => 'PHOTOGRAPH_VALID_SIZE';
   String get individualAlreadyAdded => 'IND_ALREADY_ADDED_TO_THE_TABLE';
+  String get noValue => 'ES_COMMON_NA';
 }
 
 class Home {

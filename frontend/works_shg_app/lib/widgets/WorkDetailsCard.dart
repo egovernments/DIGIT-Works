@@ -155,10 +155,12 @@ class WorkDetailsCard extends StatelessWidget {
                     .translate(cardDetails.values.elementAt(j).toString())
                 : cardDetails.values.elementAt(j).toString(),
         isActiveStatus: (isWorkOrderInbox || viewWorkOrder) &&
-                cardDetails.keys.elementAt(j).toString() == i18.common.status
+                cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+                cardDetails.length == j + 2
             ? true
             : !(isWorkOrderInbox || viewWorkOrder) &&
                 cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+                cardDetails.length == j + 2 &&
                 ((cardDetails.values.elementAt(j + 1) == 'true') ||
                     (cardDetails.values.elementAt(j) == Constants.active)),
         isRejectStatus: (isWorkOrderInbox || viewWorkOrder) &&
@@ -166,6 +168,7 @@ class WorkDetailsCard extends StatelessWidget {
             ? false
             : !(isWorkOrderInbox || viewWorkOrder) &&
                 cardDetails.keys.elementAt(j).toString() == i18.common.status &&
+                cardDetails.length == j + 2 &&
                 (cardDetails.values.elementAt(j + 1) == 'false'),
       ));
     }
@@ -375,7 +378,7 @@ class WorkDetailsCard extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                           color: isActiveStatus && !isRejectStatus
                               ? DigitTheme.instance.colorScheme.onSurfaceVariant
-                              : isRejectStatus
+                              : isRejectStatus && !isActiveStatus
                                   ? DigitTheme.instance.colorScheme.error
                                   : DigitTheme.instance.colorScheme.onSurface),
                       textAlign: TextAlign.left,

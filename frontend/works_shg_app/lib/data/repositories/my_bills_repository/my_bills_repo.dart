@@ -1,10 +1,12 @@
 // ignore_for_file: avoid_dynamic_calls
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
-import '../../models/my_bills/my_bills_model.dart';
+import '../../../models/my_bills/my_bills_inbox_config.dart';
+import '../../../models/my_bills/my_bills_model.dart';
 
 class MyBillsRepository {
   final Dio _client;
@@ -21,6 +23,28 @@ class MyBillsRepository {
           queryParameters: queryParameters, data: body ?? {}, options: options);
       return MyBillsListModelMapper.fromMap(
           response.data as Map<String, dynamic>);
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
+    }
+  }
+
+  Future<MyBillsInboxConfigList> getMyBillsInboxConfig({
+    required String apiEndPoint,
+    required String tenantId,
+    required List<Map> moduleDetails,
+  }) async {
+    try {
+      var response = await _client.post(apiEndPoint, data: {
+        "MdmsCriteria": {
+          "tenantId": tenantId,
+          "moduleDetails": moduleDetails,
+        },
+      });
+
+      return MyBillsInboxConfigList.fromJson(
+        json.decode(response.toString())['MdmsRes']['commonUiConfig'],
+      );
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;

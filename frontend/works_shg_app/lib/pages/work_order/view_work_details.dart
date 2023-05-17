@@ -527,9 +527,10 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                                                   )
                                                                               ],
                                                                             )
-                                                                          : const EmptyImage(
+                                                                          :  EmptyImage(
                                                                               align: Alignment
-                                                                                  .center),
+                                                                                  .center,
+                                                                      label: t.translate(i18.common.noTermsNConditions),),
                                                                   titlePadding: const EdgeInsets.all(
                                                                       8.0),
                                                                   contentPadding: const EdgeInsets.all(

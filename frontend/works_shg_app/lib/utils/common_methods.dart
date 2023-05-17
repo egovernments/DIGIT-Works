@@ -30,6 +30,11 @@ class CommonMethods {
 
   static Future<void> fetchPackageInfo() async {
     try {
+      if (kIsWeb) {
+        html.window.sessionStorage.clear();
+      } else {
+        await storage.deleteAll();
+      }
       packageInfo = await PackageInfo.fromPlatform();
     } catch (e, s) {
       print(e);
