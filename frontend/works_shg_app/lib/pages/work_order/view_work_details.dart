@@ -361,12 +361,16 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                         })
                                     .toList();
                                 // fileStoreList = ;
-                                attachedFiles = [...contracts.contracts!.first.documents!
+                                attachedFiles = contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs != null?  [...contracts.contracts!.first.documents!
                                     .map((e) => FileStoreModel(
                                         name: t.translate(e.documentType ?? ''), fileStoreId: e.fileStore)),
                                 ...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
                                     .map((e) => FileStoreModel(
-                                    name: t.translate(e.fileType ?? ''), fileStoreId: e.fileStoreId))];
+                                    name: t.translate(e.fileType ?? ''), fileStoreId: e.fileStoreId))] : contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs == null  ? [...contracts.contracts!.first.documents!
+                                    .map((e) => FileStoreModel(
+                                    name: t.translate(e.documentType ?? ''), fileStoreId: e.fileStore))] : contracts.contracts!.first.documents == null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
+                                    .map((e) => FileStoreModel(
+                                    name: t.translate(e.fileType ?? ''), fileStoreId: e.fileStoreId))] : [];
                               }
                             });
                       },
@@ -523,9 +527,10 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                                                   )
                                                                               ],
                                                                             )
-                                                                          : const EmptyImage(
+                                                                          :  EmptyImage(
                                                                               align: Alignment
-                                                                                  .center),
+                                                                                  .center,
+                                                                      label: t.translate(i18.common.noTermsNConditions),),
                                                                   titlePadding: const EdgeInsets.all(
                                                                       8.0),
                                                                   contentPadding: const EdgeInsets.all(

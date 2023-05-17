@@ -31,7 +31,7 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
 
   let documentFileTypeMappings = {
     docx : "vnd.openxmlformats-officedocument.wordprocessingml.document",
-    doc : "msword",
+    doc : "application/msword",
     png : "png",
     pdf : "pdf",
     jpeg : "jpeg",

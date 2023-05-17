@@ -7,8 +7,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:works_shg_app/services/urls.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
-import '../../data/my_bills_repository/my_bills_repo.dart';
 import '../../data/remote_client.dart';
+import '../../data/repositories/my_bills_repository/my_bills_repo.dart';
 import '../../models/my_bills/my_bills_model.dart';
 
 part 'search_my_bills.freezed.dart';
