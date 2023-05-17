@@ -9,8 +9,8 @@ part of 'my_bills_inbox_config.dart';
 _$_MyBillsInboxConfigList _$$_MyBillsInboxConfigListFromJson(
         Map<String, dynamic> json) =>
     _$_MyBillsInboxConfigList(
-      myBillsInboxConfig: (json['CBOBillInboxConfig'] as List<dynamic>?)
-          ?.map((e) => MyBillsInboxConfig.fromJson(e as Map<String, dynamic>))
+      myBillsInboxConfig: (json['CBOBillInboxConfig'] as List<dynamic>)
+          .map((e) => MyBillsInboxConfig.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

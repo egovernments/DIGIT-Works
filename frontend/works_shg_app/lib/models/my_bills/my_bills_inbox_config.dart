@@ -7,7 +7,7 @@ part 'my_bills_inbox_config.g.dart';
 class MyBillsInboxConfigList with _$MyBillsInboxConfigList {
   const factory MyBillsInboxConfigList({
     @JsonKey(name: 'CBOBillInboxConfig')
-        List<MyBillsInboxConfig>? myBillsInboxConfig,
+        required List<MyBillsInboxConfig> myBillsInboxConfig,
   }) = _MyBillsInboxConfigList;
 
   factory MyBillsInboxConfigList.fromJson(

@@ -22,7 +22,7 @@ MyBillsInboxConfigList _$MyBillsInboxConfigListFromJson(
 /// @nodoc
 mixin _$MyBillsInboxConfigList {
   @JsonKey(name: 'CBOBillInboxConfig')
-  List<MyBillsInboxConfig>? get myBillsInboxConfig =>
+  List<MyBillsInboxConfig> get myBillsInboxConfig =>
       throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +39,7 @@ abstract class $MyBillsInboxConfigListCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'CBOBillInboxConfig')
-          List<MyBillsInboxConfig>? myBillsInboxConfig});
+          List<MyBillsInboxConfig> myBillsInboxConfig});
 }
 
 /// @nodoc
@@ -56,13 +56,13 @@ class _$MyBillsInboxConfigListCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? myBillsInboxConfig = freezed,
+    Object? myBillsInboxConfig = null,
   }) {
     return _then(_value.copyWith(
-      myBillsInboxConfig: freezed == myBillsInboxConfig
+      myBillsInboxConfig: null == myBillsInboxConfig
           ? _value.myBillsInboxConfig
           : myBillsInboxConfig // ignore: cast_nullable_to_non_nullable
-              as List<MyBillsInboxConfig>?,
+              as List<MyBillsInboxConfig>,
     ) as $Val);
   }
 }
@@ -77,7 +77,7 @@ abstract class _$$_MyBillsInboxConfigListCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'CBOBillInboxConfig')
-          List<MyBillsInboxConfig>? myBillsInboxConfig});
+          List<MyBillsInboxConfig> myBillsInboxConfig});
 }
 
 /// @nodoc
@@ -92,13 +92,13 @@ class __$$_MyBillsInboxConfigListCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? myBillsInboxConfig = freezed,
+    Object? myBillsInboxConfig = null,
   }) {
     return _then(_$_MyBillsInboxConfigList(
-      myBillsInboxConfig: freezed == myBillsInboxConfig
+      myBillsInboxConfig: null == myBillsInboxConfig
           ? _value._myBillsInboxConfig
           : myBillsInboxConfig // ignore: cast_nullable_to_non_nullable
-              as List<MyBillsInboxConfig>?,
+              as List<MyBillsInboxConfig>,
     ));
   }
 }
@@ -108,22 +108,20 @@ class __$$_MyBillsInboxConfigListCopyWithImpl<$Res>
 class _$_MyBillsInboxConfigList implements _MyBillsInboxConfigList {
   const _$_MyBillsInboxConfigList(
       {@JsonKey(name: 'CBOBillInboxConfig')
-          final List<MyBillsInboxConfig>? myBillsInboxConfig})
+          required final List<MyBillsInboxConfig> myBillsInboxConfig})
       : _myBillsInboxConfig = myBillsInboxConfig;
 
   factory _$_MyBillsInboxConfigList.fromJson(Map<String, dynamic> json) =>
       _$$_MyBillsInboxConfigListFromJson(json);
 
-  final List<MyBillsInboxConfig>? _myBillsInboxConfig;
+  final List<MyBillsInboxConfig> _myBillsInboxConfig;
   @override
   @JsonKey(name: 'CBOBillInboxConfig')
-  List<MyBillsInboxConfig>? get myBillsInboxConfig {
-    final value = _myBillsInboxConfig;
-    if (value == null) return null;
+  List<MyBillsInboxConfig> get myBillsInboxConfig {
     if (_myBillsInboxConfig is EqualUnmodifiableListView)
       return _myBillsInboxConfig;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
+    return EqualUnmodifiableListView(_myBillsInboxConfig);
   }
 
   @override
@@ -163,7 +161,7 @@ class _$_MyBillsInboxConfigList implements _MyBillsInboxConfigList {
 abstract class _MyBillsInboxConfigList implements MyBillsInboxConfigList {
   const factory _MyBillsInboxConfigList(
           {@JsonKey(name: 'CBOBillInboxConfig')
-              final List<MyBillsInboxConfig>? myBillsInboxConfig}) =
+              required final List<MyBillsInboxConfig> myBillsInboxConfig}) =
       _$_MyBillsInboxConfigList;
 
   factory _MyBillsInboxConfigList.fromJson(Map<String, dynamic> json) =
@@ -171,7 +169,7 @@ abstract class _MyBillsInboxConfigList implements MyBillsInboxConfigList {
 
   @override
   @JsonKey(name: 'CBOBillInboxConfig')
-  List<MyBillsInboxConfig>? get myBillsInboxConfig;
+  List<MyBillsInboxConfig> get myBillsInboxConfig;
   @override
   @JsonKey(ignore: true)
   _$$_MyBillsInboxConfigListCopyWith<_$_MyBillsInboxConfigList> get copyWith =>
