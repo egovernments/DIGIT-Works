@@ -50,6 +50,8 @@ class MusterCreateBloc extends Bloc<MusterCreateEvent, MusterCreateState> {
                 "projectDesc": event.projectDesc ?? '',
                 "locality": event.locality ?? '',
                 "ward": event.ward ?? '',
+                "orgId": GlobalVariables
+                    .organisationListModel?.organisations?.first.id,
                 "projectId": event.projectId ?? '',
                 "executingAuthority": event.executingAuthority
               },

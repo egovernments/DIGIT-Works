@@ -47,6 +47,7 @@ class AttendanceRegisterTablePage extends StatefulWidget {
 
 class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   var searchController = TextEditingController();
+  int minCharForSuggestions = 3;
   var suggestionsBoxController = SuggestionsBoxController();
   List<Map<String, dynamic>> userList = [];
   List<Map<String, dynamic>> filteredUserList = [];
@@ -106,378 +107,371 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocalizationBloc, LocalizationState>(
-        builder: (context, localState) {
-      return Scaffold(
-          bottomNavigationBar: SizedBox(
-            height: 60,
-            child: DigitCard(
-              margin: const EdgeInsets.all(0),
-              padding: const EdgeInsets.all(8.0),
-              child: DigitElevatedButton(
-                onPressed: createAttendeePayLoadList.isEmpty &&
-                        deleteAttendeePayLoadList.isEmpty
-                    ? null
-                    : () {
-                        if (createAttendeePayLoadList.isNotEmpty &&
-                            deleteAttendeePayLoadList.isNotEmpty) {
-                          context.read<AttendeeCreateBloc>().add(
-                                CreateAttendeeEvent(
-                                    attendeeList: createAttendeePayLoadList),
-                              );
-                          context.read<AttendeeDeEnrollBloc>().add(
-                                DeEnrollAttendeeEvent(
-                                    attendeeList: deleteAttendeePayLoadList),
-                              );
-                        } else if (createAttendeePayLoadList.isNotEmpty &&
-                            deleteAttendeePayLoadList.isEmpty) {
-                          context.read<AttendeeCreateBloc>().add(
-                                CreateAttendeeEvent(
-                                    attendeeList: createAttendeePayLoadList),
-                              );
-                        } else if (deleteAttendeePayLoadList.isNotEmpty &&
-                            createAttendeePayLoadList.isEmpty) {
-                          context.read<AttendeeDeEnrollBloc>().add(
-                                DeEnrollAttendeeEvent(
-                                    attendeeList: deleteAttendeePayLoadList),
-                              );
-                        } else {}
-                      },
-                child: Text(
-                    AppLocalizations.of(context).translate(i18.common.submit),
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .apply(color: Colors.white)),
+    return WillPopScope(
+      onWillPop: () async {
+        if (context.router.stack[1].routeData.path.contains('work-orders')) {
+          context.router.popUntilRouteWithPath('home');
+          context.router.push(const WorkOrderRoute());
+        } else {
+          context.router.popUntilRouteWithPath('home');
+          context.router.push(const TrackAttendanceInboxRoute());
+        }
+        return false;
+      },
+      child: BlocBuilder<LocalizationBloc, LocalizationState>(
+          builder: (context, localState) {
+        return Scaffold(
+            bottomNavigationBar: SizedBox(
+              height: 60,
+              child: DigitCard(
+                margin: const EdgeInsets.all(0),
+                padding: const EdgeInsets.all(8.0),
+                child: DigitElevatedButton(
+                  onPressed: createAttendeePayLoadList.isEmpty &&
+                          deleteAttendeePayLoadList.isEmpty
+                      ? null
+                      : () {
+                          if (createAttendeePayLoadList.isNotEmpty &&
+                              deleteAttendeePayLoadList.isNotEmpty) {
+                            context.read<AttendeeCreateBloc>().add(
+                                  CreateAttendeeEvent(
+                                      attendeeList: createAttendeePayLoadList),
+                                );
+                            context.read<AttendeeDeEnrollBloc>().add(
+                                  DeEnrollAttendeeEvent(
+                                      attendeeList: deleteAttendeePayLoadList),
+                                );
+                          } else if (createAttendeePayLoadList.isNotEmpty &&
+                              deleteAttendeePayLoadList.isEmpty) {
+                            context.read<AttendeeCreateBloc>().add(
+                                  CreateAttendeeEvent(
+                                      attendeeList: createAttendeePayLoadList),
+                                );
+                          } else if (deleteAttendeePayLoadList.isNotEmpty &&
+                              createAttendeePayLoadList.isEmpty) {
+                            context.read<AttendeeDeEnrollBloc>().add(
+                                  DeEnrollAttendeeEvent(
+                                      attendeeList: deleteAttendeePayLoadList),
+                                );
+                          } else {}
+                        },
+                  child: Text(
+                      AppLocalizations.of(context).translate(i18.common.submit),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .apply(color: Colors.white)),
+                ),
               ),
             ),
-          ),
-          appBar: AppBar(
-            titleSpacing: 0,
-            title: const AppBarLogo(),
-          ),
-          drawer: DrawerWrapper(Drawer(
-              child: SideBar(
-            module: CommonMethods.getLocaleModules(),
-          ))),
-          body: Stack(children: [
-            Container(
-              color: const Color.fromRGBO(238, 238, 238, 1),
-              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
-              height: MediaQuery.of(context).size.height - 50,
-              child: CustomScrollView(slivers: [
-                SliverList(
-                    delegate: SliverChildListDelegate([
-                  Back(
-                    backLabel:
-                        AppLocalizations.of(context).translate(i18.common.back),
-                  ),
-                  BlocListener<AttendanceIndividualProjectSearchBloc,
-                      AttendanceIndividualProjectSearchState>(
-                    listener: (context, registerState) {
-                      registerState.maybeWhen(
-                          loading: () =>
-                              shg_loader.Loaders.circularLoader(context),
-                          initial: () {
-                            existingAttendeeList.clear();
-                          },
-                          loaded: (AttendanceRegistersModel?
-                              individualAttendanceRegisterModel) {
-                            registerId = individualAttendanceRegisterModel!
-                                .attendanceRegister!.first.id
-                                .toString();
-                            registerDetails = individualAttendanceRegisterModel
-                                .attendanceRegister!
-                                .map((e) => {
-                                      i18.workOrder.workOrderNo:
-                                          e.attendanceRegisterAdditionalDetails
-                                                  ?.contractId ??
-                                              'NA',
-                                      i18.attendanceMgmt.registerId:
-                                          e.registerNumber,
-                                      i18.attendanceMgmt.projectId:
-                                          e.attendanceRegisterAdditionalDetails
-                                                  ?.projectId ??
-                                              'NA',
-                                      i18.attendanceMgmt.projectDesc:
-                                          e.attendanceRegisterAdditionalDetails
-                                                  ?.projectDesc ??
-                                              'NA'
-                                    })
-                                .toList();
-                          },
-                          orElse: () => false);
-                    },
-                    child: BlocBuilder<AttendanceIndividualProjectSearchBloc,
+            appBar: AppBar(
+              titleSpacing: 0,
+              title: const AppBarLogo(),
+            ),
+            drawer: DrawerWrapper(Drawer(
+                child: SideBar(
+              module: CommonMethods.getLocaleModules(),
+            ))),
+            body: Stack(children: [
+              Container(
+                color: const Color.fromRGBO(238, 238, 238, 1),
+                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
+                height: MediaQuery.of(context).size.height - 50,
+                child: CustomScrollView(slivers: [
+                  SliverList(
+                      delegate: SliverChildListDelegate([
+                    Back(
+                        backLabel: AppLocalizations.of(context)
+                            .translate(i18.common.back),
+                        callback: () {
+                          if (context.router.stack[1].routeData.path
+                              .contains('work-orders')) {
+                            context.router.popUntilRouteWithPath('home');
+                            context.router.push(const WorkOrderRoute());
+                          } else {
+                            context.router.popUntilRouteWithPath('home');
+                            context.router
+                                .push(const TrackAttendanceInboxRoute());
+                          }
+                        }),
+                    BlocListener<AttendanceIndividualProjectSearchBloc,
+                        AttendanceIndividualProjectSearchState>(
+                      listener: (context, registerState) {
+                        registerState.maybeWhen(
+                            loading: () =>
+                                shg_loader.Loaders.circularLoader(context),
+                            initial: () {
+                              existingAttendeeList.clear();
+                            },
+                            loaded: (AttendanceRegistersModel?
+                                individualAttendanceRegisterModel) {
+                              registerId = individualAttendanceRegisterModel!
+                                  .attendanceRegister!.first.id
+                                  .toString();
+                              registerDetails =
+                                  individualAttendanceRegisterModel
+                                      .attendanceRegister!
+                                      .map((e) => {
+                                            i18.workOrder.workOrderNo:
+                                                e.attendanceRegisterAdditionalDetails
+                                                        ?.contractId ??
+                                                    'NA',
+                                            i18.attendanceMgmt.registerId:
+                                                e.registerNumber,
+                                            i18.attendanceMgmt.projectId:
+                                                e.attendanceRegisterAdditionalDetails
+                                                        ?.projectId ??
+                                                    'NA',
+                                            i18.attendanceMgmt.projectDesc:
+                                                e.attendanceRegisterAdditionalDetails
+                                                        ?.projectDesc ??
+                                                    'NA'
+                                          })
+                                      .toList();
+                            },
+                            orElse: () => false);
+                      },
+                      child: BlocBuilder<AttendanceIndividualProjectSearchBloc,
+                              AttendanceIndividualProjectSearchState>(
+                          builder: (context, registerState) {
+                        return registerState.maybeWhen(
+                            orElse: () => Container(),
+                            loading: () =>
+                                shg_loader.Loaders.circularLoader(context),
+                            loaded: (AttendanceRegistersModel?
+                                    individualAttendanceRegisterModel) =>
+                                WorkDetailsCard(registerDetails));
+                      }),
+                    ),
+                  ])),
+                  SliverToBoxAdapter(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            margin: const EdgeInsets.all(4.0),
+                            child: StatefulBuilder(
+                                builder: (context, setAutoState) {
+                              return AutoCompleteSearchBar(
+                                hintText: AppLocalizations.of(context)
+                                    .translate(
+                                        i18.common.searchByNameMobileNumber),
+                                controller: searchController,
+                                suggestionsBoxController:
+                                    suggestionsBoxController,
+                                onSuggestionSelected: onSuggestionSelected,
+                                callBack: onSearchVendorList,
+                                minCharsForSuggestions: 3,
+                                listTile: buildTile,
+                                labelText: '',
+                              );
+                            })),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        BlocListener<AttendanceIndividualProjectSearchBloc,
                             AttendanceIndividualProjectSearchState>(
-                        builder: (context, registerState) {
-                      return registerState.maybeWhen(
-                          orElse: () => Container(),
-                          loading: () =>
-                              shg_loader.Loaders.circularLoader(context),
-                          loaded: (AttendanceRegistersModel?
-                                  individualAttendanceRegisterModel) =>
-                              WorkDetailsCard(registerDetails));
-                    }),
-                  ),
-                ])),
-                SliverToBoxAdapter(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                          alignment: Alignment.centerLeft,
-                          margin: const EdgeInsets.all(4.0),
-                          child: AutoCompleteSearchBar(
-                            hintText: AppLocalizations.of(context)
-                                .translate(i18.common.searchByNameMobileNumber),
-                            controller: searchController,
-                            suggestionsBoxController: suggestionsBoxController,
-                            onSuggestionSelected: onSuggestionSelected,
-                            callBack: onSearchVendorList,
-                            minCharsForSuggestions: 3,
-                            listTile: buildTile,
-                            labelText: '',
-                          )),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      BlocListener<AttendanceIndividualProjectSearchBloc,
-                          AttendanceIndividualProjectSearchState>(
-                        listener: (context, registerState) {
-                          registerState.maybeWhen(
-                              loading: () =>
-                                  shg_loader.Loaders.circularLoader(context),
-                              initial: () {
-                                existingAttendeeList.clear();
-                              },
-                              loaded: (AttendanceRegistersModel?
-                                  individualAttendanceRegisterModel) {
-                                if (individualAttendanceRegisterModel!
-                                            .attendanceRegister !=
-                                        null &&
-                                    individualAttendanceRegisterModel!
-                                        .attendanceRegister!.isNotEmpty) {
-                                  registerStartDate =
-                                      individualAttendanceRegisterModel
-                                              .attendanceRegister!
-                                              .first
-                                              .startDate ??
-                                          DateTime.now().millisecondsSinceEpoch;
-                                  if (individualAttendanceRegisterModel
-                                              .attendanceRegister!
-                                              .first
-                                              .attendeesEntries !=
+                          listener: (context, registerState) {
+                            registerState.maybeWhen(
+                                loading: () =>
+                                    shg_loader.Loaders.circularLoader(context),
+                                initial: () {
+                                  existingAttendeeList.clear();
+                                },
+                                loaded: (AttendanceRegistersModel?
+                                    individualAttendanceRegisterModel) {
+                                  if (individualAttendanceRegisterModel!
+                                              .attendanceRegister !=
                                           null &&
-                                      individualAttendanceRegisterModel
-                                          .attendanceRegister!
-                                          .first
-                                          .attendeesEntries!
-                                          .where((e) =>
-                                              e.denrollmentDate == null ||
-                                              !(e.denrollmentDate! <=
-                                                  DateTime.now()
-                                                      .millisecondsSinceEpoch))
-                                          .toList()
-                                          .isNotEmpty) {
-                                    existingAttendeeList =
-                                        individualAttendanceRegisterModel!
+                                      individualAttendanceRegisterModel!
+                                          .attendanceRegister!.isNotEmpty) {
+                                    registerStartDate =
+                                        individualAttendanceRegisterModel
+                                                .attendanceRegister!
+                                                .first
+                                                .startDate ??
+                                            DateTime.now()
+                                                .millisecondsSinceEpoch;
+                                    if (individualAttendanceRegisterModel
+                                                .attendanceRegister!
+                                                .first
+                                                .attendeesEntries !=
+                                            null &&
+                                        individualAttendanceRegisterModel
                                             .attendanceRegister!
                                             .first
                                             .attendeesEntries!
-                                            .where((att) =>
-                                                att.denrollmentDate == null ||
-                                                !(att.denrollmentDate! <=
+                                            .where((e) =>
+                                                e.denrollmentDate == null ||
+                                                !(e.denrollmentDate! <=
                                                     DateTime.now()
                                                         .millisecondsSinceEpoch))
-                                            .map((e) => {
-                                                  "uuid":
-                                                      e.individualId.toString()
-                                                })
-                                            .toList();
-                                    context.read<IndividualSearchBloc>().add(
-                                          SearchIndividualIdEvent(
-                                              ids: individualAttendanceRegisterModel!
-                                                  .attendanceRegister!
-                                                  .first
-                                                  .attendeesEntries
-                                                  ?.where((att) =>
-                                                      att.denrollmentDate ==
-                                                          null ||
-                                                      !(att.denrollmentDate! <=
-                                                          DateTime.now()
-                                                              .millisecondsSinceEpoch))
-                                                  .map((e) =>
-                                                      e.individualId.toString())
-                                                  .toList(),
-                                              tenant: widget.tenantId),
-                                        );
-                                  }
-                                }
-                              },
-                              error: (String? error) =>
-                                  Notifiers.getToastMessage(
-                                      context, error.toString(), 'ERROR'),
-                              orElse: () => Container());
-                        },
-                        child: BlocBuilder<IndividualSearchBloc,
-                                IndividualSearchState>(
-                            builder: (context, userState) {
-                          return userState.maybeWhen(
-                              loading: () =>
-                                  shg_loader.Loaders.circularLoader(context),
-                              initial: () {
-                                existingAttendeeList.clear();
-                                return Column(
-                                  children: [
-                                    const EmptyImage(align: Alignment.center),
-                                    ButtonLink(
-                                      AppLocalizations.of(context).translate(
-                                          i18.attendanceMgmt.addNewWageSeeker),
-                                      () {
-                                        context.router.push(
-                                            const RegisterIndividualRoute());
-                                      },
-                                      align: Alignment.center,
-                                    ),
-                                  ],
-                                );
-                              },
-                              loaded:
-                                  (IndividualListModel? individualListModel) {
-                                userList = individualListModel!
-                                        .Individual!.isNotEmpty
-                                    ? individualListModel.Individual!
-                                        .map((e) => {
-                                              "name": e.name?.givenName,
-                                              "aadhaar": e.identifiers?.first
-                                                      .identifierId ??
-                                                  e.individualId,
-                                              "individualCode": e.individualId,
-                                              "skill": AppLocalizations.of(
-                                                      context)
-                                                  .translate(
-                                                      '${e.skills!.first.level?.toUpperCase()}_${e.skills!.first.type?.toUpperCase()}'),
-                                              "individualId": e.id,
-                                              "uuid": e.id,
-                                              "individualGaurdianName":
-                                                  e.fatherName ?? e.husbandName,
-                                              "mobileNumber": e.mobileNumber,
-                                              "tenantId": e.tenantId
-                                            })
-                                        .toList()
-                                    : [];
-                                if (userList.isNotEmpty) {
-                                  for (var user in userList) {
-                                    var userToAdd = {
-                                      "name": user["name"],
-                                      "aadhaar": user["aadhaar"],
-                                      "individualCode": user["individualCode"],
-                                      "uuid": user["uuid"],
-                                      "skill": user["skill"],
-                                      "individualGaurdianName":
-                                          user["individualGaurdianName"],
-                                      "individualId": user["individualId"],
-                                      "mobileNumber": user["mobileNumber"],
-                                      "tenantId": user["tenantId"]
-                                    };
-                                    bool hasDuplicate = attendeeTableList
-                                        .where((e) =>
-                                            e["individualId"] ==
-                                            user["individualId"])
-                                        .isNotEmpty;
-
-                                    if (!hasDuplicate && !searchUser) {
-                                      attendeeTableList.add(userToAdd);
+                                            .toList()
+                                            .isNotEmpty) {
+                                      existingAttendeeList =
+                                          individualAttendanceRegisterModel!
+                                              .attendanceRegister!
+                                              .first
+                                              .attendeesEntries!
+                                              .where((att) =>
+                                                  att.denrollmentDate == null ||
+                                                  !(att.denrollmentDate! <=
+                                                      DateTime.now()
+                                                          .millisecondsSinceEpoch))
+                                              .map((e) => {
+                                                    "uuid": e.individualId
+                                                        .toString()
+                                                  })
+                                              .toList();
+                                      context.read<IndividualSearchBloc>().add(
+                                            SearchIndividualIdEvent(
+                                                ids: individualAttendanceRegisterModel!
+                                                    .attendanceRegister!
+                                                    .first
+                                                    .attendeesEntries
+                                                    ?.where((att) =>
+                                                        att.denrollmentDate ==
+                                                            null ||
+                                                        !(att.denrollmentDate! <=
+                                                            DateTime.now()
+                                                                .millisecondsSinceEpoch))
+                                                    .map((e) => e.individualId
+                                                        .toString())
+                                                    .toList(),
+                                                tenant: widget.tenantId),
+                                          );
                                     }
                                   }
-                                  userTableList = attendeeTableList.isNotEmpty
-                                      ? attendeeTableList
-                                          .map(
-                                              (e) => TableDataModel.fromJson(e))
+                                },
+                                error: (String? error) =>
+                                    Notifiers.getToastMessage(
+                                        context, error.toString(), 'ERROR'),
+                                orElse: () => Container());
+                          },
+                          child: BlocBuilder<IndividualSearchBloc,
+                                  IndividualSearchState>(
+                              builder: (context, userState) {
+                            return userState.maybeWhen(
+                                loading: () =>
+                                    shg_loader.Loaders.circularLoader(context),
+                                initial: () {
+                                  existingAttendeeList.clear();
+                                  return Column(
+                                    children: [
+                                      const EmptyImage(align: Alignment.center),
+                                      ButtonLink(
+                                        AppLocalizations.of(context).translate(
+                                            i18.attendanceMgmt
+                                                .addNewWageSeeker),
+                                        () {
+                                          context.router.push(
+                                              const RegisterIndividualRoute());
+                                        },
+                                        align: Alignment.center,
+                                      ),
+                                    ],
+                                  );
+                                },
+                                loaded:
+                                    (IndividualListModel? individualListModel) {
+                                  userList = individualListModel!
+                                          .Individual!.isNotEmpty
+                                      ? individualListModel.Individual!
+                                          .map((e) => {
+                                                "name": e.name?.givenName,
+                                                "aadhaar": e.identifiers?.first
+                                                        .identifierId ??
+                                                    e.individualId,
+                                                "individualCode":
+                                                    e.individualId,
+                                                "skill": AppLocalizations.of(
+                                                        context)
+                                                    .translate(
+                                                        'COMMON_MASTERS_SKILLS_${e.skills!.first.level?.toUpperCase()}.${e.skills!.first.type?.toUpperCase()}'),
+                                                "individualId": e.id,
+                                                "uuid": e.id,
+                                                "individualGaurdianName":
+                                                    e.fatherName ??
+                                                        e.husbandName,
+                                                "mobileNumber": e.mobileNumber,
+                                                "tenantId": e.tenantId
+                                              })
                                           .toList()
                                       : [];
-                                  tableData = getAttendanceData(userTableList);
-                                }
-                                return userTableList.isNotEmpty ||
-                                        deleteAttendeePayLoadList.isNotEmpty
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                            LayoutBuilder(builder:
-                                                (context, constraints) {
-                                              var width = constraints.maxWidth <
-                                                      760
-                                                  ? 120.0
-                                                  : (constraints.maxWidth / 5);
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: shg_app.DigitTable(
-                                                  headerList: headerList,
-                                                  tableData: tableData,
-                                                  leftColumnWidth: width,
-                                                  rightColumnWidth: width * 4,
-                                                  height: 58 +
-                                                      (52.0 *
-                                                          (tableData.length +
-                                                              0.2)),
-                                                  scrollPhysics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                ),
-                                              );
-                                            }),
-                                            BlocListener<AttendeeCreateBloc,
-                                                AttendeeCreateState>(
-                                              listener: (context, createState) {
-                                                createState.maybeWhen(
-                                                    loaded: () {
-                                                      Notifiers.getToastMessage(
-                                                          context,
-                                                          AppLocalizations.of(
-                                                                  context)
-                                                              .translate(i18
-                                                                  .attendanceMgmt
-                                                                  .attendeeCreateSuccess),
-                                                          'SUCCESS');
-                                                      context.router.popAndPush(
-                                                          AttendanceRegisterTableRoute(
-                                                              registerId: widget
-                                                                  .registerId
-                                                                  .toString(),
-                                                              tenantId: widget!
-                                                                  .tenantId
-                                                                  .toString()));
-                                                    },
-                                                    error: (String? error) {
-                                                      Notifiers.getToastMessage(
-                                                          context,
-                                                          AppLocalizations.of(
-                                                                  context)
-                                                              .translate(error
-                                                                  .toString()),
-                                                          'ERROR');
-                                                      context.router.popAndPush(
-                                                          AttendanceRegisterTableRoute(
-                                                              registerId: widget
-                                                                  .registerId
-                                                                  .toString(),
-                                                              tenantId: widget!
-                                                                  .tenantId
-                                                                  .toString()));
-                                                    },
-                                                    orElse: () {});
-                                              },
-                                              child: BlocListener<
-                                                  AttendeeDeEnrollBloc,
-                                                  AttendeeDeEnrollState>(
+                                  if (userList.isNotEmpty) {
+                                    for (var user in userList) {
+                                      var userToAdd = {
+                                        "name": user["name"],
+                                        "aadhaar": user["aadhaar"],
+                                        "individualCode":
+                                            user["individualCode"],
+                                        "uuid": user["uuid"],
+                                        "skill": user["skill"],
+                                        "individualGaurdianName":
+                                            user["individualGaurdianName"],
+                                        "individualId": user["individualId"],
+                                        "mobileNumber": user["mobileNumber"],
+                                        "tenantId": user["tenantId"]
+                                      };
+                                      bool hasDuplicate = attendeeTableList
+                                          .where((e) =>
+                                              e["individualId"] ==
+                                              user["individualId"])
+                                          .isNotEmpty;
+
+                                      if (!hasDuplicate && !searchUser) {
+                                        attendeeTableList.add(userToAdd);
+                                      }
+                                    }
+                                    userTableList = attendeeTableList.isNotEmpty
+                                        ? attendeeTableList
+                                            .map((e) =>
+                                                TableDataModel.fromJson(e))
+                                            .toList()
+                                        : [];
+                                    tableData =
+                                        getAttendanceData(userTableList);
+                                  }
+                                  return userTableList.isNotEmpty ||
+                                          deleteAttendeePayLoadList.isNotEmpty
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                              LayoutBuilder(builder:
+                                                  (context, constraints) {
+                                                var width =
+                                                    constraints.maxWidth < 760
+                                                        ? 120.0
+                                                        : (constraints
+                                                                .maxWidth /
+                                                            5);
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: shg_app.DigitTable(
+                                                    headerList: headerList,
+                                                    tableData: tableData,
+                                                    leftColumnWidth: width,
+                                                    rightColumnWidth: width * 4,
+                                                    height: 58 +
+                                                        (52.0 *
+                                                            (tableData.length +
+                                                                0.2)),
+                                                    scrollPhysics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                  ),
+                                                );
+                                              }),
+                                              BlocListener<AttendeeCreateBloc,
+                                                  AttendeeCreateState>(
                                                 listener:
-                                                    (context, deEnrollState) {
-                                                  deEnrollState.maybeWhen(
+                                                    (context, createState) {
+                                                  createState.maybeWhen(
                                                       loaded: () {
                                                         Notifiers.getToastMessage(
                                                             context,
@@ -485,12 +479,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                     context)
                                                                 .translate(i18
                                                                     .attendanceMgmt
-                                                                    .attendeeDeEnrollSuccess),
+                                                                    .attendeeCreateSuccess),
                                                             'SUCCESS');
-
-                                                        Future.delayed(
-                                                            const Duration(
-                                                                seconds: 1));
                                                         context.router.popAndPush(
                                                             AttendanceRegisterTableRoute(
                                                                 registerId: widget
@@ -517,44 +507,92 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                                     .tenantId
                                                                     .toString()));
                                                       },
-                                                      orElse: () =>
-                                                          Container());
+                                                      orElse: () {});
                                                 },
-                                                child: Container(),
+                                                child: BlocListener<
+                                                    AttendeeDeEnrollBloc,
+                                                    AttendeeDeEnrollState>(
+                                                  listener:
+                                                      (context, deEnrollState) {
+                                                    deEnrollState.maybeWhen(
+                                                        loaded: () {
+                                                          Notifiers.getToastMessage(
+                                                              context,
+                                                              AppLocalizations.of(
+                                                                      context)
+                                                                  .translate(i18
+                                                                      .attendanceMgmt
+                                                                      .attendeeDeEnrollSuccess),
+                                                              'SUCCESS');
+
+                                                          Future.delayed(
+                                                              const Duration(
+                                                                  seconds: 1));
+                                                          context.router.popAndPush(
+                                                              AttendanceRegisterTableRoute(
+                                                                  registerId: widget
+                                                                      .registerId
+                                                                      .toString(),
+                                                                  tenantId: widget!
+                                                                      .tenantId
+                                                                      .toString()));
+                                                        },
+                                                        error: (String? error) {
+                                                          Notifiers.getToastMessage(
+                                                              context,
+                                                              AppLocalizations.of(
+                                                                      context)
+                                                                  .translate(error
+                                                                      .toString()),
+                                                              'ERROR');
+                                                          context.router.popAndPush(
+                                                              AttendanceRegisterTableRoute(
+                                                                  registerId: widget
+                                                                      .registerId
+                                                                      .toString(),
+                                                                  tenantId: widget!
+                                                                      .tenantId
+                                                                      .toString()));
+                                                        },
+                                                        orElse: () =>
+                                                            Container());
+                                                  },
+                                                  child: Container(),
+                                                ),
                                               ),
+                                            ])
+                                      : Column(
+                                          children: [
+                                            const EmptyImage(
+                                                align: Alignment.center),
+                                            ButtonLink(
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.attendanceMgmt
+                                                      .addNewWageSeeker),
+                                              () {
+                                                context.router.push(
+                                                    const RegisterIndividualRoute());
+                                              },
+                                              align: Alignment.center,
                                             ),
-                                          ])
-                                    : Column(
-                                        children: [
-                                          const EmptyImage(
-                                              align: Alignment.center),
-                                          ButtonLink(
-                                            AppLocalizations.of(context)
-                                                .translate(i18.attendanceMgmt
-                                                    .addNewWageSeeker),
-                                            () {
-                                              context.router.push(
-                                                  const RegisterIndividualRoute());
-                                            },
-                                            align: Alignment.center,
-                                          ),
-                                        ],
-                                      );
-                              },
-                              error: (String? error) => Container(),
-                              orElse: () => Container());
-                        }),
-                      ),
-                      const SizedBox(height: 30),
-                      const Align(
-                        alignment: Alignment.bottomCenter,
-                        child: PoweredByDigit(),
-                      ),
-                    ]))
-              ]),
-            ),
-          ]));
-    });
+                                          ],
+                                        );
+                                },
+                                error: (String? error) => Container(),
+                                orElse: () => Container());
+                          }),
+                        ),
+                        const SizedBox(height: 30),
+                        const Align(
+                          alignment: Alignment.bottomCenter,
+                          child: PoweredByDigit(),
+                        ),
+                      ]))
+                ]),
+              ),
+            ]));
+      }),
+    );
   }
 
   void onSuggestionSelected(user) {
@@ -633,6 +671,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
   Future<List<dynamic>> onSearchVendorList(pattern) async {
     searchUser = true;
     if (pattern.toString().isNotEmpty &&
+        pattern.toString().trim().length == 10 &&
         CommonMethods().containsOnlyNumbers(pattern)) {
       context.read<IndividualSearchBloc>().add(
             SearchIndividualEvent(
@@ -695,7 +734,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
           apiKey: tableDataModel.individualGaurdianName),
       TableData(
           label: AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-              .translate(tableDataModel.skill.toString()),
+              .translate('${tableDataModel.skill}'),
           apiKey: tableDataModel.skill),
       TableData(
           label: tableDataModel.mobileNumber,

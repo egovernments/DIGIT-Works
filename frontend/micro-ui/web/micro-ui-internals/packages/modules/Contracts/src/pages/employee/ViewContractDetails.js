@@ -156,7 +156,7 @@ const ViewContractDetails = () => {
                         url={Digit.Utils.Urls.contracts.update}
                         moduleCode="Contract"
                     />
-                    {data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" ?
+                    {data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" && actionsMenu?.length>0 ?
                         <ActionBar>
 
                             {showActions ? <Menu

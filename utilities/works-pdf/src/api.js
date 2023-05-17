@@ -190,8 +190,14 @@ async function search_mdms(request) {
   });
 }
 
-
-
+async function search_localization(request, params) {
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.localization, config.paths.localization_search),
+    data: request,
+    params: params
+  });
+}
 
 async function create_pdf(tenantId, key, data, requestinfo) {
   var oj = Object.assign(requestinfo, data);
@@ -477,6 +483,7 @@ module.exports = {
   search_musterRoll,
   search_contract,
   search_mdms,
+  search_localization,
   search_mdmsLabourCharges,
   search_organisation,
   search_expense_bill,

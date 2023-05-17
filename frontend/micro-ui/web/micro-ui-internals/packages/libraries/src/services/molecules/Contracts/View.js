@@ -38,6 +38,8 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
                 title: "WORKS_RELEVANT_DOCUMENTS",
                 BS : 'Works',
                 values: allDocuments?.map((document) => {
+                    if(!document.fileStoreId && !document.fileStore)
+                    return null
                    if(document?.status !== "INACTIVE") {
                     if(document?.fileStoreId){
                             //ESTIMATE FILES

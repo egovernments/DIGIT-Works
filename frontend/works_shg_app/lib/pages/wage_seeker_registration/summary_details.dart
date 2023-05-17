@@ -22,6 +22,7 @@ import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
 import '../../utils/global_variables.dart';
 import '../../utils/notifiers.dart';
+import '../../widgets/loaders.dart' as shg_loader;
 
 class SummaryDetailsPage extends StatefulWidget {
   final void Function(int index) onPressed;
@@ -244,7 +245,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                         color: const DigitColors().burningOrange,
                       ),
                       onTap: () {
-                        widget.onPressed(2);
+                        widget.onPressed(1);
                       },
                     )
                   ],
@@ -317,7 +318,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                         color: const DigitColors().burningOrange,
                       ),
                       onTap: () {
-                        widget.onPressed(3);
+                        widget.onPressed(2);
                       },
                     )
                   ],
@@ -352,7 +353,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                   listener: (context, individualState) {
                     individualState.maybeWhen(
                         orElse: () => false,
-                        loading: () => Loaders.circularLoader(context),
+                        loading: () =>
+                            shg_loader.Loaders.circularLoader(context),
                         loaded: (SingleIndividualModel? individualListModel) {
                           context.read<WageSeekerBankCreateBloc>().add(
                                 CreateBankWageSeekerEvent(
@@ -379,7 +381,8 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                     listener: (context, individualState) {
                       individualState.maybeWhen(
                           orElse: () => false,
-                          loading: () => Loaders.circularLoader(context),
+                          loading: () =>
+                              shg_loader.Loaders.circularLoader(context),
                           loaded: (BankingDetailsModel? bankingDetails,
                               BankAccounts? bankAccountDetails) {
                             var localizationText =

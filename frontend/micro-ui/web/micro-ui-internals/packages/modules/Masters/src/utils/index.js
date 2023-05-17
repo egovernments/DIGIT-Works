@@ -137,8 +137,8 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
             individualId: wageSeekerDataFromAPI?.individual?.id,
             tenantId: wageSeekerDataFromAPI?.individual?.address?.[0]?.tenantId,
             city: formData?.locDetails_city?.code,
-            doorNo: formData?.locDetails_houseName,
-            street: formData?.locDetails_streetName,
+            doorNo: formData?.locDetails_houseName || "NA", //min 2 chars mandatory from BE
+            street: formData?.locDetails_streetName || "NA" ,//min 2 chars mandatory from BE
             type: "PERMANENT",
             locality: {
                 code: formData?.locDetails_locality?.code,
@@ -154,6 +154,8 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
             Individual.skillsTobeRemoved = skillsTobeRemoved
         }
         Individual.rowVersion = wageSeekerDataFromAPI?.individual?.rowVersion
+        //here set the identifiers on Individual object
+        Individual.identifiers = wageSeekerDataFromAPI?.individual?.identifiers
     }
 
     return {

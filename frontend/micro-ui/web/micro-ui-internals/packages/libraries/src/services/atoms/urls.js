@@ -89,7 +89,13 @@ const Urls = {
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
     createPayment: "/expense/payment/v1/_create"
   },
+expense:{
+  createPayment: "/expense/payment/v1/_create",
+  searchPayment: "/expense/payment/v1/_search",
+  updatePayment: "/expense/payment/v1/_update",
+  regenerate : '/egov-pdf/bill/_generate'
 
+},
   pt: {
     fectch_property: "/property-services/property/_search",
     fetch_payment_details: "/billing-service/bill/v2/_fetchbill",

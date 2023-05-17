@@ -115,7 +115,7 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                               'NA',
                                           i18.attendanceMgmt.projectDesc: e
                                                   .musterAdditionalDetails
-                                                  ?.projectName ??
+                                                  ?.projectDesc ??
                                               'NA',
                                           i18.attendanceMgmt.musterRollPeriod:
                                               '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',

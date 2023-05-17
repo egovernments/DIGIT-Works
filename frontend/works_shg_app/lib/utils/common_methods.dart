@@ -18,7 +18,7 @@ import 'global_variables.dart';
 class CommonMethods {
   Future<void> deleteLocalStorageKey() async {
     if (kIsWeb) {
-      html.window.localStorage.remove(GlobalVariables.selectedLocale());
+      html.window.sessionStorage.remove(GlobalVariables.selectedLocale());
     } else {
       await storage.delete(key: GlobalVariables.selectedLocale().toString());
     }
@@ -30,6 +30,11 @@ class CommonMethods {
 
   static Future<void> fetchPackageInfo() async {
     try {
+      if (kIsWeb) {
+        html.window.sessionStorage.clear();
+      } else {
+        await storage.deleteAll();
+      }
       packageInfo = await PackageInfo.fromPlatform();
     } catch (e, s) {
       print(e);
@@ -127,7 +132,7 @@ class CommonMethods {
 
   static Future<bool> isValidFileSize(int fileLength) async {
     var flag = true;
-    if (fileLength > 2000000) {
+    if (fileLength > 5000000) {
       flag = false;
     }
     return flag;
