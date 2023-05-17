@@ -97,7 +97,7 @@ class _SideBar extends State<SideBar> {
           }),
           Row(
             children: [
-              context.router.currentPath == '/'
+              context.router.currentPath == '/home'
                   ? Container(
                       alignment: Alignment.centerLeft,
                       height: 60,
@@ -109,7 +109,7 @@ class _SideBar extends State<SideBar> {
                 child: DigitIconTile(
                   title:
                       AppLocalizations.of(context).translate(i18.common.home),
-                  selected: context.router.currentPath == '/',
+                  selected: context.router.currentPath == '/home',
                   icon: Icons.home,
                   onPressed: () => context.router.replace(const HomeRoute()),
                 ),

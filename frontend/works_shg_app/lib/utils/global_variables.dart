@@ -15,7 +15,7 @@ import '../services/local_storage.dart';
 class GlobalVariables {
   static dynamic getUserInfo() async {
     if (kIsWeb) {
-      return jsonDecode(html.window.localStorage['userRequest'].toString());
+      return jsonDecode(html.window.sessionStorage['userRequest'].toString());
     } else {
       var userReq = await storage.read(key: 'userRequest');
       return jsonDecode(userReq.toString());
@@ -25,7 +25,7 @@ class GlobalVariables {
   static Future<String?> getAuthToken() async {
     dynamic accessToken;
     if (kIsWeb) {
-      accessToken = html.window.localStorage['accessToken'];
+      accessToken = html.window.sessionStorage['accessToken'];
       return jsonDecode(accessToken.toString());
     } else {
       accessToken = await storage.read(key: 'accessToken');
@@ -35,7 +35,7 @@ class GlobalVariables {
 
   static dynamic getLanguages() async {
     if (kIsWeb) {
-      return jsonDecode(html.window.localStorage['languages'].toString())
+      return jsonDecode(html.window.sessionStorage['languages'].toString())
           .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
           .toList();
     } else {
@@ -52,8 +52,8 @@ class GlobalVariables {
         ? module.split(',').map((m) => m.trim()).toList()
         : [module];
     if (kIsWeb) {
-      messages = html.window.localStorage.keys.contains(locale)
-          ? jsonDecode(html.window.localStorage[locale].toString())
+      messages = html.window.sessionStorage.keys.contains(locale)
+          ? jsonDecode(html.window.sessionStorage[locale].toString())
               .map<LocalizationLabel>((e) => LocalizationLabel.fromJson(e))
               .toList()
           : [];
@@ -83,7 +83,7 @@ class GlobalVariables {
     List<Languages>? languagesList;
     if (kIsWeb) {
       languagesList =
-          jsonDecode(html.window.localStorage['languages'].toString())
+          jsonDecode(html.window.sessionStorage['languages'].toString())
               .map<Languages>((e) => Languages.fromJson(e))
               .toList();
       return languagesList!.where((elem) => elem.isSelected).first.value;
