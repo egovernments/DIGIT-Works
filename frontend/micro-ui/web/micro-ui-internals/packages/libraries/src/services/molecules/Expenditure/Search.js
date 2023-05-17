@@ -167,7 +167,7 @@ export const BillsSearch = {
     const billDetailsBelow = {
       title: "EXP_BILL_DETAILS",
       asSectionHeader: true,
-      values: [{ title: "EXP_TOTAL_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.totalAmount, "number") || t("NA") }],
+      values: [{ title: "EXP_TOTAL_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(Math.round(supervisionBill?.totalAmount), "number") || t("NA") }],
     };
 
     const totalBillAmtBelow = {
