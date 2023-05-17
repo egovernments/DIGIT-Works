@@ -55,8 +55,6 @@ class AppLocalizations {
   }
 
   Future<bool> load() async {
-    print(locale);
-    print('changedLocale');
     if (scaffoldMessengerKey.currentContext != null) {
       await getLocalizationLabels();
       return true;
