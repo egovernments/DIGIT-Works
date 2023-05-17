@@ -249,7 +249,7 @@ const getBankAccountDetails = async (requestData, beneficiaryIds) => {
                 limit: limit,
                 offSet: idx * limit,
                 sortBy: "createdTime",
-                order: {}
+                order: "DESC"
             }
             nRequest['RequestInfo'] = defaultRequest["RequestInfo"]
             requests.push(nRequest);
