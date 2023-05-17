@@ -8,6 +8,27 @@ const DeductionsTable = ({control,watch,...props}) => {
     const [sessionFormData] = PurchaseBillSession;
     const [totalAmount,setTotalAmount] = useState(0)
     const formFieldName = "deductionDetails" // this will be the key under which the data for this table will be present on onFormSubmit
+    
+    const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
+
+      const tenant = Digit.ULBService.getStateId();
+      const { isLoading: isHeadCodesLoading, data: HeadCodes } = Digit.Hooks.useCustomMDMS(
+        tenant,
+        "expense",
+        [
+          {
+            name: "HeadCodes",
+          },
+        ],
+        {
+          select: (data) => {
+            return data?.expense?.HeadCodes?.filter((row) => row?.category === "deduction" && row?.service === "works.purchase").map(
+              (row) => row.code
+            );
+          },
+          enabled:true
+        }
+      );
 
     //update deduction table with session data
     const renderDeductionsFromSession = () => {
@@ -137,8 +158,7 @@ const DeductionsTable = ({control,watch,...props}) => {
     }
 
     const getDropDownDataFromMDMS = (t, row, inputName, props, register, optionKey = "name", options = []) => {
-      const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
-
+      
         const { isLoading, data } = Digit.Hooks.useCustomMDMS(
             Digit.ULBService.getStateId(),
             options?.mdmsConfig?.moduleName,
@@ -146,9 +166,9 @@ const DeductionsTable = ({control,watch,...props}) => {
             {
                 select: (data) => {
                     const optionsData = _.get(data, `${options?.mdmsConfig?.moduleName}.${options?.mdmsConfig?.masterName}`, []);
-                    return optionsData.filter((opt) => opt?.active && Digit?.Customizations?.["commonUiConfig"]?.getBusinessService(opt?.service) === businessService).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
+                    return optionsData.filter((opt) => HeadCodes?.includes(opt?.code) && opt?.active && Digit?.Customizations?.["commonUiConfig"]?.getBusinessService(opt?.service) === businessService).map((opt) => ({ ...opt, name: `${options?.mdmsConfig?.localePrefix}_${opt.code}` }));
                 },
-                enabled: options?.mdmsConfig ? true : false,
+                enabled: options?.mdmsConfig && HeadCodes?.length>0 && !isHeadCodesLoading ? true : false,
             }
         );
         
@@ -336,7 +356,7 @@ const DeductionsTable = ({control,watch,...props}) => {
     });
   }, [rows,totalAmount,formData])
 
-
+    if(isHeadCodesLoading) return <Loader />
     return (
         <table className='table reports-table sub-work-table' style={{ marginTop: "-2rem" }}>
             <thead>
