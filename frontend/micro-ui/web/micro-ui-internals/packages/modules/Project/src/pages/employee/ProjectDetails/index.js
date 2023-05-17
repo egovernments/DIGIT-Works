@@ -16,7 +16,7 @@ const ProjectDetails = () => {
     const menuRef = useRef();
     const [showActions, setShowActions] = useState(false);
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
-    const [hideActionBar, setHideActionBar] = useState(true);
+    const [hideActionBar, setHideActionBar] = useState(false);
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
     const [sessionFormData, clearSessionFormData] = projectSession;
     const location = useLocation();
@@ -131,9 +131,10 @@ const ProjectDetails = () => {
                         name : "CREATE_ESTIMATE"
                     })
                 }else {
-                    setHideActionBar(true);
+                    // setHideActionBar(true);
                 }
-            }else if(isEstimateViewerAndCreator){
+            }else if(isProjectModifier || isEstimateViewerAndCreator){
+                //we have given search estimate access to project creator
                 setHideActionBar(false);
                 estimates && estimates?.length !== 0 && setUniqueActions({
                     name : "VIEW_ESTIMATE"
