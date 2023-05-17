@@ -47,7 +47,7 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
         
         //if contract is already there just remove the prevState and push View contract state
         if(contract?.contractNumber) {
-            setActionsMenu((prevState => [, {
+            setActionsMenu((prevState => [{
                 name: "VIEW_CONTRACT"
             }]))
         }
@@ -109,9 +109,8 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
                         editApplicationNumber={editApplicationNumber}
                     />
                     {/* Adding another action bar to show Create Contract Option */}
-                    {applicationDetails?.applicationData?.wfStatus === "APPROVED" && !isLoadingContracts ?
+                    {applicationDetails?.applicationData?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu?.length>0 ?
                         <ActionBar>
-
                             {showActions ? <Menu
                                 localeKeyPrefix={`EST_VIEW_ACTIONS`}
                                 options={actionsMenu}
