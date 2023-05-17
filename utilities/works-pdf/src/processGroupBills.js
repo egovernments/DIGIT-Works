@@ -8,7 +8,6 @@ async function processGroupBillFromPaymentCreateTopic(requestData) {
     logger.info("Started generating bill from payment topic.")
     let userid = get(requestData, "RequestInfo.userInfo.uuid", null);
     let paymentId = get(requestData, "payment.id", null);
-    logger.info("Request data from topic : " + JSON.stringify(requestData));
     try {
         let request = {}
         let filestoreId = null;
@@ -250,7 +249,7 @@ const getBankAccountDetails = async (requestData, beneficiaryIds) => {
                 limit: limit,
                 offSet: idx * limit,
                 sortBy: "createdTime",
-                order: {}
+                order: "DESC"
             }
             nRequest['RequestInfo'] = defaultRequest["RequestInfo"]
             requests.push(nRequest);
