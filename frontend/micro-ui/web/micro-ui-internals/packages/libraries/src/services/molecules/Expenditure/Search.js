@@ -264,7 +264,7 @@ export const BillsSearch = {
     //total bill amount
     let billAmount = mcDetails.amount + gstDetails.amount;
     const billDetails = {
-        title: "EXP_INVOICE_DETAILS",
+        title: "EXP_BILL_DETAILS",
         asSectionHeader: true,
         values: [
             { title: "EXP_BILL_AMOUNT", value: (Digit.Utils.dss.formatterWithoutRound(billAmount, "number")) || "NA" },
