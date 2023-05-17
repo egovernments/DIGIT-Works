@@ -275,6 +275,7 @@ class _MainApplicationState extends State<MainApplication> {
                               LocalizationRepository(client.init()),
                             ),
                     child: MaterialApp.router(
+                      title: 'MUKTA CBO App',
                       supportedLocales: appInitState.initMdmsModel != null
                           ? appInitState.digitRowCardItems!.map((e) {
                               final results = e.value.split('_');

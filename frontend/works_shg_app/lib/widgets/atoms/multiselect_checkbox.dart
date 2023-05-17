@@ -78,14 +78,14 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                         set(() {
                           if (selected ?? false) {
                             if (!widget.selectedOptions.contains(optionData)) {
-                              setState(() {
+                              set(() {
                                 widget.selectedOptions.add(optionData);
                               });
                               widget.onChange?.call(widget.selectedOptions);
                             }
                           } else {
                             if (widget.selectedOptions.contains(optionData)) {
-                              setState(() {
+                              set(() {
                                 widget.selectedOptions.remove(optionData);
                               });
                               widget.onChange?.call(widget.selectedOptions);
@@ -112,7 +112,7 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                       maxHeight: MediaQuery.of(context).size.height / 2.5)),
             ),
             StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+                builder: (BuildContext context, StateSetter setChip) {
               return Container(
                 margin: const EdgeInsets.only(top: 8),
                 child: Wrap(
@@ -125,7 +125,7 @@ class MultiSelectSearchCheckBoxState extends State<MultiSelectSearchCheckBox> {
                               padding: const EdgeInsets.all(2.0),
                               deleteIcon: const Icon(Icons.cancel),
                               onDeleted: () {
-                                setState(() {
+                                setChip(() {
                                   widget.selectedOptions.remove(option);
                                 });
                                 widget.onChange?.call(widget.selectedOptions);
