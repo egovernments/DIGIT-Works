@@ -7,6 +7,7 @@ const getModalConfig = ({
     selectedApprover,
     setSelectedApprover,
     approverLoading = false,
+    isEdit
 }) => {
 
     let checkConditions = true
@@ -15,7 +16,7 @@ const getModalConfig = ({
 
     return {
         label: {
-            heading: `WORKS_SUBMIT_ESTIMATE`,
+            heading: isEdit ? `ACTION_TEST_EDIT_ESTIMATE` :`WORKS_SUBMIT_ESTIMATE`,
             submit: `WORKS_FORWARD`,
             cancel: "WORKS_CANCEL",
         },
