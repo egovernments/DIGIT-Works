@@ -172,6 +172,7 @@ class WorkOrder {
   String get workOrderAmount => 'WORK_ORDER_AMOUNT';
   String get dueDate => 'WORKS_DUE_DATE';
   String get noWorkOrderAssigned => 'NO_WORK_ORDERS_ASSIGNED';
+  String get noCompletedWorkOrderFound => 'NO_COMPLETED_WORK_ORDERS_FOUND';
   String get workOrderAcceptSuccess => 'WORK_ORDER_ACCEPTED_SUCCESS';
   String get workOrderDeclineSuccess => 'WORK_ORDER_DECLINE_SUCCESS';
   String get workOrderDetails => 'WORK_ORDER_DETAILS';

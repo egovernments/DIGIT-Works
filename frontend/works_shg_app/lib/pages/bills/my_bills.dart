@@ -32,6 +32,7 @@ class _MyBillsPage extends State<MyBillsPage> {
   bool hasLoaded = true;
   bool inProgress = true;
   List<Map<String, dynamic>> billList = [];
+  List<MyBillModel> bills = [];
 
   @override
   void initState() {
@@ -81,7 +82,11 @@ class _MyBillsPage extends State<MyBillsPage> {
                   error: (String? error) => Notifiers.getToastMessage(
                       context, error.toString(), 'ERROR'),
                   loaded: (MyBillsListModel? myBillsModel) {
-                    billList = myBillsModel!.bills!.map((e) {
+                    bills = List<MyBillModel>.from(myBillsModel!.bills!);
+                    bills.sort((a, b) => b.bill!.auditDetails!.lastModifiedTime!
+                        .compareTo(
+                            a.bill!.auditDetails!.lastModifiedTime!.toInt()));
+                    billList = bills.map((e) {
                       if (e.bill?.businessService ==
                           Constants.myBillsWageType) {
                         return {

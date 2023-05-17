@@ -18,7 +18,7 @@ import 'global_variables.dart';
 class CommonMethods {
   Future<void> deleteLocalStorageKey() async {
     if (kIsWeb) {
-      html.window.localStorage.remove(GlobalVariables.selectedLocale());
+      html.window.sessionStorage.remove(GlobalVariables.selectedLocale());
     } else {
       await storage.delete(key: GlobalVariables.selectedLocale().toString());
     }

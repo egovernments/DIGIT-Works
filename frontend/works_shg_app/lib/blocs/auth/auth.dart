@@ -46,13 +46,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       GlobalVariables.userRequestModel =
           jsonDecode(jsonEncode(userDetailsModel.userRequestModel));
       if (kIsWeb) {
-        html.window.localStorage['accessToken' ?? ''] =
+        html.window.sessionStorage['accessToken' ?? ''] =
             jsonEncode(userDetailsModel.access_token);
-        html.window.localStorage['userRequest' ?? ''] =
+        html.window.sessionStorage['userRequest' ?? ''] =
             jsonEncode(userDetailsModel.userRequestModel);
-        html.window.localStorage['uuid' ?? ''] =
+        html.window.sessionStorage['uuid' ?? ''] =
             jsonEncode(userDetailsModel.userRequestModel?.uuid);
-        html.window.localStorage['mobileNumber' ?? ''] =
+        html.window.sessionStorage['mobileNumber' ?? ''] =
             jsonEncode(userDetailsModel.userRequestModel?.mobileNumber);
       } else {
         await storage.write(
@@ -83,7 +83,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     List<DigitRowCardModel>? languages = await GlobalVariables.getLanguages();
     languages?.forEach((e) async {
       if (kIsWeb) {
-        html.window.localStorage.remove(e.value);
+        html.window.sessionStorage.remove(e.value);
       } else {
         await storage.delete(key: e.value);
       }

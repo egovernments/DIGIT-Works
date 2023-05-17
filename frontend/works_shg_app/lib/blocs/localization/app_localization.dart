@@ -27,8 +27,8 @@ class AppLocalizations {
   Future<List<LocalizationMessageModel>?> getLocalizationLabels() async {
     dynamic localLabelResponse;
     if (kIsWeb) {
-      localLabelResponse = html.window
-          .localStorage['${locale?.languageCode}_${locale?.countryCode}' ?? ''];
+      localLabelResponse = html.window.sessionStorage[
+          '${locale?.languageCode}_${locale?.countryCode}' ?? ''];
     } else {
       localLabelResponse = await storage.read(
           key: '${locale?.languageCode}_${locale?.countryCode}');
