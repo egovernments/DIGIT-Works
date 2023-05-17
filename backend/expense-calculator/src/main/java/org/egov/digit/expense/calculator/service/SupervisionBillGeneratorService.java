@@ -75,7 +75,7 @@ public class SupervisionBillGeneratorService {
 	private Map<String, Bill> createMap(List<Bill> bills) {
 		Map<String, Bill> map = new HashMap<String, Bill>();
 		for (Bill b : bills) {
-			map.put(b.getId(), b);
+			map.put(b.getBillNumber(),b);
 		}
 		return map;
 	}
@@ -116,7 +116,7 @@ public class SupervisionBillGeneratorService {
 		for (Bill bill : bills) {
 			if (bill.getBusinessService().equals(config.getWageBusinessService())
 					|| bill.getBusinessService().equals(config.getPurchaseBusinessService())) {
-				wageAndPurchaseBills.add(bill.getId());
+				wageAndPurchaseBills.add(bill.getBillNumber());
 			} else {
 				supervisionBills.add(bill.getId());
 				// Fetch all referenceIds (existing bill Ids) and store in a list
@@ -131,7 +131,7 @@ public class SupervisionBillGeneratorService {
 		}
 		log.info("Printing all existing bills for which supervision bill is created");
 		for(String s: existingBills) {
-			log.info("Bill ID: " + s);
+			log.info("Bill numbers: " + s);
 		}
 		
 		// There are n purchase and wage bills for a contract. n-2 of them are already
@@ -148,7 +148,7 @@ public class SupervisionBillGeneratorService {
 		
 		log.info(String.format("There are %s bills for contract %s for which a supervision bill needs to be raised", wageAndPurchaseBills.size(), criteria.getContractId()));
 		for(String s: wageAndPurchaseBills) {
-			log.info("Bill ID: " + s);
+			log.info("Bill number: " + s);
 		}
 		
 		// Create bills for what's remaining
