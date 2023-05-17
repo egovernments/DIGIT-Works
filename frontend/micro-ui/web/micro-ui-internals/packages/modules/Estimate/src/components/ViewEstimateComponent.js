@@ -109,7 +109,7 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
                         editApplicationNumber={editApplicationNumber}
                     />
                     {/* Adding another action bar to show Create Contract Option */}
-                    {applicationDetails?.applicationData?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu.length>0 ?
+                    {applicationDetails?.applicationData?.wfStatus === "APPROVED" && !isLoadingContracts && actionsMenu?.length>0 ?
                         <ActionBar>
                             {showActions ? <Menu
                                 localeKeyPrefix={`EST_VIEW_ACTIONS`}
