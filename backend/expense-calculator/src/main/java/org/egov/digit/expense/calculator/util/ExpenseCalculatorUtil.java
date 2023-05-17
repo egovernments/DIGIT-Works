@@ -189,7 +189,8 @@ public class ExpenseCalculatorUtil {
         List<String> billIds = expenseCalculatorRepository.getBills(contractId, tenantId);
         if(billIds.isEmpty()) {     
         	log.info(String.format("There are 0 bills in the calculator for contractId %s and tenantId %s" ,contractId,tenantId));
-        	return null;
+        	throw new CustomException("SUPERVISION_BILL_NOT_GENERATED",
+					"No bills present for which supervision bill can be created");
         }
         StringBuilder url = searchURI(configs.getBillHost(), configs.getExpenseBillSearchEndPoint());
         Pagination pagination = Pagination.builder().limit(configs.getDefaultLimit()).offSet(configs.getDefaultOffset()).order(Order.ASC).build();

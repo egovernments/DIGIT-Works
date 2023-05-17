@@ -95,7 +95,7 @@ public class SupervisionBillGeneratorService {
 			log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. "
 					+ " So Supervision bill cannot be calculated.");
 			throw new CustomException("NO_WAGE_PURCHASE_BILL",
-					"Wage and purchase bill is not created. So Supervision bill cannot be calculated.");
+					String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getContractId(), criteria.getTenantId()));
 		}
 		
 	
@@ -142,10 +142,11 @@ public class SupervisionBillGeneratorService {
 
 		if (wageAndPurchaseBills.isEmpty()) {
 			log.error("There are no bills for which supervision bill needs to be created");
-			return new Calculation();
+			throw new CustomException("NO_WAGE_PURCHASE_BILL",
+					String.format("Supervision bills have been created for all existing wage and purchase bills for contract %s", criteria.getContractId()));
 		}
 		
-		log.info(String.format("There are %s bills for which a supervision bill needs to be raised", wageAndPurchaseBills.size()));
+		log.info(String.format("There are %s bills for contract %s for which a supervision bill needs to be raised", wageAndPurchaseBills.size(), criteria.getContractId()));
 		for(String s: wageAndPurchaseBills) {
 			log.info("Bill ID: " + s);
 		}
@@ -329,7 +330,7 @@ public class SupervisionBillGeneratorService {
 						|| bill.getBusinessService().equals(config.getWageBusinessService()))
 					isIncluded = true;
 			} else if (CBO_IMPLEMENTATION_PARTNER.equalsIgnoreCase(executingAuthority)
-					&& bill.getBusinessService() == config.getWageBusinessService()) {
+					&& bill.getBusinessService().equals(config.getWageBusinessService())) {
 				isIncluded = true;
 			}
 		}
