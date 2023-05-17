@@ -56,6 +56,7 @@ import org.egov.digit.expense.calculator.web.models.Payer;
 import org.egov.digit.expense.calculator.web.models.PurchaseBill;
 import org.egov.digit.expense.calculator.web.models.PurchaseBillRequest;
 import org.egov.digit.expense.calculator.web.models.Workflow;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -229,9 +230,18 @@ public class ExpenseCalculatorService {
         } else {
             log.info("Create supervision bill for contractId :"+criteria.getContractId() );
             List<Bill> expenseBills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getContractId().trim());
-            if(expenseBills!=null)
-            		log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
+            if(expenseBills!=null && !expenseBills.isEmpty())
+            	log.info(String.format("Fetched %s bills from the repository", expenseBills.size()));
+            //No bills have been fetched for this contract. Therefore, throw an exception
+            else {
+            	log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. "
+    					+ " So Supervision bill cannot be calculated.");
+    			throw new CustomException("NO_WAGE_PURCHASE_BILL",
+    					String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getContractId(), criteria.getTenantId()));
+            }
+            //Continue with doing the calculation for supervision bill
             Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
+            //Create the supervision bill
             bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
     		
             //Construct meta object to persist in calculator db
