@@ -356,7 +356,7 @@ const DeductionsTable = ({control,watch,...props}) => {
     });
   }, [rows,totalAmount,formData])
 
-    if(isHeadCodesLoading) return <Loader />
+    if(isHeadCodesLoading && !HeadCodes?.length>0) return <Loader />
     return (
         <table className='table reports-table sub-work-table' style={{ marginTop: "-2rem" }}>
             <thead>
