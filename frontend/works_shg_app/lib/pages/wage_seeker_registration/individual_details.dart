@@ -240,7 +240,6 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       StatefulBuilder(builder:
                           (BuildContext context, StateSetter setState) {
                         return DigitRadioButtonList<String>(
-                          context,
                           labelText: t.translate(i18.common.gender),
                           formControlName: genderKey,
                           options: gender.map((e) => e.toString()).toList(),
