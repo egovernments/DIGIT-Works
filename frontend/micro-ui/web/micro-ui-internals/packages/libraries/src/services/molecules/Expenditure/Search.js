@@ -327,7 +327,7 @@ export const BillsSearch = {
                 values: billData?.additionalDetails?.documents?.map((document) => {
                   if(document?.status !== "INACTIVE") {
                       return {
-                          title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : t(`EXP_${document?.documentType}`),
+                          title: document?.documentType === "OTHERS" ? document?.additionalDetails?.otherCategoryName : t(`EXP_${document?.documentType}`),
                           documentType: document?.documentType,
                           documentUid: document?.fileStore,
                           fileStoreId: document?.fileStore,
