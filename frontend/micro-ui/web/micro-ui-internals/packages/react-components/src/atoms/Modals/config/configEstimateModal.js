@@ -355,7 +355,10 @@ const configEstimateModal = (
                             name: "assignee",
                             optionsKey: "nameOfEmp",
                             options: approvers,
-                            hideInForm: !fetchIsShow("assignee")
+                            hideInForm: !fetchIsShow("assignee"),
+                            "optionsCustomStyle": {
+                                "top": "2.3rem"
+                              }
                         },
                     },
                     {

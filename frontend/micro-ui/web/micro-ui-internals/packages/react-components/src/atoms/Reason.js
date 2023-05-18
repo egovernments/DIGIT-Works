@@ -1,14 +1,15 @@
 import React,{Fragment} from "react";
+import { useTranslation } from "react-i18next";
 // TODO @Nipun localise 
 const Reason = ({ headComment, otherComment, additionalComment }) => {
-    
+    const { t } = useTranslation()
     const getMarkup = () => {
         if(additionalComment) {
             return <div className="checkpoint-comments-wrap" style={{marginBottom:"1rem"}}>
-                <p>I certify that appropriate amount of work has been completed. Muster roll has been verified against Measurement Book.</p>
+                <p>{t("COMMON_CERTIFY_ONE")}</p>
                 <br />
                 <p>
-                    <b> Note</b>: Once approved Payment Advice will be generated and send to JIT-FS for payment processing.
+                    <b> {t("ES_COMMON_NOTE")}</b>{t("COMMON_CERTIFY_TWO")}
                 </p>
                 </div>
             
