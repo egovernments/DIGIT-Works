@@ -47,7 +47,13 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
   const musterRollNum = referenceIds?.[1]
 
   const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
-  const location = t(`TENANT_TENANTS_${headerLocale}`)
+  const location = {
+    "ward":wageBill?.additionalDetails?.ward?t(`${headerLocale}_ADMIN_${wageBill?.additionalDetails?.ward}`):null,
+    "locality":wageBill?.additionalDetails?.locality?t(`${headerLocale}_ADMIN_${wageBill?.additionalDetails?.locality}`):null,
+    "city":wageBill?.tenantId ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(wageBill?.tenantId)}`) :null
+  };
+  const locationString = `${location.locality ? location.locality + ", " : ""}${location.ward ? location.ward + ", " : ""}${location.city ? location.city : ""}`
+ // const location = t(`TENANT_TENANTS_${headerLocale}`)
 
   //get contract details
   const contractPayload = {
@@ -72,7 +78,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       { title: "WORKS_ORDER_NO", value: workOrderNum || t("ES_COMMON_NA")},
       { title: "WORKS_PROJECT_ID", value: contract?.additionalDetails?.projectId || t("ES_COMMON_NA")},
       { title: "PROJECTS_DESCRIPTION", value: contract?.additionalDetails?.projectDesc || t("ES_COMMON_NA") },
-      { title: "ES_COMMON_LOCATION", value: location || t("ES_COMMON_NA") }
+      { title: "ES_COMMON_LOCATION", value: locationString || t("ES_COMMON_NA") }
     ]
   }
 

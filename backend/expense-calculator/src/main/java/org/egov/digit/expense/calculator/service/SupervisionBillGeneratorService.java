@@ -75,7 +75,7 @@ public class SupervisionBillGeneratorService {
 	private Map<String, Bill> createMap(List<Bill> bills) {
 		Map<String, Bill> map = new HashMap<String, Bill>();
 		for (Bill b : bills) {
-			map.put(b.getId(), b);
+			map.put(b.getBillNumber(),b);
 		}
 		return map;
 	}
@@ -95,7 +95,7 @@ public class SupervisionBillGeneratorService {
 			log.info("SupervisionBillGeneratorService::calculateEstimate::Wage bill and purchase bill not created. "
 					+ " So Supervision bill cannot be calculated.");
 			throw new CustomException("NO_WAGE_PURCHASE_BILL",
-					"Wage and purchase bill is not created. So Supervision bill cannot be calculated.");
+					String.format("No wage or purchase bills are found for this contract %s and tenant %s. So Supervision bill cannot be calculated.", criteria.getContractId(), criteria.getTenantId()));
 		}
 		
 	
@@ -116,7 +116,7 @@ public class SupervisionBillGeneratorService {
 		for (Bill bill : bills) {
 			if (bill.getBusinessService().equals(config.getWageBusinessService())
 					|| bill.getBusinessService().equals(config.getPurchaseBusinessService())) {
-				wageAndPurchaseBills.add(bill.getId());
+				wageAndPurchaseBills.add(bill.getBillNumber());
 			} else {
 				supervisionBills.add(bill.getId());
 				// Fetch all referenceIds (existing bill Ids) and store in a list
@@ -131,7 +131,7 @@ public class SupervisionBillGeneratorService {
 		}
 		log.info("Printing all existing bills for which supervision bill is created");
 		for(String s: existingBills) {
-			log.info("Bill ID: " + s);
+			log.info("Bill numbers: " + s);
 		}
 		
 		// There are n purchase and wage bills for a contract. n-2 of them are already
@@ -140,14 +140,19 @@ public class SupervisionBillGeneratorService {
 		// to be created. Find the diff by using set operations.
 		wageAndPurchaseBills.removeAll(existingBills);
 
-		if (wageAndPurchaseBills.isEmpty()) {
-			log.error("There are no bills for which supervision bill needs to be created");
-			return new Calculation();
-		}
+
+			// If the bill is empty or null, return empty response
+			if (wageAndPurchaseBills == null || CollectionUtils.isEmpty(wageAndPurchaseBills)) {
+				log.info("There are no wage and purchase bills for which supervision needs to be calculated.");
+				throw new CustomException("NO_WAGE_PURCHASE_BILL",
+					String.format("Supervision bills have been created for all existing wage and purchase bills for contract %s", criteria.getContractId()));
+
+			}
+
 		
-		log.info(String.format("There are %s bills for which a supervision bill needs to be raised", wageAndPurchaseBills.size()));
+		log.info(String.format("There are %s bills for contract %s for which a supervision bill needs to be raised", wageAndPurchaseBills.size(), criteria.getContractId()));
 		for(String s: wageAndPurchaseBills) {
-			log.info("Bill ID: " + s);
+			log.info("Bill number: " + s);
 		}
 		
 		// Create bills for what's remaining
@@ -329,7 +334,7 @@ public class SupervisionBillGeneratorService {
 						|| bill.getBusinessService().equals(config.getWageBusinessService()))
 					isIncluded = true;
 			} else if (CBO_IMPLEMENTATION_PARTNER.equalsIgnoreCase(executingAuthority)
-					&& bill.getBusinessService() == config.getWageBusinessService()) {
+					&& bill.getBusinessService().equals(config.getWageBusinessService())) {
 				isIncluded = true;
 			}
 		}

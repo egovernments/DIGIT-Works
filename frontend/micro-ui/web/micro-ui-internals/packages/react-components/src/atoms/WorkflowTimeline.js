@@ -103,7 +103,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
                                                                     label={t(
                                                                         Digit.Utils.locale.getTransformedLocale(`${timelineStatusPrefix}STATE_${checkpoint?.["state"]}`)
                                                                     )}
-                                                                    customChild={getTimelineCaptions(checkpoint, -1)}
+                                                                    // customChild={getTimelineCaptions(checkpoint, -1)}
                                                                     customClassName="checkpoint-connect-wrap"
                                                                 />
                                                             </React.Fragment>

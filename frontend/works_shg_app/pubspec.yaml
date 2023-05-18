@@ -38,6 +38,7 @@ dependencies:
       path: ./packages/digit_components
   universal_html: ^2.0.8
   flutter_secure_storage: ^8.0.0
+  easy_stepper: ^0.5.2+1
   url_strategy: ^0.2.0
   url_launcher: ^6.0.9
   flutter_bloc: ^8.1.1

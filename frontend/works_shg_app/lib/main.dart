@@ -20,6 +20,7 @@ import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
 import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
+import 'package:works_shg_app/blocs/my_bills/my_bills_inbox_bloc.dart';
 import 'package:works_shg_app/blocs/work_orders/decline_work_order.dart';
 import 'package:works_shg_app/data/repositories/attendance_mdms.dart';
 import 'package:works_shg_app/data/repositories/common_repository/common_repository.dart';
@@ -211,6 +212,7 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => BusinessWorkflowBloc()),
         BlocProvider(create: (context) => SearchMyWorksBloc()),
         BlocProvider(create: (context) => SearchMyBillsBloc()),
+        BlocProvider(create: (context) => MyBillInboxBloc()),
         BlocProvider(create: (context) => AcceptWorkOrderBloc()),
         BlocProvider(create: (context) => MyWorksSearchCriteriaBloc()),
         BlocProvider(create: (context) => DeclineWorkOrderBloc()),
@@ -275,6 +277,7 @@ class _MainApplicationState extends State<MainApplication> {
                               LocalizationRepository(client.init()),
                             ),
                     child: MaterialApp.router(
+                      title: 'MUKTA CBO App',
                       supportedLocales: appInitState.initMdmsModel != null
                           ? appInitState.digitRowCardItems!.map((e) {
                               final results = e.value.split('_');

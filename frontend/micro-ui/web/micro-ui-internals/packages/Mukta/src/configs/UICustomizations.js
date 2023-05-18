@@ -854,6 +854,14 @@ export const UICustomizations = {
         ) : (
           t("ES_COMMON_NA")
         );
+      case "ES_COMMON_STATUS":
+        return value ? (
+          <span style={{ whiteSpace: "break-spaces" }}>
+            {t(`WF_${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract")}_STATUS_${value}`)}
+          </span>
+        ) : (
+          t("ES_COMMON_NA")
+        );
       default:
         return t("ES_COMMON_NA");
       }
