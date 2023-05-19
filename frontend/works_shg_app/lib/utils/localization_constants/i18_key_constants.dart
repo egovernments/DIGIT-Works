@@ -87,6 +87,7 @@ class Common {
   String get total => 'TOTAL';
   String get attachments => 'CS_COMMON_ATTACHMENTS';
   String get apply => 'ES_COMMON_APPLY';
+  String get noItems => 'ES_COMMON_NO_ITEMS';
   String get cancel => 'CS_ACTION_CANCEL';
   String get close => 'CS_ACTION_CLOSE';
   String get startDate => 'EVENTS_START_DATE_LABEL';

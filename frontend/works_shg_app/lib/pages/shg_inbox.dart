@@ -97,7 +97,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
     super.initState();
   }
 
-  afterViewBuild() {
+  afterViewBuild()  {
     context.read<IndividualMusterRollSearchBloc>().add(
       SearchIndividualMusterRollEvent(
           musterRollNumber: widget.musterRollNo,
@@ -1092,6 +1092,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         widget: CircularButton(
           icon: Icons.circle_rounded,
           size: 15,
+          viewOnly: inWorkFlow,
           color: const Color.fromRGBO(0, 100, 0, 1),
           index: tableDataModel.monIndex ?? 0.0,
           isNotGreyed: false,
@@ -1116,6 +1117,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.tueIndex ?? 0,
         isNotGreyed: false,
@@ -1138,6 +1140,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
+            viewOnly: inWorkFlow,
         size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.wedIndex ?? 0,
@@ -1162,6 +1165,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.thuIndex ?? 0,
         isNotGreyed: false,
@@ -1185,6 +1189,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.friIndex ?? 0,
         isNotGreyed: false,
@@ -1208,6 +1213,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.satIndex ?? 0,
         isNotGreyed: false,
@@ -1231,6 +1237,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.sunIndex ?? 0,
         isNotGreyed: false,
