@@ -409,7 +409,7 @@ const CreateEstimate = () => {
         {isLoading?<Loader /> : <ViewDetailsCard cardState={cardState} t={t} createScreen={true}/>}
         {/* {isLoading? <Loader/>: <ViewDetailsCard cardState={cardState} t={t} />} */}
         {isFormReady ? <FormComposer
-            label={isEdit ? "ACTION_TEST_EDIT_ESTIMATE" :"ACTION_TEST_CREATE_ESTIMATE"}
+            label={isEdit ? "CORE_COMMON_SUBMIT" :"ACTION_TEST_CREATE_ESTIMATE"}
             config={estimateFormConfig?.form.map((config) => {
                 return {
                     ...config,
