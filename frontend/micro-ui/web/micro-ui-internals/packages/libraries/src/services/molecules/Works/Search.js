@@ -259,7 +259,7 @@ export const WorksSearch = {
                     BS: 'Works',
                     values: files?.filter(doc=>doc?.fileStoreId)?.map((document) => {
                         return {
-                            title: document?.fileType,
+                            title: document?.fileType==="Others"?document?.fileName:document?.fileType,
                             documentType: document?.documentType,
                             documentUid: document?.fileStoreId,
                             fileStoreId: document?.fileStoreId,
