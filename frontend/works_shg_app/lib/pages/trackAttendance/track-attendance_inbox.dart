@@ -46,6 +46,7 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return BlocBuilder<LocalizationBloc, LocalizationState>(
         builder: (context, localState) {
         return Scaffold(
@@ -92,16 +93,17 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
                                 i18.workOrder.workOrderNo: e
                                         .attendanceRegisterAdditionalDetails
                                         ?.contractId ??
-                                    'NA',
+                                    t.translate(i18.common.noValue),
                                 i18.attendanceMgmt.registerId: e.registerNumber,
                                 i18.attendanceMgmt.projectId: e
                                         .attendanceRegisterAdditionalDetails
-                                        ?.projectId ??
-                                    'NA',
+                                        ?.projectId ?? t.translate(i18.common.noValue),
+                                i18.attendanceMgmt.projectName: e
+                                    .attendanceRegisterAdditionalDetails
+                                    ?.projectName ?? t.translate(i18.common.noValue),
                                 i18.attendanceMgmt.projectDesc: e
                                         .attendanceRegisterAdditionalDetails
-                                        ?.projectDesc ??
-                                    'NA',
+                                        ?.projectDesc ?? t.translate(i18.common.noValue),
                                 i18.attendanceMgmt.individualsCount:
                                     e.attendeesEntries != null
                                         ? e.attendeesEntries

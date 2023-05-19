@@ -158,7 +158,6 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                     StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
                       return DigitRadioButtonList<String>(
-                        context,
                         labelText: t.translate(i18.common.accountType),
                         formControlName: accountTypeKey,
                         options:

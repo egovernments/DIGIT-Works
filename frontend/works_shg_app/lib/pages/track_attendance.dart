@@ -138,6 +138,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     var width = MediaQuery.of(context).size.width < 760
         ? 150.0
         : (MediaQuery.of(context).size.width / 7.5);
@@ -211,17 +212,20 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                   i18.workOrder.workOrderNo:
                                                       e.attendanceRegisterAdditionalDetails
                                                               ?.contractId ??
-                                                          'NA',
+                                                          t.translate(i18.common.noValue),
                                                   i18.attendanceMgmt.registerId:
                                                       e.registerNumber,
                                                   i18.attendanceMgmt.projectId:
                                                       e.attendanceRegisterAdditionalDetails
                                                               ?.projectId ??
-                                                          'NA',
+                                                          t.translate(i18.common.noValue),
+                                          i18.attendanceMgmt.projectName: e
+                                              .attendanceRegisterAdditionalDetails
+                                              ?.projectName ?? t.translate(i18.common.noValue),
                                                   i18.attendanceMgmt.projectDesc:
                                                       e.attendanceRegisterAdditionalDetails
                                                               ?.projectDesc ??
-                                                          'NA',
+                                                          t.translate(i18.common.noValue),
                                                   i18.attendanceMgmt.individualsCount: e
                                                               .attendeesEntries !=
                                                           null

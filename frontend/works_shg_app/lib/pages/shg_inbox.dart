@@ -214,9 +214,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             i18.attendanceMgmt.musterRollId:
                                             e.musterRollNumber,
                                             i18.workOrder.workOrderNo:
-                                            e.musterAdditionalDetails?.contractId ?? 'NA',
+                                            e.musterAdditionalDetails?.contractId ?? t.translate(i18.common.noValue),
                                             i18.attendanceMgmt.projectId:
-                                            e.musterAdditionalDetails?.projectId ?? 'NA',
+                                            e.musterAdditionalDetails?.projectId ?? t.translate(i18.common.noValue),
+                                            i18.attendanceMgmt.projectName:
+                                            e.musterAdditionalDetails?.projectName ?? t.translate(i18.common.noValue),
                                             i18.attendanceMgmt.projectDesc:
                                             e.musterAdditionalDetails?.projectDesc ??
                                                 'NA',
