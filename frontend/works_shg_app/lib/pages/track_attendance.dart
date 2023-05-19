@@ -1384,6 +1384,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
         widget: CircularButton(
           icon: Icons.circle_rounded,
           size: 15,
+          viewOnly: isInWorkFlow,
           color: const Color.fromRGBO(0, 100, 0, 1),
           index: tableDataModel.monIndex ?? -1,
           isNotGreyed: false,
@@ -1408,6 +1409,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: isInWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.tueIndex ?? -1,
         isNotGreyed: false,
@@ -1431,6 +1433,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: isInWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.wedIndex ?? -1,
         isNotGreyed: false,
@@ -1454,6 +1457,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: isInWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.thuIndex ?? -1,
         isNotGreyed: false,
@@ -1477,6 +1481,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: isInWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.friIndex ?? -1,
         isNotGreyed: false,
@@ -1500,6 +1505,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: isInWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.satIndex ?? -1,
         isNotGreyed: false,
@@ -1523,6 +1529,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: isInWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.sunIndex ?? -1,
         isNotGreyed: false,

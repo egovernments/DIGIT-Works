@@ -148,9 +148,9 @@ class _SideBar extends State<SideBar> {
                             ).load();
                           },
                           rowItems: state.digitRowCardItems
-                              ?.map(
-                                  (e) => DigitRowCardModel.fromJson(e.toJson()))
-                              .toList() as List<DigitRowCardModel>,
+                                  ?.map((e) =>
+                                      DigitRowCardModel.fromJson(e.toJson()))
+                                  .toList() as List<DigitRowCardModel>,
                           width: 80)
                       : const Text('');
                 },

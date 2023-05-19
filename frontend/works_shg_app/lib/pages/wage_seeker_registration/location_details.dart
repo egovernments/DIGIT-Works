@@ -127,6 +127,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     ),
                     DigitReactiveDropdown<String>(
                       label: t.translate(i18.common.ward),
+                      menuMaxHeight: 300,
                       padding: const EdgeInsets.only(top: 32),
                       menuItems: ward.map((e) => e.toString()).toList(),
                       isRequired: true,
@@ -154,6 +155,7 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                     DigitReactiveDropdown<String>(
                         label: t.translate(i18.common.locality),
                         padding: const EdgeInsets.only(top: 32),
+                        menuMaxHeight: 300,
                         menuItems: locality.map((e) => e.toString()).toList(),
                         formControlName: localityKey,
                         valueMapper: (value) => t.translate(
