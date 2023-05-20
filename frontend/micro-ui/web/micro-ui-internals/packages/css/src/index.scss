@@ -1057,3 +1057,12 @@ input[type=“date”]::-webkit-calendar-picker-indicator {
   font-weight: 400;
   color: theme(colors.text.secondary);
 }
+
+.employee {
+  .topbar {
+    img&&.state{
+      height: 35px;
+      max-height: 35px;
+  }
+}
+}
