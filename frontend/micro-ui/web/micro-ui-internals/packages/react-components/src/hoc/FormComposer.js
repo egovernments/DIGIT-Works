@@ -319,6 +319,7 @@ export const FormComposer = (props) => {
                   extraStyleName={{ padding: "0.5rem" }}
                   customClass={populators?.customClass}
                   customErrorMsg={populators?.errorMessage}
+                  containerStyles={{...populators?.containerStyles}}
                 />
               );
             }}
