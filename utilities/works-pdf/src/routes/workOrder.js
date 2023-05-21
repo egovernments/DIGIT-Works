@@ -3,8 +3,9 @@ var router = express.Router();
 var url = require("url");
 var config = require("../config");
 
-var { search_organisation, search_contract, create_pdf } = require("../api");
+var { search_organisation, search_contract, create_pdf, search_workflow } = require("../api");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
+const get = require("lodash.get");
 
 function renderError(res, errorMessage, errorCode) {
     if (errorCode == undefined) errorCode = 500;
@@ -41,10 +42,21 @@ router.post(
                 if (ex.response && ex.response.data) console.log(ex.response.data);
                 return renderError(res, "Failed to query details of the organisation", 500);
             }
+            try {
+                let workflowRequest = {};
+                workflowRequest["RequestInfo"] = requestinfo["RequestInfo"];
+                resWorkFlow = await search_workflow(contractId, tenantId, workflowRequest);
+            }
+            catch (ex) {
+                if (ex.response && ex.response.data) console.log(ex.response.data);
+                return renderError(res, "Failed to query details of the workflow", 500);
+            }
+            
 
             var contract = resContract.data;
             var organisation = resOrg.data
-            if (contract && contract.contracts && contract.contracts.length > 0 && organisation && organisation.organisations && organisation.organisations.length > 0) {
+            let worflow = resWorkFlow?.data || {};
+            if (contract && contract.contracts && contract.contracts.length > 0 && organisation && organisation.organisations && organisation.organisations.length > 0 && worflow?.ProcessInstances?.length) {
                 var pdfResponse;
                 if (requestinfo && requestinfo.RequestInfo && requestinfo.RequestInfo.msgId && requestinfo.RequestInfo.msgId.split("|")[1] == "hi_IN") {
                     var pdfkey = config.pdf.work_order_template_hindi;
@@ -58,6 +70,14 @@ router.post(
                 contract.contracts[0].doorNo = organisation.organisations[0].orgAddress[0].doorNo
                 contract.contracts[0].street = organisation.organisations[0].orgAddress[0].street
 
+                // Get issuer name 
+                contract.contracts[0].pdfNameOfIssuedTo = contract.contracts[0].totalContractedAmount <= 1500000 ? organisation.organisations[0].name :  get(contract.contracts[0], 'additionalDetails.officerInChargeName.name', null);
+                
+                // Get days left to accept the work order
+                let sla = get(worflow, "ProcessInstances[0].businesssServiceSla", 0);
+                let slaDays = parseInt(sla) / (24*60*60*1000);
+                contract.contracts[0].pdfWorkOrdAcceptanceDays = parseInt(slaDays);
+                contract.contracts[0].pdfTodaysDate = new Date().toLocaleDateString()
                 try {
                     pdfResponse = await create_pdf(
                         tenantId,
