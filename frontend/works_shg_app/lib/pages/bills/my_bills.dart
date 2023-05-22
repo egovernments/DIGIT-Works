@@ -277,7 +277,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                                               const SizedBox(
                                                 height: 16.0,
                                               ),
-                                              billList.length > 1
+                                              billList.length >= 2
                                                   ? const Align(
                                                       alignment: Alignment
                                                           .bottomCenter,
