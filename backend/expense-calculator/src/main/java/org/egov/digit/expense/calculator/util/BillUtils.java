@@ -36,10 +36,17 @@ public class BillUtils {
     }
 
     private BillResponse postBill(RequestInfo requestInfo, Bill bill, Workflow workflow, StringBuilder url) {
+        // Update workflow object because in expense service it's using core service workflow
+        digit.models.coremodels.Workflow expenseWorkflow1 = digit.models.coremodels.Workflow.builder()
+                .action(workflow.getAction())
+                .assignes(workflow.getAssignees())
+                .verificationDocuments(workflow.getDocuments())
+                .comments(workflow.getComment())
+                .build();
         BillCalculatorRequestInfoWrapper requestInfoWrapper = BillCalculatorRequestInfoWrapper.builder()
                 .requestInfo(requestInfo)
                 .bill(bill)
-                .workflow(workflow)
+                .workflow(expenseWorkflow1)
                 .build();
         log.info("Posting Bill to expense service:" + requestInfoWrapper.toString());
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
