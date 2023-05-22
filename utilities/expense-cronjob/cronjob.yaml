@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: daily
 spec:
-  schedule: "0 */1 * * *"
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       template:
@@ -14,8 +14,29 @@ spec:
             command: ["python3","cronJobAPIConfig.py"]
             args: ["daily"]  
             env:
-              - name: JOB_NAME
+              - name: TENANT_ID
                 valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.name
-          restartPolicy: OnFailure            
+                  configMapKeyRef:
+                    name: egov-config
+                    key: state-level-tenant-id
+              - name: MDMS_SERVICE_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-service-host
+                    key: egov-mdms-service
+              - name: USER_SERVICE_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-service-host
+                    key: egov-user-egov
+              - name: CONTRACTS_SERVICE_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-service-host
+                    key: contract-service
+              - name: EXPENSE_CALCULATOR_SERVICE_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-service-host
+                    key: expense-calculator
+          restartPolicy: OnFailure

@@ -53,7 +53,8 @@ def getTenants():
         mdms_search = os.getenv('MDMS_SEARCH')
         # Calls MDMS service to fetch cron job API endpoints configuration
         mdms_url = "{}{}".format(mdms_host, mdms_search)
-        mdms_payload = "{\n \"RequestInfo\": {\n   \"apiId\": \"asset-services\",\n   \"ver\": null,\n   \"ts\": null,\n   \"action\": null,\n   \"did\": null,\n   \"key\": null,\n   \"msgId\": \"search with from and to values\",\n   \"authToken\": \"f81648a6-bfa0-4a5e-afc2-57d751f256b7\"\n },\n \"MdmsCriteria\": {\n   \"tenantId\": \"pg\",\n   \"moduleDetails\": [\n     {\n       \"moduleName\": \"tenant\",\n       \"masterDetails\": [\n         {\n           \"name\": \"tenants\"\n         }\n       ]\n     }\n   ]\n }\n}"
+        mdms_payload = {"RequestInfo":{"apiId":"asset-services","ver":None,"ts":None,"action":None,"did":None,"key":None,"msgId":"search with from and to values","authToken":"f81648a6-bfa0-4a5e-afc2-57d751f256b7"},"MdmsCriteria":{"tenantId":rootTenantId,"moduleDetails":[{"moduleName":"tenant","masterDetails":[{"name":"tenants"}]}]}}
+        mdms_payload = json.dumps(mdms_payload)
         mdms_headers = {'Content-Type': 'application/json'}
         response = requests.request("POST", mdms_url, headers=mdms_headers, data = mdms_payload)
         # Convert the response to json

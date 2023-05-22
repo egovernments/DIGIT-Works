@@ -20,6 +20,14 @@ const CreatePurchaseBillResponse = () => {
         }
     });
 
+    const navigate = (page) =>{
+        switch(page){
+            case "billing-inbox" : {
+                history.push(`/${window.contextPath}/employee/expenditure/inbox`)
+            }
+        }
+    }
+
     return (
         <Card>
             <Banner 
@@ -29,6 +37,11 @@ const CreatePurchaseBillResponse = () => {
                 multipleResponseIDs={billNumberList}
                 whichSvg={`${isResponseSuccess ? "tick" : null}`}
             />
+            <div style={{display: "flex"}}>
+                <LinkLabel style={{ display: "flex", marginRight : "3rem" }} onClick={()=>navigate('billing-inbox')}>
+                    <ArrowLeftWhite  fill="#F47738" style={{marginRight: "8px", marginTop : "3px"}}/>{t("COMMON_GO_TO_INBOX")}
+                </LinkLabel>
+            </div>
             <ActionBar>
                 <Link to={`/${window.contextPath}/employee`}>
                     <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />

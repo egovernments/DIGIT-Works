@@ -12,6 +12,10 @@ class DigitRadioButtonList<T> extends StatelessWidget {
   final ValueChanged<T>? onValueChange;
   final bool? isEnabled;
   final Widget? secondaryWidget;
+  final VisualDensity? visualDensity;
+  final EdgeInsetsGeometry? contentPadding;
+  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? labelPadding;
 
   const DigitRadioButtonList(
     this.context, {
@@ -24,17 +28,22 @@ class DigitRadioButtonList<T> extends StatelessWidget {
     this.isRequired = false,
     required this.options,
     this.onValueChange,
+    this.visualDensity,
+    this.contentPadding,
+    this.margin,
+    this.labelPadding,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(top: 12.0, bottom: 5, right: 8),
+        margin: margin ?? const EdgeInsets.only(top: 12.0, bottom: 5, right: 8),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Visibility(
             visible: labelText.trim().isNotEmpty,
             child: Container(
-                padding: const EdgeInsets.only(top: 18, bottom: 3, left: 8),
+                padding: labelPadding ??
+                    const EdgeInsets.only(top: 18, bottom: 3, left: 8),
                 child: Align(
                     alignment: Alignment.centerLeft,
                     child: Row(children: <Widget>[
@@ -46,11 +55,8 @@ class DigitRadioButtonList<T> extends StatelessWidget {
                       ),
                       Text(isRequired ? '*' : '',
                           textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
-                              color: DigitTheme
-                                  .instance.colorScheme.onBackground)),
+                          style: DigitTheme
+                              .instance.mobileTheme.textTheme.bodyLarge),
                     ]))),
           ),
           Column(
@@ -59,12 +65,13 @@ class DigitRadioButtonList<T> extends StatelessWidget {
                 (data) {
                   return ReactiveRadioListTile<T>(
                     formControlName: formControlName,
-                    contentPadding: const EdgeInsets.all(0),
+                    contentPadding: contentPadding ?? const EdgeInsets.all(0),
                     title: Text(valueMapper(data)),
                     value: data,
-                    visualDensity: const VisualDensity(
-                        horizontal: VisualDensity.minimumDensity,
-                        vertical: VisualDensity.minimumDensity),
+                    visualDensity: visualDensity ??
+                        const VisualDensity(
+                            horizontal: VisualDensity.minimumDensity,
+                            vertical: VisualDensity.minimumDensity),
                     onChanged: (isEnabled ?? true)
                         ? (control) {
                             final value = control.value;

@@ -1139,7 +1139,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                   .manageWageSeekers),
                                                                           () {
                                                                             context.router.push(AttendanceRegisterTableRoute(
-                                                                                registerId: individualAttendanceRegisterModel.attendanceRegister!.first.id
+                                                                                registerId: individualAttendanceRegisterModel.attendanceRegister!.first.registerNumber
                                                                                     .toString(),
                                                                                 tenantId: individualAttendanceRegisterModel.attendanceRegister!.first.tenantId
                                                                                     .toString()));
@@ -1166,7 +1166,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                         .home.manageWageSeekers),
                                                                     () {
                                                                       context.router.push(AttendanceRegisterTableRoute(
-                                                                          registerId: individualAttendanceRegisterModel.attendanceRegister!.first.id
+                                                                          registerId: individualAttendanceRegisterModel.attendanceRegister!.first.registerNumber
                                                                               .toString(),
                                                                           tenantId: individualAttendanceRegisterModel.attendanceRegister!.first.tenantId
                                                                               .toString()));

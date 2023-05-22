@@ -124,6 +124,9 @@ async function processGroupBill(requestData) {
                 totalAmount = totalAmount + bill?.bill?.totalAmount;
             }
         })
+        if (totalAmount) {
+            totalAmount = parseFloat(totalAmount.toFixed(2));
+        }
         logger.info("Update file id and other details.")
         await updateForJobCompletion(paymentId, filestoreId, userId, billsLength, numberofbeneficialy, totalAmount);
         logger.info("File generated and saved.")

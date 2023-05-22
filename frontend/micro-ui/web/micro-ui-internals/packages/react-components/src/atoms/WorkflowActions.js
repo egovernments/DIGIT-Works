@@ -7,7 +7,7 @@ import ActionModal from "./Modals";
 import { Loader } from "./Loader";
 import Toast from "./Toast";
 import { useHistory } from "react-router-dom";
-const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback }) => {
+const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActionPrefix, ActionBarStyle = {}, MenuStyle = {}, applicationDetails, url, setStateChanged, moduleCode,editApplicationNumber,editCallback ,callback}) => {
   
   const history = useHistory()
   const { estimateNumber } = Digit.Hooks.useQueryParams();
@@ -130,6 +130,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         //show error toast acc to selectAction
         setShowToast({ error: true, label: Digit.Utils.locale.getTransformedLocale(`WF_UPDATE_ERROR_${businessService}_${selectAction.action}`), isDleteBtn:true })
         
+        callback?.onError?.();
 
         
         
@@ -139,7 +140,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
         //show success toast acc to selectAction
         setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`WF_UPDATE_SUCCESS_${businessService}_${selectAction.action}`) })
         
-
+        callback?.onSuccess?.();
         // to refetch updated workflowData and re-render timeline and actions
         workflowDetails.revalidate()
 

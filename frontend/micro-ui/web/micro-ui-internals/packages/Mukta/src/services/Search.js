@@ -14,7 +14,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
             asSectionHeader: true,
             values: [
                 { title: "WORKS_PROJECT_ID", value: currentProject?.projectNumber || "NA"},
-                { title: "WORKS_DATE_PROPOSAL", value: Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA"},
+                { title: "ES_COMMON_PROPOSAL_DATE", value: Digit.Utils.pt.convertEpochToDate(currentProject?.additionalDetails?.dateOfProposal) || "NA"},
                 { title: "WORKS_PROJECT_NAME", value: currentProject?.name || "NA"},
                 { title: "PROJECT_PROJECT_DESC", value: currentProject?.description || "NA"}
             ]
@@ -50,6 +50,7 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
         //     ],
         //   };
 
+        
         let documentDetails = {
             title: "",
             asSectionHeader: true,
@@ -62,8 +63,8 @@ const createProjectsArray = (t, project, searchParams, headerLocale) => {
                             return {
                                 title: document?.documentType === "Other" ? document?.additionalDetails?.otherCategoryName : t(`PROJECT_${document?.documentType}`),
                                 documentType: document?.documentType,
-                                documentUid: document?.fileStoreId,
-                                fileStoreId: document?.fileStoreId,
+                                documentUid: document?.fileStore,
+                                fileStoreId: document?.fileStore,
                             };
                         }
                         return {};

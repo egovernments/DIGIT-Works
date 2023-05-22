@@ -37,6 +37,28 @@ Axios.interceptors.response.use(
   }
 );
 
+
+const trimDataInObject=(data)=>{
+  for (let [key, value] of Object.entries(data)) {
+    if (typeof(value) === 'string'){
+        data[key] = value.trim(); 
+    }else if(  typeof(value) === 'object'){
+       value= trimDataInObject(value);
+    }
+  }
+  return data;
+}
+
+// Add a request interceptor
+Axios.interceptors.request.use( (req) =>{
+  // Do something before request is sent
+  // req.data=trimDataInObject(req.data);
+  return req;
+},  (error) =>{
+  // Do something with request error
+  return Promise.reject(error);
+});
+
 const requestInfo = () => ({
   authToken: Digit.UserService.getUser()?.access_token || null,
 });

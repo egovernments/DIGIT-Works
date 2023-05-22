@@ -81,10 +81,10 @@ class AppInitializationBloc
         })
       ].toList());
       if (kIsWeb) {
-        html.window.localStorage['initData'] = jsonEncode(result.toJson());
-        html.window.localStorage['StateInfo'] = jsonEncode(ss);
-        html.window.localStorage['languages'] = jsonEncode(ss.languages);
-        html.window.localStorage['tenantId'] = jsonEncode(ss.code);
+        html.window.sessionStorage['initData'] = jsonEncode(result.toJson());
+        html.window.sessionStorage['StateInfo'] = jsonEncode(ss);
+        html.window.sessionStorage['languages'] = jsonEncode(ss.languages);
+        html.window.sessionStorage['tenantId'] = jsonEncode(ss.code);
       } else {
         await storage.write(
             key: 'initData', value: jsonEncode(result.toJson()));
@@ -97,9 +97,9 @@ class AppInitializationBloc
       dynamic localStateData;
       dynamic localLanguageData;
       if (kIsWeb) {
-        localInitData = html.window.localStorage['initData'];
-        localStateData = html.window.localStorage['StateInfo'];
-        localLanguageData = html.window.localStorage['languages'];
+        localInitData = html.window.sessionStorage['initData'];
+        localStateData = html.window.sessionStorage['StateInfo'];
+        localLanguageData = html.window.sessionStorage['languages'];
       } else {
         localInitData = await storage.read(key: 'initData');
         localStateData = await storage.read(key: 'StateInfo');
@@ -130,7 +130,7 @@ class AppInitializationBloc
         })
       ].toList());
       if (kIsWeb) {
-        html.window.localStorage['languages'] = jsonEncode(ss.languages);
+        html.window.sessionStorage['languages'] = jsonEncode(ss.languages);
       } else {
         await storage.write(key: 'languages', value: jsonEncode(ss.languages));
       }
@@ -138,9 +138,9 @@ class AppInitializationBloc
       dynamic localStateData;
       dynamic localLanguageData;
       if (kIsWeb) {
-        localInitData = html.window.localStorage['initData'];
-        localStateData = html.window.localStorage['StateInfo'];
-        localLanguageData = html.window.localStorage['languages'];
+        localInitData = html.window.sessionStorage['initData'];
+        localStateData = html.window.sessionStorage['StateInfo'];
+        localLanguageData = html.window.sessionStorage['languages'];
       } else {
         localInitData = await storage.read(key: 'initData');
         localStateData = await storage.read(key: 'StateInfo');

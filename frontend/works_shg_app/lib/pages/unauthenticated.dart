@@ -5,6 +5,7 @@ import 'package:works_shg_app/blocs/localization/localization.dart';
 
 import '../blocs/app_initilization/app_initilization.dart';
 import '../data/remote_client.dart';
+import '../data/repositories/remote/localization.dart';
 import '../data/repositories/remote/mdms.dart';
 import '../models/localization/localization_model.dart';
 import '../widgets/loaders.dart';
@@ -27,19 +28,40 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
       ],
       child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
           builder: (context, appInitState) {
-        return (appInitState.isInitializationCompleted &&
-                appInitState.digitRowCardItems != null &&
-                appInitState.digitRowCardItems!.isNotEmpty)
-            ? BlocBuilder<LocalizationBloc, LocalizationState>(
-                builder: (context, localeState) {
-                return localeState.maybeWhen(
-                    orElse: () => Container(),
-                    loading: () => Loaders.circularLoader(context),
-                    loaded: (List<LocalizationMessageModel>? localization) {
-                      return const AutoRouter();
-                    });
-              })
-            : Loaders.circularLoader(context);
+        return BlocProvider(
+            create: (appInitState.initMdmsModel != null &&
+                    appInitState.stateInfoListModel?.localizationModules !=
+                        null)
+                ? (context) => LocalizationBloc(
+                      const LocalizationState.initial(),
+                      LocalizationRepository(client.init()),
+                    )..add(LocalizationEvent.onLoadLocalization(
+                        module:
+                            'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
+                        tenantId: appInitState
+                            .initMdmsModel!.tenant!.tenantListModel!.first.code
+                            .toString(),
+                        locale: appInitState.digitRowCardItems!
+                            .firstWhere((e) => e.isSelected)
+                            .value,
+                      ))
+                : (context) => LocalizationBloc(
+                      const LocalizationState.initial(),
+                      LocalizationRepository(client.init()),
+                    ),
+            child: (appInitState.isInitializationCompleted &&
+                    appInitState.digitRowCardItems != null &&
+                    appInitState.digitRowCardItems!.isNotEmpty)
+                ? BlocBuilder<LocalizationBloc, LocalizationState>(
+                    builder: (context, localeState) {
+                    return localeState.maybeWhen(
+                        orElse: () => Container(),
+                        loading: () => Loaders.circularLoader(context),
+                        loaded: (List<LocalizationMessageModel>? localization) {
+                          return const AutoRouter();
+                        });
+                  })
+                : Loaders.circularLoader(context));
       }),
     ));
   }

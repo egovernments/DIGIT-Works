@@ -27,8 +27,8 @@ export const DownloadBillConfig = {
                                 additionalCustomization:true
                             },
                             {
-                                label: "ES_COMMON_JOB_ID",
-                                jsonPath: "id"
+                                label: "ES_COMMON_PAYMENT_NO",
+                                jsonPath: "paymentNumber"
                             },
                             {
                                 label: "ES_COMMON_DATE",

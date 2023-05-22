@@ -32,7 +32,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
     if (await GlobalVariables.isLocaleSelect(event.locale, event.module)) {
       dynamic localLabelResponse;
       if (kIsWeb) {
-        localLabelResponse = html.window.localStorage[event.locale ?? ''];
+        localLabelResponse = html.window.sessionStorage[event.locale ?? ''];
       } else {
         localLabelResponse = await storage.read(key: event.locale ?? '');
       }
@@ -62,15 +62,15 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
       );
 
       if (kIsWeb) {
-        var existing = html.window.localStorage[event.locale ?? ''];
+        var existing = html.window.sessionStorage[event.locale ?? ''];
         if (existing != null) {
           var existingObject = json.decode(existing);
           existingObject
               .addAll(result.messages.map((e) => e.toJson()).toList());
-          html.window.localStorage[event.locale ?? ''] =
+          html.window.sessionStorage[event.locale ?? ''] =
               jsonEncode(existingObject);
         } else {
-          html.window.localStorage[event.locale ?? ''] =
+          html.window.sessionStorage[event.locale ?? ''] =
               jsonEncode(result.messages.map((e) => e.toJson()).toList());
         }
       } else {
@@ -91,7 +91,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
 
       dynamic localLabelResponse;
       if (kIsWeb) {
-        localLabelResponse = html.window.localStorage[event.locale ?? ''];
+        localLabelResponse = html.window.sessionStorage[event.locale ?? ''];
       } else {
         localLabelResponse = await storage.read(key: event.locale ?? '');
       }

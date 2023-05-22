@@ -1,5 +1,5 @@
 import 'package:digit_components/digit_components.dart';
-import 'package:flutter/material.dart';
+import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/utils/date_formats.dart';
@@ -78,12 +78,26 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                           .map((e) => {
                                 i18.common.orgId: e.orgNumber,
                                 i18.common.orgName: e.name,
-                                i18.common.registeredDept:
-                                    e.additionalDetails?.registeredByDept ??
-                                        'NA',
-                                i18.common.deptRegNo:
-                                    e.additionalDetails?.deptRegistrationNum ??
-                                        'NA',
+                                i18.common.registeredDept: e.additionalDetails
+                                            ?.registeredByDept !=
+                                        null
+                                    ? (e.additionalDetails?.registeredByDept ??
+                                                '')
+                                            .isNotEmpty
+                                        ? e.additionalDetails?.registeredByDept
+                                        : t.translate(i18.common.noValue)
+                                    : t.translate(i18.common.noValue),
+                                i18.common.deptRegNo: e.additionalDetails
+                                            ?.deptRegistrationNum !=
+                                        null
+                                    ? (e.additionalDetails
+                                                    ?.deptRegistrationNum ??
+                                                '')
+                                            .isNotEmpty
+                                        ? e.additionalDetails
+                                            ?.deptRegistrationNum
+                                        : t.translate(i18.common.noValue)
+                                    : t.translate(i18.common.noValue),
                                 i18.common.dateOfIncorporation:
                                     DateFormats.timeStampToDate(
                                         e.dateOfIncorporation),
@@ -120,29 +134,44 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                       contactDetails = organisationListModel.organisations!
                           .map((e) => {
                                 i18.common.contactPersonName:
-                                    e.contactDetails?.first.contactName ?? 'NA',
+                                    e.contactDetails?.first.contactName ??
+                                        t.translate(i18.common.noValue),
                                 i18.common.mobileNumber: e.contactDetails?.first
                                         .contactMobileNumber ??
-                                    'NA',
-                                i18.common.email:
-                                    e.contactDetails?.first.contactEmail ??
-                                        'NA',
+                                    t.translate(i18.common.noValue),
+                                i18.common.email: e.contactDetails?.first
+                                            .contactEmail !=
+                                        null
+                                    ? (e.contactDetails?.first.contactEmail ??
+                                                '')
+                                            .isNotEmpty
+                                        ? e.contactDetails?.first.contactEmail
+                                        : t.translate(i18.common.noValue)
+                                    : t.translate(i18.common.noValue),
                               })
                           .toList();
                       locationDetails = organisationListModel.organisations!
                           .map((e) => {
                                 i18.common.city: t.translate(
-                                        'TENANT_TENANTS_${e.tenantId?.toUpperCase().replaceAll('.', '_')}') ??
-                                    'NA',
+                                    'TENANT_TENANTS_${e.tenantId.toUpperCase().replaceAll('.', '_')}'),
                                 i18.common.ward: t.translate(
-                                        '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_${e.orgAddress?.first.boundaryCode ?? 'NA'}') ??
-                                    'NA',
+                                    '${GlobalVariables.organisationListModel?.organisations?.first.tenantId.toUpperCase().replaceAll('.', '_')}_ADMIN_${e.orgAddress?.first.boundaryCode ?? 'NA'}'),
                                 i18.common.locality: t.translate(
-                                    '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_${e.additionalDetails?.locality}'),
+                                    '${GlobalVariables.organisationListModel?.organisations?.first.tenantId.toUpperCase().replaceAll('.', '_')}_ADMIN_${e.additionalDetails?.locality}'),
                                 i18.common.streetName:
-                                    e.orgAddress?.first.street ?? 'NA',
+                                    e.orgAddress?.first.street != null
+                                        ? (e.orgAddress?.first.street ?? '')
+                                                .isNotEmpty
+                                            ? e.orgAddress?.first.street
+                                            : t.translate(i18.common.noValue)
+                                        : t.translate(i18.common.noValue),
                                 i18.common.doorNo:
-                                    e.orgAddress?.first.doorNo ?? 'NA',
+                                    e.orgAddress?.first.doorNo != null
+                                        ? (e.orgAddress?.first.doorNo ?? '')
+                                                .isNotEmpty
+                                            ? e.orgAddress?.first.doorNo
+                                            : t.translate(i18.common.noValue)
+                                        : t.translate(i18.common.noValue),
                               })
                           .toList();
                     }

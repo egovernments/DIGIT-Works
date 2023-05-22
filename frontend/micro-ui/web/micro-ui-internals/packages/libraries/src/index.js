@@ -14,6 +14,7 @@ import { LocalizationService } from "./services/elements/Localization/service";
 import { LoginService } from "./services/elements/Login";
 import { PGRService } from "./services/elements/PGR";
 import { PaymentService } from "./services/elements/Payment";
+import { ExpenseService } from "./services/elements/Expense";
 import * as dateUtils from "./services/atoms/Utils/Date";
 import Download from "./services/atoms/Download";
 import { WorkflowService } from "./services/elements/WorkFlow";
@@ -66,6 +67,7 @@ const initLibraries = () => {
   setupLibraries("PGRService", PGRService);
   setupLibraries("HRMSService", HrmsService);
   setupLibraries("PaymentService", PaymentService);
+  setupLibraries("ExpenseService", ExpenseService);
   setupLibraries("DateUtils", dateUtils);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);

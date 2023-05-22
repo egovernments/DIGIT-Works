@@ -36,7 +36,7 @@ class WageSeekerCreateBloc
               body: {
             "Individual": {
               "tenantId": event.locationDetails?.city,
-              "name": {"givenName": event.individualDetails?.name},
+              "name": {"givenName": event.individualDetails?.name?.trim()},
               "dateOfBirth": DateFormats.getFilteredDate(
                   event.individualDetails?.dateOfBirth.toString() ?? ''),
               "gender": event.individualDetails?.gender,
@@ -62,10 +62,10 @@ class WageSeekerCreateBloc
                 }
               ],
               "fatherName": event.individualDetails?.relationship == 'FATHER'
-                  ? event.individualDetails?.fatherName
+                  ? event.individualDetails?.fatherName?.trim()
                   : null,
               "husbandName": event.individualDetails?.relationship == 'HUSBAND'
-                  ? event.individualDetails?.fatherName
+                  ? event.individualDetails?.fatherName?.trim()
                   : null,
               "relationship": event.individualDetails?.relationship,
               "identifiers": [

@@ -35,8 +35,7 @@ const ViewPurchaseBill = ({props}) => {
       }
     );
 
-    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError } = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {enabled : !isApplicableChargesLoading,cacheTime:0}, metaData);
-    
+    const { data, isLoading : isViewPurchaseBillDataLoading, isError : isViewPurchaseBillDataError,remove,refetch} = Digit.Hooks.bills.useViewPurchaseBillDetails(tenantId, t, billCriteria, headerLocale, {enabled : !isApplicableChargesLoading,cacheTime:0}, metaData);
     
     const handleActionBar = (option) => {
 
@@ -91,6 +90,10 @@ const ViewPurchaseBill = ({props}) => {
                   setStateChanged={setStateChanged}
                   moduleCode="Expenditure"
                   editApplicationNumber={billNumber}
+                  callback={{onSuccess:()=>{
+                    remove();
+                    refetch();
+                    }}}
                 />
               {/* {data?.applicationData?.wfStatus === "APPROVED" ?
                   <ActionBar>

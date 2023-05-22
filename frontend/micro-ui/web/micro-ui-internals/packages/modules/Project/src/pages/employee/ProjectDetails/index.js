@@ -16,17 +16,13 @@ const ProjectDetails = () => {
     const menuRef = useRef();
     const [showActions, setShowActions] = useState(false);
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
-    const [hideActionBar, setHideActionBar] = useState(true);
+    const [hideActionBar, setHideActionBar] = useState(false);
     const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
     const [sessionFormData, clearSessionFormData] = projectSession;
     const location = useLocation();
     let isProjectModifier = false;
     let isEstimateViewerAndCreator = false;
-    const [actionsMenu, setActionsMenu] = useState([ 
-        {
-            name : "MODIFY_PROJECT"
-        }
-    ]);
+    const [actionsMenu, setActionsMenu] = useState([]);
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const navConfigs = [
         {
@@ -102,7 +98,8 @@ const ProjectDetails = () => {
     const { data } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
 
     //fetch estimate details
-    const { data : estimates, isError : isEstimateSearchError } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+    const { data : estimates, isError : isEstimateSearchError,isLoading:estimateLoading } = Digit.Hooks.works.useSearchEstimate( tenantId, {limit : 1, offset : 0, projectId : data?.projectDetails?.searchedProject?.basicDetails?.uuid });
+    
 
     useEffect(()=>{
         const projectModifierRoles = ["PROJECT_CREATOR"];
@@ -110,45 +107,47 @@ const ProjectDetails = () => {
     },[loggedInUserRoles]);
 
     useEffect(()=>{
-        const estimateViewerAndCreatorRole = ["ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER", "ESTIMATE_VIEWER"];
+        const estimateViewerAndCreatorRole = ["ESTIMATE_CREATOR", "ESTIMATE_VERIFIER", "TECHNICAL_SANCTIONER", "ESTIMATE_APPROVER"];
         isEstimateViewerAndCreator = estimateViewerAndCreatorRole?.some(role=>loggedInUserRoles?.includes(role));
     },[loggedInUserRoles]);
+
+    const setUniqueActions = (objToSet) => {
+        const set = actionsMenu.filter(row => row.name === objToSet.name).length === 0 
+        if(set){
+            setActionsMenu((prev)=>[...prev, objToSet])
+        }
+    }
 
     useEffect(()=>{
         let isUserEstimateCreator = loggedInUserRoles?.includes("ESTIMATE_CREATOR");
         if(isEstimateSearchError && isEstimateViewerAndCreator) {
             setToast({show : true, label : t("COMMON_ERROR_FETCHING_ESTIMATE_DETAILS"), error : true});
-            setActionsMenu([]);
             setHideActionBar(true);
         }else {
             if((estimates?.length === 0 || estimates?.[0]?.wfStatus === "" || estimates?.[0]?.wfStatus === "REJECTED")) {
                 if(isUserEstimateCreator) {
                     setHideActionBar(false);
-                    setActionsMenu([
-                        {
-                            name : "CREATE_ESTIMATE"
-                        }
-                    ])
+                    setUniqueActions({
+                        name : "CREATE_ESTIMATE"
+                    })
                 }else {
-                    setHideActionBar(true);
-                    setActionsMenu([])
+                    // setHideActionBar(true);
                 }
-            }else if(isEstimateViewerAndCreator){
+            }else if(isProjectModifier || isEstimateViewerAndCreator){
+                //we have given search estimate access to project creator
                 setHideActionBar(false);
-                setActionsMenu([
-                    {
-                        name : "VIEW_ESTIMATE"
-                    }
-                ])
+                estimates && estimates?.length !== 0 && setUniqueActions({
+                    name : "VIEW_ESTIMATE"
+                })
             }
             if(isProjectModifier) {
                 setHideActionBar(false);
-                setActionsMenu((prev)=>[...prev, {
+                setUniqueActions({
                     name : "MODIFY_PROJECT"
-                }])
+                })
             }
         }
-    },[estimates, isEstimateSearchError]);
+    },[estimates, isEstimateSearchError,estimateLoading]);
 
      //remove Toast after 3s
      useEffect(()=>{

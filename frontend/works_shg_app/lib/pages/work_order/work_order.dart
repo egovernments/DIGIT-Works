@@ -128,28 +128,27 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                               workOrderList = contracts!.contracts!
                                   .map((e) => {
                                         'cardDetails': {
-                                          i18.workOrder.workOrderNo:
-                                              e.contractNumber ?? 'NA',
+                                          i18.workOrder.workOrderNo: e
+                                                  .contractNumber ??
+                                              t.translate(i18.common.noValue),
                                           i18.attendanceMgmt.projectDesc: e
                                                   .additionalDetails
                                                   ?.projectDesc ??
-                                              'NA',
-                                          i18.workOrder.roleOfCBO:
-                                              AppLocalizations.of(context)
-                                                  .translate(
-                                                      e.executingAuthority ??
-                                                          'NA'),
+                                              t.translate(i18.common.noValue),
+                                          i18.workOrder.roleOfCBO: t.translate(
+                                              'COMMON_MASTERS_${e.executingAuthority ?? 'NA'}'),
                                           i18.attendanceMgmt.engineerInCharge: e
                                                   .additionalDetails
                                                   ?.officerInChargeName
                                                   ?.name ??
-                                              'NA',
-                                          i18.workOrder.contractIssueDate:
-                                              e.issueDate != null
-                                                  ? DateFormats.timeStampToDate(
-                                                      e.issueDate,
-                                                      format: "dd/MM/yyyy")
-                                                  : 'NA',
+                                              t.translate(i18.common.noValue),
+                                          i18.workOrder.contractIssueDate: e
+                                                      .issueDate !=
+                                                  null
+                                              ? DateFormats.timeStampToDate(
+                                                  e.issueDate,
+                                                  format: "dd/MM/yyyy")
+                                              : t.translate(i18.common.noValue),
                                           i18.workOrder.dueDate: e.issueDate !=
                                                   null
                                               ? DateFormats.getFilteredDate(DateTime
@@ -158,7 +157,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                   .add(const Duration(days: 7))
                                                   .toLocal()
                                                   .toString())
-                                              : 'NA',
+                                              : t.translate(i18.common.noValue),
                                           i18.workOrder.workOrderAmount:
                                               '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                           i18.common.status: t.translate(
@@ -225,23 +224,23 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                         'cardDetails':
                                                                             {
                                                                           i18.workOrder.workOrderNo:
-                                                                              e.contractNumber ?? 'NA',
+                                                                              e.contractNumber ?? t.translate(i18.common.noValue),
                                                                           i18.attendanceMgmt.projectDesc:
-                                                                              e.additionalDetails?.projectDesc ?? 'NA',
+                                                                              e.additionalDetails?.projectDesc ?? t.translate(i18.common.noValue),
                                                                           i18.workOrder.roleOfCBO:
-                                                                              AppLocalizations.of(context).translate(e.executingAuthority ?? 'NA'),
+                                                                              t.translate('COMMON_MASTERS_${e.executingAuthority ?? 'NA'}'),
                                                                           i18.attendanceMgmt.engineerInCharge:
-                                                                              e.additionalDetails?.officerInChargeName?.name ?? 'NA',
+                                                                              e.additionalDetails?.officerInChargeName?.name ?? t.translate(i18.common.noValue),
                                                                           i18.workOrder
                                                                               .contractIssueDate: e.issueDate !=
                                                                                   null
                                                                               ? DateFormats.timeStampToDate(e.issueDate, format: "dd/MM/yyyy")
-                                                                              : 'NA',
+                                                                              : t.translate(i18.common.noValue),
                                                                           i18.workOrder
                                                                               .dueDate: e.issueDate !=
                                                                                   null
                                                                               ? DateFormats.getFilteredDate(DateTime.fromMillisecondsSinceEpoch(e.issueDate ?? 0).add(const Duration(days: 7)).toLocal().toString())
-                                                                              : 'NA',
+                                                                              : t.translate(i18.common.noValue),
                                                                           i18.workOrder.workOrderAmount:
                                                                               '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
                                                                           i18.common.status:
@@ -292,14 +291,25 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                     .common
                                                                     .decline),
                                                       )
-                                                    : EmptyImage(
-                                                        label: AppLocalizations
-                                                                .of(context)
-                                                            .translate(i18
-                                                                .workOrder
-                                                                .noWorkOrderAssigned),
-                                                        align: Alignment.center,
-                                                      ),
+                                                    : inProgress
+                                                        ? EmptyImage(
+                                                            label: AppLocalizations
+                                                                    .of(context)
+                                                                .translate(i18
+                                                                    .workOrder
+                                                                    .noWorkOrderAssigned),
+                                                            align: Alignment
+                                                                .center,
+                                                          )
+                                                        : EmptyImage(
+                                                            label: AppLocalizations
+                                                                    .of(context)
+                                                                .translate(i18
+                                                                    .workOrder
+                                                                    .noCompletedWorkOrderFound),
+                                                            align: Alignment
+                                                                .center,
+                                                          ),
                                                 const SizedBox(
                                                   height: 16.0,
                                                 ),

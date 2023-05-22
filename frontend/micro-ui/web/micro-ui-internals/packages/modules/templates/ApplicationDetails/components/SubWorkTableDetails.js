@@ -24,7 +24,7 @@ const SubWorkTableDetails = ({data}) => {
                     else if(lineItem?.type === "link") return (
                       <td>                      
                         <div className="link">
-                          <Link to={`/${window.contextPath}/employee/`}>{String(lineItem.label ? lineItem.label : t("ES_COMMON_NA"))}</Link>
+                          <Link to={lineItem?.path}>{String(lineItem.label ? lineItem.label : t("ES_COMMON_NA"))}</Link>
                         </div>
                       </td>
                     );

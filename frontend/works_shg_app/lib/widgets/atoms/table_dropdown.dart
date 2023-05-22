@@ -32,7 +32,8 @@ class _DropDownDialogState extends State<DropDownDialog> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: AppLocalizations.of(context).translate(widget.selectedOption),
+      message: AppLocalizations.of(context)
+          .translate('COMMON_MASTERS_SKILLS_${widget.selectedOption}'),
       // triggerMode: TooltipTriggerMode.longPress,
       child: Align(
         alignment: Alignment.centerLeft,

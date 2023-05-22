@@ -89,7 +89,7 @@ public class PaymentService {
         backUpdateBillForPayment(paymentRequest);
 
         /* only status update should be allowed here */
-        producer.push(config.getPaymentCreateTopic(), paymentRequest);
+        producer.push(config.getPaymentUpdateTopic(), paymentRequest);
         return PaymentResponse.builder()
                 .payments(Arrays.asList(payment))
                 .responseInfo(

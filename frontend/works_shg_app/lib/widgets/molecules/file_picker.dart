@@ -218,8 +218,14 @@ class SHGFilePickerState extends State<SHGFilePicker> {
 
   void onClickOfClear(int index) {
     setState(() {
-      _selectedFiles.removeAt(index);
-      if (index < fileStoreList.length) fileStoreList.removeAt(index);
+      if (_selectedFiles.isNotEmpty) {
+        _selectedFiles.removeAt(index);
+      }
+      if (!index.isNegative) {
+        if (index < fileStoreList.length) {
+          fileStoreList.removeAt(index);
+        }
+      }
       FilePickerData.imageFile = null;
       FilePickerData.bytes = null;
     });
@@ -324,7 +330,6 @@ class SHGFilePickerState extends State<SHGFilePicker> {
               Notifiers.getToastMessage(context, i18.common.fileSize, 'ERROR');
               return;
             }
-            ;
             if (multiPick) {
               _selectedFiles.addAll([file]);
             } else {

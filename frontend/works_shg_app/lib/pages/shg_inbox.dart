@@ -265,7 +265,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                       left: 8, right: 8, bottom: 16),
                                                   height: inWorkFlow
                                                       ? MediaQuery.of(context).size.height
-                                                      : MediaQuery.of(context).size.height - 150,
+                                                      : MediaQuery.of(context).size.height - 180,
                                                   child: CustomScrollView(slivers: [
                                                     SliverList(
                                                         delegate: SliverChildListDelegate([
@@ -349,78 +349,84 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                           const SizedBox(
                                                             height: 20,
                                                           ),
-                                                              CustomInfoCard(title: AppLocalizations.of(context)
-                                                                  .translate(i18.common.info), description: AppLocalizations.of(context)
-                                                                  .translate(i18.attendanceMgmt.toMarkAttendance),
-                                                                child: Column(
-                                                                  children: entryExitList!.length > 2  ? [
-                                                                    Row(children:  [
-                                                                      CircularButton(icon: Icons.circle_rounded,
-                                                                        size: 15,
-                                                                        color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                        index: 1,
-                                                                        isNotGreyed: false,
-                                                                        onTap: () {},),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 4.0),
-                                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
-                                                                      )
-                                                                    ],),
-                                                                    const SizedBox(height: 4,),
-                                                                    Row(children: [
-                                                                      CircularButton(icon: Icons.circle_rounded,
-                                                                        size: 15,
-                                                                        color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                        index: 0.5,
-                                                                        isNotGreyed: false,
-                                                                        onTap: () {},),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 4.0),
-                                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
-                                                                      )
-                                                                    ],),
-                                                                    const SizedBox(height: 4,),
-                                                                    Row(children:  [
-                                                                      CircularButton(icon: Icons.circle_rounded,
-                                                                        size: 15,
-                                                                        color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                        index: 0,
-                                                                        isNotGreyed: false,
-                                                                        onTap: () {},),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 4.0),
-                                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
-                                                                      )
-                                                                    ],)
-                                                                  ] : [
-                                                                    Row(
-                                                                      children:  [
-                                                                        CircularButton(icon: Icons.circle_rounded,
-                                                                          size: 15,
-                                                                          color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                          index: 1,
-                                                                          isNotGreyed: false,
-                                                                          onTap: () {},),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.only(left: 4.0),
-                                                                          child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
-                                                                        )
-                                                                      ],),
-                                                                    const SizedBox(height: 4,),
-                                                                    Row(children:  [
-                                                                      CircularButton(icon: Icons.circle_rounded,
-                                                                        size: 15,
-                                                                        color: const Color.fromRGBO(0, 100, 0, 1),
-                                                                        index: 0,
-                                                                        isNotGreyed: false,
-                                                                        onTap: () {},),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 4.0),
-                                                                        child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
-                                                                      )
-                                                                    ],)
-                                                                  ],
-                                                                ),),
+                                                              BlocBuilder<MusterGetWorkflowBloc, MusterGetWorkflowState>(builder: (context, workflowState) {
+                                                                return workflowState.maybeWhen(
+                                                                  orElse: () => Container(),
+                                                                  loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                    loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkFlow) => musterWorkFlowModel?.processInstances?.first.workflowState?.state == widget.sentBackCode ? CustomInfoCard(title: AppLocalizations.of(context)
+                                                                      .translate(i18.common.info), description: AppLocalizations.of(context)
+                                                                      .translate(i18.attendanceMgmt.toMarkAttendance),
+                                                                    child: Column(
+                                                                      children: entryExitList!.length > 2  ? [
+                                                                        Row(children:  [
+                                                                          CircularButton(icon: Icons.circle_rounded,
+                                                                            size: 15,
+                                                                            color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                            index: 1,
+                                                                            isNotGreyed: false,
+                                                                            onTap: () {},),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left: 4.0),
+                                                                            child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                                          )
+                                                                        ],),
+                                                                        const SizedBox(height: 4,),
+                                                                        Row(children: [
+                                                                          CircularButton(icon: Icons.circle_rounded,
+                                                                            size: 15,
+                                                                            color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                            index: 0.5,
+                                                                            isNotGreyed: false,
+                                                                            onTap: () {},),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left: 4.0),
+                                                                            child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.halfDay)}'),
+                                                                          )
+                                                                        ],),
+                                                                        const SizedBox(height: 4,),
+                                                                        Row(children:  [
+                                                                          CircularButton(icon: Icons.circle_rounded,
+                                                                            size: 15,
+                                                                            color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                            index: 0,
+                                                                            isNotGreyed: false,
+                                                                            onTap: () {},),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left: 4.0),
+                                                                            child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.tripleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                                          )
+                                                                        ],)
+                                                                      ] : [
+                                                                        Row(
+                                                                          children:  [
+                                                                            CircularButton(icon: Icons.circle_rounded,
+                                                                              size: 15,
+                                                                              color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                              index: 1,
+                                                                              isNotGreyed: false,
+                                                                              onTap: () {},),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(left: 4.0),
+                                                                              child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.singleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.fullDay)}'),
+                                                                            )
+                                                                          ],),
+                                                                        const SizedBox(height: 4,),
+                                                                        Row(children:  [
+                                                                          CircularButton(icon: Icons.circle_rounded,
+                                                                            size: 15,
+                                                                            color: const Color.fromRGBO(0, 100, 0, 1),
+                                                                            index: 0,
+                                                                            isNotGreyed: false,
+                                                                            onTap: () {},),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left: 4.0),
+                                                                            child: Text('${AppLocalizations.of(context).translate(i18.attendanceMgmt.doubleClick)} ${AppLocalizations.of(context).translate(i18.attendanceMgmt.absent)}'),
+                                                                          )
+                                                                        ],)
+                                                                      ],
+                                                                    ),) : const SizedBox.shrink());
+                                                                }
+                                                              ),
                                                           Container(
                                                               margin:
                                                                   const EdgeInsets.all(8.0),
@@ -644,6 +650,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                     ),
                                                                   ],
                                                                 ),
+                                                              const Align(
+                                                                alignment: Alignment.bottomCenter,
+                                                                child: PoweredByDigit(),
+                                                              )
                                                         ]))
                                                   ]),
                                                 ),
@@ -662,58 +672,58 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                             left: 8.0,
                                                             right: 8.0,
                                                           ),
-                                                          child: SizedBox(
-                                                            height: inWorkFlow ? 0 :  100,
-                                                            child: BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
-                                                              listener: (context, workflowState) {
-                                                                workflowState.maybeWhen(
-                                                                    loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                    error: () {
-                                                                      Notifiers.getToastMessage(
-                                                                          context,
-                                                                          AppLocalizations.of(
-                                                                                  context)
-                                                                              .translate(i18
-                                                                                  .attendanceMgmt
-                                                                                  .unableToCheckWorkflowStatus),
-                                                                          'ERROR');
-                                                                    },
-                                                                    loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkFlow) {
-                                                                      if (!isInWorkFlow) {
-                                                                        if(inWorkFlow != false){
+                                                          child: BlocListener<MusterGetWorkflowBloc, MusterGetWorkflowState>(
+                                                            listener: (context, workflowState) {
+                                                              workflowState.maybeWhen(
+                                                                  loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                  error: () {
+                                                                    Notifiers.getToastMessage(
+                                                                        context,
+                                                                        AppLocalizations.of(
+                                                                                context)
+                                                                            .translate(i18
+                                                                                .attendanceMgmt
+                                                                                .unableToCheckWorkflowStatus),
+                                                                        'ERROR');
+                                                                  },
+                                                                  loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkFlow) {
+                                                                    if (!isInWorkFlow) {
+                                                                      if(inWorkFlow != false){
+                                                                        setState(() {
+                                                                          inWorkFlow = false;
+                                                                        });
+                                                                      }
+                                                                    } else {
+                                                                      if (individualMusterRollModel
+                                                                          .musterRoll!
+                                                                          .isNotEmpty) {
+                                                                        if(inWorkFlow != true) {
                                                                           setState(() {
-                                                                            inWorkFlow = false;
+                                                                            inWorkFlow = true;
                                                                           });
                                                                         }
-                                                                      } else {
-                                                                        if (individualMusterRollModel
-                                                                            .musterRoll!
-                                                                            .isNotEmpty) {
-                                                                          if(inWorkFlow != true) {
-                                                                            setState(() {
-                                                                              inWorkFlow = true;
-                                                                            });
-                                                                          }
-                                                                        }
                                                                       }
-                                                                    },
-                                                                    orElse: () =>
-                                                                        Container());
-                                                              },
-                                                              child: BlocBuilder<
-                                                                      MusterGetWorkflowBloc,
-                                                                      MusterGetWorkflowState>(
-                                                                  builder: (context,
-                                                                      workFlowState) {
-                                                                    return workFlowState.maybeWhen(orElse: () => Container(),
-                                                                        error: () => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.unableToCheckWorkflowStatus), 'ERROR'),
-                                                                        loading: () => shg_loader.Loaders.circularLoader(context),
-                                                                        loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool inWorkFlow) => inWorkFlow ? Container() : Column(
-                                                                  children: [
-                                                                    BlocListener<
+                                                                    }
+                                                                  },
+                                                                  orElse: () =>
+                                                                      Container());
+                                                            },
+                                                            child: BlocBuilder<
+                                                                    MusterGetWorkflowBloc,
+                                                                    MusterGetWorkflowState>(
+                                                                builder: (context,
+                                                                    workFlowState) {
+                                                                  return workFlowState.maybeWhen(orElse: () => Container(),
+                                                                      error: () => Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.unableToCheckWorkflowStatus), 'ERROR'),
+                                                                      loading: () => shg_loader.Loaders.circularLoader(context),
+                                                                      loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool inWorkFlow) => inWorkFlow ? Container() : SizedBox(
+                                                                        height: 100,
+                                                                        child: Column(
+                                                                children: [
+                                                                  BlocListener<
                                                                         AttendanceLogCreateBloc,
                                                                         AttendanceLogCreateState>(
-                                                                      listener: (context,
+                                                                    listener: (context,
                                                                           logState) {
                                                                         SchedulerBinding
                                                                             .instance
@@ -753,8 +763,8 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                               orElse: () =>
                                                                                   Container());
                                                                         });
-                                                                      },
-                                                                      child: OutlinedButton(
+                                                                    },
+                                                                    child: OutlinedButton(
                                                                           style: OutlinedButton.styleFrom(
                                                                               backgroundColor:
                                                                                   Colors
@@ -825,11 +835,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1))
                                                                                 : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
                                                                           ))),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height: 10,
-                                                                    ),
-                                                                    BlocListener<
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  BlocListener<
                                                                             MusterCreateBloc,
                                                                             MusterCreateState>(
                                                                         listener: (context,
@@ -900,10 +910,10 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                       .resubmitMusterRoll),
                                                                               style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
                                                                         )),
-                                                                  ],
-                                                                ));
-                                                                    }),
-                                                            ),
+                                                                ],
+                                                              ),
+                                                                      ));
+                                                                  }),
                                                           ),
                                                         ),
                                                       )

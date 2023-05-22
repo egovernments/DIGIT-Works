@@ -5,6 +5,7 @@ import _ from "lodash";
 import { useHistory } from "react-router-dom";
 import { createBillPayload } from "../../../utils/createBillUtils";
 import { updateBillPayload } from "../../../utils/updateBillPayload";
+import getModalConfig from "./config";
 
 const navConfig =  [
     {
@@ -28,7 +29,13 @@ const CreatePurchaseBillForm = ({
     const [toast, setToast] = useState({show : false, label : "", error : false});
     const history = useHistory();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const rolesForThisAction = "BILL_CREATOR" //hardcoded for now
+
+    const [showModal, setShowModal] = useState(false);
+    const rolesForThisAction = "BILL_VERIFIER" //hardcoded for now
+    const [approvers, setApprovers] = useState([]);
+    const [selectedApprover, setSelectedApprover] = useState({});
+    const [inputFormData,setInputFormData] = useState({})
+    const [config, setConfig] = useState({});
 
     createPurchaseBillConfig = useMemo(
         () => Digit.Utils.preProcessMDMSConfig(t, createPurchaseBillConfig, {
@@ -108,25 +115,62 @@ const CreatePurchaseBillForm = ({
 
     const { mutate: CreatePurchaseBillMutation } = Digit.Hooks.bills.useCreatePurchaseBill();
     const { mutate: UpdatePurchaseBillMutation } = Digit.Hooks.bills.useUpdatePurchaseBill();
-    const onFormSubmit = async(data) => {
-        //transform formdata to Payload
-        const payload = createBillPayload(data, contract, docConfigData);
+
+    const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
+
+
+    employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+
+    useEffect(() => {
+        setApprovers(employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : [])
+    }, [employeeDatav1])
+    useEffect(() => {
+
+        setConfig(
+            getModalConfig({
+                t,
+                approvers,
+                selectedApprover,
+                setSelectedApprover,
+                approverLoading,
+                // designation,
+                // selectedDesignation,
+                // setSelectedDesignation,
+                // department,
+                // selectedDept,
+                // setSelectedDept,
+            })
+        )
+
+    }, [approvers])
+
+
+    const onModalSubmit = async (_data) => {
+        
+        //here make complete data in combination with _data and inputFormData and create payload accordingly
+        //also test edit flow with this change
+        
+        const workflowDetails = {
+            assignees:selectedApprover ? [selectedApprover.uuid]: [],
+            comment:_data.comments ? _data.comments : ""
+        }
+        const payload = createBillPayload(inputFormData, contract, docConfigData,workflowDetails);
         
         if(isModify){
-            
             const updatedBillObject = updateBillPayload(bill,payload)
             const updatedPayload = {bill:updatedBillObject,workflow:{
                 "action": "RE-SUBMIT",
-                "assignees": []
+                "assignees": workflowDetails.assignees,
+                "comment":workflowDetails.comment
               }}
             await UpdatePurchaseBillMutation(updatedPayload, {
                 onError: async (error, variables) => {
                     
-                    sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_CREATED_FORWARDED", false);
+                    sendDataToResponsePage("billNumber", tenantId, false, "EXPENDITURE_PB_MODIFIED_FORWARDED", false);
                 },
                 onSuccess: async (responseData, variables) => {
                     
-                    sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_CREATED_FORWARDED", true);
+                    sendDataToResponsePage(responseData?.bills?.[0]?.billNumber, tenantId, true, "EXPENDITURE_PB_MODIFIED_FORWARDED", true);
                 },
             });
         }else{
@@ -140,6 +184,15 @@ const CreatePurchaseBillForm = ({
                 },
             });
         }
+    }
+
+    const onFormSubmit = async(data) => {
+
+        setInputFormData((prevState) => data)
+
+        setShowModal(true);
+        //transform formdata to Payload
+        
     }
 
     const sendDataToResponsePage = (billNumber, tenantId, isSuccess, message, showID) => {
@@ -163,6 +216,12 @@ const CreatePurchaseBillForm = ({
 
     return (
         <React.Fragment>
+                {showModal && <WorkflowModal
+                    closeModal={() => setShowModal(false)}
+                    onSubmit={onModalSubmit}
+                    config={config}
+                />
+                }
 
                 {
                     createPurchaseBillConfig && 

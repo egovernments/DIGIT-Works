@@ -17,7 +17,7 @@ class DesktopView extends StatelessWidget {
             children: <Widget>[
               (Center(
                   child: Container(
-                      width: 500,
+                      width: MediaQuery.of(context).size.width / 2.25,
                       padding: const EdgeInsets.all(15),
                       child: Container(
                           padding: const EdgeInsets.all(8), child: widget)))),

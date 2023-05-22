@@ -38,7 +38,7 @@ public class OrganisationServiceTest {
     private Producer producer;
 
     @Mock
-    private UserService userService;
+    private IndividualService userService;
 
     @Mock
     NotificationService notificationService;
@@ -54,7 +54,7 @@ public class OrganisationServiceTest {
 
         verify(organisationEnrichmentService, times(1)).enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
 
-        verify(userService, times(1)).createUser(orgRequest);
+        verify(userService, times(1)).createIndividual(orgRequest);
 
         verify(producer, times(1)).push(eq("save-organisation"), any(OrgRequest.class));
 

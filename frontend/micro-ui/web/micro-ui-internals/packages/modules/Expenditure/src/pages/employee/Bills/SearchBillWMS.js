@@ -37,7 +37,10 @@ const SearchBillWMS = () => {
                }
              ]
            })
-           configs.sections.searchResult.uiConfig.showCheckBox = Digit.Utils.didEmployeeHasRole(configs?.actionRole)
+           if( !Digit.Utils.didEmployeeHasRole(configs?.actionRole)){
+            configs.sections.searchResult.uiConfig.showCheckBox =false
+            configs.sections.searchResult.uiConfig.showTableInstruction = ""
+           }
            return configs
         },
       }
