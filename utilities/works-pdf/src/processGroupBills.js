@@ -411,14 +411,15 @@ let getBeneficiaryByHeadCode = (payableLineItem, headCodeMap) => {
 
 let getSupervisionBill = (bill, billObj) => {
     let bills = [];
-    let newBill = deepClone(billObj);
-    let billDetail = get(bill, "billDetails[0]", {});
-    newBill['beneficiaryId'] = get(billDetail,'payee.identifier', "");
-    newBill['beneficiaryType'] = get(billDetail, "payee.type", "");
-    newBill['grossAmount'] = get(billDetail, 'payableLineItems[0].amount', 0);
-    newBill['payableAmount'] = get(billDetail, 'payableLineItems[0].amount', 0);
-    newBill['headCode'] = get(billDetail, 'payableLineItems[0].headCode', "");
-    bills.push(newBill)
+    bill?.billDetails.forEach(billDetail => {
+        let newBill = deepClone(billObj);
+        newBill['beneficiaryId'] = get(billDetail,'payee.identifier', "");
+        newBill['beneficiaryType'] = get(billDetail, "payee.type", "");
+        newBill['grossAmount'] = get(billDetail, 'payableLineItems[0].amount', 0);
+        newBill['payableAmount'] = get(billDetail, 'payableLineItems[0].amount', 0);
+        newBill['headCode'] = get(billDetail, 'payableLineItems[0].headCode', "");
+        bills.push(newBill)
+    })
     return bills;
 }
 
