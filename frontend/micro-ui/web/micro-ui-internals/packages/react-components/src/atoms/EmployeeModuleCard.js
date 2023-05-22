@@ -15,7 +15,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
             <div className="flex-fit" style={isCitizen ? { paddingLeft: "17px" } : {}}>
               {kpis.map(({ count, label, link }, index) => (
                 <div className="card-count" key={index}>
-                  <div>
+                  <div onClick={()=>console.log(link,'link')}>
                     <span>{count || "-"}</span>
                   </div>
                   <div>
