@@ -235,12 +235,18 @@ const CreateEstimate = () => {
 
         let totalLabourAndMaterial = parseInt(_data.analysis.labour) + parseInt(_data.analysis.material)
         //here check totalEst amount should be less than material+labour
-        
         if (_data.totalEstimateAmount < totalLabourAndMaterial )   {
             setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" })
             closeToast()
             return
         } 
+        
+
+        else if(totalLabourAndMaterial === 0) {
+            setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_IMPROPER" })
+            closeToast()
+            return
+        }
             
 
         setInputFormData((prevState) => _data)
