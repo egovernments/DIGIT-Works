@@ -56,6 +56,7 @@ public class CalculationService {
     private int halfDayNumHours;
     private int fullDayNumHours;
     private boolean isRoundOffHours;
+    
 
     /**
      * Calculate the per day attendance and attendance aggregate for each individual for create muster roll
@@ -185,6 +186,7 @@ public class CalculationService {
         log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
 
     }
+    
     
     /**
      * //Fix for PFM-3184. Attendance register only contains info about people who attended. Absentees are left out. This method
