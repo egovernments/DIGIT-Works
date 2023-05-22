@@ -11,11 +11,12 @@ import { editEstimateUtil } from './editEstimateUtil'
 const configNavItems = [
     {
         name: "Project Details",
-        code: "WORKS_PROJECT_DETAILS"
+        code: "WORKS_PROJECT_DETAILS",
     },
     {
         name: "Work Details",
-        code: "WORKS_WORK_DETAILS"
+        code: "WORKS_WORK_DETAILS",
+        activeByDefault: true,
     },
 ]
 const CreateEstimate = () => {

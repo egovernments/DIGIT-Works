@@ -704,10 +704,26 @@ export const FormComposer = (props) => {
     }
   };
 
-  const [activeLink, setActiveLink] = useState(props.horizontalNavConfig?props.horizontalNavConfig?.[0].name:null);
+  const setActiveNavByDefault = (configNav) => {
+    
+    let setActiveByDefaultRow = null
+    configNav?.forEach(row => {
+      if(row?.activeByDefault){
+        setActiveByDefaultRow = row
+      }
+    })
+
+    if(setActiveByDefaultRow){
+      return setActiveByDefaultRow?.name
+    }
+    
+    return configNav?.[0]?.name
+  }
+
+  const [activeLink, setActiveLink] = useState(props.horizontalNavConfig?setActiveNavByDefault(props.horizontalNavConfig):null);
 
   useEffect(()=>{
-    setActiveLink(props.horizontalNavConfig?.[0].name);
+    setActiveLink(setActiveNavByDefault(props.horizontalNavConfig));
   },[props.horizontalNavConfig]);
   
   const renderFormFields = (props, section, index, array, sectionFormCategory) => (
