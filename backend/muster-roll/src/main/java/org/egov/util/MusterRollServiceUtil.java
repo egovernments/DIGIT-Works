@@ -6,14 +6,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +35,12 @@ public class MusterRollServiceUtil {
 
     @Autowired
     private ObjectMapper mapper;
+    
+    @Autowired
+    private RestTemplate restTemplate;
+    
+    @Autowired
+    private MusterRollServiceConfiguration config;
 
     /**
      * Method to return auditDetails for create/update flows
@@ -199,4 +212,33 @@ public class MusterRollServiceUtil {
         }
         return false;
     }
+    
+    public AttendanceRegisterResponse fetchAttendanceRegister(MusterRoll musterRoll, RequestInfo requestInfo) {
+    	log.info("MusterRollValidator::Fetching attendance register with tenantId::"+musterRoll.getTenantId()
+        +" and register ID: "+ musterRoll.getRegisterId());
+  	  	String id = requestInfo.getUserInfo().getUuid();
+
+        StringBuilder uri = new StringBuilder();
+        uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
+                .queryParam("tenantId",musterRoll.getTenantId())
+                .queryParam("ids",musterRoll.getRegisterId())
+                .queryParam("status",Status.ACTIVE);
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+        AttendanceRegisterResponse attendanceRegisterResponse = null;
+
+        try {
+            attendanceRegisterResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceRegisterResponse.class);
+        }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
+            log.error("MusterRollValidator::Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
+            throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION","Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
+        }
+
+        if (attendanceRegisterResponse == null || CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
+            log.error("MusterRollValidator::User with id::" + id + " is not enrolled in the attendance register::"+musterRoll.getRegisterId());
+            throw new CustomException("ACCESS_EXCEPTION","User is not enrolled in the attendance register and not authorized to fetch it");
+        }
+        return attendanceRegisterResponse;
+  }
 }
