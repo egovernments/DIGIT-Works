@@ -15,7 +15,7 @@ const MastersBreadCrumb = ({ location }) => {
     },
     {
       path: `/${window.contextPath}/employee/masters/response`,
-      content: fromScreen ? `${t(fromScreen)} / ${t("ES_COMMON_RESPONSE")}` : t("ES_COMMON_RESPONSE"),
+      content: fromScreen ? `${t(fromScreen)} / ${t("ES_WAGE_SEEKER")}` : t("ES_WAGE_SEEKER"),
       show: location.pathname.includes("/masters/response") ? true : false,
       isBack: fromScreen && true,
     },
@@ -50,7 +50,7 @@ const MastersBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/masters/modify-wageseeker`,
+      // path: `/${window.contextPath}/employee/masters/modify-wageseeker`,
       content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_MODIFY_WAGESEEKER")}` : `${t("MASTERS_MODIFY_WAGESEEKER")}`,
       show: location.pathname.includes("/masters/modify-wageseeker") ? true : false,
       isBack: fromScreen && true,
