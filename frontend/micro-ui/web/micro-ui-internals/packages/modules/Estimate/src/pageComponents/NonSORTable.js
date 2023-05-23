@@ -50,7 +50,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
       ?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount || 0), 0);
 
     setTotalAmount((prevState) => {
-      return result;
+      return (Math.round(result * 100) / 100).toFixed(2);
     });
   };
 
