@@ -52,7 +52,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
       ?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0), 0);
 
     setTotalAmount((prevState) => {
-      return Math.round(result);
+      return result;
     });
   };
 
@@ -359,7 +359,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
             {t("RT_TOTAL")}
           </td>
           <td colSpan={1} style={{ textAlign: "right" }}>
-            {Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), "number")}
+            {Digit.Utils.dss.formatterWithoutRound(totalAmount, "number")}
           </td>
           <td colSpan={1}></td>
         </tr>
