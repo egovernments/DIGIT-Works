@@ -50,7 +50,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
       ?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount || 0), 0);
 
     setTotalAmount((prevState) => {
-      return Math.round(result);
+      return (Math.round(result * 100) / 100).toFixed(2);
     });
   };
 
@@ -394,7 +394,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
             {t("RT_TOTAL")}
           </td>
           <td colSpan={1} style={{ textAlign: "right" }}>
-            {Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), "number")}
+            {Digit.Utils.dss.formatterWithoutRound(totalAmount, "number")}
           </td>
           <td colSpan={1}></td>
         </tr>

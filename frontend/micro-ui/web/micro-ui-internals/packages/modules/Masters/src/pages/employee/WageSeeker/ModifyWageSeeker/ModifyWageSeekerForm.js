@@ -124,7 +124,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
       })
 
       if(!validateCheckPass){
-        setShowToast({ label: "SKILLS_SELECTION_INVALID" });
+        setShowToast({ label: t("SKILLS_SELECTION_INVALID") });
         closeToast();
         return true
       }else{

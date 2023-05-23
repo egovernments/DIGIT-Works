@@ -209,7 +209,7 @@ export const WorksSearch = {
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail[0]?.amount?.toFixed(2), 'number')
             ]
         })
-        const totalAmountNonSor = Math.round(nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0))
+        const totalAmountNonSor = nonSOR?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc,0)
         tableRowsNonSor?.push(["","","","" ,t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountNonSor, 'number')])
         
         const tableRowsOverheads = overheads?.map((row, index) => {
@@ -220,7 +220,7 @@ export const WorksSearch = {
                 Digit.Utils.dss.formatterWithoutRound(row?.amountDetail?.[0]?.amount?.toFixed(2), 'number')
             ]
         })
-        const totalAmountOverheads = Math.round(overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0))
+        const totalAmountOverheads = overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0)
         tableRowsOverheads?.push(["","", t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountOverheads, 'number')])
         const nonSorItems = {
             title: "WORKS_NON_SOR",
