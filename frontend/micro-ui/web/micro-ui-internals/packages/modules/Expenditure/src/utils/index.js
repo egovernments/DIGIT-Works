@@ -1,6 +1,5 @@
 
 const setDefaultDocs = (bill) => {
-  console.log(bill);
   const documentsObj = {}
   bill?.additionalDetails?.documents.forEach((doc,idx) => {
     
