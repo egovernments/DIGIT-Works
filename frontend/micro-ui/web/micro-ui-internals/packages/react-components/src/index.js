@@ -200,7 +200,8 @@ import {
   OrganisationIcon,
   HelperIcon,
   DashboardIcon,
-  ExpenditureIcon
+  ExpenditureIcon,
+  PaymentIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -540,5 +541,6 @@ export {
   OrganisationIcon,
   HelperIcon,
   DashboardIcon,
-  ExpenditureIcon
+  ExpenditureIcon,
+  PaymentIcon
 };

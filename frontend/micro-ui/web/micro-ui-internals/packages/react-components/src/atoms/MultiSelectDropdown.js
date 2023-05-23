@@ -1,8 +1,8 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { ArrowDown, CheckSvg } from "./svgindex";
 import { useTranslation } from "react-i18next";
-
-const MultiSelectDropdown = ({ options, optionsKey, selected = [], onSelect, defaultLabel = "", defaultUnit = "",BlockNumber=1,isOBPSMultiple=false,props={},isPropsNeeded=false,ServerStyle={}}) => {
+import RemoveableTag from "./RemoveableTag";
+const MultiSelectDropdown = ({ options, optionsKey, selected = [], onSelect, defaultLabel = "", defaultUnit = "",BlockNumber=1,isOBPSMultiple=false,props={},isPropsNeeded=false,ServerStyle={}, config}) => {
   const [active, setActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState();
   const [optionIndex, setOptionIndex] = useState(-1);
@@ -105,6 +105,7 @@ const MultiSelectDropdown = ({ options, optionsKey, selected = [], onSelect, def
   };
 
   return (
+    <div>
     <div className="multi-select-dropdown-wrap" ref={dropdownRef} style={{marginBottom: '24px'}}>
       <div className={`master${active ? `-active` : ``}`}>
         <input className="cursorPointer"  style={{opacity: 0}} type="text" onKeyDown={keyChange} onFocus={() => setActive(true)} value={searchQuery} onChange={onSearch} />
@@ -118,6 +119,18 @@ const MultiSelectDropdown = ({ options, optionsKey, selected = [], onSelect, def
           <Menu />
         </div>
       ) : null}
+
+    </div>
+    {config.isDropdownWithChip ? <div className="tag-container">
+              {alreadyQueuedSelectedState.length > 0 &&
+                alreadyQueuedSelectedState.map((value, index) => {
+                  return <RemoveableTag key={index} text={`${t(value[optionsKey]).slice(0, 22)} ...`} 
+                  onClick={
+                    isPropsNeeded ? (e) => onSelectToAddToQueue(e, value,props)
+                    : (e) => onSelectToAddToQueue(e, value)
+                  } />;
+                })}
+            </div> : null}
     </div>
   );
 };
