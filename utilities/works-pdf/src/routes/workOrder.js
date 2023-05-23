@@ -60,14 +60,6 @@ router.post(
                          pdfkey = config.pdf.work_order_template;
                 }
 
-
-
-              /*  if (requestinfo && requestinfo.RequestInfo && requestinfo.RequestInfo.msgId && requestinfo.RequestInfo.msgId.split("|")[1] == "hi_IN") {
-                    var pdfkey = config.pdf.work_order_template_hindi;
-                }
-                else {
-                    var pdfkey = config.pdf.work_order_template;
-                }*/
                 contract.contracts[0].contactName = organisation.organisations[0].contactDetails[0].contactName
                 contract.contracts[0].nameOfCbo = organisation.organisations[0].name
                 contract.contracts[0].city = organisation.organisations[0].orgAddress[0].city
