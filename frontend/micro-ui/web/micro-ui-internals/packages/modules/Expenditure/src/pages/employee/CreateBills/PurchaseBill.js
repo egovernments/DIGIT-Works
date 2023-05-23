@@ -17,6 +17,18 @@ const PurchaseBill = () => {
     const stateTenant = Digit.ULBService.getStateId();
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
 
+    const searchVendorPayload = {
+        "SearchCriteria": {
+            "tenantId": tenantId,
+            "functions" : {
+                "type" : "VEN" //hardcoded
+            }
+        }
+    }
+
+    //vendor search
+    const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload);
+
     const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
     stateTenant,
     Digit.Utils.getConfigModuleName(),
@@ -70,18 +82,7 @@ const PurchaseBill = () => {
     const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
     const [sessionFormData, setSessionFormData, clearSessionFormData] = PurchaseBillSession;
 
-    const searchVendorPayload = {
-        "SearchCriteria": {
-            "tenantId": tenantId,
-            "functions" : {
-                "type" : "VEN" //hardcoded
-            }
-        }
-    }
-
-    //vendor search
-    const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload);
-
+    
     const createNameOfVendorObject = (vendorOptions) => {
         return vendorOptions?.organisations?.map(vendorOption => ( {code : vendorOption?.id, name : vendorOption?.name, applicationNumber : vendorOption?.applicationNumber, orgNumber : vendorOption?.orgNumber } ))
     }
@@ -100,6 +101,19 @@ const PurchaseBill = () => {
         cacheTime:0
     }})
 
+    const orgSearch = {
+        "SearchCriteria": {
+            "tenantId": tenantId,
+            id: [billData?.bills?.[0]?.billDetails?.[0]?.payee?.identifier]
+        }
+    }
+
+    //vendor search
+    const { isLoading : isOrgSearchLoadingModify, data : vendorOptionsModify } = Digit.Hooks.organisation.useSearchOrg(orgSearch,{
+        enabled:billData ? true : false
+    });
+
+
     const { isLoading : isChargesLoading, data : charges} = Digit.Hooks.useCustomMDMS( 
     Digit.ULBService.getStateId(),
     "expense",
@@ -117,10 +131,10 @@ const PurchaseBill = () => {
 
     useEffect(()=>{
         if((configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading && !isDocConfigLoading && !isBillSearchLoading)) {
-            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData, billData, setIsFormReady,charges});
+            updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData, billData, setIsFormReady,charges,org:vendorOptionsModify?.organisations?.[0]});
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
         }
-    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading,isConfigLoading]);
+    },[isContractLoading, isOrgSearchLoading, isDocConfigLoading, isBillSearchLoading,isChargesLoading,isConfigLoading,isOrgSearchLoadingModify]);
 
     
     // if(isConfigLoading) return <Loader></Loader>
