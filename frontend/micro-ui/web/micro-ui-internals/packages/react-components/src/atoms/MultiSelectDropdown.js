@@ -127,8 +127,7 @@ const MultiSelectDropdown = ({ options, optionsKey, selected = [], onSelect, def
                   return <RemoveableTag key={index} text={`${t(value[optionsKey]).slice(0, 22)} ...`} 
                   onClick={
                     isPropsNeeded ? (e) => onSelectToAddToQueue(e, value,props)
-                    : isOBPSMultiple ? (e) => onSelectToAddToQueue(e, value,BlockNumber) : 
-                    (e) => onSelectToAddToQueue(e, value)
+                    : (e) => onSelectToAddToQueue(e, value)
                   } />;
                 })}
             </div> : null}
