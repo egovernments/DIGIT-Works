@@ -286,7 +286,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       // StatefulBuilder(
                       //     builder: (BuildContext context, StateSetter setState) {
                       MultiSelectSearchCheckBox(
-                        label: t.translate(i18.attendanceMgmt.skill) + '*',
+                        label: t.translate(i18.attendanceMgmt.skill) + ' *',
                         onChange: _onSelectedOptionsChanged,
                         options: skills,
                         selectedOptions: selectedOptions,

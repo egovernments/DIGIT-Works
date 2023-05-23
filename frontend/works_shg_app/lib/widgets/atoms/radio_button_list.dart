@@ -51,7 +51,7 @@ class DigitRadioButtonList<T> extends StatelessWidget {
                         style:
                             DigitTheme.instance.mobileTheme.textTheme.bodyLarge,
                       ),
-                      Text(isRequired ? '*' : '',
+                      Text(isRequired ? ' *' : '',
                           textAlign: TextAlign.left,
                           style: DigitTheme
                               .instance.mobileTheme.textTheme.bodyLarge),
