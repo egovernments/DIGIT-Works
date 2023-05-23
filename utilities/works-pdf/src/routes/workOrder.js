@@ -46,17 +46,18 @@ router.post(
             var organisation = resOrg.data
             if (contract && contract.contracts && contract.contracts.length > 0 && organisation && organisation.organisations && organisation.organisations.length > 0) {
                 var pdfResponse;
-                var locale=requestinfo && requestinfo.RequestInfo && requestinfo.RequestInfo.msgId && requestinfo.RequestInfo.msgId.split("|")[1];
+                const locale=requestinfo ?.RequestInfo ?.msgId ?.split("|")[1];
+                var pdfkey;
 
                 switch(locale){
                    case "hi_IN":
-                        var pdfkey = config.pdf.work_order_template_hindi;
+                         pdfkey = config.pdf.work_order_template_hindi;
                         break;
                    case "or_IN":
-                        var pdfkey = config.pdf.work_order_template_odiya;
+                         pdfkey = config.pdf.work_order_template_odiya;
                         break;
                    default:
-                        var pdfkey = config.pdf.work_order_template;
+                         pdfkey = config.pdf.work_order_template;
                 }
 
 
