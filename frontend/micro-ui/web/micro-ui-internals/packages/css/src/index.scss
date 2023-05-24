@@ -1061,3 +1061,7 @@ input[type=“date”]::-webkit-calendar-picker-indicator {
   font-weight: 400;
   color: theme(colors.text.secondary);
 }
+
+.pac-container {
+  z-index: 11000 !important;
+}
