@@ -15,5 +15,20 @@ public class MusterRollServiceConstants {
     public static final String ENTRY_EVENT = "ENTRY";
     public static final String EXIT_EVENT = "EXIT";
     public static final String STATUS_APPROVED = "APPROVED";
+    public static final String TENANT_ID = "tenantId";
+    public static final String CONTRACT_NUMBER = "contractNumber";
+    public static final String REQUEST_INFO = "requestInfo";
+    public static final String ORG_ID_PATH = "$.contracts.*.orgId";
+    public static final String ORG_ID = "orgId";
+    public static final String ORG_NAME_PATH = "$.organisations.*.name";
+    public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";
+    public static final String CONTACT_MOBILE_NUMBER_PATH = "$.organisations.*.contactDetails.*.contactMobileNumber";
+    public static final String ORG_NAME = "orgName";
+    public static final String CONTACT_NAME = "contactName";
+    public static final String CONTACT_MOBILE_NUMBER = "contactMobileNumber";
+    public static final String MUSTER_ROLL_MODULE_CODE = "rainmaker-common-masters";
+    public static final String SEARCH_CRITERIA = "SearchCriteria";
+    public static final String MUSTER_ROLL_LOCALIZATION_CODE_JSONPATH = "$.messages.*.code";
+    public static final String MUSTER_ROLL_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
 
 }
