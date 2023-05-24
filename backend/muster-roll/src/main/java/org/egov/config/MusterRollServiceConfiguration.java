@@ -79,6 +79,33 @@ public class MusterRollServiceConfiguration {
     @Value("${works.attendance.register.search.limit}")
     private String attendanceRegisterSearchLimit;
 
+    //Contract Service
+    @Value("${works.contract.host}")
+    private String contractServiceHost;
+    @Value("${works.contract.endpoint}")
+    private String contractServiceEndpoint;
+
+    //Organisation Service
+    @Value("${works.organisation.host}")
+    private String organisationServiceHost;
+    @Value("{works.organisation.endpoint}")
+    private String organisationServiceEndpoint;
+
+    //Localization Service
+    @Value("${egov.localization.host}")
+    private String localizationServiceHost;
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationServiceEndpoint;
+
+    //Notification Topic
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotificationTopic;
+
+    //Expense Service
+    @Value("${works.expense.host}")
+    private String expenseServiceHost;
+    @Value("${works.expense.endpoint}")
+    private String expenseServiceEndpoint;
 
     //Individual service
     @Value("${works.individual.host}")
