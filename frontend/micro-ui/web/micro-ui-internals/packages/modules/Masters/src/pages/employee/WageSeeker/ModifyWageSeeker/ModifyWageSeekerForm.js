@@ -133,7 +133,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     };
 
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-
+        
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
 
@@ -157,6 +157,8 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
                 setIsBirthDateValid(!(ageInYear < 18));
             }
             if(formData.financeDetails_ifsc) {
+                //capitalize ifsc
+                setValue("financeDetails_ifsc",formData?.financeDetails_ifsc?.toUpperCase())
                 if(formData.financeDetails_ifsc?.length > 10) {
                     setTimeout(() => {
                         fetchIFSCDetails(formData.financeDetails_ifsc, 'financeDetails_branchName', setValue, setError, clearErrors);
