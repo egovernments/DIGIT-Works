@@ -3,15 +3,32 @@ var router = express.Router();
 var url = require("url");
 var config = require("../config");
 
-var { search_organisation, search_contract, create_pdf, search_workflow } = require("../api");
+var { search_organisation, search_contract, create_pdf, search_workflow, search_localization } = require("../api");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 const get = require("lodash.get");
+const { getStateLocalizationModule, getLanguageFromRequest, getCityLocalizationModule, getLocalizationByKey } = require("../utils/localization");
 
 function renderError(res, errorMessage, errorCode) {
     if (errorCode == undefined) errorCode = 500;
     res.status(errorCode).send({ errorMessage })
 
 }
+
+async function getLocalizaitons(request, tenantId) {
+    let localizationMaps = {};
+    let lang = getLanguageFromRequest(request);
+    let modules = [getStateLocalizationModule(tenantId),getCityLocalizationModule(tenantId)].join(",");
+    let localRequest = {}
+    localRequest["RequestInfo"] = request["RequestInfo"];
+    let localizations = await search_localization(localRequest, lang, modules, tenantId);
+    if (localizations?.data?.messages?.length) {
+        localizations.data.messages.forEach(localObj => {
+            localizationMaps[localObj.code] = localObj.message;
+        });
+    }
+    return localizationMaps;
+}
+
 router.post(
     "/work-order",
     asyncMiddleware(async function (req, res, next) {
@@ -51,6 +68,9 @@ router.post(
                 if (ex.response && ex.response.data) console.log(ex.response.data);
                 return renderError(res, "Failed to query details of the workflow", 500);
             }
+
+            // Get localizations as map
+            let localizationMaps = await getLocalizaitons(requestinfo, tenantId);
             
 
             var contract = resContract.data;
@@ -69,6 +89,24 @@ router.post(
                 contract.contracts[0].city = organisation.organisations[0].orgAddress[0].city
                 contract.contracts[0].doorNo = organisation.organisations[0].orgAddress[0].doorNo
                 contract.contracts[0].street = organisation.organisations[0].orgAddress[0].street
+
+                let address = [];
+                if (contract.contracts[0].street) {
+                    address.push(contract.contracts[0].street)
+                }
+                if (contract.contracts[0].doorNo) {
+                    address.push(contract.contracts[0].doorNo)
+                }
+                if (contract.contracts[0].city) {
+                    let city = contract.contracts[0].city.toUpperCase();
+                    let cityKey = "TENANT_TENANTS_" + city.split(".").join("_");
+                    city = getLocalizationByKey(cityKey, localizationMaps);
+                    address.push(city)
+                }
+                if (address.length) {
+                    address = address.join(", ");
+                    contract.contracts[0].pdfCboAddress = address;
+                }
 
                 // Get issuer name 
                 contract.contracts[0].pdfNameOfIssuedTo = contract.contracts[0].totalContractedAmount <= 1500000 ? organisation.organisations[0].name :  get(contract.contracts[0], 'additionalDetails.officerInChargeName.name', null);
