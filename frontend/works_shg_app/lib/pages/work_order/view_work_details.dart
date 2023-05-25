@@ -361,16 +361,16 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                         })
                                     .toList();
                                 // fileStoreList = ;
-                                attachedFiles = contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.documents!.where((d) => d.fileStore != null && d.status != 'INACTIVE')
+                                attachedFiles = contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.documents!.where((d) => d.fileStore != null)
                                     .map((e) => FileStoreModel(
                                         name: t.translate(e.documentType ?? ''), fileStoreId: e.fileStore)),
                                 ...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
                                     .map((e) => FileStoreModel(
-                                    name: t.translate(e.fileType != 'Others' ?  e.fileType ?? '' : e.fileName ?? ''), fileStoreId: e.fileStoreId))] : contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs == null  ? [...contracts.contracts!.first.documents!.where((d) => d.fileStore != null && d.status != 'INACTIVE')
+                                    name: t.translate(e.fileType ?? ''), fileStoreId: e.fileStoreId))] : contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs == null  ? [...contracts.contracts!.first.documents!.where((d) => d.fileStore != null)
                                     .map((e) => FileStoreModel(
                                     name: t.translate(e.documentType ?? ''), fileStoreId: e.fileStore))] : contracts.contracts!.first.documents == null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
                                     .map((e) => FileStoreModel(
-                                    name: t.translate(e.fileType != 'Others' ?  e.fileType ?? '' : e.fileName ?? ''), fileStoreId: e.fileStoreId))] : [];
+                                    name: t.translate(e.fileType ?? ''), fileStoreId: e.fileStoreId))] : [];
                               }
                             });
                       },

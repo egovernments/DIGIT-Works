@@ -186,11 +186,6 @@ export const UICustomizations = {
           return t("ES_COMMON_NA");
       }
      },
-     additionalValidations: (type, data, keys) => {
-      if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
-      }
-    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
@@ -428,11 +423,6 @@ export const UICustomizations = {
         return <p>{"NA"}</p>;
       }
     },
-    additionalValidations: (type, data, keys) => {
-      if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
-      }
-    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
@@ -580,11 +570,6 @@ export const UICustomizations = {
 
       default:
         return t("ES_COMMON_NA");
-      }
-    },
-    additionalValidations: (type, data, keys) => {
-      if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {

@@ -31,7 +31,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
     const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
-    const [showValidToError, setShowValidToError] = useState(false)
 
     const { mutate: CreateOrganisationMutation } = Digit.Hooks.organisation.useCreateOrganisation();
     const { mutate: UpdateOrganisationMutation } = Digit.Hooks.organisation.useUpdateOrganisation();
@@ -41,7 +40,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
 
     //location data
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
-    const ORG_VALIDTO_DATE = '2099-03-31';
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
 
@@ -161,13 +159,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         }
     },[showDuplicateUserError]);
 
-    useEffect(() => {
-        if(showValidToError) {
-            setTimeout(()=>{
-                setShowValidToError(false);
-            },3000);
-        }
-    },[showValidToError]);
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
@@ -266,11 +257,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
 
     const onSubmit = async (data) => {
-        console.log('OnSubmit call');
-        if((data?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)) < Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validFrom)){
-            console.log('if statement');
-            setShowValidToError(true);
-        }
         const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
             const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
@@ -284,7 +270,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             handleResponseForCreate(orgPayload, data);
         }
     }   
-    console.log('Create Org page');
 
     if(locationDataFetching || orgDataFetching) return <Loader/>
     return (
@@ -312,9 +297,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             />
             {
                 showDuplicateUserError && <Toast error={true} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />
-            }
-            {
-                showValidToError && <Toast error={true} label={t("DATE_VALIDATION_MSG")} isDleteBtn={true} onClose={() => setShowValidToError(false)} />
             }
         </React.Fragment>
     )

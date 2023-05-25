@@ -73,6 +73,7 @@ class _HomePage extends State<HomePage> {
             orgState.maybeWhen(
                 orElse: () => false,
                 loaded: (OrganisationListModel? organisationListModel) async {
+                  print('loaded');
                   context.read<LocalizationBloc>().add(
                         LocalizationEvent.onLoadLocalization(
                             module: CommonMethods.getLocaleModules(),
@@ -174,51 +175,18 @@ class _HomePage extends State<HomePage> {
         }));
   }
 
-  Future<void> localeLoad() async {
-    var currentLocale = await GlobalVariables.selectedLocale();
-    context.read<LocalizationBloc>().add(
-          LocalizationEvent.onLoadLocalization(
-              module: CommonMethods.getLocaleModules(),
-              tenantId: GlobalVariables
-                  .globalConfigObject!.globalConfigs!.stateTenantId
-                  .toString(),
-              locale: currentLocale.toString()),
-        );
-    context.read<AppInitializationBloc>().add(
-        AppInitializationSetupEvent(selectedLang: currentLocale.toString()));
-    await AppLocalizations(
-      Locale(currentLocale.toString().split('_').first,
-          currentLocale.toString().split('_').last),
-    ).load();
-  }
-
   void Function()? getRoute(String key, BuildContext context) {
     switch (key) {
       case Constants.homeMyWorks:
-        return () {
-          localeLoad();
-          context.router.push(const WorkOrderRoute());
-        };
+        return () => context.router.push(const WorkOrderRoute());
       case Constants.homeTrackAttendance:
-        return () {
-          localeLoad();
-          context.router.push(const TrackAttendanceInboxRoute());
-        };
+        return () => context.router.push(const TrackAttendanceInboxRoute());
       case Constants.homeMusterRolls:
-        return () {
-          localeLoad();
-          context.router.push(const ViewMusterRollsRoute());
-        };
+        return () => context.router.push(const ViewMusterRollsRoute());
       case Constants.homeMyBills:
-        return () {
-          localeLoad();
-          context.router.push(const MyBillsRoute());
-        };
+        return () => context.router.push(const MyBillsRoute());
       case Constants.homeRegisterWageSeeker:
-        return () {
-          localeLoad();
-          context.router.push(const RegisterIndividualRoute());
-        };
+        return () => context.router.push(const RegisterIndividualRoute());
       default:
         return null;
     }
