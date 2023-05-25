@@ -73,10 +73,21 @@ const getSkillsToUpdate = (formData, wageSeekerDataFromAPI) => {
     let extraSkillsTobeAdded = updatedSkills.filter(({ code }) => !set2.has(code))
     let extraSkillsTobeRemoved = existingSkills.filter(({ code }) => !set1.has(code))
 
+    let filterExistingSkills = existingSkills?.filter(item => {
+        //remove skillsToBeRemoved from existingSkills if present
+        let takeIt = true
+        extraSkillsTobeRemoved?.forEach(row => {
+            if(row?.code === item?.code){
+                takeIt = false
+            }
+        })
+        return takeIt
+    })
+
     let skillsTobeAdded = extraSkillsTobeAdded?.map(item => ({ level: item?.code?.split('.')?.[0], type: item?.code?.split('.')?.[1]}))
     let skillsTobeRemoved = extraSkillsTobeRemoved?.map(item => ({ ...item, isDeleted: true }))
     return {
-        skillsTobeAdded: [...existingSkills, ...skillsTobeAdded],
+        skillsTobeAdded: [...filterExistingSkills, ...skillsTobeAdded],
         skillsTobeRemoved
     }
 }
@@ -93,7 +104,7 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
     Individual.mobileNumber = formData?.basicDetails_mobileNumber
     Individual.fatherName = formData?.basicDetails_fatherHusbandName
     Individual.relationship = formData?.basicDetails_relationShip?.code
-    Individual.skills = formData?.skillDetails_skill?.map(skill => ({ level: skill?.code?.split('.')?.[0], type: skill?.code?.split('.')?.[1]}))
+    // Individual.skills = formData?.skillDetails_skill?.map(skill => ({ level: skill?.code?.split('.')?.[0], type: skill?.code?.split('.')?.[1]}))
     Individual.photo = formData?.basicDetails_photograph?.[0]?.[1]?.fileStoreId?.fileStoreId
 
     if(formData?.basicDetails_socialCategory?.code) {
@@ -157,7 +168,7 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
         //here set the identifiers on Individual object
         Individual.identifiers = wageSeekerDataFromAPI?.individual?.identifiers
     }
-
+    
     return {
         Individual
     }
