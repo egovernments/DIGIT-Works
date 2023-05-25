@@ -88,7 +88,7 @@ public class MusterRollServiceConfiguration {
     //Organisation Service
     @Value("${works.organisation.host}")
     private String organisationServiceHost;
-    @Value("{works.organisation.endpoint}")
+    @Value("${works.organisation.endpoint}")
     private String organisationServiceEndpoint;
 
     //Localization Service

@@ -17,7 +17,7 @@ public class MusterRollServiceConstants {
     public static final String STATUS_APPROVED = "APPROVED";
     public static final String TENANT_ID = "tenantId";
     public static final String CONTRACT_NUMBER = "contractNumber";
-    public static final String REQUEST_INFO = "requestInfo";
+    public static final String REQUEST_INFO = "RequestInfo";
     public static final String ORG_ID_PATH = "$.contracts.*.orgId";
     public static final String ORG_ID = "orgId";
     public static final String ORG_NAME_PATH = "$.organisations.*.name";

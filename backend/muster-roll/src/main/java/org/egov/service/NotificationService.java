@@ -54,7 +54,7 @@ public class NotificationService {
             }
             musterRollRequest.getMusterRoll().getMusterRollNumber();
 
-            String customizedMessage = buildMessageForSendBackToCBO(message, musterRollRequest.getMusterRoll().getMusterRollNumber(), amount);
+            String customizedMessage = buildMessageReplaceVariables(message, musterRollRequest.getMusterRoll().getMusterRollNumber(), amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
 
             producer.push(config.getSmsNotificationTopic(), smsRequest);
@@ -76,7 +76,7 @@ public class NotificationService {
         return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
     }
 
-    public String buildMessageForSendBackToCBO(String message, String musterRollName, String amount){
+    public String buildMessageReplaceVariables(String message, String musterRollName, String amount){
         message = message.replace("{musterrollID}", musterRollName)
                 .replace("{amount}", amount);
         return message;

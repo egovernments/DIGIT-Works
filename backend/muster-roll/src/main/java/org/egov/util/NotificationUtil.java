@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
@@ -43,7 +44,8 @@ public class NotificationUtil {
                 final Object contractRes = restRepo.fetchResult(url, contractSearchRequest);
                 String orgId;
                 try{
-                        orgId = JsonPath.read(contractRes, ORG_ID_PATH);
+                        JSONArray jsonArray = JsonPath.read(contractRes, ORG_ID_PATH);
+                        orgId = jsonArray.get(0).toString();
                 }catch (Exception e){
                         throw new CustomException("PARSING_CONTRACT_ERROR", "Failed to parse response from contract");
                 }
@@ -59,7 +61,7 @@ public class NotificationUtil {
 
         private Object getOrgIdWithContractIdRequest(MusterRollRequest musterRollRequest){
                 RequestInfo requestInfo = musterRollRequest.getRequestInfo();
-                String contractNumber = musterRollRequest.getMusterRoll().getRegisterId();
+                String contractNumber = musterRollRequest.getMusterRoll().getReferenceId();
                 String tenantId = musterRollRequest.getMusterRoll().getTenantId();
 
                 // Create request object
@@ -125,13 +127,13 @@ public class NotificationUtil {
                 StringBuilder url = getExpenseUrl();
                 Object expenseSearchRequest = getExpenseRequest(musterRollRequest);
                 final Object expenseRes = restRepo.fetchResult(url, expenseSearchRequest);
-                List<String> amount = null;
+                Double amount = null;
                 try {
                         amount = JsonPath.read(expenseRes, "$.calculation.totalAmount");
                 }catch (Exception e){
                         throw new CustomException("EXPENSE_PARSING_ERROR", "Error while parsing expense object");
                 }
-                String totalAmount = amount.get(0);
+                String totalAmount = amount.toString();
                 return totalAmount;
         }
         public StringBuilder getExpenseUrl(){
