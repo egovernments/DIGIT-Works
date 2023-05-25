@@ -410,6 +410,11 @@ export const UICustomizations = {
         return row?.estimateDetails?.reduce((totalAmount, item) => totalAmount + getAmount(item), 0);
       }
     },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {

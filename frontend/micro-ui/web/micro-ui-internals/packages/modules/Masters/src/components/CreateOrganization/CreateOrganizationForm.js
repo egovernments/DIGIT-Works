@@ -61,6 +61,7 @@ const CreateOrganizationForm = ({setCreateOrgStatus, sessionFormData, setSession
         setCreateOrgStatus(true)
     }
 
+    console.log('Org Component');
     return (
         <React.Fragment>
         <FormComposer
