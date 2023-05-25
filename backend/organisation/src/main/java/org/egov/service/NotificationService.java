@@ -148,18 +148,20 @@ public class NotificationService {
         String orgName = organisation.getName();
         String tenantId=organisation.getTenantId();
         String CBOUrl = getShortnerURL(config.getCboUrlHost() + config.getCboUrlEndpoint());
+        String contactName = organisation.getContactDetails().get(0).getContactName();
+        String contactMobileNumber = organisation.getContactDetails().get(0).getContactMobileNumber();
+        String orgNumber = organisation.getOrgNumber();
 
-
-        //get name, mobileNumber from hrms
-        log.info("get name, mobileNumber from hrms");
-        Map<String , String> employeeDetails=hrmsUtils.getEmployeeDetailsByUuid(requestInfo,tenantId,uuid);
+        //Commented out we are not sending sms to employee
+//      Map<String , String> employeeDetails=hrmsUtils.getEmployeeDetailsByUuid(requestInfo,tenantId,uuid);
 
         Map<String, String> smsDetails = new HashMap<>();
 
         smsDetails.put("orgNames", orgName);
-        smsDetails.put("personName", employeeDetails.get("userName"));
-        smsDetails.put("mobileNumber", employeeDetails.get("mobileNumber"));
+        smsDetails.put("personName", contactName);
+        smsDetails.put("mobileNumber", contactMobileNumber);
         smsDetails.put("CBOUrl", CBOUrl);
+        smsDetails.put("orgNumber", orgNumber);
 
 
         return smsDetails;
@@ -187,9 +189,10 @@ public class NotificationService {
     public String getMessage(OrgRequest request, String msgCode) {
         String rootTenantId = request.getOrganisations().get(0).getTenantId().split("\\.")[0];
         RequestInfo requestInfo = request.getRequestInfo();
+        String locale = requestInfo.getMsgId().split("\\|")[1];
         Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(requestInfo, rootTenantId,
-                OrganisationConstant.ORGANISATION_NOTIFICATION_ENG_LOCALE_CODE, OrganisationConstant.ORGANISATION_MODULE_CODE);
-        return localizedMessageMap.get(OrganisationConstant.ORGANISATION_NOTIFICATION_ENG_LOCALE_CODE + "|" + rootTenantId).get(msgCode);
+                locale, OrganisationConstant.ORGANISATION_MODULE_CODE);
+        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
     }
 
     /**
@@ -208,7 +211,7 @@ public class NotificationService {
     }
 
     public String buildMessageForUpdateAction(Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{contactpersonname}", userDetailsForSMS.get("personName"))
+        message = message.replace("{orgID}", userDetailsForSMS.get("orgNumber"))
                 .replace("{cbo_portal_url}", userDetailsForSMS.get("CBOUrl"));
         return message;
     }
