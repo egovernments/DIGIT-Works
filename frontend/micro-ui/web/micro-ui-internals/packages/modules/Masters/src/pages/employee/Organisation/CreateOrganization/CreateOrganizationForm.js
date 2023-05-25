@@ -266,12 +266,11 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
 
     const onSubmit = async (data) => {
-        console.log('OnSubmit call');
         if((data?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)) < Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validFrom)){
-            console.log('if statement');
             setShowValidToError(true);
         }
-        const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
+        else{
+            const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
             const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
             handleResponseForUpdate(orgPayload, bankAccountPayload);
@@ -283,8 +282,8 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             }
             handleResponseForCreate(orgPayload, data);
         }
+    }
     }   
-    console.log('Create Org page');
 
     if(locationDataFetching || orgDataFetching) return <Loader/>
     return (
