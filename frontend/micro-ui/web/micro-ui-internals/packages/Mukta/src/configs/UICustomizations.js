@@ -519,6 +519,8 @@ export const UICustomizations = {
       const { createdFrom, createdTo } = data;
       if (createdTo !== "" && createdFrom === "")
         return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      else if (createdTo === "" && createdFrom !== "")
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
 
       return false;
     },
