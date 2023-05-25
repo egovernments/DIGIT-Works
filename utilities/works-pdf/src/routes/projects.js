@@ -30,7 +30,7 @@ async function getStateCityLocalizaitons(request, tenantId) {
 
 function updateLocalization(projects, localizationMaps, tenantId) {
     projects = projects.map((project) => {
-        if (project?.address?.latitude != null && project?.address?.longitude != null) {
+        if (project?.address?.latitude != null && project?.address?.latitude != 0 && project?.address?.longitude != null  && project?.address?.longitude != 0) {
             project.address.pdfLatlong = `${project.address.latitude}, ${project.address.longitude}`;
         } else {
             project.address.pdfLatlong = null;

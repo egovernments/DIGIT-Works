@@ -113,9 +113,16 @@ router.post(
                 
                 // Get days left to accept the work order
                 let sla = get(worflow, "ProcessInstances[0].businesssServiceSla", 0);
+                let todaysDateTime = new Date().getTime();
+                let workflowAuditDetails = get(worflow, "ProcessInstances[0].auditDetails", {});
+                // Get today's date time and subtract with accpted date and add the remaining sla to find the total number of days
+                sla = sla + (todaysDateTime - workflowAuditDetails.createdTime);
                 let slaDays = parseInt(sla) / (24*60*60*1000);
-                contract.contracts[0].pdfWorkOrdAcceptanceDays = parseInt(slaDays);
-                contract.contracts[0].pdfTodaysDate = new Date().toLocaleDateString()
+                contract.contracts[0].pdfWorkOrdAcceptanceDays = parseInt(slaDays.toFixed());
+                var slaDate = workflowAuditDetails.createdTime + sla;
+                contract.contracts[0].pdfSlaDate = slaDate;
+                contract.contracts[0].pdfAcceptedDate  = workflowAuditDetails.createdTime;
+
                 try {
                     pdfResponse = await create_pdf(
                         tenantId,
