@@ -36,6 +36,7 @@ const getModalConfig = ({
                                 id="fieldInspector"
                                 select={setSelectedApprover}
                                 selected={selectedApprover}
+                                optionCardStyles={{"top":"2.3rem"}}
                             />
                         ),
                     },

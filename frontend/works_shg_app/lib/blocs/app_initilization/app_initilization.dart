@@ -116,7 +116,40 @@ class AppInitializationBloc
         digitRowCardItems = jsonDecode(localLanguageData)
             .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
             .toList();
-      }
+      } else {}
+
+      await AppLocalizations(
+        Locale(
+            digitRowCardItems!
+                .firstWhere((e) => e.isSelected)
+                .value
+                .split('_')
+                .first,
+            digitRowCardItems!
+                .firstWhere((e) => e.isSelected)
+                .value
+                .split('_')
+                .last),
+      ).load();
+
+      emit(state.copyWith(
+          isInitializationCompleted: true,
+          initMdmsModel: initMdmsModelData,
+          stateInfoListModel: stateInfoListModel,
+          digitRowCardItems: digitRowCardItems));
+      await AppLocalizations(
+        Locale(
+            digitRowCardItems!
+                .firstWhere((e) => e.isSelected)
+                .value
+                .split('_')
+                .first,
+            digitRowCardItems!
+                .firstWhere((e) => e.isSelected)
+                .value
+                .split('_')
+                .last),
+      ).load();
     } else {
       StateInfoListModel ss = GlobalVariables.stateInfoListModel!.copyWith(
           languages: [
@@ -157,40 +190,41 @@ class AppInitializationBloc
         digitRowCardItems = jsonDecode(localLanguageData)
             .map<DigitRowCardModel>((e) => DigitRowCardModel.fromJson(e))
             .toList();
-      }
-    }
-    await AppLocalizations(
-      Locale(
-          digitRowCardItems!
-              .firstWhere((e) => e.isSelected)
-              .value
-              .split('_')
-              .first,
-          digitRowCardItems!
-              .firstWhere((e) => e.isSelected)
-              .value
-              .split('_')
-              .last),
-    ).load();
+      } else {}
 
-    emit(state.copyWith(
-        isInitializationCompleted: true,
-        initMdmsModel: initMdmsModelData,
-        stateInfoListModel: stateInfoListModel,
-        digitRowCardItems: digitRowCardItems));
-    await AppLocalizations(
-      Locale(
-          digitRowCardItems!
-              .firstWhere((e) => e.isSelected)
-              .value
-              .split('_')
-              .first,
-          digitRowCardItems!
-              .firstWhere((e) => e.isSelected)
-              .value
-              .split('_')
-              .last),
-    ).load();
+      await AppLocalizations(
+        Locale(
+            digitRowCardItems!
+                .firstWhere((e) => e.isSelected)
+                .value
+                .split('_')
+                .first,
+            digitRowCardItems!
+                .firstWhere((e) => e.isSelected)
+                .value
+                .split('_')
+                .last),
+      ).load();
+
+      emit(state.copyWith(
+          isInitializationCompleted: true,
+          initMdmsModel: initMdmsModelData,
+          stateInfoListModel: stateInfoListModel,
+          digitRowCardItems: digitRowCardItems));
+      await AppLocalizations(
+        Locale(
+            digitRowCardItems!
+                .firstWhere((e) => e.isSelected)
+                .value
+                .split('_')
+                .first,
+            digitRowCardItems!
+                .firstWhere((e) => e.isSelected)
+                .value
+                .split('_')
+                .last),
+      ).load();
+    }
   }
 }
 

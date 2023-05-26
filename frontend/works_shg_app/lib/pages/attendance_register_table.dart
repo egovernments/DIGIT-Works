@@ -107,9 +107,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return WillPopScope(
       onWillPop: () async {
-        if (context.router.stack[1].routeData.path.contains('work-orders')) {
+        if (context.router.stack[1].routeData.path.contains('work-order')) {
           context.router.popUntilRouteWithPath('home');
           context.router.push(const WorkOrderRoute());
         } else {
@@ -215,17 +216,25 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                             i18.workOrder.workOrderNo:
                                                 e.attendanceRegisterAdditionalDetails
                                                         ?.contractId ??
-                                                    'NA',
+                                                    t.translate(
+                                                        i18.common.noValue),
                                             i18.attendanceMgmt.registerId:
                                                 e.registerNumber,
                                             i18.attendanceMgmt.projectId:
                                                 e.attendanceRegisterAdditionalDetails
                                                         ?.projectId ??
-                                                    'NA',
+                                                    t.translate(
+                                                        i18.common.noValue),
+                                            i18.attendanceMgmt.projectName:
+                                                e.attendanceRegisterAdditionalDetails
+                                                        ?.projectName ??
+                                                    t.translate(
+                                                        i18.common.noValue),
                                             i18.attendanceMgmt.projectDesc:
                                                 e.attendanceRegisterAdditionalDetails
                                                         ?.projectDesc ??
-                                                    'NA'
+                                                    t.translate(
+                                                        i18.common.noValue)
                                           })
                                       .toList();
                             },

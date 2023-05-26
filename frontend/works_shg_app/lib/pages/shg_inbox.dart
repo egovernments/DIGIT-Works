@@ -97,7 +97,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
     super.initState();
   }
 
-  afterViewBuild() {
+  afterViewBuild()  {
     context.read<IndividualMusterRollSearchBloc>().add(
       SearchIndividualMusterRollEvent(
           musterRollNumber: widget.musterRollNo,
@@ -214,9 +214,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             i18.attendanceMgmt.musterRollId:
                                             e.musterRollNumber,
                                             i18.workOrder.workOrderNo:
-                                            e.musterAdditionalDetails?.contractId ?? 'NA',
+                                            e.musterAdditionalDetails?.contractId ?? t.translate(i18.common.noValue),
                                             i18.attendanceMgmt.projectId:
-                                            e.musterAdditionalDetails?.projectId ?? 'NA',
+                                            e.musterAdditionalDetails?.projectId ?? t.translate(i18.common.noValue),
+                                            i18.attendanceMgmt.projectName:
+                                            e.musterAdditionalDetails?.projectName ?? t.translate(i18.common.noValue),
                                             i18.attendanceMgmt.projectDesc:
                                             e.musterAdditionalDetails?.projectDesc ??
                                                 'NA',
@@ -517,26 +519,26 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                           .lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon')
                                                                                           .attendanceEntriesAdditionalDetails
                                                                                           ?.entryAttendanceLogId,
-                                                                                      monExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                                      monIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1,
-                                                                                      tueEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      tueExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                                      tueIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendance ?? -1,
-                                                                                      wedEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      wedExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                                      wedIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendance ?? -1,
-                                                                                      thuEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      thuExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                                      thursIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendance ?? -1,
-                                                                                      friEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      friExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                                      friIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendance ?? -1,
-                                                                                      satEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      satExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                                      satIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? -1,
-                                                                                      sunEntryId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      sunExitId: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
-                                                                                      sunIndex: e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? -1,
+                                                                                      monExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      monIndex: e.attendanceEntries != null ? e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1 : 0,
+                                                                                      tueEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                                      tueExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      tueIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendance ?? -1 : 0,
+                                                                                      wedEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                                      wedExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      wedIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendance ?? -1 : 0,
+                                                                                      thuEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                                      thuExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      thursIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendance ?? -1 : 0,
+                                                                                      friEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                                      friExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      friIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendance ?? -1 : 0,
+                                                                                      satEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                                      satExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      satIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? -1 : 0,
+                                                                                      sunEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
+                                                                                      sunExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      sunIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? -1 : 0,
                                                                                       auditDetails: e.attendanceEntries?.first.auditDetails))
                                                                                   .toList();
 
@@ -771,11 +773,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                       .white,
                                                                               side: BorderSide(
                                                                                   width: 2,
-                                                                                  color: inWorkFlow ? const Color.fromRGBO(149, 148, 148, 1) : DigitTheme
+                                                                                  color:(createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty) ? const Color.fromRGBO(149, 148, 148, 1) : DigitTheme
                                                                                       .instance
                                                                                       .colorScheme
                                                                                       .secondary)),
-                                                                          onPressed: inWorkFlow ? null : () {
+                                                                          onPressed: inWorkFlow || (updateAttendeePayload.isEmpty && createAttendeePayload.isEmpty) ? null : () {
                                                                             if (selectedDateRange ==
                                                                                 null) {
                                                                               Notifiers.getToastMessage(
@@ -831,7 +833,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                 .translate(i18
                                                                                     .common
                                                                                     .saveAsDraft),
-                                                                            style: inWorkFlow
+                                                                            style: (createAttendeePayload.isEmpty && updateAttendeePayload.isEmpty)
                                                                                 ? DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const Color.fromRGBO(149, 148, 148, 1))
                                                                                 : DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: const DigitColors().burningOrange),
                                                                           ))),
@@ -878,7 +880,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                             context,
                                                                                             AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst),
                                                                                             'ERROR');
-                                                                                      } else if (newList.any((e) =>
+                                                                                      }
+                                                                                      else if (updateAttendeePayload.isNotEmpty || createAttendeePayload.isNotEmpty) {
+                                                                                        Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
+                                                                                      }
+                                                                                      else if (newList.any((e) =>
                                                                                               e.skill == null &&
                                                                                               e.skill.toString().isEmpty)) {
                                                                                         Notifiers.getToastMessage(
@@ -897,8 +903,6 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                             registerName: individualMusterRollModel.musterRoll!.first.musterAdditionalDetails!.attendanceRegisterName ?? 'NA',
                                                                                             orgName: individualMusterRollModel.musterRoll!.first.musterAdditionalDetails!.contractId ?? 'NA',
                                                                                             skillsList: skillsPayLoad));
-                                                                                        Future.delayed(
-                                                                                            const Duration(seconds: 1));
                                                                                       }
                                                                                     }
                                                                                   : null,
@@ -1037,7 +1041,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           apiKey: tableDataModel.skill,
           hide: false,
           widget: DropDownDialog(
-            isDisabled: inWorkFlow,
+            isDisabled: inWorkFlow || (tableDataModel.skillCodeList ?? []).isEmpty,
             options: tableDataModel.skillCodeList ?? [],
             label: i18.common.selectSkill,
             selectedOption: tableDataModel.skill.toString(),
@@ -1090,6 +1094,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         widget: CircularButton(
           icon: Icons.circle_rounded,
           size: 15,
+          viewOnly: inWorkFlow,
           color: const Color.fromRGBO(0, 100, 0, 1),
           index: tableDataModel.monIndex ?? 0.0,
           isNotGreyed: false,
@@ -1114,6 +1119,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.tueIndex ?? 0,
         isNotGreyed: false,
@@ -1136,6 +1142,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
       TableData(
           widget: CircularButton(
         icon: Icons.circle_rounded,
+            viewOnly: inWorkFlow,
         size: 15,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.wedIndex ?? 0,
@@ -1160,6 +1167,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.thuIndex ?? 0,
         isNotGreyed: false,
@@ -1183,6 +1191,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.friIndex ?? 0,
         isNotGreyed: false,
@@ -1206,6 +1215,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.satIndex ?? 0,
         isNotGreyed: false,
@@ -1229,6 +1239,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           widget: CircularButton(
         icon: Icons.circle_rounded,
         size: 15,
+            viewOnly: inWorkFlow,
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.sunIndex ?? 0,
         isNotGreyed: false,

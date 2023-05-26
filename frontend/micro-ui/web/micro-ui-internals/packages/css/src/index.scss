@@ -169,6 +169,10 @@
   width: fit-content;
 }
 
+.resend-otp {
+  cursor: pointer; 
+}
+
 .primaryColor {
   color: #0b0c0c !important;
 }
@@ -1056,4 +1060,8 @@ input[type=“date”]::-webkit-calendar-picker-indicator {
   font-size: 16px;
   font-weight: 400;
   color: theme(colors.text.secondary);
+}
+
+.pac-container {
+  z-index: 11000 !important;
 }

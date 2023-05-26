@@ -102,7 +102,7 @@ const CreateWorkOrder = () => {
     const createDocumentObject = (documents) => {
         let docs =  documents?.filter(document=>document?.fileStoreId)?.map((document) => {
             return {
-                title: document?.fileType,
+                title: document?.fileType==="Others"?document?.fileName:document?.fileType,
                 documentType: document?.fileType,
                 documentUid: document?.documentUid,
                 fileStoreId: document?.fileStoreId,

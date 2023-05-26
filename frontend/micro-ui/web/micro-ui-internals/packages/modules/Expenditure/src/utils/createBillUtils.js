@@ -1,7 +1,6 @@
 import { convertDateToEpoch } from "../../../../libraries/src/utils/pt";
 import _ from "lodash";
 const createDocObject = (document, docType, otherDocFileName="Others", isActive, docConfigData) =>{
-
    let documentType = docConfigData?.works?.DocumentConfig?.[0]?.documents;
     //handle empty Category Name in File Type
     if((otherDocFileName.trim()).length === 0) {
@@ -14,7 +13,7 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive,
     payload_modal.key = docType;
     payload_modal.additionalDetails = {
       fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] :  documentType?.filter(doc=>doc?.name === docType)?.[0]?.code,
-      otherCategoryName :  docType === "others" ? otherDocFileName : ""
+      otherCategoryName :  docType === "doc_others" ? otherDocFileName : ""
     }
     return payload_modal;
 }

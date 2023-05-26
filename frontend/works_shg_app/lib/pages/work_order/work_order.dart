@@ -131,6 +131,10 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                           i18.workOrder.workOrderNo: e
                                                   .contractNumber ??
                                               t.translate(i18.common.noValue),
+                                          i18.attendanceMgmt.projectName: e
+                                                  .additionalDetails
+                                                  ?.projectName ??
+                                              t.translate(i18.common.noValue),
                                           i18.attendanceMgmt.projectDesc: e
                                                   .additionalDetails
                                                   ?.projectDesc ??
@@ -225,6 +229,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                             {
                                                                           i18.workOrder.workOrderNo:
                                                                               e.contractNumber ?? t.translate(i18.common.noValue),
+                                                                          i18.attendanceMgmt.projectName:
+                                                                              e.additionalDetails?.projectName ?? t.translate(i18.common.noValue),
                                                                           i18.attendanceMgmt.projectDesc:
                                                                               e.additionalDetails?.projectDesc ?? t.translate(i18.common.noValue),
                                                                           i18.workOrder.roleOfCBO:

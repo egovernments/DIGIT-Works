@@ -3,7 +3,9 @@ import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, L
 import { Controller } from "react-hook-form";
 import _ from "lodash";
 
-const NonSORTable = ({ control, watch, ...props }) => {
+const NonSORTable = ({ control, watch,config, ...props }) => {
+  const populators = config?.populators
+  
   const [totalAmount, setTotalAmount] = useState(0);
 
   const formFieldName = "nonSORTablev1"; // this will be the key under which the data for this table will be present on onFormSubmit
@@ -50,7 +52,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
       ?.reduce((acc, curr) => acc + parseFloat(curr?.estimatedAmount || 0), 0);
 
     setTotalAmount((prevState) => {
-      return Math.round(result);
+      return (Math.round(result * 100) / 100).toFixed(2);
     });
   };
 
@@ -299,6 +301,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     name={`${formFieldName}.${row.key}.rate`}
                     inputRef={register({
                       required: true,
+                      max:populators?.rate?.max,
                       // pattern: /^\d*\.?\d*$/,
                       // pattern: /^\d*(\.\d{0,2})?$/,
                       pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
@@ -309,6 +312,9 @@ const NonSORTable = ({ control, watch, ...props }) => {
                 <div style={errorContainerStyles}>
                   {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_AMOUNT_ERR`)}</CardLabelError>
+                  )}
+                  {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "max" && (
+                    <CardLabelError style={errorCardStyle}>{t(`${populators?.rate?.error}`)}</CardLabelError>
                   )}
                   {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "required" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
@@ -326,6 +332,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
                     inputRef={register({
                       required: true,
                       // pattern: /^[0-9]*$/,
+                      max:populators?.quantity?.max,
                       pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
                     })}
                     onChange={(e) => setAmountField(e, row)}
@@ -334,6 +341,9 @@ const NonSORTable = ({ control, watch, ...props }) => {
                 <div style={errorContainerStyles}>
                   {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "pattern" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_QT_ERR`)}</CardLabelError>
+                  )}
+                  {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "max" && (
+                    <CardLabelError style={errorCardStyle}>{t(`${populators?.quantity?.error}`)}</CardLabelError>
                   )}
                   {errors && errors?.[formFieldName]?.[row.key]?.estimatedQuantity?.type === "required" && (
                     <CardLabelError style={errorCardStyle}>{t(`WORKS_REQUIRED_ERR`)}</CardLabelError>
@@ -394,7 +404,7 @@ const NonSORTable = ({ control, watch, ...props }) => {
             {t("RT_TOTAL")}
           </td>
           <td colSpan={1} style={{ textAlign: "right" }}>
-            {Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), "number")}
+            {Digit.Utils.dss.formatterWithoutRound(totalAmount, "number")}
           </td>
           <td colSpan={1}></td>
         </tr>

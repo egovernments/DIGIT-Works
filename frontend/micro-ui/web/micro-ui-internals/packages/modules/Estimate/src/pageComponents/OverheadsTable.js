@@ -5,6 +5,7 @@ import _ from "lodash";
 
 const OverheadsTable = ({ control, watch, ...props }) => {
   const [totalAmount, setTotalAmount] = useState(0);
+
   const [sorTotal, setSorTotal] = useState(0);
   const formFieldName = "overheadDetails"; // this will be the key under which the data for this table will be present on onFormSubmit
 
@@ -52,7 +53,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
       ?.reduce((acc, curr) => acc + parseFloat(curr?.amount || 0), 0);
 
     setTotalAmount((prevState) => {
-      return Math.round(result);
+      return (Math.round(result * 100) / 100).toFixed(2);
     });
   };
 
@@ -359,7 +360,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
             {t("RT_TOTAL")}
           </td>
           <td colSpan={1} style={{ textAlign: "right" }}>
-            {Digit.Utils.dss.formatterWithoutRound(Math.round(totalAmount), "number")}
+            {Digit.Utils.dss.formatterWithoutRound(totalAmount, "number")}
           </td>
           <td colSpan={1}></td>
         </tr>
