@@ -53,16 +53,6 @@ const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, 
   let documents_payload_list = [];
   let documentDefaultValue = transformDefaultDocObject(configs?.defaultValues?.noSubProject_docs);
 
-  //new uploaded docs
-  for(let docType of Object.keys(documents)) {
-    for(let document of documents[docType]) {
-      if(_.isArray(document)) {
-      let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE", tenantId, docConfigData); 
-      documents_payload_list.push(payload_modal);
-      }
-    }
-  }
-
   // compare with existing docs
   // if existing docs exists
   if(documentDefaultValue) {
@@ -91,6 +81,15 @@ const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, 
     }
   }
 
+  //new uploaded docs
+  for(let docType of Object.keys(documents)) {
+    for(let document of documents[docType]) {
+      if(_.isArray(document)) {
+      let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE", tenantId, docConfigData); 
+      documents_payload_list.push(payload_modal);
+      }
+    }
+  }
 
   return documents_payload_list;
 }
