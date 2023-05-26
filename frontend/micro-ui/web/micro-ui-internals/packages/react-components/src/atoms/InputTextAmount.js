@@ -16,7 +16,7 @@ import {
 /* Amount component by default round offs and formats for amount   */
 
 const InputTextAmount = ({ value, prefix = "₹ ", intlConfig = getIntlConfig(prefix), onChange, ...otherProps }) => {
-  return <InputAmountWrapper defaultValue={value} onValueChange={onChange} otherProps={otherProps} prefix={prefix}></InputAmountWrapper>;
+  return <InputAmountWrapper defaultValue={value} intlConfig={intlConfig} onValueChange={onChange} otherProps={otherProps} prefix={prefix}></InputAmountWrapper>;
 };
 
 export default InputTextAmount;
@@ -398,7 +398,7 @@ export const InputAmountWrapper = (props) => {
       // placeholder="Please enter a number"
       prefix={prefix}
       step={1}
-      intlConfig={{ locale: "en-IN", currency: "INR" }}
+      intlConfig={props?.intlConfig}
       otherProps={props?.otherProps}
     />
   );
