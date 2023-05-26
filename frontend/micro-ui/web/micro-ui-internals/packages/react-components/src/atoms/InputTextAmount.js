@@ -1,11 +1,21 @@
 import TextInput from "./TextInput";
 
 import React, { forwardRef, useImperativeHandle, useMemo, useRef, useEffect, useState } from "react";
-import { cleanValue, fixedDecimalValue, formatValue, getLocaleConfig, getSuffix, isNumber, padTrimValue, repositionCursor } from "./amtUtils";
+import {
+  cleanValue,
+  fixedDecimalValue,
+  formatValue,
+  getLocaleConfig,
+  getIntlConfig,
+  getSuffix,
+  isNumber,
+  padTrimValue,
+  repositionCursor,
+} from "./amtUtils";
 
 /* Amount component by default round offs and formats for amount   */
 
-const InputTextAmount = ({ value, prefix = "₹ ", onChange, ...otherProps }) => {
+const InputTextAmount = ({ value, prefix = "₹ ", intlConfig = getIntlConfig(prefix), onChange, ...otherProps }) => {
   return <InputAmountWrapper defaultValue={value} onValueChange={onChange} otherProps={otherProps} prefix={prefix}></InputAmountWrapper>;
 };
 
@@ -61,7 +71,6 @@ export const CurrencyInput = forwardRef(
     const localeConfig = useMemo(() => getLocaleConfig(intlConfig), [intlConfig]);
     const decimalSeparator = _decimalSeparator || localeConfig.decimalSeparator || "";
     const groupSeparator = _groupSeparator || localeConfig.groupSeparator || "";
-
     if (decimalSeparator && groupSeparator && decimalSeparator === groupSeparator && disableGroupSeparators === false) {
       throw new Error("decimalSeparator cannot be the same as groupSeparator");
     }
@@ -74,7 +83,6 @@ export const CurrencyInput = forwardRef(
       prefix: prefix || localeConfig.prefix,
       suffix: suffix,
     };
-
     const cleanValueOptions = {
       decimalSeparator,
       groupSeparator,
@@ -326,7 +334,6 @@ export const CurrencyInput = forwardRef(
 
     if (customInput) {
       const CustomInput = customInput;
-      console.log(otherProps, "otherPropsotherProps");
       return <CustomInput {...inputProps} {...otherProps} />;
     }
 
@@ -391,6 +398,7 @@ export const InputAmountWrapper = (props) => {
       // placeholder="Please enter a number"
       prefix={prefix}
       step={1}
+      intlConfig={{ locale: "en-IN", currency: "INR" }}
       otherProps={props?.otherProps}
     />
   );
