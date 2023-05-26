@@ -175,6 +175,7 @@ export const createProjectConfigMUKTA = {
                   ]
               },
               "populators": {
+                "prefix":"₹ ",
                   "name": "noSubProject_estimatedCostInRs",
                   "error": "PROJECT_PATTERN_ERR_MSG_PROJECT_ESTIMATED_COST",
                   "validation": {
