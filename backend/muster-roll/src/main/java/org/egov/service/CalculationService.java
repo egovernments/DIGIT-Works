@@ -168,7 +168,7 @@ public class CalculationService {
             individualEntry.setAuditDetails(auditDetails);
             individualEntry.setActualTotalAttendance(totalAttendance);
             //Set individual details in additionalDetails
-            if (!CollectionUtils.isEmpty(individuals) /*&& !CollectionUtils.isEmpty(bankAccounts)*/) {
+           /** if (!CollectionUtils.isEmpty(individuals)) {
                 Individual individual = individuals.stream()
                                 .filter(ind -> ind.getId().equalsIgnoreCase(individualEntry.getIndividualId()))
                                         .findFirst().orElse(null);
@@ -176,18 +176,40 @@ public class CalculationService {
                                 .filter(account -> account.getReferenceId().equalsIgnoreCase(individualEntry.getIndividualId()))
                                         .findFirst().orElse(null);
 
-                if (individual != null /*&& bankAccount != null*/) {
+                if (individual != null) {
                     setAdditionalDetails(individualEntry,individualEntriesFromRequest,mdmsData,individual,bankAccount,isCreate);
                 } else {
                     log.info("CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "+individualEntry.getIndividualId());
                 }
 
-            }
+            } **/
 
             individualEntries.add(individualEntry);
         }
-        
-       
+
+        // Loop through and set individual and bank account details
+		for (IndividualEntry entry : individualEntries) {
+
+			// Set individual details in additionalDetails
+			if (!CollectionUtils.isEmpty(individuals) /* && !CollectionUtils.isEmpty(bankAccounts) */) {
+				Individual individual = individuals.stream()
+						.filter(ind -> ind.getId().equalsIgnoreCase(entry.getIndividualId())).findFirst()
+						.orElse(null);
+				BankAccount bankAccount = bankAccounts.stream()
+						.filter(account -> account.getReferenceId().equalsIgnoreCase(entry.getIndividualId()))
+						.findFirst().orElse(null);
+
+				if (individual != null /* && bankAccount != null */) {
+					setAdditionalDetails(entry, individualEntriesFromRequest, mdmsData, individual,
+							bankAccount, isCreate);
+				} else {
+					log.info(
+							"CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "
+									+ entry.getIndividualId());
+				}
+
+			}
+		}
        
         musterRoll.setIndividualEntries(individualEntries);
         log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());

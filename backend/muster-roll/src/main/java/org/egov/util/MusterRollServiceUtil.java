@@ -1,6 +1,5 @@
 package org.egov.util;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -33,212 +32,228 @@ import static org.egov.util.MusterRollServiceConstants.*;
 @Slf4j
 public class MusterRollServiceUtil {
 
-    @Autowired
-    private ObjectMapper mapper;
-    
-    @Autowired
-    private RestTemplate restTemplate;
-    
-    @Autowired
-    private MusterRollServiceConfiguration config;
+	@Autowired
+	private ObjectMapper mapper;
 
-    /**
-     * Method to return auditDetails for create/update flows
-     *
-     * @param by
-     * @param isCreate
-     * @return AuditDetails
-     */
-    public AuditDetails getAuditDetails(String by, MusterRoll musterRoll, Boolean isCreate) {
-        Long time = System.currentTimeMillis();
-        if (isCreate)
-            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
-        else
-            return AuditDetails.builder().createdBy(musterRoll.getAuditDetails().getCreatedBy()).lastModifiedBy(by)
-                    .createdTime(musterRoll.getAuditDetails().getCreatedTime()).lastModifiedTime(time).build();
-    }
+	@Autowired
+	private RestTemplate restTemplate;
 
-    /**
-     * Fetch the individual skill level from MDMS
-     * @param mdmsData
-     * @param individualEntry
-     * @param skillCode
-     *
-     */
-    public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode, Individual matchedIndividual, BankAccount bankAccount, boolean isCreate) {
-        final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_WAGER_SEEKER_SKILLS + ".*";
-        List<LinkedHashMap<String,String>> musterRes = null;
+	@Autowired
+	private MusterRollServiceConfiguration config;
 
-        try {
-            musterRes = JsonPath.read(mdmsData, jsonPathForWorksMuster);
+	/**
+	 * Method to return auditDetails for create/update flows
+	 *
+	 * @param by
+	 * @param isCreate
+	 * @return AuditDetails
+	 */
+	public AuditDetails getAuditDetails(String by, MusterRoll musterRoll, Boolean isCreate) {
+		Long time = System.currentTimeMillis();
+		if (isCreate)
+			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
+					.build();
+		else
+			return AuditDetails.builder().createdBy(musterRoll.getAuditDetails().getCreatedBy()).lastModifiedBy(by)
+					.createdTime(musterRoll.getAuditDetails().getCreatedTime()).lastModifiedTime(time).build();
+	}
 
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException("MusterRollServiceUtil::populateAdditionalDetails::JSONPATH_ERROR", "Failed to parse mdms response");
-        }
+	/**
+	 * Fetch the individual skill level from MDMS
+	 * 
+	 * @param mdmsData
+	 * @param individualEntry
+	 * @param skillCode
+	 *
+	 */
+	public void populateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode,
+			Individual matchedIndividual, BankAccount bankAccount, boolean isCreate) {
+		final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "."
+				+ MASTER_WAGER_SEEKER_SKILLS + ".*";
+		List<LinkedHashMap<String, String>> musterRes = null;
 
-        String skillValue = "";
-        if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
-            for (Object object : musterRes) {
-                LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
-                if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
-                    skillValue = codeValueMap.get("name");
-                    break;
-                }
-            }
-        }
+		try {
+			musterRes = JsonPath.read(mdmsData, jsonPathForWorksMuster);
 
-        // populate individual details for estimate and create
-        log.info("MusterRollServiceUtil::populateAdditionalDetails::start");
-        JSONObject additionalDetails = new JSONObject();
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new CustomException("MusterRollServiceUtil::populateAdditionalDetails::JSONPATH_ERROR",
+					"Failed to parse mdms response");
+		}
 
-        additionalDetails.put("userId",matchedIndividual.getIndividualId());
-        additionalDetails.put("userName",matchedIndividual.getName().getGivenName());
-        additionalDetails.put("fatherName",matchedIndividual.getFatherName());
-        additionalDetails.put("mobileNo",matchedIndividual.getMobileNumber());
-        Identifier aadhaar = matchedIndividual.getIdentifiers().stream()
-                            .filter(identifier -> identifier.getIdentifierType().contains("AADHAAR"))
-                                    .findFirst().orElse(null);
-        if (aadhaar != null) {
-            additionalDetails.put("aadharNumber",aadhaar.getIdentifierId());
-        }
+		String skillValue = "";
+		if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
+			for (Object object : musterRes) {
+				LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
+				if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
+					skillValue = codeValueMap.get("name");
+					break;
+				}
+			}
+		}
 
+		// populate individual details for estimate and create
+		log.info("MusterRollServiceUtil::populateAdditionalDetails::start");
+		JSONObject additionalDetails = new JSONObject();
 
+		additionalDetails.put("userId", matchedIndividual.getIndividualId());
+		additionalDetails.put("userName", matchedIndividual.getName().getGivenName());
+		additionalDetails.put("fatherName", matchedIndividual.getFatherName());
+		additionalDetails.put("mobileNo", matchedIndividual.getMobileNumber());
+		Identifier aadhaar = matchedIndividual.getIdentifiers().stream()
+				.filter(identifier -> identifier.getIdentifierType().contains("AADHAAR")).findFirst().orElse(null);
+		if (aadhaar != null) {
+			additionalDetails.put("aadharNumber", aadhaar.getIdentifierId());
+		}
 
-        //populate individual's skill details in create and update (user selected skill will be set in additionalDetails)
-        if (isCreate) {
-            additionalDetails.put("skillCode",skillCode);
-            additionalDetails.put("skillValue",skillValue);
-        }
+		// populate individual's skill details in create and update (user selected skill
+		// will be set in additionalDetails)
+		if (isCreate) {
+			additionalDetails.put("skillCode", skillCode);
+			additionalDetails.put("skillValue", skillValue);
+		}
 
-        //populate list of skills of the individual in estimate additionalDetails
-        if (!isCreate && !CollectionUtils.isEmpty(matchedIndividual.getSkills())) {
-            List<String> skillList = new ArrayList<>();
-            for (Skill skill : matchedIndividual.getSkills()) {
-                skillList.add(skill.getLevel()+"."+skill.getType());
-            }
-            additionalDetails.put("skillCode",skillList);
-        }
+		// populate list of skills of the individual in estimate additionalDetails
+		if (!isCreate && !CollectionUtils.isEmpty(matchedIndividual.getSkills())) {
+			List<String> skillList = new ArrayList<>();
+			for (Skill skill : matchedIndividual.getSkills()) {
+				skillList.add(skill.getLevel() + "." + skill.getType());
+			}
+			additionalDetails.put("skillCode", skillList);
+		}
 
-        if (bankAccount != null) {
-            List<BankAccountDetails> bankAccountDetails= bankAccount.getBankAccountDetails();
-            if (!CollectionUtils.isEmpty(bankAccountDetails)) {
-                String accountNumber = bankAccountDetails.get(0).getAccountNumber();
-                String ifscCode = bankAccountDetails.get(0).getBankBranchIdentifier().getCode();
-                String accountHolderName = bankAccountDetails.get(0).getAccountHolderName();
-                String accountType = bankAccountDetails.get(0).getAccountType();
-                additionalDetails.put("bankDetails",accountNumber+"-"+ifscCode);
-                additionalDetails.put("accountHolderName",accountHolderName);
-                additionalDetails.put("accountType",accountType);
-            }
-        }
+		if (bankAccount != null) {
+			List<BankAccountDetails> bankAccountDetails = bankAccount.getBankAccountDetails();
+			if (!CollectionUtils.isEmpty(bankAccountDetails)) {
+				String accountNumber = bankAccountDetails.get(0).getAccountNumber();
+				String ifscCode = bankAccountDetails.get(0).getBankBranchIdentifier().getCode();
+				String accountHolderName = bankAccountDetails.get(0).getAccountHolderName();
+				String accountType = bankAccountDetails.get(0).getAccountType();
+				additionalDetails.put("bankDetails", accountNumber + "-" + ifscCode);
+				additionalDetails.put("accountHolderName", accountHolderName);
+				additionalDetails.put("accountType", accountType);
+			}
+		}
 
+		try {
+			individualEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
+		} catch (IOException e) {
+			throw new CustomException("MusterRollServiceUtil::populateAdditionalDetails::PARSING ERROR",
+					"Failed to set additionalDetail object");
+		}
 
+	}
 
-        try {
-            individualEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
-        } catch (IOException e) {
-            throw new CustomException("MusterRollServiceUtil::populateAdditionalDetails::PARSING ERROR", "Failed to set additionalDetail object");
-        }
+	public void updateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
+		final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "."
+				+ MASTER_WAGER_SEEKER_SKILLS + ".*";
+		List<LinkedHashMap<String, String>> musterRes = null;
 
+		try {
+			musterRes = JsonPath.read(mdmsData, jsonPathForWorksMuster);
 
-    }
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new CustomException("MusterRollServiceUtil::updateAdditionalDetails::JSONPATH_ERROR",
+					"Failed to parse mdms response");
+		}
 
+		String skillValue = "";
+		if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
+			for (Object object : musterRes) {
+				LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
+				if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
+					skillValue = codeValueMap.get("name");
+					break;
+				}
+			}
+		}
 
-    public void updateAdditionalDetails(Object mdmsData, IndividualEntry individualEntry, String skillCode) {
-        final String jsonPathForWorksMuster = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_WAGER_SEEKER_SKILLS + ".*";
-        List<LinkedHashMap<String,String>> musterRes = null;
+		try {
+			JsonNode node = mapper.readTree(mapper.writeValueAsString(individualEntry.getAdditionalDetails()));
+			((ObjectNode) node).put("skillCode", skillCode);
+			((ObjectNode) node).put("skillValue", skillValue);
+			individualEntry.setAdditionalDetails(mapper.readValue(node.toString(), Object.class));
 
-        try {
-            musterRes = JsonPath.read(mdmsData, jsonPathForWorksMuster);
+		} catch (IOException e) {
+			log.info(
+					"MusterRollServiceUtil::updateAdditionalDetails::Failed to parse additionalDetail object from request"
+							+ e);
+			throw new CustomException("PARSING ERROR",
+					"Failed to parse additionalDetail object from request on update");
+		}
 
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException("MusterRollServiceUtil::updateAdditionalDetails::JSONPATH_ERROR", "Failed to parse mdms response");
-        }
+	}
 
-        String skillValue = "";
-        if (skillCode != null && !CollectionUtils.isEmpty(musterRes)) {
-            for (Object object : musterRes) {
-                LinkedHashMap<String, String> codeValueMap = (LinkedHashMap<String, String>) object;
-                if (codeValueMap.get("code").equalsIgnoreCase(skillCode)) {
-                    skillValue = codeValueMap.get("name");
-                    break;
-                }
-            }
-        }
+	/**
+	 * Sets the attendanceLogId in additionalDetails of the attendanceEntry
+	 * 
+	 * @param attendanceEntry
+	 * @param entryAttendanceLogId
+	 * @param exitAttendanceLogId
+	 */
+	public void populateAdditionalDetailsAttendanceEntry(AttendanceEntry attendanceEntry, String entryAttendanceLogId,
+			String exitAttendanceLogId) {
+		JSONObject additionalDetails = new JSONObject();
+		additionalDetails.put("entryAttendanceLogId", entryAttendanceLogId);
+		additionalDetails.put("exitAttendanceLogId", exitAttendanceLogId);
+		try {
+			attendanceEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
+		} catch (IOException e) {
+			throw new CustomException("MusterRollServiceUtil::populateAdditionalDetailsAttendanceEntry::PARSING ERROR",
+					"Failed to set additionalDetail object");
+		}
+	}
 
-        try {
-            JsonNode node = mapper.readTree(mapper.writeValueAsString(individualEntry.getAdditionalDetails()));
-            ((ObjectNode)node).put("skillCode", skillCode);
-            ((ObjectNode)node).put("skillValue", skillValue);
-            individualEntry.setAdditionalDetails(mapper.readValue(node.toString(), Object.class));
+	/**
+	 * Checks if the search is based only on tenantId
+	 * 
+	 * @param searchCriteria
+	 * @return
+	 */
+	public boolean isTenantBasedSearch(MusterRollSearchCriteria searchCriteria) {
+		if ((searchCriteria.getIds() == null || searchCriteria.getIds().isEmpty())
+				&& StringUtils.isBlank(searchCriteria.getMusterRollNumber())
+				&& StringUtils.isBlank(searchCriteria.getRegisterId()) && searchCriteria.getFromDate() == null
+				&& searchCriteria.getToDate() == null && searchCriteria.getStatus() == null
+				&& StringUtils.isBlank(searchCriteria.getMusterRollStatus())
+				&& StringUtils.isNotBlank(searchCriteria.getTenantId())) {
+			return true;
+		}
+		return false;
+	}
 
-        } catch (IOException e) {
-            log.info("MusterRollServiceUtil::updateAdditionalDetails::Failed to parse additionalDetail object from request"+e);
-            throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object from request on update");
-        }
+	public AttendanceRegisterResponse fetchAttendanceRegister(MusterRoll musterRoll, RequestInfo requestInfo) {
+		log.info("MusterRollValidator::Fetching attendance register with tenantId::" + musterRoll.getTenantId()
+				+ " and register ID: " + musterRoll.getRegisterId());
+		String id = requestInfo.getUserInfo().getUuid();
 
-    }
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
+				.queryParam("tenantId", musterRoll.getTenantId()).queryParam("ids", musterRoll.getRegisterId())
+				.queryParam("status", Status.ACTIVE);
+		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
-    /**
-     *  Sets the attendanceLogId in additionalDetails of the attendanceEntry
-     * @param attendanceEntry
-     * @param entryAttendanceLogId
-     * @param exitAttendanceLogId
-     */
-    public void populateAdditionalDetailsAttendanceEntry (AttendanceEntry attendanceEntry, String entryAttendanceLogId, String exitAttendanceLogId) {
-        JSONObject additionalDetails = new JSONObject();
-        additionalDetails.put("entryAttendanceLogId",entryAttendanceLogId);
-        additionalDetails.put("exitAttendanceLogId",exitAttendanceLogId);
-        try {
-            attendanceEntry.setAdditionalDetails(mapper.readValue(additionalDetails.toString(), Object.class));
-        } catch (IOException e) {
-            throw new CustomException("MusterRollServiceUtil::populateAdditionalDetailsAttendanceEntry::PARSING ERROR", "Failed to set additionalDetail object");
-        }
-    }
+		AttendanceRegisterResponse attendanceRegisterResponse = null;
 
-    /**
-     * Checks if the search is based only on tenantId
-     * @param searchCriteria
-     * @return
-     */
-    public boolean isTenantBasedSearch(MusterRollSearchCriteria searchCriteria) {
-        if ((searchCriteria.getIds() == null || searchCriteria.getIds().isEmpty()) && StringUtils.isBlank(searchCriteria.getMusterRollNumber())
-                && StringUtils.isBlank(searchCriteria.getRegisterId()) &&  searchCriteria.getFromDate() == null  && searchCriteria.getToDate() == null
-                && searchCriteria.getStatus() == null && StringUtils.isBlank(searchCriteria.getMusterRollStatus())
-                && StringUtils.isNotBlank(searchCriteria.getTenantId())) {
-            return true;
-        }
-        return false;
-    }
-    
-    public AttendanceRegisterResponse fetchAttendanceRegister(MusterRoll musterRoll, RequestInfo requestInfo) {
-    	log.info("MusterRollValidator::Fetching attendance register with tenantId::"+musterRoll.getTenantId()
-        +" and register ID: "+ musterRoll.getRegisterId());
-  	  	String id = requestInfo.getUserInfo().getUuid();
+		try {
+			attendanceRegisterResponse = restTemplate.postForObject(uriBuilder.toUriString(), requestInfoWrapper,
+					AttendanceRegisterResponse.class);
+		} catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
+			log.error("MusterRollValidator::Error thrown from attendance register service::"
+					+ httpClientOrServerExc.getStatusCode());
+			throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION",
+					"Error thrown from attendance register service::" + httpClientOrServerExc.getStatusCode());
+		}
 
-        StringBuilder uri = new StringBuilder();
-        uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
-                .queryParam("tenantId",musterRoll.getTenantId())
-                .queryParam("ids",musterRoll.getRegisterId())
-                .queryParam("status",Status.ACTIVE);
-        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-
-        AttendanceRegisterResponse attendanceRegisterResponse = null;
-
-        try {
-            attendanceRegisterResponse  = restTemplate.postForObject(uriBuilder.toUriString(),requestInfoWrapper,AttendanceRegisterResponse.class);
-        }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
-            log.error("MusterRollValidator::Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
-            throw new CustomException("ATTENDANCE_REGISTER_SERVICE_EXCEPTION","Error thrown from attendance register service::"+httpClientOrServerExc.getStatusCode());
-        }
-
-        if (attendanceRegisterResponse == null || CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
-            log.error("MusterRollValidator::User with id::" + id + " is not enrolled in the attendance register::"+musterRoll.getRegisterId());
-            throw new CustomException("ACCESS_EXCEPTION","User is not enrolled in the attendance register and not authorized to fetch it");
-        }
-        return attendanceRegisterResponse;
-  }
+		if (attendanceRegisterResponse == null
+				|| CollectionUtils.isEmpty(attendanceRegisterResponse.getAttendanceRegister())) {
+			log.error("MusterRollValidator::User with id::" + id + " is not enrolled in the attendance register::"
+					+ musterRoll.getRegisterId());
+			throw new CustomException("ACCESS_EXCEPTION",
+					"User is not enrolled in the attendance register and not authorized to fetch it");
+		}
+		return attendanceRegisterResponse;
+	}
 }
