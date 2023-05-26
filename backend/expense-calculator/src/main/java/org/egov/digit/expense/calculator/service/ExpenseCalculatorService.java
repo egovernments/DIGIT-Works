@@ -98,6 +98,8 @@ public class ExpenseCalculatorService {
     private BillToMetaMapper billToMetaMapper;
     @Autowired
     private ExpenseCalculatorRepository expenseCalculatorRepository;
+    @Autowired
+    private NotificationService notificationService;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -154,6 +156,7 @@ public class ExpenseCalculatorService {
             List<Bill> respBills = billResponse.getBills();
             if(respBills != null && !respBills.isEmpty()) {
                // persistMeta(respBills,metaInfo);
+                notificationService.sendNotificationForPurchaseBill(purchaseBillRequest);
                 submittedBills.addAll(respBills);
             }
         }

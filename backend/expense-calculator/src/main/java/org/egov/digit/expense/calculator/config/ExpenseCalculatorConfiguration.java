@@ -46,6 +46,16 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.idgen.supervision.reference.number}")
 	private String idGenSupervisionBillFormat;
 
+	//Localization Config
+	@Value("${egov.localization.host}")
+	private String localizationServiceHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationServiceContextPath;
+
+	@Value("${egov.localization.search.endpoint")
+	private String localizationServiceEndpoint;
+
 	// Workflow Config
 	@Value("${egov.workflow.host}")
 	private String wfHost;
@@ -72,6 +82,13 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
+
+	//Organisation Service
+	@Value("${egov.organisation.host}")
+	private String organisationServiceHost;
+
+	@Value("${egov.organisation.endpoint}")
+	private String organisationServiceEndpoint;
 
 	// Contract service
 	@Value("${egov.contract.service.host}")
