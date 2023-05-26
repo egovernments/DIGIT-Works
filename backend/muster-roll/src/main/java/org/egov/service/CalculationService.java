@@ -87,10 +87,22 @@ public class CalculationService {
         //calculate attendance aggregate and per day per individual attendance
         List<IndividualEntry> individualEntries = new ArrayList<>();
         List<IndividualEntry> individualEntriesFromRequest = musterRoll.getIndividualEntries();
+        
+        //Collect unique individuals from attendance logs
+        Set<String> attendeesWithLogs = new HashSet<String>();
+        for(String individualId: individualExitAttendanceMap.keySet()) {
+        	attendeesWithLogs.add(individualId);
+        }
+        //Fetch Absentees by comparing original enrolment against attendance register - fix for PFM-3184
+        List<IndividualEntry> absenteesList = fetchAbsentees(attendeesWithLogs, musterRoll, musterRollRequest.getRequestInfo());
+        //Add absentees to the response first. These attendees have 0 as attendance
+        individualEntries.addAll(absenteesList);
 
         // fetch individual details from individual service and account details from bank account service
         List<String> individualIds = new ArrayList<>();
         individualIds.addAll(individualExitAttendanceMap.keySet());
+        //Add all absentee individualIds as well
+        individualIds.addAll(absenteesList.stream().map(entry-> entry.getIndividualId()).collect(Collectors.toSet()));
         List<Individual> individuals = fetchIndividualDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
         List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
 
@@ -175,12 +187,7 @@ public class CalculationService {
             individualEntries.add(individualEntry);
         }
         
-        //Collect unique individuals from attendance logs
-        Set<String> attendeesWithLogs = individualEntries.stream().map(entry -> entry.getIndividualId()).collect(Collectors.toSet());
-        //Fetch Absentees - fix for PFM-3184
-        List<IndividualEntry> absenteesList = fetchAbsentees(attendeesWithLogs, musterRoll, musterRollRequest.getRequestInfo());
-        //Add absentees to the response
-        individualEntries.addAll(absenteesList);
+       
        
         musterRoll.setIndividualEntries(individualEntries);
         log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
