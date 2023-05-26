@@ -313,7 +313,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 showDuplicateUserError && <Toast error={true} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />
             }
             {
-                showValidToError && <Toast error={true} label={t("DATE_VALIDATION_MSG")} isDleteBtn={true} onClose={() => setShowValidToError(false)} />
+                showValidToError && <Toast error={true} label={t("DATE_VALIDATION_VALID_TO_VALID_FROM_MSG")} isDleteBtn={true} onClose={() => setShowValidToError(false)} />
             }
         </React.Fragment>
     )
