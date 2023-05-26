@@ -56,6 +56,7 @@ public class CalculationService {
     private int halfDayNumHours;
     private int fullDayNumHours;
     private boolean isRoundOffHours;
+    
 
     /**
      * Calculate the per day attendance and attendance aggregate for each individual for create muster roll
@@ -86,10 +87,22 @@ public class CalculationService {
         //calculate attendance aggregate and per day per individual attendance
         List<IndividualEntry> individualEntries = new ArrayList<>();
         List<IndividualEntry> individualEntriesFromRequest = musterRoll.getIndividualEntries();
+        
+        //Collect unique individuals from attendance logs
+        Set<String> attendeesWithLogs = new HashSet<String>();
+        for(String individualId: individualExitAttendanceMap.keySet()) {
+        	attendeesWithLogs.add(individualId);
+        }
+        //Fetch Absentees by comparing original enrolment against attendance register - fix for PFM-3184
+        List<IndividualEntry> absenteesList = fetchAbsentees(attendeesWithLogs, musterRoll, musterRollRequest.getRequestInfo());
+        //Add absentees to the response first. These attendees have 0 as attendance
+        individualEntries.addAll(absenteesList);
 
         // fetch individual details from individual service and account details from bank account service
         List<String> individualIds = new ArrayList<>();
         individualIds.addAll(individualExitAttendanceMap.keySet());
+        //Add all absentee individualIds as well
+        individualIds.addAll(absenteesList.stream().map(entry-> entry.getIndividualId()).collect(Collectors.toSet()));
         List<Individual> individuals = fetchIndividualDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
         List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
 
@@ -155,7 +168,7 @@ public class CalculationService {
             individualEntry.setAuditDetails(auditDetails);
             individualEntry.setActualTotalAttendance(totalAttendance);
             //Set individual details in additionalDetails
-            if (!CollectionUtils.isEmpty(individuals) /*&& !CollectionUtils.isEmpty(bankAccounts)*/) {
+           /** if (!CollectionUtils.isEmpty(individuals)) {
                 Individual individual = individuals.stream()
                                 .filter(ind -> ind.getId().equalsIgnoreCase(individualEntry.getIndividualId()))
                                         .findFirst().orElse(null);
@@ -163,19 +176,85 @@ public class CalculationService {
                                 .filter(account -> account.getReferenceId().equalsIgnoreCase(individualEntry.getIndividualId()))
                                         .findFirst().orElse(null);
 
-                if (individual != null /*&& bankAccount != null*/) {
+                if (individual != null) {
                     setAdditionalDetails(individualEntry,individualEntriesFromRequest,mdmsData,individual,bankAccount,isCreate);
                 } else {
                     log.info("CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "+individualEntry.getIndividualId());
                 }
 
-            }
+            } **/
 
             individualEntries.add(individualEntry);
         }
+
+        // Loop through and set individual and bank account details
+		for (IndividualEntry entry : individualEntries) {
+
+			// Set individual details in additionalDetails
+			if (!CollectionUtils.isEmpty(individuals) /* && !CollectionUtils.isEmpty(bankAccounts) */) {
+				Individual individual = individuals.stream()
+						.filter(ind -> ind.getId().equalsIgnoreCase(entry.getIndividualId())).findFirst()
+						.orElse(null);
+				BankAccount bankAccount = bankAccounts.stream()
+						.filter(account -> account.getReferenceId().equalsIgnoreCase(entry.getIndividualId()))
+						.findFirst().orElse(null);
+
+				if (individual != null /* && bankAccount != null */) {
+					setAdditionalDetails(entry, individualEntriesFromRequest, mdmsData, individual,
+							bankAccount, isCreate);
+				} else {
+					log.info(
+							"CalculationService::createAttendance::No match found in individual and bank account service for the individual id from attendance log - "
+									+ entry.getIndividualId());
+				}
+
+			}
+		}
+       
         musterRoll.setIndividualEntries(individualEntries);
         log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
 
+    }
+    
+    
+    /**
+     * //Fix for PFM-3184. Attendance register only contains info about people who attended. Absentees are left out. This method
+     * fetches all the unique individuals added to a register and identifies wage seekers who never attended a single day of work
+     * in a given time period. Adds their entries with attendnce of 0 and returns it to the UI.
+     * @param attendeesWithLogs
+     * @param musterRoll
+     * @param requestInfo
+     * @return
+     */
+    private List<IndividualEntry> fetchAbsentees(Set<String> attendeesWithLogs, MusterRoll musterRoll, RequestInfo requestInfo){
+    	List<IndividualEntry> absentees = new ArrayList<>();
+    	 // Get all individuals who were originally registered to the register
+        AttendanceRegisterResponse response = musterRollServiceUtil.fetchAttendanceRegister(musterRoll, requestInfo);
+        List<AttendanceRegister> registers = response.getAttendanceRegister();
+        Set<String> allAttendees = null;
+        if(registers!=null && !registers.isEmpty()) {
+        	AttendanceRegister register = registers.get(0);
+        	//Get all attendees of the register
+        	List<IndividualEntry> entries = register.getAttendees();
+        	if(entries!=null && !entries.isEmpty()) {
+        		allAttendees = entries.stream().map(entry -> entry.getIndividualId()).collect(Collectors.toSet());
+        		//Remove all attendees who have marked some sort of attendance. This leaves the once who registered but never marked a day's work
+                allAttendees.removeAll(attendeesWithLogs);
+                //Add these absentees to a list with zero as attendance days
+                for(String individual: allAttendees) {
+                	for(IndividualEntry entry: entries) {
+                		if(entry.getIndividualId().equals(individual)) {
+                			entry.setActualTotalAttendance(new BigDecimal(0));
+                			absentees.add(entry);            		}
+                	}
+                }//End of for
+        	}
+        	else {
+        		log.error("No attendees enrolled in register " + musterRoll.getRegisterId());
+        	}
+            
+        }//End of if
+        return absentees;
     }
 
     /**
