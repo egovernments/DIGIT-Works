@@ -289,6 +289,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         label: t.translate(i18.attendanceMgmt.skill) + ' *',
                         onChange: _onSelectedOptionsChanged,
                         options: skills,
+                        hintText: t.translate(i18.attendanceMgmt.skill),
                         selectedOptions: selectedOptions,
                       ),
                       // }),
