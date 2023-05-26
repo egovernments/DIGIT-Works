@@ -167,7 +167,7 @@ export const createProjectConfigMUKTA = {
               "label": "PROJECT_ESTIMATED_COST_IN_RS",
               "isMandatory": false,
               "key": "noSubProject_estimatedCostInRs",
-              "type": "text",
+              "type": "amount",
               "disable": false,
               "preProcess": {
                   "convertStringToRegEx": [

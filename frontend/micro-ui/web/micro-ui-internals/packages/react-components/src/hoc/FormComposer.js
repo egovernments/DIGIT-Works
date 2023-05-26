@@ -27,6 +27,7 @@ import UploadFileComposer from "./UploadFileComposer";
 import CheckBox from "../atoms/CheckBox";
 import MultiSelectDropdown from '../atoms/MultiSelectDropdown';
 import Paragraph from "../atoms/Paragraph";
+import InputTextAmount from "../atoms/InputTextAmount";
 
 const wrapperStyles = {
   // "display":"flex",
@@ -174,7 +175,39 @@ export const FormComposer = (props) => {
             />
           </div>
         );
-
+      case "amount":
+      // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
+      return (
+        <div className="field-container">
+          {populators?.componentInFront ? (
+            <span className={`component-in-front ${disable && "disabled"}`}>{populators.componentInFront}</span>
+          ) : null}
+          <Controller
+            defaultValue={formData?.[populators.name]}
+            render={({ onChange, ref, value }) => (
+              <InputTextAmount
+                value={formData?.[populators.name]}
+                type={"text"}
+                name={populators.name}
+                onChange={onChange}
+                inputRef={ref}
+                errorStyle={errors?.[populators.name]}
+                max={populators?.validation?.max}
+                min={populators?.validation?.min}
+                disable={disable}
+                style={type === "date" ? { paddingRight: "3px" } : ""}
+                maxlength={populators?.validation?.maxlength}
+                minlength={populators?.validation?.minlength}
+                customIcon={populators?.customIcon}
+                customClass={populators?.customClass}
+              />
+            )}
+            name={populators.name}
+            rules={!disableFormValidation ? { required: isMandatory, ...populators.validation, ...customRules } : {}}
+            control={control}
+          />
+        </div>
+      );
       case "textarea":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
         return (
