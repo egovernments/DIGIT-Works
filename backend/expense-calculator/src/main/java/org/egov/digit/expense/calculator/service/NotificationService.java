@@ -43,8 +43,9 @@ public class NotificationService {
             String message = null;
             String contactMobileNumber = null;
             if (action.equalsIgnoreCase("APPROVE")) {
-                Map<String, String> CBODetails = notificationUtil.getCBOContactPersonDetails(purchaseBillRequest);
-                message = getMessage(purchaseBillRequest, "PURCHASE_BILL_APPROVE_TO_VENDOR");
+                Map<String, String> CBODetails = notificationUtil.getCBOContactPersonDetails(purchaseBillRequest.getRequestInfo(),
+                        purchaseBillRequest.getBill().getTenantId(), purchaseBillRequest.getBill().getContractNumber());
+                message = getMessage(purchaseBillRequest.getRequestInfo(), purchaseBillRequest.getBill().getTenantId(), "PURCHASE_BILL_APPROVE_TO_VENDOR");
                 contactMobileNumber = CBODetails.get(CONTACT_MOBILE_NUMBER);
 
             } else if (action.equalsIgnoreCase("REJECT")) {
@@ -52,7 +53,7 @@ public class NotificationService {
                 Map<String , String> employeeDetails=hrmsUtils.getEmployeeDetailsByUuid(purchaseBillRequest.getRequestInfo(),purchaseBillRequest.getBill()
                         .getTenantId(),purchaseBillRequest.getBill().getAuditDetails().getCreatedBy());
                 contactMobileNumber = employeeDetails.get("mobileNumber");
-                message = getMessage(purchaseBillRequest, "PURCHASE_BILL_REJECT_TO_CREATOR");
+                message = getMessage(purchaseBillRequest.getRequestInfo(), purchaseBillRequest.getBill().getTenantId(), "PURCHASE_BILL_REJECT_TO_CREATOR");
 
             }
             String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
@@ -61,11 +62,22 @@ public class NotificationService {
         }
     }
 
+    public void sendNotificationForSupervisionBill(RequestInfo requestInfo, Criteria criteria, Calculation calculation){
+        Map<String, String> cboDetails = notificationUtil.getCBOContactPersonDetails(requestInfo, criteria.getTenantId(), criteria.getContractId());
+        String amount = String.valueOf(calculation.getTotalAmount());
+        String billNumber = calculation.getEstimates().get(0).getCalcDetails().get(0).getBillId();
+        String message = getMessage(requestInfo, criteria.getTenantId(), "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO");
+        String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
+        String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
+        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
+        producer.push(config.getSmsNotificationTopic(), smsRequest);
+    }
 
-    public String getMessage(PurchaseBillRequest purchaseBillRequest, String msgCode){
-        String rootTenantId = purchaseBillRequest.getBill().getTenantId().split("\\.")[0];
-        RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
-        String locale = requestInfo.getMsgId().split("\\|")[1];
+    public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){
+        String rootTenantId = tenantId.split("\\.")[0];
+        String locale = "en_IN";
+        if(requestInfo.getMsgId().split("\\|").length > 1)
+            locale = requestInfo.getMsgId().split("\\|")[1];
         Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, rootTenantId,
                 locale, EXPENSE_CALCULATOR_MODULE_CODE);
         return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);

@@ -44,22 +44,21 @@ public class NotificationUtil {
     public static final String CONTACT_MOBILE_NUMBER = "contactMobileNumber";
 
 
-    public Map<String, String> getCBOContactPersonDetails(PurchaseBillRequest purchaseBillRequest){
-        String orgId = fetchOrgId(purchaseBillRequest);
-        Map<String, String> CBODetails = fetchCBODetails(purchaseBillRequest, orgId);
+    public Map<String, String> getCBOContactPersonDetails(RequestInfo requestInfo, String tenantId, String contractNumber){
+        String orgId = fetchOrgId(requestInfo, tenantId, contractNumber);
+        Map<String, String> CBODetails = fetchCBODetails(requestInfo, tenantId, orgId);
         return CBODetails;
     }
 
-    public String fetchOrgId(PurchaseBillRequest purchaseBillRequest){
-        ContractResponse contractResponse = contractUtils.fetchContract(purchaseBillRequest.getRequestInfo(),
-                purchaseBillRequest.getBill().getTenantId(), purchaseBillRequest.getBill().getContractNumber());
+    public String fetchOrgId(RequestInfo requestInfo, String tenantId, String contractNumber){
+        ContractResponse contractResponse = contractUtils.fetchContract(requestInfo, tenantId, contractNumber);
 
         return contractResponse.getContracts().get(0).getOrgId();
     }
 
-    private Map<String,String> fetchCBODetails(PurchaseBillRequest purchaseBillRequest, String orgId){
+    private Map<String,String> fetchCBODetails(RequestInfo requestInfo, String tenantId, String orgId){
         StringBuilder url = getCBODetailsFromOrgUrl();
-        Object orgSearchRequest = getCBODetailsRequest(purchaseBillRequest, orgId);
+        Object orgSearchRequest = getCBODetailsRequest(requestInfo, tenantId, orgId);
 
         log.info("Organisation search request -> {}", orgSearchRequest);
         Object orgRes = restRepo.fetchResult(url, orgSearchRequest);
@@ -91,10 +90,7 @@ public class NotificationUtil {
         return builder;
     }
 
-    private Object getCBODetailsRequest(PurchaseBillRequest purchaseBillRequest, String orgId){
-        RequestInfo requestInfo = purchaseBillRequest.getRequestInfo();
-        String tenantId = purchaseBillRequest.getBill().getTenantId();
-
+    private Object getCBODetailsRequest(RequestInfo requestInfo, String tenantId, String orgId){
         ObjectNode orgSearchRequestNode = mapper.createObjectNode();
 
         ObjectNode orgObjNode = mapper.createObjectNode();
