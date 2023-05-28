@@ -23,7 +23,7 @@ public class LocalizationUtil {
     private ServiceRequestRepository restRepo;
 
     public static final String EXPENSE_CALCULATOR_LOCALIZATION_CODE_JSONPATH = "$.messages.*.code";
-    public static final String MUSTER_ROLL_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
+    public static final String EXPENSE_CALCULATOR_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
 
     /**
      * Creates a cache for localization that gets refreshed at every call.
@@ -49,7 +49,7 @@ public class LocalizationUtil {
         try {
             result = restRepo.fetchResult(uri, requestInfoWrapper);
             codes = JsonPath.read(result, EXPENSE_CALCULATOR_LOCALIZATION_CODE_JSONPATH);
-            messages = JsonPath.read(result, MUSTER_ROLL_LOCALIZATION_MESSAGE_JSONPATH);
+            messages = JsonPath.read(result, EXPENSE_CALCULATOR_LOCALIZATION_MESSAGE_JSONPATH);
         } catch (Exception e) {
             log.error("Exception while fetching from localization: " + e);
         }
