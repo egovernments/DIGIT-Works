@@ -70,7 +70,9 @@ public class NotificationService {
     public String getMessage(MusterRollRequest musterRollRequest, String msgCode){
         String rootTenantId = musterRollRequest.getMusterRoll().getTenantId().split("\\.")[0];
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
-        String locale = requestInfo.getMsgId().split("\\|")[1];
+        String locale = "en_IN";
+        if(requestInfo.getMsgId().split("\\|").length > 1)
+            locale = requestInfo.getMsgId().split("\\|")[1];
         Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, rootTenantId,
                 locale, MUSTER_ROLL_MODULE_CODE);
         return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
