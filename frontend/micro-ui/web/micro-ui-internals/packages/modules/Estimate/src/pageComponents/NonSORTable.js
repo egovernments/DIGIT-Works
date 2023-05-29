@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo } from "react";
-import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, Loader, TextArea } from "@egovernments/digit-ui-react-components";
+import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Dropdown, Loader, TextArea,InputTextAmount } from "@egovernments/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 import _ from "lodash";
 
@@ -17,7 +17,7 @@ const NonSORTable = ({ control, watch,config, ...props }) => {
   ];
 
   const { t, register, errors, setValue, getValues, formData, unregister } = props;
-  
+ 
   // const [rows, setRows] = useState(initialState);
   const [rows, setRows] = useState(
     formData?.[formFieldName]?.length > 2
@@ -296,7 +296,7 @@ const NonSORTable = ({ control, watch,config, ...props }) => {
             <td style={getStyles(4)}>
               <div style={cellContainerStyle}>
                 <div>
-                  <TextInput
+                  {/* <TextInput
                     style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
                     name={`${formFieldName}.${row.key}.rate`}
                     inputRef={register({
@@ -307,7 +307,38 @@ const NonSORTable = ({ control, watch,config, ...props }) => {
                       pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
                     })}
                     onChange={(e) => setAmountField(e, row)}
-                  />
+                  /> */}
+                  <Controller
+                    defaultValue={formData?.[formFieldName]?.[row?.key]?.rate}
+                    render={({ onChange, ref, value }) => (
+                      <InputTextAmount
+                        style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                        type={"text"}
+                        value={formData?.[formFieldName]?.[row?.key]?.rate}
+                        name={`${formFieldName}.${row.key}.rate`}
+                        onChange={(e) => {
+                          onChange(e)
+                          setAmountField(e, row)
+                        }}
+                        inputRef={ref}
+                        errorStyle={errors?.[populators.name]}
+                        max={populators?.rate?.max}
+                        min={0}
+                        disable={false}
+                        customIcon={populators?.customIcon}
+                        customClass={populators?.customClass}
+                      />
+                    )}
+                    name={`${formFieldName}.${row.key}.rate`}
+                    rules={{
+                      required: true,
+                      max:populators?.rate?.max,
+                      // pattern: /^\d*\.?\d*$/,
+                      // pattern: /^\d*(\.\d{0,2})?$/,
+                      pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/,
+                    }}
+                    control={control}
+                   />
                 </div>
                 <div style={errorContainerStyles}>
                   {errors && errors?.[formFieldName]?.[row.key]?.rate?.type === "pattern" && (
@@ -355,7 +386,7 @@ const NonSORTable = ({ control, watch,config, ...props }) => {
             <td style={getStyles(6)}>
               <div>
                 <div>
-                  <TextInput
+                  {/* <TextInput
                     style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
                     name={`${formFieldName}.${row.key}.estimatedAmount`}
                     inputRef={register({
@@ -364,7 +395,36 @@ const NonSORTable = ({ control, watch,config, ...props }) => {
                       // pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                     })}
                     disable={true}
-                  />
+                  /> */}
+                  <Controller
+                    defaultValue={formData?.[formFieldName]?.[row?.key]?.estimatedAmount}
+                    // defaultValue={getValues(`${formFieldName}.${row.key}.estimatedAmount`)}
+                    render={({ onChange, ref, value }) => (
+                      <InputTextAmount
+                        value={formData?.[formFieldName]?.[row?.key]?.estimatedAmount}
+                        // value={getValues(`${formFieldName}.${row.key}.estimatedAmount`)}
+                        style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                        type={"text"}
+                        name={`${formFieldName}.${row.key}.estimatedAmount`}
+                        onChange= {()=>{}}
+                        // onChange={(e)=>{
+                        //   onChange(e)}
+                        // }
+                        inputRef={ref}
+                        // errorStyle={errors?.[populators.name]}
+                        disable={true}
+                        // customIcon={populators?.customIcon}
+                        // customClass={populators?.customClass}
+                      />
+                    )}
+                    name={`${formFieldName}.${row.key}.estimatedAmount`}
+                    rules={{
+                      required: true,
+                      pattern: /^\d*\.?\d*$/,
+                      // pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
+                    }}
+                    control={control}
+                   />
                 </div>
                 <div style={errorContainerStyles}>
                   {/* {errors && errors?.[formFieldName]?.[row.key]?.estimatedAmount?.type === "pattern" && (
