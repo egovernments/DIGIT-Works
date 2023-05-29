@@ -137,8 +137,8 @@ public class NotificationUtil {
                 return totalAmount;
         }
         public StringBuilder getExpenseUrl(){
-                StringBuilder url = new StringBuilder(config.getExpenseServiceHost())
-                        .append(config.getExpenseServiceEndpoint());
+                StringBuilder url = new StringBuilder(config.getExpenseCalculatorServiceHost())
+                        .append(config.getExpenseCalculatorServiceEndpoint());
                 return url;
         }
 

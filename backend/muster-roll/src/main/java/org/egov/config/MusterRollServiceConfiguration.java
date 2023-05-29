@@ -102,10 +102,10 @@ public class MusterRollServiceConfiguration {
     private String smsNotificationTopic;
 
     //Expense Service
-    @Value("${works.expense.host}")
-    private String expenseServiceHost;
-    @Value("${works.expense.endpoint}")
-    private String expenseServiceEndpoint;
+    @Value("${works.expense.calculator.host}")
+    private String expenseCalculatorServiceHost;
+    @Value("${works.expense.calculator.endpoint}")
+    private String expenseCalculatorServiceEndpoint;
 
     //Individual service
     @Value("${works.individual.host}")
