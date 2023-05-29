@@ -408,6 +408,7 @@ const NonSORTable = ({ control, watch,config, ...props }) => {
                         name={`${formFieldName}.${row.key}.estimatedAmount`}
                         onChange= {()=>{}}
                         // onChange={(e)=>{
+                        //   debugger
                         //   onChange(e)}
                         // }
                         inputRef={ref}
