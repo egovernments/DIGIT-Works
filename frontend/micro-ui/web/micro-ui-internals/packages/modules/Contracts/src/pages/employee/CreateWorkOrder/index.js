@@ -172,7 +172,8 @@ const CreateWorkOrder = () => {
                 totalAmount -= amountDetails?.amount;
             }
         })
-        return totalAmount;
+        
+        return Math.round(totalAmount);
     }
 
     useEffect(()=>{
