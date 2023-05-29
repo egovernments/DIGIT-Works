@@ -207,6 +207,7 @@ import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
 import { Phone } from "./atoms/svgindex";
 import TextArea from "./atoms/TextArea";
+import InputTextAmount from "./atoms/InputTextAmount";
 import TextInput from "./atoms/TextInput";
 import Toast from "./atoms/Toast";
 import TopBar from "./atoms/TopBar";
@@ -268,6 +269,7 @@ import WorkflowActions from "./atoms/WorkflowActions";
 import Amount from "./atoms/Amount";
 import Paragraph from "./atoms/Paragraph";
 export {
+  InputTextAmount,
   Button,
   ViewImages,
   Phone,
