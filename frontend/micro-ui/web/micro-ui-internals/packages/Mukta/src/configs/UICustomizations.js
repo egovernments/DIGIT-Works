@@ -186,6 +186,11 @@ export const UICustomizations = {
           return t("ES_COMMON_NA");
       }
      },
+     additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
@@ -423,6 +428,11 @@ export const UICustomizations = {
         return <p>{"NA"}</p>;
       }
     },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
@@ -509,6 +519,8 @@ export const UICustomizations = {
       const { createdFrom, createdTo } = data;
       if (createdTo !== "" && createdFrom === "")
         return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      else if (createdTo === "" && createdFrom !== "")
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
 
       return false;
     },
@@ -520,7 +532,7 @@ export const UICustomizations = {
         case "WORKS_PROJECT_ID":
          return (
           <span className="link">
-            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}&from=WORKS_SEARCH_PROJECTS`}>
+            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}`}>
             {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
           </span>
@@ -572,6 +584,11 @@ export const UICustomizations = {
         return t("ES_COMMON_NA");
       }
     },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
@@ -579,11 +596,6 @@ export const UICustomizations = {
           link = `/${window.contextPath}/employee/project/project-details?tenantId=${tenantId}&projectNumber=${row[key]}`;
       });
       return link;
-    },
-    additionalValidations: (type, data, keys) => {
-      if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
-      }
     },
   },
   SearchAttendanceConfig: {
