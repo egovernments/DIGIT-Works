@@ -62,10 +62,10 @@ public class NotificationService {
         }
     }
 
-    public void sendNotificationForSupervisionBill(RequestInfo requestInfo, Criteria criteria, Calculation calculation){
+    public void sendNotificationForSupervisionBill(RequestInfo requestInfo, Criteria criteria, Calculation calculation, List<Bill> bills){
         Map<String, String> cboDetails = notificationUtil.getCBOContactPersonDetails(requestInfo, criteria.getTenantId(), criteria.getContractId());
         String amount = String.valueOf(calculation.getTotalAmount());
-        String billNumber = calculation.getEstimates().get(0).getCalcDetails().get(0).getBillId();
+        String billNumber = bills.get(0).getBillNumber();
         String message = getMessage(requestInfo, criteria.getTenantId(), "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO");
         String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
         String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
