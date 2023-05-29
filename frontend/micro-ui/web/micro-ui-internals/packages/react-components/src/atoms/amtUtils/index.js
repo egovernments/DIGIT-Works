@@ -241,10 +241,7 @@ const defaultConfig = {
  */
 //tried locale hardcoded
 export const getLocaleConfig = (intlConfig) => {
-  const { locale, currency } = intlConfig || {
-    locale: "en-IN",
-    currency: "INR",
-  };
+  const { locale, currency } = intlConfig || {};
 
   const numberFormatter = locale ? new Intl.NumberFormat(locale, currency ? { currency, style: "currency" } : undefined) : new Intl.NumberFormat();
 
@@ -382,4 +379,36 @@ export const repositionCursor = ({ selectionStart, value, lastKeyStroke, stateVa
   }
 
   return { modifiedValue, cursorPosition: selectionStart };
+};
+
+export const getIntlConfig = (prefix = "") => {
+  const currencyMatch = Object.keys(CURRENCY_MAP).filter((e) => prefix.includes(e));
+  if (currencyMatch && currencyMatch?.length > 0) {
+    return CURRENCY_MAP[currencyMatch[0]];
+  } else {
+    CURRENCY_MAP["₹"];
+  }
+};
+
+const CURRENCY_MAP = {
+  "￥": {
+    locale: "ja-JP",
+    currency: "JPY",
+  },
+  "₹": {
+    locale: "en-IN",
+    currency: "INR",
+  },
+  "£": {
+    locale: "en-GB",
+    currency: "GBP",
+  },
+  "€": {
+    locale: "de-DE",
+    currency: "EUR",
+  },
+  $: {
+    locale: "en-US",
+    currency: "USD",
+  },
 };

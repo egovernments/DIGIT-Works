@@ -200,6 +200,8 @@ export const FormComposer = (props) => {
                 minlength={populators?.validation?.minlength}
                 customIcon={populators?.customIcon}
                 customClass={populators?.customClass}
+                prefix={populators?.prefix}
+                intlConfig={populators?.intlConfig}
               />
             )}
             name={populators.name}

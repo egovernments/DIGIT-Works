@@ -1,12 +1,22 @@
 import TextInput from "./TextInput";
 
 import React, { forwardRef, useImperativeHandle, useMemo, useRef, useEffect, useState } from "react";
-import { cleanValue, fixedDecimalValue, formatValue, getLocaleConfig, getSuffix, isNumber, padTrimValue, repositionCursor } from "./amtUtils";
+import {
+  cleanValue,
+  fixedDecimalValue,
+  formatValue,
+  getLocaleConfig,
+  getIntlConfig,
+  getSuffix,
+  isNumber,
+  padTrimValue,
+  repositionCursor,
+} from "./amtUtils";
 
 /* Amount component by default round offs and formats for amount   */
 
-const InputTextAmount = ({ value, prefix = "₹ ", onChange, inputRef,...otherProps }) => {
-  return <InputAmountWrapper ref={inputRef} defaultValue={value} onValueChange={onChange} otherProps={otherProps} prefix={prefix}></InputAmountWrapper>;
+const InputTextAmount = ({ value, prefix = "₹ ", intlConfig = getIntlConfig(prefix), onChange, ...otherProps }) => {
+  return <InputAmountWrapper defaultValue={value} intlConfig={intlConfig} onValueChange={onChange} otherProps={otherProps} prefix={prefix}></InputAmountWrapper>;
 };
 
 export default InputTextAmount;
@@ -46,7 +56,6 @@ export const CurrencyInput = forwardRef(
       onKeyUp,
       transformRawValue,
       otherProps,
-      inputRef:inputRefFrom,
       ...props
     },
     ref
@@ -62,7 +71,6 @@ export const CurrencyInput = forwardRef(
     const localeConfig = useMemo(() => getLocaleConfig(intlConfig), [intlConfig]);
     const decimalSeparator = _decimalSeparator || localeConfig.decimalSeparator || "";
     const groupSeparator = _groupSeparator || localeConfig.groupSeparator || "";
-
     if (decimalSeparator && groupSeparator && decimalSeparator === groupSeparator && disableGroupSeparators === false) {
       throw new Error("decimalSeparator cannot be the same as groupSeparator");
     }
@@ -75,7 +83,6 @@ export const CurrencyInput = forwardRef(
       prefix: prefix || localeConfig.prefix,
       suffix: suffix,
     };
-
     const cleanValueOptions = {
       decimalSeparator,
       groupSeparator,
@@ -99,7 +106,7 @@ export const CurrencyInput = forwardRef(
     const [cursor, setCursor] = useState(0);
     const [changeCount, setChangeCount] = useState(0);
     const [lastKeyStroke, setLastKeyStroke] = useState(null);
-    const inputRef = useRef(inputRefFrom);
+    const inputRef = useRef(null);
     useImperativeHandle(ref, () => inputRef.current);
 
     /**
@@ -336,7 +343,7 @@ export const CurrencyInput = forwardRef(
 
 CurrencyInput.displayName = "CurrencyInput";
 
-export const InputAmountWrapper = ({ref,...props}) => {
+export const InputAmountWrapper = (props) => {
   const limit = 1000;
   const prefix = props?.prefix;
 
@@ -386,13 +393,13 @@ export const InputAmountWrapper = ({ref,...props}) => {
       name="input-1"
       customInput={TextInput}
       className={`form-control ${className}`}
-      value={ props.defaultValue || value}
+      value={value}
       onValueChange={handleOnValueChange}
       // placeholder="Please enter a number"
       prefix={prefix}
       step={1}
+      intlConfig={props?.intlConfig}
       otherProps={props?.otherProps}
-      inputRef={ref}
     />
   );
 };
