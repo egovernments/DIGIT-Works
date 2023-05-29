@@ -212,8 +212,20 @@ export const getBankAccountUpdatePayload = ({formData, apiData, tenantId, isModi
 
         let bankAccountDetails = bankAccounts?.[0]?.bankAccountDetails?.[0]
         if(bankAccountDetails) {
-            bankAccountDetails.isActive = false
-            bankAccountDetails.isPrimary = false
+            bankAccountDetails.isActive = true
+            bankAccountDetails.isPrimary = true
+            bankAccountDetails.accountHolderName = formData?.financeDetails_accountHolderName
+            bankAccountDetails.accountNumber = formData?.financeDetails_accountNumber
+            bankAccountDetails.accountType = formData?.financeDetails_accountType?.code
+            bankAccountDetails.tenantId = tenantId
+            bankAccountDetails.bankBranchIdentifier = {
+                type: "IFSC",
+                code: isWageSeeker? formData?.financeDetails_ifsc : formData?.transferCodesData?.[0]?.value,
+                additionalDetails: {
+                    ifsccode: formData?.financeDetails_branchName
+                },
+                id: isModify ? bankAccountDetails.bankBranchIdentifier?.id : null
+            }
         }
         delete bankAccountDetails?.auditDetails
     } else {
