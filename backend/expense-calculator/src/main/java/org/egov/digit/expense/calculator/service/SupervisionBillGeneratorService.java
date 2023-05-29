@@ -7,6 +7,7 @@ import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceCon
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.PAYEE_TYPE_SUPERVISIONBILL;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -384,7 +385,9 @@ public class SupervisionBillGeneratorService {
 	private LineItem buildLineItem(String tenantId, Bill bill, BigDecimal supervisionRate) {
 		BigDecimal billAmount = bill.getTotalAmount();
 		BigDecimal supervisionAmt = billAmount.multiply(supervisionRate).divide(new BigDecimal(100));
-		LineItem lineItem = LineItem.builder().amount(supervisionAmt).paidAmount(new BigDecimal(0)).headCode(HEAD_CODE_SUPERVISION) // TODO fetch from
+		// Round the supervision amount to 0 decimal place
+		BigDecimal roundedNumber = supervisionAmt.setScale(0, RoundingMode.HALF_UP);
+		LineItem lineItem = LineItem.builder().amount(roundedNumber).paidAmount(new BigDecimal(0)).headCode(HEAD_CODE_SUPERVISION) // TODO fetch from
 																										// mdms
 				.tenantId(tenantId).type(LineItem.TypeEnum.PAYABLE).build();
 		return lineItem;
