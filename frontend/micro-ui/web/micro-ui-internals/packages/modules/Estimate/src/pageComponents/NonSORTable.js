@@ -17,7 +17,7 @@ const NonSORTable = ({ control, watch,config, ...props }) => {
   ];
 
   const { t, register, errors, setValue, getValues, formData, unregister } = props;
- 
+
   // const [rows, setRows] = useState(initialState);
   const [rows, setRows] = useState(
     formData?.[formFieldName]?.length > 2
@@ -131,10 +131,10 @@ const NonSORTable = ({ control, watch,config, ...props }) => {
       formData?.[formFieldName]?.map((row,index) => {
         if(row) {
           setValue(`${formFieldName}.${index}.description`,'')
-          setValue(`${formFieldName}.${index}.rate`,'')
+          setValue(`${formFieldName}.${index}.rate`,"0")
           setValue(`${formFieldName}.${index}.uom`,'')
           setValue(`${formFieldName}.${index}.estimatedQuantity`,'')
-          setValue(`${formFieldName}.${index}.estimatedAmount`,'')
+          setValue(`${formFieldName}.${index}.estimatedAmount`,"0")
         }
       })
       
