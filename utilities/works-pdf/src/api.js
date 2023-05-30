@@ -190,12 +190,16 @@ async function search_mdms(request) {
   });
 }
 
-async function search_localization(request, params) {
+async function search_localization(request, lang, module, tenantId) {
   return await axios({
     method: "post",
     url: url.resolve(config.host.localization, config.paths.localization_search),
     data: request,
-    params: params
+    params: {
+      "locale": lang,
+      "module": module,
+      "tenantId": tenantId.split(".")[0]
+    }
   });
 }
 
