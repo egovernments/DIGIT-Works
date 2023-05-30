@@ -58,12 +58,20 @@ router.post(
             let worflow = resWorkFlow?.data || {};
             if (contract && contract.contracts && contract.contracts.length > 0 && organisation && organisation.organisations && organisation.organisations.length > 0 && worflow?.ProcessInstances?.length) {
                 var pdfResponse;
-                if (requestinfo && requestinfo.RequestInfo && requestinfo.RequestInfo.msgId && requestinfo.RequestInfo.msgId.split("|")[1] == "hi_IN") {
-                    var pdfkey = config.pdf.work_order_template_hindi;
+                const locale=requestinfo ?.RequestInfo ?.msgId ?.split("|")[1];
+                var pdfkey;
+
+                switch(locale){
+                   case "hi_IN":
+                         pdfkey = config.pdf.work_order_template_hindi;
+                        break;
+                   case "or_IN":
+                         pdfkey = config.pdf.work_order_template_odiya;
+                        break;
+                   default:
+                         pdfkey = config.pdf.work_order_template;
                 }
-                else {
-                    var pdfkey = config.pdf.work_order_template;
-                }
+
                 contract.contracts[0].contactName = organisation.organisations[0].contactDetails[0].contactName
                 contract.contracts[0].nameOfCbo = organisation.organisations[0].name
                 contract.contracts[0].city = organisation.organisations[0].orgAddress[0].city
