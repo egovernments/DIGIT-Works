@@ -410,6 +410,19 @@ export const UICustomizations = {
           </span>
         );
       }
+      if (key === "ES_COMMON_PROJECT_NAME") {
+        return (
+          <div class="tooltip">
+            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </span>
+            {/* check condtion - if length greater than 20 */}
+            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+              {row?.businessObject?.project?.description || t("ES_COMMON_NA")}
+            </span>
+          </div>
+        );
+      }
       if (key === "WORKS_ESTIMATED_AMOUNT") {
         return <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount>
       }
@@ -664,7 +677,6 @@ export const UICustomizations = {
       }
 
       if (key === "ES_COMMON_PROJECT_NAME") {
-        
         return (
           <div class="tooltip">
             <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
@@ -672,7 +684,7 @@ export const UICustomizations = {
             </span>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
-              {row?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
+              {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
             </span>
           </div>
         );
@@ -849,6 +861,20 @@ export const UICustomizations = {
             </Link>
           </span>
         );
+      
+      case "WORKS_PROJECT_NAME":
+          return (
+            <div class="tooltip">
+              <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+                {String(t(value))}
+              </span>
+              {/* check condtion - if length greater than 20 */}
+              <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+                {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
+              </span>
+            </div>
+          );
+        
       case "ES_COMMON_AMOUNT":
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       case "COMMON_ROLE_OF_CBO": 
@@ -1194,6 +1220,21 @@ export const UICustomizations = {
       if (key === "EXP_BILL_AMOUNT") {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
+
+      if (key === "WORKS_PROJECT_NAME") {
+        return (
+          <div class="tooltip">
+            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </span>
+            {/* check condtion - if length greater than 20 */}
+            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+              {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
+            </span>
+          </div>
+        );
+      }
+
       if(key === "CORE_COMMON_STATUS") {
         return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
       }
