@@ -1,12 +1,22 @@
 import TextInput from "./TextInput";
 
 import React, { forwardRef, useImperativeHandle, useMemo, useRef, useEffect, useState } from "react";
-import { cleanValue, fixedDecimalValue, formatValue, getLocaleConfig, getSuffix, isNumber, padTrimValue, repositionCursor } from "./amtUtils";
+import {
+  cleanValue,
+  fixedDecimalValue,
+  formatValue,
+  getLocaleConfig,
+  getIntlConfig,
+  getSuffix,
+  isNumber,
+  padTrimValue,
+  repositionCursor,
+} from "./amtUtils";
 
 /* Amount component by default round offs and formats for amount   */
 
-const InputTextAmount = ({ value, prefix = "₹ ", onChange, inputRef,...otherProps }) => {
-  return <InputAmountWrapper ref={inputRef} defaultValue={value} onValueChange={onChange} otherProps={otherProps} prefix={prefix}></InputAmountWrapper>;
+const InputTextAmount = ({ value, prefix = "₹ ",intlConfig = getIntlConfig(prefix), onChange, inputRef,...otherProps }) => {
+  return <InputAmountWrapper ref={inputRef} defaultValue={value} intlConfig={intlConfig}  onValueChange={onChange} otherProps={otherProps} prefix={prefix}></InputAmountWrapper>;
 };
 
 export default InputTextAmount;
