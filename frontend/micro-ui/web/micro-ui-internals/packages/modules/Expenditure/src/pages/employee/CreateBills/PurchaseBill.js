@@ -27,7 +27,9 @@ const PurchaseBill = () => {
     }
 
     //vendor search
-    const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload);
+    const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload, {
+        cacheTime: 0
+    });
 
     const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
     stateTenant,
