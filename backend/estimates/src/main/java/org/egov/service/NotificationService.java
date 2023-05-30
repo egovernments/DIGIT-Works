@@ -209,7 +209,7 @@ public class NotificationService {
      * @return
      */
     public String buildMessageForRejectAction(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{estimate_no}", estimate.getEstimateNumber())
+        message = message.replace("{estimteno}", estimate.getEstimateNumber())
                 .replace("{projectid}",userDetailsForSMS.get("projectNumber"))
                 .replace("{project_name}", userDetailsForSMS.get("projectName"))
                 .replace("{location}", userDetailsForSMS.get("locationName"))
@@ -219,7 +219,7 @@ public class NotificationService {
     }
 
     public String buildMessageForApproveAction_Creator(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{estimate_no}", estimate.getEstimateNumber())
+        message = message.replace("{estimteno}", estimate.getEstimateNumber())
                 .replace("{projectid}", userDetailsForSMS.get("projectNumber"))
                 .replace("{project_name}", userDetailsForSMS.get("projectName"))
                 .replace("{location}", userDetailsForSMS.get("locationName"));
