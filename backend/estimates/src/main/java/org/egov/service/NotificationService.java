@@ -150,10 +150,12 @@ public class NotificationService {
         Object projectRes = projectServiceUtil.getProjectDetails(request);
 
         Map<String, String> projectDetails = new HashMap<>();
+        List<String> projectNumber = new ArrayList<>();
         List<String> projectNames = new ArrayList<>();
         List<String> boundaries = new ArrayList<>();
         List<String> boundaryTypes = new ArrayList<>();
         try {
+            projectNumber = JsonPath.read(projectRes, PROJECT_ID_CODE);
             projectNames = JsonPath.read(projectRes, PROJECT_NAME_CODE);
             boundaries = JsonPath.read(projectRes, PROJECT_BOUNDARY_CODE);
             boundaryTypes = JsonPath.read(projectRes, PROJECT_BOUNDARY_TYPE_CODE);
@@ -165,6 +167,7 @@ public class NotificationService {
         projectDetails.put("projectName", projectNames.get(0));
         projectDetails.put("boundary", boundaries.get(0));
         projectDetails.put("boundaryType", boundaryTypes.get(0));
+        projectDetails.put("projectNumber", projectNumber.get(0));
 
         return projectDetails;
     }
@@ -207,6 +210,7 @@ public class NotificationService {
      */
     public String buildMessageForRejectAction(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{estimate_no}", estimate.getEstimateNumber())
+                .replace("{projectid}",userDetailsForSMS.get("projectNumber"))
                 .replace("{project_name}", userDetailsForSMS.get("projectName"))
                 .replace("{location}", userDetailsForSMS.get("locationName"))
                 .replace("{username}", userDetailsForSMS.get("userName"))
@@ -216,6 +220,7 @@ public class NotificationService {
 
     public String buildMessageForApproveAction_Creator(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{estimate_no}", estimate.getEstimateNumber())
+                .replace("{projectid}", userDetailsForSMS.get("projectNumber"))
                 .replace("{project_name}", userDetailsForSMS.get("projectName"))
                 .replace("{location}", userDetailsForSMS.get("locationName"));
         return message;
