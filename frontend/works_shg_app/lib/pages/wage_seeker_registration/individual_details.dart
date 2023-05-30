@@ -222,7 +222,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         padding: const EdgeInsets.only(top: 32.0),
                         isRequired: true,
                         cancelText: t.translate(i18.common.cancel),
-                        fieldHintText: 'dd/MM/YYYY',
+                        fieldHintText: 'dd/mm/yyyy',
                         confirmText: t.translate(i18.common.oK),
                         icon: Icons.info_outline_rounded,
                         toolTipMsg: t.translate(i18.wageSeeker.ageValidation),
