@@ -84,7 +84,7 @@ public class NotificationService {
                 smsDetails.put("orgName", orgDetails.get("orgNames").get(0));
                 smsDetails.put("personName", orgDetails.get("personNames").get(i));
                 smsDetails.put("mobileNumber", orgDetails.get("mobileNumbers").get(i));
-                smsDetails.put("CBOUrl", orgDetails.get("CBOUrl").get(0));
+//                smsDetails.put("CBOUrl", orgDetails.get("CBOUrl").get(0));
                 smsDetails.put("orgId", organisation.getOrgNumber());
 
 
@@ -127,14 +127,14 @@ public class NotificationService {
         String orgName = organisation.getName();
         List<String> personNames = organisation.getContactDetails().stream().map(contactDetails -> contactDetails.getContactName()).collect(Collectors.toList());
         List<String> mobileNumbers = organisation.getContactDetails().stream().map(contactDetails -> contactDetails.getContactMobileNumber()).collect(Collectors.toList());
-        String CBOUrl = getShortnerURL(config.getCboUrlHost() + config.getCboUrlEndpoint());
+//        String CBOUrl = getShortnerURL(config.getCboUrlHost() + config.getCboUrlEndpoint());
 
         Map<String, List<String>> smsDetails = new HashMap<>();
 
         smsDetails.put("orgNames", Collections.singletonList(orgName));
         smsDetails.put("personNames", personNames);
         smsDetails.put("mobileNumbers", mobileNumbers);
-        smsDetails.put("CBOUrl", Collections.singletonList(CBOUrl));
+//        smsDetails.put("CBOUrl", Collections.singletonList(CBOUrl));
 
 
         return smsDetails;
@@ -147,7 +147,7 @@ public class NotificationService {
         String uuid=organisation.getAuditDetails().getLastModifiedBy();
         String orgName = organisation.getName();
         String tenantId=organisation.getTenantId();
-        String CBOUrl = getShortnerURL(config.getCboUrlHost() + config.getCboUrlEndpoint());
+//        String CBOUrl = getShortnerURL(config.getCboUrlHost() + config.getCboUrlEndpoint());
         String contactName = organisation.getContactDetails().get(0).getContactName();
         String contactMobileNumber = organisation.getContactDetails().get(0).getContactMobileNumber();
         String orgNumber = organisation.getOrgNumber();
@@ -160,7 +160,7 @@ public class NotificationService {
         smsDetails.put("orgNames", orgName);
         smsDetails.put("personName", contactName);
         smsDetails.put("mobileNumber", contactMobileNumber);
-        smsDetails.put("CBOUrl", CBOUrl);
+//        smsDetails.put("CBOUrl", CBOUrl);
         smsDetails.put("orgNumber", orgNumber);
 
 
@@ -207,14 +207,12 @@ public class NotificationService {
     public String buildMessageForCreateAction(Map<String, String> userDetailsForSMS, String message) {
         message = message.replace("{individualName}", userDetailsForSMS.get("personName"))
                 .replace("{organisationName}", userDetailsForSMS.get("orgName"))
-                .replace("{ID}", userDetailsForSMS.get("orgId"))
-                .replace("{cbo_portal_url}", userDetailsForSMS.get("CBOUrl"));
+                .replace("{ID}", userDetailsForSMS.get("orgId"));
         return message;
     }
 
     public String buildMessageForUpdateAction(Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{orgID}", userDetailsForSMS.get("orgNumber"))
-                .replace("{cbo_portal_url}", userDetailsForSMS.get("CBOUrl"));
+        message = message.replace("{orgID}", userDetailsForSMS.get("orgNumber"));
         return message;
     }
 
