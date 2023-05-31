@@ -514,30 +514,30 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                       id: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
                                                                                       skill: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                                           '',
-                                                                                      monEntryId: e
+                                                                                      monEntryId: e.attendanceEntries != null ? e
                                                                                           .attendanceEntries!
                                                                                           .lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon')
                                                                                           .attendanceEntriesAdditionalDetails
-                                                                                          ?.entryAttendanceLogId,
-                                                                                      monExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                          ?.entryAttendanceLogId : null,
+                                                                                      monExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                                       monIndex: e.attendanceEntries != null ? e.attendanceEntries!.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendance ?? -1 : 0,
-                                                                                      tueEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      tueExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      tueEntryId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                                      tueExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                                       tueIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Tue').attendance ?? -1 : 0,
-                                                                                      wedEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      wedExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      wedEntryId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                                      wedExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                                       wedIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Wed').attendance ?? -1 : 0,
-                                                                                      thuEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      thuExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      thuEntryId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                                      thuExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                                       thursIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Thu').attendance ?? -1 : 0,
-                                                                                      friEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      friExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      friEntryId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                                      friExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                                       friIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Fri').attendance ?? -1 : 0,
-                                                                                      satEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      satExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      satEntryId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                                      satExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                                       satIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sat').attendance ?? -1 : 0,
-                                                                                      sunEntryId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId,
-                                                                                      sunExitId: e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId,
+                                                                                      sunEntryId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
+                                                                                      sunExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                                       sunIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? -1 : 0,
                                                                                       auditDetails: e.attendanceEntries?.first.auditDetails))
                                                                                   .toList();
@@ -1051,39 +1051,39 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                   .isNotEmpty) {
                 skillsPayLoad.removeWhere((elem) =>
                     elem["individualId"] == tableDataModel.individualId);
-                if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
-                  skillsPayLoad.add({
-                    "id": tableDataModel.id,
-                    "additionalDetails": {
-                      "code": val
-                    }
-                  });
-                }
-                else {
+                // if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+                //   skillsPayLoad.add({
+                //     "id": tableDataModel.id,
+                //     "additionalDetails": {
+                //       "code": val
+                //     }
+                //   });
+                // }
+                // else {
                   skillsPayLoad.add({
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {
                       "code": val
                     }
                   });
-                }
+                // }
               } else {
-                if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
-                  skillsPayLoad.add({
-                    "id": tableDataModel.id,
-                    "additionalDetails": {
-                      "code": val
-                    }
-                  });
-                }
-                else {
+                // if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+                //   skillsPayLoad.add({
+                //     "id": tableDataModel.id,
+                //     "additionalDetails": {
+                //       "code": val
+                //     }
+                //   });
+                // }
+                // else {
                   skillsPayLoad.add({
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {
                       "code": val
                     }
                   });
-                }
+                // }
               }
             },
           )),
