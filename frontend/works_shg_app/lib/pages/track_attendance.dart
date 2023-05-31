@@ -870,9 +870,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                 listener: (context, logState) {
                                                                                                                   SchedulerBinding.instance.addPostFrameCallback((_) {
                                                                                                                     logState.maybeWhen(
-                                                                                                                        error: () {
+                                                                                                                        error: (String? error) {
                                                                                                                           if (!hasLoaded && selectedDateRange != null) {
-                                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedFailed), 'ERROR');
+                                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(error.toString()), 'ERROR');
                                                                                                                             onSubmit(widget.id);
                                                                                                                             hasLoaded = true;
                                                                                                                           }
@@ -1001,9 +1001,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                               listener: (context, logState) {
                                                                                                                 SchedulerBinding.instance.addPostFrameCallback((_) {
                                                                                                                   logState.maybeWhen(
-                                                                                                                      error: () {
+                                                                                                                      error: (String? error) {
                                                                                                                         if (!hasLoaded && selectedDateRange != null) {
-                                                                                                                          Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedFailed), 'ERROR');
+                                                                                                                          Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(error.toString()), 'ERROR');
                                                                                                                           onSubmit(widget.id);
                                                                                                                           hasLoaded = true;
                                                                                                                         }
