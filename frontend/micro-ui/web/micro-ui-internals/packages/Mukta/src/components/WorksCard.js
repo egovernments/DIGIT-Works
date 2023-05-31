@@ -162,7 +162,7 @@ const WorksCard = () => {
     },
     {
       label: t("ACTION_TEST_6DASHBOARD"),
-      link: `/${window?.contextPath}/employee/dss/dashboard/works`,
+      link: `/${window?.contextPath}/employee/dss/dashboard/mukta`,
       roles: ROLES.DSS,
     },
     {
