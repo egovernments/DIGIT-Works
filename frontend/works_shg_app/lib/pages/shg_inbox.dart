@@ -732,13 +732,11 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                             .addPostFrameCallback(
                                                                                 (_) {
                                                                           logState.maybeWhen(
-                                                                              error: () {
+                                                                              error: (String? error) {
                                                                                 if (!hasLoaded) {
                                                                                   Notifiers.getToastMessage(
                                                                                       context,
-                                                                                      AppLocalizations.of(context).translate(i18
-                                                                                          .attendanceMgmt
-                                                                                          .attendanceLoggedFailed),
+                                                                                      AppLocalizations.of(context).translate(error.toString()),
                                                                                       'ERROR');
                                                                                   onSubmit(
                                                                                       registerId
