@@ -274,7 +274,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                     suggestionsBoxController,
                                 onSuggestionSelected: onSuggestionSelected,
                                 callBack: onSearchVendorList,
-                                minCharsForSuggestions: 3,
+                                minCharsForSuggestions: 2,
                                 listTile: buildTile,
                                 labelText: '',
                               );
