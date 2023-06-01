@@ -1236,7 +1236,7 @@ export const UICustomizations = {
       }
 
       if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+        return value ? t(`BILL_STATUS_PAYMENT_INITIATED`) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
         const location = {
@@ -1314,7 +1314,7 @@ export const UICustomizations = {
       })
 
       const payload = getCreatePaymentPayload(result.bills);
-      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_INITIATED_TOAST"}
       try {
         const response = await Digit.ExpenseService.createPayment(payload);
         responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
@@ -1593,7 +1593,7 @@ export const UICustomizations = {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+        return t("BILL_STATUS_PAYMENT_INITIATED")
       }
       if(key === "ES_COMMON_DATE") {
         return value ? Digit.DateUtils.ConvertTimestampToDate(parseInt(value), "dd/MM/yyyy") : t("ES_COMMON_NA")
