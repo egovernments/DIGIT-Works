@@ -266,6 +266,13 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         });
     }
 
+    const closeToast = () => {
+        setTimeout(() => {
+            setShowDuplicateContactToast(false)
+        }, 10000);
+    }
+
+
     const onSubmit = async (data) => {
 
         //here call org search with mobile number and see if number is already there with some other org , do an early return
@@ -293,6 +300,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         //check if another org associated with entered number
         if(searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.orgNumber !== orgNumber ){
             setShowDuplicateContactToast(true)
+            closeToast()
             return 
         }
 
