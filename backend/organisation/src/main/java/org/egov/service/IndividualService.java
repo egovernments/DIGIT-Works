@@ -185,6 +185,7 @@ public class IndividualService {
         individual.setName(new Name());
         individual.getName().setGivenName(contactDetails.getContactName());
         individual.setTenantId(tenantId);
+        individual.setIsSystemUser(true);
         /*user.setType(UserType.CITIZEN);
         user.setRoles(Collections.singleton(role));
         user.setActive(Boolean.TRUE);

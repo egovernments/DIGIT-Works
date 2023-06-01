@@ -120,6 +120,9 @@ public class Individual {
     @JsonProperty("rowVersion")
     private Integer rowVersion = null;
 
+    @JsonProperty("isSystemUser")
+    private Boolean isSystemUser = null;
+
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
