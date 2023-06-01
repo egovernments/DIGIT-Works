@@ -271,7 +271,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         //here call org search with mobile number and see if number is already there with some other org , do an early return
         
         const contactNumber = data?.contactDetails_mobile
-        // const orgNumber = data?.basicDetails_orgId
+        const orgNumber = data?.basicDetails_orgId
        
         const searchOrgResponse = await Digit.WorksService.searchOrg({
             SearchCriteria: {
@@ -290,7 +290,8 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         // })
         // if(doEarlyReturn) return
         
-        if(searchOrgResponse?.organisations?.length>0){
+        //check if another org associated with entered number
+        if(searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.orgNumber !== orgNumber ){
             setShowDuplicateContactToast(true)
             return 
         }
