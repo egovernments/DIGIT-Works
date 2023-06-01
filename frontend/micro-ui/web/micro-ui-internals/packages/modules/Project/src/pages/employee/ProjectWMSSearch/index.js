@@ -48,7 +48,6 @@ const ProjectWMSSearch = () => {
       }
   },[location]);
 
-  console.log('WMS Search Page');
   if (isLoading) return <Loader />;
   return (
     <React.Fragment>
