@@ -323,6 +323,7 @@ const RenderFormFields = ({data,...props}) => {
     return (
       <React.Fragment>
         {fields?.map((item, index) => {
+          if(item.hideInForm) return null
           return (
             <LabelFieldPair key={index}>
                 { item.label && (
