@@ -12,17 +12,16 @@ const searchConfigMUKTA = {
           "serviceName": "/wms/project/_search",
           "requestParam": {},
           "requestBody": {
-            "apiOperation": "SEARCH",
-            "Projects": [
-              {}
-            ]
+            "inbox": {
+              "moduleSearchCriteria": {}
+            }
           },
           "minParametersForSearchForm": 1,
-          "masterName": "commonUiConfig",
-          "moduleName": "SearchProjectConfig",
-          "tableFormJsonPath": "requestParam",
-          "filterFormJsonPath": "requestBody.Projects[0]",
-          "searchFormJsonPath": "requestBody.Projects[0]"
+        "masterName": "commonUiConfig",
+        "moduleName": "SearchProjectConfig",
+        "tableFormJsonPath": "requestBody.inbox",
+        "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria"
         },
         "sections": {
           "search": {

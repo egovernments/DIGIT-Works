@@ -481,16 +481,18 @@ export const UICustomizations = {
   },
   SearchProjectConfig: {
     preProcess: (data) => {
-      const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom, "daystart");
-      const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
-      const projectType = data.body.Projects[0]?.projectType?.code;
-      const ward = data.body.Projects[0]?.ward?.[0]?.code;
+      const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdFrom, "daystart");
+      const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdTo);
+      const projectType = data.body.inbox.moduleSearchCriteria?.projectType?.code;
+      const ward = data.body.inbox.moduleSearchCriteria?.ward?.[0]?.code;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true, createdFrom, createdTo };
-      let name = data.body.Projects[0]?.name?.trim();
-      let projectNumber = data.body.Projects[0]?.projectNumber?.trim()
-      delete data.body.Projects[0]?.createdFrom;
-      delete data.body.Projects[0]?.createdTo;
-      data.body.Projects[0] = { ...data.body.Projects[0], tenantId: Digit.ULBService.getCurrentTenantId(),projectNumber, projectType, name, address : { boundary : ward}  };
+      let name = data.body.inbox.moduleSearchCriteria?.name?.trim();
+      let projectNumber = data.body.inbox.moduleSearchCriteria?.projectNumber?.trim()
+      delete data.body.inbox.moduleSearchCriteria?.createdFrom;
+      delete data.body.inbox.moduleSearchCriteria?.ward;
+      delete data.body.inbox.moduleSearchCriteria?.createdTo;
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId(),projectNumber, projectType, name, address : { boundary : ward}  };
 
       return data;
     },
@@ -952,6 +954,7 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
+      debugger;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
 
       let requestBody = { ...data.body.Individual };
