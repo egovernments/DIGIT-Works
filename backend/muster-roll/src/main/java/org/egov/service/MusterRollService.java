@@ -208,7 +208,11 @@ public class MusterRollService {
         workflowService.updateWorkflowStatus(musterRollRequest);
         producer.push(serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
 
-        notificationService.sendNotificationToCBO(musterRollRequest);
+        try {
+            notificationService.sendNotificationToCBO(musterRollRequest);
+        }catch (Exception e){
+            log.error("Exception while sending notification: " + e);
+        }
 
         //If the musterroll is in 'APPROVED' status, push the musterRoll to calculate topic to be processed by expense-calculator service
         if (StringUtils.isNotBlank(musterRollRequest.getMusterRoll().getMusterRollStatus()) && STATUS_APPROVED.equalsIgnoreCase(musterRollRequest.getMusterRoll().getMusterRollStatus())) {

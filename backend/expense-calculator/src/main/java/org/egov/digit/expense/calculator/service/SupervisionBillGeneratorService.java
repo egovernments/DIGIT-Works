@@ -232,7 +232,11 @@ public class SupervisionBillGeneratorService {
 			log.info("Bill created:" + bill.toString());
 		}
 		if(!CollectionUtils.isEmpty(bills)){
-			notificationService.sendNotificationForSupervisionBill(requestInfo, criteria, calculation, bills);
+			try {
+				notificationService.sendNotificationForSupervisionBill(requestInfo, criteria, calculation, bills);
+			}catch (Exception e){
+				log.error("Exception while sending notification: " + e);
+			}
 		}
 		return bills;
 	}
