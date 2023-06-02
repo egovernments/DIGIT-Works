@@ -38,7 +38,7 @@ const MastersBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/masters/view-organization`,
+      // path: `/${window.contextPath}/employee/masters/view-organization`,
       content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_ORG")}` : `${t("MASTERS_VIEW_ORG")}`,
       show: location.pathname.includes("/masters/view-organization") ? true : false,
       isBack: fromScreen && true,
