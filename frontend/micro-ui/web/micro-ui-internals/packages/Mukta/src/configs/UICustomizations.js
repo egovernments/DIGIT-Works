@@ -993,7 +993,7 @@ export const UICustomizations = {
           return acc;
         }, {});
 
-      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria ,...Individual};
+      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria ,...Individual,tenantId:Digit.ULBService.getCurrentTenantId()};
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
       return data;
     },
