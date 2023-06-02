@@ -511,7 +511,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                       skillCodeList: e.musterIndividualAdditionalDetails?.skillCode ?? [],
                                                                                       individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName ??
                                                                                             e.musterIndividualAdditionalDetails?.fatherName ?? '',
-                                                                                      id: e.id ?? individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? '',
+                                                                                      id: e.id != null ? e.id : individualMusterRollModel!.musterRoll!.first.individualEntries!.any((i) => i.individualId == e.individualId) ? individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? '' : '',
                                                                                       skill: individualMusterRollModel!.musterRoll!.first.individualEntries!.any((i) => i.individualId == e.individualId)  ? individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
                                                                                           '' : '',
                                                                                       monEntryId: e.attendanceEntries != null ? e
