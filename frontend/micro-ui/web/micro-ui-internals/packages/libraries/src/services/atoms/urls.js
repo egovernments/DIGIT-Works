@@ -45,7 +45,7 @@ const Urls = {
     download_pdf: "/egov-pdf/download/WORKSESTIMATE/estimatepdf",
     createProject: "/project/v1/_create",
     searchProject: "/project/v1/_search",
-    wmsSearchProject: "/wms/project/search",
+    wmsSearchProject: "/wms/project/_search",
     updateProject: "/project/v1/_update",
   },
 
@@ -229,7 +229,7 @@ expense:{
   wageseeker: {
     create: "/individual/v1/_create",
     search: "/individual/v1/_search",
-    wmssearch: "/wms/individual",
+    wmssearch: "/wms/individual/_search",
     update: "/individual/v1/_update",
     delete: "/individual/v1/_delete",
   },
