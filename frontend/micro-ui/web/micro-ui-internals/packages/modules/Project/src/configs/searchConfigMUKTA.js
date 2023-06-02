@@ -9,7 +9,7 @@ const searchConfigMUKTA = {
         "actionRole": "PROJECT_CREATOR",
         "actionLink": "project/create-project",
         "apiDetails": {
-          "serviceName": "/wms/project/search",
+          "serviceName": "/wms/project/_search",
           "requestParam": {},
           "requestBody": {
             "apiOperation": "SEARCH",
