@@ -11,10 +11,12 @@ import { Loader } from '../atoms/Loader';
 import NoResultsFound from '../atoms/NoResultsFound';
 import { InfoIcon } from "../atoms/svgindex";
 
-const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate }) => {
+const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate,type }) => {
+    
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
     const resultsKey = config.resultsJsonPath
+    const [showResultsTable,setShowResultsTable] = useState(true)
     
     // let searchResult = data?.[resultsKey]?.length>0 ? data?.[resultsKey] : []
     let searchResult = _.get(data,resultsKey,[])
@@ -41,6 +43,21 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
 
     const {state,dispatch} = useContext(InboxContext)
     
+    //here I am just checking state.searchForm has all empty keys or not(when clicked on clear search)
+    useEffect(() => {
+        if(Object.keys(state.searchForm).length > 0 && !Object.keys(state.searchForm).some(key => state.searchForm[key]!=="") && type==="search"){
+            setShowResultsTable(false)
+        }
+        // else{
+        //     setShowResultsTable(true)
+        // }
+        return ()=>{
+            setShowResultsTable(true)
+        }
+    }, [state])
+   
+    
+
     const tableColumns = useMemo(() => {
         //test if accessor can take jsonPath value only and then check sort and global search work properly
         return config?.columns?.map(column => {
@@ -148,6 +165,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     
     if (isLoading || isFetching ) return <Loader />
     if(!data) return <></>
+    if(!showResultsTable) return <></>
     if (searchResult?.length === 0) return <NoResultsFound/>
     return (
         <div style={{width : "100%"}}>
