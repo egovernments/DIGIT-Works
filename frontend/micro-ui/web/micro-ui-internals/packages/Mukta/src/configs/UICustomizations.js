@@ -954,10 +954,9 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      debugger;
       data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
 
-      let requestBody = { ...data.body.Individual };
+      let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const pathConfig = {
         name: "name.givenName",
       };
@@ -970,6 +969,7 @@ export const UICustomizations = {
         socialCategory: "socialCategory.code",
       };
       const textConfig = ["name", "individualId"]
+      
       let Individual = Object.keys(requestBody)
         .map((key) => {
           if (selectConfig[key]) {
@@ -993,7 +993,8 @@ export const UICustomizations = {
           return acc;
         }, {});
 
-      data.body.Individual = { ...Individual };
+      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria ,...Individual};
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
