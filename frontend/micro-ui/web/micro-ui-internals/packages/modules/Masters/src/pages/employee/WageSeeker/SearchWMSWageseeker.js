@@ -12,7 +12,7 @@ const SearchWMSWageseeker = () => {
   const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
   const [sesionFormData, clearSessionFormData] = wageSeekerSession;
 
-  const indConfigs = searchWageSeekerConfig();
+  // const indConfigs = searchWageSeekerConfig();
   const configModuleName = Digit.Utils.getConfigModuleName()
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -20,11 +20,11 @@ const SearchWMSWageseeker = () => {
       configModuleName,
    [
     {
-      name: "SearchIndividualConfig",
+      name: "SearchWMSIndividualConfig",
     },
   ]);
 
-//   const indConfigs = data?.[configModuleName]?.SearchIndividualConfig?.[0]
+  const indConfigs = data?.[configModuleName]?.SearchIndividualConfig?.[0]
 
   let configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, indConfigs, "sections.search.uiConfig.fields",{

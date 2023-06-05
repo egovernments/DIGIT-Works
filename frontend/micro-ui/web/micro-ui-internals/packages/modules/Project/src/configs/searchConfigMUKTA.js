@@ -33,8 +33,8 @@ const searchConfigMUKTA = {
               "showFormInstruction": "PROJECT_SELECT_ONE_PARAM_TO_SEARCH",
               "defaultValues": {
                 "projectNumber": "",
-                "ward": "",
-                "name": "",
+                "boundary": "",
+                "projectName": "",
                 "projectType": "",
                 "createdFrom": "",
                 "createdTo": ""
@@ -46,7 +46,7 @@ const searchConfigMUKTA = {
                   "isMandatory": false,
                   "disable": false,
                   "populators": {
-                    "name": "ward",
+                    "name": "boundary",
                     "type": "ward",
                     "optionsKey": "i18nKey",
                     "allowMultiSelect": false,
@@ -84,7 +84,7 @@ const searchConfigMUKTA = {
                     ]
                   },
                   "populators": {
-                    "name": "name",
+                    "name": "projectName",
                     "error": "PROJECT_PATTERN_ERR_MSG",
                     "validation": {
                         "pattern": "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$",
@@ -159,30 +159,30 @@ const searchConfigMUKTA = {
               "columns": [
                 {
                   "label": "WORKS_PROJECT_ID",
-                  "jsonPath": "projectNumber",
+                  "jsonPath": "businessObject.projectNumber",
                   "additionalCustomization": true
                 },
                 {
                   "label": "WORKS_PROJECT_NAME",
-                  "jsonPath": "name",
+                  "jsonPath": "businessObject.name",
                   "maxLength": 40,
                   "additionalCustomization": true
                 },
                 {
                   "label": "ES_COMMON_LOCATION",
-                  "jsonPath": "",
+                  "jsonPath": "businessObject.address.boundary",
                   "additionalCustomization": true
                 },
                 {
                   "label": "PROJECT_ESTIMATED_COST_IN_RS",
-                  "jsonPath": "additionalDetails.estimatedCostInRs",
+                  "jsonPath": "businessObject.additionalDetails.estimatedCostInRs",
                   "additionalCustomization": true,
                   "headerAlign": "right"
                 }
               ],
               "enableGlobalSearch": false,
               "enableColumnSort": true,
-              "resultsJsonPath": "Project"
+              "resultsJsonPath": "items"
             },
             "children": {},
             "show": true

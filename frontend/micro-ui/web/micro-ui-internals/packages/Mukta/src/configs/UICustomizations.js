@@ -481,18 +481,18 @@ export const UICustomizations = {
   },
   SearchProjectConfig: {
     preProcess: (data) => {
-      const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdFrom, "daystart");
+     const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdFrom, "daystart");
       const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdTo);
       const projectType = data.body.inbox.moduleSearchCriteria?.projectType?.code;
-      const ward = data.body.inbox.moduleSearchCriteria?.ward?.[0]?.code;
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true, createdFrom, createdTo };
-      let name = data.body.inbox.moduleSearchCriteria?.name?.trim();
+      const boundary = data.body.inbox.moduleSearchCriteria?.boundary?.[0]?.code;
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true };
+      let projectName = data.body.inbox.moduleSearchCriteria?.projectName?.trim();
       let projectNumber = data.body.inbox.moduleSearchCriteria?.projectNumber?.trim()
       delete data.body.inbox.moduleSearchCriteria?.createdFrom;
       delete data.body.inbox.moduleSearchCriteria?.ward;
       delete data.body.inbox.moduleSearchCriteria?.createdTo;
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId(),projectNumber, projectType, name, address : { boundary : ward}  };
+      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId(),projectNumber, projectType, projectName, boundary, createdFrom, createdTo};
 
       return data;
     },
@@ -582,8 +582,8 @@ export const UICustomizations = {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
 
       case "ES_COMMON_LOCATION":    
-      { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
-        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.tenantId)
+      { let currentProject = searchResult?.filter((result) => result?.businessObject.id === row?.businessObject.id)[0].businessObject;
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.businessObject.tenantId)
         if (currentProject) {
           let locality = currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "";
           let ward = currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "";
@@ -958,15 +958,15 @@ export const UICustomizations = {
 
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const pathConfig = {
-        name: "name.givenName",
       };
       const dateConfig = {
         createdFrom: "daystart",
         createdTo: "dayend",
       };
       const selectConfig = {
-        wardCode: "wardCode[0].code",
-        socialCategory: "socialCategory.code",
+        ward: "ward[0].code",
+        name: "name.givenName",
+        socialCategoryValue: "socialCategoryValue.code",
       };
       const textConfig = ["name", "individualId"]
       
@@ -993,7 +993,7 @@ export const UICustomizations = {
           return acc;
         }, {});
 
-      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria ,...Individual,tenantId:Digit.ULBService.getCurrentTenantId()};
+      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria ,...Individual, tenantId:Digit.ULBService.getCurrentTenantId()};
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
       return data;
     },
@@ -1019,14 +1019,15 @@ export const UICustomizations = {
 
         case "MASTERS_WARD":
           return value ? (
-            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.businessObject.tenantId)))}</span>
           ) : (
             t("ES_COMMON_NA")
           );
 
         case "MASTERS_LOCALITY":
+          debugger;
           return value ? (
-            <span style={{ whiteSpace: "break-spaces" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+            <span style={{ whiteSpace: "break-spaces" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.businessObject.tenantId)))}</span>
           ) : (
             t("ES_COMMON_NA")
           );

@@ -29,10 +29,10 @@ const searchWageSeekerConfig = () => {
           "secondaryLabel": "ES_COMMON_CLEAR_SEARCH",
           "minReqFields": 1,
           "defaultValues": {
-            "wardCode": "",
+            "ward": "",
             "individualId": "",
             "name": "",
-            "socialCategory": "",
+            "socialCategoryValue": "",
             "mobileNumber": "",
             "createdFrom": "",
             "createdTo": ""
@@ -47,7 +47,7 @@ const searchWageSeekerConfig = () => {
                 "optionsCustomStyle": {
                   "top": "2.3rem"
                 },
-                "name": "wardCode",
+                "name": "ward",
                 "type": "ward",
                 "optionsKey": "i18nKey",
                 "defaultText": "COMMON_SELECT_WARD",
@@ -93,7 +93,7 @@ const searchWageSeekerConfig = () => {
               "isMandatory": false,
               "disable": false,
               "populators": {
-                "name": "socialCategory",
+                "name": "socialCategoryValue",
                 "optionsKey": "code",
                 "optionsCustomStyle": { "top": "2.3rem" },
                 "mdmsConfig": {
@@ -145,37 +145,37 @@ const searchWageSeekerConfig = () => {
           "columns": [
             {
               "label": "MASTERS_WAGESEEKER_ID",
-              "jsonPath": "individualId",
+              "jsonPath": "businessObject.individualId",
               "additionalCustomization": true
             },
             {
               "label": "MASTERS_WAGESEEKER_NAME",
-              "jsonPath": "name.givenName"
+              "jsonPath": "businessObject.name.givenName"
             },
-            { "label": "MASTERS_FATHER_NAME", "jsonPath": "fatherName" },
+            { "label": "MASTERS_FATHER_NAME", "jsonPath": "businessObject.fatherName" },
             {
               "label": "MASTERS_SOCIAL_CATEGORY",
-              "jsonPath": "additionalFields.fields[0].value"
+              "jsonPath": "businessObject.additionalFields.fields[0].value"
             },
             {
               "label": "CORE_COMMON_PROFILE_CITY",
-              "jsonPath": "address[0].tenantId",
+              "jsonPath": "businessObject.address[0].tenantId",
               "additionalCustomization": true
             },
             {
               "label": "MASTERS_WARD",
-              "jsonPath": "address[0].ward.code",
+              "jsonPath": "businessObject.address[0].ward.code",
               "additionalCustomization": true
             },
             {
               "label": "MASTERS_LOCALITY",
-              "jsonPath": "address[0].locality.code",
+              "jsonPath": "businessObject.address[0].locality.code",
               "additionalCustomization": true
             }
           ],
           "enableGlobalSearch": false,
           "enableColumnSort": true,
-          "resultsJsonPath": "Individual"
+          "resultsJsonPath": "items"
         },
         "children": {},
         "show": true

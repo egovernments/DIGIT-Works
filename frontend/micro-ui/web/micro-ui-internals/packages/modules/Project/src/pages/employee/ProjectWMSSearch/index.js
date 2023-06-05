@@ -11,21 +11,21 @@ const ProjectWMSSearch = () => {
   const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});
   const [sessionFormData, clearSessionFormData] = projectSession;
   const location = useLocation();
-  // const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, 
-  //   Digit.Utils.getConfigModuleName(),
-  //   [
-  //     {
-  //       name: "SearchProjectConfig",
-  //     }
-  //   ],
-  //   {
-  //     select: (data) => {
-  //         return data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
-  //     },
-  //   }
-  //   )
+  const { isLoading, data } = Digit.Hooks.useCustomMDMS(tenant, 
+    Digit.Utils.getConfigModuleName(),
+    [
+      {
+        name: "SearchWMSProjectConfig",
+      }
+    ],
+    {
+      select: (data) => {
+          return data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
+      },
+    }
+    )
 
-  const data = searchConfigMUKTA?.SearchProjectConfig?.[0];
+  // const data = searchConfigMUKTA?.SearchProjectConfig?.[0];
   let configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
       updateDependent : [
@@ -48,7 +48,7 @@ const ProjectWMSSearch = () => {
       }
   },[location]);
 
-  // if (isLoading) return <Loader />;
+  if (isLoading) return <Loader />;
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">
