@@ -112,7 +112,11 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     values: [
         { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount), "number") || t("ES_COMMON_NA")},
         { title: "WB_DEDUCTIONS", value: Digit.Utils.dss.formatterWithoutRound(Math.round(calcDeductions), "number") || t("ES_COMMON_NA")},
-    ]
+    ],
+    amountStyle: {
+      width:"8rem",
+      textAlign:"right"
+    }
   }
 
   const netPayable = {
