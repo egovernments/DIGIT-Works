@@ -82,7 +82,7 @@ const App = ({ path }) => {
   const ViewOrganisation = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
   
   const RegisterWageSeeker = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
-  const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
+  const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWMSWageseeker");
   const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
   const ModifyWageSeeker = Digit?.ComponentRegistryService?.getComponent("ModifyWageSeeker");
 

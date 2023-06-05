@@ -93,7 +93,7 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
                               i18.workOrder.workOrderNo: e
                                       .attendanceRegisterAdditionalDetails
                                       ?.contractId ??
-                                  t.translate(i18.common.noValue),
+                                  i18.common.noValue,
                               i18.attendanceMgmt.registerId: e.registerNumber,
                               i18.attendanceMgmt.projectId: e
                                       .attendanceRegisterAdditionalDetails
@@ -102,7 +102,7 @@ class _TrackAttendanceInboxPage extends State<TrackAttendanceInboxPage> {
                               i18.attendanceMgmt.projectName: e
                                       .attendanceRegisterAdditionalDetails
                                       ?.projectName ??
-                                  t.translate(i18.common.noValue),
+                                  i18.common.noValue,
                               i18.attendanceMgmt.projectDesc: e
                                       .attendanceRegisterAdditionalDetails
                                       ?.projectDesc ??
