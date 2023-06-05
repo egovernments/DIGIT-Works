@@ -283,9 +283,9 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                             i18.attendanceMgmt.projectId:
                                                 e.additionalDetails?.projectId ?? 'NA',
                                             i18.common.location:
-                                                '${t.translate('${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}')}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
+                                                '${'${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}'}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
                                             i18.attendanceMgmt.projectType:
-                                                t.translate('ES_COMMON_${e.additionalDetails?.projectType ?? 'NA'}'),
+                                                'ES_COMMON_${e.additionalDetails?.projectType ?? 'NA'}',
                                             i18.attendanceMgmt.projectName:
                                                 e.additionalDetails?.projectName ?? 'NA',
                                             i18.attendanceMgmt.projectDesc:
@@ -298,26 +298,24 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                     .map((e) => {
                                           'cardDetails': {
                                             i18.workOrder.nameOfCBO:
-                                                AppLocalizations.of(context).translate(
-                                                    e.additionalDetails?.cboName ?? 'NA'),
+                                                    e.additionalDetails?.cboName ?? 'NA',
                                             i18.workOrder.roleOfCBO:
-                                                AppLocalizations.of(context).translate(
-                                                    e.executingAuthority ?? 'NA'),
+                                                    e.executingAuthority ?? 'NA',
                                             i18.attendanceMgmt.engineerInCharge: e
                                                     .additionalDetails
                                                     ?.officerInChargeName
                                                     ?.name ??
                                                 'NA',
                                             i18.attendanceMgmt.officeInCharge:
-                                                t.translate(e.additionalDetails
+                                                e.additionalDetails
                                                         ?.officerInChargeDesgn ??
-                                                    'NA'),
+                                                    'NA',
                                             i18.workOrder.completionPeriod:
                                                 '${e.completionPeriod} ${t.translate(i18.common.days)}',
                                             i18.workOrder.workOrderAmount:
                                                 '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                            i18.common.status: t.translate(
-                                                'WF_WORK_ORDER_STATE_${e.wfStatus.toString()}'),
+                                            i18.common.status:
+                                                'WF_WORK_ORDER_STATE_${e.wfStatus.toString()}',
                                             Constants.activeInboxStatus: e.wfStatus == acceptCode ? 'true' : 'false'
                                           },
                                           'payload': e.toMap()

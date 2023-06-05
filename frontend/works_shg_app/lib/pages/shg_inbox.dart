@@ -214,17 +214,17 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             i18.attendanceMgmt.musterRollId:
                                             e.musterRollNumber,
                                             i18.workOrder.workOrderNo:
-                                            e.musterAdditionalDetails?.contractId ?? t.translate(i18.common.noValue),
+                                            e.musterAdditionalDetails?.contractId ?? i18.common.noValue,
                                             i18.attendanceMgmt.projectId:
-                                            e.musterAdditionalDetails?.projectId ?? t.translate(i18.common.noValue),
+                                            e.musterAdditionalDetails?.projectId ?? i18.common.noValue,
                                             i18.attendanceMgmt.projectName:
-                                            e.musterAdditionalDetails?.projectName ?? t.translate(i18.common.noValue),
+                                            e.musterAdditionalDetails?.projectName ?? i18.common.noValue,
                                             i18.attendanceMgmt.projectDesc:
                                             e.musterAdditionalDetails?.projectDesc ??
                                                 'NA',
                                             i18.attendanceMgmt.musterRollPeriod:
                                             '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                                            i18.common.status: t.translate('WF_MUSTOR_${e.musterRollStatus}'),
+                                            i18.common.status: 'WF_MUSTOR_${e.musterRollStatus}',
                                             Constants.activeInboxStatus : e.musterRollStatus == sentBackToCBOCode
                                                 ? 'false'
                                                 : 'true'
