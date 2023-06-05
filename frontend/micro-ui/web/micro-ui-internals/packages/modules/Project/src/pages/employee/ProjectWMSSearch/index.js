@@ -19,7 +19,7 @@ const ProjectWMSSearch = () => {
     ],
     {
       select: (data) => {
-          return data?.[Digit.Utils.getConfigModuleName()]?.SearchProjectConfig?.[0];
+          return data?.[Digit.Utils.getConfigModuleName()]?.SearchWMSProjectConfig?.[0];
       },
     }
     )
