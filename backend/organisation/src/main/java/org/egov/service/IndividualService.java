@@ -1,10 +1,12 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.user.Role;
+import digit.models.coremodels.user.enums.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.models.core.Role;
+import org.egov.common.models.individual.UserDetails;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -180,12 +182,16 @@ public class IndividualService {
      */
     private void addIndividualDefaultFields(String tenantId, Role role, Individual individual, ContactDetails contactDetails, boolean isCreate, Individual existingIndividual) {
         log.info("IndividualService::addUserDefaultFields");
+        UserDetails userDetails = UserDetails.builder().roles(Collections.singletonList(role))
+                .tenantId(tenantId).username(contactDetails.getContactMobileNumber())
+                .userType(UserType.fromValue("CITIZEN")).build();
         individual.setMobileNumber(contactDetails.getContactMobileNumber());
         individual.setEmail(contactDetails.getContactEmail());
         individual.setName(new Name());
         individual.getName().setGivenName(contactDetails.getContactName());
         individual.setTenantId(tenantId);
         individual.setIsSystemUser(true);
+        individual.setUserDetails(userDetails);
         /*user.setType(UserType.CITIZEN);
         user.setRoles(Collections.singleton(role));
         user.setActive(Boolean.TRUE);
