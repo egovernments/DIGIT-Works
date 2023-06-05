@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import searchWageSeekerConfig from "../../../configs/searchWageSeekerConfig";
+import searchWMSWageSeekerConfig from "../../../configs/searchWMSWageSeekerConfig";
 import { useHistory, useLocation } from "react-router-dom";
 
 const SearchWMSWageseeker = () => {
@@ -12,7 +13,7 @@ const SearchWMSWageseeker = () => {
   const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
   const [sesionFormData, clearSessionFormData] = wageSeekerSession;
 
-  // const indConfigs = searchWageSeekerConfig();
+  // const indConfigs = searchWMSWageSeekerConfig();
   const configModuleName = Digit.Utils.getConfigModuleName()
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(

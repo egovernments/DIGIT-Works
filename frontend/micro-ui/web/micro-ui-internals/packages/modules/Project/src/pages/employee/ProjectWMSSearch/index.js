@@ -2,8 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import { useHistory, useLocation } from "react-router-dom";
-import searchConfigMUKTA from "../../../configs/searchConfigMUKTA";
-
+import searchWMSProjectConfig from "../../../configs/searchWMSProjectConfig";
 const ProjectWMSSearch = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -25,7 +24,7 @@ const ProjectWMSSearch = () => {
     }
     )
 
-  // const data = searchConfigMUKTA?.SearchProjectConfig?.[0];
+  // const data = searchWMSProjectConfig?.SearchWMSProjectConfig?.[0];
   let configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
       updateDependent : [
