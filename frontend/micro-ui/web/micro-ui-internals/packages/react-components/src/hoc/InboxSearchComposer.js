@@ -225,7 +225,9 @@ const InboxSearchComposer = ({configs}) => {
                                 data={data} 
                                 isLoading={isLoading} 
                                 isFetching={isFetching} 
-                                fullConfig={configs}/>
+                                fullConfig={configs}
+                                type={configs?.type}
+                                />
                             </MediaQuery>
                             <MediaQuery maxWidth={426}>
                             <MobileSearchResults
