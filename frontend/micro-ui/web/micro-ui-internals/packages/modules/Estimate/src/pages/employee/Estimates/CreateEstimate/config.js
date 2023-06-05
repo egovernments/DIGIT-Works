@@ -16,7 +16,7 @@ const getModalConfig = ({
 
     return {
         label: {
-            heading: isEdit ? `ACTION_TEST_EDIT_ESTIMATE` :`WORKS_SUBMIT_ESTIMATE`,
+            heading: isEdit ? `WORKS_UPDATE_AND_FORWARD` :`WORKS_SUBMIT_ESTIMATE`,
             submit: `WORKS_FORWARD`,
             cancel: "WORKS_CANCEL",
         },
