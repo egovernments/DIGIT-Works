@@ -151,7 +151,7 @@ const CreatePurchaseBillForm = ({
         //also test edit flow with this change
         
         const workflowDetails = {
-            assignees:selectedApprover.uuid ? [selectedApprover.uuid]: [],
+            assignees:selectedApprover.uuid ? [selectedApprover.uuid]: null,
             comment:_data.comments ? _data.comments : ""
         }
         const payload = createBillPayload(inputFormData, contract, docConfigData,workflowDetails);
