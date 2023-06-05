@@ -25,7 +25,7 @@ const SearchWMSWageseeker = () => {
     },
   ]);
 
-  const indConfigs = data?.[configModuleName]?.SearchIndividualConfig?.[0]
+  const indConfigs = data?.[configModuleName]?.SearchWMSIndividualConfig?.[0]
 
   let configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, indConfigs, "sections.search.uiConfig.fields",{
