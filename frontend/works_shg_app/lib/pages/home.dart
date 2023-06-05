@@ -32,7 +32,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  String? selectedLocale;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
@@ -46,7 +45,6 @@ class _HomePage extends State<HomePage> {
     context.read<HomeScreenBloc>().add(
           const GetHomeScreenConfigEvent(),
         );
-    selectedLocale = await GlobalVariables.selectedLocale();
   }
 
   @override
