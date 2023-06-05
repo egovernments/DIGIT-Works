@@ -15,7 +15,7 @@ const getModalConfig = ({
 
     return {
         label: {
-            heading: `EXP_CREATE_PURCHASE_BILL`,
+            heading: `EXP_UPDATE_AND_FORWARD`,
             submit: `CORE_COMMON_SUBMIT`,
             cancel: "WORKS_CANCEL",
         },
