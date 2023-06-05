@@ -97,11 +97,21 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     }
   }
 
+ 
+  const calcDeductions = wageBill?.billDetails
+    ?.map((item) => {
+      return item.payableLineItems.filter((item) => item.headCode === "LC");
+    })
+    .reduce((acc, item) => {
+      return item?.[0]?.amount + acc;
+    }, 0);
+ 
   const billAmount = {
     title: "EXP_BILL_DETAILS",
     asSectionHeader: true,
     values: [
         { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount), "number") || t("ES_COMMON_NA")},
+        { title: "WB_DEDUCTIONS", value: Digit.Utils.dss.formatterWithoutRound(Math.round(calcDeductions), "number") || t("ES_COMMON_NA")},
     ]
   }
 
@@ -109,7 +119,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     title: " ",
     asSectionHeader: true,
     Component: Digit.ComponentRegistryService.getComponent("PayableAmt"),
-    value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount), "number") || t("ES_COMMON_NA")
+    value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount-calcDeductions), "number") || t("ES_COMMON_NA")
 }
 
   const applicationDetails = { applicationDetails: [billDetails, beneficiaryDetails, billAmount, netPayable] };
