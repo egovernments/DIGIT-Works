@@ -94,6 +94,10 @@ public class EnrichmentUtil {
         
         Bill billFromSearch = billsFromSearch.get(0);
 
+        // Add createdBy and createdTime to updateAudit
+        updateAudit.setCreatedBy(billFromSearch.getAuditDetails().getCreatedBy());
+        updateAudit.setCreatedTime(billFromSearch.getAuditDetails().getCreatedTime());
+
 		bill.setAuditDetails(updateAudit);
 
 		Party payer = bill.getPayer();
