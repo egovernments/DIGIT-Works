@@ -283,6 +283,10 @@ public class CalculationService {
                 attendanceEntry.setAttendance(new BigDecimal("1.0"));
             }
 
+            if (workHours == 0) {
+                attendanceEntry.setAttendance(new BigDecimal("0.0"));
+            }
+
         } else {
             attendanceEntry.setAttendance(new BigDecimal("0.0"));
         }
