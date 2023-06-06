@@ -372,7 +372,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
                 isActive: true
             }  
         }
-    })
+    }).filter(item=> item)
 
     if(isModify) {
         organisation.id = orgDataFromAPI?.organisation?.id
@@ -399,7 +399,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
             contactEmail: formData?.contactDetails_email
         }]
 
-        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI)
+        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI).filter(item=> item)
 
         organisation.functions[0].id = orgDataFromAPI?.organisation?.functions?.[0]?.id
         organisation.functions[0].orgId = orgDataFromAPI?.organisation?.id
