@@ -135,7 +135,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
         if(row) {
           setValue(`${formFieldName}.${index}.name`,'')
           setValue(`${formFieldName}.${index}.percentage`,'')
-          setValue(`${formFieldName}.${index}.amount`,'')
+          setValue(`${formFieldName}.${index}.amount`,"0")
         }
       })
       

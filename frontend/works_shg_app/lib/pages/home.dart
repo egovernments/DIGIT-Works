@@ -32,7 +32,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  String? selectedLocale;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
@@ -46,7 +45,6 @@ class _HomePage extends State<HomePage> {
     context.read<HomeScreenBloc>().add(
           const GetHomeScreenConfigEvent(),
         );
-    selectedLocale = await GlobalVariables.selectedLocale();
   }
 
   @override
@@ -73,20 +71,21 @@ class _HomePage extends State<HomePage> {
             orgState.maybeWhen(
                 orElse: () => false,
                 loaded: (OrganisationListModel? organisationListModel) async {
+                  var currLoc = await GlobalVariables.selectedLocale();
                   context.read<LocalizationBloc>().add(
                         LocalizationEvent.onLoadLocalization(
                             module: CommonMethods.getLocaleModules(),
                             tenantId: GlobalVariables.globalConfigObject!
                                 .globalConfigs!.stateTenantId
                                 .toString(),
-                            locale: selectedLocale.toString()),
+                            locale: currLoc.toString()),
                       );
                   context.read<AppInitializationBloc>().add(
                       AppInitializationSetupEvent(
-                          selectedLang: selectedLocale.toString()));
+                          selectedLang: currLoc.toString()));
                   await AppLocalizations(
-                    Locale(selectedLocale.toString().split('_').first,
-                        selectedLocale.toString().split('_').last),
+                    Locale(currLoc.toString().split('_').first,
+                        currLoc.toString().split('_').last),
                   ).load();
                 });
           }, child: BlocBuilder<ORGSearchBloc, ORGSearchState>(

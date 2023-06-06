@@ -24,7 +24,7 @@ export const handleModifyProjectFiles = (uploadedDocs, docConfigData) => {
     let currentDoc = uploadedDocs?.filter((doc)=>doc?.documentType === fileKeyMapping?.value)[0];
 
     if(currentDoc?.fileStore) {
-      if(fileKeyMapping?.value === "Other") {
+      if(fileKeyMapping?.value === "OTHERS") {
         documentObject["noSubProject_doc_others_name"] = currentDoc?.additionalDetails?.otherCategoryName;
       }
       documentObject[fileKeyMapping?.key] = [

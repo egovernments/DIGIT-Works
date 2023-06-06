@@ -153,6 +153,9 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${egov.works.expense.supervision.business.service}")
 	private String supervisionBusinessService;
+	
+	@Value("${works.wages.master.category}")
+	private String wagesMasterCategory;
 
 	@Value("${egov.works.expense.payer.type}")
 	private String payerType;

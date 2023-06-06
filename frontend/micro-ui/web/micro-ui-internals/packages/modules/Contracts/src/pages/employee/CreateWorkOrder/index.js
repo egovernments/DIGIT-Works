@@ -132,7 +132,9 @@ const CreateWorkOrder = () => {
     const  { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch({ roles: "OFFICER_IN_CHARGE", isActive: true }, tenantId, null, null, { enabled: true });
 
     //organisation search
-    const { isLoading : isOrgSearchLoading, data : organisationOptions } = Digit.Hooks.organisation.useSearchOrg(searchOrgPayload);
+    const { isLoading : isOrgSearchLoading, data : organisationOptions } = Digit.Hooks.organisation.useSearchOrg(searchOrgPayload, {
+        cacheTime: 0
+    });
     
     //Overheads Search
     const { isLoading : isOverHeadsMasterDataLoading, data : overHeadMasterData } = Digit.Hooks.useCustomMDMS(

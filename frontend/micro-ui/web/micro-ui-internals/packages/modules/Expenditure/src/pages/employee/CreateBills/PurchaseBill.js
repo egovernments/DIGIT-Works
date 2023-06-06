@@ -27,7 +27,9 @@ const PurchaseBill = () => {
     }
 
     //vendor search
-    const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload);
+    const { isLoading : isOrgSearchLoading, data : vendorOptions } = Digit.Hooks.organisation.useSearchOrg(searchVendorPayload, {
+        cacheTime: 0
+    });
 
     const { isLoading : isConfigLoading, data : configs} = Digit.Hooks.useCustomMDMS( 
     stateTenant,
@@ -110,7 +112,8 @@ const PurchaseBill = () => {
 
     //vendor search
     const { isLoading : isOrgSearchLoadingModify, data : vendorOptionsModify } = Digit.Hooks.organisation.useSearchOrg(orgSearch,{
-        enabled:billData ? true : false
+        enabled:billData ? true : false,
+        cacheTime:0
     });
 
 
@@ -130,7 +133,7 @@ const PurchaseBill = () => {
     );
 
     useEffect(()=>{
-        if((configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading && !isDocConfigLoading && !isBillSearchLoading)) {
+        if((configs && !isOrgSearchLoading && !isContractLoading && !isDocConfigLoading && !isDocConfigLoading && !isBillSearchLoading && !isOrgSearchLoadingModify)) {
             updateDefaultValues({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract, docConfigData, billData, setIsFormReady,charges,org:vendorOptionsModify?.organisations?.[0]});
             setNameOfVendor(createNameOfVendorObject(vendorOptions));
         }

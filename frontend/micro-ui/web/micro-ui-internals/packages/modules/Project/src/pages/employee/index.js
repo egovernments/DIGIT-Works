@@ -45,7 +45,7 @@ const ProjectBreadCrumb = ({ location }) => {
 const App = ({ path }) => {
   const CreateProjectComponent = Digit?.ComponentRegistryService?.getComponent("CreateProject");
   const ProjectDetailsComponent = Digit?.ComponentRegistryService?.getComponent("ProjectDetails");
-  const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearch");
+  const ProjectSearchComponent = Digit?.ComponentRegistryService?.getComponent("ProjectWMSSearch");
   const ProjectSearchAndInboxComponent = Digit?.ComponentRegistryService?.getComponent("ProjectSearchAndInbox");
   const CreateProjectResponseComponent = Digit?.ComponentRegistryService?.getComponent("CreateProjectResponse");
   const projectSession = Digit.Hooks.useSessionStorage("NEW_PROJECT_CREATE", {});

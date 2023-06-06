@@ -212,8 +212,20 @@ export const getBankAccountUpdatePayload = ({formData, apiData, tenantId, isModi
 
         let bankAccountDetails = bankAccounts?.[0]?.bankAccountDetails?.[0]
         if(bankAccountDetails) {
-            bankAccountDetails.isActive = false
-            bankAccountDetails.isPrimary = false
+            bankAccountDetails.isActive = true
+            bankAccountDetails.isPrimary = true
+            bankAccountDetails.accountHolderName = formData?.financeDetails_accountHolderName
+            bankAccountDetails.accountNumber = formData?.financeDetails_accountNumber
+            bankAccountDetails.accountType = formData?.financeDetails_accountType?.code
+            bankAccountDetails.tenantId = tenantId
+            bankAccountDetails.bankBranchIdentifier = {
+                type: "IFSC",
+                code: isWageSeeker? formData?.financeDetails_ifsc : formData?.transferCodesData?.[0]?.value,
+                additionalDetails: {
+                    ifsccode: formData?.financeDetails_branchName
+                },
+                id: isModify ? bankAccountDetails.bankBranchIdentifier?.id : null
+            }
         }
         delete bankAccountDetails?.auditDetails
     } else {
@@ -337,7 +349,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
     organisation.contactDetails = [{
         contactName: formData?.contactDetails_name, 
         contactMobileNumber: formData?.contactDetails_mobile,
-        contactEmail: formData?.contactDetails_email
+        contactEmail: formData?.contactDetails_email != '' ? formData?.contactDetails_email : null
     }]
     organisation.functions = [{
         type: `${formData?.funDetails_orgType?.code}.${formData?.funDetails_orgSubType?.code}`,
@@ -360,7 +372,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
                 isActive: true
             }  
         }
-    })
+    }).filter(item=> item)
 
     if(isModify) {
         organisation.id = orgDataFromAPI?.organisation?.id
@@ -387,7 +399,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
             contactEmail: formData?.contactDetails_email
         }]
 
-        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI)
+        organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI).filter(item=> item)
 
         organisation.functions[0].id = orgDataFromAPI?.organisation?.functions?.[0]?.id
         organisation.functions[0].orgId = orgDataFromAPI?.organisation?.id

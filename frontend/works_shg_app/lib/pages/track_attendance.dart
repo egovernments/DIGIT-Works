@@ -218,14 +218,14 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                   i18.attendanceMgmt.projectId:
                                                       e.attendanceRegisterAdditionalDetails
                                                               ?.projectId ??
-                                                          t.translate(i18.common.noValue),
+                                                          i18.common.noValue,
                                           i18.attendanceMgmt.projectName: e
                                               .attendanceRegisterAdditionalDetails
-                                              ?.projectName ?? t.translate(i18.common.noValue),
+                                              ?.projectName ?? i18.common.noValue,
                                                   i18.attendanceMgmt.projectDesc:
                                                       e.attendanceRegisterAdditionalDetails
                                                               ?.projectDesc ??
-                                                          t.translate(i18.common.noValue),
+                                                         i18.common.noValue,
                                                   i18.attendanceMgmt.individualsCount: e
                                                               .attendeesEntries !=
                                                           null
@@ -870,9 +870,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                 listener: (context, logState) {
                                                                                                                   SchedulerBinding.instance.addPostFrameCallback((_) {
                                                                                                                     logState.maybeWhen(
-                                                                                                                        error: () {
+                                                                                                                        error: (String? error) {
                                                                                                                           if (!hasLoaded && selectedDateRange != null) {
-                                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedFailed), 'ERROR');
+                                                                                                                            Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(error.toString()), 'ERROR');
                                                                                                                             onSubmit(widget.id);
                                                                                                                             hasLoaded = true;
                                                                                                                           }
@@ -1001,9 +1001,9 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                               listener: (context, logState) {
                                                                                                                 SchedulerBinding.instance.addPostFrameCallback((_) {
                                                                                                                   logState.maybeWhen(
-                                                                                                                      error: () {
+                                                                                                                      error: (String? error) {
                                                                                                                         if (!hasLoaded && selectedDateRange != null) {
-                                                                                                                          Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceLoggedFailed), 'ERROR');
+                                                                                                                          Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(error.toString()), 'ERROR');
                                                                                                                           onSubmit(widget.id);
                                                                                                                           hasLoaded = true;
                                                                                                                         }
@@ -1357,31 +1357,31 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                   .isNotEmpty) {
                 skillsPayLoad.removeWhere((elem) =>
                     elem["individualId"] == tableDataModel.individualId);
-                if (tableDataModel.id != null &&
-                    tableDataModel.id!.trim().isNotEmpty) {
-                  skillsPayLoad.add({
-                    "id": tableDataModel.id,
-                    "additionalDetails": {"code": val}
-                  });
-                } else {
+                // if (tableDataModel.id != null &&
+                //     tableDataModel.id!.trim().isNotEmpty) {
+                //   skillsPayLoad.add({
+                //     "id": tableDataModel.id,
+                //     "additionalDetails": {"code": val}
+                //   });
+                // } else {
                   skillsPayLoad.add({
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {"code": val}
                   });
-                }
+                // }
               } else {
-                if (tableDataModel.id != null &&
-                    tableDataModel.id!.trim().isNotEmpty) {
-                  skillsPayLoad.add({
-                    "id": tableDataModel.id,
-                    "additionalDetails": {"code": val}
-                  });
-                } else {
+                // if (tableDataModel.id != null &&
+                //     tableDataModel.id!.trim().isNotEmpty) {
+                //   skillsPayLoad.add({
+                //     "id": tableDataModel.id,
+                //     "additionalDetails": {"code": val}
+                //   });
+                // } else {
                   skillsPayLoad.add({
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {"code": val}
                   });
-                }
+                // }
               }
             },
           )),

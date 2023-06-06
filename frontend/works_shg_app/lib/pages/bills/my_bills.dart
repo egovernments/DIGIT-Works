@@ -109,35 +109,35 @@ class _MyBillsPage extends State<MyBillsPage> {
                                   if (e.bill?.businessService ==
                                       Constants.myBillsWageType) {
                                     return {
-                                      i18.myBills.billType: t.translate(
-                                          'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}'),
+                                      i18.myBills.billType:
+                                          'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
                                       i18.myBills.billNumber:
                                           e.bill?.billNumber,
                                       i18.myBills.billDate: e.bill?.billDate !=
                                               null
                                           ? DateFormats.getDateFromTimestamp(
                                               e.bill?.billDate ?? 0)
-                                          : t.translate(i18.common.noValue),
+                                          : i18.common.noValue,
                                       i18.workOrder.workOrderNo:
                                           e.contractNumber ??
-                                              t.translate(i18.common.noValue),
+                                              i18.common.noValue,
                                       i18.attendanceMgmt.projectDesc: e
                                               .bill
                                               ?.additionalDetails
                                               ?.projectDesc ??
-                                          t.translate(i18.common.noValue),
+                                          i18.common.noValue,
                                       i18.attendanceMgmt.musterRollId:
                                           e.musterRollNumber ??
-                                              t.translate(i18.common.noValue),
+                                              i18.common.noValue,
                                       i18.attendanceMgmt.musterRollPeriod: e
                                                   .bill?.fromPeriod !=
                                               null
                                           ? '${DateFormats.getDateFromTimestamp(e.bill?.fromPeriod ?? 0)} - ${DateFormats.getDateFromTimestamp(e.bill?.toPeriod ?? 0)}'
-                                          : t.translate(i18.common.noValue),
+                                          : i18.common.noValue,
                                       i18.myBills.netPayable:
                                           (e.bill?.totalAmount ?? 0),
-                                      i18.common.status: t.translate(
-                                          'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}'),
+                                      i18.common.status:
+                                          'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:
                                           e.bill?.wfStatus == approvedCode
                                               ? 'true'
@@ -148,23 +148,23 @@ class _MyBillsPage extends State<MyBillsPage> {
                                   } else if (e.bill?.businessService ==
                                       Constants.myBillsPurchaseType) {
                                     return {
-                                      i18.myBills.billType: t.translate(
-                                          'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}'),
+                                      i18.myBills.billType:
+                                          'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
                                       i18.myBills.billNumber:
                                           e.bill?.billNumber,
                                       i18.myBills.billDate: e.bill?.billDate !=
                                               null
                                           ? DateFormats.getDateFromTimestamp(
                                               e.bill?.billDate ?? 0)
-                                          : t.translate(i18.common.noValue),
+                                          : i18.common.noValue,
                                       i18.workOrder.workOrderNo:
                                           e.contractNumber ??
-                                              t.translate(i18.common.noValue),
+                                              i18.common.noValue,
                                       i18.attendanceMgmt.projectDesc: e
                                               .bill
                                               ?.additionalDetails
                                               ?.projectDesc ??
-                                          t.translate(i18.common.noValue),
+                                          i18.common.noValue,
                                       i18.myBills.invoiceId: e.bill
                                           ?.additionalDetails?.invoiceNumber,
                                       i18.myBills.invoiceDate: e
@@ -177,13 +177,13 @@ class _MyBillsPage extends State<MyBillsPage> {
                                                   ?.additionalDetails
                                                   ?.invoiceDate ??
                                               0)
-                                          : t.translate(i18.common.noValue),
+                                          : i18.common.noValue,
                                       i18.myBills.payeeName:
                                           e.bill?.payer?.identifier,
                                       i18.myBills.netPayable:
                                           (e.bill?.totalAmount ?? 0),
-                                      i18.common.status: t.translate(
-                                          'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}'),
+                                      i18.common.status:
+                                          'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:
                                           e.bill?.wfStatus == approvedCode
                                               ? 'true'
@@ -193,8 +193,8 @@ class _MyBillsPage extends State<MyBillsPage> {
                                     };
                                   } else {
                                     return {
-                                      i18.myBills.billType: t.translate(
-                                          'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}'),
+                                      i18.myBills.billType:
+                                          'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
                                       i18.myBills.billNumber:
                                           e.bill?.billNumber,
                                       i18.myBills.billDate: e.bill?.billDate !=
@@ -204,18 +204,18 @@ class _MyBillsPage extends State<MyBillsPage> {
                                           : t.translate(i18.common.noValue),
                                       i18.workOrder.workOrderNo:
                                           e.contractNumber ??
-                                              t.translate(i18.common.noValue),
+                                              i18.common.noValue,
                                       i18.attendanceMgmt.projectDesc: e
                                               .bill
                                               ?.additionalDetails
                                               ?.projectDesc ??
-                                          t.translate(i18.common.noValue),
+                                          i18.common.noValue,
                                       i18.myBills.payeeName:
                                           e.bill?.payer?.identifier,
                                       i18.myBills.netPayable:
                                           (e.bill?.totalAmount ?? 0),
-                                      i18.common.status: t.translate(
-                                          'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}'),
+                                      i18.common.status:
+                                          'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:
                                           e.bill?.wfStatus == approvedCode
                                               ? 'true'
