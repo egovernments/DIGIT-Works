@@ -183,13 +183,13 @@ public class IndividualService {
     private void addIndividualDefaultFields(String tenantId, Role role, Individual individual, ContactDetails contactDetails, boolean isCreate, Individual existingIndividual) {
         log.info("IndividualService::addUserDefaultFields");
         UserDetails userDetails = UserDetails.builder().roles(Collections.singletonList(role))
-                .tenantId(tenantId.split(".")[0]).username(contactDetails.getContactMobileNumber())
+                .tenantId(tenantId.split("\\.")[0]).username(contactDetails.getContactMobileNumber())
                 .userType(UserType.fromValue("CITIZEN")).build();
         individual.setMobileNumber(contactDetails.getContactMobileNumber());
         individual.setEmail(contactDetails.getContactEmail());
         individual.setName(new Name());
         individual.getName().setGivenName(contactDetails.getContactName());
-        individual.setTenantId(tenantId.split(".")[0]);
+        individual.setTenantId(tenantId.split("\\.")[0]);
         individual.setIsSystemUser(true);
         individual.setUserDetails(userDetails);
         /*user.setType(UserType.CITIZEN);
