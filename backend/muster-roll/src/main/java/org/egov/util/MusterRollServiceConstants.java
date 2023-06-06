@@ -18,8 +18,8 @@ public class MusterRollServiceConstants {
     public static final String TENANT_ID = "tenantId";
     public static final String CONTRACT_NUMBER = "contractNumber";
     public static final String REQUEST_INFO = "RequestInfo";
-    public static final String ORG_ID_PATH = "$.contracts.*.orgId";
-    public static final String ORG_ID = "orgId";
+    public static final String ORG_NUMBER_PATH = "$.contracts.*.orgNumber";
+    public static final String ORG_NUMBER = "orgNumber";
     public static final String ORG_NAME_PATH = "$.organisations.*.name";
     public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";
     public static final String CONTACT_MOBILE_NUMBER_PATH = "$.organisations.*.contactDetails.*.contactMobileNumber";

@@ -14,7 +14,6 @@ import org.egov.web.models.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,7 @@ public class NotificationUtil {
                 final Object contractRes = restRepo.fetchResult(url, contractSearchRequest);
                 String orgId;
                 try{
-                        JSONArray jsonArray = JsonPath.read(contractRes, ORG_ID_PATH);
+                        JSONArray jsonArray = JsonPath.read(contractRes, ORG_NUMBER_PATH);
                         orgId = jsonArray.get(0).toString();
                 }catch (Exception e){
                         throw new CustomException("PARSING_CONTRACT_ERROR", "Failed to parse response from contract");
@@ -116,7 +115,7 @@ public class NotificationUtil {
 
                 ObjectNode orgObjNode = mapper.createObjectNode();
                 orgObjNode.put(TENANT_ID, tenantId);
-                orgObjNode.put(ORG_ID, orgId);
+                orgObjNode.put(ORG_NUMBER, orgId);
 
                 orgSearchRequestNode.putPOJO(REQUEST_INFO, requestInfo);
                 orgSearchRequestNode.putPOJO(SEARCH_CRITERIA,orgObjNode);
