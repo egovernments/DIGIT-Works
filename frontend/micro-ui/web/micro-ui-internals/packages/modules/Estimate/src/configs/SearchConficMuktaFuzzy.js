@@ -121,8 +121,13 @@ const searchConfigMuktaFuzzy = () => {
               "type": "date",
               "isMandatory": false,
               "disable": false,
-              "populators": {
-                "name": "fromProposalDate"
+              "key" : "fromProposalDate",
+              "preProcess" : {
+                "updateDependent" : ["populators.max"]
+               },
+               "populators": {
+                  "name": "fromProposalDate",
+                  "max" : "currentDate"
               }
             },
             {
@@ -130,8 +135,21 @@ const searchConfigMuktaFuzzy = () => {
               "type": "date",
               "isMandatory": false,
               "disable": false,
+              "key" : "toProposalDate",
+              "preProcess" : {
+                "updateDependent" : ["populators.max"]
+               },
               "populators": {
-                "name": "toProposalDate"
+                "name": "toProposalDate",
+                "error": "DATE_VALIDATION_MSG",
+                "max" : "currentDate"
+                },
+                "additionalValidation": {
+                  "type": "date",
+                  "keys": {
+                    "start": "fromProposalDate",
+                    "end": "toProposalDate"
+                 }
               }
             }
           ]
@@ -157,7 +175,8 @@ const searchConfigMuktaFuzzy = () => {
             },
             {
               "label": "ES_COMMON_PROJECT_NAME",
-              "jsonPath": "businessObject.additionalDetails.projectName"
+              "jsonPath": "businessObject.additionalDetails.projectName",
+              "additionalCustomization":true
             },
             {
               "label": "ES_COMMON_LOCATION",

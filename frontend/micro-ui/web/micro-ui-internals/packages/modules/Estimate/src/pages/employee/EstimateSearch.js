@@ -20,27 +20,30 @@ const EstimateSearch = () => {
         ],
         {
           select: (data) => {
-              return data?.[Digit.Utils.getConfigModuleName()]?.SearchEstimateWMSConfig?.[0];
-          },
+            
+              const config = data?.[Digit.Utils.getConfigModuleName()]?.SearchEstimateWMSConfig?.[0];
+              
+              return config
+            },
         }
     );
-    const configs = Digit.Utils.configUpdater(searchConfigMuktaFuzzy())
-
+    // const configs = Digit.Utils.configUpdater(searchConfigMuktaFuzzy())
+    
     // const configs = data?.[configModuleName].SearchEstimateWMSConfig?.[0]
-    // let configs = useMemo(
-    //     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
-    //       updateDependent : [
-    //         {
-    //           key : "fromProposalDate",
-    //           value : [new Date().toISOString().split("T")[0]]
-    //         },
-    //         {
-    //           key : "toProposalDate",
-    //           value : [new Date().toISOString().split("T")[0]]
-    //         }
-    //       ]
-    //     }
-    //     ),[data]);
+    let configs = useMemo(
+        () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
+          updateDependent : [
+            {
+              key : "fromProposalDate",
+              value : [new Date().toISOString().split("T")[0]]
+            },
+            {
+              key : "toProposalDate",
+              value : [new Date().toISOString().split("T")[0]]
+            }
+          ]
+        }
+        ),[data]);
     
 
     if (isLoading) return <Loader />

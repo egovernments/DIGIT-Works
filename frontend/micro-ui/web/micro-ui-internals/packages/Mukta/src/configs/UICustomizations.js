@@ -3,6 +3,7 @@ import _ from "lodash";
 import React from "react";
 import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 
+
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares
@@ -357,7 +358,6 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data) => {
-      
       //get data to set in api
       const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.fromProposalDate,"daystart");
       if(fromProposalDate) data.body.inbox.moduleSearchCriteria.fromProposalDate = fromProposalDate
@@ -387,6 +387,15 @@ export const UICustomizations = {
       //set tenantId 
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      //here iterate over defaultValues and set from presets in the api
+      const presets  = Digit.Hooks.useQueryParams();
+      if(Object.keys(presets).length > 0 ) {
+        Object.keys(presets).forEach(preset => {
+          data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+        })
+      }
+
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
