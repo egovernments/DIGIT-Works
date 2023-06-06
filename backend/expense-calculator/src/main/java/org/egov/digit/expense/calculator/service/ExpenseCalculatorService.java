@@ -172,9 +172,9 @@ public class ExpenseCalculatorService {
         // Fetch Payers from MDMS
         List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
         // Fetch HeadCodes from MDMS
-        List<HeadCode> headCodes = fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
+        List<HeadCode> headCodes = expenseCalculatorUtil.fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Fetch Applicable Charges from MDMS
-        List<ApplicableCharge> applicableCharges = fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
+        List<ApplicableCharge> applicableCharges = expenseCalculatorUtil.fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Create the bill
         return purchaseBillGeneratorService.createPurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
     }
@@ -202,9 +202,9 @@ public class ExpenseCalculatorService {
         //Fetch Payers from MDMS
         List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
         // Fetch HeadCodes from MDMS
-        List<HeadCode> headCodes = fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
+        List<HeadCode> headCodes = expenseCalculatorUtil.fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Fetch Applicable Charges from MDMS
-        List<ApplicableCharge> applicableCharges = fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
+        List<ApplicableCharge> applicableCharges = expenseCalculatorUtil.fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Create the bill
         return purchaseBillGeneratorService.updatePurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
     }
@@ -451,43 +451,5 @@ public class ExpenseCalculatorService {
         return payers;
     }
 
-    private List<HeadCode> fetchHeadCodesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
-        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
-        List<HeadCode> filteredHeadCodes = headCodes.stream()
-                                                    .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
-        return filteredHeadCodes;
-    }
-    private List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
-        log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMS_HEAD_CODES);
-        List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
-        List<HeadCode> headCodes = new ArrayList<>();
-        for(Object obj : headCodeListJson){
-            HeadCode headCode = mapper.convertValue(obj, HeadCode.class);
-            headCodes.add(headCode);
-        }
-        log.info("Head codes fetched from MDMS");
-        return headCodes;
-    }
-
-    private List<ApplicableCharge> fetchApplicableChargesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
-        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
-        List<ApplicableCharge> filteredApplicableCharges = applicableCharges.stream()
-                                                                            .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
-        return filteredApplicableCharges;
-    }
-    private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
-        log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId,MDMS_APPLICABLE_CHARGES);
-        List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
-        List<ApplicableCharge> applicableCharges = new ArrayList<>();
-        for(Object obj : applicableChargesListJson){
-            ApplicableCharge applicableCharge = mapper.convertValue(obj, ApplicableCharge.class);
-            applicableCharges.add(applicableCharge);
-        }
-        log.info("Head codes fetched from MDMS");
-        return applicableCharges;
-    }
+    
 }

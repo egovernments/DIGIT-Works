@@ -218,14 +218,14 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                   i18.attendanceMgmt.projectId:
                                                       e.attendanceRegisterAdditionalDetails
                                                               ?.projectId ??
-                                                          t.translate(i18.common.noValue),
+                                                          i18.common.noValue,
                                           i18.attendanceMgmt.projectName: e
                                               .attendanceRegisterAdditionalDetails
-                                              ?.projectName ?? t.translate(i18.common.noValue),
+                                              ?.projectName ?? i18.common.noValue,
                                                   i18.attendanceMgmt.projectDesc:
                                                       e.attendanceRegisterAdditionalDetails
                                                               ?.projectDesc ??
-                                                          t.translate(i18.common.noValue),
+                                                         i18.common.noValue,
                                                   i18.attendanceMgmt.individualsCount: e
                                                               .attendeesEntries !=
                                                           null

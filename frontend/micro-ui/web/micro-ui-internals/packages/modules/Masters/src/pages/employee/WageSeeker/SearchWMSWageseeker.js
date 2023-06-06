@@ -2,9 +2,10 @@ import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import searchWageSeekerConfig from "../../../configs/searchWageSeekerConfig";
+import searchWMSWageSeekerConfig from "../../../configs/searchWMSWageSeekerConfig";
 import { useHistory, useLocation } from "react-router-dom";
 
-const SearchWageSeeker = () => {
+const SearchWMSWageseeker = () => {
   const { t } = useTranslation();
   const history = useHistory()
   const location = useLocation()
@@ -12,7 +13,7 @@ const SearchWageSeeker = () => {
   const wageSeekerSession = Digit.Hooks.useSessionStorage("WAGE_SEEKER_CREATE", {});
   const [sesionFormData, clearSessionFormData] = wageSeekerSession;
 
-  //const indConfigs = searchWageSeekerConfig();
+  // const indConfigs = searchWMSWageSeekerConfig();
   const configModuleName = Digit.Utils.getConfigModuleName()
   const tenant = Digit.ULBService.getStateId();
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -24,7 +25,7 @@ const SearchWageSeeker = () => {
     },
   ]);
 
-  const indConfigs = data?.[configModuleName]?.SearchIndividualConfig?.[0]
+  const indConfigs = data?.[configModuleName]?.SearchWMSIndividualConfig?.[0]
 
   let configs = useMemo(
     () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, indConfigs, "sections.search.uiConfig.fields",{
@@ -71,4 +72,4 @@ const SearchWageSeeker = () => {
   );
 };
 
-export default SearchWageSeeker;
+export default SearchWMSWageseeker;

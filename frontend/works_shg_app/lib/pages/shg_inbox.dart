@@ -214,17 +214,17 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                             i18.attendanceMgmt.musterRollId:
                                             e.musterRollNumber,
                                             i18.workOrder.workOrderNo:
-                                            e.musterAdditionalDetails?.contractId ?? t.translate(i18.common.noValue),
+                                            e.musterAdditionalDetails?.contractId ?? i18.common.noValue,
                                             i18.attendanceMgmt.projectId:
-                                            e.musterAdditionalDetails?.projectId ?? t.translate(i18.common.noValue),
+                                            e.musterAdditionalDetails?.projectId ?? i18.common.noValue,
                                             i18.attendanceMgmt.projectName:
-                                            e.musterAdditionalDetails?.projectName ?? t.translate(i18.common.noValue),
+                                            e.musterAdditionalDetails?.projectName ?? i18.common.noValue,
                                             i18.attendanceMgmt.projectDesc:
                                             e.musterAdditionalDetails?.projectDesc ??
                                                 'NA',
                                             i18.attendanceMgmt.musterRollPeriod:
                                             '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                                            i18.common.status: t.translate('WF_MUSTOR_${e.musterRollStatus}'),
+                                            i18.common.status: 'WF_MUSTOR_${e.musterRollStatus}',
                                             Constants.activeInboxStatus : e.musterRollStatus == sentBackToCBOCode
                                                 ? 'false'
                                                 : 'true'
@@ -502,21 +502,20 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                   .first
                                                                                   .individualEntries!
                                                                                   .map((e) => AttendeesTrackList(
-                                                                                      name: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.userName ??
+                                                                                      name: e.musterIndividualAdditionalDetails?.userName ??
                                                                                           '',
-                                                                                      aadhaar: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.aadharNumber ??
+                                                                                      aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ??
                                                                                           '',
                                                                                       individualId: e
                                                                                           .individualId,
                                                                                       skillCodeList: e.musterIndividualAdditionalDetails?.skillCode ?? [],
-                                                                                      individualGaurdianName: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.fatherName ??
+                                                                                      individualGaurdianName: e.musterIndividualAdditionalDetails?.fatherName ??
                                                                                             e.musterIndividualAdditionalDetails?.fatherName ?? '',
-                                                                                      id: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? e.id ?? '',
-                                                                                      skill: individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
-                                                                                          '',
+                                                                                      id: e.id != null ? e.id : individualMusterRollModel!.musterRoll!.first.individualEntries!.any((i) => i.individualId == e.individualId) ? individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).id ?? '' : '',
+                                                                                      skill: individualMusterRollModel!.musterRoll!.first.individualEntries!.any((i) => i.individualId == e.individualId)  ? individualMusterRollModel?.musterRoll!.first.individualEntries?.firstWhere((s) => s.individualId == e.individualId).musterIndividualAdditionalDetails?.skillCode ??
+                                                                                          '' : '',
                                                                                       monEntryId: e.attendanceEntries != null ? e
-                                                                                          .attendanceEntries!
-                                                                                          .lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon')
+                                                                                          .attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon')
                                                                                           .attendanceEntriesAdditionalDetails
                                                                                           ?.entryAttendanceLogId : null,
                                                                                       monExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Mon').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
@@ -539,7 +538,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                       sunEntryId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.entryAttendanceLogId : null,
                                                                                       sunExitId: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendanceEntriesAdditionalDetails?.exitAttendanceLogId : null,
                                                                                       sunIndex: e.attendanceEntries != null ? e.attendanceEntries?.lastWhere((att) => DateFormats.getDay(att.time!) == 'Sun').attendance ?? -1 : 0,
-                                                                                      auditDetails: e.attendanceEntries?.first.auditDetails))
+                                                                                      auditDetails: e.attendanceEntries != null ? e.attendanceEntries?.first.auditDetails : null))
                                                                                   .toList();
 
                                                                               if (newList.isEmpty) {
@@ -883,7 +882,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                         Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
                                                                                       }
                                                                                       else if (newList.any((e) =>
-                                                                                              e.skill == null &&
+                                                                                              e.skill == null ||
                                                                                               e.skill.toString().isEmpty)) {
                                                                                         Notifiers.getToastMessage(
                                                                                             context,
