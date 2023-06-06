@@ -131,6 +131,7 @@ public class NotificationUtil {
                 try {
                         amount = JsonPath.read(expenseRes, "$.calculation.totalAmount");
                 }catch (Exception e){
+                        e.printStackTrace();
                         throw new CustomException("EXPENSE_PARSING_ERROR", "Error while parsing expense object");
                 }
                 String totalAmount = amount.toString();
