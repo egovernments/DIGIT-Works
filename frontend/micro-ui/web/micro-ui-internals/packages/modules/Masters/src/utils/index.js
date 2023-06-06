@@ -372,7 +372,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
                 isActive: true
             }  
         }
-    })
+    }).filter(item=> item)
 
     if(isModify) {
         organisation.id = orgDataFromAPI?.organisation?.id
