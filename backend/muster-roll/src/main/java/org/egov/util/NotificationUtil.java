@@ -14,6 +14,7 @@ import org.egov.web.models.MusterRollRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,11 +128,10 @@ public class NotificationUtil {
                 StringBuilder url = getExpenseUrl();
                 Object expenseSearchRequest = getExpenseRequest(musterRollRequest);
                 final Object expenseRes = restRepo.fetchResult(url, expenseSearchRequest);
-                Double amount = null;
+                Integer amount = null;
                 try {
                         amount = JsonPath.read(expenseRes, "$.calculation.totalAmount");
                 }catch (Exception e){
-                        e.printStackTrace();
                         throw new CustomException("EXPENSE_PARSING_ERROR", "Error while parsing expense object");
                 }
                 String totalAmount = amount.toString();
