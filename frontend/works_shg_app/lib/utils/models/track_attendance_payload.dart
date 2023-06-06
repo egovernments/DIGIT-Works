@@ -126,7 +126,7 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
             "individualId": attendeeList.individualId,
             "time": exitTime,
             "type": "EXIT",
-            "status": status ? "ACTIVE" : "INACTIVE",
+            "status": "ACTIVE" ,
             "tenantId": tenantId,
             "documentIds": [],
             "auditDetails": auditDetails
@@ -139,7 +139,7 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
             "individualId": attendeeList.individualId,
             "time": entryTime,
             "type": "ENTRY",
-            "status": status ? "ACTIVE" : "INACTIVE",
+            "status": "ACTIVE",
             "tenantId": tenantId,
             "documentIds": [],
             "auditDetails": auditDetails
@@ -150,7 +150,7 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
             "individualId": attendeeList.individualId,
             "time": exitTime,
             "type": "EXIT",
-            "status": status ? "ACTIVE" : "INACTIVE",
+            "status": "ACTIVE" ,
             "tenantId": tenantId,
             "documentIds": [],
             "auditDetails": auditDetails
@@ -170,7 +170,7 @@ List<Map<String, dynamic>> createAttendanceLogPayload(
       "individualId": attendeeList.individualId,
       "time": entryTime,
       "type": "ENTRY",
-      "status": isAbsent ?  "INACTIVE" : "ACTIVE",
+      "status": "ACTIVE",
       "tenantId": tenantId,
       "documentIds": []
     },
@@ -179,7 +179,7 @@ List<Map<String, dynamic>> createAttendanceLogPayload(
       "individualId": attendeeList.individualId,
       "time": exitTime,
       "type": "EXIT",
-      "status":  isAbsent ?  "INACTIVE" : "ACTIVE",
+      "status":   "ACTIVE",
       "tenantId": tenantId,
       "documentIds": []
     }
