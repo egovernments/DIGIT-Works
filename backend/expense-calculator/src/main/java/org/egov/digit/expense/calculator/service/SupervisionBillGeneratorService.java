@@ -72,6 +72,9 @@ public class SupervisionBillGeneratorService {
 	@Autowired
 	private CommonUtil commonUtil;
 
+	@Autowired
+	private NotificationService notificationService;
+
 	private Map<String, Bill> createMap(List<Bill> bills) {
 		Map<String, Bill> map = new HashMap<String, Bill>();
 		for (Bill b : bills) {
@@ -228,7 +231,13 @@ public class SupervisionBillGeneratorService {
 			bills.add(bill);
 			log.info("Bill created:" + bill.toString());
 		}
-
+		if(!CollectionUtils.isEmpty(bills)){
+			try {
+				notificationService.sendNotificationForSupervisionBill(requestInfo, criteria, calculation, bills);
+			}catch (Exception e){
+				log.error("Exception while sending notification: " + e);
+			}
+		}
 		return bills;
 	}
 

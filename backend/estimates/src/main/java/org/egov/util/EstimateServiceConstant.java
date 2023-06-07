@@ -45,6 +45,8 @@ public class EstimateServiceConstant {
 
     public static final String PROJECT_NAME_CODE ="$.Project.*.name";
 
+    public static final String PROJECT_ID_CODE = "$.Project.*.projectNumber";
+
     public static final String PROJECT_BOUNDARY_CODE ="$.Project.*.address.boundary";
 
     public static final String PROJECT_BOUNDARY_TYPE_CODE ="$.Project.*.address.boundaryType";

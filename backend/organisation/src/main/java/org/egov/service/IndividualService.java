@@ -1,10 +1,12 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.user.Role;
+import digit.models.coremodels.user.enums.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.models.core.Role;
+import org.egov.common.models.individual.UserDetails;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -71,7 +73,7 @@ public class IndividualService {
         for (ContactDetails contactDetails : contactDetailsList) {
 
             Individual newUser = Individual.builder().build();
-            addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true);
+            addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
             IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
@@ -111,15 +113,14 @@ public class IndividualService {
         }
         contactDetailsList.forEach(contactDetails -> {
 
-            Individual newIndividual = Individual.builder().build();
-            addIndividualDefaultFields(tenantId, role, newIndividual, contactDetails, false);
-
             IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
 
             StringBuilder uri = new StringBuilder(config.getIndividualHost());
 
             if (!CollectionUtils.isEmpty(response.getIndividual())) {
-                newIndividual.setId(response.getIndividual().get(0).getId());
+                Individual existingIndividual = response.getIndividual().get(0);
+                Individual newIndividual = Individual.builder().build();
+                addIndividualDefaultFields(tenantId, role, newIndividual, contactDetails, false, existingIndividual);
                 uri = uri.append(config.getIndividualUpdateEndpoint());
                 IndividualRequest individualRequest = IndividualRequest.builder().requestInfo(requestInfo).individual(newIndividual).build();
                 IndividualResponse individualResponse = individualUpdateCall(individualRequest,uri);
@@ -179,19 +180,28 @@ public class IndividualService {
      * @param individual
      * @param contactDetails
      */
-    private void addIndividualDefaultFields(String tenantId, Role role, Individual individual, ContactDetails contactDetails, boolean isCreate) {
+    private void addIndividualDefaultFields(String tenantId, Role role, Individual individual, ContactDetails contactDetails, boolean isCreate, Individual existingIndividual) {
         log.info("IndividualService::addUserDefaultFields");
+        UserDetails userDetails = UserDetails.builder().roles(Collections.singletonList(role))
+                .tenantId(tenantId.split("\\.")[0]).username(contactDetails.getContactMobileNumber())
+                .userType(UserType.fromValue("CITIZEN")).build();
         individual.setMobileNumber(contactDetails.getContactMobileNumber());
         individual.setEmail(contactDetails.getContactEmail());
         individual.setName(new Name());
         individual.getName().setGivenName(contactDetails.getContactName());
-        individual.setTenantId(tenantId);
+        individual.setTenantId(tenantId.split("\\.")[0]);
+        individual.setIsSystemUser(true);
+        individual.setUserDetails(userDetails);
         /*user.setType(UserType.CITIZEN);
         user.setRoles(Collections.singleton(role));
         user.setActive(Boolean.TRUE);
         user.setUsername(contactDetails.getContactMobileNumber());*/
         if (!isCreate) {
-            individual.setId(contactDetails.getId());
+            individual.setId(existingIndividual.getId());
+            individual.setRowVersion(existingIndividual.getRowVersion());
+            individual.setIndividualId(existingIndividual.getIndividualId());
+            individual.setIsDeleted(false);
+            individual.setIdentifiers(Collections.emptyList());
         }
 
         contactDetails.setActive(true);

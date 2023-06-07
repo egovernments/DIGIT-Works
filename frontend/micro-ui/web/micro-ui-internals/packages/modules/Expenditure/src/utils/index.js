@@ -4,7 +4,7 @@ const setDefaultDocs = (bill) => {
   bill?.additionalDetails?.documents.forEach((doc,idx) => {
     
     if(doc?.documentType === "OTHERS") {
-      documentsObj["doc_others_name"] = doc?.additionalDetails?.fileName
+      documentsObj["doc_others_name"] = doc?.additionalDetails?.otherCategoryName
     }
 
      documentsObj[`doc_${doc.documentType}`.toLowerCase()] = [
