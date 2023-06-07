@@ -53,7 +53,7 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.localization.context.path}")
 	private String localizationServiceContextPath;
 
-	@Value("${egov.localization.search.endpoint")
+	@Value("${egov.localization.search.endpoint}")
 	private String localizationServiceEndpoint;
 
 	// Workflow Config
