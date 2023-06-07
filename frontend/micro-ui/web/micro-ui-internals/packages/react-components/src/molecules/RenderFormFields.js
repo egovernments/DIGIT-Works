@@ -323,8 +323,9 @@ const RenderFormFields = ({data,...props}) => {
     return (
       <React.Fragment>
         {fields?.map((item, index) => {
+          // if(item.hideInForm) return null
           return (
-            <LabelFieldPair key={index}>
+            <LabelFieldPair key={index} style={item.hideInForm ? {"display":"none"}:{}}>
                 { item.label && (
                   <CardLabel style={{...props.labelStyle,marginBottom:"0.4rem"}}>
                     {t(item.label)}{ item?.isMandatory ? " * " : null }

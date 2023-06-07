@@ -8,6 +8,7 @@ import * as privacy from "./privacy";
 import PDFUtil, { downloadReceipt, downloadPDFFromLink, downloadBill, getFileUrl, downloadEgovPDF, getDocumentName } from "./pdf";
 import getFileTypeFromFileStoreURL from "./fileType";
 import preProcessMDMSConfig from "./preProcessMDMSConfig";
+import { configUpdater } from "./configUpdater";
 import preProcessMDMSConfigInboxSearch from "./preProcessMDMSConfigInboxSearch";
 import Urls from "../services/atoms/urls";
 import { getLoggedInUserDetails } from "./user";
@@ -337,4 +338,5 @@ export default {
   ...privacy,
   getConfigModuleName,
   createFunction,
+  configUpdater
 };

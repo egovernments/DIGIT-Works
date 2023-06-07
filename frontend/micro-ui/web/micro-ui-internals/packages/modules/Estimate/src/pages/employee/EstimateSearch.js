@@ -8,7 +8,6 @@ import searchConfigMuktaFuzzy from "../../configs/SearchConficMuktaFuzzy";
 const EstimateSearch = () => {
     const { t } = useTranslation();
 
-    // const configs = searchConfigMuktaFuzzy();
     const configModuleName = Digit.Utils.getConfigModuleName()
     const tenant = Digit.ULBService.getStateId();
     const { isLoading, data } = Digit.Hooks.useCustomMDMS(
@@ -21,11 +20,15 @@ const EstimateSearch = () => {
         ],
         {
           select: (data) => {
-              return data?.[Digit.Utils.getConfigModuleName()]?.SearchEstimateWMSConfig?.[0];
-          },
+            
+              const config = data?.[Digit.Utils.getConfigModuleName()]?.SearchEstimateWMSConfig?.[0];
+              
+              return config
+            },
         }
     );
-
+    // const configs = Digit.Utils.configUpdater(searchConfigMuktaFuzzy())
+    
     // const configs = data?.[configModuleName].SearchEstimateWMSConfig?.[0]
     let configs = useMemo(
         () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{

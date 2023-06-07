@@ -3,6 +3,7 @@ import _ from "lodash";
 import React from "react";
 import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 
+
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares
@@ -356,8 +357,7 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data) => {
-      
+    preProcess: (data,defaultValues) => {
       //get data to set in api
       const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.fromProposalDate,"daystart");
       if(fromProposalDate) data.body.inbox.moduleSearchCriteria.fromProposalDate = fromProposalDate
@@ -387,6 +387,19 @@ export const UICustomizations = {
       //set tenantId 
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      //here iterate over defaultValues and set from presets in the api
+      
+      const presets  = Digit.Hooks.useQueryParams();
+      if(Object.keys(presets).length > 0 ) {
+        Object.keys(presets).forEach(preset => {
+          //if present in defaultValues object then only set it
+          if(Object.keys(defaultValues).some(key => key===preset)){
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+          }
+        })
+      }
+
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
@@ -947,7 +960,7 @@ export const UICustomizations = {
     },
   },
   SearchContractConfig: {
-    preProcess: (data) => {
+    preProcess: (data,defaultValues) => {
       const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom,'daystart');
       const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo,'dayend');
       const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
@@ -971,6 +984,17 @@ export const UICustomizations = {
           status
         },
       };
+
+      const presets  = Digit.Hooks.useQueryParams();
+      if(Object.keys(presets).length > 0 ) {
+        Object.keys(presets).forEach(preset => {
+          //if present in defaultValues object then only set it
+          if(Object.keys(defaultValues).some(key => key===preset)){
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+          }
+        })
+      }
+      
       return data;
     },
     customValidationCheck: (data) => {
@@ -1389,7 +1413,8 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data) => {
+    preProcess: (data,defaultValues) => {
+      
       
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
@@ -1425,6 +1450,17 @@ export const UICustomizations = {
       }, {});
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+
+      const presets  = Digit.Hooks.useQueryParams();
+      if(Object.keys(presets).length > 0 ) {
+        Object.keys(presets).forEach(preset => {
+          //if present in defaultValues object then only set it
+          if(Object.keys(defaultValues).some(key => key===preset)){
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+          }
+        })
+      }
+
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
