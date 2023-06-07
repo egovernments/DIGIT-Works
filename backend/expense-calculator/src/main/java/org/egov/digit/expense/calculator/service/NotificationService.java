@@ -43,8 +43,8 @@ public class NotificationService {
             String message = null;
             String contactMobileNumber = null;
             if (action.equalsIgnoreCase("APPROVE")) {
-                Map<String, String> CBODetails = notificationUtil.getCBOContactPersonDetails(purchaseBillRequest.getRequestInfo(),
-                        purchaseBillRequest.getBill().getTenantId(), purchaseBillRequest.getBill().getContractNumber());
+                Map<String, String> CBODetails = notificationUtil.getVendorContactPersonDetails(purchaseBillRequest.getRequestInfo(),
+                        purchaseBillRequest.getBill().getTenantId(), purchaseBillRequest.getBill().getContractNumber(), purchaseBillRequest.getBill().getBillDetails().get(0).getPayee().getIdentifier());
                 message = getMessage(purchaseBillRequest.getRequestInfo(), purchaseBillRequest.getBill().getTenantId(), "PURCHASE_BILL_APPROVE_TO_VENDOR");
                 contactMobileNumber = CBODetails.get(CONTACT_MOBILE_NUMBER);
 

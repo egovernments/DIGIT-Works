@@ -106,4 +106,9 @@ public class NotificationUtil {
         return orgSearchRequestNode;
     }
 
+    public Map<String, String> getVendorContactPersonDetails(RequestInfo requestInfo, String tenantId, String contractNumber, String orgId){
+        Map<String, String> VendorDetails = fetchCBODetails(requestInfo, tenantId, orgId);
+        return VendorDetails;
+    }
+
 }
