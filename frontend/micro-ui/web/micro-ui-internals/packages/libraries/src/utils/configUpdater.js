@@ -5,7 +5,7 @@ export const configUpdater = (config) => {
   //here get url params
   const presets = useQueryParams();
   
-  config.label = config.alternateLabel || "Create Contract"
+  // config.label = config.alternateLabel || "Create Contract"
   
   //update the config and return
   config.sections.search.uiConfig.minReqFields = 0
