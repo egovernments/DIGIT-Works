@@ -251,6 +251,14 @@ public class ExpenseCalculatorService {
             contractProjectMapping.put(ORG_ID_CONSTANT,contract.getOrgId());
 			metaInfo.putAll(contractProjectMapping);
 
+            if(!CollectionUtils.isEmpty(bills)){
+                try {
+                    notificationService.sendNotificationForSupervisionBill(requestInfo, criteria, calculation, bills);
+                }catch (Exception e){
+                    log.error("Exception while sending notification: " + e);
+                }
+            }
+
 		}
     		
 
