@@ -105,13 +105,13 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     .reduce((acc, item) => {
       return item?.[0]?.amount + acc;
     }, 0);
- 
+
   const billAmount = {
     title: "EXP_BILL_DETAILS",
     asSectionHeader: true,
     values: [
         { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount), "number") || t("ES_COMMON_NA")},
-        { title: "WB_DEDUCTIONS", value: Digit.Utils.dss.formatterWithoutRound(Math.round(calcDeductions), "number") || t("ES_COMMON_NA")},
+        { title: "WB_DEDUCTIONS", value: Digit.Utils.dss.formatterWithoutRound(calcDeductions.toFixed(2), "number") || t("ES_COMMON_NA")},
     ],
     amountStyle: {
       width:"8rem",
