@@ -2,13 +2,13 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import digit.models.coremodels.user.OtpValidationRequest;
-import digit.models.coremodels.user.Role;
 import digit.models.coremodels.user.enums.BloodGroup;
 import digit.models.coremodels.user.enums.Gender;
 import digit.models.coremodels.user.enums.GuardianRelation;
 import digit.models.coremodels.user.enums.UserType;
 import lombok.*;
 import org.apache.commons.lang3.time.DateUtils;
+import org.egov.common.models.core.Role;
 import org.egov.util.OrganisationConstant;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.util.CollectionUtils;
@@ -203,7 +203,7 @@ public class User {
 
     public void setRoleToCitizen() {
         type = UserType.CITIZEN;
-        roles = Collections.singleton(Role.getCitizenRole());
+        roles = Collections.singleton(Role.builder().code("CITIZEN").build());
     }
 
     public void updatePassword(String newPassword) {

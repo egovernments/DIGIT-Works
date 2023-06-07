@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.models.individual.UserDetails;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -120,12 +121,19 @@ public class Individual {
     @JsonProperty("rowVersion")
     private Integer rowVersion = null;
 
+    @JsonProperty("isSystemUser")
+    private Boolean isSystemUser = null;
+
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
 
     @JsonIgnore
     private Boolean hasErrors = Boolean.FALSE;
+
+    @JsonProperty("userDetails")
+    private UserDetails userDetails = null;
+
 
 
     public Individual addAddressItem(Address addressItem) {
