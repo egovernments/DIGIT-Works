@@ -14,7 +14,11 @@ const getBeneficiaryData = async (wageBillDetails, tenantId, musterRoll, t) => {
       tableRow.registerId = individual?.additionalDetails?.userId || t("NA")
       tableRow.nameOfIndividual = individual?.additionalDetails?.userName || t("NA")
       tableRow.guardianName = individual?.additionalDetails?.fatherName || t("NA")
-      tableRow.amount = item?.payableLineItems?.[0]?.amount || 0 //check if correct
+      // tableRow.amount = item?.payableLineItems?.[0]?.amount || 0 //check if correct(add all payable here)
+      tableRow.amount = item?.payableLineItems?.reduce((acc,item)=>{
+        if(item?.type==="PAYABLE") return acc + item.amount
+        return acc 
+      },0) || 0 //check if correct(add all payable here)
       tableRow.bankAccountDetails = {
         accountNo : individual?.additionalDetails?.bankDetails || t("NA"), 
         ifscCode : null
