@@ -268,8 +268,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                 builder: (context, setAutoState) {
                               return AutoCompleteSearchBar(
                                 hintText: AppLocalizations.of(context)
-                                    .translate(
-                                        i18.common.searchByNameMobileNumber),
+                                    .translate(i18.common.searchByName),
                                 controller: searchController,
                                 suggestionsBoxController:
                                     suggestionsBoxController,
