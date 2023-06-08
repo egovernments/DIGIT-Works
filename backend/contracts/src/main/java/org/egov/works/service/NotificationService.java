@@ -360,10 +360,12 @@ public class NotificationService {
     }
 
     public String buildMessageForApproveAction_WOCreator(Contract contract, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{CONTRACT_NUMBER}", contract.getContractNumber())
-                .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
-                .replace("{LOCATION}", userDetailsForSMS.get("locationName"))
-                .replace("{organisationName}", userDetailsForSMS.get("orgName"));
+//        message = message.replace("{CONTRACT_NUMBER}", contract.getContractNumber())
+//                .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
+//                .replace("{LOCATION}", userDetailsForSMS.get("locationName"))
+//                .replace("{organisationName}", userDetailsForSMS.get("orgName"));
+        message = message.replace("{workorderno}", contract.getContractNumber())
+                .replace("{projectid}", userDetailsForSMS.get("projectId"));
         return message;
     }
 
