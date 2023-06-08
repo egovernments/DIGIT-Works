@@ -1263,7 +1263,7 @@ export const UICustomizations = {
         case "MASTERS_WAGESEEKER_ID":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
+              <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.businessObject?.tenantId}&individualId=${value}`}>
                  {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
