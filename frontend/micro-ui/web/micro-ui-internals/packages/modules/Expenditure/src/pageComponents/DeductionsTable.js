@@ -305,7 +305,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                 style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
                 name={`${formFieldName}.${row.key}.amount`}
                 inputRef={register({
-                  required: isInputDisabled(`${formFieldName}.${row.key}.name`) ? false : false,
+                  required: isInputDisabled(`${formFieldName}.${row.key}.name`) ? false : true,
                   // pattern: /^\d*\.?\d*$/,
                   pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                 })}
