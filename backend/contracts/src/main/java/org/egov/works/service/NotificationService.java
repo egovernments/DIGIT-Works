@@ -190,7 +190,7 @@ public class NotificationService {
         for (int i = 0; i < projDetails.get("mobileNumbers").size(); i++) {
             Map<String,String> smsDetails=new HashMap<>();
 
-            smsDetails.put("projectId",projDetails.get("projectId").get(0));
+            smsDetails.put("projectId",projDetails.get("projectNumber").get(0));
 //            smsDetails.put("projectName",orgDetails.get("projectName").get(0));
 //            smsDetails.put("personName",orgDetails.get("contactPersonNames").get(i));
             smsDetails.put("mobileNumber",projDetails.get("mobileNumbers").get(i));
@@ -255,7 +255,7 @@ public class NotificationService {
 
         //As the new template only requires the project id so fetching it in this class only rather than calling the util method
         String projectId = estimates.get(0).getProjectId();
-        // Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
+         Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
 
         // Fetching org mobile number and maintaining in the map
         Map<String,List<String>> projectAndOrgDetails= organisationServiceUtil.getOrganisationInfo(request);
@@ -263,6 +263,7 @@ public class NotificationService {
 //        orgDetails.put("projectName", Collections.singletonList(projectDetails.get("projectName")));
 
         projectAndOrgDetails.put("projectId",Collections.singletonList(projectId));
+        projectAndOrgDetails.put("projectNumber", Collections.singletonList(projectDetails.get("projectNumber")));
 
         return projectAndOrgDetails;
     }
