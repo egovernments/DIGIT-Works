@@ -361,13 +361,15 @@ const getBillsForExcel = (billDetails, headCodeMap) => {
 let getWagesBill = (bill, billObj) => {
     let bills = [];
     bill?.billDetails.forEach(billDetail => {
-        let newBill = deepClone(billObj);
-        newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
-        newBill['beneficiaryType'] = billDetail?.payee?.type || "";
-        newBill['grossAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
-        newBill['payableAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
-        newBill['headCode'] = billDetail?.payableLineItems[0]?.headCode || "";
-        bills.push(newBill)
+        billDetail?.payableLineItems.forEach((payableLineItem) => {
+            let newBill = deepClone(billObj);
+            newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
+            newBill['beneficiaryType'] = billDetail?.payee?.type || "";
+            newBill['grossAmount'] = payableLineItem?.amount || 0;
+            newBill['payableAmount'] = payableLineItem?.amount || 0;
+            newBill['headCode'] = payableLineItem?.headCode || "";
+            bills.push(newBill)
+        })
     });
     return bills;
 }
@@ -467,8 +469,13 @@ let createXlsxFromBills = async (billsData, paymentId, paymentNumber, tenantId) 
     const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
     try {
         // if payment number will available then file name will be based on payment number else paymentId
-        let filename = (paymentNumber && paymentNumber != "") ? paymentNumber : paymentId;
-        filename = `${filename} - ${new Date().getTime()}.xlsx`;
+        let filename = "";
+        if (paymentNumber) {
+            filename = paymentNumber;
+        } else {
+            filename = paymentId;
+        }
+        filename = filename + " - " + new Date().getTime() + ".xlsx";
         let filestoreId = await upload_file_using_filestore(filename, tenantId, buffer);
         return filestoreId;
     } catch (error) {
