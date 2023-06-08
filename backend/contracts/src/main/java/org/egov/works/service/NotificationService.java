@@ -222,8 +222,9 @@ public class NotificationService {
 //        Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
 
         //As the new template only requires the project id so fetching it in this class only rather than calling the util method
-        String projectId = estimates.get(0).getProjectId();Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
+//        String projectId = estimates.get(0).getProjectId();Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
 
+        Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
         //get location name from boundary type
 /*        String boundaryCode = projectDetails.get("boundary");
         String boundaryType=projectDetails.get("boundaryType");
@@ -234,7 +235,7 @@ public class NotificationService {
 
         smsDetails.put("orgName",orgDetails.get("orgName").get(0));
         smsDetails.putAll(userDetailsForSMS);
-        smsDetails.put("projectId",projectId);
+        smsDetails.put("projectId",projectDetails.get("projectNumber"));
 
        /* smsDetails.putAll(projectDetails);
         smsDetails.putAll(locationName);*/
@@ -314,9 +315,12 @@ public class NotificationService {
      */
     public String getMessage(ContractRequest request, String msgCode) {
         String rootTenantId = request.getContract().getTenantId().split("\\.")[0];
+        String locale = "en_IN";
+        if(request.getRequestInfo().getMsgId().split("\\|").length > 1)
+            locale = request.getRequestInfo().getMsgId().split("\\|")[1];
         Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(request.getRequestInfo(), rootTenantId,
-                ContractServiceConstants.CONTRACTS_NOTIFICATION_ENG_LOCALE_CODE, ContractServiceConstants.CONTRACTS_MODULE_CODE);
-        return localizedMessageMap.get(ContractServiceConstants.CONTRACTS_NOTIFICATION_ENG_LOCALE_CODE + "|" + rootTenantId).get(msgCode);
+                locale, ContractServiceConstants.CONTRACTS_MODULE_CODE);
+        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
     }
 
     /**
