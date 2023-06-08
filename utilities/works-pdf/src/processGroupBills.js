@@ -361,13 +361,15 @@ const getBillsForExcel = (billDetails, headCodeMap) => {
 let getWagesBill = (bill, billObj) => {
     let bills = [];
     bill?.billDetails.forEach(billDetail => {
-        let newBill = deepClone(billObj);
-        newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
-        newBill['beneficiaryType'] = billDetail?.payee?.type || "";
-        newBill['grossAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
-        newBill['payableAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
-        newBill['headCode'] = billDetail?.payableLineItems[0]?.headCode || "";
-        bills.push(newBill)
+        billDetail?.payableLineItems.forEach((payableLineItem) => {
+            let newBill = deepClone(billObj);
+            newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
+            newBill['beneficiaryType'] = billDetail?.payee?.type || "";
+            newBill['grossAmount'] = payableLineItem?.amount || 0;
+            newBill['payableAmount'] = payableLineItem?.amount || 0;
+            newBill['headCode'] = payableLineItem?.headCode || "";
+            bills.push(newBill)
+        })
     });
     return bills;
 }

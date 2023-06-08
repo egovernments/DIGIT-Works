@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST;
+HOST = process.env.EGOV_HOST || "localhost";
 
 
 if (!HOST) {
