@@ -469,8 +469,13 @@ let createXlsxFromBills = async (billsData, paymentId, paymentNumber, tenantId) 
     const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
     try {
         // if payment number will available then file name will be based on payment number else paymentId
-        let filename = (paymentNumber && paymentNumber != "") ? paymentNumber : paymentId;
-        filename = `${filename} - ${new Date().getTime()}.xlsx`;
+        let filename = "";
+        if (paymentNumber) {
+            filename = paymentNumber;
+        } else {
+            filename = paymentId;
+        }
+        filename = filename + " - " + new Date().getTime() + ".xlsx";
         let filestoreId = await upload_file_using_filestore(filename, tenantId, buffer);
         return filestoreId;
     } catch (error) {
