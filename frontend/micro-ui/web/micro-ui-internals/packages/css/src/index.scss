@@ -762,6 +762,11 @@ input[type="number"] {
   }
 }
 
+.complaint-links-container .header .removeHeight {
+  line-height: 28px;
+  overflow-wrap: anywhere;
+}
+
 @screen sm {
   .employeeCard {
     .card-section-header {
