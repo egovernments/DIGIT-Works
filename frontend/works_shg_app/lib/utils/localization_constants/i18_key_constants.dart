@@ -115,6 +115,7 @@ class Common {
   String get branchName => 'COMMON_BRANCH_NAME';
   String get photoGraph => 'COMMON_PHOTOGRAPH';
   String get inProgress => 'IN_PROGRESS_LABEL';
+  String get wageSeekerID => 'MASTERS_WAGESEEKER_ID';
   String get completed => 'COMPLETED_LABEL';
   String get info => 'ES_COMMON_INFO';
   String get clickToAddPhoto => 'CLICK_TO_ADD_PHOTO';

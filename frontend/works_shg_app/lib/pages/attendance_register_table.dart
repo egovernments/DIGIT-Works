@@ -16,6 +16,7 @@ import 'package:works_shg_app/widgets/molecules/digit_table.dart' as shg_app;
 import '../blocs/attendance/create_attendee.dart';
 import '../blocs/attendance/de_enroll_attendee.dart';
 import '../blocs/attendance/individual_search.dart';
+import '../blocs/attendance/individual_wms_search.dart';
 import '../blocs/attendance/search_projects/search_individual_project.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
@@ -336,8 +337,10 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                         .toString()
                                                   })
                                               .toList();
-                                      context.read<IndividualSearchBloc>().add(
-                                            SearchIndividualIdEvent(
+                                      context
+                                          .read<IndividualWMSSearchBloc>()
+                                          .add(
+                                            SearchWMSIndividualIdEvent(
                                                 ids: individualAttendanceRegisterModel!
                                                     .attendanceRegister!
                                                     .first
@@ -361,8 +364,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                         context, error.toString(), 'ERROR'),
                                 orElse: () => Container());
                           },
-                          child: BlocBuilder<IndividualSearchBloc,
-                                  IndividualSearchState>(
+                          child: BlocBuilder<IndividualWMSSearchBloc,
+                                  IndividualWMSSearchState>(
                               builder: (context, userState) {
                             return userState.maybeWhen(
                                 loading: () =>
@@ -385,29 +388,40 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                     ],
                                   );
                                 },
-                                loaded:
-                                    (IndividualListModel? individualListModel) {
-                                  userList = individualListModel!
-                                          .Individual!.isNotEmpty
-                                      ? individualListModel.Individual!
+                                loaded: (WMSIndividualListModel?
+                                    individualListModel) {
+                                  userList = (individualListModel!.items ?? [])
+                                          .isNotEmpty
+                                      ? individualListModel.items!
                                           .map((e) => {
-                                                "name": e.name?.givenName,
-                                                "aadhaar": e.identifiers?.first
+                                                "name": e.businessObject?.name
+                                                    ?.givenName,
+                                                "aadhaar": e
+                                                        .businessObject
+                                                        ?.identifiers
+                                                        ?.first
                                                         .identifierId ??
-                                                    e.individualId,
-                                                "individualCode":
-                                                    e.individualId,
+                                                    e.businessObject
+                                                        ?.individualId,
+                                                "individualCode": e
+                                                    .businessObject
+                                                    ?.individualId,
                                                 "skill": AppLocalizations.of(
                                                         context)
                                                     .translate(
-                                                        'COMMON_MASTERS_SKILLS_${e.skills!.first.level?.toUpperCase()}.${e.skills!.first.type?.toUpperCase()}'),
-                                                "individualId": e.id,
-                                                "uuid": e.id,
-                                                "individualGaurdianName":
-                                                    e.fatherName ??
-                                                        e.husbandName,
-                                                "mobileNumber": e.mobileNumber,
-                                                "tenantId": e.tenantId
+                                                        'COMMON_MASTERS_SKILLS_${e.businessObject?.skills!.first.level?.toUpperCase()}.${e.businessObject?.skills!.first.type?.toUpperCase()}'),
+                                                "individualId":
+                                                    e.businessObject?.id,
+                                                "uuid": e.businessObject?.id,
+                                                "individualGaurdianName": e
+                                                        .businessObject
+                                                        ?.fatherName ??
+                                                    e.businessObject
+                                                        ?.husbandName,
+                                                "mobileNumber": e.businessObject
+                                                    ?.mobileNumber,
+                                                "tenantId":
+                                                    e.businessObject?.tenantId
                                               })
                                           .toList()
                                       : [];
@@ -455,7 +469,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                   (context, constraints) {
                                                 var width =
                                                     constraints.maxWidth < 760
-                                                        ? 120.0
+                                                        ? 150.0
                                                         : (constraints
                                                                 .maxWidth /
                                                             5);
@@ -679,28 +693,16 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
 
   Future<List<dynamic>> onSearchVendorList(pattern) async {
     searchUser = true;
-    if (pattern.toString().isNotEmpty &&
-        pattern.toString().trim().length == 10 &&
-        CommonMethods().containsOnlyNumbers(pattern)) {
-      context.read<IndividualSearchBloc>().add(
-            SearchIndividualEvent(
-                mobileNumber: pattern, tenant: widget.tenantId),
-          );
-      await Future.delayed(const Duration(milliseconds: 500));
-    } else {
-      context.read<IndividualSearchBloc>().add(
-            SearchIndividualNameEvent(name: pattern, tenant: widget.tenantId),
-          );
-      await Future.delayed(const Duration(milliseconds: 500));
-    }
+    context.read<IndividualWMSSearchBloc>().add(
+          SearchWMSIndividualNameEvent(name: pattern, tenant: widget.tenantId),
+        );
+    await Future.delayed(const Duration(milliseconds: 500));
 
     setState(() {
       filteredUserList = userList.where((e) {
-        if (e["mobileNumber"]!
-                .contains(pattern.toString().trim().toLowerCase()) ||
-            e["name"]!
-                .toLowerCase()
-                .contains(pattern.toString().trim().toLowerCase())) {
+        if (e["name"]!
+            .toLowerCase()
+            .contains(pattern.toString().trim().toLowerCase())) {
           return true;
         } else {
           return false;
@@ -727,8 +729,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
             apiKey: 'skill'),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
-                .translate(i18.common.mobileNumber),
-            apiKey: 'mobileNumber'),
+                .translate(i18.common.wageSeekerID),
+            apiKey: 'individualCode'),
         TableHeader(
             AppLocalizations.of(scaffoldMessengerKey.currentContext!)
                 .translate(i18.common.action),
@@ -746,8 +748,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
               .translate('${tableDataModel.skill}'),
           apiKey: tableDataModel.skill),
       TableData(
-          label: tableDataModel.mobileNumber,
-          apiKey: tableDataModel.mobileNumber),
+          label: tableDataModel.individualCode,
+          apiKey: tableDataModel.individualId),
       TableData(
           widget: DeleteButton(
               onTap: () => onDelete(tableDataModel.uuid.toString())))

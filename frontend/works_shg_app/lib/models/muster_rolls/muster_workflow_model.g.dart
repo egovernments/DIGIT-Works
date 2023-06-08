@@ -33,6 +33,7 @@ _$_ProcessInstances _$$_ProcessInstancesFromJson(Map<String, dynamic> json) =>
       assignes: (json['assignes'] as List<dynamic>?)
           ?.map((e) => Assignees.fromJson(e as Map<String, dynamic>))
           .toList(),
+      comment: json['comment'] as String?,
       nextActions: (json['nextActions'] as List<dynamic>?)
           ?.map((e) => NextActions.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -50,6 +51,7 @@ Map<String, dynamic> _$$_ProcessInstancesToJson(_$_ProcessInstances instance) =>
       'action': instance.action,
       'auditDetails': instance.auditDetails,
       'assignes': instance.assignes,
+      'comment': instance.comment,
       'nextActions': instance.nextActions,
       'state': instance.workflowState,
     };

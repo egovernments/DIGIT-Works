@@ -1,5 +1,6 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../models/file_store/file_store_model.dart';
@@ -49,7 +50,8 @@ class Attachments extends StatelessWidget {
                                     Wrap(runSpacing: 5, spacing: 8, children: [
                                   Image.asset('assets/png/attachment.png'),
                                   Text(
-                                    e.name.toString(),
+                                    AppLocalizations.of(context)
+                                        .translate(e.name.toString()),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   )
