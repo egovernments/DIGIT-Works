@@ -42,7 +42,7 @@ const fetchDocuments = (documents, otherDocFileName, docConfigData) => {
 
 const fetchDeductions = (deductions, tenantId) => {
 
-    let deductionsList = deductions?.filter(row => row && row.amount!=="0")?.map(row => {
+    let deductionsList = deductions?.filter(row => row && row.amount!=="0" && row.name && row.amount)?.map(row => {
         return {
             "tenantId": tenantId,
             "headCode": row?.name?.code,

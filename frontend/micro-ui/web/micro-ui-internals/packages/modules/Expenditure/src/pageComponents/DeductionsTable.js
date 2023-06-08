@@ -254,7 +254,7 @@ const DeductionsTable = ({control,watch,...props}) => {
                 control={control}
                 name={`${formFieldName}.${row.key}.name`}
                 rules={{
-                  required: true,
+                  required: false,
                   pattern: /^[a-zA-Z0-9_ .$@#\/ ]*$/,
                 }}
                 render={(props) =>
