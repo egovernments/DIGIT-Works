@@ -312,6 +312,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                   title: t.translate('WF_MUSTOR_${e.workflowState?.state}'),
                                                                   subTitle: DateFormats.getTimeLineDate(e.auditDetails?.lastModifiedTime ?? 0),
                                                                   isCurrentState: i == 0,
+                                                                  comments: e.comment,
                                                                   assignee: e.assignes?.first.name ,
                                                                   mobileNumber: e.assignes != null ? '+91-${e.assignes?.first.mobileNumber}' : null
 
@@ -326,6 +327,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                            loaded: (MusterWorkFlowModel? musterWorkFlowModel, bool isInWorkFlow) {
                                                              return DigitCard(padding: const EdgeInsets.all(8.0),child: Column(
                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                               mainAxisAlignment: MainAxisAlignment.start,
                                                                children: [
                                                                  Padding(
                                                                    padding: const EdgeInsets.only(left: 4.0, bottom: 16.0, top: 8.0),

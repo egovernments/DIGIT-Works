@@ -701,7 +701,7 @@ export const UICustomizations = {
        case "WORKS_PARENT_PROJECT_ID":
          return value ? (
           <span className="link">
-            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}`}>
+            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.businessObject?.tenantId}&projectNumber=${value}`}>
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
           </span>

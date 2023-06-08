@@ -32,4 +32,27 @@ class IndividualRepository {
       rethrow;
     }
   }
+
+  Future<WMSIndividualListModel> searchWMSIndividual({
+    Map<String, String>? queryParameters,
+    dynamic body,
+    required String url,
+  }) async {
+    try {
+      // var formData = FormData.fromMap(body);
+      final response = await _client.post(url,
+          queryParameters: queryParameters,
+          data: body,
+          options: Options(extra: {
+            "userInfo": GlobalVariables.userRequestModel,
+            "accessToken": GlobalVariables.authToken,
+          }));
+
+      return WMSIndividualListModelMapper.fromMap(
+          response.data as Map<String, dynamic>);
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
+    }
+  }
 }
