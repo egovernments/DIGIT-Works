@@ -692,7 +692,7 @@ export const UICustomizations = {
         case "WORKS_PROJECT_ID":
          return (
           <span className="link">
-            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}`}>
+            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.businessObject?.tenantId}&projectNumber=${value}`}>
             {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
           </span>
@@ -710,7 +710,7 @@ export const UICustomizations = {
          );
 
       case "WORKS_PROJECT_NAME": 
-       { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
+       { let currentProject = searchResult?.filter((result) => result?.businessObject?.id === row?.businessObject?.id)[0];
         return (
           <div class="tooltip">
             <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>         
@@ -718,7 +718,7 @@ export const UICustomizations = {
             </span>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
-              {currentProject?.description}
+              {currentProject?.businessObject?.description}
             </span>
           </div>
          ); }
