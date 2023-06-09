@@ -53,6 +53,9 @@ public class BillService {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
+	@Autowired
+	private NotificationService notificationService;
+
 	/**
 	 * Validates the Bill Request and sends to repository for create
 	 * 
@@ -72,10 +75,12 @@ public class BillService {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+			if(billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.SUPERVISION"))
+				notificationService.sendNotificationForSupervisionBill(billRequest);
 		} else {
 			bill.setStatus(Status.ACTIVE);
 		}
-		
+
 		producer.push(config.getBillCreateTopic(), billRequest);
 		
 		response = BillResponse.builder()
@@ -104,6 +109,8 @@ public class BillService {
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 		}
+		if(billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.PURCHASE"))
+			notificationService.sendNotificationForPurchaseBill(billRequest);
 		
 		producer.push(config.getBillUpdateTopic(), billRequest);
 		response = BillResponse.builder()
