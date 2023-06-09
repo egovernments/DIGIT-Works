@@ -38,16 +38,16 @@ public class NotificationService {
      */
     public void sendNotificationToCBO(MusterRollRequest musterRollRequest){
         String action = musterRollRequest.getWorkflow().getAction();
-        if(action.equalsIgnoreCase("SENDBACKTOCBO") || action.equalsIgnoreCase("APPROVE")) {
+        if(action.equalsIgnoreCase(SEND_BACK_TO_CBO_CODE) || action.equalsIgnoreCase(APPROVE_CODE)) {
                 Map<String, String> CBODetails = notificationUtil.getCBOContactPersonDetails(musterRollRequest);
                 String amount = notificationUtil.getExpenseAmount(musterRollRequest);
 
                 String message = null;
                 String contactMobileNumber = CBODetails.get(CONTACT_MOBILE_NUMBER);
-            if (musterRollRequest.getWorkflow().getAction().equalsIgnoreCase("SENDBACKTOCBO")) {
-                message = getMessage(musterRollRequest, "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION");
-            } else if (musterRollRequest.getWorkflow().getAction().equalsIgnoreCase("APPROVE")) {
-                message = getMessage(musterRollRequest, "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL");
+            if (musterRollRequest.getWorkflow().getAction().equalsIgnoreCase(SEND_BACK_TO_CBO_CODE)) {
+                message = getMessage(musterRollRequest, MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION_LOCALIZATION_CODE);
+            } else if (musterRollRequest.getWorkflow().getAction().equalsIgnoreCase(APPROVE_CODE)) {
+                message = getMessage(musterRollRequest, MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL_LOCALIZATION_CODE);
             }
             musterRollRequest.getMusterRoll().getMusterRollNumber();
 
