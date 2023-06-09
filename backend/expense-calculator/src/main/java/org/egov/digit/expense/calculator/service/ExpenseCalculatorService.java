@@ -41,6 +41,7 @@ import org.egov.digit.expense.calculator.web.models.Payer;
 import org.egov.digit.expense.calculator.web.models.PurchaseBill;
 import org.egov.digit.expense.calculator.web.models.PurchaseBillRequest;
 import org.egov.digit.expense.calculator.web.models.Workflow;
+import org.egov.digit.expense.calculator.web.models.CalcEstimate;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -236,6 +237,19 @@ public class ExpenseCalculatorService {
             }
             //Continue with doing the calculation for supervision bill
             Calculation calculation = supervisionBillGeneratorService.estimateBill(requestInfo, criteria, expenseBills);
+            // Check calculation have any calculation details or not
+            Boolean hasCalcDetail = false;
+            for (CalcEstimate estimate: calculation.getEstimates()) {
+                if (estimate.getCalcDetails() != null && !estimate.getCalcDetails().isEmpty()) {
+                    hasCalcDetail = true;
+                }
+            }
+            // If no calculation details are there then throw an exception
+            if (hasCalcDetail == false) {
+                log.info("ExpenseCalculatorService::createWageOrSupervisionBills::Supervision bill will not created because there are no calculation details in estimate.");
+                throw new CustomException("NO_CALCULATION_DETAIL",
+                        String.format("No calculation details found for bills of contract %s and tenant %s. So Supervision bill cannot be generated.", criteria.getContractId(), criteria.getTenantId()));
+            }
             //Create the supervision bill
             bills = supervisionBillGeneratorService.createSupervisionBill(requestInfo, criteria,calculation, expenseBills);
     		
