@@ -30,8 +30,8 @@ public class MusterRollServiceConstants {
     public static final String SEARCH_CRITERIA = "SearchCriteria";
     public static final String MUSTER_ROLL_LOCALIZATION_CODE_JSONPATH = "$.messages.*.code";
     public static final String MUSTER_ROLL_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
-    public static final String SEND_BACK_TO_CBO_CODE = "SENDBACKTOCBO";
-    public static final String APPROVE_CODE = "APPROVE";
-    public static final String MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION_LOCALIZATION_CODE = "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION";
-    public static final String MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL_LOCALIZATION_CODE = "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL";
+    public static final String WF_SEND_BACK_TO_CBO_CODE = "SENDBACKTOCBO";
+    public static final String WF_APPROVE_CODE = "APPROVE";
+    public static final String CBO_NOTIFICATION_FOR_CORRECTION_LOCALIZATION_CODE = "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION";
+    public static final String CBO_NOTIFICATION_OF_APPROVAL_LOCALIZATION_CODE = "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL";
 }
