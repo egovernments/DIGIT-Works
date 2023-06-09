@@ -1,9 +1,8 @@
 import React, { useState, useEffect, Fragment } from "react";
 import _ from "lodash";
-import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer,WorkflowModal } from "@egovernments/digit-ui-react-components";
 import { configAttendanceApproveModal, configAttendanceRejectModal, configAttendanceCheckModal } from "../config";
-
-
+import getModalConfig from "../config/AttendanceSaveConfig";
 const Heading = (props) => {
   return <h1 className={props.className ? `heading-m ${props.className}` : "heading-m"}>{props.label}</h1>;
 };
@@ -23,7 +22,8 @@ const CloseBtn = (props) => {
   );
 };
 
-const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails, saveAttendanceState}) => {
+const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode,applicationDetails,workflowDetails, saveAttendanceState,approverList}) => {
+  
   const [config, setConfig] = useState({});
   const [modalSubmit,setModalSubmit] = useState(false)
   const userUuid = Digit.UserService.getUser()?.info.uuid;
@@ -31,10 +31,31 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     { uuids : userUuid }, tenantId
   );
 
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({});
+  const [selectedApprover, setSelectedApprover] = useState({});
   const empData =  employeeData?.Employees[0]
   const empDepartment = empData?.assignments?.[0]?.department ? t(`COMMON_MASTERS_DEPARTMENT_${empData?.assignments?.[0]?.department}`) : t('NA')
   const empDesignation = empData?.assignments?.[0]?.designation ? t(`COMMON_MASTERS_DESIGNATION_${empData?.assignments?.[0]?.designation}`) : t('NA')
   const empName = empData?.user?.name || t('NA')
+
+  useEffect(() => {
+    setModalConfig(
+        getModalConfig({
+            t,
+            approverList,
+            selectedApprover,
+            setSelectedApprover,
+        })
+    )
+
+  }, [])
+
+  const onModalSubmit = ({comments}) => {
+    //here we have access to action, selectedApprover, action
+    submitBasedOnAction(action, comments,selectedApprover)
+    
+  }
 
   useEffect(() => {
     const selectedAction = action?.action
@@ -65,7 +86,8 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
         submitBasedOnAction(action, 'Resubmit muster roll')
         break;
       case "SAVE":
-        submitBasedOnAction(action, 'Muster roll Re-Submitted')
+        setShowModal(true)
+        //submitBasedOnAction(action, 'Muster roll Re-Submitted')
         break;
       default:
         break
@@ -77,10 +99,10 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     submitBasedOnAction(action, data?.comments)
   }
 
-  const submitBasedOnAction = (action, comments) => {
+  const submitBasedOnAction = (action, comments,selectedApprover) => {
     //passing complete muster object with updated additionalDetails
     let musterRoll = updateMusterObject(applicationDetails)
-    let workflow = { action: action?.action, comment: (comments || `${action?.action} done`), assignees: [] }
+    let workflow = { action: action?.action, comment: (comments || `${action?.action} done`), assignees: selectedApprover?[selectedApprover.uuid] : [] }
 
     const selectedAction = action?.action
     switch(selectedAction) {
@@ -120,9 +142,19 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     return {}
   }
   
+  if(action && modalConfig?.form && showModal ) {
+    return <WorkflowModal
+      closeModal={() => setShowModal(false)}
+      onSubmit={onModalSubmit}
+      config={modalConfig}
+    />
+  }
+
   if(action?.action === "SAVE" && !config?.form) {
     return <></>
   }
+
+  
 
   return action && config?.form ? (
     <Modal

@@ -22,6 +22,11 @@ const ViewAttendance = () => {
 
   const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.attendance.useViewAttendance(tenantId, { musterRollNumber },{},isStateChanged);
 
+  const { isLoading: approverLoading, isErrorApprover, errorApprover, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: "MUSTER_ROLL_VERIFIER", isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
+
+
+  employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
+
   const { mutate } = Digit.Hooks.attendance.useUpdateAttendance();
 
   const HandleDownloadPdf = () => {
@@ -56,7 +61,7 @@ const ViewAttendance = () => {
         ])
     }, [data])
 
-  if(isLoading) return <Loader />
+  if(isLoading || approverLoading) return <Loader />
   return (
     <React.Fragment>
       <div className={"employee-application-details"} >
@@ -91,6 +96,7 @@ const ViewAttendance = () => {
           setshowEditTitle={setshowEditTitle}
           saveAttendanceState={saveAttendanceState}
           setSaveAttendanceState={setSaveAttendanceState}
+          approverList={employeeDatav1?.Employees?.length > 0 ? employeeDatav1?.Employees.filter(emp => emp?.nameOfEmp !== "NA") : []}
         />
       )}
 
