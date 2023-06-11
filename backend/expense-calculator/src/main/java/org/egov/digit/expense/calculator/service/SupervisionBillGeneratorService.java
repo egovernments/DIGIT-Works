@@ -231,13 +231,13 @@ public class SupervisionBillGeneratorService {
 			bills.add(bill);
 			log.info("Bill created:" + bill.toString());
 		}
-		if(!CollectionUtils.isEmpty(bills)){
-			try {
-				notificationService.sendNotificationForSupervisionBill(requestInfo, criteria, calculation, bills);
-			}catch (Exception e){
-				log.error("Exception while sending notification: " + e);
-			}
-		}
+//		if(!CollectionUtils.isEmpty(bills)){
+//			try {
+//				notificationService.sendNotificationForSupervisionBill(requestInfo, criteria, calculation, bills);
+//			}catch (Exception e){
+//				log.error("Exception while sending notification: " + e);
+//			}
+//		}
 		return bills;
 	}
 
