@@ -212,6 +212,7 @@ class WageSeeker {
   String get minMobileCharacters => 'MIN_MOBILE_CHARCTERS_REQUIRED';
   String get minAadhaarCharacters => 'MIN_AADHAAR_CHARCTERS_REQUIRED';
   String get maxMobileCharacters => 'MAX_MOBILE_CHARCTERS_REQUIRED';
+  String get validMobileCharacters => 'MAX_VALID_MOBILE_CHARCTERS_REQUIRED';
   String get maxAadhaarCharacters => 'MAX_AADHAAR_CHARCTERS_REQUIRED';
   String get pinCodeRequired => 'PINCODE_IS_REQUIRED';
   String get localityRequired => 'LOCALITY_IS_REQUIRED';
