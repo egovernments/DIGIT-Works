@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./scripts/run.sh project
+./scripts/run.sh project dss
