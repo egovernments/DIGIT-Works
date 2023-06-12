@@ -144,11 +144,11 @@ public class ExpenseCalculatorService {
             List<Bill> respBills = billResponse.getBills();
             if(respBills != null && !respBills.isEmpty()) {
                // persistMeta(respBills,metaInfo);
-                try {
-                    notificationService.sendNotificationForPurchaseBill(purchaseBillRequest);
-                }catch (Exception e){
-                    log.error("Exception while sending notification: " + e);
-                }
+//                try {
+//                    notificationService.sendNotificationForPurchaseBill(purchaseBillRequest);
+//                }catch (Exception e){
+//                    log.error("Exception while sending notification: " + e);
+//                }
 
                 submittedBills.addAll(respBills);
             }

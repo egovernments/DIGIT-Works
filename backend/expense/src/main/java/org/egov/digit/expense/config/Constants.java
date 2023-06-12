@@ -8,6 +8,29 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Constants {
+	public static final String REQUEST_INFO = "RequestInfo";
+	public static final String TENANT_ID = "tenantId";
+	public static final String CONTRACT_NUMBER = "contractNumber";
+	public static final String ORG_ID_PATH = "$.contracts.*.orgId";
+	public static final String ID = "id";
+	public static final String SEARCH_CRITERIA = "SearchCriteria";
+	public static final String ORG_NAME_PATH = "$.organisations.*.name";
+	public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";
+	public static final String CONTACT_MOBILE_NUMBER_PATH = "$.organisations.*.contactDetails.*.contactMobileNumber";
+	public static final String ORG_NAME = "orgName";
+	public static final String CONTACT_NAME = "contactName";
+	public static final String EXPENSE_CALCULATOR_LOCALIZATION_CODE_JSONPATH = "$.messages.*.code";
+	public static final String EXPENSE_CALCULATOR_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
+	public static final String HRMS_USER_USERNAME_CODE = "$.Employees.*.user.userName";
+	public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
+	public static final String CONTACT_MOBILE_NUMBER = "contactMobileNumber";
+	public static final String EXPENSE_CALCULATOR_MODULE_CODE = "rainmaker-common-masters";
+	public static final String APPROVE_CODE = "APPROVE";
+	public static final String REJECT_CODE = "REJECT";
+	public static final String MOBILE_NUMBER_CODE = "mobileNumber";
+	public static final String PURCHASE_BILL_APPROVE_TO_VENDOR_LOCALIZATION_CODE = "PURCHASE_BILL_APPROVE_TO_VENDOR";
+	public static final String PURCHASE_BILL_REJECT_TO_CREATOR_LOCALIZATION_CODE = "PURCHASE_BILL_REJECT_TO_CREATOR";
+	public static final String SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO_LOCALIZATION_CODE = "SUPERVISION_BILL_APPROVE_ON_CREATE_TO_CBO";
 
 	public static final String TENANT_MODULE_NAME = "tenant";
 
