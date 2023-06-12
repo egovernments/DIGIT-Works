@@ -5,6 +5,7 @@ ARG WORK_DIR
 WORKDIR /app
 # copy the project files
 COPY ${WORK_DIR} .
+RUN flutter upgrade
 RUN flutter doctor
 RUN flutter clean
 RUN flutter pub get
