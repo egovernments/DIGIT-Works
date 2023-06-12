@@ -440,8 +440,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
         mobileKey: FormControl<String>(value: '', validators: [
           Validators.required,
           Validators.minLength(10),
-          Validators.min(5999999999),
-          Validators.max(9999999999),
+          Validators.min('5999999999'),
+          Validators.max('9999999999'),
           Validators.maxLength(10)
         ])
       });

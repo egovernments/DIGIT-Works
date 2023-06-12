@@ -175,7 +175,11 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                           'maxLength': (_) => t.translate(
                                 i18.wageSeeker.maxStreetCharacters,
                               ),
-                        }),
+                        },
+                        inputFormatter: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
+                        ]),
                     DigitTextFormField(
                         formControlName: doorNoKey,
                         label: t.translate(i18.common.doorNo),
@@ -184,7 +188,11 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                           'maxLength': (_) => t.translate(
                                 i18.wageSeeker.maxDoorNoCharacters,
                               ),
-                        }),
+                        },
+                        inputFormatter: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
+                        ]),
                   ]),
                   const SizedBox(height: 16),
                   Center(
