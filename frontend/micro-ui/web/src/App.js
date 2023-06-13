@@ -1,6 +1,6 @@
 import React from "react";
 
-// import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 // import { initWorksComponents } from "@egovernments/digit-ui-module-works";
 import { initAttendenceMgmtComponents } from "@egovernments/digit-ui-module-attendencemgmt";
@@ -24,7 +24,7 @@ const enabledModules = [
   // "Payment",
   // "PT",
   // "QuickPayLinks",
-  // "DSS",
+  "DSS",
   // "NDSS",
   // "MCollect",
   // "HRMS",
@@ -51,7 +51,7 @@ const enabledModules = [
 const initDigitUI = () => {
   window.Digit.ComponentRegistryService.setupRegistry({});
 
-  // initDSSComponents();
+  initDSSComponents();
   // initEngagementComponents();
   // initWorksComponents();
   initHRMSComponents();
