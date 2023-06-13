@@ -75,6 +75,20 @@ public class BankAccountValidator {
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
+    
+    public void validateBankAccountOnUpdate(BankAccountRequest bankAccountRequest) {
+        log.info("Validate bank account on update. Correlation ID: " + bankAccountRequest.getRequestInfo().getCorrelationId());
+        Map<String, String> errorMap = new HashMap<>();
+        List<BankAccount> bankAccountList = bankAccountRequest.getBankAccounts();
+        RequestInfo requestInfo = bankAccountRequest.getRequestInfo();
+
+        validateRequestInfo(requestInfo, errorMap);
+        validateOnUpdate(bankAccountList, errorMap);
+        validateOrgIdAndIndId(bankAccountRequest, errorMap);
+
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
+    }
 
     /**
      * Validate the individual and organisation ids from the individual and organisation service respectively
@@ -155,6 +169,7 @@ public class BankAccountValidator {
             throw new CustomException("BANK_ACCOUNTS", "Bank account is mandatory");
         }
         for (BankAccount bankAccount : bankAccountList) {
+        	
             if (StringUtils.isBlank(bankAccount.getTenantId())) {
                 throw new CustomException("TENANT_ID", "Tenant id is mandatory");
             }
@@ -171,6 +186,7 @@ public class BankAccountValidator {
             }
 
             for (BankAccountDetails bankAccountDetails : bankAccountDetailsList) {
+           
                 if (StringUtils.isBlank(bankAccountDetails.getTenantId())) {
                     throw new CustomException("BANK_ACCOUNT_DETAILS.TENANT_ID", "Tenant id is mandatory");
                 }
@@ -182,12 +198,64 @@ public class BankAccountValidator {
                 if (bankBranchIdentifier == null) {
                     throw new CustomException("BANK_ACCOUNT_DETAILS.BRANCH_IDENTIFIER", "Bank branch identifier is mandatory");
                 }
-
+            
                 if (StringUtils.isBlank(bankBranchIdentifier.getType())) {
                     throw new CustomException("BRANCH_IDENTIFIER.TYPE", "Branch identifier type is mandatory");
                 }
                 if (StringUtils.isBlank(bankBranchIdentifier.getCode())) {
-                    throw new CustomException("BRANCH_IDENTIFIER.CODE", "Branch identifier code is mandatory");
+                    throw new CustomException("BRANCH_IDENTIFIER.CODE", "Branch identifier code is mandatory ");
+                }
+            }
+        }
+    }
+
+    private void validateOnUpdate(List<BankAccount> bankAccountList, Map<String, String> errorMap) {
+        log.info("BankAccountValidator::validateBankAccount");
+        if (CollectionUtils.isEmpty(bankAccountList)) {
+            throw new CustomException("BANK_ACCOUNTS", "Bank account is mandatory");
+        }
+        for (BankAccount bankAccount : bankAccountList) {
+        	if(StringUtils.isBlank(bankAccount.getId())) {
+        		throw new CustomException("BANK_ACCOUNT_ID", "Bank account ID is mandatory");
+        	}
+            if (StringUtils.isBlank(bankAccount.getTenantId())) {
+                throw new CustomException("TENANT_ID", "Tenant id is mandatory");
+            }
+            if (StringUtils.isBlank(bankAccount.getReferenceId())) {
+                throw new CustomException("REFERENCE_ID", "Reference id is mandatory");
+            }
+            if (StringUtils.isBlank(bankAccount.getServiceCode())) {
+                throw new CustomException("SERVICE_CODE", "Service code is mandatory");
+            }
+
+            List<BankAccountDetails> bankAccountDetailsList = bankAccount.getBankAccountDetails();
+            if (CollectionUtils.isEmpty(bankAccountDetailsList)) {
+                throw new CustomException("BANK_ACCOUNT_DETAILS", "Bank account details are mandatory");
+            }
+
+            for (BankAccountDetails bankAccountDetails : bankAccountDetailsList) {
+            	if(StringUtils.isBlank(bankAccountDetails.getId())) {
+            		throw new CustomException("BANK_ACCOUNT_ID", "Bank account details ID is mandatory");
+            	}
+                if (StringUtils.isBlank(bankAccountDetails.getTenantId())) {
+                    throw new CustomException("BANK_ACCOUNT_DETAILS.TENANT_ID", "Tenant id is mandatory");
+                }
+                if (StringUtils.isBlank(bankAccountDetails.getAccountNumber())) {
+                    throw new CustomException("BANK_ACCOUNT_DETAILS.ACCOUNT_NUMBER", "Account number is mandatory");
+                }
+
+                BankBranchIdentifier bankBranchIdentifier = bankAccountDetails.getBankBranchIdentifier();
+                if (bankBranchIdentifier == null) {
+                    throw new CustomException("BANK_ACCOUNT_DETAILS.BRANCH_IDENTIFIER", "Bank branch identifier is mandatory for update");
+                }
+                if (StringUtils.isBlank(bankBranchIdentifier.getId())) {
+                    throw new CustomException("BRANCH_IDENTIFIER.ID", "Branch identifier ID is mandatory for updates");
+                }
+                if (StringUtils.isBlank(bankBranchIdentifier.getType())) {
+                    throw new CustomException("BRANCH_IDENTIFIER.TYPE", "Branch identifier type is mandatory for updates");
+                }
+                if (StringUtils.isBlank(bankBranchIdentifier.getCode())) {
+                    throw new CustomException("BRANCH_IDENTIFIER.CODE", "Branch identifier code is mandatory for updates");
                 }
             }
         }

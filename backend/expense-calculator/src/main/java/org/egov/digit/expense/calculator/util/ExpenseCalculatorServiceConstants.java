@@ -45,6 +45,7 @@ public class ExpenseCalculatorServiceConstants {
     public static final String CBO_IMPLEMENTATION_AGENCY = "IA";
     public static final String CBO_IMPLEMENTATION_PARTNER = "IP";
     public static final String HEAD_CODE_SUPERVISION = "SC";
+    public static final String HEAD_CODE_LABOR_CESS = "LC";
     public static final String SUCCESSFUL_CONSTANT = "successful";
     public static final String SKILL_CODE_CONSTANT = "skillCode";
     public static final String PROJECT_ID_CONSTANT = "projectId";

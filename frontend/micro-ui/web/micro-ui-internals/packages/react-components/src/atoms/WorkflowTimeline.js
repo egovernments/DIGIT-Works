@@ -39,7 +39,7 @@ const WorkflowTimeline = ({ businessService, tenantId,applicationNo, timelineSta
             captionDetails.date = `${Digit.DateUtils?.ConvertTimestampToDate(checkpoint.auditDetails.lastModifiedEpoch)} ${Digit.DateUtils?.ConvertEpochToTimeInHours(
                 checkpoint.auditDetails.lastModifiedEpoch
             )} ${Digit.DateUtils?.getDayfromTimeStamp(checkpoint.auditDetails.lastModifiedEpoch)}`;
-            captionDetails.mobileNumber = checkpoint?.assignes?.[0]?.mobileNumber;
+            captionDetails.mobileNumber = checkpoint?.assigner?.mobileNumber;
             captionDetails.wfComment = checkpoint?.comment ? [checkpoint?.comment] : [];
             captionDetails.additionalComment = additionalComment && checkpoint?.performedAction === "APPROVE",
             captionDetails.thumbnailsToShow = checkpoint?.thumbnailsToShow;

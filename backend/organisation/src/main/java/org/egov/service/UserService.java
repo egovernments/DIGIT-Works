@@ -1,11 +1,11 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.user.Role;
 import digit.models.coremodels.user.enums.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.models.core.Role;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;

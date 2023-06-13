@@ -138,7 +138,7 @@ const Table = ({
   const handleSelection = async () => {
     const selectedRows = rows?.filter(ele => Object.keys(selectedRowIds)?.includes(ele?.id))
     const response = await tableSelectionHandler(selectedRows,t)
-    setToast({show: true, label: t(response?.label), error: !response?.isSuccess})
+    setToast({show: true, label: response?.label, error: !response?.isSuccess})
   }
 
   const handleToastClose = () => {

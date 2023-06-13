@@ -118,6 +118,7 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   String? officerInChargeId;
   String? attendanceRegisterNumber;
   String? orgName;
+  String? cboOrgNumber;
   String? projectId;
   String? projectName;
   String? projectDesc;
@@ -133,25 +134,27 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   List<EstimateDocs>? estimateDocs;
   List<Description?>? termsAndConditions;
   int? completionPeriod;
-  ContractAdditionalDetails(
-      {this.officerInChargeId,
-      this.attendanceRegisterNumber,
-      this.projectId,
-      this.projectType,
-      this.orgName,
-      this.projectName,
-      this.ward,
-      this.locality,
-      this.cboCode,
-      this.cboName,
-      this.estimateDocs,
-      this.estimateNumber,
-      this.totalEstimatedAmount,
-      this.completionPeriod,
-      this.termsAndConditions,
-      this.projectDesc,
-      this.officerInChargeName,
-      this.officerInChargeDesgn});
+  ContractAdditionalDetails({
+    this.officerInChargeId,
+    this.attendanceRegisterNumber,
+    this.cboOrgNumber,
+    this.projectId,
+    this.projectType,
+    this.orgName,
+    this.projectName,
+    this.ward,
+    this.locality,
+    this.cboCode,
+    this.cboName,
+    this.estimateDocs,
+    this.estimateNumber,
+    this.totalEstimatedAmount,
+    this.completionPeriod,
+    this.termsAndConditions,
+    this.projectDesc,
+    this.officerInChargeName,
+    this.officerInChargeDesgn,
+  });
 }
 
 @MappableClass()

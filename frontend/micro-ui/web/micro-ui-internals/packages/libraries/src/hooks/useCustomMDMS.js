@@ -26,7 +26,7 @@ import { MdmsService } from "../services/elements/MDMS";
  * @returns {Object} Returns the object of the useQuery from react-query.
  */
 const useCustomMDMS = (tenantId, moduleName, masterDetails = [], config = {}) => {
-  return useQuery([tenantId, moduleName, masterDetails], () => MdmsService.getMultipleTypesWithFilter(tenantId, moduleName, masterDetails), config);
+  return useQuery([tenantId, moduleName, masterDetails], () => MdmsService.getMultipleTypesWithFilter(tenantId, moduleName, masterDetails), {cacheTime:0,...config});
 };
 
 export default useCustomMDMS;

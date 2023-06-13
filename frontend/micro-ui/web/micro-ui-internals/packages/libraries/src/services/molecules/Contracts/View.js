@@ -44,7 +44,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
                     if(document?.fileStoreId){
                             //ESTIMATE FILES
                             return {
-                                title: document?.fileType,
+                                title: document?.fileType==="Others"?document?.fileName:document?.fileType,
                                 documentType: document?.fileName,
                                 documentUid: document?.documentUid,
                                 fileStoreId: document?.fileStoreId,
@@ -52,7 +52,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
                         }
                         //WO FILES
                         return {
-                            title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : t(`CONTRACT_${document?.documentType}`),
+                            title: document?.documentType === "OTHERS" ? document?.additionalDetails?.otherCategoryName : t(`CONTRACT_${document?.documentType}`),
                             documentType: document?.documentType,
                             documentUid: document?.fileStore,
                             fileStoreId: document?.fileStore,

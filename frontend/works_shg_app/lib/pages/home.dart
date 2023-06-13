@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:works_shg_app/router/app_router.dart';
+import 'package:works_shg_app/utils/common_methods.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
     as i18;
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/app_bar_logo.dart';
 
+import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/app_initilization/home_screen_bloc.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
@@ -30,7 +32,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  String? selectedLocale;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
@@ -44,7 +45,6 @@ class _HomePage extends State<HomePage> {
     context.read<HomeScreenBloc>().add(
           const GetHomeScreenConfigEvent(),
         );
-    selectedLocale = await GlobalVariables.selectedLocale();
   }
 
   @override
@@ -63,26 +63,30 @@ class _HomePage extends State<HomePage> {
             },
           ),
         ),
-        drawer: const DrawerWrapper(Drawer(
-            child: SideBar(
-          module: 'rainmaker-common,rainmaker-attendencemgmt',
-        ))),
+        drawer: const DrawerWrapper(Drawer(child: SideBar())),
         body: BlocBuilder<LocalizationBloc, LocalizationState>(
             builder: (context, localState) {
           return BlocListener<ORGSearchBloc, ORGSearchState>(
               listener: (context, orgState) {
             orgState.maybeWhen(
                 orElse: () => false,
-                loaded: (OrganisationListModel? organisationListModel) {
+                loaded: (OrganisationListModel? organisationListModel) async {
+                  var currLoc = await GlobalVariables.selectedLocale();
                   context.read<LocalizationBloc>().add(
                         LocalizationEvent.onLoadLocalization(
-                            module:
-                                'rainmaker-attendencemgmt,rainmaker-contracts,rainmaker-expenditure,rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}',
+                            module: CommonMethods.getLocaleModules(),
                             tenantId: GlobalVariables.globalConfigObject!
                                 .globalConfigs!.stateTenantId
                                 .toString(),
-                            locale: selectedLocale.toString()),
+                            locale: currLoc.toString()),
                       );
+                  context.read<AppInitializationBloc>().add(
+                      AppInitializationSetupEvent(
+                          selectedLang: currLoc.toString()));
+                  await AppLocalizations(
+                    Locale(currLoc.toString().split('_').first,
+                        currLoc.toString().split('_').last),
+                  ).load();
                 });
           }, child: BlocBuilder<ORGSearchBloc, ORGSearchState>(
                   builder: (context, state) {
@@ -169,18 +173,51 @@ class _HomePage extends State<HomePage> {
         }));
   }
 
+  Future<void> localeLoad() async {
+    var currentLocale = await GlobalVariables.selectedLocale();
+    context.read<LocalizationBloc>().add(
+          LocalizationEvent.onLoadLocalization(
+              module: CommonMethods.getLocaleModules(),
+              tenantId: GlobalVariables
+                  .globalConfigObject!.globalConfigs!.stateTenantId
+                  .toString(),
+              locale: currentLocale.toString()),
+        );
+    context.read<AppInitializationBloc>().add(
+        AppInitializationSetupEvent(selectedLang: currentLocale.toString()));
+    await AppLocalizations(
+      Locale(currentLocale.toString().split('_').first,
+          currentLocale.toString().split('_').last),
+    ).load();
+  }
+
   void Function()? getRoute(String key, BuildContext context) {
     switch (key) {
       case Constants.homeMyWorks:
-        return () => context.router.push(const WorkOrderRoute());
+        return () {
+          localeLoad();
+          context.router.push(const WorkOrderRoute());
+        };
       case Constants.homeTrackAttendance:
-        return () => context.router.push(const TrackAttendanceInboxRoute());
+        return () {
+          localeLoad();
+          context.router.push(const TrackAttendanceInboxRoute());
+        };
       case Constants.homeMusterRolls:
-        return () => context.router.push(const ViewMusterRollsRoute());
+        return () {
+          localeLoad();
+          context.router.push(const ViewMusterRollsRoute());
+        };
       case Constants.homeMyBills:
-        return () => context.router.push(const MyBillsRoute());
+        return () {
+          localeLoad();
+          context.router.push(const MyBillsRoute());
+        };
       case Constants.homeRegisterWageSeeker:
-        return () => context.router.push(const RegisterIndividualRoute());
+        return () {
+          localeLoad();
+          context.router.push(const RegisterIndividualRoute());
+        };
       default:
         return null;
     }

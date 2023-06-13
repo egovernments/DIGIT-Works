@@ -116,8 +116,9 @@ public class WorkflowUtil {
     	Bill bill = billRequest.getBill();
     	Workflow workflowFromRequest = billRequest.getWorkflow();
     	List<User> assignes = new ArrayList<>();
-    	
-		if (!CollectionUtils.isEmpty(assignes))
+
+        // Changed check from assignes to workflowFromRequest assignee object because it's checking incorrect object
+		if (!CollectionUtils.isEmpty(workflowFromRequest.getAssignes()) && !workflowFromRequest.getAssignes().isEmpty())
 			for (String userId : workflowFromRequest.getAssignes()) {
 
 				User user = User.builder()

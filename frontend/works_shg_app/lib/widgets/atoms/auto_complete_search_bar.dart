@@ -1,6 +1,10 @@
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 
 class AutoCompleteSearchBar extends StatelessWidget {
   final String labelText;
@@ -126,7 +130,19 @@ class AutoCompleteSearchBar extends StatelessWidget {
         return const SizedBox(
             height: 100, child: Center(child: CircularProgressIndicator()));
       },
-      suggestionsBoxVerticalOffset: -10.0,
+      noItemsFoundBuilder: (BuildContext context) {
+        return SizedBox(
+          height: 30,
+          child: Center(
+            child: Text(
+              AppLocalizations.of(context).translate(i18.common.noItems),
+              style: DigitTheme.instance.mobileTheme.textTheme.bodyMedium
+                  ?.apply(color: const DigitColors().davyGray),
+            ),
+          ),
+        );
+      },
+      suggestionsBoxVerticalOffset: 0.0,
       direction: AxisDirection.down,
       minCharsForSuggestions: minCharsForSuggestions ?? 0,
       hideSuggestionsOnKeyboardHide: false,

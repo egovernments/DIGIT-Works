@@ -369,8 +369,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                                         individualListModel?.Individual?.id,
                                     indId: individualListModel
                                         ?.Individual?.individualId,
-                                    bankName:
-                                        '${financialDetails?.bankName}, ${financialDetails?.branchName}'),
+                                    bankName: '${financialDetails?.bankName}'),
                               );
                         },
                         error: (String? error) => Notifiers.getToastMessage(

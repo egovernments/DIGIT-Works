@@ -70,7 +70,11 @@ public class ContractService {
         contractEnrichment.enrichContractOnUpdate(contractRequest);
         workflowService.updateWorkflowStatus(contractRequest);
         producer.push(contractServiceConfiguration.getUpdateContractTopic(), contractRequest);
-        notificationService.sendNotification(contractRequest);
+        try {
+            notificationService.sendNotification(contractRequest);
+        }catch (Exception e){
+            log.error("Exception while sending notification: " + e);
+        }
 
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractRequest.getRequestInfo(), true);

@@ -107,7 +107,7 @@ export const BillsSearch = {
       return {
         billNo: row?.bill?.billNumber,
         billType: t(Digit.Utils.locale.getTransformedLocale(`COMMON_MASTERS_BILL_TYPE_${row?.bill?.businessService}`)),
-        billDate: Digit.DateUtils.ConvertEpochToDate(row?.bill?.fromPeriod),
+        billDate: Digit.DateUtils.ConvertEpochToDate(row?.bill?.billDate),
         status: t(`WF_BILL_${row?.bill?.status}`),
         amount:  Digit.Utils.dss.formatterWithoutRound(row?.bill?.totalAmount,'number')|| t('NA'),
         paymentStatus: row?.bill.paymentStatus ? t(`PAYMENT_STATUS_${row?.bill?.paymentStatus}`): t("NA"),
@@ -167,7 +167,7 @@ export const BillsSearch = {
     const billDetailsBelow = {
       title: "EXP_BILL_DETAILS",
       asSectionHeader: true,
-      values: [{ title: "EXP_TOTAL_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(supervisionBill?.totalAmount, "number") || t("NA") }],
+      values: [{ title: "EXP_TOTAL_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(Math.round(supervisionBill?.totalAmount), "number") || t("NA") }],
     };
 
     const totalBillAmtBelow = {
@@ -327,7 +327,7 @@ export const BillsSearch = {
                 values: billData?.additionalDetails?.documents?.map((document) => {
                   if(document?.status !== "INACTIVE") {
                       return {
-                          title: document?.documentType === "Others" ? document?.additionalDetails?.otherCategoryName : t(`EXP_${document?.documentType}`),
+                          title: document?.documentType === "OTHERS" ? document?.additionalDetails?.otherCategoryName : t(`EXP_${document?.documentType}`),
                           documentType: document?.documentType,
                           documentUid: document?.fileStore,
                           fileStoreId: document?.fileStore,

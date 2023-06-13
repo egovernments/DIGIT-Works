@@ -1,20 +1,5 @@
 package org.egov.digit.expense.calculator.service;
 
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.CONTRACT_ID_CONSTANT;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_APPLICABLE_CHARGES;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_HEAD_CODES;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_LABOUR_CHARGES;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_PAYER;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_APPLICABLE_CHARGES;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_BUSINESS_SERVICE;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_HEAD_CODES;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_PAYER_LIST;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.PROJECT_ID_CONSTANT;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.PROJECT_ID_OF_CONSTANT;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.SUCCESSFUL_CONSTANT;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.WF_SUBMIT_ACTION_CONSTANT;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,6 +51,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
+
 @Slf4j
 @Service
 public class ExpenseCalculatorService {
@@ -98,6 +85,8 @@ public class ExpenseCalculatorService {
     private BillToMetaMapper billToMetaMapper;
     @Autowired
     private ExpenseCalculatorRepository expenseCalculatorRepository;
+    @Autowired
+    private NotificationService notificationService;
     
     @Autowired
     private ObjectMapper objectMapper;
@@ -154,6 +143,12 @@ public class ExpenseCalculatorService {
             List<Bill> respBills = billResponse.getBills();
             if(respBills != null && !respBills.isEmpty()) {
                // persistMeta(respBills,metaInfo);
+                try {
+                    notificationService.sendNotificationForPurchaseBill(purchaseBillRequest);
+                }catch (Exception e){
+                    log.error("Exception while sending notification: " + e);
+                }
+
                 submittedBills.addAll(respBills);
             }
         }
@@ -172,9 +167,9 @@ public class ExpenseCalculatorService {
         // Fetch Payers from MDMS
         List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
         // Fetch HeadCodes from MDMS
-        List<HeadCode> headCodes = fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
+        List<HeadCode> headCodes = expenseCalculatorUtil.fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Fetch Applicable Charges from MDMS
-        List<ApplicableCharge> applicableCharges = fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
+        List<ApplicableCharge> applicableCharges = expenseCalculatorUtil.fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Create the bill
         return purchaseBillGeneratorService.createPurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
     }
@@ -202,9 +197,9 @@ public class ExpenseCalculatorService {
         //Fetch Payers from MDMS
         List<Payer> payers = fetchMDMSDataForPayers(requestInfo, tenantId);
         // Fetch HeadCodes from MDMS
-        List<HeadCode> headCodes = fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
+        List<HeadCode> headCodes = expenseCalculatorUtil.fetchHeadCodesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Fetch Applicable Charges from MDMS
-        List<ApplicableCharge> applicableCharges = fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
+        List<ApplicableCharge> applicableCharges = expenseCalculatorUtil.fetchApplicableChargesFromMDMSForService(requestInfo, tenantId, businessServiceName);
         // Create the bill
         return purchaseBillGeneratorService.updatePurchaseBill(requestInfo,providedPurchaseBill,payers,headCodes,applicableCharges,metaInfo);
     }
@@ -252,6 +247,8 @@ public class ExpenseCalculatorService {
 			if (contract.getContractNumber()!=null && projectIdOptional.isPresent()) {
 				contractProjectMapping.put(PROJECT_ID_OF_CONSTANT + contract.getContractNumber(), projectIdOptional.get());
 			}
+            // Put OrgId in meta
+            contractProjectMapping.put(ORG_ID_CONSTANT,contract.getOrgId());
 			metaInfo.putAll(contractProjectMapping);
 
 		}
@@ -451,43 +448,5 @@ public class ExpenseCalculatorService {
         return payers;
     }
 
-    private List<HeadCode> fetchHeadCodesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
-        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
-        List<HeadCode> filteredHeadCodes = headCodes.stream()
-                                                    .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
-        return filteredHeadCodes;
-    }
-    private List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
-        log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMS_HEAD_CODES);
-        List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
-        List<HeadCode> headCodes = new ArrayList<>();
-        for(Object obj : headCodeListJson){
-            HeadCode headCode = mapper.convertValue(obj, HeadCode.class);
-            headCodes.add(headCode);
-        }
-        log.info("Head codes fetched from MDMS");
-        return headCodes;
-    }
-
-    private List<ApplicableCharge> fetchApplicableChargesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
-        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
-        List<ApplicableCharge> filteredApplicableCharges = applicableCharges.stream()
-                                                                            .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
-        return filteredApplicableCharges;
-    }
-    private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
-        log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId,MDMS_APPLICABLE_CHARGES);
-        List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
-        List<ApplicableCharge> applicableCharges = new ArrayList<>();
-        for(Object obj : applicableChargesListJson){
-            ApplicableCharge applicableCharge = mapper.convertValue(obj, ApplicableCharge.class);
-            applicableCharges.add(applicableCharge);
-        }
-        log.info("Head codes fetched from MDMS");
-        return applicableCharges;
-    }
+    
 }

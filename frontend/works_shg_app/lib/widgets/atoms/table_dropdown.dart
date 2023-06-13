@@ -54,7 +54,7 @@ class _DropDownDialogState extends State<DropDownDialog> {
                 decoration: BoxDecoration(
                   border: Border.all(
                       color: widget.isDisabled
-                          ? const Color.fromRGBO(149, 148, 148, 1)
+                          ? const Color.fromRGBO(149, 148, 148, 0.5)
                           : const DigitColors().black),
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -76,8 +76,11 @@ class _DropDownDialogState extends State<DropDownDialog> {
                                 : const DigitColors().black),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_drop_down,
+                      color: widget.isDisabled
+                          ? const Color.fromRGBO(149, 148, 148, 1)
+                          : const DigitColors().black,
                       size: 20,
                     ),
                   ],

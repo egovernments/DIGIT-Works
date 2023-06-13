@@ -94,6 +94,9 @@ public class Configuration {
     @Value("${bank.account.kafka.create.topic}")
     private String saveBankAccountTopic;
 
+    @Value("${bank.account.kafka.update.topic}")
+    private String updateBankAccountTopic;
+    
     //search
     @Value("${bank.account.default.offset}")
     private Integer defaultOffset;
