@@ -282,6 +282,12 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                           'maxLength': (_) => t.translate(
                                 i18.wageSeeker.maxMobileCharacters,
                               ),
+                          'min': (_) => t.translate(
+                                i18.wageSeeker.validMobileCharacters,
+                              ),
+                          'max': (_) => t.translate(
+                                i18.wageSeeker.validMobileCharacters,
+                              ),
                         },
                       ),
                       // StatefulBuilder(
@@ -434,6 +440,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
         mobileKey: FormControl<String>(value: '', validators: [
           Validators.required,
           Validators.minLength(10),
+          Validators.min('5999999999'),
+          Validators.max('9999999999'),
           Validators.maxLength(10)
         ])
       });

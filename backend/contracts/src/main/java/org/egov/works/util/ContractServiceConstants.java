@@ -69,6 +69,7 @@ public class ContractServiceConstants {
 
     //Project service Constants
     public static final String PROJECT_NAME_CODE ="$.Project.*.name";
+    public static final String PROJECT_NUMBER_CODE = "$.Project.*.projectNumber";
 
     public static final String PROJECT_BOUNDARY_CODE ="$.Project.*.address.boundary";
 

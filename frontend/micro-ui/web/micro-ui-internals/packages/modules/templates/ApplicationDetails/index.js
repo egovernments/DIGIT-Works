@@ -58,7 +58,8 @@ const ApplicationDetails = (props) => {
     modify,
     setModify,
     saveAttendanceState,
-    setSaveAttendanceState
+    setSaveAttendanceState,
+    approverList=[]
   } = props;
   
   useEffect(() => {
@@ -347,6 +348,7 @@ const ApplicationDetails = (props) => {
               workflowDetails={workflowDetails}
               moduleCode={moduleCode}
               saveAttendanceState={saveAttendanceState}
+              approverList={approverList}
             />
           ) : null}
           {isWarningPop ? (

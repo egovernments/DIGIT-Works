@@ -131,8 +131,7 @@ class _MainApplicationState extends State<MainApplication> {
     super.dispose();
   }
 
-  static void downloadCallback(
-      String id, DownloadTaskStatus status, int progress) {
+  static void downloadCallback(String id, int status, int progress) {
     final SendPort send =
         IsolateNameServer.lookupPortByName('downloader_send_port')!;
 
