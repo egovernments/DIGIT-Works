@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
-// import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 
 // import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
@@ -75,7 +75,7 @@ const initDigitUI = () => {
   });
 
   // initPGRComponents();
-  // initDSSComponents();
+  initDSSComponents();
   initEstimateComponents();
   // initEngagementComponents();
   // initWorksComponents();
