@@ -26,6 +26,7 @@ class ProcessInstances with _$ProcessInstances {
     String? action,
     AuditDetails? auditDetails,
     List<Assignees>? assignes,
+    String? comment,
     List<NextActions>? nextActions,
     @JsonKey(name: 'state') WorkflowState? workflowState,
   }) = _ProcessInstances;

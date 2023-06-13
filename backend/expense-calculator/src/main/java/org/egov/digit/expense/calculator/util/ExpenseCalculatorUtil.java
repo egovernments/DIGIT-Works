@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.project.Project;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.repository.*;
 import org.egov.digit.expense.calculator.repository.ServiceRequestRepository;
+import org.egov.digit.expense.calculator.web.models.ApplicableCharge;
 import org.egov.digit.expense.calculator.web.models.Bill;
 import org.egov.digit.expense.calculator.web.models.BillCriteria;
 import org.egov.digit.expense.calculator.web.models.BillResponse;
@@ -16,6 +19,7 @@ import org.egov.digit.expense.calculator.web.models.BillSearchRequest;
 import org.egov.digit.expense.calculator.web.models.Contract;
 import org.egov.digit.expense.calculator.web.models.ContractCriteria;
 import org.egov.digit.expense.calculator.web.models.ContractResponse;
+import org.egov.digit.expense.calculator.web.models.HeadCode;
 import org.egov.digit.expense.calculator.web.models.LineItem;
 import org.egov.digit.expense.calculator.web.models.LineItems;
 import org.egov.digit.expense.calculator.web.models.MusterRoll;
@@ -28,9 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_APPLICABLE_CHARGES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.JSON_PATH_FOR_HEAD_CODES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_APPLICABLE_CHARGES;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MDMS_HEAD_CODES;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.MUSTER_ROLL_ID_JSON_PATH;
 
 @Component
@@ -40,6 +49,12 @@ public class ExpenseCalculatorUtil {
     private ObjectMapper mapper;
     @Autowired
     private ServiceRequestRepository restRepo;
+    
+    @Autowired
+    private MdmsUtils mdmsUtils;
+    
+    @Autowired
+    private CommonUtil commonUtil;
 
     @Autowired
     private ExpenseCalculatorConfiguration configs;
@@ -234,11 +249,105 @@ public class ExpenseCalculatorUtil {
 
         return bills;
     }
+    
+    public LineItem buildPayableLineItem(BigDecimal amount, String tenantId, String headCode) {
+        return LineItem.builder()
+                 .amount(amount)
+                 .paidAmount(BigDecimal.ZERO)
+                 .tenantId(tenantId)
+                 .isLineItemPayable(true)
+                 .type(LineItem.TypeEnum.PAYABLE)
+                 .headCode(headCode)
+                 .build();
+     }
+    
+    public String getCalculationType(String headCode, List<ApplicableCharge> applicableCharges, String businessService) {
+        for(ApplicableCharge applicableCharge : applicableCharges) {
+            if(applicableCharge.getCode().equalsIgnoreCase(headCode) && applicableCharge.getService().equals(businessService)) {
+            	String calculationType = applicableCharge.getCalculationType();
+                if (StringUtils.isBlank(calculationType)) {
+                    log.error("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +"] and service ["+ businessService +"]");
+                    throw new CustomException("CALCULATION_TYPE_MISSING","MDMS::calculationType missing for head code [" + headCode +"] and service ["+businessService+"]");
+                } else {
+                    return calculationType;
+                }
+            }
+        }
+        log.error("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+businessService+"]");
+        throw new CustomException("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+businessService+"]");
+    }
+    
+    public String getDeductionValue(String headCode, List<ApplicableCharge> applicableCharges) {
+        for(ApplicableCharge applicableCharge : applicableCharges) {
+            if(applicableCharge.getCode().equalsIgnoreCase(headCode)){
+                return applicableCharge.getValue();
+            }
+        }
+        log.error("MISSING_HEAD_CODE","HeadCode ["+headCode+"] missing in applicable charge MDMS");
+        throw new CustomException("MISSING_HEAD_CODE","HeadCode ["+headCode+"] missing in applicable charge MDMS");
+    }
+    
+    public String getHeadCodeCategory(String headCode, List<HeadCode> headCodes, String businessService) {
+        for(HeadCode hCode : headCodes) {
+            if(hCode.getCode().equalsIgnoreCase(headCode)){
+                String category = hCode.getCategory();
+                if (StringUtils.isBlank(category)) {
+                    log.error("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +"] and service ["+businessService+"]");
+                    throw new CustomException("CATEGORY_MISSING","MDMS::category missing for head code [" + headCode +"] and service ["+businessService+"]");
+                } else {
+                    return category;
+                }
+            }
+        }
+        log.error("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+businessService+"]");
+        throw new CustomException("INVALID_HEAD_CODE","Invalid head code [" + headCode +"] for service ["+businessService+"]");
+    }
 
     private StringBuilder searchURI(String host, String endpoint) {
         StringBuilder builder = new StringBuilder(host);
         builder.append(endpoint);
         return builder;
+    }
+    
+    public List<HeadCode> fetchHeadCodesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
+        List<HeadCode> headCodes = fetchMDMSDataForHeadCode(requestInfo, tenantId);
+        List<HeadCode> filteredHeadCodes = headCodes.stream()
+                                                    .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
+        return filteredHeadCodes;
+    }
+    
+    public List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
+        String rootTenantId = tenantId.split("\\.")[0];
+        log.info("Fetch head code list from MDMS");
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMS_HEAD_CODES);
+        List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
+        List<HeadCode> headCodes = new ArrayList<>();
+        for(Object obj : headCodeListJson){
+            HeadCode headCode = mapper.convertValue(obj, HeadCode.class);
+            headCodes.add(headCode);
+        }
+        log.info("Head codes fetched from MDMS");
+        return headCodes;
+    }
+
+    public List<ApplicableCharge> fetchApplicableChargesFromMDMSForService(RequestInfo requestInfo, String tenantId, String service) {
+        List<ApplicableCharge> applicableCharges = fetchMDMSDataForApplicableCharges(requestInfo, tenantId);
+        List<ApplicableCharge> filteredApplicableCharges = applicableCharges.stream()
+                                                                            .filter(e -> service.equalsIgnoreCase(e.getService())).collect(Collectors.toList());
+        return filteredApplicableCharges;
+    }
+    private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
+        String rootTenantId = tenantId.split("\\.")[0];
+        log.info("Fetch head code list from MDMS");
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId,MDMS_APPLICABLE_CHARGES);
+        List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
+        List<ApplicableCharge> applicableCharges = new ArrayList<>();
+        for(Object obj : applicableChargesListJson){
+            ApplicableCharge applicableCharge = mapper.convertValue(obj, ApplicableCharge.class);
+            applicableCharges.add(applicableCharge);
+        }
+        log.info("Head codes fetched from MDMS");
+        return applicableCharges;
     }
 
 

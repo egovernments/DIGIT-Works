@@ -64,6 +64,7 @@ public class NotificationService {
         if ("REJECT".equalsIgnoreCase(workflow.getAction())) {
             pushNotificationToCreatorForRejectAction(request);
         } else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
+            //No template present for Creator Approve Action
             pushNotificationToCreatorForApproveAction(request);
             pushNotificationToCBOForApproveAction(request);
         }
@@ -182,15 +183,17 @@ public class NotificationService {
         }
 
         //get org-details: orgName, contactPersonNames, mobileNumbers
-        Map<String, List<String>> orgDetails = getOrgDetailsForCBOAdmin(request);
+//        Map<String, List<String>> orgDetails = getOrgDetailsForCBOAdmin(request);
 
-        for (int i = 0; i < orgDetails.get("contactPersonNames").size(); i++) {
+        Map<String, List<String>> projDetails = getProjectName(request);
+
+        for (int i = 0; i < projDetails.get("mobileNumbers").size(); i++) {
             Map<String,String> smsDetails=new HashMap<>();
 
-            smsDetails.put("orgName",orgDetails.get("orgName").get(0));
-            smsDetails.put("projectName",orgDetails.get("projectName").get(0));
-            smsDetails.put("personName",orgDetails.get("contactPersonNames").get(i));
-            smsDetails.put("mobileNumber",orgDetails.get("mobileNumbers").get(i));
+            smsDetails.put("projectId",projDetails.get("projectNumber").get(0));
+//            smsDetails.put("projectName",orgDetails.get("projectName").get(0));
+//            smsDetails.put("personName",orgDetails.get("contactPersonNames").get(i));
+            smsDetails.put("mobileNumber",projDetails.get("mobileNumbers").get(i));
 
 
             String customizedMessage = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
@@ -216,22 +219,53 @@ public class NotificationService {
         List<LineItems> lineItems = request.getContract().getLineItems();
         Map<String, List<LineItems>> lineItemsMap = lineItems.stream().collect(Collectors.groupingBy(LineItems::getEstimateId));
         List<Estimate> estimates = estimateServiceUtil.fetchActiveEstimates(requestInfo, tenantId, lineItemsMap.keySet());
-        Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
+//        Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
 
+        //As the new template only requires the project id so fetching it in this class only rather than calling the util method
+//        String projectId = estimates.get(0).getProjectId();Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
+
+        Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
         //get location name from boundary type
-        String boundaryCode = projectDetails.get("boundary");
+/*        String boundaryCode = projectDetails.get("boundary");
         String boundaryType=projectDetails.get("boundaryType");
-        Map<String, String> locationName = locationServiceUtil.getLocationName(tenantId, requestInfo, boundaryCode, boundaryType);
+        Map<String, String> locationName = locationServiceUtil.getLocationName(tenantId, requestInfo, boundaryCode, boundaryType);*/
 
         //get org name
         Map<String, List<String>> orgDetails = organisationServiceUtil.getOrganisationInfo(request);
 
         smsDetails.put("orgName",orgDetails.get("orgName").get(0));
         smsDetails.putAll(userDetailsForSMS);
-        smsDetails.putAll(projectDetails);
-        smsDetails.putAll(locationName);
+        smsDetails.put("projectId",projectDetails.get("projectNumber"));
+
+       /* smsDetails.putAll(projectDetails);
+        smsDetails.putAll(locationName);*/
 
         return smsDetails;
+    }
+    private Map<String, List<String>> getProjectName(ContractRequest request) {
+
+        RequestInfo requestInfo = request.getRequestInfo();
+        Contract contract = request.getContract();
+        String tenantId = contract.getTenantId();
+
+        // fetch project details - project name and location
+        List<LineItems> lineItems = request.getContract().getLineItems();
+        Map<String, List<LineItems>> lineItemsMap = lineItems.stream().collect(Collectors.groupingBy(LineItems::getEstimateId));
+        List<Estimate> estimates = estimateServiceUtil.fetchActiveEstimates(requestInfo, tenantId, lineItemsMap.keySet());
+
+        //As the new template only requires the project id so fetching it in this class only rather than calling the util method
+        String projectId = estimates.get(0).getProjectId();
+         Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
+
+        // Fetching org mobile number and maintaining in the map
+        Map<String,List<String>> projectAndOrgDetails= organisationServiceUtil.getOrganisationInfo(request);
+
+//        orgDetails.put("projectName", Collections.singletonList(projectDetails.get("projectName")));
+
+        projectAndOrgDetails.put("projectId",Collections.singletonList(projectId));
+        projectAndOrgDetails.put("projectNumber", Collections.singletonList(projectDetails.get("projectNumber")));
+
+        return projectAndOrgDetails;
     }
 
     private Map<String, List<String>> getOrgDetailsForCBOAdmin(ContractRequest request) {
@@ -282,9 +316,12 @@ public class NotificationService {
      */
     public String getMessage(ContractRequest request, String msgCode) {
         String rootTenantId = request.getContract().getTenantId().split("\\.")[0];
+        String locale = "en_IN";
+        if(request.getRequestInfo().getMsgId().split("\\|").length > 1)
+            locale = request.getRequestInfo().getMsgId().split("\\|")[1];
         Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(request.getRequestInfo(), rootTenantId,
-                ContractServiceConstants.CONTRACTS_NOTIFICATION_ENG_LOCALE_CODE, ContractServiceConstants.CONTRACTS_MODULE_CODE);
-        return localizedMessageMap.get(ContractServiceConstants.CONTRACTS_NOTIFICATION_ENG_LOCALE_CODE + "|" + rootTenantId).get(msgCode);
+                locale, ContractServiceConstants.CONTRACTS_MODULE_CODE);
+        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
     }
 
     /**
@@ -296,55 +333,52 @@ public class NotificationService {
      * @return
      */
     public String buildMessageForRejectAction(Contract contract, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{CONTRACT_NUMBER}", contract.getContractNumber())
+        /*message = message.replace("{CONTRACT_NUMBER}", contract.getContractNumber())
                 .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
                 .replace("{LOCATION}", userDetailsForSMS.get("locationName"))
                 .replace("{USERNAME}", userDetailsForSMS.get("userName"))
-                .replace("{DESIGNATION}", userDetailsForSMS.get("designation"));
+                .replace("{DESIGNATION}", userDetailsForSMS.get("designation"));*/
+        message = message.replace("{workorderno} ", contract.getContractNumber())
+                .replace("{projectid}", userDetailsForSMS.get("projectId"));
         return message;
     }
 
     public String buildMessageForApproveAction_WO_CBO(Contract contract, Map<String, String> userDetailsForSMS, String message) {
 
-        long dueDate = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(new Integer(config.getContractDueDatePeriod()));
+        /* long dueDate = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(new Integer(config.getContractDueDatePeriod()));
 
-        StringBuilder CBOUrl= new StringBuilder(config.getCboUrlHost()).append(config.getCboUrlEndpoint());
-        String shortendURL = getShortnerURL(CBOUrl.toString());
+       StringBuilder CBOUrl= new StringBuilder(config.getCboUrlHost()).append(config.getCboUrlEndpoint());
+       String shortendURL = getShortnerURL(CBOUrl.toString());
 
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dueDate);
-        String date = formatter.format(calendar.getTime());
+        String date = formatter.format(calendar.getTime());*/
 
-        message = message.replace("{contactPersonName}", userDetailsForSMS.get("personName"))
-                .replace("{organisationName}", userDetailsForSMS.get("orgName"))
-                .replace("{IA/IP}", contract.getExecutingAuthority())
-                .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
-                .replace("{CONTRACT_NUMBER}", contract.getContractNumber())
-                .replace("{dueDate}", formatter.format(calendar.getTime()))
-                .replace("{Organization_Login_URL}", shortendURL);
+        message = message.replace("{projectid}", userDetailsForSMS.get("projectId"))
+                .replace("{cborole}", contract.getExecutingAuthority());
         return message;
     }
 
     public String buildMessageForApproveAction_WOCreator(Contract contract, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{CONTRACT_NUMBER}", contract.getContractNumber())
-                .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
-                .replace("{LOCATION}", userDetailsForSMS.get("locationName"))
-                .replace("{organisationName}", userDetailsForSMS.get("orgName"));
+//        message = message.replace("{CONTRACT_NUMBER}", contract.getContractNumber())
+//                .replace("{PROJECT_NAME}", userDetailsForSMS.get("projectName"))
+//                .replace("{LOCATION}", userDetailsForSMS.get("locationName"))
+//                .replace("{organisationName}", userDetailsForSMS.get("orgName"));
+        message = message.replace("{workorderno}", contract.getContractNumber())
+                .replace("{projectid}", userDetailsForSMS.get("projectId"));
         return message;
     }
 
     public String buildMessageForDeclineAction_WOCreator(Contract contract, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{projectName}", userDetailsForSMS.get("projectName"))
-                .replace("{locationName}", userDetailsForSMS.get("locationName"))
-                .replace("{cboName}", userDetailsForSMS.get("orgName"));
+        message = message.replace("{workorderno}", contract.getContractNumber())
+                .replace("{projectid}", userDetailsForSMS.get("projectId"));
         return message;
     }
 
     public String buildMessageForAcceptAction_WOCreator(Contract contract, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{projectName}", userDetailsForSMS.get("projectName"))
-                .replace("{locationName}", userDetailsForSMS.get("locationName"))
-                .replace("{cboName}", userDetailsForSMS.get("orgName"));
+        message = message.replace("{workorderno}", contract.getContractNumber())
+                .replace("{projectid}", userDetailsForSMS.get("projectId"));
         return message;
     }
 

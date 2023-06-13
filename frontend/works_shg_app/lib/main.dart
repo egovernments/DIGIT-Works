@@ -40,6 +40,7 @@ import 'blocs/attendance/attendance_hours_mdms.dart';
 import 'blocs/attendance/create_attendance_register.dart';
 import 'blocs/attendance/create_attendee.dart';
 import 'blocs/attendance/de_enroll_attendee.dart';
+import 'blocs/attendance/individual_wms_search.dart';
 import 'blocs/attendance/muster_submission_mdms.dart';
 import 'blocs/attendance/search_projects/search_individual_project.dart';
 import 'blocs/auth/auth.dart';
@@ -130,8 +131,7 @@ class _MainApplicationState extends State<MainApplication> {
     super.dispose();
   }
 
-  static void downloadCallback(
-      String id, DownloadTaskStatus status, int progress) {
+  static void downloadCallback(String id, int status, int progress) {
     final SendPort send =
         IsolateNameServer.lookupPortByName('downloader_send_port')!;
 
@@ -233,6 +233,9 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(
             create: (context) =>
                 IndividualSearchBloc(const IndividualSearchState.initial())),
+        BlocProvider(
+            create: (context) => IndividualWMSSearchBloc(
+                const IndividualWMSSearchState.initial())),
         BlocProvider(
             create: (context) => SkillsBloc(const SkillsBlocState.initial(),
                 AttendanceMDMSRepository(client.init()))),

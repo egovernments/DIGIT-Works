@@ -11,11 +11,12 @@ import { editEstimateUtil } from './editEstimateUtil'
 const configNavItems = [
     {
         name: "Project Details",
-        code: "WORKS_PROJECT_DETAILS"
+        code: "WORKS_PROJECT_DETAILS",
     },
     {
         name: "Work Details",
-        code: "WORKS_WORK_DETAILS"
+        code: "WORKS_WORK_DETAILS",
+        activeByDefault: true,
     },
 ]
 const CreateEstimate = () => {
@@ -234,12 +235,18 @@ const CreateEstimate = () => {
 
         let totalLabourAndMaterial = parseInt(_data.analysis.labour) + parseInt(_data.analysis.material)
         //here check totalEst amount should be less than material+labour
-        
         if (_data.totalEstimateAmount < totalLabourAndMaterial )   {
             setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" })
             closeToast()
             return
         } 
+        
+
+        else if(totalLabourAndMaterial === 0) {
+            setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_IMPROPER" })
+            closeToast()
+            return
+        }
             
 
         setInputFormData((prevState) => _data)
@@ -379,6 +386,7 @@ const CreateEstimate = () => {
                 selectedApprover,
                 setSelectedApprover,
                 approverLoading,
+                isEdit
                 // designation,
                 // selectedDesignation,
                 // setSelectedDesignation,
@@ -408,7 +416,7 @@ const CreateEstimate = () => {
         {isLoading?<Loader /> : <ViewDetailsCard cardState={cardState} t={t} createScreen={true}/>}
         {/* {isLoading? <Loader/>: <ViewDetailsCard cardState={cardState} t={t} />} */}
         {isFormReady ? <FormComposer
-            label={isEdit ? "ACTION_TEST_EDIT_ESTIMATE" :"ACTION_TEST_CREATE_ESTIMATE"}
+            label={isEdit ? "CORE_COMMON_SUBMIT" :"ACTION_TEST_CREATE_ESTIMATE"}
             config={estimateFormConfig?.form.map((config) => {
                 return {
                     ...config,

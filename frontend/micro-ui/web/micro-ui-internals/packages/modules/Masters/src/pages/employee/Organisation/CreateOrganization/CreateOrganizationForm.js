@@ -31,6 +31,8 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
     const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
+    const [showDuplicateContactToast, setShowDuplicateContactToast] = useState(false)
+    const [showValidToError, setShowValidToError] = useState(false)
 
     const { mutate: CreateOrganisationMutation } = Digit.Hooks.organisation.useCreateOrganisation();
     const { mutate: UpdateOrganisationMutation } = Digit.Hooks.organisation.useUpdateOrganisation();
@@ -40,6 +42,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
 
     //location data
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
+    const ORG_VALIDTO_DATE = '2099-03-31';
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB });
 
@@ -159,6 +162,13 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         }
     },[showDuplicateUserError]);
 
+    useEffect(() => {
+        if(showValidToError) {
+            setTimeout(()=>{
+                setShowValidToError(false);
+            },3000);
+        }
+    },[showValidToError]);
     const onFormValueChange = async (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
         if (!_.isEqual(sessionFormData, formData)) {
             const difference = _.pickBy(sessionFormData, (v, k) => !_.isEqual(formData[k], v));
@@ -256,8 +266,49 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         });
     }
 
+    const closeToast = () => {
+        setTimeout(() => {
+            setShowDuplicateContactToast(false)
+        }, 10000);
+    }
+
+
     const onSubmit = async (data) => {
-        const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
+
+        //here call org search with mobile number and see if number is already there with some other org , do an early return
+        
+        const contactNumber = data?.contactDetails_mobile
+        const orgNumber = data?.basicDetails_orgId
+       
+        const searchOrgResponse = await Digit.WorksService.searchOrg({
+            SearchCriteria: {
+                "tenantId": tenantId,
+                "contactMobileNumber": contactNumber
+            }
+          })
+
+        // let doEarlyReturn = false
+        // searchOrgResponse?.organisations?.forEach(row => {
+        //     if(row?.orgNumber === orgNumber){
+        //         setShowDuplicateContactToast(true)
+        //         doEarlyReturn = true
+        //         return 
+        //     }
+        // })
+        // if(doEarlyReturn) return
+        
+        //check if another org associated with entered number
+        if(searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.orgNumber !== orgNumber ){
+            setShowDuplicateContactToast(true)
+            closeToast()
+            return 
+        }
+
+        if((data?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)) < Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validFrom)){
+            setShowValidToError(true);
+        }
+        else{
+            const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
             const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
             handleResponseForUpdate(orgPayload, bankAccountPayload);
@@ -269,37 +320,44 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             }
             handleResponseForCreate(orgPayload, data);
         }
+    }
     }   
 
     if(locationDataFetching || orgDataFetching) return <Loader/>
     return (
-        <React.Fragment>
-            <FormComposer
-                label={isModify ? "CORE_COMMON_SAVE" : t("MASTERS_CREATE_ORGANISATION")}
-                config={config?.form}
-                onSubmit={onSubmit}
-                submitInForm={false}
-                fieldStyle={{ marginRight: 0 }}
-                inline={false}
-                className="form-no-margin"
-                defaultValues={sessionFormData}
-                showWrapperContainers={false}
-                isDescriptionBold={false}
-                noBreakLine={true}
-                showNavs={config?.metaData?.showNavs}
-                showFormInNav={true}
-                showMultipleCardsWithoutNavs={false}
-                showMultipleCardsInNavs={false}
-                horizontalNavConfig={navConfig}
-                onFormValueChange={onFormValueChange}
-                cardClassName = "mukta-header-card"
-                labelBold={true}
-            />
-            {
-                showDuplicateUserError && <Toast error={true} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />
-            }
-        </React.Fragment>
-    )
+      <React.Fragment>
+        <FormComposer
+          label={isModify ? "CORE_COMMON_SAVE" : t("MASTERS_CREATE_ORGANISATION")}
+          config={config?.form}
+          onSubmit={onSubmit}
+          submitInForm={false}
+          fieldStyle={{ marginRight: 0 }}
+          inline={false}
+          className="form-no-margin"
+          defaultValues={sessionFormData}
+          showWrapperContainers={false}
+          isDescriptionBold={false}
+          noBreakLine={true}
+          showNavs={config?.metaData?.showNavs}
+          showFormInNav={true}
+          showMultipleCardsWithoutNavs={false}
+          showMultipleCardsInNavs={false}
+          horizontalNavConfig={navConfig}
+          onFormValueChange={onFormValueChange}
+          cardClassName="mukta-header-card"
+          labelBold={true}
+        />
+        {showDuplicateUserError && (
+          <Toast error={true} label={t("ES_COMMON_MOBILE_EXISTS_ERROR")} isDleteBtn={true} onClose={() => setShowDuplicateUserError(false)} />
+        )}
+        {showValidToError && (
+          <Toast error={true} label={t("DATE_VALIDATION_VALID_TO_VALID_FROM_MSG")} isDleteBtn={true} onClose={() => setShowValidToError(false)} />
+        )}
+        {showDuplicateContactToast && (
+          <Toast warning={true} label={t("ES_COMMON_ORG_EXISTS_WITH_MOBILE_NUMBER")} isDleteBtn={true} onClose={() => setShowDuplicateContactToast(false)} />
+        )}
+      </React.Fragment>
+    );
 }
 
 export default CreateOrganizationForm;

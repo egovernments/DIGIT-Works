@@ -22,7 +22,7 @@
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 16px 24px;
+    padding: 15px 24px;
     background: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0 1px 4px;
     z-index: 9999;
@@ -32,24 +32,26 @@
 
       &.city {
         margin-right: 8px;
-        height: 48px;
-        width: 48px;
+        height: 52px;
+        width: 52px;
       }
 
       &.state {
-        height: 20px;
-        max-height: 20px;
+        height: 35px;
+        max-height: 35px;
         width: auto;
       }
     }
 
     .ulb {
       font-weight: bold;
+      font-size: 22px;
+      line-height: 26px;
     }
 
     .right {
       float: right;
-      margin-top: 12px;
+      margin-top: 0px;
 
       .user-img-txt {
         background: theme(colors.primary.main);
@@ -537,3 +539,8 @@
   text-align: right;
 }
 
+.banner{
+  .bannerLogo{
+    width:140px;
+  }
+} 

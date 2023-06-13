@@ -48,20 +48,19 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive,
   return payload_modal;
 }
 
+//getting latitude & logitude from text Input
+const getLatLongfromString = (geolocation, type="LAT") => { 
+  let latlong = geolocation?.split(",");
+  if(type === "LAT")
+  return parseFloat(latlong?.[0]?.trim()) == NaN ? null : parseFloat(latlong?.[0]?.trim());
+  else if(type === "LONG")
+  return parseFloat(latlong?.[1]?.trim()) == NaN ? null : parseFloat(latlong?.[1]?.trim());
+}
+
 const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, docConfigData) => {
   
   let documents_payload_list = [];
   let documentDefaultValue = transformDefaultDocObject(configs?.defaultValues?.noSubProject_docs);
-
-  //new uploaded docs
-  for(let docType of Object.keys(documents)) {
-    for(let document of documents[docType]) {
-      if(_.isArray(document)) {
-      let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE", tenantId, docConfigData); 
-      documents_payload_list.push(payload_modal);
-      }
-    }
-  }
 
   // compare with existing docs
   // if existing docs exists
@@ -91,6 +90,15 @@ const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, 
     }
   }
 
+  //new uploaded docs
+  for(let docType of Object.keys(documents)) {
+    for(let document of documents[docType]) {
+      if(_.isArray(document)) {
+      let payload_modal = createDocObject(document, docType, otherDocFileName, "ACTIVE", tenantId, docConfigData); 
+      documents_payload_list.push(payload_modal);
+      }
+    }
+  }
 
   return documents_payload_list;
 }
@@ -139,8 +147,8 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
             "id" : modifyParams?.modify_addressID,
             "tenantId": tenantId,
             // "doorNo": "1", //Not being captured on UI
-            "latitude": project_details?.geoLocation?.latitude,
-            "longitude": project_details?.geoLocation?.longitude,
+            "latitude": (project_details?.geoLocation?.latitude ? project_details?.geoLocation?.latitude : getLatLongfromString(project_details?.geoLocation,"LAT")) || null, 
+            "longitude": (project_details?.geoLocation?.longitude ? project_details?.geoLocation?.longitude : getLatLongfromString(project_details?.geoLocation,"LONG")) || null,
             // "locationAccuracy": 10000, //Not being captured on UI
             // "type": "Home", //Not being captured on UI
             // "addressLine1": project_details?.geoLocation,

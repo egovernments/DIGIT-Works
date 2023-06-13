@@ -9,6 +9,7 @@ import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
 import '../blocs/localization/app_localization.dart';
+import '../blocs/localization/localization.dart';
 import '../blocs/work_orders/accept_work_order.dart';
 import '../blocs/work_orders/decline_work_order.dart';
 import '../models/attendance/attendance_registry_model.dart';
@@ -106,9 +107,12 @@ class WorkDetailsCard extends StatelessWidget {
         ));
       }
     }
-    return Column(
-      children: list,
-    );
+    return BlocBuilder<LocalizationBloc, LocalizationState>(
+        builder: (context, localState) {
+      return Column(
+        children: list,
+      );
+    });
   }
 
   Widget getCardDetails(BuildContext context, Map<String, dynamic> cardDetails,
@@ -149,11 +153,8 @@ class WorkDetailsCard extends StatelessWidget {
         context,
         title: AppLocalizations.of(context)
             .translate(cardDetails.keys.elementAt(j).toString()),
-        description:
-            cardDetails.keys.elementAt(j).toString() == i18.common.status
-                ? AppLocalizations.of(context)
-                    .translate(cardDetails.values.elementAt(j).toString())
-                : cardDetails.values.elementAt(j).toString(),
+        description: AppLocalizations.of(context)
+            .translate(cardDetails.values.elementAt(j).toString()),
         isActiveStatus: (isWorkOrderInbox || viewWorkOrder) &&
                 cardDetails.keys.elementAt(j).toString() == i18.common.status &&
                 cardDetails.length == j + 2

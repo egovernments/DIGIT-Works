@@ -108,19 +108,23 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                           i18.workOrder.workOrderNo: e
                                                   .musterAdditionalDetails
                                                   ?.contractId ??
-                                              'NA',
+                                              i18.common.noValue,
                                           i18.attendanceMgmt.projectId: e
                                                   .musterAdditionalDetails
                                                   ?.projectId ??
-                                              'NA',
+                                              t.translate(i18.common.noValue),
+                                        i18.attendanceMgmt.projectName: e
+                                            .musterAdditionalDetails
+                                            ?.projectName ??
+                                            i18.common.noValue,
                                           i18.attendanceMgmt.projectDesc: e
                                                   .musterAdditionalDetails
                                                   ?.projectDesc ??
-                                              'NA',
+                                              t.translate(i18.common.noValue),
                                           i18.attendanceMgmt.musterRollPeriod:
                                               '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                                          i18.common.status: t.translate(
-                                              'WF_MUSTOR_${e.musterRollStatus}'),
+                                          i18.common.status:
+                                              'WF_MUSTOR_${e.musterRollStatus}',
                                           Constants.activeInboxStatus:
                                               e.musterRollStatus ==
                                                       sentBackToCBOCode

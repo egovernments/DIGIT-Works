@@ -1698,6 +1698,22 @@ const InfoIcon = ({ className = "", fill = "none", style = {} }) => (
     <path d="M9 5H11V7H9V5ZM9 9H11V15H9V9ZM10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM10 18C5.59 18 2 14.41 2 10C2 5.59 5.59 2 10 2C14.41 2 18 5.59 18 10C18 14.41 14.41 18 10 18Z" fill="#505A5F"/>
   </svg>
 )
+const PaymentIcon = ({ className = "", fill = "none", style = {} }) => (
+  <svg width="34" height="34" viewBox="0 0 34 34" className={className} style={style} fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_7555_25801)">
+      <path
+        d="M23.9987 2.66675H7.9987C6.53203 2.66675 5.33203 3.86675 5.33203 5.33341V26.6667C5.33203 28.1334 6.53203 29.3334 7.9987 29.3334H23.9987C25.4654 29.3334 26.6654 28.1334 26.6654 26.6667V5.33341C26.6654 3.86675 25.4654 2.66675 23.9987 2.66675ZM7.9987 5.33341H14.6654V16.0001L11.332 14.0001L7.9987 16.0001V5.33341Z"
+        fill="white"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_7555_25801">
+        <rect width="32" height="32" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
 const ExpenditureIcon = BillsIcon;
 
 export {
@@ -1846,5 +1862,6 @@ export {
   DashboardIcon,
   ExpenditureIcon,
   DoubleTickIcon,
-  InfoIcon
+  InfoIcon,
+  PaymentIcon
 };

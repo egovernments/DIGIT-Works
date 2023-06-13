@@ -2,12 +2,12 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import digit.models.coremodels.user.Role;
 import digit.models.coremodels.user.enums.BloodGroup;
 import digit.models.coremodels.user.enums.Gender;
 import digit.models.coremodels.user.enums.GuardianRelation;
 import digit.models.coremodels.user.enums.UserType;
 import lombok.*;
+import org.egov.common.models.core.Role;
 import org.egov.util.OrganisationConstant;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.SafeHtml;
