@@ -14,7 +14,11 @@ const getBeneficiaryData = async (wageBillDetails, tenantId, musterRoll, t) => {
       tableRow.registerId = individual?.additionalDetails?.userId || t("NA")
       tableRow.nameOfIndividual = individual?.additionalDetails?.userName || t("NA")
       tableRow.guardianName = individual?.additionalDetails?.fatherName || t("NA")
-      tableRow.amount = item?.payableLineItems?.[0]?.amount || 0 //check if correct
+      // tableRow.amount = item?.payableLineItems?.[0]?.amount || 0 //check if correct(add all payable here)
+      tableRow.amount = item?.payableLineItems?.reduce((acc,item)=>{
+        if(item?.type==="PAYABLE") return acc + item.amount
+        return acc 
+      },0) || 0 //check if correct(add all payable here)
       tableRow.bankAccountDetails = {
         accountNo : individual?.additionalDetails?.bankDetails || t("NA"), 
         ifscCode : null
@@ -97,19 +101,33 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
     }
   }
 
+ 
+  const calcDeductions = wageBill?.billDetails
+    ?.map((item) => {
+      return item.payableLineItems.filter((item) => item.headCode === "LC");
+    })
+    .reduce((acc, item) => {
+      return item?.[0]?.amount + acc;
+    }, 0);
+
   const billAmount = {
     title: "EXP_BILL_DETAILS",
     asSectionHeader: true,
     values: [
-        { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(wageBill?.totalAmount, "number") || t("ES_COMMON_NA")},
-    ]
+        { title: "EXP_BILL_AMOUNT", value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount), "number") || t("ES_COMMON_NA")},
+        { title: "WB_DEDUCTIONS", value: Digit.Utils.dss.formatterWithoutRound(calcDeductions.toFixed(2), "number") || t("ES_COMMON_NA")},
+    ],
+    amountStyle: {
+      width:"8rem",
+      textAlign:"right"
+    }
   }
 
   const netPayable = {
     title: " ",
     asSectionHeader: true,
     Component: Digit.ComponentRegistryService.getComponent("PayableAmt"),
-    value: Digit.Utils.dss.formatterWithoutRound(wageBill?.totalAmount, "number") || t("ES_COMMON_NA")
+    value: Digit.Utils.dss.formatterWithoutRound(Math.round(wageBill?.totalAmount-calcDeductions), "number") || t("ES_COMMON_NA")
 }
 
   const applicationDetails = { applicationDetails: [billDetails, beneficiaryDetails, billAmount, netPayable] };

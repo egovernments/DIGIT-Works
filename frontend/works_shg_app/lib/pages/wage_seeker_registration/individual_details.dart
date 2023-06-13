@@ -222,6 +222,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         padding: const EdgeInsets.only(top: 32.0),
                         isRequired: true,
                         cancelText: t.translate(i18.common.cancel),
+                        fieldHintText: 'dd/mm/yyyy',
                         confirmText: t.translate(i18.common.oK),
                         icon: Icons.info_outline_rounded,
                         toolTipMsg: t.translate(i18.wageSeeker.ageValidation),
@@ -240,7 +241,6 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       StatefulBuilder(builder:
                           (BuildContext context, StateSetter setState) {
                         return DigitRadioButtonList<String>(
-                          context,
                           labelText: t.translate(i18.common.gender),
                           formControlName: genderKey,
                           options: gender.map((e) => e.toString()).toList(),
@@ -287,9 +287,10 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                       // StatefulBuilder(
                       //     builder: (BuildContext context, StateSetter setState) {
                       MultiSelectSearchCheckBox(
-                        label: t.translate(i18.attendanceMgmt.skill) + '*',
+                        label: t.translate(i18.attendanceMgmt.skill) + ' *',
                         onChange: _onSelectedOptionsChanged,
                         options: skills,
+                        hintText: t.translate(i18.attendanceMgmt.skill),
                         selectedOptions: selectedOptions,
                       ),
                       // }),

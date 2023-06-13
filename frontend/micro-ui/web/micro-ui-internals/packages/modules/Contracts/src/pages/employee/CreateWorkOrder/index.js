@@ -102,7 +102,7 @@ const CreateWorkOrder = () => {
     const createDocumentObject = (documents) => {
         let docs =  documents?.filter(document=>document?.fileStoreId)?.map((document) => {
             return {
-                title: document?.fileType,
+                title: document?.fileType==="Others"?document?.fileName:document?.fileType,
                 documentType: document?.fileType,
                 documentUid: document?.documentUid,
                 fileStoreId: document?.fileStoreId,
@@ -132,7 +132,9 @@ const CreateWorkOrder = () => {
     const  { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch({ roles: "OFFICER_IN_CHARGE", isActive: true }, tenantId, null, null, { enabled: true });
 
     //organisation search
-    const { isLoading : isOrgSearchLoading, data : organisationOptions } = Digit.Hooks.organisation.useSearchOrg(searchOrgPayload);
+    const { isLoading : isOrgSearchLoading, data : organisationOptions } = Digit.Hooks.organisation.useSearchOrg(searchOrgPayload, {
+        cacheTime: 0
+    });
     
     //Overheads Search
     const { isLoading : isOverHeadsMasterDataLoading, data : overHeadMasterData } = Digit.Hooks.useCustomMDMS(
@@ -172,7 +174,8 @@ const CreateWorkOrder = () => {
                 totalAmount -= amountDetails?.amount;
             }
         })
-        return totalAmount;
+        
+        return Math.round(totalAmount);
     }
 
     useEffect(()=>{

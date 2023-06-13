@@ -900,6 +900,7 @@ class ContractAdditionalDetailsMapperElement
           officerInChargeId: container.$getOpt(map, 'officerInChargeId'),
           attendanceRegisterNumber:
               container.$getOpt(map, 'attendanceRegisterNumber'),
+          cboOrgNumber: container.$getOpt(map, 'cboOrgNumber'),
           projectId: container.$getOpt(map, 'projectId'),
           projectType: container.$getOpt(map, 'projectType'),
           orgName: container.$getOpt(map, 'orgName'),
@@ -925,6 +926,7 @@ class ContractAdditionalDetailsMapperElement
             container.$enc(c.officerInChargeId, 'officerInChargeId'),
         'attendanceRegisterNumber': container.$enc(
             c.attendanceRegisterNumber, 'attendanceRegisterNumber'),
+        'cboOrgNumber': container.$enc(c.cboOrgNumber, 'cboOrgNumber'),
         'projectId': container.$enc(c.projectId, 'projectId'),
         'projectType': container.$enc(c.projectType, 'projectType'),
         'orgName': container.$enc(c.orgName, 'orgName'),
@@ -950,12 +952,13 @@ class ContractAdditionalDetailsMapperElement
 
   @override
   String stringify(ContractAdditionalDetails self) =>
-      'ContractAdditionalDetails(officerInChargeId: ${container.asString(self.officerInChargeId)}, attendanceRegisterNumber: ${container.asString(self.attendanceRegisterNumber)}, orgName: ${container.asString(self.orgName)}, projectId: ${container.asString(self.projectId)}, projectName: ${container.asString(self.projectName)}, projectDesc: ${container.asString(self.projectDesc)}, projectType: ${container.asString(self.projectType)}, ward: ${container.asString(self.ward)}, cboName: ${container.asString(self.cboName)}, officerInChargeName: ${container.asString(self.officerInChargeName)}, officerInChargeDesgn: ${container.asString(self.officerInChargeDesgn)}, cboCode: ${container.asString(self.cboCode)}, estimateNumber: ${container.asString(self.estimateNumber)}, locality: ${container.asString(self.locality)}, totalEstimatedAmount: ${container.asString(self.totalEstimatedAmount)}, estimateDocs: ${container.asString(self.estimateDocs)}, termsAndConditions: ${container.asString(self.termsAndConditions)}, completionPeriod: ${container.asString(self.completionPeriod)})';
+      'ContractAdditionalDetails(officerInChargeId: ${container.asString(self.officerInChargeId)}, attendanceRegisterNumber: ${container.asString(self.attendanceRegisterNumber)}, orgName: ${container.asString(self.orgName)}, cboOrgNumber: ${container.asString(self.cboOrgNumber)}, projectId: ${container.asString(self.projectId)}, projectName: ${container.asString(self.projectName)}, projectDesc: ${container.asString(self.projectDesc)}, projectType: ${container.asString(self.projectType)}, ward: ${container.asString(self.ward)}, cboName: ${container.asString(self.cboName)}, officerInChargeName: ${container.asString(self.officerInChargeName)}, officerInChargeDesgn: ${container.asString(self.officerInChargeDesgn)}, cboCode: ${container.asString(self.cboCode)}, estimateNumber: ${container.asString(self.estimateNumber)}, locality: ${container.asString(self.locality)}, totalEstimatedAmount: ${container.asString(self.totalEstimatedAmount)}, estimateDocs: ${container.asString(self.estimateDocs)}, termsAndConditions: ${container.asString(self.termsAndConditions)}, completionPeriod: ${container.asString(self.completionPeriod)})';
   @override
   int hash(ContractAdditionalDetails self) =>
       container.hash(self.officerInChargeId) ^
       container.hash(self.attendanceRegisterNumber) ^
       container.hash(self.orgName) ^
+      container.hash(self.cboOrgNumber) ^
       container.hash(self.projectId) ^
       container.hash(self.projectName) ^
       container.hash(self.projectDesc) ^
@@ -978,6 +981,7 @@ class ContractAdditionalDetailsMapperElement
       container.isEqual(
           self.attendanceRegisterNumber, other.attendanceRegisterNumber) &&
       container.isEqual(self.orgName, other.orgName) &&
+      container.isEqual(self.cboOrgNumber, other.cboOrgNumber) &&
       container.isEqual(self.projectId, other.projectId) &&
       container.isEqual(self.projectName, other.projectName) &&
       container.isEqual(self.projectDesc, other.projectDesc) &&
@@ -1045,6 +1049,7 @@ abstract class ContractAdditionalDetailsCopyWith<
   $R call(
       {String? officerInChargeId,
       String? attendanceRegisterNumber,
+      String? cboOrgNumber,
       String? projectId,
       String? projectType,
       String? orgName,
@@ -1101,6 +1106,7 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
   $R call(
           {Object? officerInChargeId = $none,
           Object? attendanceRegisterNumber = $none,
+          Object? cboOrgNumber = $none,
           Object? projectId = $none,
           Object? projectType = $none,
           Object? orgName = $none,
@@ -1121,6 +1127,7 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
           officerInChargeId: or(officerInChargeId, $value.officerInChargeId),
           attendanceRegisterNumber:
               or(attendanceRegisterNumber, $value.attendanceRegisterNumber),
+          cboOrgNumber: or(cboOrgNumber, $value.cboOrgNumber),
           projectId: or(projectId, $value.projectId),
           projectType: or(projectType, $value.projectType),
           orgName: or(orgName, $value.orgName),

@@ -130,13 +130,17 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                         'cardDetails': {
                                           i18.workOrder.workOrderNo: e
                                                   .contractNumber ??
-                                              t.translate(i18.common.noValue),
+                                              i18.common.noValue,
+                                          i18.attendanceMgmt.projectName: e
+                                                  .additionalDetails
+                                                  ?.projectName ??
+                                              i18.common.noValue,
                                           i18.attendanceMgmt.projectDesc: e
                                                   .additionalDetails
                                                   ?.projectDesc ??
-                                              t.translate(i18.common.noValue),
-                                          i18.workOrder.roleOfCBO: t.translate(
-                                              'COMMON_MASTERS_${e.executingAuthority ?? 'NA'}'),
+                                              i18.common.noValue,
+                                          i18.workOrder.roleOfCBO:
+                                              'COMMON_MASTERS_${e.executingAuthority ?? 'NA'}',
                                           i18.attendanceMgmt.engineerInCharge: e
                                                   .additionalDetails
                                                   ?.officerInChargeName
@@ -148,7 +152,7 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                               ? DateFormats.timeStampToDate(
                                                   e.issueDate,
                                                   format: "dd/MM/yyyy")
-                                              : t.translate(i18.common.noValue),
+                                              : i18.common.noValue,
                                           i18.workOrder.dueDate: e.issueDate !=
                                                   null
                                               ? DateFormats.getFilteredDate(DateTime
@@ -160,8 +164,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                               : t.translate(i18.common.noValue),
                                           i18.workOrder.workOrderAmount:
                                               '₹ ${NumberFormat('##,##,##,##,###').format(e.totalContractedAmount ?? 0)}',
-                                          i18.common.status: t.translate(
-                                              'WF_WORK_ORDER_STATE_${e.wfStatus.toString()}'),
+                                          i18.common.status:
+                                              'WF_WORK_ORDER_STATE_${e.wfStatus.toString()}',
                                           Constants.activeInboxStatus:
                                               e.wfStatus != acceptCode
                                                   ? 'false'
@@ -225,6 +229,8 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                                             {
                                                                           i18.workOrder.workOrderNo:
                                                                               e.contractNumber ?? t.translate(i18.common.noValue),
+                                                                          i18.attendanceMgmt.projectName:
+                                                                              e.additionalDetails?.projectName ?? t.translate(i18.common.noValue),
                                                                           i18.attendanceMgmt.projectDesc:
                                                                               e.additionalDetails?.projectDesc ?? t.translate(i18.common.noValue),
                                                                           i18.workOrder.roleOfCBO:

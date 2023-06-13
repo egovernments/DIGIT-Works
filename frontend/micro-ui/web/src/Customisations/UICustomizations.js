@@ -110,7 +110,12 @@ export const UICustomizations = {
                 
             }
 
-        }
+        },
+        additionalValidations: (type, data, keys) => {
+            if(type === 'date') {
+                return (data[keys.start] && data[keys.end]) ? () => new Date(data[keys.start]).getTime() < new Date(data[keys.end]).getTime() : true
+            }
+        },
     },
     SearchAttendanceConfig: {
         preProcess: (data) => {

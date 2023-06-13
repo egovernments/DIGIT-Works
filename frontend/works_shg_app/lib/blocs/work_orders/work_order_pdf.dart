@@ -25,6 +25,7 @@ class WorkOrderPDFBloc extends Bloc<WorkOrderPDFEvent, WorkOrderPDFState> {
   ) async {
     Client client = Client();
     try {
+      var selectedLocale = await GlobalVariables.selectedLocale();
       await CommonRepository(client.init()).downloadPDF(
         url: '${Urls.commonServices.pdfDownload}/workOrder/work-order',
         queryParameters: {
@@ -34,7 +35,8 @@ class WorkOrderPDFBloc extends Bloc<WorkOrderPDFEvent, WorkOrderPDFState> {
         fileName: 'WorkOrder.pdf',
         options: Options(extra: {
           "userInfo": GlobalVariables.userRequestModel,
-          "accessToken": GlobalVariables.authToken
+          "accessToken": GlobalVariables.authToken,
+          "msgId": "20170310130900|$selectedLocale"
         }, headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
         }, responseType: ResponseType.bytes),

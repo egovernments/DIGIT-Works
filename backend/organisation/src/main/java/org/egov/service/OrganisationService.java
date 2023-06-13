@@ -55,7 +55,11 @@ public class OrganisationService {
         //userService.createUser(orgRequest);
         individualService.createIndividual(orgRequest);
         producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
-        notificationService.sendNotification(orgRequest,true);
+        try {
+            notificationService.sendNotification(orgRequest, true);
+        }catch (Exception e){
+            log.error("Exception while sending notification: " + e);
+        }
         return orgRequest;
     }
 

@@ -366,6 +366,7 @@ function ApplicationDetailsContent({
                       rowContainerStyle={getRowStyles(detail?.tab)}
                       textStyle={getTextStyles(detail?.tab)}
                       labelStyle={getLabelStyles(detail?.tab)}
+                      amountStyle={detail?.amountStyle}
                     />
                   );
                 })}

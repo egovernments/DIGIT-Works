@@ -3,6 +3,7 @@ import _ from "lodash";
 import React from "react";
 import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 
+
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares
@@ -186,6 +187,11 @@ export const UICustomizations = {
           return t("ES_COMMON_NA");
       }
      },
+     additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
@@ -351,8 +357,7 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data) => {
-      
+    preProcess: (data,defaultValues) => {
       //get data to set in api
       const fromProposalDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.fromProposalDate,"daystart");
       if(fromProposalDate) data.body.inbox.moduleSearchCriteria.fromProposalDate = fromProposalDate
@@ -382,6 +387,19 @@ export const UICustomizations = {
       //set tenantId 
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+
+      //here iterate over defaultValues and set from presets in the api
+      
+      const presets  = Digit.Hooks.useQueryParams();
+      if(Object.keys(presets).length > 0 ) {
+        Object.keys(presets).forEach(preset => {
+          //if present in defaultValues object then only set it
+          if(Object.keys(defaultValues).some(key => key===preset)){
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+          }
+        })
+      }
+
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
@@ -405,6 +423,19 @@ export const UICustomizations = {
           </span>
         );
       }
+      if (key === "ES_COMMON_PROJECT_NAME") {
+        return (
+          <div class="tooltip">
+            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </span>
+            {/* check condtion - if length greater than 20 */}
+            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+              {row?.businessObject?.project?.description || t("ES_COMMON_NA")}
+            </span>
+          </div>
+        );
+      }
       if (key === "WORKS_ESTIMATED_AMOUNT") {
         return <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount>
       }
@@ -421,6 +452,11 @@ export const UICustomizations = {
           return <p>{`${ward ? ward + ", " : ""}${city}`}</p>;
         }
         return <p>{"NA"}</p>;
+      }
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {
@@ -509,6 +545,8 @@ export const UICustomizations = {
       const { createdFrom, createdTo } = data;
       if (createdTo !== "" && createdFrom === "")
         return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      else if (createdTo === "" && createdFrom !== "")
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
 
       return false;
     },
@@ -572,6 +610,11 @@ export const UICustomizations = {
         return t("ES_COMMON_NA");
       }
     },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
@@ -580,10 +623,139 @@ export const UICustomizations = {
       });
       return link;
     },
+  },
+  SearchWMSProjectConfig: {
+    preProcess: (data) => {
+     const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdFrom, "daystart");
+      const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.inbox.moduleSearchCriteria?.createdTo);
+      const projectType = data.body.inbox.moduleSearchCriteria?.projectType?.code;
+      const boundary = data.body.inbox.moduleSearchCriteria?.boundary?.[0]?.code;
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), includeAncestors: true };
+      let projectName = data.body.inbox.moduleSearchCriteria?.projectName?.trim();
+      let projectNumber = data.body.inbox.moduleSearchCriteria?.projectNumber?.trim()
+      delete data.body.inbox.moduleSearchCriteria?.createdFrom;
+      delete data.body.inbox.moduleSearchCriteria?.ward;
+      delete data.body.inbox.moduleSearchCriteria?.createdTo;
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria, tenantId: Digit.ULBService.getCurrentTenantId(),projectNumber, projectType, projectName, boundary, createdFrom, createdTo};
+
+      return data;
+    },
+    postProcess: (responseArray) => {
+      const listOfUuids = responseArray?.map((row) => row.auditDetails.createdBy);
+      const uniqueUuids = listOfUuids?.filter(function (item, i, ar) {
+        return ar.indexOf(item) === i;
+      });
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+      const reqCriteria = {
+        url: "/user/_search",
+        params: {},
+        body: { tenantId, pageSize: 100, uuid: [...uniqueUuids] },
+        config: {
+          enabled: responseArray?.length > 0 ? true : false,
+          select: (data) => {
+            const usersResponse = data?.user;
+            responseArray?.forEach((row) => {
+              const uuid = row?.auditDetails?.createdBy;
+              const user = usersResponse?.filter((user) => user.uuid === uuid);
+              row.createdBy = user?.[0].name;
+            });
+            return responseArray;
+          },
+        },
+      };
+      const { isLoading: isPostProcessLoading, data: combinedResponse, isFetching: isPostProcessFetching } = Digit.Hooks.useCustomAPIHook(
+        reqCriteria
+      );
+
+      return {
+        isPostProcessFetching,
+        isPostProcessLoading,
+        combinedResponse,
+      };
+    },
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if (createdTo !== "" && createdFrom === "")
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+      else if (createdTo === "" && createdFrom !== "")
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      //here we can add multiple conditions
+      //like if a cell is link then we return link
+      //first we can identify which column it belongs to then we can return relevant result
+     switch(key){
+        case "WORKS_PROJECT_ID":
+         return (
+          <span className="link">
+            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.tenantId}&projectNumber=${value}`}>
+            {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+         );
+
+       case "WORKS_PARENT_PROJECT_ID":
+         return value ? (
+          <span className="link">
+            <Link to={`/${window.contextPath}/employee/project/project-details?tenantId=${row?.businessObject?.tenantId}&projectNumber=${value}`}>
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </Link>
+          </span>
+         ) : (
+          t("ES_COMMON_NA")
+         );
+
+      case "WORKS_PROJECT_NAME": 
+       { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
+        return (
+          <div class="tooltip">
+            <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>         
+              {String(t(value))}
+            </span>
+            {/* check condtion - if length greater than 20 */}
+            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+              {currentProject?.description}
+            </span>
+          </div>
+         ); }
+
+      case "PROJECT_ESTIMATED_COST_IN_RS":
+        return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
+
+      case "ES_COMMON_LOCATION":    
+      { let currentProject = searchResult?.filter((result) => result?.businessObject.id === row?.businessObject.id)[0].businessObject;
+        const headerLocale = Digit.Utils.locale.getTransformedLocale(row?.businessObject.tenantId)
+        if (currentProject) {
+          let locality = currentProject?.address?.boundary ? t(`${headerLocale}_ADMIN_${currentProject?.address?.boundary}`) : "";
+          let ward = currentProject?.additionalDetails?.ward ? t(`${headerLocale}_ADMIN_${currentProject?.additionalDetails?.ward}`) : "";
+          let city = currentProject?.address?.city
+            ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(currentProject?.address?.city)}`)
+            : "";
+          return <p>{`${locality ? locality + ", " : ""}${ward ? ward + ", " : ""}${city}`}</p>;
+        }
+        return <p>{"NA"}</p>
+      }
+
+      default:
+        return t("ES_COMMON_NA");
+      }
+    },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "WORKS_PROJECT_ID")
+          link = `/${window.contextPath}/employee/project/project-details?tenantId=${tenantId}&projectNumber=${row[key]}`;
+      });
+      return link;
     },
   },
   SearchAttendanceConfig: {
@@ -652,7 +824,6 @@ export const UICustomizations = {
       }
 
       if (key === "ES_COMMON_PROJECT_NAME") {
-        
         return (
           <div class="tooltip">
             <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
@@ -660,7 +831,7 @@ export const UICustomizations = {
             </span>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
-              {row?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
+              {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
             </span>
           </div>
         );
@@ -789,9 +960,9 @@ export const UICustomizations = {
     },
   },
   SearchContractConfig: {
-    preProcess: (data) => {
-      const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom);
-      const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo);
+    preProcess: (data,defaultValues) => {
+      const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom,'daystart');
+      const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo,'dayend');
       const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
       const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
       const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
@@ -813,6 +984,17 @@ export const UICustomizations = {
           status
         },
       };
+
+      const presets  = Digit.Hooks.useQueryParams();
+      if(Object.keys(presets).length > 0 ) {
+        Object.keys(presets).forEach(preset => {
+          //if present in defaultValues object then only set it
+          if(Object.keys(defaultValues).some(key => key===preset)){
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+          }
+        })
+      }
+      
       return data;
     },
     customValidationCheck: (data) => {
@@ -837,6 +1019,20 @@ export const UICustomizations = {
             </Link>
           </span>
         );
+      
+      case "WORKS_PROJECT_NAME":
+          return (
+            <div class="tooltip">
+              <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+                {String(t(value))}
+              </span>
+              {/* check condtion - if length greater than 20 */}
+              <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+                {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
+              </span>
+            </div>
+          );
+        
       case "ES_COMMON_AMOUNT":
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       case "COMMON_ROLE_OF_CBO": 
@@ -1006,6 +1202,110 @@ export const UICustomizations = {
       }
     }
   },
+  SearchWMSWageSeekerConfig: {
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+    preProcess: (data) => {
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
+
+      let requestBody = { ...data.body.inbox.moduleSearchCriteria };
+      const pathConfig = {
+      };
+      const dateConfig = {
+        createdFrom: "daystart",
+        createdTo: "dayend",
+      };
+      const selectConfig = {
+        ward: "ward[0].code",
+        name: "name.givenName",
+        socialCategoryValue: "socialCategoryValue.code",
+      };
+      const textConfig = ["name", "individualId"]
+      
+      let Individual = Object.keys(requestBody)
+        .map((key) => {
+          if (selectConfig[key]) {
+            requestBody[key] = _.get(requestBody, selectConfig[key], null);
+          } else if (typeof requestBody[key] == "object") {
+            requestBody[key] = requestBody[key]?.code;
+          } else if (textConfig?.includes(key)) {
+            requestBody[key] = requestBody[key]?.trim()
+          }
+          return key;
+        })
+        .filter((key) => requestBody[key])
+        .reduce((acc, curr) => {
+          if (pathConfig[curr]) {
+            _.set(acc, pathConfig[curr], requestBody[curr]);
+          } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
+            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+          } else {
+            _.set(acc, curr, requestBody[curr]);
+          }
+          return acc;
+        }, {});
+
+      data.body.inbox.moduleSearchCriteria = { ...data.body.inbox.moduleSearchCriteria ,...Individual, tenantId:Digit.ULBService.getCurrentTenantId()};
+      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId()
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      //here we can add multiple conditions
+      //like if a cell is link then we return link
+      //first we can identify which column it belongs to then we can return relevant result
+      switch (key) {
+        case "MASTERS_WAGESEEKER_ID":
+          return (
+            <span className="link">
+              <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.businessObject?.tenantId}&individualId=${value}`}>
+                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link>
+            </span>
+          );
+
+        case "MASTERS_SOCIAL_CATEGORY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+
+        case "CORE_COMMON_PROFILE_CITY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
+
+        case "MASTERS_WARD":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.businessObject.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+
+        case "MASTERS_LOCALITY":
+          return value ? (
+            <span style={{ whiteSpace: "break-spaces" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.businessObject.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "MASTERS_WAGESEEKER_ID")
+          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    }
+  },
   SearchOrganisationConfig: {
     customValidationCheck: (data) => {
       //checking both to and from date are present
@@ -1113,7 +1413,8 @@ export const UICustomizations = {
 
       return false;
     },
-    preProcess: (data) => {
+    preProcess: (data,defaultValues) => {
+      
       
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
@@ -1149,6 +1450,17 @@ export const UICustomizations = {
       }, {});
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.moduleSearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+
+      const presets  = Digit.Hooks.useQueryParams();
+      if(Object.keys(presets).length > 0 ) {
+        Object.keys(presets).forEach(preset => {
+          //if present in defaultValues object then only set it
+          if(Object.keys(defaultValues).some(key => key===preset)){
+            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+          }
+        })
+      }
+
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
@@ -1182,8 +1494,23 @@ export const UICustomizations = {
       if (key === "EXP_BILL_AMOUNT") {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
+
+      if (key === "WORKS_PROJECT_NAME") {
+        return (
+          <div class="tooltip">
+            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </span>
+            {/* check condtion - if length greater than 20 */}
+            <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
+              {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
+            </span>
+          </div>
+        );
+      }
+
       if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+        return value ? t(`BILL_STATUS_PAYMENT_INITIATED`) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
         const location = {
@@ -1261,7 +1588,7 @@ export const UICustomizations = {
       })
 
       const payload = getCreatePaymentPayload(result.bills);
-      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_SUCCESS"}
+      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_INITIATED_TOAST"}
       try {
         const response = await Digit.ExpenseService.createPayment(payload);
         responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
@@ -1540,7 +1867,7 @@ export const UICustomizations = {
         return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>
       }
       if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_${value}`) : t("ES_COMMON_NA")
+        return t("BILL_STATUS_PAYMENT_INITIATED")
       }
       if(key === "ES_COMMON_DATE") {
         return value ? Digit.DateUtils.ConvertTimestampToDate(parseInt(value), "dd/MM/yyyy") : t("ES_COMMON_NA")
