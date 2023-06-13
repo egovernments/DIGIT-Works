@@ -115,6 +115,7 @@ class Common {
   String get branchName => 'COMMON_BRANCH_NAME';
   String get photoGraph => 'COMMON_PHOTOGRAPH';
   String get inProgress => 'IN_PROGRESS_LABEL';
+  String get wageSeekerID => 'MASTERS_WAGESEEKER_ID';
   String get completed => 'COMPLETED_LABEL';
   String get info => 'ES_COMMON_INFO';
   String get clickToAddPhoto => 'CLICK_TO_ADD_PHOTO';
@@ -211,6 +212,7 @@ class WageSeeker {
   String get minMobileCharacters => 'MIN_MOBILE_CHARCTERS_REQUIRED';
   String get minAadhaarCharacters => 'MIN_AADHAAR_CHARCTERS_REQUIRED';
   String get maxMobileCharacters => 'MAX_MOBILE_CHARCTERS_REQUIRED';
+  String get validMobileCharacters => 'MAX_VALID_MOBILE_CHARCTERS_REQUIRED';
   String get maxAadhaarCharacters => 'MAX_AADHAAR_CHARCTERS_REQUIRED';
   String get pinCodeRequired => 'PINCODE_IS_REQUIRED';
   String get localityRequired => 'LOCALITY_IS_REQUIRED';

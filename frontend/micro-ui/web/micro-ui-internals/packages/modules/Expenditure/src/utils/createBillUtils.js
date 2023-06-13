@@ -11,8 +11,14 @@ const createDocObject = (document, docType, otherDocFileName="Others", isActive,
     payload_modal.fileStore = document?.[1]?.['fileStoreId']?.['fileStoreId'];
     payload_modal.documentUid = document?.[1]?.['fileStoreId']?.['fileStoreId'];
     payload_modal.key = docType;
+    
+    let fileName = "";
+    if (document?.[1]?.['file']?.['name']) fileName = document?.[1]?.['file']?.['name'];
+    else if (document?.[0]) fileName = document?.[0];
+    else  fileName = documentType?.filter(doc=>doc?.name === docType)?.[0]?.code;
+
     payload_modal.additionalDetails = {
-      fileName : document?.[1]?.['file']?.['name'] ? document?.[1]?.['file']?.['name'] :  documentType?.filter(doc=>doc?.name === docType)?.[0]?.code,
+      fileName : fileName,
       otherCategoryName :  docType === "doc_others" ? otherDocFileName : ""
     }
     return payload_modal;
@@ -36,7 +42,7 @@ const fetchDocuments = (documents, otherDocFileName, docConfigData) => {
 
 const fetchDeductions = (deductions, tenantId) => {
 
-    let deductionsList = deductions?.filter(row => row && row.amount!=="0")?.map(row => {
+    let deductionsList = deductions?.filter(row => row && row.amount!=="0" && row.name && row.amount)?.map(row => {
         return {
             "tenantId": tenantId,
             "headCode": row?.name?.code,
@@ -53,7 +59,7 @@ const fetchDeductions = (deductions, tenantId) => {
 }
 
 export const createBillPayload = (data, contract,  docConfigData,workflowDetails) => {
-  
+
     const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     const tenantId = Digit.ULBService.getCurrentTenantId()
     let DeductionsList = fetchDeductions(data?.deductionDetails, tenantId)

@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 0.1.0+1
 
 environment:
-  sdk: '>=2.18.4 <3.0.0'
+  sdk: '>=2.19.4 <=4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -45,8 +45,6 @@ dependencies:
   auto_route: ^5.0.2
   freezed_annotation: ^2.2.0
   json_annotation: ^4.8.0
-  faker: ^2.0.0 # Library can be removed when no longer needed for fake data
-  google_fonts: ^3.0.1
   http_mock_adapter: ^0.3.3
   pin_input_text_field: ^4.5.0
   logging: ^1.1.0

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo } from "react";
-import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Loader, Dropdown } from "@egovernments/digit-ui-react-components";
+import { AddIcon, DeleteIcon, RemoveIcon, TextInput, CardLabelError, Loader, Dropdown,InputTextAmount } from "@egovernments/digit-ui-react-components";
 import { Controller } from "react-hook-form";
 import _ from "lodash";
 
@@ -135,7 +135,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
         if(row) {
           setValue(`${formFieldName}.${index}.name`,'')
           setValue(`${formFieldName}.${index}.percentage`,'')
-          setValue(`${formFieldName}.${index}.amount`,'')
+          setValue(`${formFieldName}.${index}.amount`,"0")
         }
       })
       
@@ -310,7 +310,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
 
           <td style={getStyles(4)}>
             <div style={cellContainerStyle}>
-              <TextInput
+              {/* <TextInput
                 style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
                 name={`${formFieldName}.${row.key}.amount`}
                 inputRef={register({
@@ -319,7 +319,31 @@ const OverheadsTable = ({ control, watch, ...props }) => {
                   pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
                 })}
                 disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
-              />
+              /> */}
+                  <Controller
+                    defaultValue={formData?.[formFieldName]?.[row?.key]?.amount}
+                    render={({ onChange, ref, value }) => (
+                      <InputTextAmount
+                        value={formData?.[formFieldName]?.[row?.key]?.amount}
+                        style={{ marginBottom: "0px", textAlign: "right", paddingRight: "1rem" }}
+                        type={"text"}
+                        name={`${formFieldName}.${row.key}.amount`}
+                        onChange={onChange}
+                        inputRef={ref}
+                        // errorStyle={errors?.[populators.name]}
+                        disable={isInputDisabled(`${formFieldName}.${row.key}.name`)}
+                        // customIcon={populators?.customIcon}
+                        // customClass={populators?.customClass}
+                      />
+                    )}
+                    name={`${formFieldName}.${row.key}.amount`}
+                    rules={{
+                      required: isInputDisabled(`${formFieldName}.${row.key}.name`) ? false : true,
+                      // pattern: /^\d*\.?\d*$/,
+                      // pattern: /^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$/
+                    }}
+                    control={control}
+                  />
             </div>
             <div style={errorContainerStyles}>
               {errors && errors?.[formFieldName]?.[row.key]?.amount?.type === "pattern" && (

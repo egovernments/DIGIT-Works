@@ -32,7 +32,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  String? selectedLocale;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => afterViewBuild());
@@ -46,7 +45,6 @@ class _HomePage extends State<HomePage> {
     context.read<HomeScreenBloc>().add(
           const GetHomeScreenConfigEvent(),
         );
-    selectedLocale = await GlobalVariables.selectedLocale();
   }
 
   @override
@@ -73,21 +71,21 @@ class _HomePage extends State<HomePage> {
             orgState.maybeWhen(
                 orElse: () => false,
                 loaded: (OrganisationListModel? organisationListModel) async {
-                  print('loaded');
+                  var currLoc = await GlobalVariables.selectedLocale();
                   context.read<LocalizationBloc>().add(
                         LocalizationEvent.onLoadLocalization(
                             module: CommonMethods.getLocaleModules(),
                             tenantId: GlobalVariables.globalConfigObject!
                                 .globalConfigs!.stateTenantId
                                 .toString(),
-                            locale: selectedLocale.toString()),
+                            locale: currLoc.toString()),
                       );
                   context.read<AppInitializationBloc>().add(
                       AppInitializationSetupEvent(
-                          selectedLang: selectedLocale.toString()));
+                          selectedLang: currLoc.toString()));
                   await AppLocalizations(
-                    Locale(selectedLocale.toString().split('_').first,
-                        selectedLocale.toString().split('_').last),
+                    Locale(currLoc.toString().split('_').first,
+                        currLoc.toString().split('_').last),
                   ).load();
                 });
           }, child: BlocBuilder<ORGSearchBloc, ORGSearchState>(
@@ -175,18 +173,51 @@ class _HomePage extends State<HomePage> {
         }));
   }
 
+  Future<void> localeLoad() async {
+    var currentLocale = await GlobalVariables.selectedLocale();
+    context.read<LocalizationBloc>().add(
+          LocalizationEvent.onLoadLocalization(
+              module: CommonMethods.getLocaleModules(),
+              tenantId: GlobalVariables
+                  .globalConfigObject!.globalConfigs!.stateTenantId
+                  .toString(),
+              locale: currentLocale.toString()),
+        );
+    context.read<AppInitializationBloc>().add(
+        AppInitializationSetupEvent(selectedLang: currentLocale.toString()));
+    await AppLocalizations(
+      Locale(currentLocale.toString().split('_').first,
+          currentLocale.toString().split('_').last),
+    ).load();
+  }
+
   void Function()? getRoute(String key, BuildContext context) {
     switch (key) {
       case Constants.homeMyWorks:
-        return () => context.router.push(const WorkOrderRoute());
+        return () {
+          localeLoad();
+          context.router.push(const WorkOrderRoute());
+        };
       case Constants.homeTrackAttendance:
-        return () => context.router.push(const TrackAttendanceInboxRoute());
+        return () {
+          localeLoad();
+          context.router.push(const TrackAttendanceInboxRoute());
+        };
       case Constants.homeMusterRolls:
-        return () => context.router.push(const ViewMusterRollsRoute());
+        return () {
+          localeLoad();
+          context.router.push(const ViewMusterRollsRoute());
+        };
       case Constants.homeMyBills:
-        return () => context.router.push(const MyBillsRoute());
+        return () {
+          localeLoad();
+          context.router.push(const MyBillsRoute());
+        };
       case Constants.homeRegisterWageSeeker:
-        return () => context.router.push(const RegisterIndividualRoute());
+        return () {
+          localeLoad();
+          context.router.push(const RegisterIndividualRoute());
+        };
       default:
         return null;
     }

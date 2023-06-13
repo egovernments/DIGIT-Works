@@ -18,6 +18,7 @@ async function processGroupBillFromPaymentCreateTopic(requestData) {
             request.billIds = requestData.payment.bills.map(bill => {return bill.billId})
             request.RequestInfo = requestData.RequestInfo;
             request.tenantId = requestData.payment.tenantId;
+            request.paymentNumber = paymentNumber;
             // Get user uuid and payment id and create an entry on db
             userid = get(request, "RequestInfo.userInfo.uuid", null)
             paymentId = request.paymentId;
@@ -54,6 +55,7 @@ async function processGroupBillFromPaymentId(requestData) {
                 groupBillRequest.RequestInfo = request.RequestInfo;
                 let payment = paymentDetails.payments[0];
                 groupBillRequest.paymentId = payment.id;
+                groupBillRequest.paymentNumber = payment.paymentNumber;
                 groupBillRequest.billIds = [];
                 groupBillRequest.billIds = payment.bills.map(bill => {return bill.billId})
                 groupBillRequest.RequestInfo = requestData.RequestInfo;
@@ -72,6 +74,7 @@ async function processGroupBill(requestData) {
     try {
         logger.info("Started processGroupBill.")
         let paymentId = requestData.paymentId;
+        let paymentNumber = requestData.paymentNumber;
         let tenantId = requestData.tenantId;
         let userId = requestData?.RequestInfo?.userInfo?.uuid;
 
@@ -115,7 +118,7 @@ async function processGroupBill(requestData) {
             return billDetails;
         })
         logger.info("Creating excel.")
-        let filestoreId = await createXlsxFromBills(billsForExcel, paymentId, tenantId);
+        let filestoreId = await createXlsxFromBills(billsForExcel, paymentId, paymentNumber, tenantId);
         let billsLength = bills.length;
         let numberofbeneficialy = billsForExcel.length;
         let totalAmount = 0;
@@ -358,13 +361,15 @@ const getBillsForExcel = (billDetails, headCodeMap) => {
 let getWagesBill = (bill, billObj) => {
     let bills = [];
     bill?.billDetails.forEach(billDetail => {
-        let newBill = deepClone(billObj);
-        newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
-        newBill['beneficiaryType'] = billDetail?.payee?.type || "";
-        newBill['grossAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
-        newBill['payableAmount'] = billDetail?.payableLineItems[0]?.amount || 0;
-        newBill['headCode'] = billDetail?.payableLineItems[0]?.headCode || "";
-        bills.push(newBill)
+        billDetail?.payableLineItems.forEach((payableLineItem) => {
+            let newBill = deepClone(billObj);
+            newBill['beneficiaryId'] = billDetail?.payee?.identifier || "";
+            newBill['beneficiaryType'] = billDetail?.payee?.type || "";
+            newBill['grossAmount'] = payableLineItem?.amount || 0;
+            newBill['payableAmount'] = payableLineItem?.amount || 0;
+            newBill['headCode'] = payableLineItem?.headCode || "";
+            bills.push(newBill)
+        })
     });
     return bills;
 }
@@ -423,7 +428,7 @@ let getSupervisionBill = (bill, billObj) => {
     return bills;
 }
 
-let createXlsxFromBills = async (billsData, paymentId, tenantId) => {
+let createXlsxFromBills = async (billsData, paymentId, paymentNumber, tenantId) => {
     const data = billsData.map((obj, idx) => [
         idx+1,
         obj.projectId,
@@ -463,7 +468,14 @@ let createXlsxFromBills = async (billsData, paymentId, tenantId) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Payment');
     const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
     try {
-        let filename = `${paymentId} - ${new Date().getTime()}.xlsx`;
+        // if payment number will available then file name will be based on payment number else paymentId
+        let filename = "";
+        if (paymentNumber) {
+            filename = paymentNumber;
+        } else {
+            filename = paymentId;
+        }
+        filename = filename + " - " + new Date().getTime() + ".xlsx";
         let filestoreId = await upload_file_using_filestore(filename, tenantId, buffer);
         return filestoreId;
     } catch (error) {

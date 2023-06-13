@@ -150,10 +150,12 @@ public class NotificationService {
         Object projectRes = projectServiceUtil.getProjectDetails(request);
 
         Map<String, String> projectDetails = new HashMap<>();
+        List<String> projectNumber = new ArrayList<>();
         List<String> projectNames = new ArrayList<>();
         List<String> boundaries = new ArrayList<>();
         List<String> boundaryTypes = new ArrayList<>();
         try {
+            projectNumber = JsonPath.read(projectRes, PROJECT_ID_CODE);
             projectNames = JsonPath.read(projectRes, PROJECT_NAME_CODE);
             boundaries = JsonPath.read(projectRes, PROJECT_BOUNDARY_CODE);
             boundaryTypes = JsonPath.read(projectRes, PROJECT_BOUNDARY_TYPE_CODE);
@@ -165,6 +167,7 @@ public class NotificationService {
         projectDetails.put("projectName", projectNames.get(0));
         projectDetails.put("boundary", boundaries.get(0));
         projectDetails.put("boundaryType", boundaryTypes.get(0));
+        projectDetails.put("projectNumber", projectNumber.get(0));
 
         return projectDetails;
     }
@@ -192,9 +195,12 @@ public class NotificationService {
     public String getMessage(EstimateRequest request, String msgCode) {
         String rootTenantId = request.getEstimate().getTenantId().split("\\.")[0];
         RequestInfo requestInfo = request.getRequestInfo();
+        String locale = "en_IN";
+        if(requestInfo.getMsgId().split("\\|").length > 1)
+            locale = requestInfo.getMsgId().split("\\|")[1];
         Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(requestInfo, rootTenantId,
-                EstimateServiceConstant.ESTIMATE_NOTIFICATION_ENG_LOCALE_CODE, EstimateServiceConstant.ESTIMATE_MODULE_CODE);
-        return localizedMessageMap.get(EstimateServiceConstant.ESTIMATE_NOTIFICATION_ENG_LOCALE_CODE + "|" + rootTenantId).get(msgCode);
+                locale, EstimateServiceConstant.ESTIMATE_MODULE_CODE);
+        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
     }
 
     /**
@@ -206,7 +212,8 @@ public class NotificationService {
      * @return
      */
     public String buildMessageForRejectAction(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{estimate_no}", estimate.getEstimateNumber())
+        message = message.replace("{estimteno}", estimate.getEstimateNumber())
+                .replace("{projectid}",userDetailsForSMS.get("projectNumber"))
                 .replace("{project_name}", userDetailsForSMS.get("projectName"))
                 .replace("{location}", userDetailsForSMS.get("locationName"))
                 .replace("{username}", userDetailsForSMS.get("userName"))
@@ -215,7 +222,8 @@ public class NotificationService {
     }
 
     public String buildMessageForApproveAction_Creator(Estimate estimate, Map<String, String> userDetailsForSMS, String message) {
-        message = message.replace("{estimate_no}", estimate.getEstimateNumber())
+        message = message.replace("{estimteno}", estimate.getEstimateNumber())
+                .replace("{projectid}", userDetailsForSMS.get("projectNumber"))
                 .replace("{project_name}", userDetailsForSMS.get("projectName"))
                 .replace("{location}", userDetailsForSMS.get("locationName"));
         return message;

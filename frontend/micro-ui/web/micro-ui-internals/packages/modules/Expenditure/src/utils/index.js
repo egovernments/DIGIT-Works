@@ -4,7 +4,7 @@ const setDefaultDocs = (bill) => {
   bill?.additionalDetails?.documents.forEach((doc,idx) => {
     
     if(doc?.documentType === "OTHERS") {
-      documentsObj["doc_others_name"] = doc?.additionalDetails?.fileName
+      documentsObj["doc_others_name"] = doc?.additionalDetails?.otherCategoryName
     }
 
      documentsObj[`doc_${doc.documentType}`.toLowerCase()] = [
@@ -59,6 +59,7 @@ const setDeductionTableData = (bill,charges,t) => {
 }
 
 export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract,  docConfigData, billData, setIsFormReady,charges,org}) => {
+  
   const bill = billData?.bills?.[0]
   if(!sessionFormData?.basicDetails_workOrderNumber || !sessionFormData.basicDetails_projectID || !sessionFormData.basicDetails_projectDesc || !sessionFormData.basicDetails_location) {  
     configs.defaultValues.billDetails_billDate = isModify ? Digit.DateUtils.ConvertTimestampToDate(bill?.billDate, 'yyyy-MM-dd') : findCurrentDate(); 
@@ -70,7 +71,7 @@ export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isMo
       String(
           `${t(Digit.Utils.locale.getCityLocale(tenantId))}, ${t(Digit.Utils.locale.getMohallaLocale(contract?.additionalDetails?.ward, tenantId))}`
       )  : t("NA"); 
-    configs.defaultValues.invoiceDetails_vendor =  isModify ? { code: org.id, name: org.name, orgNumber: org.orgNumber} : ""
+    configs.defaultValues.invoiceDetails_vendor =  isModify ? { code: org?.id, name: org?.name, orgNumber: org?.orgNumber} : ""
     configs.defaultValues.invoiceDetails_invoiceNumber = bill?.additionalDetails?.invoiceNumber || ""
     configs.defaultValues.invoiceDetails_invoiceDate = bill?.billDate ? Digit.DateUtils.ConvertTimestampToDate(bill?.billDate, 'yyyy-MM-dd') : ""
 

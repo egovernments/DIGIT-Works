@@ -15,6 +15,18 @@ class SingleIndividualModel with SingleIndividualModelMappable {
 }
 
 @MappableClass()
+class WMSIndividualListModel with WMSIndividualListModelMappable {
+  List<SingleWMSIndividualModel>? items;
+  WMSIndividualListModel({this.items});
+}
+
+@MappableClass()
+class SingleWMSIndividualModel with SingleWMSIndividualModelMappable {
+  IndividualModel? businessObject;
+  SingleWMSIndividualModel({this.businessObject});
+}
+
+@MappableClass()
 class IndividualModel with IndividualModelMappable {
   String? id;
   String? individualId;

@@ -138,8 +138,11 @@ public class ContractEnrichment {
         Contract contract=contractRequest.getContract();
         List<Document> documents=contractRequest.getContract().getDocuments();
         contract.setStatus(Status.INACTIVE);
-        for(Document document:documents){
-            document.setStatus(Status.INACTIVE);
+        // Check if documents exists then only update the status
+        if (documents != null && !documents.isEmpty()) {
+            for(Document document:documents){
+                document.setStatus(Status.INACTIVE);
+            }
         }
     }
 

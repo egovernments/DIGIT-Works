@@ -14,7 +14,11 @@ const MultiSelectDropdown = ({ options, optionsKey, selected = [], onSelect, def
       case "ADD_TO_SELECTED_EVENT_QUEUE":
         return [...state, {[optionsKey]: action.payload?.[1]?.[optionsKey], propsData: action.payload} ] 
       case "REMOVE_FROM_SELECTED_EVENT_QUEUE":
-        return state.filter( e => e?.[optionsKey] !== action.payload?.[1]?.[optionsKey]) 
+        const newState = state.filter(
+          (e) => e?.[optionsKey] !== action.payload?.[1]?.[optionsKey]
+        );
+        onSelect(newState.map((e) => e.propsData), props); // Update the form state here
+        return newState;
       case "REPLACE_COMPLETE_STATE":
         return action.payload
       default:

@@ -188,6 +188,7 @@ mixin _$ProcessInstances {
   String? get action => throw _privateConstructorUsedError;
   AuditDetails? get auditDetails => throw _privateConstructorUsedError;
   List<Assignees>? get assignes => throw _privateConstructorUsedError;
+  String? get comment => throw _privateConstructorUsedError;
   List<NextActions>? get nextActions => throw _privateConstructorUsedError;
   @JsonKey(name: 'state')
   WorkflowState? get workflowState => throw _privateConstructorUsedError;
@@ -212,6 +213,7 @@ abstract class $ProcessInstancesCopyWith<$Res> {
       String? action,
       AuditDetails? auditDetails,
       List<Assignees>? assignes,
+      String? comment,
       List<NextActions>? nextActions,
       @JsonKey(name: 'state') WorkflowState? workflowState});
 
@@ -239,6 +241,7 @@ class _$ProcessInstancesCopyWithImpl<$Res, $Val extends ProcessInstances>
     Object? action = freezed,
     Object? auditDetails = freezed,
     Object? assignes = freezed,
+    Object? comment = freezed,
     Object? nextActions = freezed,
     Object? workflowState = freezed,
   }) {
@@ -271,6 +274,10 @@ class _$ProcessInstancesCopyWithImpl<$Res, $Val extends ProcessInstances>
           ? _value.assignes
           : assignes // ignore: cast_nullable_to_non_nullable
               as List<Assignees>?,
+      comment: freezed == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
+              as String?,
       nextActions: freezed == nextActions
           ? _value.nextActions
           : nextActions // ignore: cast_nullable_to_non_nullable
@@ -323,6 +330,7 @@ abstract class _$$_ProcessInstancesCopyWith<$Res>
       String? action,
       AuditDetails? auditDetails,
       List<Assignees>? assignes,
+      String? comment,
       List<NextActions>? nextActions,
       @JsonKey(name: 'state') WorkflowState? workflowState});
 
@@ -350,6 +358,7 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
     Object? action = freezed,
     Object? auditDetails = freezed,
     Object? assignes = freezed,
+    Object? comment = freezed,
     Object? nextActions = freezed,
     Object? workflowState = freezed,
   }) {
@@ -382,6 +391,10 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
           ? _value._assignes
           : assignes // ignore: cast_nullable_to_non_nullable
               as List<Assignees>?,
+      comment: freezed == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
+              as String?,
       nextActions: freezed == nextActions
           ? _value._nextActions
           : nextActions // ignore: cast_nullable_to_non_nullable
@@ -405,6 +418,7 @@ class _$_ProcessInstances implements _ProcessInstances {
       this.action,
       this.auditDetails,
       final List<Assignees>? assignes,
+      this.comment,
       final List<NextActions>? nextActions,
       @JsonKey(name: 'state') this.workflowState})
       : _assignes = assignes,
@@ -435,6 +449,8 @@ class _$_ProcessInstances implements _ProcessInstances {
     return EqualUnmodifiableListView(value);
   }
 
+  @override
+  final String? comment;
   final List<NextActions>? _nextActions;
   @override
   List<NextActions>? get nextActions {
@@ -451,7 +467,7 @@ class _$_ProcessInstances implements _ProcessInstances {
 
   @override
   String toString() {
-    return 'ProcessInstances(tenantId: $tenantId, businessService: $businessService, id: $id, businessId: $businessId, action: $action, auditDetails: $auditDetails, assignes: $assignes, nextActions: $nextActions, workflowState: $workflowState)';
+    return 'ProcessInstances(tenantId: $tenantId, businessService: $businessService, id: $id, businessId: $businessId, action: $action, auditDetails: $auditDetails, assignes: $assignes, comment: $comment, nextActions: $nextActions, workflowState: $workflowState)';
   }
 
   @override
@@ -470,6 +486,7 @@ class _$_ProcessInstances implements _ProcessInstances {
             (identical(other.auditDetails, auditDetails) ||
                 other.auditDetails == auditDetails) &&
             const DeepCollectionEquality().equals(other._assignes, _assignes) &&
+            (identical(other.comment, comment) || other.comment == comment) &&
             const DeepCollectionEquality()
                 .equals(other._nextActions, _nextActions) &&
             (identical(other.workflowState, workflowState) ||
@@ -487,6 +504,7 @@ class _$_ProcessInstances implements _ProcessInstances {
       action,
       auditDetails,
       const DeepCollectionEquality().hash(_assignes),
+      comment,
       const DeepCollectionEquality().hash(_nextActions),
       workflowState);
 
@@ -513,6 +531,7 @@ abstract class _ProcessInstances implements ProcessInstances {
           final String? action,
           final AuditDetails? auditDetails,
           final List<Assignees>? assignes,
+          final String? comment,
           final List<NextActions>? nextActions,
           @JsonKey(name: 'state') final WorkflowState? workflowState}) =
       _$_ProcessInstances;
@@ -534,6 +553,8 @@ abstract class _ProcessInstances implements ProcessInstances {
   AuditDetails? get auditDetails;
   @override
   List<Assignees>? get assignes;
+  @override
+  String? get comment;
   @override
   List<NextActions>? get nextActions;
   @override

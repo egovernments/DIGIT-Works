@@ -222,6 +222,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         padding: const EdgeInsets.only(top: 32.0),
                         isRequired: true,
                         cancelText: t.translate(i18.common.cancel),
+                        fieldHintText: 'dd/mm/yyyy',
                         confirmText: t.translate(i18.common.oK),
                         icon: Icons.info_outline_rounded,
                         toolTipMsg: t.translate(i18.wageSeeker.ageValidation),
@@ -281,6 +282,12 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                           'maxLength': (_) => t.translate(
                                 i18.wageSeeker.maxMobileCharacters,
                               ),
+                          'min': (_) => t.translate(
+                                i18.wageSeeker.validMobileCharacters,
+                              ),
+                          'max': (_) => t.translate(
+                                i18.wageSeeker.validMobileCharacters,
+                              ),
                         },
                       ),
                       // StatefulBuilder(
@@ -289,6 +296,7 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
                         label: t.translate(i18.attendanceMgmt.skill) + ' *',
                         onChange: _onSelectedOptionsChanged,
                         options: skills,
+                        hintText: t.translate(i18.attendanceMgmt.skill),
                         selectedOptions: selectedOptions,
                       ),
                       // }),
@@ -432,6 +440,8 @@ class IndividualDetailsPageState extends State<IndividualDetailsPage> {
         mobileKey: FormControl<String>(value: '', validators: [
           Validators.required,
           Validators.minLength(10),
+          Validators.min('5999999999'),
+          Validators.max('9999999999'),
           Validators.maxLength(10)
         ])
       });

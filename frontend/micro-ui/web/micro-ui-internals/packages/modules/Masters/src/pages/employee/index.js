@@ -38,7 +38,7 @@ const MastersBreadCrumb = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/masters/view-organization`,
+      // path: `/${window.contextPath}/employee/masters/view-organization`,
       content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_VIEW_ORG")}` : `${t("MASTERS_VIEW_ORG")}`,
       show: location.pathname.includes("/masters/view-organization") ? true : false,
       isBack: fromScreen && true,
@@ -82,7 +82,7 @@ const App = ({ path }) => {
   const ViewOrganisation = Digit?.ComponentRegistryService?.getComponent("ViewOrganisation");
   
   const RegisterWageSeeker = Digit?.ComponentRegistryService?.getComponent("RegisterWageSeeker");
-  const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWageSeeker");
+  const SearchWageSeeker = Digit?.ComponentRegistryService?.getComponent("SearchWMSWageseeker");
   const ViewWageSeeker = Digit?.ComponentRegistryService?.getComponent("ViewWageSeeker");
   const ModifyWageSeeker = Digit?.ComponentRegistryService?.getComponent("ModifyWageSeeker");
 

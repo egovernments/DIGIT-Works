@@ -157,7 +157,7 @@ const WorksCard = () => {
     },
     {
       label: t("ACTION_TEST_5PAYMENT"),
-      link: `/${window?.contextPath}/employee/expenditure/search-bill`,
+      link: `/${window?.contextPath}/employee/expenditure/search-bill?status=APPROVED`,
       roles: ROLES.PAYMENT,
     },
     {
