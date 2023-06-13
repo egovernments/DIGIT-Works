@@ -1,0 +1,30 @@
+{
+  "serviceId": "PAG",
+  "errorMsg": null,
+  "data": [
+    {
+      "billNo": "MUKTA/2022-23/03/16/105",
+      "ssuIaId": "1474",
+      "finYear": "2022",
+      "adviceId": "34",
+      "adviceDate": "2023-03-24",
+      "onlineBillRefNo": "202211051239",
+      "tokenNumber": "25",
+      "tokenDate": "2023-03-24",
+      "benfList": [
+        {
+          "benfName": "Chandra Kiran",
+          "benfAccountNo": "389201502452",
+          "benfBankIfscCode": "ICIC0003892",
+          "amount": "250"
+        },
+        {
+          "benfName": "C K",
+          "benfAccountNo": "389201502453",
+          "benfBankIfscCode": "ICIC0003892",
+          "amount": "250"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: JIT adapter API specification
+  description: Specifications defining integration points with the JIT adapter
+
+paths: 
+  /ifms/jit/v1/_create:
+    post:
+      tags:
+      - PI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PIRequest'
+      responses:
+        '202':
+          description: Accepted create PI request.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PIResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+  
+ 
+  /ifms/jit/v1/_search:
+    post:
+      tags:
+      - PI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PICriteria'
+      responses:
+        '200':
+          description: Successful response sorted by reverse chrnological order of creation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+components:
+  schemas:
+    Payment:
+      $ref: https://raw.githubusercontent.com/egovernments/DIGIT-Specs/master/works/expense-contract.yml#/components/schemas/Payment
+          
+    PIRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
+        payment:
+          $ref: '#/components/schemas/Payment'
+        workflow:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
+    
+    PIResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo'
+        payment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        pagination:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
