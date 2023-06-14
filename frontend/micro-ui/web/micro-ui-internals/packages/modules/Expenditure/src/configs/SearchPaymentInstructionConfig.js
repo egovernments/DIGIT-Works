@@ -18,7 +18,8 @@ export const SearchPaymentInstructionConfig = {
         },
         "minParametersForSearchForm": 1,
         "masterName": "commonUiConfig",
-        "moduleName": "SearchPaymentInstruction",
+        // "moduleName": "SearchPaymentInstruction",
+        "moduleName": "SearchBillWMSConfig",
         "tableFormJsonPath": "requestBody.inbox",
         "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
         "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria"
