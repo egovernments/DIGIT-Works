@@ -5,6 +5,7 @@ import { Switch, useLocation } from "react-router-dom";
 import CreateBill from "./CreateBill";
 import ViewSupervisionbill from "./Bills/ViewSupervisionbill";
 import SearchBillWMS from "./Bills/SearchBillWMS";
+import SearchPaymentInstruction from "./Bills/SearchPaymentInstruction";
 const ExpenditureBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
@@ -47,9 +48,15 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         isBack: fromScreen && true,
       },
       {
-        path: `/${window.contextPath}/employee/expenditure/search-bill`,
+        // path: `/${window.contextPath}/employee/expenditure/search-bill`,
         content: fromScreen ? `${t(fromScreen)} / ${t("EXP_SEARCH_BILL")}` : t("EXP_SEARCH_BILL"),
         show: location.pathname.includes("/expenditure/search-bill") ? true : false,
+        isBack: fromScreen && true,
+      },
+      {
+        // path: `/${window.contextPath}/employee/expenditure/search-payment-instruction`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_SEARCH_PAYMENT_INS")}` : t("EXP_SEARCH_PAYMENT_INS"),
+        show: location.pathname.includes("/expenditure/search-payment-instruction") ? true : false,
         isBack: fromScreen && true,
       },
       {
@@ -118,6 +125,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/inbox`} component={() => <BillInbox parentRoute={path} />} />
           <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBillWMS parentRoute={path} />} />
           <PrivateRoute path={`${path}/search-bill-plain`} component={() => <SearchBill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/search-payment-instruction`} component={() => <SearchPaymentInstruction parentRoute={path} />} />
           <PrivateRoute path={`${path}/wage-bill-details`} component={() => <ViewWageBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/supervision-bill-details`} component={() => <ViewSupervisionbill parentRoute={path} />} />
           <PrivateRoute path={`${path}/purchase-bill-details`} component={() => <ViewPurchaseBillComponent parentRoute={path} />}/>
