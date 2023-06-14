@@ -39,14 +39,14 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
 
     useEffect(() => {
         let isUserContractCreator = loggedInUserRoles?.includes("WORK_ORDER_CREATOR");
-        if (applicationDetails?.applicationData?.wfStatus === "APPROVED" && isUserContractCreator){
+        if (applicationDetails?.applicationData?.wfStatus === "APPROVED" && isUserContractCreator && !(actionsMenu?.find((ob) => ob?.name === "CREATE_CONTRACT"))){
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_CONTRACT"
             }]))
         }
         
         //if contract is already there just remove the prevState and push View contract state
-        if(contract?.contractNumber) {
+        if(contract?.contractNumber && contract?.wfStatus !== "REJECTED") {
             setActionsMenu((prevState => [{
                 name: "VIEW_CONTRACT"
             }]))
