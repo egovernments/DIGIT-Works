@@ -7,6 +7,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.models.core.Role;
 import org.egov.common.models.individual.UserDetails;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.Configuration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -49,6 +50,8 @@ public class IndividualService {
 
     @Autowired
     private Configuration config;
+    @Autowired
+    private MultiStateInstanceUtil multiStateInstanceUtil;
 
     /**
      * Creates individual for the organisation - contact details, if it is not created already
@@ -58,8 +61,8 @@ public class IndividualService {
     public void createIndividual(OrgRequest request) {
         log.info("UserService::createIndividual");
         List<Organisation> organisationList = request.getOrganisations();
-        String tenantId = organisationList.get(0).getTenantId();
-        //String stateLevelTenantId = getStateLevelTenant(tenantId);
+
+        String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         RequestInfo requestInfo = request.getRequestInfo();
         Role role = getCitizenRole();
 
@@ -73,8 +76,8 @@ public class IndividualService {
         for (ContactDetails contactDetails : contactDetailsList) {
 
             Individual newUser = Individual.builder().build();
-            addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
-            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
+            addIndividualDefaultFields(stateLevelTenantId, role, newUser, contactDetails, true, null);
+            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, stateLevelTenantId);
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
 
@@ -189,7 +192,7 @@ public class IndividualService {
         individual.setEmail(contactDetails.getContactEmail());
         individual.setName(new Name());
         individual.getName().setGivenName(contactDetails.getContactName());
-        individual.setTenantId(tenantId.split("\\.")[0]);
+        individual.setTenantId(tenantId);
         individual.setIsSystemUser(true);
         individual.setUserDetails(userDetails);
         /*user.setType(UserType.CITIZEN);
