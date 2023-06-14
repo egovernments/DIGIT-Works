@@ -31,10 +31,13 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
     
 
     //here make a contract search based on the estimateNumber
-    const { isLoading: isLoadingContracts, data: contract } = Digit.Hooks.contracts.useContractSearch({
+    let { isLoading: isLoadingContracts, data: contract } = Digit.Hooks.contracts.useContractSearch({
         tenantId, filters: { tenantId, estimateIds: [applicationDetails?.applicationData?.id] },config:{
-        enabled: (!isLoading &&  applicationDetails?.applicationData?.wfStatus === "APPROVED") ? true : false
+        enabled: (!isLoading &&  applicationDetails?.applicationData?.wfStatus === "APPROVED") ? true : false, cacheTime:0
     }})
+
+    let allContract = contract;
+    contract = contract?.[0];
     
 
     useEffect(() => {
@@ -44,9 +47,9 @@ const ViewEstimateComponent = ({editApplicationNumber,...props}) => {
                 name:"CREATE_CONTRACT"
             }]))
         }
-        
+        let isCreateContractallowed = allContract?.filter((ob) => ob?.wfStatus !== "REJECTED")?.length > 0
         //if contract is already there just remove the prevState and push View contract state
-        if(contract?.contractNumber && contract?.wfStatus !== "REJECTED") {
+        if(contract?.contractNumber && isCreateContractallowed) {
             setActionsMenu((prevState => [{
                 name: "VIEW_CONTRACT"
             }]))
