@@ -223,7 +223,8 @@ class Documents with DocumentsMappable {
 @MappableClass()
 class DocumentAdditionalDetails with DocumentAdditionalDetailsMappable {
   String? fileName;
-  DocumentAdditionalDetails(this.fileName);
+  String? otherCategoryName;
+  DocumentAdditionalDetails(this.fileName, this.otherCategoryName);
 }
 
 @MappableClass()
