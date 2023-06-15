@@ -7,6 +7,7 @@ const getModalConfig = ({
     selectedApprover,
     setSelectedApprover,
     approverLoading = false,
+    isModify
 }) => {
 
     let checkConditions = true
@@ -15,7 +16,7 @@ const getModalConfig = ({
 
     return {
         label: {
-            heading: `EXP_UPDATE_AND_FORWARD`,
+            heading: isModify?`EXP_UPDATE_AND_FORWARD`:`EXP_CREATE_AND_FORWARD`,
             submit: `CORE_COMMON_SUBMIT`,
             cancel: "WORKS_CANCEL",
         },
