@@ -10,7 +10,6 @@
     "packages/modules/Contracts",
     "packages/modules/Estimate",
     "packages/modules/Expenditure",
-    "packages/modules/DSS",
     "packages/Mukta"
   ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
@@ -32,7 +31,6 @@
     "dev:attendencemgmt": "cd packages/modules/AttendenceMgmt && yarn start",
     "dev:masters": "cd packages/modules/Masters && yarn start",
     "dev:project": "cd packages/modules/Project && yarn start",
-    "dev:dss": "cd packages/modules/DSS && yarn start",
     "dev:estimate": "cd packages/modules/Estimate && yarn start",
     "dev:mukta": "cd packages/Mukta && yarn start",
     "devD:works": "cd packages/modules/works && yarn start",
@@ -47,7 +45,6 @@
     "buildD:masters": "cd packages/modules/Masters && yarn build",
     "build:estimate": "cd packages/modules/Estimate && yarn build",
     "build:mukta": "cd packages/Mukta && yarn build",
-    "build:dss": "cd packages/modules/DSS && yarn build",
     "buildD:project": "cd packages/modules/Project && yarn build",
     "build:project": "cd packages/modules/Project && yarn build",
     "buildD:works": "cd packages/modules/works && yarn build",
