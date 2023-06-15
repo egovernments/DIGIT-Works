@@ -106,6 +106,23 @@ class _MyBillsPage extends State<MyBillsPage> {
                                         .bill!.auditDetails!.lastModifiedTime!
                                         .toInt()));
                                 billList = bills.map((e) {
+                                  num totalPayable = 0;
+
+                                  for (var billDetail
+                                      in e.bill?.billDetails ?? []) {
+                                    List<PayableLineItems>? payableLineItems =
+                                        billDetail.payableLineItems;
+                                    if (payableLineItems != null &&
+                                        payableLineItems.isNotEmpty) {
+                                      for (var lineItem in payableLineItems) {
+                                        if (lineItem.type == 'PAYABLE' &&
+                                            lineItem.status == 'ACTIVE') {
+                                          num amount = lineItem.amount ?? 0;
+                                          totalPayable += amount;
+                                        }
+                                      }
+                                    }
+                                  }
                                   if (e.bill?.businessService ==
                                       Constants.myBillsWageType) {
                                     return {
@@ -135,7 +152,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                                           ? '${DateFormats.getDateFromTimestamp(e.bill?.fromPeriod ?? 0)} - ${DateFormats.getDateFromTimestamp(e.bill?.toPeriod ?? 0)}'
                                           : i18.common.noValue,
                                       i18.myBills.netPayable:
-                                          (e.bill?.totalAmount ?? 0),
+                                          '₹ ${totalPayable.ceil()}',
                                       i18.common.status:
                                           'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:
@@ -181,7 +198,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                                       i18.myBills.payeeName:
                                           e.bill?.payer?.identifier,
                                       i18.myBills.netPayable:
-                                          (e.bill?.totalAmount ?? 0),
+                                          '₹ ${totalPayable.ceil()}',
                                       i18.common.status:
                                           'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:
@@ -213,7 +230,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                                       i18.myBills.payeeName:
                                           e.bill?.payer?.identifier,
                                       i18.myBills.netPayable:
-                                          (e.bill?.totalAmount ?? 0),
+                                          '₹ ${totalPayable.ceil()}',
                                       i18.common.status:
                                           'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:
