@@ -36,7 +36,7 @@ dependencies:
       url: https://github.com/egovernments/health-campaign-field-worker-app
       ref: main-parallel
       path: ./packages/digit_components
-  universal_html: ^2.2.2
+  universal_html: ^2.0.8
   flutter_secure_storage: ^8.0.0
   easy_stepper: ^0.5.2+1
   url_strategy: ^0.2.0
@@ -44,7 +44,6 @@ dependencies:
   flutter_bloc: ^8.1.1
   auto_route: ^5.0.2
   freezed_annotation: ^2.2.0
-  csslib: ^0.17.0
   json_annotation: ^4.8.0
   http_mock_adapter: ^0.3.3
   pin_input_text_field: ^4.5.0
