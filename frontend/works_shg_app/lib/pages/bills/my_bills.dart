@@ -106,25 +106,25 @@ class _MyBillsPage extends State<MyBillsPage> {
                                         .bill!.auditDetails!.lastModifiedTime!
                                         .toInt()));
                                 billList = bills.map((e) {
-                                  num deduction = 0;
+                                  if (e.bill?.businessService ==
+                                      Constants.myBillsWageType) {
+                                    num deduction = 0;
 
-                                  for (var billDetail
-                                      in e.bill?.billDetails ?? []) {
-                                    List<PayableLineItems>? payableLineItems =
-                                        billDetail.payableLineItems;
-                                    if (payableLineItems != null &&
-                                        payableLineItems.isNotEmpty) {
-                                      for (var lineItem in payableLineItems) {
-                                        if (lineItem.type == 'DEDUCTION' &&
-                                            lineItem.status == 'ACTIVE') {
-                                          num amount = lineItem.amount ?? 0;
-                                          deduction += amount;
+                                    for (var billDetail
+                                        in e.bill?.billDetails ?? []) {
+                                      List<PayableLineItems>? payableLineItems =
+                                          billDetail.payableLineItems;
+                                      if (payableLineItems != null &&
+                                          payableLineItems.isNotEmpty) {
+                                        for (var lineItem in payableLineItems) {
+                                          if (lineItem.type == 'DEDUCTION' &&
+                                              lineItem.status == 'ACTIVE') {
+                                            num amount = lineItem.amount ?? 0;
+                                            deduction += amount;
+                                          }
                                         }
                                       }
                                     }
-                                  }
-                                  if (e.bill?.businessService ==
-                                      Constants.myBillsWageType) {
                                     return {
                                       i18.myBills.billType:
                                           'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
@@ -164,6 +164,23 @@ class _MyBillsPage extends State<MyBillsPage> {
                                     };
                                   } else if (e.bill?.businessService ==
                                       Constants.myBillsPurchaseType) {
+                                    num deduction = 0;
+
+                                    for (var billDetail
+                                        in e.bill?.billDetails ?? []) {
+                                      List<BillLineItems>? lineItems =
+                                          billDetail.lineItems;
+                                      if (lineItems != null &&
+                                          lineItems.isNotEmpty) {
+                                        for (var lineItem in lineItems) {
+                                          if (lineItem.type == 'DEDUCTION' &&
+                                              lineItem.status == 'ACTIVE') {
+                                            num amount = lineItem.amount ?? 0;
+                                            deduction += amount;
+                                          }
+                                        }
+                                      }
+                                    }
                                     return {
                                       i18.myBills.billType:
                                           'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
@@ -209,6 +226,23 @@ class _MyBillsPage extends State<MyBillsPage> {
                                                   : 'none'
                                     };
                                   } else {
+                                    num deduction = 0;
+
+                                    for (var billDetail
+                                        in e.bill?.billDetails ?? []) {
+                                      List<PayableLineItems>? payableLineItems =
+                                          billDetail.payableLineItems;
+                                      if (payableLineItems != null &&
+                                          payableLineItems.isNotEmpty) {
+                                        for (var lineItem in payableLineItems) {
+                                          if (lineItem.type == 'DEDUCTION' &&
+                                              lineItem.status == 'ACTIVE') {
+                                            num amount = lineItem.amount ?? 0;
+                                            deduction += amount;
+                                          }
+                                        }
+                                      }
+                                    }
                                     return {
                                       i18.myBills.billType:
                                           'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
