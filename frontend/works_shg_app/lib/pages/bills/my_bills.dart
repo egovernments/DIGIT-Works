@@ -110,17 +110,14 @@ class _MyBillsPage extends State<MyBillsPage> {
 
                                   for (var billDetail
                                       in e.bill?.billDetails ?? []) {
-                                    List<PayableLineItems>? payableLineItems =
-                                        billDetail.payableLineItems;
-                                    if (payableLineItems != null &&
-                                        payableLineItems.isNotEmpty) {
-                                      for (var payableLineItem
-                                          in payableLineItems) {
-                                        if (payableLineItem.headCode == 'LC' &&
-                                            payableLineItem.status ==
-                                                'ACTIVE') {
-                                          num amount =
-                                              payableLineItem.amount ?? 0;
+                                    List<BillLineItems>? lineItems =
+                                        billDetail.lineItems;
+                                    if (lineItems != null &&
+                                        lineItems.isNotEmpty) {
+                                      for (var lineItem in lineItems) {
+                                        if (lineItem.type == 'DEDUCTION' &&
+                                            lineItem.status == 'ACTIVE') {
+                                          num amount = lineItem.amount ?? 0;
                                           deduction += amount;
                                         }
                                       }
