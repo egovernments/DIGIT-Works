@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import searchContractConfig from "../../configs/searchContractConfig";
@@ -16,10 +16,33 @@ const SearchContractDetails = () => {
             {
                 "name": "SearchContractConfig"
             }
-        ]
+        ],
+        {
+          select: (data) => {
+            
+              const config = data?.[Digit.Utils.getConfigModuleName()]?.SearchContractConfig?.[0];
+              
+              return config
+            },
+        }
     );
 
-    const configs = data?.[configModuleName].SearchContractConfig?.[0]
+    //const configs = data?.[configModuleName].SearchContractConfig?.[0]
+
+    let configs = useMemo(
+      () => Digit.Utils.preProcessMDMSConfigInboxSearch(t, data, "sections.search.uiConfig.fields",{
+        updateDependent : [
+          {
+            key : "createdFrom",
+            value : [new Date().toISOString().split("T")[0]]
+          },
+          {
+            key : "createdTo",
+            value : [new Date().toISOString().split("T")[0]]
+          }
+        ]
+      }
+      ),[data])
 
   if (isLoading) return <Loader />
   
