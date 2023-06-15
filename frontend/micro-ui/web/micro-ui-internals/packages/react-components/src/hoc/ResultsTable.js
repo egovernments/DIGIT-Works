@@ -181,7 +181,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
             {searchResult?.length > 0 && <Table
                 className={config?.tableClassName ? config?.tableClassName: "table"}
                 t={t}
-                customTableWrapperClassName={"dss-table-wrapper"}
+                customTableWrapperClassName={"search-component-table"}
                 disableSort={config?.enableColumnSort ? false : true}
                 autoSort={config?.enableColumnSort ? true : false}
                 globalSearch={config?.enableGlobalSearch ? filterValue : undefined}
