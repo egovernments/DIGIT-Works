@@ -283,7 +283,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                             i18.attendanceMgmt.projectId:
                                                 e.additionalDetails?.projectId ?? 'NA',
                                             i18.common.location:
-                                                '${'${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}'}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
+                                                '${t.translate('${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}')}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
                                             i18.attendanceMgmt.projectType:
                                                 'ES_COMMON_${e.additionalDetails?.projectType ?? 'NA'}',
                                             i18.attendanceMgmt.projectName:
