@@ -174,7 +174,12 @@ const WorksCard = () => {
       label: t("ACTION_TEST_8WAGESEEKER"),
       link: `/${window?.contextPath}/employee/masters/search-wageseeker`,
       roles: ROLES.MASTERS,
-    }
+    },
+    // {
+    //   label: t("EXP_PAYMENT_INS"),
+    //   link: `/${window?.contextPath}/employee/expenditure/search-payment-instruction`,
+    //   roles: ROLES.PAYMENT,
+    // }
   ];
 
   links = links.filter((link) => (link?.roles && link?.roles?.length > 0 ? Digit.Utils.didEmployeeHasAtleastOneRole(link?.roles) : true));
