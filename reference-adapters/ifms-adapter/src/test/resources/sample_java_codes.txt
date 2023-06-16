@@ -1,0 +1,59 @@
+AES
+==================================
+public static String genSek() throws NoSuchAlgorithmException {
+    final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+    keyGenerator.init(256);
+    // Generate Key
+    final SecretKey	key		= keyGenerator.generateKey();
+    final String	keyText	= Base64.getEncoder().encodeToString(key.getEncoded());
+    return keyText;
+}
+
+public static String encrypt(final byte[] plainText, final byte[] secret)
+			throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+			IllegalBlockSizeException, BadPaddingException {
+    final SecretKeySpec secretKey = new SecretKeySpec(secret, "AES");
+    final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+    return Base64.getEncoder().encodeToString(cipher.doFinal(plainText));
+}
+
+public static String decrypt(final String cypherText, final byte[] secret)
+			throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+			IllegalBlockSizeException, BadPaddingException {
+    final SecretKeySpec secretKey = new SecretKeySpec(secret, "AES");
+    final Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    cipher.init(Cipher.DECRYPT_MODE, secretKey);
+    return new String(cipher.doFinal(Base64.getDecoder().decode(cypherText)));
+}
+
+RSA
+==================================
+public static PrivateKey getPrivateKeyFormFile(final String filePath) throws Exception {
+    final byte[] keyBytes = Files.readAllBytes(Paths.get(filePath));
+    final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+    final KeyFactory kf = KeyFactory.getInstance("RSA");
+    return kf.generatePrivate(spec);
+}
+
+public static PublicKey getPublicKeyFromFile(final String filePath) throws Exception {
+    final byte[] keyBytes = Files.readAllBytes(Paths.get(filePath));
+    final X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+    final KeyFactory kf = KeyFactory.getInstance("RSA");
+    return kf.generatePublic(spec);
+}
+
+public static String encrypt(final byte[] data, final PublicKey publicKey) throws BadPaddingException,
+			IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException {
+    final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+    cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+    final byte[] cyperText = cipher.doFinal(data);
+    return Base64.getEncoder().encodeToString(cyperText);
+}
+
+public static byte[] decrypt(final String data, final String privateKeyFile) throws Exception {
+    final PrivateKey privateKey = RSAUtility.getPrivateKeyFormFile(privateKeyFile);
+    final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+    cipher.init(Cipher.DECRYPT_MODE, privateKey);
+    return cipher.doFinal(Base64.getDecoder().decode(data.getBytes(ENCODING)));
+}

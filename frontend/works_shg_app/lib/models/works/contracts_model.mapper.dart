@@ -1758,23 +1758,29 @@ class DocumentAdditionalDetailsMapperElement
   DocumentAdditionalDetails decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   DocumentAdditionalDetails fromMap(Map<String, dynamic> map) =>
-      DocumentAdditionalDetails(container.$getOpt(map, 'fileName'));
+      DocumentAdditionalDetails(container.$getOpt(map, 'fileName'),
+          container.$getOpt(map, 'otherCategoryName'));
 
   @override
   Function get encoder => encode;
   dynamic encode(DocumentAdditionalDetails v) => toMap(v);
-  Map<String, dynamic> toMap(DocumentAdditionalDetails d) =>
-      {'fileName': container.$enc(d.fileName, 'fileName')};
+  Map<String, dynamic> toMap(DocumentAdditionalDetails d) => {
+        'fileName': container.$enc(d.fileName, 'fileName'),
+        'otherCategoryName':
+            container.$enc(d.otherCategoryName, 'otherCategoryName')
+      };
 
   @override
   String stringify(DocumentAdditionalDetails self) =>
-      'DocumentAdditionalDetails(fileName: ${container.asString(self.fileName)})';
+      'DocumentAdditionalDetails(fileName: ${container.asString(self.fileName)}, otherCategoryName: ${container.asString(self.otherCategoryName)})';
   @override
-  int hash(DocumentAdditionalDetails self) => container.hash(self.fileName);
+  int hash(DocumentAdditionalDetails self) =>
+      container.hash(self.fileName) ^ container.hash(self.otherCategoryName);
   @override
   bool equals(
           DocumentAdditionalDetails self, DocumentAdditionalDetails other) =>
-      container.isEqual(self.fileName, other.fileName);
+      container.isEqual(self.fileName, other.fileName) &&
+      container.isEqual(self.otherCategoryName, other.otherCategoryName);
 }
 
 mixin DocumentAdditionalDetailsMappable {
@@ -1815,7 +1821,7 @@ abstract class DocumentAdditionalDetailsCopyWith<
   DocumentAdditionalDetailsCopyWith<$R2, $In, $Out2>
       chain<$R2, $Out2 extends DocumentAdditionalDetails>(
           Then<DocumentAdditionalDetails, $Out2> t, Then<$Out2, $R2> t2);
-  $R call({String? fileName});
+  $R call({String? fileName, String? otherCategoryName});
 }
 
 class _DocumentAdditionalDetailsCopyWithImpl<$R,
@@ -1831,8 +1837,9 @@ class _DocumentAdditionalDetailsCopyWithImpl<$R,
           _DocumentAdditionalDetailsCopyWithImpl($value, t, t2);
 
   @override
-  $R call({Object? fileName = $none}) =>
-      $then(DocumentAdditionalDetails(or(fileName, $value.fileName)));
+  $R call({Object? fileName = $none, Object? otherCategoryName = $none}) =>
+      $then(DocumentAdditionalDetails(or(fileName, $value.fileName),
+          or(otherCategoryName, $value.otherCategoryName)));
 }
 
 class AmountBreakupsMapper extends MapperBase<AmountBreakups> {
