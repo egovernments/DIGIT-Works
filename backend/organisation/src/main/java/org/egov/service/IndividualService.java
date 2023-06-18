@@ -169,8 +169,11 @@ public class IndividualService {
                 orgContactUpdateDiff.setOrganisationId(organisation.getId());
                 orgContactUpdateDiff.setOldContacts(toBeRemovedMembers);
                 orgContactUpdateDiff.setNewContacts(newMembers);
-
                 producer.push(config.getOrganisationContactDetailsUpdateTopic(), orgContactUpdateDiff);
+
+                log.info("For Organisation Id: " + organisation.getId() + ": Number of members to be removed: " + toBeRemovedMembers.size()
+                        + "\n" + "Number of members to be added: " + newMembers.size()
+                        + "\nMessage pushed to kafka");
             }
         }
 
