@@ -44,6 +44,8 @@ public class OrganisationContactDetailsStaffUpdateService {
     }
 
     public void revokePermission(List<AttendanceRegister> attendanceRegisters, ContactDetails oldContact, RequestInfo requestInfo) {
+        if(attendanceRegisters.isEmpty())
+            return;
         List<StaffPermission> staffPermissionList = new ArrayList<>();
         for(AttendanceRegister attendanceRegister : attendanceRegisters) {
             String tenantId = attendanceRegister.getTenantId();
@@ -57,6 +59,8 @@ public class OrganisationContactDetailsStaffUpdateService {
     }
 
     public void grantPermission(Set<AttendanceRegister> attendanceRegisters, Set<ContactDetails> newContacts, RequestInfo requestInfo) {
+        if(attendanceRegisters.isEmpty())
+            return;
         List<StaffPermission> staffPermissionList = new ArrayList<>();
         for(AttendanceRegister attendanceRegister : attendanceRegisters) {
             String tenantId = attendanceRegister.getTenantId();
