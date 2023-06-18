@@ -164,6 +164,7 @@ public class IndividualService {
             }
 
             ObjectNode organisationContactUpdate = objectMapper.createObjectNode();
+            organisationContactUpdate.set("RequestInfo", objectMapper.convertValue(request.getRequestInfo(), JsonNode.class));
             organisationContactUpdate.set("organisation", objectMapper.convertValue(organisation, JsonNode.class));
             organisationContactUpdate.set("oldContacts", objectMapper.convertValue(toBeRemovedMembers, ArrayNode.class));
             organisationContactUpdate.set("newContacts", objectMapper.convertValue(newMembers, ArrayNode.class));
