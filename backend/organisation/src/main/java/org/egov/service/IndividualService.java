@@ -396,6 +396,7 @@ public class IndividualService {
     private IndividualBulkResponse individualSearchCall(Object userRequest, StringBuilder url, String tenantId) {
         log.info("IndividualService::individualSearchCall");
         try {
+            tenantId = multiStateInstanceUtil.getStateLevelTenant(tenantId);
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url.toString())
                     .queryParam("limit",100)
                     .queryParam("offset",0)
