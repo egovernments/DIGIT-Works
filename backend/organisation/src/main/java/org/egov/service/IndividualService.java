@@ -163,13 +163,15 @@ public class IndividualService {
                 updateContactDetails(contactDetails, tenantId, requestInfo, Role.builder().build());
             }
 
-            OrgContactUpdateDiff orgContactUpdateDiff = new OrgContactUpdateDiff();
-            orgContactUpdateDiff.setRequestInfo(requestInfo);
-            orgContactUpdateDiff.setOrganisationId(organisation.getId());
-            orgContactUpdateDiff.setOldContacts(toBeRemovedMembers);
-            orgContactUpdateDiff.setNewContacts(newMembers);
+            if(!newMembers.isEmpty() && !toBeRemovedMembers.isEmpty()) {
+                OrgContactUpdateDiff orgContactUpdateDiff = new OrgContactUpdateDiff();
+                orgContactUpdateDiff.setRequestInfo(requestInfo);
+                orgContactUpdateDiff.setOrganisationId(organisation.getId());
+                orgContactUpdateDiff.setOldContacts(toBeRemovedMembers);
+                orgContactUpdateDiff.setNewContacts(newMembers);
 
-            producer.push(config.getOrganisationContactDetailsUpdateTopic(), orgContactUpdateDiff);
+                producer.push(config.getOrganisationContactDetailsUpdateTopic(), orgContactUpdateDiff);
+            }
         }
 
     }
