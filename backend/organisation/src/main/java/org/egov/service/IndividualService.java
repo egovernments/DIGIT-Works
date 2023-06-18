@@ -7,6 +7,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.models.core.Role;
 import org.egov.common.models.individual.*;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.Configuration;
 import org.egov.kafka.Producer;
 import org.egov.repository.OrganisationRepository;
@@ -41,6 +42,8 @@ public class IndividualService {
 
     @Autowired
     private Producer producer;
+    @Autowired
+    private MultiStateInstanceUtil multiStateInstanceUtil;
 
     /**
      * Creates individual for the organisation - contact details, if it is not created already
@@ -50,8 +53,8 @@ public class IndividualService {
     public void createIndividual(OrgRequest request) {
         log.info("UserService::createIndividual");
         List<Organisation> organisationList = request.getOrganisations();
-        String tenantId = organisationList.get(0).getTenantId();
-        //String stateLevelTenantId = getStateLevelTenant(tenantId);
+        //String tenantId = organisationList.get(0).getTenantId();
+        String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         RequestInfo requestInfo = request.getRequestInfo();
         Role role = getCitizenRole();
 
@@ -65,8 +68,8 @@ public class IndividualService {
         for (ContactDetails contactDetails : contactDetailsList) {
 
             Individual newUser = Individual.builder().build();
-            addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
-            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
+            addIndividualDefaultFields(stateLevelTenantId, role, newUser, contactDetails, true, null);
+            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, stateLevelTenantId);
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
 
@@ -325,13 +328,13 @@ public class IndividualService {
     private void addIndividualDefaultFields(String tenantId, Role role, Individual individual, ContactDetails contactDetails, boolean isCreate, Individual existingIndividual) {
         log.info("IndividualService::addUserDefaultFields");
         UserDetails userDetails = UserDetails.builder().roles(Collections.singletonList(role))
-                .tenantId(tenantId.split("\\.")[0]).username(contactDetails.getContactMobileNumber())
+                .tenantId(tenantId).username(contactDetails.getContactMobileNumber())
                 .userType(UserType.fromValue("CITIZEN")).build();
         individual.setMobileNumber(contactDetails.getContactMobileNumber());
         individual.setEmail(contactDetails.getContactEmail());
         individual.setName(new Name());
         individual.getName().setGivenName(contactDetails.getContactName());
-        individual.setTenantId(tenantId.split("\\.")[0]);
+        individual.setTenantId(tenantId);
         individual.setIsSystemUser(true);
         individual.setUserDetails(userDetails);
         individual.setIsSystemUserActive(true);
