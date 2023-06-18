@@ -1,6 +1,9 @@
 package org.egov.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import digit.models.coremodels.user.enums.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -44,6 +47,8 @@ public class IndividualService {
     private Producer producer;
     @Autowired
     private MultiStateInstanceUtil multiStateInstanceUtil;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * Creates individual for the organisation - contact details, if it is not created already
@@ -157,73 +162,14 @@ public class IndividualService {
             for(ContactDetails contactDetails : toBeRemovedMembers) {
                 updateContactDetails(contactDetails, tenantId, requestInfo, Role.builder().build());
             }
+
+            ObjectNode organisationContactUpdate = objectMapper.createObjectNode();
+            organisationContactUpdate.set("organisation", objectMapper.convertValue(organisation, JsonNode.class));
+            organisationContactUpdate.set("oldContacts", objectMapper.convertValue(toBeRemovedMembers, ArrayNode.class));
+            organisationContactUpdate.set("newContacts", objectMapper.convertValue(newMembers, ArrayNode.class));
+
+            producer.push(config.getOrganisationContactDetailsUpdateTopic(), organisationContactUpdate);
         }
-
-        // ------------------x-------------------------x--------------------------
-
-        List<ContactDetails> contactDetailsList = new ArrayList<>();
-        for (Organisation organisation : organisationList) {
-            if (!CollectionUtils.isEmpty(organisation.getContactDetails())) {
-                contactDetailsList.addAll(organisation.getContactDetails());
-            }
-        }
-        contactDetailsList.forEach(contactDetails -> {
-
-            //Get contactDetails from DB and compare contact number with updateRequest contact number
-            OrgSearchRequest orgSearchRequest = OrgSearchRequest.builder().requestInfo(requestInfo)
-                    .searchCriteria(OrgSearchCriteria.builder().orgNumber(request.getOrganisations().get(0).getOrgNumber())
-                            .tenantId(tenantId).build()).build();
-            List<Organisation> organisations = organisationRepository.getOrganisations(orgSearchRequest);
-            String contactNumberFromDB = organisations.get(0).getContactDetails().get(0).getContactMobileNumber();
-
-            if(contactNumberFromDB.equalsIgnoreCase(contactDetails.getContactMobileNumber())) {
-
-                IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
-
-                StringBuilder uri = new StringBuilder(config.getIndividualHost());
-
-                if (!CollectionUtils.isEmpty(response.getIndividual())) {
-                    Individual existingIndividual = response.getIndividual().get(0);
-                    Individual newIndividual = Individual.builder().build();
-                    addIndividualDefaultFields(tenantId, role, newIndividual, contactDetails, false, existingIndividual);
-                    uri = uri.append(config.getIndividualUpdateEndpoint());
-                    IndividualRequest individualRequest = IndividualRequest.builder().requestInfo(requestInfo).individual(newIndividual).build();
-                    IndividualResponse individualResponse = individualUpdateCall(individualRequest, uri);
-                    setContactFields(contactDetails, individualResponse, requestInfo);
-                } else {
-                    throw new CustomException("INDIVIDUAL.UUID",
-                            "Individual's UUID : " + contactDetails.getId() + " doesn't exists in the system");
-                }
-            } else {
-                IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
-                StringBuilder uri = new StringBuilder(config.getIndividualHost());
-
-                if (!CollectionUtils.isEmpty(response.getIndividual())) {
-                    Individual existingIndividual = response.getIndividual().get(0);
-
-                    if(existingIndividual.getUserDetails().getRoles().equals(role)){
-                        throw new CustomException("USER.EXISTS", "Individual contanct number: "+contactDetails.getContactMobileNumber()+" already exists in system");
-                    }
-                    else{
-                        Individual newIndividual = Individual.builder().build();
-                        addIndividualDefaultFields(tenantId, role, newIndividual, contactDetails, false, existingIndividual);
-                        uri = uri.append(config.getIndividualUpdateEndpoint());
-                        IndividualRequest individualRequest = IndividualRequest.builder().requestInfo(requestInfo).individual(newIndividual).build();
-                        IndividualResponse individualResponse = individualUpdateCall(individualRequest, uri);
-                        setContactFields(contactDetails, individualResponse, requestInfo);
-
-                        //TODO remove org_admin role from previous user
-                    }
-                }
-                else{
-                    Individual newUser = Individual.builder().build();
-                    addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
-                    contactDetails.setId(UUID.randomUUID().toString());
-                    IndividualResponse individualResponse = createIndividualFromIndividualService(requestInfo, newUser, contactDetails);
-                }
-
-            }
-        });
 
     }
 
