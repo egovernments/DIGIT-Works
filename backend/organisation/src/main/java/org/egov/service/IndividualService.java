@@ -284,8 +284,6 @@ public class IndividualService {
         IndividualSearchRequest searchRequest = getIndividualSearchRequest(requestInfo);
         if (isCreate) {
             searchRequest.getIndividual().setMobileNumber(contactDetails.getContactMobileNumber());
-            searchRequest.getIndividual().setName(new Name());
-            searchRequest.getIndividual().getName().setGivenName(contactDetails.getContactName());
         } else {
             searchRequest.getIndividual().setId(Collections.singletonList(contactDetails.getId()));
         }
