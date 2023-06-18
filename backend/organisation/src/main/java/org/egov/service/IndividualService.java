@@ -150,35 +150,12 @@ public class IndividualService {
 
             Set<ContactDetails> newMembers = organisation.getContactDetails().stream().filter(contactDetails -> toBeAddedMembersMobile.contains(contactDetails.getContactMobileNumber())).collect(Collectors.toSet());
             for(ContactDetails contactDetails : newMembers) {
-                Map<String, String> updateStaff = new HashMap<>();
-                updateStaff.put("oldMobileNumber", contactDetails.getContactMobileNumber());
-                updateStaff.put("oldIndividualId",contactDetails.getId());
-
                 addContactAsOrgMember(contactDetails, tenantId, requestInfo, role);
-
-                updateStaff.put("newMobileNumber", contactDetails.getContactMobileNumber());
-                updateStaff.put("newIndividualId", contactDetails.getId());
-                updateStaff.put("operation","ADD");
-                producer.push("organisation.contact.detail.update", updateStaff);
-
-
-
             }
 
             Set<ContactDetails> toBeRemovedMembers = organisationFromDB.getContactDetails().stream().filter(contactDetails -> toBeRemovedMembersMobile.contains(contactDetails.getContactMobileNumber())).collect(Collectors.toSet());
             for(ContactDetails contactDetails : toBeRemovedMembers) {
-                Map<String, Object> updateStaff = new HashMap<>();
-                updateStaff.put("oldMobileNumber", contactDetails.getContactMobileNumber());
-                updateStaff.put("oldIndividualId",contactDetails.getId());
-
                 updateContactDetails(contactDetails, tenantId, requestInfo, Role.builder().build());
-
-                updateStaff.put("newMobileNumber", contactDetails.getContactMobileNumber());
-                updateStaff.put("newIndividualId", contactDetails.getId());
-                updateStaff.put("operation", "REMOVE");
-                producer.push("organisation.contact.detail.update", updateStaff);
-
-
             }
         }
 
