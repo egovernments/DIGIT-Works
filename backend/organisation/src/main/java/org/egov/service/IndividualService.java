@@ -166,6 +166,7 @@ public class IndividualService {
             if(!newMembers.isEmpty() && !toBeRemovedMembers.isEmpty()) {
                 OrgContactUpdateDiff orgContactUpdateDiff = new OrgContactUpdateDiff();
                 orgContactUpdateDiff.setRequestInfo(requestInfo);
+                orgContactUpdateDiff.setTenantId(tenantId);
                 orgContactUpdateDiff.setOrganisationId(organisation.getId());
                 orgContactUpdateDiff.setOldContacts(toBeRemovedMembers);
                 orgContactUpdateDiff.setNewContacts(newMembers);

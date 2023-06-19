@@ -28,10 +28,10 @@ public class Consumer {
     private OrganisationContactDetailsStaffUpdateService organisationContactDetailsStaffUpdateService;
 
     @KafkaListener(topics = "${organisation.contact.details.update.topic}")
-    public void updateAttendanceStaff(Map<String, String> consumerRecord,
+    public void updateAttendanceStaff(String consumerRecord,
                                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic){
         try {
-            OrgContactUpdateDiff orgContactUpdateDiff = objectMapper.convertValue(consumerRecord, OrgContactUpdateDiff.class);
+            OrgContactUpdateDiff orgContactUpdateDiff = objectMapper.readValue(consumerRecord, OrgContactUpdateDiff.class);
             organisationContactDetailsStaffUpdateService.updateStaffPermissionsForContactDetails(orgContactUpdateDiff);
         } catch(Exception e){
             log.error("Error updating staff permissions for update in organisation contact details", e);

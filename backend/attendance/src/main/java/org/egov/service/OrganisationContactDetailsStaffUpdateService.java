@@ -28,12 +28,13 @@ public class OrganisationContactDetailsStaffUpdateService {
 
     public void updateStaffPermissionsForContactDetails(OrgContactUpdateDiff orgContactUpdateDiff) {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(orgContactUpdateDiff.getRequestInfo()).build();
+        String tenantId = orgContactUpdateDiff.getTenantId();
         Set<AttendanceRegister> attendanceRegisterSet = new HashSet<>();
         List<ContactDetails> oldContacts = orgContactUpdateDiff.getOldContacts();
 
         for(ContactDetails oldContact : oldContacts) {
             AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria =
-                    AttendanceRegisterSearchCriteria.builder().staffId(oldContact.getIndividualId()).build();
+                    AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(oldContact.getIndividualId()).build();
             List<AttendanceRegister> attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
             revokePermission(attendanceRegisterList, oldContact, orgContactUpdateDiff.getRequestInfo());
             attendanceRegisterSet.addAll(attendanceRegisterList);

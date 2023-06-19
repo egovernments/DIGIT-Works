@@ -18,6 +18,8 @@ public class OrgContactUpdateDiff {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
+    private String tenantId;
+
     private String organisationId;
 
     private Set<ContactDetails> oldContacts;
