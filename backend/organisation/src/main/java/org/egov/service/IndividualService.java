@@ -88,7 +88,7 @@ public class IndividualService {
                         "Individual's mobile number : " + contactDetails.getContactMobileNumber() + " already exists in the system");
             }
             // Assigns value of fields from user got from userDetailResponse to contact detail object
-            setContactFields(contactDetails, individualResponse, requestInfo);
+            setContactFields(contactDetails, individualResponse, requestInfo, true);
         }
     }
 
@@ -102,7 +102,7 @@ public class IndividualService {
             uri = uri.append(config.getIndividualUpdateEndpoint());
             IndividualRequest individualRequest = IndividualRequest.builder().requestInfo(requestInfo).individual(newIndividual).build();
             IndividualResponse individualResponse = individualUpdateCall(individualRequest, uri);
-            setContactFields(contactDetails, individualResponse, requestInfo);
+            setContactFields(contactDetails, individualResponse, requestInfo, false);
         } else {
             throw new CustomException("INDIVIDUAL.UUID",
                     "Individual's UUID : " + contactDetails.getId() + " doesn't exists in the system");
@@ -195,7 +195,7 @@ public class IndividualService {
                 uri = uri.append(config.getIndividualUpdateEndpoint());
                 IndividualRequest individualRequest = IndividualRequest.builder().requestInfo(requestInfo).individual(newIndividual).build();
                 IndividualResponse individualResponse = individualUpdateCall(individualRequest, uri);
-                setContactFields(contactDetails, individualResponse, requestInfo);
+                setContactFields(contactDetails, individualResponse, requestInfo, false);
             }
         }
         else{
@@ -203,7 +203,7 @@ public class IndividualService {
             addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
             contactDetails.setId(UUID.randomUUID().toString());
             IndividualResponse individualResponse = createIndividualFromIndividualService(requestInfo, newUser, contactDetails);
-            setContactFields(contactDetails, individualResponse, requestInfo);
+            setContactFields(contactDetails, individualResponse, requestInfo, false);
         }
     }
 
@@ -389,10 +389,12 @@ public class IndividualService {
      * @param contactDetails     contact details in the org whose user is created
      * @param response IndividualResponse from the individual Service corresponding to the given contact details
      */
-    private void setContactFields(ContactDetails contactDetails, IndividualResponse response, RequestInfo requestInfo) {
+    private void setContactFields(ContactDetails contactDetails, IndividualResponse response, RequestInfo requestInfo, Boolean isCreate) {
         log.info("IndividualService::setContactFields");
         if (response != null && response.getIndividual() != null) {
-            contactDetails.setId(UUID.randomUUID().toString());
+            if(isCreate)
+                contactDetails.setId(UUID.randomUUID().toString());
+
             contactDetails.setIndividualId(response.getIndividual().getId());
             contactDetails.setContactName(response.getIndividual().getName().getGivenName());
             contactDetails.setCreatedBy(requestInfo.getUserInfo().getUuid());
