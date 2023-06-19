@@ -58,10 +58,10 @@ public class IndividualService {
     public void createIndividual(OrgRequest request) {
         log.info("UserService::createIndividual");
         List<Organisation> organisationList = request.getOrganisations();
-        String tenantId = organisationList.get(0).getTenantId();
-        //String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
+        //String tenantId = organisationList.get(0).getTenantId();
+        String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         RequestInfo requestInfo = request.getRequestInfo();
-        Role role = getCitizenRole(tenantId);
+        Role role = getCitizenRole();
 
         List<ContactDetails> contactDetailsList = new ArrayList<>();
         for (Organisation organisation : organisationList) {
@@ -73,8 +73,8 @@ public class IndividualService {
         for (ContactDetails contactDetails : contactDetailsList) {
 
             Individual newUser = Individual.builder().build();
-            addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
-            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
+            addIndividualDefaultFields(stateLevelTenantId, role, newUser, contactDetails, true, null);
+            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, stateLevelTenantId);
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
 
@@ -118,12 +118,12 @@ public class IndividualService {
         log.info("IndividualService::updateIndividual");
         List<Organisation> organisationList = request.getOrganisations();
         RequestInfo requestInfo = request.getRequestInfo();
-        String tenantId = organisationList.get(0).getTenantId();
-        //String stateLevelTenantId = getStateLevelTenant(tenantId);
-        Role role = getCitizenRole(tenantId);
+        //String tenantId = organisationList.get(0).getTenantId();
+        String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
+        Role role = getCitizenRole();
 
         OrgSearchCriteria orgSearchCriteria = OrgSearchCriteria.builder()
-                .id(new ArrayList<>()).tenantId(tenantId).build();
+                .id(new ArrayList<>()).tenantId(stateLevelTenantId).build();
 
         for(Organisation organisation : organisationList) {
             orgSearchCriteria.getId().add(organisation.getId());
@@ -150,17 +150,17 @@ public class IndividualService {
             // Plainly update the individuals which are not new to the org
             Set<ContactDetails> toBeUpdatedExistingMembers = organisation.getContactDetails().stream().filter(contactDetails -> dbMembersMobiles.contains(contactDetails.getContactMobileNumber())).collect(Collectors.toSet());
             for(ContactDetails contactDetails : toBeUpdatedExistingMembers) {
-                updateContactDetails(contactDetails, tenantId, requestInfo, role);
+                updateContactDetails(contactDetails, stateLevelTenantId, requestInfo, role);
             }
 
             Set<ContactDetails> newMembers = organisation.getContactDetails().stream().filter(contactDetails -> toBeAddedMembersMobile.contains(contactDetails.getContactMobileNumber())).collect(Collectors.toSet());
             for(ContactDetails contactDetails : newMembers) {
-                addContactAsOrgMember(contactDetails, tenantId, requestInfo, role);
+                addContactAsOrgMember(contactDetails, stateLevelTenantId, requestInfo, role);
             }
 
             Set<ContactDetails> toBeRemovedMembers = organisationFromDB.getContactDetails().stream().filter(contactDetails -> toBeRemovedMembersMobile.contains(contactDetails.getContactMobileNumber())).collect(Collectors.toSet());
             for(ContactDetails contactDetails : toBeRemovedMembers) {
-                updateContactDetails(contactDetails, tenantId, requestInfo, Role.builder().build());
+                updateContactDetails(contactDetails, stateLevelTenantId, requestInfo, Role.builder().build());
             }
 
             if(!newMembers.isEmpty() && !toBeRemovedMembers.isEmpty()) {
@@ -291,11 +291,10 @@ public class IndividualService {
      * this is will be hardcoded from code level as we have fix CITIZEN role
      * @return
      */
-    private Role getCitizenRole(String tenantId) {
+    private Role getCitizenRole() {
         return Role.builder()
                 .code(OrganisationConstant.ORG_CITIZEN_ROLE_CODE)
                 .name(OrganisationConstant.ORG_CITIZEN_ROLE_NAME)
-                .tenantId(multiStateInstanceUtil.getStateLevelTenant(tenantId))
                 .build();
     }
 
