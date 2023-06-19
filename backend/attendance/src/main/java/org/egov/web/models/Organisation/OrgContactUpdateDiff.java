@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -20,8 +21,8 @@ public class OrgContactUpdateDiff {
 
     private String organisationId;
 
-    private Set<ContactDetails> oldContacts;
+    private List<ContactDetails> oldContacts;
 
-    private Set<ContactDetails> newContacts;
+    private List<ContactDetails> newContacts;
 
 }

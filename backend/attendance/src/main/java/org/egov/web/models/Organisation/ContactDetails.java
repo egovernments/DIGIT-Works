@@ -77,4 +77,7 @@ public class ContactDetails {
     @JsonProperty("lastModifiedDate")
     private Long lastModifiedDate;
 
+    @JsonProperty("individualId")
+    private String individualId = null;
+
 }
