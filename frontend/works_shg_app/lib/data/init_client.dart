@@ -9,9 +9,8 @@ import 'package:works_shg_app/utils/constants.dart';
 import '../Env/env_config.dart';
 import '../blocs/auth/auth.dart';
 import '../models/request_info/request_info_model.dart';
-import '../utils/global_variables.dart';
 
-class Client {
+class InitClient {
   Dio init() {
     final Dio dio = Dio();
     dio.interceptors.add(ApiInterceptors());
@@ -30,8 +29,6 @@ class ApiInterceptors extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    var ts = DateTime.now().millisecondsSinceEpoch;
-    var selectedLocale = await GlobalVariables.selectedLocale() ?? "en_IN";
     options.data = {
       ...options.data,
       "RequestInfo": {
@@ -42,7 +39,7 @@ class ApiInterceptors extends Interceptor {
           action: options.extra['action'] ?? "_search",
           did: options.extra['did'] ?? "1",
           key: options.extra['key'] ?? "",
-          msgId: selectedLocale != null ? "$ts|$selectedLocale" : "",
+          msgId: "",
           authToken: options.extra['accessToken'],
         ).toJson(),
         "userInfo": options.extra['userInfo']
