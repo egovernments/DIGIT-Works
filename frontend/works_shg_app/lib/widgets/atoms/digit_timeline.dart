@@ -18,11 +18,10 @@ class DigitTimeline extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(
           timelineOptions.length,
-          (index) => Row(
-                children: [
-                  SizedBox(
-                    height: index == timelineOptions.length - 1 ? 80 : 160.0,
-                    child: TimelineNode(
+          (index) => IntrinsicHeight(
+                child: Row(
+                  children: [
+                    TimelineNode(
                       indicatorPosition: 0,
                       indicator: Icon(
                         Icons.circle,
@@ -45,103 +44,105 @@ class DigitTimeline extends StatelessWidget {
                               color: const DigitColors().cloudGray,
                             ),
                     ),
-                  ),
-                  Container(
-                    height: index == timelineOptions.length - 1 ? 80 : 160.0,
-                    padding: const EdgeInsets.only(left: 8.0),
-                    width: MediaQuery.of(context).size.width / 1.5,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          timelineOptions[index].title,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w400),
-                          textAlign: TextAlign.left,
-                        ),
-                        timelineOptions[index].subTitle != null &&
-                                timelineOptions[index].subTitle!.isNotEmpty
-                            ? SizedBox(
-                                width: 200,
-                                child: Text(
-                                  timelineOptions[index].subTitle ?? '',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: const DigitColors().davyGray),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                        timelineOptions[index].assignee != null &&
-                                timelineOptions[index].assignee!.isNotEmpty
-                            ? SizedBox(
-                                width: 200,
-                                child: Text(
-                                  timelineOptions[index].assignee ?? '',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: const DigitColors().davyGray),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                        timelineOptions[index].mobileNumber != null &&
-                                timelineOptions[index].mobileNumber!.isNotEmpty
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  timelineOptions[index].mobileNumber != null &&
-                                          timelineOptions[index]
-                                              .mobileNumber!
-                                              .isNotEmpty
-                                      ? const Icon(
-                                          Icons.phone,
-                                          size: 16,
-                                        )
-                                      : const Text(''),
-                                  timelineOptions[index].mobileNumber != null
-                                      ? SizedBox(
-                                          width: 200,
-                                          child: Text(
+                    Container(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            timelineOptions[index].title,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w400),
+                            textAlign: TextAlign.left,
+                          ),
+                          timelineOptions[index].subTitle != null &&
+                                  timelineOptions[index].subTitle!.isNotEmpty
+                              ? SizedBox(
+                                  width: 200,
+                                  child: Text(
+                                    timelineOptions[index].subTitle ?? '',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: const DigitColors().davyGray),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                          timelineOptions[index].assignee != null &&
+                                  timelineOptions[index].assignee!.isNotEmpty
+                              ? SizedBox(
+                                  width: 200,
+                                  child: Text(
+                                    timelineOptions[index].assignee ?? '',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: const DigitColors().davyGray),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                          timelineOptions[index].mobileNumber != null &&
+                                  timelineOptions[index]
+                                      .mobileNumber!
+                                      .isNotEmpty
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    timelineOptions[index].mobileNumber !=
+                                                null &&
                                             timelineOptions[index]
-                                                            .mobileNumber !=
-                                                        null &&
-                                                    timelineOptions[index]
-                                                        .mobileNumber!
-                                                        .isNotEmpty
-                                                ? timelineOptions[index]
-                                                    .mobileNumber
-                                                    .toString()
-                                                : '',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color: const DigitColors()
-                                                    .davyGray),
-                                          ),
-                                        )
-                                      : const SizedBox.shrink(),
-                                ],
-                              )
-                            : const SizedBox.shrink(),
-                        timelineOptions[index].comments != null &&
-                                timelineOptions[index].comments!.isNotEmpty
-                            ? SizedBox(
-                                width: 200,
-                                child: Text(
+                                                .mobileNumber!
+                                                .isNotEmpty
+                                        ? const Icon(
+                                            Icons.phone,
+                                            size: 16,
+                                          )
+                                        : const Text(''),
+                                    timelineOptions[index].mobileNumber != null
+                                        ? SizedBox(
+                                            width: 200,
+                                            child: Text(
+                                              timelineOptions[index]
+                                                              .mobileNumber !=
+                                                          null &&
+                                                      timelineOptions[index]
+                                                          .mobileNumber!
+                                                          .isNotEmpty
+                                                  ? timelineOptions[index]
+                                                      .mobileNumber
+                                                      .toString()
+                                                  : '',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const DigitColors()
+                                                      .davyGray),
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                          timelineOptions[index].comments != null &&
+                                  timelineOptions[index].comments!.isNotEmpty
+                              ? Text(
                                   timelineOptions[index].comments ?? '',
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       color: const DigitColors().davyGray),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                      ],
+                                )
+                              : const SizedBox.shrink(),
+                          const SizedBox(
+                            height: 16.0,
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )),
     );
   }
