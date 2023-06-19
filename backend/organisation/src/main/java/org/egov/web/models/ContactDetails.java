@@ -33,6 +33,9 @@ public class ContactDetails {
     @JsonProperty("tenantId")
     private String tenantId = null;
 
+    @JsonProperty("individualId")
+    private String individualId = null;
+
     @JsonProperty("orgId")
     private String orgId = null;
 
@@ -76,8 +79,5 @@ public class ContactDetails {
     //@DiffIgnore
     @JsonProperty("lastModifiedDate")
     private Long lastModifiedDate;
-
-    @JsonProperty("individualId")
-    private String individualId = null;
 
 }

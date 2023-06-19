@@ -201,7 +201,6 @@ public class IndividualService {
         else{
             Individual newUser = Individual.builder().build();
             addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
-            contactDetails.setId(UUID.randomUUID().toString());
             IndividualResponse individualResponse = createIndividualFromIndividualService(requestInfo, newUser, contactDetails);
             setContactFields(contactDetails, individualResponse, requestInfo);
         }
