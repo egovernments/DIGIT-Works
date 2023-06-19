@@ -58,10 +58,10 @@ public class IndividualService {
     public void createIndividual(OrgRequest request) {
         log.info("UserService::createIndividual");
         List<Organisation> organisationList = request.getOrganisations();
-        //String tenantId = organisationList.get(0).getTenantId();
-        String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
+        String tenantId = organisationList.get(0).getTenantId();
+        //String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         RequestInfo requestInfo = request.getRequestInfo();
-        Role role = getCitizenRole();
+        Role role = getCitizenRole(tenantId);
 
         List<ContactDetails> contactDetailsList = new ArrayList<>();
         for (Organisation organisation : organisationList) {
@@ -73,8 +73,8 @@ public class IndividualService {
         for (ContactDetails contactDetails : contactDetailsList) {
 
             Individual newUser = Individual.builder().build();
-            addIndividualDefaultFields(stateLevelTenantId, role, newUser, contactDetails, true, null);
-            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, stateLevelTenantId);
+            addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
+            IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
 
@@ -88,7 +88,7 @@ public class IndividualService {
                         "Individual's mobile number : " + contactDetails.getContactMobileNumber() + " already exists in the system");
             }
             // Assigns value of fields from user got from userDetailResponse to contact detail object
-            setContactFields(contactDetails, individualResponse, requestInfo, true);
+            setContactFields(contactDetails, individualResponse, requestInfo);
         }
     }
 
@@ -102,7 +102,7 @@ public class IndividualService {
             uri = uri.append(config.getIndividualUpdateEndpoint());
             IndividualRequest individualRequest = IndividualRequest.builder().requestInfo(requestInfo).individual(newIndividual).build();
             IndividualResponse individualResponse = individualUpdateCall(individualRequest, uri);
-            setContactFields(contactDetails, individualResponse, requestInfo, false);
+            setContactFields(contactDetails, individualResponse, requestInfo);
         } else {
             throw new CustomException("INDIVIDUAL.UUID",
                     "Individual's UUID : " + contactDetails.getId() + " doesn't exists in the system");
@@ -120,7 +120,7 @@ public class IndividualService {
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = organisationList.get(0).getTenantId();
         //String stateLevelTenantId = getStateLevelTenant(tenantId);
-        Role role = getCitizenRole();
+        Role role = getCitizenRole(tenantId);
 
         OrgSearchCriteria orgSearchCriteria = OrgSearchCriteria.builder()
                 .id(new ArrayList<>()).tenantId(tenantId).build();
@@ -195,7 +195,7 @@ public class IndividualService {
                 uri = uri.append(config.getIndividualUpdateEndpoint());
                 IndividualRequest individualRequest = IndividualRequest.builder().requestInfo(requestInfo).individual(newIndividual).build();
                 IndividualResponse individualResponse = individualUpdateCall(individualRequest, uri);
-                setContactFields(contactDetails, individualResponse, requestInfo, false);
+                setContactFields(contactDetails, individualResponse, requestInfo);
             }
         }
         else{
@@ -203,7 +203,7 @@ public class IndividualService {
             addIndividualDefaultFields(tenantId, role, newUser, contactDetails, true, null);
             contactDetails.setId(UUID.randomUUID().toString());
             IndividualResponse individualResponse = createIndividualFromIndividualService(requestInfo, newUser, contactDetails);
-            setContactFields(contactDetails, individualResponse, requestInfo, false);
+            setContactFields(contactDetails, individualResponse, requestInfo);
         }
     }
 
@@ -291,10 +291,11 @@ public class IndividualService {
      * this is will be hardcoded from code level as we have fix CITIZEN role
      * @return
      */
-    private Role getCitizenRole() {
+    private Role getCitizenRole(String tenantId) {
         return Role.builder()
                 .code(OrganisationConstant.ORG_CITIZEN_ROLE_CODE)
                 .name(OrganisationConstant.ORG_CITIZEN_ROLE_NAME)
+                .tenantId(multiStateInstanceUtil.getStateLevelTenant(tenantId))
                 .build();
     }
 
@@ -389,12 +390,9 @@ public class IndividualService {
      * @param contactDetails     contact details in the org whose user is created
      * @param response IndividualResponse from the individual Service corresponding to the given contact details
      */
-    private void setContactFields(ContactDetails contactDetails, IndividualResponse response, RequestInfo requestInfo, Boolean isCreate) {
+    private void setContactFields(ContactDetails contactDetails, IndividualResponse response, RequestInfo requestInfo) {
         log.info("IndividualService::setContactFields");
         if (response != null && response.getIndividual() != null) {
-            if(isCreate)
-                contactDetails.setId(UUID.randomUUID().toString());
-
             contactDetails.setIndividualId(response.getIndividual().getId());
             contactDetails.setContactName(response.getIndividual().getName().getGivenName());
             contactDetails.setCreatedBy(requestInfo.getUserInfo().getUuid());
