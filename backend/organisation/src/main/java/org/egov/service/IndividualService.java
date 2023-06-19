@@ -392,7 +392,8 @@ public class IndividualService {
     private void setContactFields(ContactDetails contactDetails, IndividualResponse response, RequestInfo requestInfo) {
         log.info("IndividualService::setContactFields");
         if (response != null && response.getIndividual() != null) {
-            contactDetails.setId(response.getIndividual().getId());
+            contactDetails.setId(UUID.randomUUID().toString());
+            contactDetails.setIndividualId(response.getIndividual().getId());
             contactDetails.setContactName(response.getIndividual().getName().getGivenName());
             contactDetails.setCreatedBy(requestInfo.getUserInfo().getUuid());
             contactDetails.setCreatedDate(System.currentTimeMillis());
