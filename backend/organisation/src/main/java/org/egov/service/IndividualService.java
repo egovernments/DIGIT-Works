@@ -118,12 +118,12 @@ public class IndividualService {
         log.info("IndividualService::updateIndividual");
         List<Organisation> organisationList = request.getOrganisations();
         RequestInfo requestInfo = request.getRequestInfo();
-        //String tenantId = organisationList.get(0).getTenantId();
+        String tenantId = organisationList.get(0).getTenantId();
         String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         Role role = getCitizenRole();
 
         OrgSearchCriteria orgSearchCriteria = OrgSearchCriteria.builder()
-                .id(new ArrayList<>()).tenantId(stateLevelTenantId).build();
+                .id(new ArrayList<>()).tenantId(tenantId).build();
 
         for(Organisation organisation : organisationList) {
             orgSearchCriteria.getId().add(organisation.getId());
