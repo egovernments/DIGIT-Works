@@ -447,14 +447,14 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        title.trim(),
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w700),
                         textAlign: TextAlign.start,
                       ),
                       subtitle.trim.toString() != ''
                           ? Text(
-                              subtitle,
+                              subtitle.trim(),
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -469,7 +469,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                         ? MediaQuery.of(context).size.width / 2.25
                         : MediaQuery.of(context).size.width / 2,
                     child: Text(
-                      description,
+                      description.trim(),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
@@ -482,7 +482,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                             ? MediaQuery.of(context).size.width / 2.25
                             : MediaQuery.of(context).size.width / 2,
                         child: Text(
-                          subDescription,
+                          subDescription.trim(),
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
