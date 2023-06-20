@@ -98,6 +98,7 @@ dev_dependencies:
   retrofit_generator: '>=4.0.0 <5.0.0'
   dart_code_metrics: ^5.6.0
   mocktail: ^0.3.0
+  flutter_launcher_icons: ^0.13.1
 
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -106,6 +107,13 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+flutter_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path_android: "assets/icons/png/ic_launcher.png"
+  image_path_ios: "assets/icons/png/ic_launcher.png"
+  remove_alpha_ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

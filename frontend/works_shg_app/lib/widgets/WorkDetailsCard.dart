@@ -354,14 +354,14 @@ class WorkDetailsCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            title,
+                            title.trim(),
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w700),
                             textAlign: TextAlign.start,
                           ),
                           subtitle.trim.toString() != ''
                               ? Text(
-                                  subtitle,
+                                  subtitle.trim(),
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
@@ -373,7 +373,7 @@ class WorkDetailsCard extends StatelessWidget {
                 SizedBox(
                     width: MediaQuery.of(context).size.width / 2,
                     child: Text(
-                      description,
+                      description.trim(),
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
