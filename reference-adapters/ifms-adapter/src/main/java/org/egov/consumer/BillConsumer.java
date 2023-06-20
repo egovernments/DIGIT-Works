@@ -2,8 +2,8 @@ package org.egov.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.web.models.BillDemandResponse;
-import org.egov.service.BillService;
+import org.egov.service.PaymentInstruction;
+import org.egov.web.models.bill.PaymentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -17,12 +17,16 @@ public class BillConsumer {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private BillService billService;
+    private PaymentInstruction paymentInstruction;
 
-    @KafkaListener(topics = {"${bill.kafka.topic}"})
+    @KafkaListener(topics = {"${billing.payment.create}"})
     public void listen(HashMap<String, Object> record) {
-        BillDemandResponse billDemandResponse = objectMapper.convertValue(record, BillDemandResponse.class);
-        billService.processBillDemandRequest(billDemandResponse);
+        PaymentRequest paymentRequest = objectMapper.convertValue(record, PaymentRequest.class);
+        try {
+            paymentInstruction.getPaymentInstructionFromPayment(paymentRequest);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

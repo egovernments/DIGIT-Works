@@ -38,4 +38,42 @@ public class IfmsAdapterConfig {
     @Value("${ifms.jit.public.key.file}")
     private String ifmsJitPublicKeyFile;
 
+    @Value("${billing.payment.create}")
+    private String paymentCreateTopic;
+
+    // MDMS
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
+
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsEndPoint;
+
+    // bill
+    @Value("${egov.bill.host}")
+    private String billHost;
+
+    @Value("${egov.bill.search.endpoint}")
+    private String billSearchEndPoint;
+
+    // Bank account
+    @Value("${egov.bank.account.host}")
+    private String bankAccountHost;
+
+    @Value("${egov.bank.account.search.endpoint}")
+    private String bankAccountSearchEndPoint;
+
+    // individual
+    @Value("${egov.individual.host}")
+    private String individualHost;
+
+    @Value("${egov.individual.search.endpoint}")
+    private String individualSearchEndPoint;
+
+    // organisation
+    @Value("${egov.organisation.host}")
+    private String organisationHost;
+
+    @Value("${egov.organisation.search.endpoint}")
+    private String organisationSearchEndPoint;
+
 }

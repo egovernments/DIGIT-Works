@@ -8,11 +8,13 @@ import org.egov.key.PublicKeyLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Base64;
+import java.util.TimeZone;
 
 @Component
 public class AuthenticationUtils {
@@ -22,11 +24,12 @@ public class AuthenticationUtils {
 
     PublicKey publicKey;
 
-    AuthenticationUtils() throws Exception {
-//        String path = config.getIfmsJitPublicKeyPath();
-//        String fileName = config.getIfmsJitPublicKeyFile();
-        String path = "D:/egovernments/digit-works-bkp-3/reference-adapter/ifms-adapter/src/main/resources/";
-        String fileName = "publicKey";
+    AuthenticationUtils(){}
+
+    @PostConstruct
+    public void initialize() throws Exception {
+        String path = config.getIfmsJitPublicKeyPath();
+        String fileName = config.getIfmsJitPublicKeyFile();
         publicKey = PublicKeyLoader.getPublicKeyFromByteFile(path + fileName);
     }
 

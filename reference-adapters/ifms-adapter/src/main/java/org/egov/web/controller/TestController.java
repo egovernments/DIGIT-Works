@@ -1,33 +1,27 @@
 package org.egov.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TextNode;
-import org.egov.kafka.Producer;
-import org.egov.web.models.TestObjectProducer;
+import org.egov.service.PaymentInstruction;
+import org.egov.web.models.PIRequest;
+import org.egov.web.models.bill.PaymentRequest;
 import org.egov.service.IfmsService;
 import org.egov.utils.AuthenticationUtils;
 import org.egov.utils.JitRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequestMapping("/test")
 public class TestController {
-
-    @Autowired
-    private Producer producer;
-//    @Autowired
-//    @Qualifier("ifmsRestTemplate")
-//    private RestTemplate ifmsRestTemplate;
 
     @Autowired
     IfmsService ifmsService;
@@ -38,16 +32,8 @@ public class TestController {
     @Autowired
     JitRequestUtils jitRequestUtils;
 
-    @RequestMapping(path = "/produce", method = RequestMethod.POST)
-    public ResponseEntity<Object> produceRecord(@RequestBody TestObjectProducer testObjectProducer) {
-        producer.push(testObjectProducer.getTopic(), testObjectProducer.getJson());
-        return new ResponseEntity<>(TextNode.valueOf("Done"), HttpStatus.ACCEPTED);
-    }
-
-//    @RequestMapping(path = "/send", method = RequestMethod.POST)
-//    public ResponseEntity<Object> send(@RequestBody Object object) {
-//        return ifmsRestTemplate.postForEntity("http://localhost:8080/produce", object, Object.class);
-//    }
+    @Autowired
+    PaymentInstruction paymentInstruction;
 
     @RequestMapping(path = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<Object> login(@RequestBody Object object) {
@@ -78,6 +64,16 @@ public class TestController {
             String response = ifmsService.ifmsJITRequest(String.valueOf(jsonObject.get("authToken")), payload.get("encryptedPayload"), payload.get("encryptionRek"));
             Object decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
             ResponseEntity<Object> responseEntity = new ResponseEntity<>(decryptedResponse, HttpStatus.OK);
+            return responseEntity;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @RequestMapping(path = "/pi-request", method = RequestMethod.POST)
+    public ResponseEntity<Object> request(@RequestBody PaymentRequest paymentRequest) {
+        try {
+            PIRequest piRequest = paymentInstruction.getPaymentInstructionFromPayment(paymentRequest);
+            ResponseEntity<Object> responseEntity = new ResponseEntity<>(piRequest, HttpStatus.OK);
             return responseEntity;
         } catch (Exception e) {
             throw new RuntimeException(e);
