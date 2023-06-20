@@ -3,12 +3,13 @@ package org.egov.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.IndividualBulkResponse;
+import org.egov.common.models.individual.IndividualSearch;
+import org.egov.common.models.individual.IndividualSearchRequest;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.web.models.Individual.IndividualBulkResponse;
-import org.egov.web.models.Individual.IndividualSearch;
-import org.egov.web.models.Individual.IndividualSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -38,6 +39,20 @@ public class IndividualServiceUtil {
 
     public List<String> fetchIndividualIds(List<String> individualIds, RequestInfo requestInfo, String tenantId) {
 
+        List<Individual> individualList = getIndividualDetails(individualIds, requestInfo, tenantId);
+
+        List<String> ids = null;
+        try {
+            ids = individualList.stream().map(Individual::getId).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new CustomException("PARSING_ERROR", "Failed to parse Individual service response");
+        }
+        log.info("Individual search fetched successfully");
+        return ids;
+    }
+
+    public List<Individual> getIndividualDetails(List<String> individualIds, RequestInfo requestInfo, String tenantId) {
+
         String uri = getSearchURLWithParams(tenantId).toUriString();
 
         IndividualSearch individualSearch = IndividualSearch.builder().id(individualIds).build();
@@ -57,15 +72,7 @@ public class IndividualServiceUtil {
             throw new CustomException("INDIVIDUAL_SEARCH_RESPONSE_IS_EMPTY", "Individuals not found");
         }
 
-        List<String> ids = null;
-
-        try {
-            ids = response.getIndividual().stream().map(individual -> individual.getId()).collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new CustomException("PARSING_ERROR", "Failed to parse Individual service response");
-        }
-        log.info("Individual search fetched successfully");
-        return ids;
+        return response.getIndividual();
     }
 
     private UriComponentsBuilder getSearchURLWithParams(String tenantId) {

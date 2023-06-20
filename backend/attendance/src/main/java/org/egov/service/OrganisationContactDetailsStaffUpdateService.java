@@ -3,6 +3,8 @@ package org.egov.service;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
 import org.egov.web.models.Organisation.ContactDetails;
@@ -11,11 +13,9 @@ import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -25,6 +25,8 @@ public class OrganisationContactDetailsStaffUpdateService {
     private AttendanceRegisterService attendanceRegisterService;
     @Autowired
     private StaffService staffService;
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     public void updateStaffPermissionsForContactDetails(OrgContactUpdateDiff orgContactUpdateDiff) {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(orgContactUpdateDiff.getRequestInfo()).build();
@@ -36,7 +38,15 @@ public class OrganisationContactDetailsStaffUpdateService {
             AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria =
                     AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(oldContact.getIndividualId()).build();
             List<AttendanceRegister> attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
-            revokePermission(attendanceRegisterList, oldContact, orgContactUpdateDiff.getRequestInfo());
+            if(!CollectionUtils.isEmpty(attendanceRegisterList)) {
+                revokePermission(attendanceRegisterList, oldContact.getIndividualId(), orgContactUpdateDiff.getRequestInfo());
+            }
+            else {
+                String userUuid = individualServiceUtil.getIndividualDetails(Collections.singletonList(oldContact.getIndividualId()), requestInfoWrapper.getRequestInfo(), tenantId).get(0).getUserUuid();
+                attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(userUuid).build();
+                attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
+                revokePermission(attendanceRegisterList, userUuid, orgContactUpdateDiff.getRequestInfo());
+            }
             attendanceRegisterSet.addAll(attendanceRegisterList);
         }
 
@@ -44,7 +54,7 @@ public class OrganisationContactDetailsStaffUpdateService {
         grantPermission(attendanceRegisterSet, newContacts, orgContactUpdateDiff.getRequestInfo());
     }
 
-    public void revokePermission(List<AttendanceRegister> attendanceRegisters, ContactDetails oldContact, RequestInfo requestInfo) {
+    public void revokePermission(List<AttendanceRegister> attendanceRegisters, String individualOrUserId, RequestInfo requestInfo) {
         if(attendanceRegisters.isEmpty()) {
             log.info("No attendance registers to revoke permissions on");
             return;
@@ -53,13 +63,13 @@ public class OrganisationContactDetailsStaffUpdateService {
         for(AttendanceRegister attendanceRegister : attendanceRegisters) {
             String tenantId = attendanceRegister.getTenantId();
             StaffPermission staffPermission = StaffPermission.builder()
-                    .tenantId(tenantId).registerId(attendanceRegister.getId()).userId(oldContact.getIndividualId()).build();
+                    .tenantId(tenantId).registerId(attendanceRegister.getId()).userId(individualOrUserId).build();
             staffPermissionList.add(staffPermission);
         }
         StaffPermissionRequest staffPermissionRequest = StaffPermissionRequest.builder()
                 .requestInfo(requestInfo).staff(staffPermissionList).build();
         staffService.deleteAttendanceStaff(staffPermissionRequest);
-        log.info("Revoked permission for: " + oldContact.getIndividualId() + " on " + attendanceRegisters.size() + " registers.");
+        log.info("Revoked permission for: " + individualOrUserId + " on " + attendanceRegisters.size() + " registers.");
     }
 
     public void grantPermission(Set<AttendanceRegister> attendanceRegisters, List<ContactDetails> newContacts, RequestInfo requestInfo) {

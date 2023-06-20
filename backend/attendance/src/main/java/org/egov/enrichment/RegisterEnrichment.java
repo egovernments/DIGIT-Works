@@ -4,10 +4,12 @@ import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.AttendanceServiceUtil;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,8 @@ public class RegisterEnrichment {
     private IdGenRepository idGenRepository;
     @Autowired
     private AttendanceServiceConfiguration config;
-
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     /* Enrich Attendance Register on Create Request */
     public void enrichRegisterOnCreate(AttendanceRegisterRequest attendanceRegisterRequest) {
@@ -65,11 +68,15 @@ public class RegisterEnrichment {
 
     /* Enrich first staff details while creating register*/
     private void enrichRegisterFirstStaff(AttendanceRegister attendanceRegister, RequestInfo requestInfo, AuditDetails auditDetails) {
+        String tenantId = attendanceRegister.getTenantId();
+        String userUuid = requestInfo.getUserInfo().getUuid();
+        List<Individual> individualList = individualServiceUtil.getIndividualDetails(Collections.singletonList(userUuid), requestInfo, tenantId);
+        String individualId = individualList.get(0).getIndividualId();
         StaffPermission staffPermission = StaffPermission.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(attendanceRegister.getTenantId())
                 .registerId(attendanceRegister.getId())
-                .userId(requestInfo.getUserInfo().getUuid())
+                .userId(individualId)
                 .enrollmentDate(new BigDecimal(System.currentTimeMillis()))
                 .auditDetails(auditDetails)
                 .build();
