@@ -167,6 +167,8 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
               t={t}
               onSelect={onActionSelect}
               style={MenuStyle}
+              actionStyleApply={["SEND_BACK_TO_ORIGINATOR"]}
+              actionStyle={{height:"auto"}}
             />
           ) : null}
           <SubmitBar ref={menuRef} label={t("WORKS_ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
