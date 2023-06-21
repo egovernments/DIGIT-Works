@@ -104,7 +104,7 @@ public class AttendanceRegisterService {
             */
             Long userId = requestInfoWrapper.getRequestInfo().getUserInfo().getId();
 
-            String individualId = individualServiceUtil.getIndividualDetailsFromUserId(userId,requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getIndividualId();
+            String individualId = individualServiceUtil.getIndividualDetailsFromUserId(userId,requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
             Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(individualId);
             updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
         }
