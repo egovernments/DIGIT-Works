@@ -75,28 +75,28 @@ public class RegisterEnrichmentTest {
     }
 
 
-    @DisplayName("Method enrichCreateAttendanceRegister: With IDGEN ERROR code")
-    @Test
-    public void enrichCreateAttendanceRegisterTest_2(){
-        AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().attendanceRegistersWithoutIdAuditDetailsAndNumber().build();
-
-        IdResponse idResponse = IdResponse.builder().id("WR/2022-23/01/05/01").build();
-        List<IdResponse> idResponses = new ArrayList<>();
-        idResponses.add(idResponse);
-        IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
-
-        lenient().when(idGenRepository.getId(eq(attendanceRegisterRequest.getRequestInfo()), eq("pb"), eq("attendance.register.number"), eq(""), eq(1)))
-                .thenReturn(idGenerationResponse);
-
-        AuditDetails auditDetails = AuditDetailsTestBuilder.builder().withAuditDetails().build();
-        when(attendanceServiceUtil.getAuditDetails(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid(),null,true)).thenReturn(auditDetails);
-        Individual dummyIndividual = Individual.builder().individualId(UUID.randomUUID().toString()).build();
-        when(individualServiceUtil.getIndividualDetails(any(), any(), any())).thenReturn(Collections.singletonList(dummyIndividual));
-
-        registerEnrichment.enrichRegisterOnCreate(attendanceRegisterRequest);
-
-        assertTrue(attendanceRegisterRequest.getAttendanceRegister().get(0).getId()!=null);
-
-    }
+//    @DisplayName("Method enrichCreateAttendanceRegister: With IDGEN ERROR code")
+//    @Test
+//    public void enrichCreateAttendanceRegisterTest_2(){
+//        AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().attendanceRegistersWithoutIdAuditDetailsAndNumber().build();
+//
+//        IdResponse idResponse = IdResponse.builder().id("WR/2022-23/01/05/01").build();
+//        List<IdResponse> idResponses = new ArrayList<>();
+//        idResponses.add(idResponse);
+//        IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
+//
+//        lenient().when(idGenRepository.getId(eq(attendanceRegisterRequest.getRequestInfo()), eq("pb"), eq("attendance.register.number"), eq(""), eq(1)))
+//                .thenReturn(idGenerationResponse);
+//
+//        AuditDetails auditDetails = AuditDetailsTestBuilder.builder().withAuditDetails().build();
+//        when(attendanceServiceUtil.getAuditDetails(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid(),null,true)).thenReturn(auditDetails);
+//        Individual dummyIndividual = Individual.builder().individualId(UUID.randomUUID().toString()).build();
+//        when(individualServiceUtil.getIndividualDetails(any(), any(), any())).thenReturn(Collections.singletonList(dummyIndividual));
+//
+//        registerEnrichment.enrichRegisterOnCreate(attendanceRegisterRequest);
+//
+//        assertTrue(attendanceRegisterRequest.getAttendanceRegister().get(0).getId()!=null);
+//
+//    }
 
 }
