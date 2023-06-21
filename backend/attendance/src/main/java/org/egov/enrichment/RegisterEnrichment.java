@@ -5,6 +5,7 @@ import digit.models.coremodels.IdResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.IdGenRepository;
 import org.egov.tracer.model.CustomException;
@@ -33,6 +34,8 @@ public class RegisterEnrichment {
     private AttendanceServiceConfiguration config;
     @Autowired
     private IndividualServiceUtil individualServiceUtil;
+    @Autowired
+    private MultiStateInstanceUtil multiStateInstanceUtil;
 
     /* Enrich Attendance Register on Create Request */
     public void enrichRegisterOnCreate(AttendanceRegisterRequest attendanceRegisterRequest) {
@@ -70,7 +73,7 @@ public class RegisterEnrichment {
     private void enrichRegisterFirstStaff(AttendanceRegister attendanceRegister, RequestInfo requestInfo, AuditDetails auditDetails) {
         String tenantId = attendanceRegister.getTenantId();
         Long userid = requestInfo.getUserInfo().getId();
-        List<Individual> individualList = individualServiceUtil.getIndividualDetailsFromUserId(userid, requestInfo, tenantId);
+        List<Individual> individualList = individualServiceUtil.getIndividualDetailsFromUserId(userid, requestInfo, multiStateInstanceUtil.getStateLevelTenant(tenantId));
         String individualId = individualList.get(0).getIndividualId();
         StaffPermission staffPermission = StaffPermission.builder()
                 .id(UUID.randomUUID().toString())
