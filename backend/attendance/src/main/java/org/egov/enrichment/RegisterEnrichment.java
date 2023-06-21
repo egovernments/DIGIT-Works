@@ -69,8 +69,8 @@ public class RegisterEnrichment {
     /* Enrich first staff details while creating register*/
     private void enrichRegisterFirstStaff(AttendanceRegister attendanceRegister, RequestInfo requestInfo, AuditDetails auditDetails) {
         String tenantId = attendanceRegister.getTenantId();
-        String userUuid = requestInfo.getUserInfo().getUuid();
-        List<Individual> individualList = individualServiceUtil.getIndividualDetails(Collections.singletonList(userUuid), requestInfo, tenantId);
+        Long userid = requestInfo.getUserInfo().getId();
+        List<Individual> individualList = individualServiceUtil.getIndividualDetailsFromUserId(userid, requestInfo, tenantId);
         String individualId = individualList.get(0).getIndividualId();
         StaffPermission staffPermission = StaffPermission.builder()
                 .id(UUID.randomUUID().toString())

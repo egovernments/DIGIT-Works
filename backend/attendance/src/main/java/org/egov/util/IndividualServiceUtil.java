@@ -21,6 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Long.parseLong;
+
 @Component
 @Slf4j
 public class IndividualServiceUtil {
@@ -84,5 +86,27 @@ public class IndividualServiceUtil {
                 .queryParam("tenantId", tenantId);
 
         return uriBuilder;
+    }
+
+    public List<Individual> getIndividualDetailsFromUserId(Long userId, RequestInfo requestInfo, String tenantId) {
+        String uri = getSearchURLWithParams(tenantId).toUriString();
+        IndividualSearch individualSearch = IndividualSearch.builder().userId(userId).build();
+        IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
+                .requestInfo(requestInfo).individual(individualSearch).build();
+
+        IndividualBulkResponse response = null;
+        log.info("call individual search with tenantId::" + tenantId + "::user id::" + userId);
+
+        try {
+            response = restTemplate.postForObject(uri, individualSearchRequest, IndividualBulkResponse.class);
+        } catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
+            log.error("Error thrown from individual search service::" + httpClientOrServerExc.getStatusCode());
+            throw new CustomException("INDIVIDUAL_SEARCH_SERVICE_EXCEPTION", "Error thrown from individual search service::" + httpClientOrServerExc.getStatusCode());
+        }
+        if (response == null || CollectionUtils.isEmpty(response.getIndividual())) {
+            throw new CustomException("INDIVIDUAL_SEARCH_RESPONSE_IS_EMPTY", "Individuals not found");
+        }
+
+        return response.getIndividual();
     }
 }
