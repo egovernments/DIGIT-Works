@@ -7,6 +7,7 @@ import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.IndividualBulkResponse;
 import org.egov.common.models.individual.IndividualSearch;
 import org.egov.common.models.individual.IndividualSearchRequest;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
@@ -38,6 +39,8 @@ public class IndividualServiceUtil {
 
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private MultiStateInstanceUtil multiStateInstanceUtil;
 
     public List<String> fetchIndividualIds(List<String> individualIds, RequestInfo requestInfo, String tenantId) {
 
@@ -89,7 +92,7 @@ public class IndividualServiceUtil {
     }
 
     public List<Individual> getIndividualDetailsFromUserId(Long userId, RequestInfo requestInfo, String tenantId) {
-        String uri = getSearchURLWithParams(tenantId).toUriString();
+        String uri = getSearchURLWithParams(multiStateInstanceUtil.getStateLevelTenant(tenantId)).toUriString();
         IndividualSearch individualSearch = IndividualSearch.builder().userId(userId).build();
         IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
                 .requestInfo(requestInfo).individual(individualSearch).build();

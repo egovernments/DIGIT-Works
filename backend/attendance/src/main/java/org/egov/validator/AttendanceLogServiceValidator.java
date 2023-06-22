@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.AttendanceServiceConfiguration;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendeeSearchCriteria;
 import org.egov.web.models.AttendanceLogSearchCriteria;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
@@ -39,6 +40,9 @@ public class AttendanceLogServiceValidator {
 
     @Autowired
     private AttendanceServiceConfiguration config;
+
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     public void validateCreateAttendanceLogRequest(AttendanceLogRequest attendanceLogRequest) {
         log.info("Validate attendance log create request");
@@ -348,7 +352,8 @@ public class AttendanceLogServiceValidator {
 
         String userUUID = attendanceLogRequest.getRequestInfo().getUserInfo().getUuid();
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
-        validateLoggedInUser(userUUID, registerId);
+        String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceLogRequest.getRequestInfo().getUserInfo().getId(), attendanceLogRequest.getRequestInfo(), attendanceLogRequest.getAttendance().get(0).getTenantId()).get(0).getId();
+        validateLoggedInUser(individualId, registerId);
         log.info("User ["+userUUID+"] validation is done for register ["+registerId+"]");
     }
 
@@ -370,7 +375,8 @@ public class AttendanceLogServiceValidator {
         validateTenantIdAssociationWithRegisterId(attendanceRegisters.get(0), searchCriteria.getTenantId());
 
         // Verify the Logged-in user is associated to the given register.
-        validateLoggedInUser(requestInfoWrapper.getRequestInfo().getUserInfo().getUuid(), searchCriteria.getRegisterId());
+        String individualId = individualServiceUtil.getIndividualDetailsFromUserId(requestInfoWrapper.getRequestInfo().getUserInfo().getId(), requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
+        validateLoggedInUser(individualId, searchCriteria.getRegisterId());
 
         log.info("Attendance log search request validated successfully");
     }

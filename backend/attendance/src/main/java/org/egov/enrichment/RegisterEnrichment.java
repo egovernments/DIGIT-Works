@@ -74,7 +74,8 @@ public class RegisterEnrichment {
         String tenantId = attendanceRegister.getTenantId();
         Long userid = requestInfo.getUserInfo().getId();
         List<Individual> individualList = individualServiceUtil.getIndividualDetailsFromUserId(userid, requestInfo, multiStateInstanceUtil.getStateLevelTenant(tenantId));
-        String individualId = individualList.get(0).getIndividualId();
+        String individualId = individualList.get(0).getId();
+
         StaffPermission staffPermission = StaffPermission.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(attendanceRegister.getTenantId())
