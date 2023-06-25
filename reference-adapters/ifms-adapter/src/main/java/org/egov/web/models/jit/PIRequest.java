@@ -1,4 +1,4 @@
-package org.egov.web.models;
+package org.egov.web.models.jit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -42,6 +42,6 @@ public class PIRequest {
     @JsonProperty("purpose")
     private String purpose;
     @JsonProperty("beneficiaryDetails")
-    private List<PiBeneficiary> beneficiaryDetails;
+    private List<PIBeneficiary> beneficiaryDetails;
 
 }

@@ -5,10 +5,11 @@ import org.egov.utils.BankAccountUtils;
 import org.egov.utils.BillUtils;
 import org.egov.utils.IndividualUtils;
 import org.egov.utils.OrganisationUtils;
-import org.egov.web.models.*;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.Status;
+import org.egov.web.models.jit.PIRequest;
+import org.egov.web.models.jit.PIBeneficiary;
 import org.egov.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,12 +63,18 @@ public class PaymentInstruction {
         beneficiaryIds.addAll(individualBeneficiaryIds);
         beneficiaryIds.addAll(orgBeneficiaryIds);
 
+        List<Organisation> organizations = new ArrayList<>();
+        List<Individual> individuals = new ArrayList<>();
         // Get bank account details by beneficiary ids
         List<BankAccount> bankAccounts = bankAccountUtils.getBankAccountsByIdentifier(paymentRequest.getRequestInfo(), beneficiaryIds, paymentRequest.getPayment().getTenantId());
         // Get organizations details
-        List<Organisation> organizations = organisationUtils.getOrganisationsById(paymentRequest.getRequestInfo(), orgBeneficiaryIds, paymentRequest.getPayment().getTenantId());
+        if (orgBeneficiaryIds != null && !orgBeneficiaryIds.isEmpty()) {
+            organizations = organisationUtils.getOrganisationsById(paymentRequest.getRequestInfo(), orgBeneficiaryIds, paymentRequest.getPayment().getTenantId());
+        }
         // Get bank account details by beneficiary ids
-        List<Individual> individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualBeneficiaryIds, paymentRequest.getPayment().getTenantId());
+        if (individualBeneficiaryIds != null && !individualBeneficiaryIds.isEmpty()) {
+            individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualBeneficiaryIds, paymentRequest.getPayment().getTenantId());
+        }
         // Enrich PI request with beneficiary bankaccount details
         enrichBankaccountOnPI(piRequest, bankAccounts, individuals, organizations);
         return piRequest;
@@ -75,13 +82,13 @@ public class PaymentInstruction {
 
     private PIRequest getPiRequestByBill(List<Bill> billList) {
         // Get the beneficiaries
-        List<PiBeneficiary>  piBeneficiaries = new ArrayList<>();
+        List<PIBeneficiary>  piBeneficiaries = new ArrayList<>();
         BigDecimal totalAmount = new BigDecimal(0);
         for (Bill bill: billList) {
-            List<PiBeneficiary>  beneficiaries = getBeneficiaryListFromBill(bill);
+            List<PIBeneficiary>  beneficiaries = getBeneficiaryListFromBill(bill);
             if (beneficiaries != null && !beneficiaries.isEmpty()) {
                 piBeneficiaries.addAll(beneficiaries);
-                for (PiBeneficiary piBeneficiary: beneficiaries) {
+                for (PIBeneficiary piBeneficiary: beneficiaries) {
                     BigDecimal amt = new BigDecimal(piBeneficiary.getBenfAmount());
                     totalAmount = totalAmount.add(amt);
                 }
@@ -111,12 +118,12 @@ public class PaymentInstruction {
         return piRequest;
     }
 
-    private List<PiBeneficiary> getBeneficiaryListFromBill(Bill bill) {
-        List<PiBeneficiary>  piBeneficiaryList = new ArrayList<>();
+    private List<PIBeneficiary> getBeneficiaryListFromBill(Bill bill) {
+        List<PIBeneficiary>  piBeneficiaryList = new ArrayList<>();
         for (BillDetail billDetail: bill.getBillDetails()) {
             for (LineItem lineItem: billDetail.getPayableLineItems()) {
                 if (lineItem.getStatus().equals(Status.ACTIVE)) {
-                    PiBeneficiary piBeneficiary = PiBeneficiary.builder()
+                    PIBeneficiary piBeneficiary = PIBeneficiary.builder()
                             .benefId(billDetail.getPayee().getIdentifier())
                             .benfAmount(lineItem.getAmount().toString())
                             .build();
@@ -146,7 +153,7 @@ public class PaymentInstruction {
                 organisationMap.put(organisation.getId(), organisation);
             }
         }
-        for(PiBeneficiary piBeneficiary: piRequest.getBeneficiaryDetails()) {
+        for(PIBeneficiary piBeneficiary: piRequest.getBeneficiaryDetails()) {
             BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBenefId());
             if (bankAccount != null) {
                 piBeneficiary.setBenefName(bankAccount.getBankAccountDetails().get(0).getAccountHolderName());

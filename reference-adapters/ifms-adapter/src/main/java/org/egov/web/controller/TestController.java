@@ -2,7 +2,9 @@ package org.egov.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.service.PaymentInstruction;
-import org.egov.web.models.PIRequest;
+import org.egov.service.VirtualAllotmentService;
+import org.egov.web.models.jit.PIRequest;
+import org.egov.web.models.jit.SanctionAllotmentRequest;
 import org.egov.web.models.bill.PaymentRequest;
 import org.egov.service.IfmsService;
 import org.egov.utils.AuthenticationUtils;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -34,6 +35,9 @@ public class TestController {
 
     @Autowired
     PaymentInstruction paymentInstruction;
+
+    @Autowired
+    VirtualAllotmentService virtualAllotmentService;
 
     @RequestMapping(path = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<Object> login(@RequestBody Object object) {
@@ -73,7 +77,21 @@ public class TestController {
     public ResponseEntity<Object> request(@RequestBody PaymentRequest paymentRequest) {
         try {
             PIRequest piRequest = paymentInstruction.getPaymentInstructionFromPayment(paymentRequest);
+            // TODO: PI request send to JIT
+            // TODO: Store PI request into system
+
             ResponseEntity<Object> responseEntity = new ResponseEntity<>(piRequest, HttpStatus.OK);
+            return responseEntity;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @RequestMapping(path = "/create-sanction-allotments", method = RequestMethod.POST)
+    public ResponseEntity<Object> createSanctionAllotments(@RequestBody SanctionAllotmentRequest allotmentRequest) {
+        try {
+            virtualAllotmentService.generateVirtualAllotment(allotmentRequest);
+            ResponseEntity<Object> responseEntity = new ResponseEntity<>("Generated", HttpStatus.OK);
             return responseEntity;
         } catch (Exception e) {
             throw new RuntimeException(e);

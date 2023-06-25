@@ -1,17 +1,24 @@
 package org.egov.service;
 
+import net.minidev.json.JSONArray;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.utils.AuthenticationUtils;
 import org.egov.utils.JitRequestUtils;
+import org.egov.utils.MdmsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.egov.config.Constants.*;
 
 
 @Service
@@ -28,6 +35,12 @@ public class IfmsService {
 
     @Autowired
     JitRequestUtils jitRequestUtils;
+
+    @Autowired
+    MdmsUtils mdmsUtils;
+
+    @Autowired
+    IfmsAdapterConfig ifmsAdapterConfig;
 
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
@@ -90,6 +103,23 @@ public class IfmsService {
         System.out.println("res : " + res);
         return res;
     }
+
+    public JSONArray getHeadOfAccounts(RequestInfo requestInfo) {
+        List<String> ifmsMasters = new ArrayList<>();
+        ifmsMasters.add(MDMS_HEAD_OF_ACCOUNT_MASTER);
+        Map<String, Map<String, JSONArray>> ifmsHOAResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_IFMS_MODULE_NAME, ifmsMasters);
+        System.out.println(ifmsHOAResponse);
+        return ifmsHOAResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_HEAD_OF_ACCOUNT_MASTER);
+    }
+
+    public JSONArray getSchemeDetails(RequestInfo requestInfo) {
+        List<String> ifmsMasters = new ArrayList<>();
+        ifmsMasters.add(MDMS_SCHEMA_DETAILS_MASTER);
+        Map<String, Map<String, JSONArray>> ifmsSchemaResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_IFMS_MODULE_NAME, ifmsMasters);
+        System.out.println(ifmsSchemaResponse);
+        return ifmsSchemaResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SCHEMA_DETAILS_MASTER);
+    }
+
 
 
 }

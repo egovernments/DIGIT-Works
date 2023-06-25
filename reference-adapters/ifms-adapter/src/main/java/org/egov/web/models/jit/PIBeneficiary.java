@@ -1,4 +1,4 @@
-package org.egov.web.models;
+package org.egov.web.models.jit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class PiBeneficiary {
+public class PIBeneficiary {
     @JsonProperty("benefId")
     private String benefId;
     @JsonProperty("benefName")

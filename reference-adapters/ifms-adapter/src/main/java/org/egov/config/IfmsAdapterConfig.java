@@ -41,6 +41,9 @@ public class IfmsAdapterConfig {
     @Value("${billing.payment.create}")
     private String paymentCreateTopic;
 
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
+
     // MDMS
     @Value("${egov.mdms.host}")
     private String mdmsHost;
