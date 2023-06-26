@@ -179,6 +179,12 @@ public class WorkflowService {
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 
+        if(CollectionUtils.isEmpty(workflow.getAssignees()) && workflow.getAction().equals("SENDBACK")){
+            List<String> uuids = new ArrayList<>();
+            uuids.add(estimate.getAuditDetails().getCreatedBy());
+            workflow.setAssignees(uuids);
+        }
+
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
             List<User> users = new ArrayList<>();
 
