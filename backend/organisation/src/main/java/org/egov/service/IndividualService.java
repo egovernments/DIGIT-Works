@@ -59,6 +59,7 @@ public class IndividualService {
         log.info("UserService::createIndividual");
         List<Organisation> organisationList = request.getOrganisations();
         //String tenantId = organisationList.get(0).getTenantId();
+        StringBuilder uri = new StringBuilder(config.getIndividualHost());
         String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         RequestInfo requestInfo = request.getRequestInfo();
         Role role = getCitizenRole();
@@ -83,6 +84,12 @@ public class IndividualService {
                 contactDetails.setId(UUID.randomUUID().toString());
                 individualResponse = createIndividualFromIndividualService(requestInfo, newUser, contactDetails);
 
+            } else if (!existingIndividualFromService.get(0).getUserDetails().getRoles().equals(getCitizenRole())) {
+                Individual newIndividual = Individual.builder().build();
+                addIndividualDefaultFields(stateLevelTenantId, role, newIndividual, contactDetails, false, existingIndividualFromService.get(0));
+                uri = uri.append(config.getIndividualUpdateEndpoint());
+                IndividualRequest individualRequest = IndividualRequest.builder().requestInfo(requestInfo).individual(newIndividual).build();
+                individualResponse = individualUpdateCall(individualRequest, uri);
             } else {
                 throw new CustomException("INDIVIDUAL.MOBILE_NUMBER",
                         "Individual's mobile number : " + contactDetails.getContactMobileNumber() + " already exists in the system");
@@ -105,7 +112,7 @@ public class IndividualService {
             setContactFields(contactDetails, individualResponse, requestInfo);
         } else {
             throw new CustomException("INDIVIDUAL.UUID",
-                    "Individual's UUID : " + contactDetails.getId() + " doesn't exists in the system");
+                    "Individual's UUID : " + contactDetails.getIndividualId() + " doesn't exists in the system");
         }
     }
 
@@ -237,7 +244,7 @@ public class IndividualService {
         if (isCreate) {
             searchRequest.getIndividual().setMobileNumber(contactDetails.getContactMobileNumber());
         } else {
-            searchRequest.getIndividual().setId(Collections.singletonList(contactDetails.getId()));
+            searchRequest.getIndividual().setId(Collections.singletonList(contactDetails.getIndividualId()));
         }
         StringBuilder uri = new StringBuilder(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
         return individualSearchCall(searchRequest, uri,tenantId);
