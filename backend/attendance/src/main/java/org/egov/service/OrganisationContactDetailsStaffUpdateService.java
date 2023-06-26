@@ -31,31 +31,25 @@ public class OrganisationContactDetailsStaffUpdateService {
     public void updateStaffPermissionsForContactDetails(OrgContactUpdateDiff orgContactUpdateDiff) {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(orgContactUpdateDiff.getRequestInfo()).build();
         String tenantId = orgContactUpdateDiff.getTenantId();
-        Set<AttendanceRegister> attendanceRegisterSet = new HashSet<>();
         List<ContactDetails> oldContacts = orgContactUpdateDiff.getOldContacts();
 
         for(ContactDetails oldContact : oldContacts) {
             AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria =
                     AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(oldContact.getIndividualId()).build();
             List<AttendanceRegister> attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
-            if(!CollectionUtils.isEmpty(attendanceRegisterList)) {
-                revokePermission(attendanceRegisterList, oldContact.getIndividualId(), orgContactUpdateDiff.getRequestInfo());
-            }
-            else {
+            if(CollectionUtils.isEmpty(attendanceRegisterList)) {
                 try {
                     String userUuid = individualServiceUtil.getIndividualDetails(Collections.singletonList(oldContact.getIndividualId()), requestInfoWrapper.getRequestInfo(), tenantId).get(0).getUserUuid();
                     attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(userUuid).build();
                     attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
-                    revokePermission(attendanceRegisterList, userUuid, orgContactUpdateDiff.getRequestInfo());
                 }catch (Exception e){
                     log.error(e.toString());
                 }
             }
-            attendanceRegisterSet.addAll(attendanceRegisterList);
+            List<ContactDetails> newContacts = orgContactUpdateDiff.getNewContacts();
+            grantPermission(attendanceRegisterList, newContacts, orgContactUpdateDiff.getRequestInfo());
+            revokePermission(attendanceRegisterList, oldContact.getIndividualId(), orgContactUpdateDiff.getRequestInfo());
         }
-
-        List<ContactDetails> newContacts = orgContactUpdateDiff.getNewContacts();
-        grantPermission(attendanceRegisterSet, newContacts, orgContactUpdateDiff.getRequestInfo());
     }
 
     public void revokePermission(List<AttendanceRegister> attendanceRegisters, String individualOrUserId, RequestInfo requestInfo) {
@@ -76,7 +70,7 @@ public class OrganisationContactDetailsStaffUpdateService {
         log.info("Revoked permission for: " + individualOrUserId + " on " + attendanceRegisters.size() + " registers.");
     }
 
-    public void grantPermission(Set<AttendanceRegister> attendanceRegisters, List<ContactDetails> newContacts, RequestInfo requestInfo) {
+    public void grantPermission(List<AttendanceRegister> attendanceRegisters, List<ContactDetails> newContacts, RequestInfo requestInfo) {
         if(attendanceRegisters.isEmpty()) {
             log.info("No attendance registers to grant permission on");
             return;
