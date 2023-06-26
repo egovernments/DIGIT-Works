@@ -3,6 +3,7 @@ const XLSX = require('xlsx');
 var logger = require("./logger").logger;
 let get = require('lodash.get');
 const config = require("./config");
+const { createAuditLogs } = require("./utils/auditLogs");
 
 async function processGroupBillFromPaymentCreateTopic(requestData) {
     logger.info("Started generating bill from payment topic.")
@@ -23,6 +24,14 @@ async function processGroupBillFromPaymentCreateTopic(requestData) {
             userid = get(request, "RequestInfo.userInfo.uuid", null)
             paymentId = request.paymentId;
             await create_eg_payments_excel(paymentId, paymentNumber, request.tenantId, userid);
+            await createAuditLogs(requestData, "CREATE", {
+                paymentId, 
+                paymentNumber, 
+                "tenantId": request.tenantId, 
+                "status": "INPROGRESS",
+                "lastmodifiedby": userid,
+                "lastmodifiedtime": new Date().getTime()
+            })
             filestoreId = await processGroupBill(request);
         }
         return filestoreId;
@@ -30,6 +39,12 @@ async function processGroupBillFromPaymentCreateTopic(requestData) {
         logger.info("Exception Catched on processGroupBill from create topic.");
         logger.error(error.stack || error);
         await updatePaymentExcelIfJobFailed(paymentId, userid);
+        await createAuditLogs(requestData, "UPDATE", {
+            paymentId, 
+            "status": "FAILED",
+            "lastmodifiedby": userid,
+            "lastmodifiedtime": new Date().getTime()
+        })
         return;
     }
 }
@@ -67,6 +82,12 @@ async function processGroupBillFromPaymentId(requestData) {
     } catch (error) {
         logger.error(error.stack || error);
         await updatePaymentExcelIfJobFailed(paymentId, userid);
+        await createAuditLogs(requestData, "UPDATE", {
+            paymentId, 
+            "status": "FAILED",
+            "lastmodifiedby": userid,
+            "lastmodifiedtime": new Date().getTime()
+        })
         return;
     }
 }
@@ -131,7 +152,18 @@ async function processGroupBill(requestData) {
             totalAmount = parseFloat(totalAmount.toFixed(2));
         }
         logger.info("Update file id and other details.")
+
         await updateForJobCompletion(paymentId, filestoreId, userId, billsLength, numberofbeneficialy, totalAmount);
+        await createAuditLogs(requestData, "UPDATE", {
+            paymentId, 
+            filestoreId, 
+            "numberofbills": billsLength,
+            numberofbeneficialy, 
+            totalAmount, 
+            "status": "COMPLETED",
+            "lastmodifiedby": userId,  
+            "lastmodifiedtime": new Date().getTime()
+        })
         logger.info("File generated and saved.")
         return filestoreId;
     } catch (error) {

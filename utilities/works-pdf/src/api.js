@@ -7,6 +7,7 @@ const { Pool } = require('pg');
 const get = require('lodash/get');
 var FormData = require("form-data");
 const uuidv4 = require("uuid/v4");
+const { resolve } = require("path");
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -296,6 +297,20 @@ function search_payment_details(request) {
   })
 }
 
+function create_audit_details(request) {
+  return new Promise((resolve, reject) => {
+    let newRequest = JSON.parse(JSON.stringify(request))
+    let promise = new axios({
+      method: "POST",
+      url: url.resolve(config.host.audit_service, config.paths.audit_service_create),
+      data: newRequest,
+    });
+    promise.then((data) => {
+      resolve(data.data)
+    }).catch((err) => reject(err))
+  })
+}
+
 /**
  *
  * @param {*} filename -name of localy stored temporary file
@@ -498,5 +513,6 @@ module.exports = {
   upload_file_using_filestore,
   create_eg_payments_excel,
   reset_eg_payments_excel,
-  exec_query_eg_payments_excel
+  exec_query_eg_payments_excel,
+  create_audit_details
 };

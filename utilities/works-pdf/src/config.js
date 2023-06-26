@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST;
+HOST = process.env.EGOV_HOST || "localhost";
 
 
 if (!HOST) {
@@ -55,6 +55,7 @@ module.exports = {
     bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
     expense_calculator: process.env.EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
+    audit_service: process.env.EGOV_AUDIT_SERVICE_HOST || 'http://localhost:8094',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -72,7 +73,8 @@ module.exports = {
     bankaccount_search: "/bankaccount-service/bankaccount/v1/_search",
     expense_calculator_estimate: "/expense-calculator/v1/_estimate",
     expense_calculator_search: "/expense-calculator/v1/_search",
-    localization_search: "/localization/messages/v1/_search"
+    localization_search: "/localization/messages/v1/_search",
+    audit_service_create: "/audit-service/log/v1/_create",
   },
   constraints: {
     "beneficiaryIdByHeadCode": "Deduction_{tanentId}_{headcode}"
