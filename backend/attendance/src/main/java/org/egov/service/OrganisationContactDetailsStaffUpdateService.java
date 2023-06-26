@@ -42,10 +42,14 @@ public class OrganisationContactDetailsStaffUpdateService {
                 revokePermission(attendanceRegisterList, oldContact.getIndividualId(), orgContactUpdateDiff.getRequestInfo());
             }
             else {
-                String userUuid = individualServiceUtil.getIndividualDetails(Collections.singletonList(oldContact.getIndividualId()), requestInfoWrapper.getRequestInfo(), tenantId).get(0).getUserUuid();
-                attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(userUuid).build();
-                attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
-                revokePermission(attendanceRegisterList, userUuid, orgContactUpdateDiff.getRequestInfo());
+                try {
+                    String userUuid = individualServiceUtil.getIndividualDetails(Collections.singletonList(oldContact.getIndividualId()), requestInfoWrapper.getRequestInfo(), tenantId).get(0).getUserUuid();
+                    attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(userUuid).build();
+                    attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
+                    revokePermission(attendanceRegisterList, userUuid, orgContactUpdateDiff.getRequestInfo());
+                }catch (Exception e){
+                    log.error(e.toString());
+                }
             }
             attendanceRegisterSet.addAll(attendanceRegisterList);
         }
