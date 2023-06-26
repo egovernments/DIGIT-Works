@@ -7,33 +7,35 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class ExecutedVALog {
+public class FundsSummary {
+
     @JsonProperty("id")
-    private String id = null;
+    private String id;
 
     @JsonProperty("tenantId")
-    private String tenantId = null;
+    private String tenantId;
 
-    @JsonProperty("hoaCode")
-    private String hoaCode = null;
+    @JsonProperty("sanctionId")
+    private String sanctionId;
 
-    @JsonProperty("ddoCode")
-    private String ddoCode = null;
+    @JsonProperty("allottedAmount")
+    private BigDecimal allottedAmount;
 
-    @JsonProperty("granteeCode")
-    private String granteeCode = null;
-
-    @JsonProperty("lastExecuted")
-    private Long lastExecuted = null;
+    @JsonProperty("availableAmount")
+    private BigDecimal availableAmount;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+
 
 }

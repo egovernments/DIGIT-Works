@@ -25,7 +25,7 @@ import java.util.Map;
 public class ExecutedVALogsRowMapper implements ResultSetExtractor<List<ExecutedVALog>> {
 
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper objectMapper;
 
     @Override
     public List<ExecutedVALog> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -37,6 +37,7 @@ public class ExecutedVALogsRowMapper implements ResultSetExtractor<List<Executed
             String ddoCode = rs.getString("ddoCode");
             String granteeCode = rs.getString("granteeCode");
             Long lastExecuted = rs.getLong("lastExecuted");
+            JsonNode additionalDetails = getAdditionalDetail("additionalDetails", rs);
             String createdby = rs.getString("createdby");
             String lastmodifiedby = rs.getString("lastmodifiedby");
             Long createdtime = rs.getLong("createdtime");
@@ -53,6 +54,7 @@ public class ExecutedVALogsRowMapper implements ResultSetExtractor<List<Executed
                     .ddoCode(ddoCode)
                     .granteeCode(granteeCode)
                     .lastExecuted(lastExecuted)
+                    .additionalDetails(additionalDetails)
                     .auditDetails(auditDetails)
                     .build();
 
@@ -61,5 +63,24 @@ public class ExecutedVALogsRowMapper implements ResultSetExtractor<List<Executed
             }
         }
         return new ArrayList<>(attendanceStaffMap.values());
+    }
+
+
+    private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
+        JsonNode additionalDetails = null;
+        try {
+            PGobject obj = (PGobject) rs.getObject(columnName);
+            if (obj != null) {
+                additionalDetails = objectMapper.readTree(obj.getValue());
+            }
+        } catch (IOException e) {
+            log.error("Failed to parse additionalDetail object");
+            throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
+        }
+        if (additionalDetails == null) {
+            JsonNode emptyObject = objectMapper.createObjectNode();
+            additionalDetails = emptyObject;
+        }
+        return additionalDetails;
     }
 }

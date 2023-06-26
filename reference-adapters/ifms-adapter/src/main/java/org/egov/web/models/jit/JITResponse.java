@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.web.models.enums.JITServiceId;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,6 +18,6 @@ public class JITResponse {
     @JsonProperty("errorMsg")
     private String errorMsg;
 
-    @JsonProperty("params")
-    private Object params;
+    @JsonProperty("data")
+    private List<Object> data;
 }

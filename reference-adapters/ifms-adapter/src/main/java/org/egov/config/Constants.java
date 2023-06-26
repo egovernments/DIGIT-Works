@@ -11,5 +11,8 @@ public class Constants {
 	public static final String MDMS_SCHEMA_DETAILS_MASTER = "SchemeDetails";
 	public static final String MDMS_SSU_DETAILS_MASTER = "SSUDetails";
 	public static final String VA_REQUEST_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String VA_TRANSACTION_TYPE_INITIAL_ALLOTMENT = "Initial Allotment";
+	public static final String VA_TRANSACTION_TYPE_ADDITIONAL_ALLOTMENT = "Additional allotment";
+	public static final String VA_TRANSACTION_TYPE_WITHDRAWAL = "Allotment withdrawal";
 
 }

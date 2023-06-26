@@ -6,43 +6,43 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class Sanction {
+public class SanctionDetail {
 
     @JsonProperty("id")
-    private String id = null;
+    private String id;
 
     @JsonProperty("tenantId")
-    private String tenantId = null;
+    private String tenantId;
 
     @JsonProperty("hoaCode")
-    private String hoaCode = null;
+    private String hoaCode;
 
     @JsonProperty("ddoCode")
-    private String ddoCode = null;
+    private String ddoCode;
 
     @JsonProperty("masterAllotmentId")
-    private String masterAllotmentId = null;
+    private String masterAllotmentId;
 
     @JsonProperty("sanctionedAmount")
-    private BigDecimal sanctionedAmount = null;
+    private BigDecimal sanctionedAmount;
 
     @JsonProperty("financialYear")
-    private String financialYear = null;
-
+    private String financialYear;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 
+    @JsonProperty("fundsSummary")
+    private FundsSummary fundsSummary;
+
     @JsonProperty("auditDetails")
-    @Valid
     private AuditDetails auditDetails;
 
 

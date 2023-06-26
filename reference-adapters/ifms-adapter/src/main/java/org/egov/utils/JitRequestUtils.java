@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.enc.SymmetricEncryptionService;
 import org.egov.key.KeyGenerator;
+import org.egov.web.models.jit.JITResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,13 +48,13 @@ public class JitRequestUtils {
         return requestMap;
     }
 
-    public Object decryptResponse(String decryptedRek, String encryptedResponse) throws Exception {
+    public JITResponse decryptResponse(String decryptedRek, String encryptedResponse) throws Exception {
         byte[] secret = Base64.getDecoder().decode(decryptedRek);
         SecretKey secretKey = new SecretKeySpec(secret, "AES");
         byte[] plainBytes = SymmetricEncryptionService.decrypt(encryptedResponse, secretKey);
         String plaintext = new String(plainBytes);
         ObjectMapper objectMapper = new ObjectMapper();
-        Object response = objectMapper.readValue(plaintext, Map.class);
+        JITResponse response = objectMapper.readValue(plaintext, JITResponse.class);
         return response;
     }
 

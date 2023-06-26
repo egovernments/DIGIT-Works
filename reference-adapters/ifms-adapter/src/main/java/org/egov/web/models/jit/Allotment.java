@@ -37,19 +37,19 @@ public class Allotment {
 
     @JsonProperty("allotmentSerialNo")
     @Exclude
-    private String allotmentSerialNo;
+    private int allotmentSerialNo;
 
-    @JsonProperty("allottedAmount")
+    @JsonProperty("decimalAllottedAmount")
     @Exclude
-    private BigDecimal allottedAmount = null;
+    private BigDecimal decimalAllottedAmount = null;
 
-    @JsonProperty("sanctionBalance")
+    @JsonProperty("decimalSanctionBalance")
     @Exclude
-    private BigDecimal sanctionBalance = null;
+    private BigDecimal decimalSanctionBalance = null;
 
-    @JsonProperty("allottedDate")
+    @JsonProperty("allotmentDateTimeStamp")
     @Exclude
-    private Long allottedDate = null;
+    private Long allotmentDateTimeStamp = null;
 
     @JsonProperty("auditDetails")
     @Exclude

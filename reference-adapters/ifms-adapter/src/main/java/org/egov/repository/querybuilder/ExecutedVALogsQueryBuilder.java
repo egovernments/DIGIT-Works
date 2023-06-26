@@ -10,17 +10,27 @@ import java.util.List;
 public class ExecutedVALogsQueryBuilder {
 
 
-    private static final String FETCH_VA_EXECUTED_SELECT_QUERY = " SELECT evl.id, " +
+    private static final String EXECUTED_VA_LOGS_SELECT_QUERY = " SELECT evl.id, " +
             "evl.tenantId, " +
             "evl.hoaCode, " +
             "evl.ddoCode, " +
             "evl.granteeCode , " +
             "evl.lastExecuted, " +
+            "evl.additionalDetails, " +
             "evl.createdby, " +
             "evl.lastmodifiedby, " +
             "evl.createdtime, " +
             "evl.lastmodifiedtime " +
             "FROM jit_executed_va_logs evl ";
+
+    public static final String EXECUTED_VA_LOGS_INSERT_QUERY = "INSERT INTO jit_executed_va_logs (id, tenantId, hoaCode,"
+            + " ddoCode, granteeCode, lastExecuted, additionalDetails, createdby, createdtime, lastmodifiedby, lastmodifiedtime) "
+            + "	VALUES (:id, :tenantId, :hoaCode, :ddoCode, :granteeCode, :lastExecuted, :additionalDetails,"
+            + " :createdby, :createdtime, :lastmodifiedby, :lastmodifiedtime);";
+
+    public static final String EXECUTED_VA_LOGS_UPDATE_QUERY = "UPDATE jit_executed_va_logs SET lastExecuted=:lastExecuted,"
+            + "additionalDetails=:additionalDetails, lastmodifiedby=:lastmodifiedby,lastmodifiedtime=:lastmodifiedtime "
+            + " WHERE id=:id";
 
     public String getLastExecutedVABySearchQuery(List<Object> preparedStmtList, String tenantId, String hoaCode, String ddoCode, String granteeCode) {
         StringBuilder query = new StringBuilder(getLastExecutedVASearchQuery(preparedStmtList, tenantId, hoaCode, ddoCode, granteeCode));
@@ -29,7 +39,7 @@ public class ExecutedVALogsQueryBuilder {
     }
 
     private String getLastExecutedVASearchQuery(List<Object> preparedStmtList, String tenantId, String hoaCode, String ddoCode, String granteeCode) {
-        StringBuilder query = new StringBuilder(FETCH_VA_EXECUTED_SELECT_QUERY);
+        StringBuilder query = new StringBuilder(EXECUTED_VA_LOGS_SELECT_QUERY);
 
         if (tenantId != null && tenantId != "") {
             addClauseIfRequired(query, preparedStmtList);

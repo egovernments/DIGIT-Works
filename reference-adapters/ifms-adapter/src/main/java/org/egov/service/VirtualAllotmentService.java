@@ -2,28 +2,33 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
+import org.egov.enrichment.VirtualAllotmentEnrichment;
+import org.egov.repository.AllotmentDetailsRepository;
 import org.egov.repository.ExecutedVALogsRepository;
+import org.egov.repository.FundsSummaryRepository;
+import org.egov.repository.SanctionDetailsRepository;
 import org.egov.utils.MdmsUtils;
 import org.egov.web.models.enums.JITServiceId;
-import org.egov.web.models.jit.ExecutedVALog;
-import org.egov.web.models.jit.JITRequest;
-import org.egov.web.models.jit.SanctionAllotmentRequest;
-import org.egov.web.models.jit.VARequest;
+import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static org.egov.config.Constants.*;
 
 @Service
+@Slf4j
 public class VirtualAllotmentService {
 
     @Autowired
@@ -37,6 +42,17 @@ public class VirtualAllotmentService {
 
     @Autowired
     ExecutedVALogsRepository executedVALogsRepository;
+
+    @Autowired
+    VirtualAllotmentEnrichment vaEnrichment;
+
+    @Autowired
+    SanctionDetailsRepository sanctionDetailsRepository;
+    @Autowired
+    FundsSummaryRepository fundsSummaryRepository;
+
+    @Autowired
+    AllotmentDetailsRepository allotmentRepository;
 
     public void generateVirtualAllotment(SanctionAllotmentRequest allotmentRequest) {
 
@@ -71,9 +87,7 @@ public class VirtualAllotmentService {
                         // Convert object to JsonNode
                         JsonNode hoaNode = objectMapper.valueToTree(hoa);
                         JsonNode ssuNode = objectMapper.valueToTree(ssu);
-                        // TODO: Fetch last executed VA
-                        Long lastExecuted = getLastExecutedVA(tenantId, hoaNode, ssuNode);
-                        getVAFromIFMS(hoaNode, ssuNode, lastExecuted);
+                        processVAForHOA(tenantId, hoaNode, ssuNode, requestInfo);
                     }
 
 
@@ -84,6 +98,70 @@ public class VirtualAllotmentService {
 
         }
 
+    }
+
+    private void processVAForHOA(String tenantId, JsonNode hoaNode, JsonNode ssuNode, RequestInfo requestInfo) {
+        try {
+            ExecutedVALog executedVALog = getLastExecutedVA(tenantId, hoaNode, ssuNode);
+            Long lastExecuted = null;
+            if (executedVALog != null && executedVALog.getLastExecuted() != null) {
+                lastExecuted = executedVALog.getLastExecuted();
+            } else {
+                String effectiveFrom = String.valueOf(hoaNode.get("effectiveFrom"));
+                lastExecuted = Long.parseLong(effectiveFrom);
+            }
+
+            JITRequest vaRequest = vaEnrichment.constructVARequest(hoaNode, ssuNode, lastExecuted);
+            JITResponse vaResponse = ifmsService.sendRequestToIFMS(vaRequest);
+
+            // TODO: Temp response for dev remove after dev completed
+            // JITResponse vaResponse = vaEnrichment.vaResponse();
+            if (vaResponse.getErrorMsg() == null) {
+                List<Object> vaResponseList = vaResponse.getData();
+                List<Allotment> allotmentList = new ArrayList<>();
+                if (vaResponseList != null && !vaResponseList.isEmpty()) {
+                    for(Object va: vaResponseList) {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        Allotment allotment = objectMapper.convertValue(va, Allotment.class);
+                        allotmentList.add(allotment);
+                    }
+                    SanctionDetailsSearchCriteria searchCriteria = vaEnrichment.getSanctionDetailsSearchCriteriaForVA(tenantId, hoaNode, ssuNode);
+                    List<SanctionDetail> existingSanctionDetailList = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
+                    List<SanctionDetail> updatedSanctions = vaEnrichment.getCreateAndUpdateSanctionDetails(existingSanctionDetailList, allotmentList);
+                    vaEnrichment.enrichAndUpdateSanctions(updatedSanctions, tenantId, hoaNode, ssuNode, requestInfo);
+                    Map<String, List<SanctionDetail>> createUpdateSanctions = vaEnrichment.getCreateUpdateSanctionMap(existingSanctionDetailList, updatedSanctions);
+                    List<SanctionDetail> createSanctions =  createUpdateSanctions.get("create");
+                    List<SanctionDetail> updateSanctions =  createUpdateSanctions.get("update");
+                    if (createSanctions != null && !createSanctions.isEmpty()) {
+                        sanctionDetailsRepository.saveSanctionDetails(createSanctions);
+                        List<FundsSummary> fundsSummaries = vaEnrichment.getFundsSummariesFromSanctions(createSanctions);
+                        fundsSummaryRepository.saveFundsSummary(fundsSummaries);
+                    }
+                    if (updateSanctions != null && !updateSanctions.isEmpty()) {
+                        List<FundsSummary> fundsSummaries = vaEnrichment.getFundsSummariesFromSanctions(updateSanctions);
+                        fundsSummaryRepository.updateFundsSummary(fundsSummaries);
+                    }
+                    // Get allotments to create and
+                    List<Allotment> createAllotments =  vaEnrichment.getAllotmentsForCreate(updatedSanctions, allotmentList, tenantId, requestInfo);
+                    if (createAllotments != null && !createAllotments.isEmpty()) {
+                        allotmentRepository.saveAllotmentDetails(createAllotments);
+                    }
+                    System.out.println(updatedSanctions);
+                }
+            } else {
+                log.info("Error on VA response  for hoa : "+ hoaNode.get("code").asText() +"["+vaResponse.getErrorMsg()+"]");
+            }
+            // Update last executed for the va
+            if (executedVALog == null) {
+                executedVALog = vaEnrichment.getExecutedVALogForCreate(tenantId, hoaNode, ssuNode, requestInfo);
+                executedVALogsRepository.saveExecutedVALogs(Collections.singletonList(executedVALog));
+            } else {
+                executedVALog = vaEnrichment.enrichExecutedVaLogForUpdate(executedVALog, requestInfo);
+                executedVALogsRepository.updateExecutedVALogs(Collections.singletonList(executedVALog));
+            }
+        } catch (Exception e) {
+            System.out.println("Exception occured.");
+        }
     }
 
     private List<String> getTenants(RequestInfo requestInfo) {
@@ -107,54 +185,16 @@ public class VirtualAllotmentService {
         return tenantIds;
     }
 
-    public Long getLastExecutedVA(String tenantId, JsonNode hoaNode, JsonNode ssuNode) {
-        System.out.println(hoaNode);
-        System.out.println(ssuNode);
+    private ExecutedVALog getLastExecutedVA(String tenantId, JsonNode hoaNode, JsonNode ssuNode) {
         String hoaCode = hoaNode.get("code").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
         String granteeCode = ssuNode.get("granteeAgCode").asText();
-        List<ExecutedVALog> executedVALogs = executedVALogsRepository.getAttendanceLogs(tenantId, hoaCode, ddoCode, granteeCode);
-        Long lastExecuted = null;
+        List<ExecutedVALog> executedVALogs = executedVALogsRepository.getExecutedVALogs(tenantId, hoaCode, ddoCode, granteeCode);
+        ExecutedVALog executedVALog = null;
         if (executedVALogs != null && !executedVALogs.isEmpty()) {
-            ExecutedVALog executedVALog = executedVALogs.get(0);
-            if (executedVALog.getLastExecuted() != null) {
-                lastExecuted = executedVALog.getLastExecuted();
-            }
-        } else {
-            String effectiveFrom = String.valueOf(hoaNode.get("effectiveFrom"));
-            lastExecuted = Long.parseLong(effectiveFrom);
+            executedVALog = executedVALogs.get(0);
         }
-        return lastExecuted;
+        return executedVALog;
     }
 
-    public void getVAFromIFMS(JsonNode hoaNode, JsonNode ssuNode, Long lastExecuted) {
-        String hoaCode = hoaNode.get("code").asText();
-        String ddoCode = ssuNode.get("ddoCode").asText();
-        String granteeCode = ssuNode.get("granteeAgCode").asText();
-        String fromDate = getFormattedTimeFromTimestamp(lastExecuted, VA_REQUEST_TIME_FORMAT);
-
-        VARequest vaRequest = VARequest.builder()
-                .hoa(hoaCode)
-                .ddoCode(ddoCode)
-                .granteCode(granteeCode)
-                .fromDate(fromDate)
-                .build();
-
-        JITRequest jitRequest = JITRequest.builder()
-                .serviceId(JITServiceId.VA)
-                .params(vaRequest)
-                .build();
-
-
-    }
-
-    private String getFormattedTimeFromTimestamp(Long timestamp, String dateFormat) {
-        // Convert timestamp to LocalDateTime
-        LocalDateTime dateTime = LocalDateTime.ofEpochSecond(timestamp / 1000, 0, java.time.ZoneOffset.UTC);
-        // Create a formatter for the desired format
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-        // Format the LocalDateTime to the desired format
-        String formattedDateTime = dateTime.format(formatter);
-        return formattedDateTime;
-    }
 }

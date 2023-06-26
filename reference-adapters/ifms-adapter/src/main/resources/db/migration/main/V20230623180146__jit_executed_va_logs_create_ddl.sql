@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS jit_executed_va_logs (
   ddoCode varchar(64) NOT NULL,
   granteeCode varchar(64) NOT NULL,
   lastExecuted bigint,
+  additionalDetails jsonb,
   createdtime bigint,
   createdby varchar(256),
   lastmodifiedtime bigint,

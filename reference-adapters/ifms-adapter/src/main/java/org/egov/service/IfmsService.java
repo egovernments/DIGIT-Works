@@ -3,10 +3,13 @@ package org.egov.service;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
+import org.egov.config.JITAuthValues;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.utils.AuthenticationUtils;
 import org.egov.utils.JitRequestUtils;
 import org.egov.utils.MdmsUtils;
+import org.egov.web.models.jit.JITRequest;
+import org.egov.web.models.jit.JITResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -42,6 +45,9 @@ public class IfmsService {
     @Autowired
     IfmsAdapterConfig ifmsAdapterConfig;
 
+    @Autowired
+    JITAuthValues jitAuthValues;
+
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
         String encryptedAppKey = authenticationUtils.genEncryptedAppKey();
@@ -52,6 +58,52 @@ public class IfmsService {
         keyMap.put("encodedAppKey", encodedAppKey);
         System.out.println("\n\n==================keyMap : ============== \n" + keyMap);
         return  keyMap;
+    }
+
+    public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
+        if (jitAuthValues.getAuthToken() == null) {
+            getAuthDetailsFromIFMS();
+        }
+        Map<String, String> payload = null;
+        int maxRetries = 1;
+        int failedCount = 0;
+        JITResponse decryptedResponse = null;
+        Exception exception = null;
+        while (failedCount < maxRetries) {
+            try {
+                payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
+                String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
+                decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
+                return decryptedResponse;
+            } catch (Exception e) {
+                failedCount++;
+                exception = e;
+                getAuthDetailsFromIFMS();
+            }
+        }
+        if (failedCount == maxRetries) {
+            throw new RuntimeException(exception);
+        }
+        return decryptedResponse;
+    }
+
+    private void getAuthDetailsFromIFMS() {
+        try {
+            Map<String, String> appKeys = getKeys();
+            Map<String, String> authResponse = (Map<String, String>) authenticate(appKeys.get("encodedAppKey"));
+            appKeys.put("authToken", authResponse.get("authToken"));
+            appKeys.put("sek", authResponse.get("sek"));
+            String decryptedSek = authenticationUtils.getDecryptedSek(appKeys.get("appKey"), authResponse.get("sek"));
+            appKeys.put("decryptedSek", decryptedSek);
+
+            // Set authentication details to the request
+            jitAuthValues.setAuthToken(authResponse.get("authToken"));
+            jitAuthValues.setSekString(decryptedSek);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Object authenticate(String appKey) {

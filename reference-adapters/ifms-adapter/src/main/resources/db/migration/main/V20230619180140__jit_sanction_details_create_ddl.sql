@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS jit_sanction_details (
   ddoCode varchar(64) NOT NULL,
   masterAllotmentId varchar(64) NOT NULL,
   sanctionedAmount numeric(12,2),
-  financialYear int,
+  financialYear varchar(64),
   additionalDetails jsonb,
   createdtime bigint,
   createdby varchar(256),
