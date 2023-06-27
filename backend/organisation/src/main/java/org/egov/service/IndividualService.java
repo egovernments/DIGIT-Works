@@ -62,7 +62,7 @@ public class IndividualService {
         StringBuilder uri = new StringBuilder(config.getIndividualHost());
         String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         RequestInfo requestInfo = request.getRequestInfo();
-        List<Role> role = Collections.singletonList(getCitizenRole());
+        Role role = getCitizenRole();
 
         List<ContactDetails> contactDetailsList = new ArrayList<>();
         for (Organisation organisation : organisationList) {
@@ -78,13 +78,14 @@ public class IndividualService {
             IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, stateLevelTenantId);
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
+            List<String> existingRoleCode = existingIndividualFromService.get(0).getUserDetails().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
 
             if (CollectionUtils.isEmpty(existingIndividualFromService)) {
 
                 contactDetails.setId(UUID.randomUUID().toString());
                 individualResponse = createIndividualFromIndividualService(requestInfo, newUser, contactDetails);
 
-            } else if (!existingIndividualFromService.get(0).getUserDetails().getRoles().contains(getCitizenRole())) {
+            } else if (!existingRoleCode.contains(getCitizenRole().getCode())) {
                 Individual newIndividual = Individual.builder().build();
                 addIndividualDefaultFields(stateLevelTenantId, role, newIndividual, contactDetails, false, existingIndividualFromService.get(0));
                 uri = uri.append(config.getIndividualUpdateEndpoint());
@@ -99,7 +100,7 @@ public class IndividualService {
         }
     }
 
-    public void updateContactDetails(ContactDetails contactDetails, String tenantId, RequestInfo requestInfo, List<Role> role) {
+    public void updateContactDetails(ContactDetails contactDetails, String tenantId, RequestInfo requestInfo, Role role) {
         IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
         StringBuilder uri = new StringBuilder(config.getIndividualHost());
         if (!CollectionUtils.isEmpty(response.getIndividual())) {
@@ -127,7 +128,7 @@ public class IndividualService {
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = organisationList.get(0).getTenantId();
         String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
-        List<Role> role = Collections.singletonList(getCitizenRole());
+        Role role = getCitizenRole();
 
         OrgSearchCriteria orgSearchCriteria = OrgSearchCriteria.builder()
                 .id(new ArrayList<>()).tenantId(tenantId).build();
@@ -167,9 +168,7 @@ public class IndividualService {
 
             Set<ContactDetails> toBeRemovedMembers = organisationFromDB.getContactDetails().stream().filter(contactDetails -> toBeRemovedMembersMobile.contains(contactDetails.getContactMobileNumber())).collect(Collectors.toSet());
             for(ContactDetails contactDetails : toBeRemovedMembers) {
-                List<Role> removedOrgAdminRole = contactDetails.getRoles();
-                removedOrgAdminRole.remove(getCitizenRole());
-                updateContactDetails(contactDetails, stateLevelTenantId, requestInfo, removedOrgAdminRole);
+                updateContactDetails(contactDetails, stateLevelTenantId, requestInfo, Role.builder().build());
             }
 
             if(!newMembers.isEmpty() && !toBeRemovedMembers.isEmpty()) {
@@ -189,14 +188,14 @@ public class IndividualService {
 
     }
 
-    private void addContactAsOrgMember(ContactDetails contactDetails, String tenantId, RequestInfo requestInfo, List<Role> role) {
+    private void addContactAsOrgMember(ContactDetails contactDetails, String tenantId, RequestInfo requestInfo, Role role) {
         IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, tenantId);
         StringBuilder uri = new StringBuilder(config.getIndividualHost());
 
         if (!CollectionUtils.isEmpty(response.getIndividual())) {
             Individual existingIndividual = response.getIndividual().get(0);
-
-            if(existingIndividual.getUserDetails().getRoles().contains(getCitizenRole())){
+            List<String> existingRoleCode = existingIndividual.getUserDetails().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+            if(existingRoleCode.contains(getCitizenRole().getCode())){
                 throw new CustomException("USER.EXISTS", "Individual contanct number: "+contactDetails.getContactMobileNumber()+" already exists in system");
             }
             else{
@@ -261,9 +260,9 @@ public class IndividualService {
      * @param individual
      * @param contactDetails
      */
-    private void addIndividualDefaultFields(String tenantId, List<Role> role, Individual individual, ContactDetails contactDetails, boolean isCreate, Individual existingIndividual) {
+    private void addIndividualDefaultFields(String tenantId, Role role, Individual individual, ContactDetails contactDetails, boolean isCreate, Individual existingIndividual) {
         log.info("IndividualService::addUserDefaultFields");
-        UserDetails userDetails = UserDetails.builder().roles(role)
+        UserDetails userDetails = UserDetails.builder().roles(Collections.singletonList(role))
                 .tenantId(tenantId).username(contactDetails.getContactMobileNumber())
                 .userType(UserType.fromValue("CITIZEN")).build();
         individual.setMobileNumber(contactDetails.getContactMobileNumber());
@@ -288,7 +287,7 @@ public class IndividualService {
 
         contactDetails.setActive(true);
         contactDetails.setTenantId(tenantId);
-        contactDetails.setRoles(role);
+        contactDetails.setRoles(Collections.singletonList(role));
         contactDetails.setType(OrganisationConstant.ORG_CITIZEN_TYPE);
         contactDetails.setCreatedDate(null);
         contactDetails.setCreatedBy(null);
