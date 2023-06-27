@@ -31,6 +31,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
     const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
+    const [showNoOrgError, setShowNoOrgError] = useState(false)
     const [showDuplicateContactToast, setShowDuplicateContactToast] = useState(false)
     const [showValidToError, setShowValidToError] = useState(false)
 
@@ -158,6 +159,14 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         if(showDuplicateUserError) {
             setTimeout(()=>{
                 setShowDuplicateUserError(false);
+            },3000);
+        }
+    },[showDuplicateUserError]);
+
+    useEffect(() => {
+        if(showNoOrgError) {
+            setTimeout(()=>{
+                setShowNoOrgError(false);
             },3000);
         }
     },[showDuplicateUserError]);
@@ -310,11 +319,16 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         else{
             const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
+            const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {});
+            if(userData?.user?.[0]?.roles.every(role => role.code !== "ORG_ADMIN")){
+                setShowNoOrgError(true)
+                return
+            }
             const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
             handleResponseForUpdate(orgPayload, bankAccountPayload);
         }else {
             const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
-            if(userData?.user?.length > 0) {
+            if(userData?.user?.length > 0 && userData?.user?.[0]?.roles.every(role => role.code !== "ORG_ADMIN")) {
                 setShowDuplicateUserError(true)
                 return
             }
@@ -355,6 +369,9 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         )}
         {showDuplicateContactToast && (
           <Toast warning={true} label={t("ES_COMMON_ORG_EXISTS_WITH_MOBILE_NUMBER")} isDleteBtn={true} onClose={() => setShowDuplicateContactToast(false)} />
+        )}
+        {showNoOrgError && (
+          <Toast warning={true} label={t("ES_COMMON_NO_ORG_LINKED_WITH_MOBILE_NUMBER")} isDleteBtn={true} onClose={() => setShowNoOrgError(false)} />
         )}
       </React.Fragment>
     );
