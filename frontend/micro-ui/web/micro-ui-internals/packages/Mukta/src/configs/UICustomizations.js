@@ -1611,7 +1611,7 @@ export const UICustomizations = {
     },
     preProcess: (data,defaultValues) => {
       // debugger
-      let requestBody = { ...data.body.inbox.moduleSearchCriteria };
+      let requestBody = { ...data.body.paymentCriteria };
       const dateConfig = {
         createdFrom: "daystart",
         createdTo: "dayend",
@@ -1643,15 +1643,18 @@ export const UICustomizations = {
         }
         return acc;
       }, {});
-      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+      data.body.paymentCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+      data.body.paymentCriteria = { ...SearchCriteria,tenantId:Digit.ULBService.getCurrentTenantId()  };
+      
+      //added for testing(to have some results)
+      data.body.paymentCriteria.status = "INITIATED"
 
       const presets  = Digit.Hooks.useQueryParams();
       if(Object.keys(presets).length > 0 ) {
         Object.keys(presets).forEach(preset => {
           //if present in defaultValues object then only set it
           if(Object.keys(defaultValues).some(key => key===preset)){
-            data.body.inbox.moduleSearchCriteria[preset] = presets[preset]
+            data.body.paymentCriteria[preset] = presets[preset]
           }
         })
       }
