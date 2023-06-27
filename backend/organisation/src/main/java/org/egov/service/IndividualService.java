@@ -79,7 +79,7 @@ public class IndividualService {
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
             List<String> existingRoleCode = new ArrayList<>();
-            if(!CollectionUtils.isEmpty(existingIndividualFromService))
+            if(!CollectionUtils.isEmpty(existingIndividualFromService) && (existingIndividualFromService.get(0).getUserDetails()!=null) && !CollectionUtils.isEmpty(existingIndividualFromService.get(0).getUserDetails().getRoles()))
                 existingRoleCode = existingIndividualFromService.get(0).getUserDetails().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
 
             if (CollectionUtils.isEmpty(existingIndividualFromService)) {
@@ -196,7 +196,9 @@ public class IndividualService {
 
         if (!CollectionUtils.isEmpty(response.getIndividual())) {
             Individual existingIndividual = response.getIndividual().get(0);
-            List<String> existingRoleCode = existingIndividual.getUserDetails().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+            List<String> existingRoleCode = new ArrayList<>();
+            if((existingIndividual.getUserDetails()!=null) && !CollectionUtils.isEmpty(existingIndividual.getUserDetails().getRoles()))
+                existingRoleCode = existingIndividual.getUserDetails().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
             if(existingRoleCode.contains(getCitizenRole().getCode())){
                 throw new CustomException("USER.EXISTS", "Individual contanct number: "+contactDetails.getContactMobileNumber()+" already exists in system");
             }
