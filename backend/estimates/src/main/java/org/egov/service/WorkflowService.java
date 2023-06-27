@@ -180,11 +180,15 @@ public class WorkflowService {
         processInstance.setComment(workflow.getComment());
 
         if(workflow.getAction().equals("SENDBACK")){
-            if(!CollectionUtils.isEmpty(workflow.getAssignees())){
-                List<String> uuids = new ArrayList<>();
-                uuids.add(workflow.getAssignees().get(0));
-                workflow.setAssignees(uuids);
-            }else {
+            if(!CollectionUtils.isEmpty(processInstance.getAssignes()) && CollectionUtils.isEmpty(workflow.getAssignees())){
+//                List<User> users = new ArrayList<>();
+//                processInstance.getAssignes().forEach(userObj -> {
+//                    User user = new User();
+//                    user.setUuid(userObj.getUuid());
+//                    users.add(user);
+//                });
+                workflow.setAssignees(Collections.singletonList(processInstance.getAssignes().get(0).getUuid()));
+            }else{
             List<String> uuids = new ArrayList<>();
             uuids.add(estimate.getAuditDetails().getLastModifiedBy());
             workflow.setAssignees(uuids);
