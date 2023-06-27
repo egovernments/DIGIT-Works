@@ -179,10 +179,16 @@ public class WorkflowService {
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 
-        if(CollectionUtils.isEmpty(workflow.getAssignees()) && workflow.getAction().equals("SENDBACK")){
+        if(workflow.getAction().equals("SENDBACK")){
+            if(!CollectionUtils.isEmpty(workflow.getAssignees())){
+                List<String> uuids = new ArrayList<>();
+                uuids.add(workflow.getAssignees().get(0));
+                workflow.setAssignees(uuids);
+            }else {
             List<String> uuids = new ArrayList<>();
-            uuids.add(estimate.getAuditDetails().getCreatedBy());
+            uuids.add(estimate.getAuditDetails().getLastModifiedBy());
             workflow.setAssignees(uuids);
+            }
         }
 
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
