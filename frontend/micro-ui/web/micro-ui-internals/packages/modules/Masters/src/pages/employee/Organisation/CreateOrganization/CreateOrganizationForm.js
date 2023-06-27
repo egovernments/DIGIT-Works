@@ -319,11 +319,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         else{
             const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
-            const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {});
-            if(userData?.user?.[0]?.roles.every(role => role.code !== "ORG_ADMIN")){
-                setShowNoOrgError(true)
-                return
-            }
             const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
             handleResponseForUpdate(orgPayload, bankAccountPayload);
         }else {
