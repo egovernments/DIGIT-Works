@@ -78,7 +78,9 @@ public class IndividualService {
             IndividualBulkResponse response = IndividualExists(contactDetails, requestInfo, Boolean.TRUE, stateLevelTenantId);
             List<Individual> existingIndividualFromService = response.getIndividual();
             IndividualResponse individualResponse;
-            List<String> existingRoleCode = existingIndividualFromService.get(0).getUserDetails().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
+            List<String> existingRoleCode = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(existingIndividualFromService))
+                existingRoleCode = existingIndividualFromService.get(0).getUserDetails().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
 
             if (CollectionUtils.isEmpty(existingIndividualFromService)) {
 
