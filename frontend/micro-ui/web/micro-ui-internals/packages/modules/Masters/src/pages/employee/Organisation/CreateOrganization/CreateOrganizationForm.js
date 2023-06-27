@@ -31,7 +31,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const [selectedWard, setSelectedWard] = useState(sessionFormData?.locDetails_ward?.code || '')
     const [selectedOrg, setSelectedOrg] = useState('')
     const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
-    const [showNoOrgError, setShowNoOrgError] = useState(false)
     const [showDuplicateContactToast, setShowDuplicateContactToast] = useState(false)
     const [showValidToError, setShowValidToError] = useState(false)
 
@@ -162,14 +161,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             },3000);
         }
     },[showDuplicateUserError]);
-
-    useEffect(() => {
-        if(showNoOrgError) {
-            setTimeout(()=>{
-                setShowNoOrgError(false);
-            },3000);
-        }
-    },[showNoOrgError]);
 
     useEffect(() => {
         if(showValidToError) {
@@ -364,9 +355,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         )}
         {showDuplicateContactToast && (
           <Toast warning={true} label={t("ES_COMMON_ORG_EXISTS_WITH_MOBILE_NUMBER")} isDleteBtn={true} onClose={() => setShowDuplicateContactToast(false)} />
-        )}
-        {showNoOrgError && (
-          <Toast warning={true} label={t("ES_COMMON_NO_ORG_LINKED_WITH_MOBILE_NUMBER")} isDleteBtn={true} onClose={() => setShowNoOrgError(false)} />
         )}
       </React.Fragment>
     );
