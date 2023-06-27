@@ -314,7 +314,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             handleResponseForUpdate(orgPayload, bankAccountPayload);
         }else {
             const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
-            if(userData?.user?.length > 0) {
+            if(userData?.user?.length > 0 && userData?.user?.[0]?.roles.some(role => role.code === "ORG_ADMIN")) {
                 setShowDuplicateUserError(true)
                 return
             }
