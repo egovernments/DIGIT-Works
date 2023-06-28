@@ -106,7 +106,11 @@ public class EstimateService {
         workflowService.updateWorkflowStatus(estimateRequest);
         //calculationService.calculateEstimate(estimateRequest);
         producer.push(serviceConfiguration.getUpdateEstimateTopic(), estimateRequest);
-        notificationService.sendNotification(estimateRequest);
+        try{
+            notificationService.sendNotification(estimateRequest);
+        }catch (Exception e){
+            log.error("Exception while sending notification: " + e);
+        }
         return estimateRequest;
     }
 }
