@@ -145,7 +145,7 @@ class AutoCompleteSearchBar extends StatelessWidget {
       suggestionsBoxVerticalOffset: 0.0,
       direction: AxisDirection.down,
       minCharsForSuggestions: minCharsForSuggestions ?? 0,
-      hideSuggestionsOnKeyboardHide: false,
+      hideSuggestionsOnKeyboardHide: true,
       suggestionsBoxController: suggestionsBoxController,
       suggestionsCallback: (pattern) async {
         // FocusScope.of(context).unfocus();
