@@ -1,19 +1,66 @@
 package org.egov.digit.expense.kafka;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.digit.expense.service.PaymentService;
+import org.egov.digit.expense.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class Consumer {
 
-    /*
-    * Uncomment the below line to start consuming record from kafka.topics.consumer
-    * Value of the variable kafka.topics.consumer should be overwritten in application.properties
-    */
-    //@KafkaListener(topics = {"kafka.topics.consumer"})
-    public void listen(final HashMap<String, Object> record) {
+    @Autowired
+    PaymentService paymentService;
 
+    @KafkaListener(topics = {"${expense-bill-create}", "${expense-bill-update}"})
+    public void listen(BillRequest bill, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+
+        List<PaymentBillDetail> paymentBillDetails = null;
+        for(BillDetail billDetail : bill.getBill().getBillDetails()) {
+            List<PaymentLineItem> payableLineItems = null;
+            for (LineItem lineItem : bill.getBill().getBillDetails().get(0).getPayableLineItems()) {
+                PaymentLineItem payableLineItem = PaymentLineItem.builder().lineItemId(lineItem.getId())
+                        .paidAmount(BigDecimal.ZERO).tenantId(lineItem.getTenantId()).build();
+                payableLineItems.add(payableLineItem);
+            }
+            PaymentBillDetail paymentBillDetail = PaymentBillDetail.builder()
+                    .billDetailId(billDetail.getBillId())
+                    .payableLineItems(payableLineItems)
+                    .totalAmount(BigDecimal.ZERO)
+                    .totalPaidAmount(BigDecimal.ZERO).build();
+            paymentBillDetails.add(paymentBillDetail);
+        }
+
+        List<PaymentBill> paymentBills = null;
+        PaymentBill paymentBill = PaymentBill.builder()
+                .billId(bill.getBill().getId())
+                .billDetails(paymentBillDetails)
+                .tenantId(bill.getBill().getTenantId())
+                .totalAmount(BigDecimal.ZERO)
+                .totalPaidAmount(BigDecimal.ZERO).build();
+        paymentBills.add(paymentBill);
+
+        Payment payment = Payment.builder()
+                .bills(paymentBills)
+                .netPaidAmount(BigDecimal.ZERO)
+                .netPayableAmount(BigDecimal.ZERO)
+                .tenantId(bill.getBill().getTenantId()).build();
+
+        PaymentRequest paymentRequest = PaymentRequest.builder()
+                .requestInfo(bill.getRequestInfo())
+                .payment(payment).build();
+
+        PaymentResponse paymentResponse = paymentService.create(paymentRequest);
+        log.info(paymentResponse.toString());
 
     }
 }
