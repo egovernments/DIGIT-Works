@@ -32,7 +32,8 @@ const HorizontalNav = ({ configNavItems, activeLink, setActiveLink, showNav = fa
                     ))}
                 </div>
               }
-              <BreakLine style={{margin:"0px 16px 0px 16px"}}/>
+              {/* Commenting out for now due to horizontal line coming in every inbox as well */}
+              {/* <BreakLine style={{margin:"0px 16px 0px 16px"}}/> */}
               {children}
           </div>
         )
