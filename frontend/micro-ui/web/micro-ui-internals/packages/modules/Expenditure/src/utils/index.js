@@ -42,7 +42,7 @@ const setMaterialCost = (bill) => {
 
 const setDeductionTableData = (bill,charges,t) => {
   const deductions = bill?.billDetails?.[0]?.lineItems?.filter(row=>row?.type==="DEDUCTION").map((row,idx)=>{
-    const chargesObject = charges.filter(charge => charge.code === row.headCode)
+    const chargesObject = charges.filter(charge => charge.code === row.headCode)?.[0]
     return {
       "percentage": chargesObject?.calculationType==="percentage"?`${chargesObject.value} ${t("WORKS_PERCENT")}`:`${t("EXP_FIXED")}`,
       "amount": row?.amount,
