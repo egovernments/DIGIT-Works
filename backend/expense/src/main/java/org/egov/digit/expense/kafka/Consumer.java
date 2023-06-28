@@ -35,7 +35,7 @@ public class Consumer {
             PaymentBillDetail paymentBillDetail = PaymentBillDetail.builder()
                     .billDetailId(billDetail.getBillId())
                     .payableLineItems(payableLineItems)
-                    .totalAmount(BigDecimal.ZERO)
+                    .totalAmount(billDetail.getTotalAmount())
                     .totalPaidAmount(BigDecimal.ZERO).build();
             paymentBillDetails.add(paymentBillDetail);
         }
@@ -45,7 +45,7 @@ public class Consumer {
                 .billId(bill.getBill().getId())
                 .billDetails(paymentBillDetails)
                 .tenantId(bill.getBill().getTenantId())
-                .totalAmount(BigDecimal.ZERO)
+                .totalAmount(bill.getBill().getTotalAmount())
                 .totalPaidAmount(BigDecimal.ZERO).build();
         paymentBills.add(paymentBill);
 
