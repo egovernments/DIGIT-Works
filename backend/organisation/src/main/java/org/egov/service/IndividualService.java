@@ -1,9 +1,6 @@
 package org.egov.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import digit.models.coremodels.user.enums.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -287,6 +284,8 @@ public class IndividualService {
             individual.setIndividualId(existingIndividual.getIndividualId());
             individual.setIsDeleted(false);
             individual.setIdentifiers(Collections.emptyList());
+            individual.setUserId(existingIndividual.getUserId());
+            individual.setUserUuid(existingIndividual.getUserUuid());
         }
 
         contactDetails.setActive(true);
