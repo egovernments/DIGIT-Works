@@ -27,7 +27,7 @@ public class Consumer {
         List<PaymentBillDetail> paymentBillDetails = null;
         for(BillDetail billDetail : bill.getBill().getBillDetails()) {
             List<PaymentLineItem> payableLineItems = null;
-            for (LineItem lineItem : bill.getBill().getBillDetails().get(0).getPayableLineItems()) {
+            for (LineItem lineItem : billDetail.getPayableLineItems()) {
                 PaymentLineItem payableLineItem = PaymentLineItem.builder().lineItemId(lineItem.getId())
                         .paidAmount(BigDecimal.ZERO).tenantId(lineItem.getTenantId()).build();
                 payableLineItems.add(payableLineItem);
