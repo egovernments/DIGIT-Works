@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from 'react-router-dom';
 import { Header, InboxSearchComposer, Loader, Button, DownloadImgIcon} from "@egovernments/digit-ui-react-components";
 import { SearchPaymentInstructionConfig } from '../../../configs/SearchPaymentInstructionConfig';
+import { SearchPIConfigNew } from '../../../configs/SearchPaymentInstructionConfigNew';
 
 const SearchPaymentInstruction = () => {
   const { t } = useTranslation();
@@ -17,13 +18,14 @@ const SearchPaymentInstruction = () => {
       Digit.Utils.getConfigModuleName(),
       [
           {
-              "name": "SearchBillWMSConfig"
+              "name": "SearchPaymentInstructionConfig"
           }
       ],
       {
         select: (data) => {
-            // const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchBillWMSConfig[0];
-            const result =  SearchPaymentInstructionConfig?.SearchBillWMSConfig[0];
+          
+            // const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchPaymentInstructionConfig[0];
+            const result =  SearchPIConfigNew?.SearchPaymentInstructionConfig[0];
           
               const configs =  Digit.Utils.preProcessMDMSConfigInboxSearch(t, result, "sections.search.uiConfig.fields",{
               updateDependent : [
@@ -45,6 +47,7 @@ const SearchPaymentInstruction = () => {
 
   //For local Update data to access searchConfig or searchWMS config
   // const configs = SearchBillWMSConfig?.SearchBillWMSConfig?.[0]
+  // const configs = SearchPIConfigNew?.SearchPaymentInstructionConfig?.[0]
 
   
 
