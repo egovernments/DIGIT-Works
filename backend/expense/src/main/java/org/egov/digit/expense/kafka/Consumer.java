@@ -52,7 +52,7 @@ public class Consumer {
         Payment payment = Payment.builder()
                 .bills(paymentBills)
                 .netPaidAmount(BigDecimal.ZERO)
-                .netPayableAmount(BigDecimal.ZERO)
+                .netPayableAmount(bill.getBill().getTotalAmount())
                 .tenantId(bill.getBill().getTenantId()).build();
 
         PaymentRequest paymentRequest = PaymentRequest.builder()
