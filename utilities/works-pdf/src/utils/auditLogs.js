@@ -22,10 +22,11 @@ async function createAuditLogs(requestData, operation, values){
     let AuditLogObj = {
         "userUUID" : RequestInfo.userInfo.uuid,
         "module": "PA",
-        "tenantId": RequestInfo.tenantId,
+        "tenantId": RequestInfo.userInfo.tenantId,
         "transactionCode": "PA."+operation,
         "changeDate": new Date().getTime(),
         "entityName": "eg_payments_excel",
+        "objectId": values.paymentId,
         keyValueMap,
         "operationType": operation
     }
