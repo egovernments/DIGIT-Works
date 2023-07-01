@@ -51,6 +51,7 @@ public class AllotmentDetailsRepository {
             allotmentParamMap.addValue("tenantId", allotment.getTenantId());
             allotmentParamMap.addValue("sanctionId", allotment.getSanctionId());
             allotmentParamMap.addValue("allotmentSerialNo", allotment.getAllotmentSerialNo());
+            allotmentParamMap.addValue("ssuAllotmentId", allotment.getSsuAllotmentId());
             allotmentParamMap.addValue("allotmentTransactionType", allotment.getAllotmentTxnType());
             allotmentParamMap.addValue("allotmentAmount", allotment.getDecimalAllottedAmount());
             allotmentParamMap.addValue("sanctionBalance", allotment.getDecimalSanctionBalance());

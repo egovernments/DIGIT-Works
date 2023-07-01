@@ -29,8 +29,14 @@ public class PaymentRequest {
 
   @JsonProperty("payment")
   @Valid
-  @NotNull
   private Payment payment;
 
+  @JsonProperty("referenceId")
+  @Valid
+  private String referenceId;
+
+  @JsonProperty("parentPI")
+  @Valid
+  private String parentPI;
  
 }

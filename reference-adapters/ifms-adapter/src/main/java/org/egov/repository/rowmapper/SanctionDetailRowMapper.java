@@ -6,6 +6,7 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
+import org.egov.web.models.jit.Allotment;
 import org.egov.web.models.jit.FundsSummary;
 import org.egov.web.models.jit.SanctionDetail;
 import org.postgresql.util.PGobject;
@@ -68,6 +69,7 @@ public class SanctionDetailRowMapper implements ResultSetExtractor<List<Sanction
             }
 
             addFundsSummary(rs, sanctionDetailMap.get(id));
+            addAllotmentDetails(rs, sanctionDetailMap.get(id));
         }
         return new ArrayList<>(sanctionDetailMap.values());
     }
@@ -102,6 +104,51 @@ public class SanctionDetailRowMapper implements ResultSetExtractor<List<Sanction
             sanctionDetail.setFundsSummary(fundsSummary);
         }
     }
+
+    private void addAllotmentDetails(ResultSet rs, SanctionDetail sanctionDetail) throws SQLException {
+        String allotmentId = rs.getString("jadId");
+        String tenantId = rs.getString("jadTenantId");
+        String sanctionId = rs.getString("jadSanctionId");
+        Integer allotmentSerialNo = rs.getInt("jadAllotmentSerialNo");
+        String ssuAllotmentId = rs.getString("jadSsuAllotmentId");
+        String allotmentTransactionType = rs.getString("jadAllotmentTransactionType");
+        BigDecimal allottedAmount = rs.getBigDecimal("jadAllotmentAmount");
+        BigDecimal sanctionBalance = rs.getBigDecimal("jadSanctionBalance");
+        Long allotmentDate = rs.getLong("jadAllotmentDate");
+        String createdby = rs.getString("jfsCreatedBy");
+        String lastmodifiedby = rs.getString("jfsLastModifiedBy");
+        Long createdtime = rs.getLong("jfsCreatedTime");
+        Long lastmodifiedtime = rs.getLong("jfsLastModifiedTime");
+        JsonNode additionalDetails = getAdditionalDetail("jfsAdditionalDetails", rs);
+
+        if (StringUtils.isNotBlank(allotmentId) && sanctionId.equalsIgnoreCase(sanctionDetail.getId().toString())) {
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
+                    .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
+                    .build();
+
+            Allotment allotment = Allotment.builder()
+                    .id(allotmentId)
+                    .tenantId(tenantId)
+                    .sanctionId(sanctionId)
+                    .allotmentSerialNo(allotmentSerialNo)
+                    .ssuAllotmentId(ssuAllotmentId)
+                    .allotmentTxnType(allotmentTransactionType)
+                    .decimalAllottedAmount(allottedAmount)
+                    .decimalSanctionBalance(sanctionBalance)
+                    .allotmentDateTimeStamp(allotmentDate)
+                    .additionalDetails(additionalDetails)
+                    .auditDetails(auditDetails)
+                    .build();
+            if (sanctionDetail.getAllotmentDetails() == null) {
+                List<Allotment> allotments = new ArrayList<>();
+                allotments.add(allotment);
+                sanctionDetail.setAllotmentDetails(allotments);
+            } else {
+                sanctionDetail.getAllotmentDetails().add(allotment);
+            }
+        }
+    }
+
 
     private JsonNode getAdditionalDetail(String columnName, ResultSet rs) throws SQLException {
         JsonNode additionalDetails = null;

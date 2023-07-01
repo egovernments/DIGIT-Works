@@ -6,14 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.web.models.enums.TransactionType;
+
 import java.math.BigDecimal;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class SanctionDetail {
+public class TransactionDetails {
 
     @JsonProperty("id")
     private String id;
@@ -21,32 +22,25 @@ public class SanctionDetail {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("hoaCode")
-    private String hoaCode;
+    @JsonProperty("sanctionId")
+    private String sanctionId;
 
-    @JsonProperty("ddoCode")
-    private String ddoCode;
+    @JsonProperty("paymentInstId")
+    private String paymentInstId;
 
-    @JsonProperty("masterAllotmentId")
-    private String masterAllotmentId;
+    @JsonProperty("transactionAmount")
+    private BigDecimal transactionAmount;
 
-    @JsonProperty("sanctionedAmount")
-    private BigDecimal sanctionedAmount;
+    @JsonProperty("transactionDate")
+    private Long transactionDate;
 
-    @JsonProperty("financialYear")
-    private String financialYear;
+    @JsonProperty("transactionType")
+    private TransactionType transactionType;
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 
-    @JsonProperty("fundsSummary")
-    private FundsSummary fundsSummary;
-
-    @JsonProperty("allotmentDetails")
-    private List<Allotment> allotmentDetails;
-
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
-
 
 }

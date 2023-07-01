@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 public enum PaymentStatus {
 
 	INITIATED("INITIATED"),
-
+	PENDING("PENDING"),
 	SUCCESSFUL("SUCCESSFUL"),
 
 	FAILED("FAILED"),

@@ -79,4 +79,14 @@ public class IfmsAdapterConfig {
     @Value("${egov.organisation.search.endpoint}")
     private String organisationSearchEndPoint;
 
+    // idgen
+    @Value("${egov.idgen.host}")
+    private String idgenHost;
+
+    @Value("${egov.idgen.path}")
+    private String idGenPath;
+
+    @Value("${egov.idgen.ifms.bill.reference.number}")
+    private String paymentInstructionNumberFormat;
+
 }

@@ -38,7 +38,7 @@ public class VirtualAllotmentEnrichment {
         String hoaCode = hoaNode.get("code").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
         String granteeCode = ssuNode.get("granteeAgCode").asText();
-        String fromDate = getFormattedTimeFromTimestamp(lastExecuted, VA_REQUEST_TIME_FORMAT);
+        String fromDate = util.getFormattedTimeFromTimestamp(lastExecuted, VA_REQUEST_TIME_FORMAT);
 
         VARequest vaRequest = VARequest.builder()
                 .hoa(hoaCode)
@@ -54,15 +54,6 @@ public class VirtualAllotmentEnrichment {
         return jitRequest;
     }
 
-    private String getFormattedTimeFromTimestamp(Long timestamp, String dateFormat) {
-        // Convert timestamp to LocalDateTime
-        LocalDateTime dateTime = LocalDateTime.ofEpochSecond(timestamp / 1000, 0, java.time.ZoneOffset.UTC);
-        // Create a formatter for the desired format
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-        // Format the LocalDateTime to the desired format
-        String formattedDateTime = dateTime.format(formatter);
-        return formattedDateTime;
-    }
 
     public SanctionDetailsSearchCriteria getSanctionDetailsSearchCriteriaForVA(String tenantId, JsonNode hoaNode, JsonNode ssuNode) {
         String hoaCode = hoaNode.get("code").asText();
@@ -85,7 +76,7 @@ public class VirtualAllotmentEnrichment {
         for (Allotment allotment: allotments) {
             if (allotment.getAllotmentTxnType().equalsIgnoreCase(VA_TRANSACTION_TYPE_INITIAL_ALLOTMENT)) {
                 initialAllotments.add(allotment);
-            } else if (allotment.getAllotmentTxnType().equalsIgnoreCase(VA_TRANSACTION_TYPE_ADDITIONAL_ALLOTMENT)) {
+            } else {
                 if (mstAllotmentIdMap.get(allotment.getMstAllotmentDistId()) != null) {
                     mstAllotmentIdMap.get(allotment.getMstAllotmentDistId()).add(allotment);
                 } else {
@@ -137,8 +128,13 @@ public class VirtualAllotmentEnrichment {
         if (allotmentList != null && !allotmentList.isEmpty()) {
             for (Allotment allotment: allotmentList) {
                 BigDecimal allotmentAmount = new BigDecimal(allotment.getAllotmentAmount());
-                sanctionDetail.getFundsSummary().setAllottedAmount(sanctionDetail.getFundsSummary().getAllottedAmount().add(allotmentAmount));
-                sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().add(allotmentAmount));
+                if (allotment.getAllotmentTxnType().equalsIgnoreCase(VA_TRANSACTION_TYPE_ADDITIONAL_ALLOTMENT)) {
+                    sanctionDetail.getFundsSummary().setAllottedAmount(sanctionDetail.getFundsSummary().getAllottedAmount().add(allotmentAmount));
+                    sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().add(allotmentAmount));
+                } else if (allotment.getAllotmentTxnType().equalsIgnoreCase(VA_TRANSACTION_TYPE_WITHDRAWAL)) {
+                    sanctionDetail.getFundsSummary().setAllottedAmount(sanctionDetail.getFundsSummary().getAllottedAmount().subtract(allotmentAmount));
+                    sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().subtract(allotmentAmount));
+                }
             }
         }
 
@@ -223,6 +219,7 @@ public class VirtualAllotmentEnrichment {
                         .tenantId(tenantId)
                         .sanctionId(sanctionDetail.getId())
                         .allotmentSerialNo(Integer.parseInt(allotment.getAllotmentTxnSlNo()))
+                        .ssuAllotmentId(allotment.getSsuAllotmentId())
                         .decimalAllottedAmount(new BigDecimal(allotment.getAllotmentAmount()))
                         .allotmentTxnType(allotment.getAllotmentTxnType())
                         .decimalSanctionBalance(new BigDecimal(allotment.getAvailableBalance()))

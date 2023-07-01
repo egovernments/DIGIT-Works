@@ -31,11 +31,28 @@ public class SanctionDetailQueryBuilder {
             "jfs.createdby as jfsCreatedBy, " +
             "jfs.lastmodifiedby as jfsLastModifiedBy, " +
             "jfs.createdtime as jfsCreatedTime, " +
-            "jfs.lastmodifiedtime as jfsLastModifiedTime " +
+            "jfs.lastmodifiedtime as jfsLastModifiedTime, " +
+            "jad.id as jadId, " +
+            "jad.tenantId as jadTenantId, " +
+            "jad.sanctionId as jadSanctionId, " +
+            "jad.allotmentSerialNo as jadAllotmentSerialNo, " +
+            "jad.ssuAllotmentId as jadSsuAllotmentId, " +
+            "jad.allotmentAmount as jadAllotmentAmount, " +
+            "jad.allotmentTransactionType as jadAllotmentTransactionType, " +
+            "jad.sanctionBalance as jadSanctionBalance, " +
+            "jad.allotmentDate as jadAllotmentDate, " +
+            "jad.additionalDetails as jadAdditionalDetails, " +
+            "jad.createdtime as jadCreatedtime, " +
+            "jad.createdby as jadCreatedby, " +
+            "jad.lastmodifiedtime as jadLastmodifiedtime, " +
+            "jad.lastmodifiedby as jadLastmodifiedby " +
             "FROM jit_sanction_details AS jsd " +
             "LEFT JOIN " +
             "jit_funds_summary AS jfs " +
-            "ON (jsd.id=jfs.sanctionId) ";
+            "ON (jsd.id=jfs.sanctionId) " +
+            "LEFT JOIN " +
+            "jit_allotment_details AS jad " +
+            "ON (jsd.id=jad.sanctionId)";
 
     public static final String SANCTION_DETAILS_INSERT_QUERY = "INSERT INTO jit_sanction_details (id, tenantId, hoaCode, ddoCode,"
             + " masterAllotmentId, sanctionedAmount, financialYear, additionalDetails, createdby, createdtime, lastmodifiedby, lastmodifiedtime) "

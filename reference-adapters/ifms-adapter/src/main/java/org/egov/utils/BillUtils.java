@@ -2,6 +2,7 @@ package org.egov.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.ServiceRequestRepository;
@@ -12,6 +13,9 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.*;
+
+import static org.egov.config.Constants.MDMS_EXPENSE_MODULE_NAME;
+import static org.egov.config.Constants.MDMS_HEAD_CODES_MASTER;
 
 @Component
 @Slf4j
@@ -27,6 +31,8 @@ public class BillUtils {
 
     @Autowired
     private IfmsAdapterConfig config;
+	@Autowired
+	MdmsUtils mdmsUtils;
 
 	public @Valid List<Bill> fetchBillsFromPayment(PaymentRequest paymentRequest) {
 		RequestInfo requestInfo = paymentRequest.getRequestInfo();
@@ -62,6 +68,15 @@ public class BillUtils {
 
 		log.info(billResponse.toString());
 		return billResponse.getBills();
+	}
+
+	public JSONArray getHeadCode(RequestInfo requestInfo, String tenantId) {
+		String rootTenantId = tenantId.split("\\.")[0];
+		List<String> headCodeMasters = new ArrayList<>();
+		headCodeMasters.add(MDMS_HEAD_CODES_MASTER);
+		Map<String, Map<String, JSONArray>> headCodeResponse = mdmsUtils.fetchMdmsData(requestInfo, rootTenantId, MDMS_EXPENSE_MODULE_NAME, headCodeMasters);
+		JSONArray ssuDetailsList = headCodeResponse.get(MDMS_EXPENSE_MODULE_NAME).get(MDMS_HEAD_CODES_MASTER);
+		return ssuDetailsList;
 	}
 
 }

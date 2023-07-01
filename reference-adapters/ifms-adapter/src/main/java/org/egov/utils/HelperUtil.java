@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
@@ -53,5 +54,22 @@ public class HelperUtil {
         LocalDate date = LocalDate.parse(dateString);
         Long timestamp =  date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
         return timestamp;
+    }
+
+    public String getFormattedTimeFromTimestamp(Long timestamp, String dateFormat) {
+        String formattedDateTime = null;
+        try {
+            if (timestamp != null && dateFormat != null) {
+                // Convert timestamp to LocalDateTime
+                LocalDateTime dateTime = LocalDateTime.ofEpochSecond(timestamp / 1000, 0, java.time.ZoneOffset.UTC);
+                // Create a formatter for the desired format
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+                // Format the LocalDateTime to the desired format
+                formattedDateTime = dateTime.format(formatter);
+            }
+        } catch (Exception e) {
+            log.error("Exception occurred in getFormattedTimeFromTimestamp from Helper util: ", e);
+        }
+        return formattedDateTime;
     }
 }

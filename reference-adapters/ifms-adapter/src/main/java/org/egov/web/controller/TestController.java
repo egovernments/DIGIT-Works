@@ -1,9 +1,9 @@
 package org.egov.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.service.PaymentInstruction;
+import org.egov.service.PaymentInstructionService;
 import org.egov.service.VirtualAllotmentService;
-import org.egov.web.models.jit.PIRequest;
+import org.egov.web.models.jit.PaymentInstruction;
 import org.egov.web.models.jit.SanctionAllotmentRequest;
 import org.egov.web.models.bill.PaymentRequest;
 import org.egov.service.IfmsService;
@@ -34,7 +34,7 @@ public class TestController {
     JitRequestUtils jitRequestUtils;
 
     @Autowired
-    PaymentInstruction paymentInstruction;
+    PaymentInstructionService paymentInstruction;
 
     @Autowired
     VirtualAllotmentService virtualAllotmentService;
@@ -76,10 +76,7 @@ public class TestController {
     @RequestMapping(path = "/pi-request", method = RequestMethod.POST)
     public ResponseEntity<Object> request(@RequestBody PaymentRequest paymentRequest) {
         try {
-            PIRequest piRequest = paymentInstruction.getPaymentInstructionFromPayment(paymentRequest);
-            // TODO: PI request send to JIT
-            // TODO: Store PI request into system
-
+            PaymentInstruction piRequest = paymentInstruction.processPaymentRequestForPI(paymentRequest);
             ResponseEntity<Object> responseEntity = new ResponseEntity<>(piRequest, HttpStatus.OK);
             return responseEntity;
         } catch (Exception e) {

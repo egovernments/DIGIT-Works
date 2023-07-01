@@ -118,7 +118,7 @@ public class IfmsService {
         payload.put("appKey", appKey);
 
         StringBuilder uri = new StringBuilder(config.getIfmsJitHostName() + config.getIfmsJitAuthEndpoint());
-        Object res = requestRepository.fetchResult(uri, payload, headers);
+        Object res = requestRepository.fetchResultWithHeader(uri, payload, headers);
         System.out.println("res : " + res);
         return res;
     }
@@ -135,7 +135,7 @@ public class IfmsService {
         payload.put("rek", rek);
 
         StringBuilder uri = new StringBuilder(config.getIfmsJitHostName() + config.getIfmsJitRequestEndpoint());
-        Object res = requestRepository.fetchResult(uri, payload, headers);
+        Object res = requestRepository.fetchResultWithHeader(uri, payload, headers);
         System.out.println("res : " + res);
         return res;
     }
@@ -160,7 +160,6 @@ public class IfmsService {
         List<String> ifmsMasters = new ArrayList<>();
         ifmsMasters.add(MDMS_HEAD_OF_ACCOUNT_MASTER);
         Map<String, Map<String, JSONArray>> ifmsHOAResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_IFMS_MODULE_NAME, ifmsMasters);
-        System.out.println(ifmsHOAResponse);
         return ifmsHOAResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_HEAD_OF_ACCOUNT_MASTER);
     }
 
@@ -168,8 +167,14 @@ public class IfmsService {
         List<String> ifmsMasters = new ArrayList<>();
         ifmsMasters.add(MDMS_SCHEMA_DETAILS_MASTER);
         Map<String, Map<String, JSONArray>> ifmsSchemaResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_IFMS_MODULE_NAME, ifmsMasters);
-        System.out.println(ifmsSchemaResponse);
         return ifmsSchemaResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SCHEMA_DETAILS_MASTER);
+    }
+    public JSONArray getSSUDetails(RequestInfo requestInfo, String tenantId) {
+        List<String> ssuMasters = new ArrayList<>();
+        ssuMasters.add(MDMS_SSU_DETAILS_MASTER);
+        Map<String, Map<String, JSONArray>> ssuDetailsResponse = mdmsUtils.fetchMdmsData(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, ssuMasters);
+        JSONArray ssuDetailsList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
+        return ssuDetailsList;
     }
 
 

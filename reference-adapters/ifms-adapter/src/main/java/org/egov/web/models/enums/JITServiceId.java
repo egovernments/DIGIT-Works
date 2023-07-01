@@ -18,7 +18,8 @@ public enum JITServiceId {
 
     PD ("PD"),
 
-    FD ("FD");
+    FD ("FD"),
+    COR ("COR");
 
 	private String value;
 

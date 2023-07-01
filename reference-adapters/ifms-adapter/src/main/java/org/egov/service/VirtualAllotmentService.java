@@ -115,7 +115,7 @@ public class VirtualAllotmentService {
             JITResponse vaResponse = ifmsService.sendRequestToIFMS(vaRequest);
 
             // TODO: Temp response for dev remove after dev completed
-            // JITResponse vaResponse = vaEnrichment.vaResponse();
+//            JITResponse vaResponse = vaEnrichment.vaResponse();
             if (vaResponse.getErrorMsg() == null) {
                 List<Object> vaResponseList = vaResponse.getData();
                 List<Allotment> allotmentList = new ArrayList<>();

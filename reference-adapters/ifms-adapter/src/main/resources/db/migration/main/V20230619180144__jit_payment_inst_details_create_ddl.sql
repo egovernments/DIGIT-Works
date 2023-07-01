@@ -7,15 +7,15 @@ CREATE TABLE IF NOT EXISTS jit_payment_inst_details (
   numBeneficiaries int,
   grossAmount numeric(12,2),
   netAmount numeric(12,2),
-  piStatus varchar,
-  piSuccessCode varchar,
-  piSuccessDesc varchar,
-  piApprovedId varchar,
-  piApprovalDate varchar,
+  piStatus varchar(64),
+  piSuccessCode varchar(256),
+  piSuccessDesc varchar(256),
+  piApprovedId varchar(256),
+  piApprovalDate varchar(256),
   piErrorResp varchar(256),
   additionalDetails jsonb,
   createdtime bigint,
-  createdby varchar(64),
+  createdby varchar(256),
   lastmodifiedtime bigint,
-  lastmodifiedby varchar(64)
+  lastmodifiedby varchar(256)
 );

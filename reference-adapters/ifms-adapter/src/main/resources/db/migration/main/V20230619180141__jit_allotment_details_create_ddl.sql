@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS jit_allotment_details (
   tenantId varchar(64),
   sanctionId varchar(256),
   allotmentSerialNo int,
+  ssuAllotmentId varchar (64),
   allotmentAmount numeric(12,2),
   allotmentTransactionType varchar(64),
   sanctionBalance numeric(12,2),

@@ -14,5 +14,12 @@ public class Constants {
 	public static final String VA_TRANSACTION_TYPE_INITIAL_ALLOTMENT = "Initial Allotment";
 	public static final String VA_TRANSACTION_TYPE_ADDITIONAL_ALLOTMENT = "Additional allotment";
 	public static final String VA_TRANSACTION_TYPE_WITHDRAWAL = "Allotment withdrawal";
+	public static final String DEDUCTION_BENEFICIARY_BY_HEADCODE = "Deduction_{tanentId}_{headcode}";
+	public static final String MDMS_COMMON_ACTIVE_FILTER ="$.*.[?(@.active==true)]";
+	public static final String MDMS_EXPENSE_MODULE_NAME = "expense";
+	public static final String MDMS_HEAD_CODES_MASTER = "HeadCodes";
+	public static final String HEAD_CODE_CATEGORY_KEY = "category";
+	public static final String HEAD_CODE_DEDUCTION_CATEGORY = "deduction";
+
 
 }
