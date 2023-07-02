@@ -1,10 +1,12 @@
 package org.egov.web.models.jit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.egov.common.data.query.annotations.Exclude;
+import org.egov.web.models.enums.BeneficiaryPaymentStatus;
 import org.egov.web.models.enums.PaymentStatus;
 
 import java.math.BigDecimal;
@@ -17,6 +19,7 @@ import java.util.List;
 @Builder
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Beneficiary {
 
     // Beneficiary Details fields stored in DB
@@ -74,7 +77,7 @@ public class Beneficiary {
 
     @JsonProperty("paymentStatus")
     @Exclude
-    private PaymentStatus paymentStatus;
+    private BeneficiaryPaymentStatus paymentStatus;
 
     @JsonProperty("paymentStatusMessage")
     @Exclude

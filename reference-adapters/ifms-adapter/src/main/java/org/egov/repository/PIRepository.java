@@ -53,7 +53,7 @@ public class PIRepository {
             piRequestParamMap.addValue("numBeneficiaries", piRequest.getNumBeneficiaries());
             piRequestParamMap.addValue("grossAmount", piRequest.getGrossAmount());
             piRequestParamMap.addValue("netAmount", piRequest.getNetAmount());
-            piRequestParamMap.addValue("piStatus", piRequest.getPiStatus());
+            piRequestParamMap.addValue("piStatus", piRequest.getPiStatus().toString());
             piRequestParamMap.addValue("piSuccessCode", piRequest.getPiSuccessCode());
             piRequestParamMap.addValue("piSuccessDesc", piRequest.getPiSuccessDesc());
             piRequestParamMap.addValue("piApprovedId", piRequest.getPiApprovedId());

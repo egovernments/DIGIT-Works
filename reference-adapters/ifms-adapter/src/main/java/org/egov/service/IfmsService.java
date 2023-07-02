@@ -65,24 +65,25 @@ public class IfmsService {
             getAuthDetailsFromIFMS();
         }
         Map<String, String> payload = null;
-        int maxRetries = 1;
-        int failedCount = 0;
         JITResponse decryptedResponse = null;
-        Exception exception = null;
-        while (failedCount < maxRetries) {
-            try {
-                payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
-                String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
-                decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
-                return decryptedResponse;
-            } catch (Exception e) {
-                failedCount++;
-                exception = e;
-                getAuthDetailsFromIFMS();
+        try {
+            payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
+            String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
+            decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
+        } catch (Exception e) {
+            String message = e.toString();
+            if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
+                try {
+                    getAuthDetailsFromIFMS();
+                    payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
+                    String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
+                    decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                throw new RuntimeException(e);
             }
-        }
-        if (failedCount == maxRetries) {
-            throw new RuntimeException(exception);
         }
         return decryptedResponse;
     }

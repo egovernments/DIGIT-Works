@@ -20,6 +20,7 @@ public class Constants {
 	public static final String MDMS_HEAD_CODES_MASTER = "HeadCodes";
 	public static final String HEAD_CODE_CATEGORY_KEY = "category";
 	public static final String HEAD_CODE_DEDUCTION_CATEGORY = "deduction";
+	public static final String JIT_UNAUTHORIZED_REQUEST_EXCEPTION="No valid session encryption key";
 
 
 }

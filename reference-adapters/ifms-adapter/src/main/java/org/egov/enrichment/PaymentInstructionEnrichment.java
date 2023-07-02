@@ -129,9 +129,9 @@ public class PaymentInstructionEnrichment {
         // Sort the list in descending order based on the value
         Collections.sort(selectedSanction.getAllotmentDetails(), Comparator.comparingInt(o -> ((Allotment) o).getAllotmentSerialNo()).reversed());
         String mstAllotmentDistId = selectedSanction.getAllotmentDetails().get(0).getMstAllotmentDistId();
-        String piStatus = String.valueOf(hasFunds ? PIStatus.INITIATED : PaymentStatus.PENDING);
-//        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
-        String jitBillNo = "Demo";
+        PIStatus piStatus = hasFunds ? PIStatus.INITIATED : PIStatus.PENDING;
+        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+//        String jitBillNo = "Demo";
         PaymentInstruction piRequest = PaymentInstruction.builder()
                 .id(UUID.randomUUID().toString())
                 .jitBillNo(jitBillNo)
@@ -166,7 +166,7 @@ public class PaymentInstructionEnrichment {
         String tenantId = paymentRequest.getPayment().getTenantId();
         String muktaReferenceId = paymentRequest.getPayment().getPaymentNumber();
         AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
-        PaymentStatus beneficiaryPaymentStatus = hasFunds ? PaymentStatus.INITIATED : PaymentStatus.PENDING;
+        BeneficiaryPaymentStatus beneficiaryPaymentStatus = hasFunds ? BeneficiaryPaymentStatus.INITIATED : BeneficiaryPaymentStatus.PENDING;
         JsonNode emptyObject = objectMapper.createObjectNode();
         if (piRequest.getId() == null)
             piRequest.setId(UUID.randomUUID().toString());

@@ -32,6 +32,9 @@ public class IfmsAdapterConfig {
     @Value("${ifms.jit.client.secret}")
     private String ifmsJitClientSecret;
 
+    @Value("${ifms.jit.public.key}")
+    private String ifmsJitPublic;
+
     @Value("${ifms.jit.public.key.path}")
     private String ifmsJitPublicKeyPath;
 

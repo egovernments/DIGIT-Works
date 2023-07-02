@@ -13,6 +13,8 @@ import org.egov.utils.IndividualUtils;
 import org.egov.utils.OrganisationUtils;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
+import org.egov.web.models.enums.BeneficiaryPaymentStatus;
+import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.enums.Status;
 import org.egov.web.models.jit.Beneficiary;
@@ -22,6 +24,7 @@ import org.egov.web.models.jit.SanctionDetail;
 import org.egov.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -80,13 +83,26 @@ public class PaymentInstructionService {
                 try {
                     ifmsService.sendRequestToIFMS(jitPiRequest);
                 } catch (Exception e) {
-                    log.error("Exception while calling request.");
+                    String errorMessage = e.toString();
+                    errorMessage = e.getMessage();
+                    Throwable cause = e.getCause();
+                    if (cause instanceof HttpServerErrorException.InternalServerError) {
+                        errorMessage = ((HttpServerErrorException.InternalServerError) cause).getResponseBodyAsString();
+                    } else {
+                        errorMessage = e.getMessage();
+                    }
+                    log.error("Exception while calling request." + e);
+                    piRequest.setPiErrorResp(errorMessage);
+                    piRequest.setPiStatus(PIStatus.DECLINED);
+                    for(Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
+                        beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.PENDING);
+                    }
                 }
             }
             piRepository.save(Collections.singletonList(piRequest));
 
         } catch (Exception e) {
-            log.info("Exception ");
+            log.info("Exception " + e);
         }
 
         return piRequest;
