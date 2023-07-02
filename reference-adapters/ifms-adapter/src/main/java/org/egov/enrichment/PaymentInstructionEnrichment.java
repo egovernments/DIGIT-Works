@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.config.Constants;
 import org.egov.config.IfmsAdapterConfig;
@@ -385,18 +384,6 @@ public class PaymentInstructionEnrichment {
             headCodeMap.put(node.get("code").asText(), node);
         }
         return headCodeMap;
-    }
-
-    public void enrichPaymentInstructionOnSearch(RequestInfo requestInfo, PISearchRequest searchRequest) {
-        log.info("PaymentInstructionEnrichmentService::enrichPaymentInstructionOnSearch");
-        if (searchRequest.getPagination().getLimit() == null)
-            searchRequest.getPagination().setLimit(config.getDefaultLimit());
-
-        if (searchRequest.getPagination().getOffSet() == null)
-            searchRequest.getPagination().setOffSet(config.getDefaultOffset());
-
-        if (searchRequest.getPagination().getLimit() != null && searchRequest.getPagination().getLimit() > config.getMaxLimit())
-            searchRequest.getPagination().setLimit(config.getMaxLimit());
     }
 
 
