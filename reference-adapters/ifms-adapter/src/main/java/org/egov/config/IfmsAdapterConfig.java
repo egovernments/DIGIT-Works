@@ -89,4 +89,11 @@ public class IfmsAdapterConfig {
     @Value("${egov.idgen.ifms.bill.reference.number}")
     private String paymentInstructionNumberFormat;
 
+    // Search Config
+    @Value("${ifms.jit.default.offset}")
+    private Integer defaultOffset;
+    @Value("${ifms.jit.default.limit}")
+    private Integer defaultLimit;
+    @Value("${ifms.jit.search.max.limit}")
+    private Integer maxLimit;
 }
