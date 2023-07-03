@@ -22,6 +22,7 @@ import org.egov.web.models.jit.SanctionDetail;
 import org.egov.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -166,6 +167,16 @@ public class PaymentInstructionService {
             }
         }
         return billList;
+    }
+
+    public List<PaymentInstruction> searchPaymentInstruction(PISearchRequest piSearchRequest){
+        log.info("PaymentInstructionService::searchPaymentInstruction");
+        piEnrichment.enrichPaymentInstructionOnSearch(piSearchRequest.getRequestInfo(), piSearchRequest);
+        List<PaymentInstruction> paymentInstructions = piRepository.getPaymentInstructions(piSearchRequest);
+        if(CollectionUtils.isEmpty(paymentInstructions)){
+            return new ArrayList<>();
+        }
+        return paymentInstructions;
     }
 
 }
