@@ -44,7 +44,7 @@ public class Consumer {
                     }
                 }
                 PaymentBillDetail paymentBillDetail = PaymentBillDetail.builder()
-                        .billDetailId(billDetail.getBillId())
+                        .billDetailId(billDetail.getId())
                         .payableLineItems(payableLineItems)
                         .totalAmount(billDetail.getTotalAmount())
                         .totalPaidAmount(billDetail.getTotalAmount()).build();
