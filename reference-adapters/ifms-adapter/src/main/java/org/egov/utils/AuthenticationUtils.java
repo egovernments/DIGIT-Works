@@ -14,7 +14,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Base64;
-import java.util.TimeZone;
 
 @Component
 public class AuthenticationUtils {

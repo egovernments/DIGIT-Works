@@ -19,14 +19,11 @@ import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.egov.web.models.organisation.Organisation;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.egov.config.Constants.VA_REQUEST_TIME_FORMAT;
 

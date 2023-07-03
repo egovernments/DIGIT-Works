@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.data.query.annotations.Exclude;
+import org.egov.web.models.jit.SanctionDetailsSearchCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,62 +16,55 @@ import java.util.List;
 @Builder
 public class PISearchCriteria {
 
-    @JsonProperty("id")
-    private List<String> id = null;
+    @JsonProperty("ids")
+    private List<String> ids;
 
     @JsonProperty("tenantId")
-    private String tenantId = null;//mand
-
-    @JsonProperty("name")
-    private String name = null;
+    private String tenantId;
 
     @JsonProperty("ward")
-    private String ward = null;
+    private String ward;
 
     @JsonProperty("paymentInstructionType")
-    private String paymentInstructionType = null;
+    private String paymentInstructionType;
 
     @JsonProperty("projectName")
-    private String projectName = null;
+    private String projectName;
 
     @JsonProperty("billNo")
-    private String billNo = null;
-
-    @JsonProperty("applicationNumber")
-    private String applicationNumber = null;
+    private String billNo;
 
     @JsonProperty("piStatus")
     private String piStatus;
 
-    @JsonProperty("contactMobileNumber")
-    private String contactMobileNumber = null;
-
     @JsonProperty("createdFrom")
-    private Long createdFrom = null;
+    private Long createdFrom;
 
     @JsonProperty("createdTo")
-    private Long createdTo = null;
+    private Long createdTo;
 
     @JsonProperty("boundaryCode")
-    private String boundaryCode = null;
+    private String boundaryCode;
 
-    @JsonProperty("identifierType")
-    private String identifierType = null;
+    @JsonProperty("limit")
+    private Integer limit;
 
-    @JsonProperty("identifierValue")
-    private String identifierValue = null;
+    @JsonProperty("offset")
+    private Integer offset;
 
-    @JsonProperty("includeDeleted")
-    private Boolean includeDeleted = false;
+    @JsonProperty("sortBy")
+    private SanctionDetailsSearchCriteria.SortBy sortBy;
 
+    @JsonProperty("sortOrder")
+    private SanctionDetailsSearchCriteria.SortOrder sortOrder;
     @JsonIgnore
     private Boolean isCountNeeded = false;
 
     public PISearchCriteria addIdItem(String idItem) {
-        if (this.id == null) {
-            this.id = new ArrayList<>();
+        if (this.ids == null) {
+            this.ids = new ArrayList<>();
         }
-        this.id.add(idItem);
+        this.ids.add(idItem);
         return this;
     }
 }

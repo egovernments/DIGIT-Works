@@ -12,14 +12,10 @@ import org.egov.repository.ExecutedVALogsRepository;
 import org.egov.repository.FundsSummaryRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.utils.MdmsUtils;
-import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

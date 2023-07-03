@@ -189,14 +189,12 @@ public class PIRepository {
         public List<PaymentInstruction> getPaymentInstructions(PISearchRequest piSearchRequest){
             log.info("PIRepository::getPaymentInstructions");
             PISearchCriteria criteria = piSearchRequest.getSearchCriteria();
-
             List<Object> preparedStmtList = new ArrayList<>();
-        //String query = queryBuilder.getPIQuery(piSearchRequest.getSearchCriteria(), preparedStmtList);
-       // List<PaymentInstruction> paymentInstructionList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
-
-        List<PaymentInstruction> paymentInstructionList = new ArrayList<>();
-            // in progress
-
+            log.info("Fetching Payment instruction. tenantId ["+criteria.getTenantId()+"]");
+            String query = queryBuilder.getPaymentInstructionSearchQuery(criteria, preparedStmtList);
+            log.info("Query build successfully. tenantId ["+criteria.getTenantId()+"]");
+            List<PaymentInstruction> paymentInstructionList = jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
+            log.info("Fetched Payment instruction. tenantId ["+criteria.getTenantId()+"]");
             return paymentInstructionList;
     }
 }
