@@ -71,6 +71,7 @@ public class WorkflowService {
     }
 
 
+
     public void validateAssignee(EstimateRequest estimateRequest) {
 
         /* Call HRMS service and validate of the assignee belongs to same department
@@ -179,21 +180,13 @@ public class WorkflowService {
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
 
-        if(workflow.getAction().equals("SENDBACK")){
-            if(!CollectionUtils.isEmpty(processInstance.getAssignes()) && CollectionUtils.isEmpty(workflow.getAssignees())){
-//                List<User> users = new ArrayList<>();
-//                processInstance.getAssignes().forEach(userObj -> {
-//                    User user = new User();
-//                    user.setUuid(userObj.getUuid());
-//                    users.add(user);
-//                });
-                workflow.setAssignees(Collections.singletonList(processInstance.getAssignes().get(0).getUuid()));
-            }else{
+        if(workflow.getAction().equals("SENDBACK") && CollectionUtils.isEmpty(workflow.getAssignees())) {
+            String assignees =  callWorkFlowForAssignees(request);
             List<String> uuids = new ArrayList<>();
-            uuids.add(estimate.getAuditDetails().getLastModifiedBy());
-            workflow.setAssignees(uuids);
-            }
+                uuids.add(assignees);
+                workflow.setAssignees(uuids);
         }
+
 
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
             List<User> users = new ArrayList<>();
@@ -256,6 +249,14 @@ public class WorkflowService {
         return response.getProcessInstances().get(0).getState();
     }
 
+    private String callWorkFlowForAssignees(EstimateRequest estimateRequest) {
+        log.info("WorkflowService::callWorkFlow");
+        ProcessInstanceResponse response = null;
+        StringBuilder url = getprocessInstanceSearchURL(estimateRequest.getEstimate().getTenantId(), estimateRequest.getEstimate().getEstimateNumber());
+        Object optional = repository.fetchResult(url, estimateRequest);
+        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+        return response.getProcessInstances().get(0).getAssignes().get(0).getUuid();
+    }
 
     public StringBuilder getprocessInstanceSearchURL(String tenantId, String estimateNumber) {
         log.info("WorkflowService::getprocessInstanceSearchURL");
