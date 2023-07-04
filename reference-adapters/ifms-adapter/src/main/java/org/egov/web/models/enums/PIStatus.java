@@ -7,13 +7,12 @@ import javax.validation.constraints.NotNull;
 
 public enum PIStatus {
 
-    PENDING("Pending"),
-    DECLINED("Declined"),
-    INITIATED("Initiated"),
-    REJECTED("Rejected"),
-    APPROVED("Approved"),
-    IN_PROCESS("In Process"),
-    COMPLETED("Completed");
+    FAILED("FAILED"),
+    INITIATED("INITIATED"),
+    PARTIAL("PARTIAL"),
+    APPROVED("APPROVED"),
+    IN_PROCESS("IN PROCESS"),
+    COMPLETED("SUCCESSFUL");
 
     private String value;
 

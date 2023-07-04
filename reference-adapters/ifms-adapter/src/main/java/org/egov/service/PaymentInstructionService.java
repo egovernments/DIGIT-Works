@@ -17,10 +17,7 @@ import org.egov.web.models.enums.BeneficiaryPaymentStatus;
 import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.enums.Status;
-import org.egov.web.models.jit.Beneficiary;
-import org.egov.web.models.jit.JITRequest;
-import org.egov.web.models.jit.PaymentInstruction;
-import org.egov.web.models.jit.SanctionDetail;
+import org.egov.web.models.jit.*;
 import org.egov.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,9 +55,10 @@ public class PaymentInstructionService {
 
     public PaymentInstruction processPaymentRequestForPI(PaymentRequest paymentRequest) {
         PaymentInstruction piRequest = null;
+        PaymentStatus paymentStatus = null;
         try {
-            List<Beneficiary> beneficiaries = getBeneficiariesFromPayment(paymentRequest);
             // Get the beneficiaries
+            List<Beneficiary> beneficiaries = getBeneficiariesFromPayment(paymentRequest);
             BigDecimal totalAmount = new BigDecimal(0);
             if (beneficiaries != null && !beneficiaries.isEmpty()) {
                 for (Beneficiary piBeneficiary: beneficiaries) {
@@ -72,17 +70,31 @@ public class PaymentInstructionService {
             Map<String, Object> hoaSsuMap = piEnrichment.getSanctionSsuAndHOA(paymentRequest, totalAmount);
             selectedSanction = (SanctionDetail) hoaSsuMap.get("sanction");
             hasFunds = Boolean.parseBoolean(hoaSsuMap.get("hasFunds").toString());
-            // Get enriched PI request to store on DB
-            piRequest = piEnrichment.getEnrichedPaymentRequest(paymentRequest, beneficiaries, hoaSsuMap);
-
-            // update fund summary amount
-            selectedSanction.getFundsSummary().setAvailableAmount(selectedSanction.getFundsSummary().getAvailableAmount().subtract(totalAmount));
 
             if (hasFunds) {
+                // Get enriched PI request to store on DB
+                piRequest = piEnrichment.getEnrichedPaymentRequest(paymentRequest, beneficiaries, hoaSsuMap);
+
+                // update fund summary amount
+                selectedSanction.getFundsSummary().setAvailableAmount(selectedSanction.getFundsSummary().getAvailableAmount().subtract(totalAmount));
+
                 JITRequest jitPiRequest = piEnrichment.getJitPaymentInstructionRequestForIFMS(piRequest);
                 try {
-                    ifmsService.sendRequestToIFMS(jitPiRequest);
+                    JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                    if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
+                        paymentStatus = PaymentStatus.INITIATED;
+                        Object piResponseNode = jitResponse.getData().get(0);
+                        JsonNode node = objectMapper.valueToTree(piResponseNode);
+                        String piSuccessCode = node.get("successCode").asText();
+                        String piSucessDescrp = node.get("sucessDescrp").asText();
+                        piRequest.setPiSuccessCode(piSuccessCode);
+                        piRequest.setPiSuccessDesc(piSucessDescrp);
+                    } else {
+                        paymentStatus = PaymentStatus.FAILED;
+                        piRequest.setPiErrorResp(jitResponse.getErrorMsg());
+                    }
                 } catch (Exception e) {
+                    paymentStatus = PaymentStatus.FAILED;
                     String errorMessage = e.toString();
                     errorMessage = e.getMessage();
                     Throwable cause = e.getCause();
@@ -93,17 +105,20 @@ public class PaymentInstructionService {
                     }
                     log.error("Exception while calling request." + e);
                     piRequest.setPiErrorResp(errorMessage);
-                    piRequest.setPiStatus(PIStatus.DECLINED);
+                    piRequest.setPiStatus(PIStatus.FAILED);
                     for(Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
-                        beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.PENDING);
+                        beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
                     }
                 }
+                piRepository.save(Collections.singletonList(piRequest));
+            } else {
+                paymentStatus = PaymentStatus.FAILED;
             }
-            piRepository.save(Collections.singletonList(piRequest));
-
         } catch (Exception e) {
             log.info("Exception " + e);
+            paymentStatus = PaymentStatus.FAILED;
         }
+        updatePaymentForStatus(paymentRequest, paymentStatus);
 
         return piRequest;
     }
@@ -182,6 +197,20 @@ public class PaymentInstructionService {
             }
         }
         return billList;
+    }
+
+    private void updatePaymentForStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus) {
+        paymentRequest.getPayment().setStatus(paymentStatus);
+        for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
+            bill.setStatus(paymentStatus);
+            for (PaymentBillDetail billDetail: bill.getBillDetails()) {
+                billDetail.setStatus(paymentStatus);
+                for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+                    lineItem.setStatus(paymentStatus);
+                }
+            }
+        }
+        billUtils.updatePaymentsData(paymentRequest);
     }
 
 }

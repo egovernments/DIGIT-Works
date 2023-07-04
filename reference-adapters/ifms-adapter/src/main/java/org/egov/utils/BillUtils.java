@@ -70,6 +70,24 @@ public class BillUtils {
 		return billResponse.getBills();
 	}
 
+	public @Valid List<Payment> updatePaymentsData(Object paymentRequest) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getBillHost()).append(config.getPaymentUpdateEndPoint());
+		Object response = new HashMap<>();
+		PaymentResponse paymentResponse = new PaymentResponse();
+		try {
+			response = restTemplate.postForObject(uri.toString(), paymentRequest, Map.class);
+			paymentResponse = mapper.convertValue(response, PaymentResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+		}
+
+		log.info(paymentResponse.toString());
+		return paymentResponse.getPayments();
+	}
+
+
+
 	public JSONArray getHeadCode(RequestInfo requestInfo, String tenantId) {
 		String rootTenantId = tenantId.split("\\.")[0];
 		List<String> headCodeMasters = new ArrayList<>();

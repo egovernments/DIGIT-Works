@@ -35,11 +35,8 @@ public class IfmsAdapterConfig {
     @Value("${ifms.jit.public.key}")
     private String ifmsJitPublic;
 
-    @Value("${ifms.jit.public.key.path}")
-    private String ifmsJitPublicKeyPath;
-
-    @Value("${ifms.jit.public.key.file}")
-    private String ifmsJitPublicKeyFile;
+    @Value("${ifms.jit.public.key.filepath}")
+    private String ifmsJitPublicKeyFilePath;
 
     @Value("${billing.payment.create}")
     private String paymentCreateTopic;
@@ -60,6 +57,9 @@ public class IfmsAdapterConfig {
 
     @Value("${egov.bill.search.endpoint}")
     private String billSearchEndPoint;
+
+    @Value("${egov.payment.update.endpoint}")
+    private String paymentUpdateEndPoint;
 
     // Bank account
     @Value("${egov.bank.account.host}")

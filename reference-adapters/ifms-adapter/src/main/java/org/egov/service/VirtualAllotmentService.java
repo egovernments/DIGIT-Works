@@ -7,19 +7,13 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.VirtualAllotmentEnrichment;
-import org.egov.repository.AllotmentDetailsRepository;
 import org.egov.repository.ExecutedVALogsRepository;
-import org.egov.repository.FundsSummaryRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.utils.MdmsUtils;
-import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,11 +42,6 @@ public class VirtualAllotmentService {
 
     @Autowired
     SanctionDetailsRepository sanctionDetailsRepository;
-    @Autowired
-    FundsSummaryRepository fundsSummaryRepository;
-
-    @Autowired
-    AllotmentDetailsRepository allotmentRepository;
 
     public void generateVirtualAllotment(SanctionAllotmentRequest allotmentRequest) {
 
@@ -135,16 +124,16 @@ public class VirtualAllotmentService {
                     if (createSanctions != null && !createSanctions.isEmpty()) {
                         sanctionDetailsRepository.saveSanctionDetails(createSanctions);
                         List<FundsSummary> fundsSummaries = vaEnrichment.getFundsSummariesFromSanctions(createSanctions);
-                        fundsSummaryRepository.saveFundsSummary(fundsSummaries);
+                        sanctionDetailsRepository.saveFundsSummary(fundsSummaries);
                     }
                     if (updateSanctions != null && !updateSanctions.isEmpty()) {
                         List<FundsSummary> fundsSummaries = vaEnrichment.getFundsSummariesFromSanctions(updateSanctions);
-                        fundsSummaryRepository.updateFundsSummary(fundsSummaries);
+                        sanctionDetailsRepository.updateFundsSummary(fundsSummaries);
                     }
                     // Get allotments to create and
                     List<Allotment> createAllotments =  vaEnrichment.getAllotmentsForCreate(updatedSanctions, allotmentList, tenantId, requestInfo);
                     if (createAllotments != null && !createAllotments.isEmpty()) {
-                        allotmentRepository.saveAllotmentDetails(createAllotments);
+                        sanctionDetailsRepository.saveAllotmentDetails(createAllotments);
                     }
                     System.out.println(updatedSanctions);
                 }

@@ -31,9 +31,8 @@ public class AuthenticationUtils {
     @PostConstruct
     public void initialize() throws Exception {
         // Commenting loading of public key from file because will load this from application.properties
-        String path = config.getIfmsJitPublicKeyPath();
-        String fileName = config.getIfmsJitPublicKeyFile();
-        publicKey = PublicKeyLoader.getPublicKeyFromByteFile(path + fileName);
+        String fileName = config.getIfmsJitPublicKeyFilePath();
+        publicKey = PublicKeyLoader.getPublicKeyFromByteFile(fileName);
 //        publicKey = getPublicKey();
     }
 

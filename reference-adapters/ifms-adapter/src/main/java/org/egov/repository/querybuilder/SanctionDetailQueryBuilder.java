@@ -59,6 +59,22 @@ public class SanctionDetailQueryBuilder {
             + "	VALUES (:id, :tenantId, :hoaCode, :ddoCode, :masterAllotmentId, :sanctionedAmount, :financialYear, :additionalDetails,"
             + " :createdby, :createdtime, :lastmodifiedby, :lastmodifiedtime);";
 
+    public static final String ALLOTMENT_DETAILS_INSERT_QUERY = "INSERT INTO jit_allotment_details (id, tenantId, sanctionId, allotmentSerialNo, ssuAllotmentId,"
+            + " allotmentAmount, allotmentTransactionType, sanctionBalance, allotmentDate, additionalDetails, createdby, createdtime, lastmodifiedby, lastmodifiedtime) "
+            + "	VALUES (:id, :tenantId, :sanctionId, :allotmentSerialNo, :ssuAllotmentId, :allotmentAmount, :allotmentTransactionType, :sanctionBalance, :allotmentDate,"
+            + " :additionalDetails, :createdby, :createdtime, :lastmodifiedby, :lastmodifiedtime);";
+
+    public static final String FUNDS_SUMMARY_INSERT_QUERY = "INSERT INTO jit_funds_summary (id, tenantId, sanctionId,"
+            + " allottedAmount, availableAmount, additionalDetails, createdby, createdtime, lastmodifiedby, lastmodifiedtime) "
+            + "	VALUES (:id, :tenantId, :sanctionId, :allottedAmount, :availableAmount, :additionalDetails,"
+            + " :createdby, :createdtime, :lastmodifiedby, :lastmodifiedtime);";
+
+    public static final String FUNDS_SUMMARY_UPDATE_QUERY = "UPDATE jit_funds_summary SET allottedAmount=:allottedAmount, availableAmount=:availableAmount,"
+            + "additionalDetails=:additionalDetails, lastmodifiedby=:lastmodifiedby,lastmodifiedtime=:lastmodifiedtime "
+            + " WHERE id=:id";
+
+
+
     public String getSanctionDetailsSearchQuery(SanctionDetailsSearchCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(SANCTION_DETAILS_SELECT_QUERY);
 

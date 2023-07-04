@@ -129,7 +129,7 @@ public class PaymentInstructionEnrichment {
         // Sort the list in descending order based on the value
         Collections.sort(selectedSanction.getAllotmentDetails(), Comparator.comparingInt(o -> ((Allotment) o).getAllotmentSerialNo()).reversed());
         String mstAllotmentDistId = selectedSanction.getAllotmentDetails().get(0).getMstAllotmentDistId();
-        PIStatus piStatus = hasFunds ? PIStatus.INITIATED : PIStatus.PENDING;
+        PIStatus piStatus = hasFunds ? PIStatus.INITIATED : PIStatus.FAILED;
         String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
 //        String jitBillNo = "Demo";
         PaymentInstruction piRequest = PaymentInstruction.builder()
@@ -308,7 +308,7 @@ public class PaymentInstructionEnrichment {
             }
         }
         for(Beneficiary piBeneficiary: beneficiaryList) {
-            BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBenefId());
+            BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
             if (bankAccount != null) {
                 piBeneficiary.setBenefName(bankAccount.getBankAccountDetails().get(0).getAccountHolderName());
                 piBeneficiary.setBenfAcctNo(bankAccount.getBankAccountDetails().get(0).getAccountNumber());
@@ -316,8 +316,8 @@ public class PaymentInstructionEnrichment {
                 piBeneficiary.setBenfAccountType(bankAccount.getBankAccountDetails().get(0).getAccountType());
             }
 
-            Individual individual = individualMap.get(piBeneficiary.getBenefId());
-            Organisation organisation = organisationMap.get(piBeneficiary.getBenefId());
+            Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
+            Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
 
             if (individual != null) {
                 piBeneficiary.setBenfMobileNo(individual.getMobileNumber());
