@@ -255,7 +255,7 @@ public class WorkflowService {
         StringBuilder url = getprocessInstanceHistorySearchURL(estimateRequest.getEstimate().getTenantId(), estimateRequest.getEstimate().getEstimateNumber(), true);
         Object optional = repository.fetchResult(url, estimateRequest);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-        return response.getProcessInstances().get(0).getAssignes().get(0).getUuid();
+        return response.getProcessInstances().get(1).getAssignes().get(0).getUuid();
     }
 
     public StringBuilder getprocessInstanceSearchURL(String tenantId, String estimateNumber) {
