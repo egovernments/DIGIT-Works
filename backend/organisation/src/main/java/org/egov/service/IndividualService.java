@@ -59,7 +59,7 @@ public class IndividualService {
         StringBuilder uri = new StringBuilder(config.getIndividualHost());
         String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
         RequestInfo requestInfo = request.getRequestInfo();
-        Role role = getCitizenRole();
+        Role role = getOrgAdminRole();
 
         List<ContactDetails> contactDetailsList = new ArrayList<>();
         for (Organisation organisation : organisationList) {
@@ -84,7 +84,7 @@ public class IndividualService {
                 contactDetails.setId(UUID.randomUUID().toString());
                 individualResponse = createIndividualFromIndividualService(requestInfo, newUser, contactDetails);
 
-            } else if (!existingRoleCode.contains(getCitizenRole().getCode())) {
+            } else if (!existingRoleCode.contains(getOrgAdminRole().getCode())) {
                 Individual newIndividual = Individual.builder().build();
                 addIndividualDefaultFields(stateLevelTenantId, role, newIndividual, contactDetails, false, existingIndividualFromService.get(0));
                 uri = uri.append(config.getIndividualUpdateEndpoint());
@@ -127,7 +127,7 @@ public class IndividualService {
         RequestInfo requestInfo = request.getRequestInfo();
         String tenantId = organisationList.get(0).getTenantId();
         String stateLevelTenantId = multiStateInstanceUtil.getStateLevelTenant(organisationList.get(0).getTenantId());
-        Role role = getCitizenRole();
+        Role role = getOrgAdminRole();
 
         OrgSearchCriteria orgSearchCriteria = OrgSearchCriteria.builder()
                 .id(new ArrayList<>()).tenantId(tenantId).build();
@@ -167,7 +167,7 @@ public class IndividualService {
 
             Set<ContactDetails> toBeRemovedMembers = organisationFromDB.getContactDetails().stream().filter(contactDetails -> toBeRemovedMembersMobile.contains(contactDetails.getContactMobileNumber())).collect(Collectors.toSet());
             for(ContactDetails contactDetails : toBeRemovedMembers) {
-                updateContactDetails(contactDetails, stateLevelTenantId, requestInfo, Role.builder().build());
+                updateContactDetails(contactDetails, stateLevelTenantId, requestInfo, getCitizenRole());
             }
 
             if(!newMembers.isEmpty() && !toBeRemovedMembers.isEmpty()) {
@@ -196,7 +196,7 @@ public class IndividualService {
             List<String> existingRoleCode = new ArrayList<>();
             if((existingIndividual.getUserDetails()!=null) && !CollectionUtils.isEmpty(existingIndividual.getUserDetails().getRoles()))
                 existingRoleCode = existingIndividual.getUserDetails().getRoles().stream().map(Role::getCode).collect(Collectors.toList());
-            if(existingRoleCode.contains(getCitizenRole().getCode())){
+            if(existingRoleCode.contains(getOrgAdminRole().getCode())){
                 throw new CustomException("USER.EXISTS", "Individual contanct number: "+contactDetails.getContactMobileNumber()+" already exists in system");
             }
             else{
@@ -302,10 +302,16 @@ public class IndividualService {
      * this is will be hardcoded from code level as we have fix CITIZEN role
      * @return
      */
+    private Role getOrgAdminRole() {
+        return Role.builder()
+                .code(OrganisationConstant.ORG_ADMIN_ROLE_CODE)
+                .name(OrganisationConstant.ORG_ADMIN_ROLE_NAME)
+                .build();
+    }
     private Role getCitizenRole() {
         return Role.builder()
-                .code(OrganisationConstant.ORG_CITIZEN_ROLE_CODE)
-                .name(OrganisationConstant.ORG_CITIZEN_ROLE_NAME)
+                .code(OrganisationConstant.ORG_CITIZEN_TYPE)
+                .name(OrganisationConstant.ORG_CITIZEN_TYPE)
                 .build();
     }
 
