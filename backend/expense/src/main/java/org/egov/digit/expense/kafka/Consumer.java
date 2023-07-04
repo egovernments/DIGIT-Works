@@ -9,6 +9,7 @@ import org.egov.digit.expense.service.PaymentService;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -25,6 +26,7 @@ public class Consumer {
     @Autowired
     PaymentService paymentService;
 
+    @ConditionalOnProperty(value = "payment.auto.create.enabled", havingValue = "true")
     @KafkaListener(topics = {"${expense.billing.bill.create}","${expense.billing.bill.update}"})
     public void createPayment(String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
