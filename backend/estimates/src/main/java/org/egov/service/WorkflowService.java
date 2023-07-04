@@ -171,6 +171,13 @@ public class WorkflowService {
         Estimate estimate = request.getEstimate();
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
+        if(workflow.getAction().equals("SENDBACK") && CollectionUtils.isEmpty(workflow.getAssignees())) {
+            String assignees =  callWorkFlowForAssignees(request);
+            List<String> uuids = new ArrayList<>();
+            uuids.add(assignees);
+            workflow.setAssignees(uuids);
+        }
+
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(estimate.getEstimateNumber());
         processInstance.setAction(request.getWorkflow().getAction());
@@ -179,13 +186,6 @@ public class WorkflowService {
         processInstance.setBusinessService(serviceConfiguration.getEstimateWFBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
-
-        if(workflow.getAction().equals("SENDBACK") && CollectionUtils.isEmpty(workflow.getAssignees())) {
-            String assignees =  callWorkFlowForAssignees(request);
-            List<String> uuids = new ArrayList<>();
-                uuids.add(assignees);
-                workflow.setAssignees(uuids);
-        }
 
 
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
@@ -252,7 +252,7 @@ public class WorkflowService {
     private String callWorkFlowForAssignees(EstimateRequest estimateRequest) {
         log.info("WorkflowService::callWorkFlow");
         ProcessInstanceResponse response = null;
-        StringBuilder url = getprocessInstanceSearchURL(estimateRequest.getEstimate().getTenantId(), estimateRequest.getEstimate().getEstimateNumber());
+        StringBuilder url = getprocessInstanceHistorySearchURL(estimateRequest.getEstimate().getTenantId(), estimateRequest.getEstimate().getEstimateNumber(), true);
         Object optional = repository.fetchResult(url, estimateRequest);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getAssignes().get(0).getUuid();
@@ -266,6 +266,19 @@ public class WorkflowService {
         url.append(tenantId);
         url.append("&businessIds=");
         url.append(estimateNumber);
+        return url;
+    }
+
+    public StringBuilder getprocessInstanceHistorySearchURL(String tenantId, String estimateNumber, boolean history) {
+        log.info("WorkflowService::getprocessInstanceSearchURL");
+        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
+        url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
+        url.append("?tenantId=");
+        url.append(tenantId);
+        url.append("&businessIds=");
+        url.append(estimateNumber);
+        url.append("history=");
+        url.append(history);
         return url;
     }
 
