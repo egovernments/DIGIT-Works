@@ -46,6 +46,7 @@ public class Consumer {
                     }
                 }
                 PaymentBillDetail paymentBillDetail = PaymentBillDetail.builder()
+                        .tenantId(billDetail.getTenantId())
                         .billDetailId(billDetail.getId())
                         .payableLineItems(payableLineItems)
                         .totalAmount(billDetail.getTotalAmount())
@@ -55,6 +56,7 @@ public class Consumer {
 
             List<PaymentBill> paymentBills = new ArrayList<>();
             PaymentBill paymentBill = PaymentBill.builder()
+
                     .billId(bill.getBill().getId())
                     .billDetails(paymentBillDetails)
                     .tenantId(bill.getBill().getTenantId())
