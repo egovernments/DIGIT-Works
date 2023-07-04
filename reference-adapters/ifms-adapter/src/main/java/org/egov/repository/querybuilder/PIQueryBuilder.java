@@ -111,8 +111,20 @@ public class PIQueryBuilder {
             "jbl.createdtime as jblCreatedTime, " +
             "jbl.createdby as jblCreatedBy, " +
             "jbl.lastmodifiedtime as jblLastModifiedTime, " +
-            "jbl.lastmodifiedby as jblLastModifiedBy, " +
-            ;
+            "jbl.lastmodifiedby as jblLastModifiedBy " +
+            "FROM jit_payment_inst_details AS jpi " +
+            "LEFT JOIN " +
+            "jit_payment_advice_details AS jpa " +
+            "ON (jpi.id=jpa.piId) " +
+            "LEFT JOIN " +
+            "jit_transaction_details AS jtd " +
+            "ON (jpi.id=jtd.paymentInstId) " +
+            "LEFT JOIN " +
+            "jit_beneficiary_details AS jbd " +
+            "ON (jpi.id=jbd.piId) " +
+            "LEFT JOIN " +
+            "jit_beneficiary_lineitems as jbl " +
+            "ON (jbd.id=jbl.beneficiaryId)";
 
     public String getPaymentInstructionSearchQuery(PISearchCriteria criteria, List<Object> preparedStmtList){
         StringBuilder query = new StringBuilder(PAYMENT_INSTRUCTION_SELECT_QUERY);
@@ -130,9 +142,9 @@ public class PIQueryBuilder {
             preparedStmtList.add(criteria.getTenantId());
         }
 
-        if (StringUtils.isNotBlank(criteria.getHoaCode())) {
+        if (StringUtils.isNotBlank(criteria.getPaymentInstructionType())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jsd.hoaCode=? ");
+            query.append("  ");
             preparedStmtList.add(criteria.getHoaCode());
         }
         if (StringUtils.isNotBlank(criteria.getDdoCode())) {
