@@ -27,6 +27,9 @@ public class Constants {
 	public static final String EXPENSE_CALCULATOR_MODULE_CODE = "rainmaker-common-masters";
 	public static final String APPROVE_CODE = "APPROVE";
 	public static final String REJECT_CODE = "REJECT";
+	public static final String EXPENSE_SUPERVISION_CODE = "EXPENSE.SUPERVISION";
+	public static final String EXPENSE_PURCHASE_CODE = "EXPENSE.PURCHASE";
+	public static final String EXPENSE_WAGES_CODE = "EXPENSE.WAGES";
 	public static final String MOBILE_NUMBER_CODE = "mobileNumber";
 	public static final String PURCHASE_BILL_APPROVE_TO_VENDOR_LOCALIZATION_CODE = "PURCHASE_BILL_APPROVE_TO_VENDOR";
 	public static final String PURCHASE_BILL_REJECT_TO_CREATOR_LOCALIZATION_CODE = "PURCHASE_BILL_REJECT_TO_CREATOR";
