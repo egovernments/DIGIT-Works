@@ -2,11 +2,13 @@ package org.egov.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.querybuilder.PIQueryBuilder;
+import org.egov.repository.rowmapper.PIRowMapper;
 import org.egov.utils.HelperUtil;
 import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -24,6 +26,16 @@ public class PIRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate namedJdbcTemplate;
+
+    @Autowired
+    private PIRowMapper piRowMapper;
+
+    @Autowired
+    private PIQueryBuilder piQueryBuilder;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Autowired
     SanctionDetailsRepository sanctionDetailsRepository;
     @Transactional
@@ -186,5 +198,13 @@ public class PIRepository {
             }
         }
         return benfLineItemsParamMapList;
+    }
+
+    public List<PaymentInstruction> searchPi (PISearchRequest piSearchRequest){
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = piQueryBuilder.getPaymentInstructionSearchQuery(piSearchRequest.getSearchCriteria(), preparedStmtList);
+        List<PaymentInstruction> paymentInstructions = jdbcTemplate.query(query, piRowMapper, preparedStmtList.toArray());
+
+        return paymentInstructions;
     }
 }
