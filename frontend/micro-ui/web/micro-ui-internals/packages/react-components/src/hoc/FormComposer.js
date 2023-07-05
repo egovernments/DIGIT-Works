@@ -15,6 +15,7 @@ import ActionBar from "../atoms/ActionBar";
 import SubmitBar from "../atoms/SubmitBar";
 import LabelFieldPair from "../atoms/LabelFieldPair";
 import LinkButton from "../atoms/LinkButton";
+import ApiDropdown from "../molecules/ApiDropdown";
 
 import { useTranslation } from "react-i18next";
 import MobileNumber from "../atoms/MobileNumber";
@@ -175,6 +176,30 @@ export const FormComposer = (props) => {
             />
           </div>
         );
+
+        case "apidropdown":
+            return (
+              <Controller
+                name={`${populators.name}`}
+                control={control}
+                defaultValue={formData?.[populators.name]}
+                rules={{ required: populators?.isMandatory, ...populators.validation }}
+                render={(props) => {
+                  return (
+                    <div style={{ display: "grid", gridAutoFlow: "row" }}>
+                      <ApiDropdown
+                        props={props}
+                        populators={populators}
+                        formData={formData}
+                        inputRef={props.ref}
+                        errors={errors}
+                      />
+                    </div>
+                  );
+                }}
+              />
+            );
+
       case "amount":
       // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
       return (
