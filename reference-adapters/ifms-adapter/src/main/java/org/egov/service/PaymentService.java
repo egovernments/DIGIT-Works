@@ -43,6 +43,11 @@ public class PaymentService {
 
                      additionalDetailsNode.put("billNumber", billNumber);
                      additionalDetailsNode.put("referenceId", referenceId);
+
+                     if(payment.getAdditionalDetails() != null)
+                     {
+                         ((ObjectNode) paymentBillNode).set("additionalDetails", (JsonNode) payment.getAdditionalDetails());
+                     }
                      ((ObjectNode) paymentBillNode).set("additionalDetails", additionalDetailsNode);
                      PaymentBill modifiedPaymentBill = mapper.convertValue(paymentBillNode, PaymentBill.class);
                      payment.addBillItem(modifiedPaymentBill);
