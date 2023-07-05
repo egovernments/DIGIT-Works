@@ -187,6 +187,24 @@ class WorkOrder {
   String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
   String get workStartDate => 'WORKS_START_DATE';
   String get workEndDate => 'WORKS_END_DATE';
+  String get extensionReqInDays => 'WORKS_EXTENSION_REQ_IN_DAYS';
+  String get reasonForExtension => 'WORKS_REASON_FOR_EXTENSION';
+  String get extensionReqInDaysIsRequired => 'EXTENSION_DAYS_IS_REQUIRED';
+  String get reasonForExtensionIsRequired =>
+      'WORKS_REASON_FOR_EXTENSION_IS_REQUIRED';
+  String get extensionReqInDaysMinVal => 'WORKS_EXTENSION_DAYS_MIN_VALUE';
+  String get extensionReqInDaysMaxVal => 'WORKS_EXTENSION_DAYS_MAX_VALUE';
+  String get reasonForExtensionMinChar =>
+      'WORKS_REASON_FOR_EXTENSION_MIN_CHARS';
+  String get reasonForExtensionMaxChar =>
+      'WORKS_REASON_FOR_EXTENSION_MAX_CHARS';
+  String get timeExtensionRequestedSuccess =>
+      'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY';
+  String get requestID => 'WORKS_TIME_EXT_REQUEST_ID';
+  String get timeExtensionRequestedSuccessSubText =>
+      'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY_SUB_TEXT';
+  String get requestTimeExtension => 'ACTION_TEST_TIME_EXTENSION';
+  String get projectClosure => 'ACTION_TEST_PROJECT_CLOSURE';
 }
 
 class MyBills {
