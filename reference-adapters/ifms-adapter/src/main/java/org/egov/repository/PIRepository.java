@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.egov.repository.querybuilder.PIQueryBuilder.PAYMENT_INSTRUCTION_DETAIL_STATUS_UPDATE;
+
 @Repository
 @Slf4j
 public class PIRepository {
@@ -206,5 +208,24 @@ public class PIRepository {
         List<PaymentInstruction> paymentInstructions = jdbcTemplate.query(query, piRowMapper, preparedStmtList.toArray());
 
         return paymentInstructions;
+    }
+
+    @Transactional
+    public void updatePaymentInstructionByPIS(List<PaymentInstruction> paymentInstructions){
+        List<MapSqlParameterSource> sqlParameterSources = getParameterListForPISUpdate(paymentInstructions);
+        namedJdbcTemplate.batchUpdate(PAYMENT_INSTRUCTION_DETAIL_STATUS_UPDATE, sqlParameterSources.toArray(new MapSqlParameterSource[0]) );
+    }
+    private List<MapSqlParameterSource> getParameterListForPISUpdate(List<PaymentInstruction> paymentInstructions){
+        List<MapSqlParameterSource> paymentInstructionParamList = new ArrayList<>();
+        for (PaymentInstruction paymentInstruction : paymentInstructions){
+
+            MapSqlParameterSource paymentInstructionParamMap = new MapSqlParameterSource();
+            paymentInstructionParamMap.addValue("piApprovedId", paymentInstruction.getPiApprovedId());
+            paymentInstructionParamMap.addValue("piApprovalDate", paymentInstruction.getPiApprovalDate());
+            paymentInstructionParamMap.addValue("piStatus", paymentInstruction.getPiStatus().toString());
+            paymentInstructionParamMap.addValue("id", paymentInstruction.getId());
+            paymentInstructionParamList.add(paymentInstructionParamMap);
+        }
+        return paymentInstructionParamList;
     }
 }
