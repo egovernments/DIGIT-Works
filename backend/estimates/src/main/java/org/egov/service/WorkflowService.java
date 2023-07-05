@@ -277,7 +277,7 @@ public class WorkflowService {
         url.append(tenantId);
         url.append("&businessIds=");
         url.append(estimateNumber);
-        url.append("history=");
+        url.append("&history=");
         url.append(history);
         return url;
     }
