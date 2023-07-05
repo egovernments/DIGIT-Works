@@ -839,7 +839,7 @@ export const UICustomizations = {
 
 
       if (key === "CORE_COMMON_STATUS") {
-        return <span>{t(`WF_MUSTOR_${value}`)}</span>
+        return <span>{t(`WF_MR_STATUS_${value}`)}</span>
       }
 
       if(key === "MUSTER_WAGE_AMOUNT") {
