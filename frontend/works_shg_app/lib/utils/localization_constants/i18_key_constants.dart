@@ -99,6 +99,7 @@ class Common {
   String get action => 'CS_COMMON_ACTION';
   String get next => 'CS_COMMON_NEXT';
   String get fileSize => 'FILE_SIZE';
+  String get invalidImageFile => 'CS_COMMON_INVALID_IMAGE_FILE';
   String get chooseFile => 'CHOOSE_FILE';
   String get noFileUploaded => 'NO_FILE_UPLOADED';
   String get camera => 'CAMERA';
