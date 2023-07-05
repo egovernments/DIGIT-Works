@@ -1,10 +1,7 @@
 package org.egov.web.controller;
 
-import org.egov.service.IfmsService;
 import org.egov.service.PaymentInstructionService;
 import org.egov.service.VirtualAllotmentService;
-import org.egov.utils.AuthenticationUtils;
-import org.egov.utils.JitRequestUtils;
 import org.egov.web.models.bill.PaymentRequest;
 import org.egov.web.models.jit.PaymentInstruction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/pi/v1/")
 public class PIController {
-
-    @Autowired
-    IfmsService ifmsService;
-
-    @Autowired
-    AuthenticationUtils authenticationUtils;
-
-    @Autowired
-    JitRequestUtils jitRequestUtils;
 
     @Autowired
     PaymentInstructionService paymentInstruction;

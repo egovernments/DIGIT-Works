@@ -38,6 +38,9 @@ public class IfmsAdapterConfig {
     @Value("${payment.create.topic}")
     private String paymentCreateTopic;
 
+    @Value("${ifms.pi.index.enrich.topic}")
+    private String ifmsPiEnrichmentTopic;
+
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
 
@@ -57,6 +60,13 @@ public class IfmsAdapterConfig {
 
     @Value("${egov.payment.update.endpoint}")
     private String paymentUpdateEndPoint;
+
+    // bill calculator
+    @Value("${egov.bill.calculator.host}")
+    private String billCalculatorHost;
+
+    @Value("${egov.bill.calculator.search.endpoint}")
+    private String billCalculatorSearchEndPoint;
 
     // Bank account
     @Value("${egov.bank.account.host}")
