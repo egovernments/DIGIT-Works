@@ -219,4 +219,11 @@ public class PaymentInstructionService {
         billUtils.updatePaymentsData(paymentRequest);
     }
 
+    public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
+        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchRequest);
+
+        log.info("Sending search response");
+        return paymentInstructions;
+    }
+
 }
