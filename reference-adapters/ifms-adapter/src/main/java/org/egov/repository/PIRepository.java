@@ -3,6 +3,8 @@ package org.egov.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.repository.querybuilder.PIQueryBuilder;
 import org.egov.utils.HelperUtil;
+import org.egov.web.models.enums.PIStatus;
+import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -21,9 +24,10 @@ public class PIRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate namedJdbcTemplate;
-
+    @Autowired
+    SanctionDetailsRepository sanctionDetailsRepository;
     @Transactional
-    public void save(List<PaymentInstruction> piRequests) {
+    public void save(List<PaymentInstruction> piRequests, FundsSummary fundsSummary, PaymentStatus paymentStatus) {
 
         log.debug("PIRepository save, the request object : " + piRequests);
         List<MapSqlParameterSource> piRequestSqlParameterSources = getSqlParameterListForPIRequest(piRequests);
@@ -35,8 +39,13 @@ public class PIRepository {
         namedJdbcTemplate.batchUpdate(PIQueryBuilder.PAYMENT_INSTRUCTION_INSERT_QUERY, piRequestSqlParameterSources.toArray(new MapSqlParameterSource[0]));
         namedJdbcTemplate.batchUpdate(PIQueryBuilder.PAYMENT_ADVICE_DETAILS_INSERT_QUERY, paDetailsSqlParameterSources.toArray(new MapSqlParameterSource[0]));
         namedJdbcTemplate.batchUpdate(PIQueryBuilder.BENEFICIARY_DETAILS_INSERT_QUERY, beneficiarySqlParameterSources.toArray(new MapSqlParameterSource[0]));
-        namedJdbcTemplate.batchUpdate(PIQueryBuilder.TRANSACTION_DETAILS_INSERT_QUERY, transactionSqlParameterSources.toArray(new MapSqlParameterSource[0]));
         namedJdbcTemplate.batchUpdate(PIQueryBuilder.BENEFICIARY_LINEITEM_INSERT_QUERY, beneficiaryLineItemSqlParameterSources.toArray(new MapSqlParameterSource[0]));
+        if (!transactionSqlParameterSources.isEmpty()) {
+            namedJdbcTemplate.batchUpdate(PIQueryBuilder.TRANSACTION_DETAILS_INSERT_QUERY, transactionSqlParameterSources.toArray(new MapSqlParameterSource[0]));
+        }
+        if (paymentStatus.equals(PIStatus.INITIATED)) {
+            sanctionDetailsRepository.updateFundsSummary(Collections.singletonList(fundsSummary));
+        }
     }
 
     private List<MapSqlParameterSource> getSqlParameterListForPIRequest(List<PaymentInstruction> piRequests) {
@@ -101,22 +110,25 @@ public class PIRepository {
 
         List<MapSqlParameterSource> transactionDetailParamMapList = new ArrayList<>();
         for (PaymentInstruction piRequest: piRequests) {
-            for (TransactionDetails transactionDetails: piRequest.getTransactionDetails()) {
-                MapSqlParameterSource transactionRequestParamMap = new MapSqlParameterSource();
-                transactionRequestParamMap.addValue("id", transactionDetails.getId());
-                transactionRequestParamMap.addValue("tenantId", transactionDetails.getTenantId());
-                transactionRequestParamMap.addValue("sanctionId", transactionDetails.getSanctionId());
-                transactionRequestParamMap.addValue("paymentInstId", transactionDetails.getPaymentInstId());
-                transactionRequestParamMap.addValue("transactionAmount", transactionDetails.getTransactionAmount());
-                transactionRequestParamMap.addValue("transactionDate", transactionDetails.getTransactionDate());
-                transactionRequestParamMap.addValue("transactionType", transactionDetails.getTransactionType().toString());
-                transactionRequestParamMap.addValue("additionalDetails", util.getPGObject(transactionDetails.getAdditionalDetails()));
-                transactionRequestParamMap.addValue("createdby", transactionDetails.getAuditDetails().getCreatedBy());
-                transactionRequestParamMap.addValue("createdtime", transactionDetails.getAuditDetails().getCreatedTime());
-                transactionRequestParamMap.addValue("lastmodifiedby", transactionDetails.getAuditDetails().getLastModifiedBy());
-                transactionRequestParamMap.addValue("lastmodifiedtime", transactionDetails.getAuditDetails().getLastModifiedTime());
-                transactionDetailParamMapList.add(transactionRequestParamMap);
+            if (piRequest.getTransactionDetails() != null && !piRequest.getTransactionDetails().isEmpty()) {
+                for (TransactionDetails transactionDetails: piRequest.getTransactionDetails()) {
+                    MapSqlParameterSource transactionRequestParamMap = new MapSqlParameterSource();
+                    transactionRequestParamMap.addValue("id", transactionDetails.getId());
+                    transactionRequestParamMap.addValue("tenantId", transactionDetails.getTenantId());
+                    transactionRequestParamMap.addValue("sanctionId", transactionDetails.getSanctionId());
+                    transactionRequestParamMap.addValue("paymentInstId", transactionDetails.getPaymentInstId());
+                    transactionRequestParamMap.addValue("transactionAmount", transactionDetails.getTransactionAmount());
+                    transactionRequestParamMap.addValue("transactionDate", transactionDetails.getTransactionDate());
+                    transactionRequestParamMap.addValue("transactionType", transactionDetails.getTransactionType().toString());
+                    transactionRequestParamMap.addValue("additionalDetails", util.getPGObject(transactionDetails.getAdditionalDetails()));
+                    transactionRequestParamMap.addValue("createdby", transactionDetails.getAuditDetails().getCreatedBy());
+                    transactionRequestParamMap.addValue("createdtime", transactionDetails.getAuditDetails().getCreatedTime());
+                    transactionRequestParamMap.addValue("lastmodifiedby", transactionDetails.getAuditDetails().getLastModifiedBy());
+                    transactionRequestParamMap.addValue("lastmodifiedtime", transactionDetails.getAuditDetails().getLastModifiedTime());
+                    transactionDetailParamMapList.add(transactionRequestParamMap);
+                }
             }
+
         }
         return transactionDetailParamMapList;
     }
@@ -132,6 +144,8 @@ public class PIRepository {
                 beneficiaryParamMap.addValue("muktaReferenceId", beneficiary.getMuktaReferenceId());
                 beneficiaryParamMap.addValue("piId", beneficiary.getPiId());
                 beneficiaryParamMap.addValue("beneficiaryId", beneficiary.getBeneficiaryId());
+                beneficiaryParamMap.addValue("beneficiaryType", beneficiary.getBeneficiaryType().toString());
+                beneficiaryParamMap.addValue("bankAccountId", beneficiary.getBankAccountId());
                 beneficiaryParamMap.addValue("amount", beneficiary.getAmount());
                 beneficiaryParamMap.addValue("voucherNumber", beneficiary.getVoucherNumber());
                 beneficiaryParamMap.addValue("voucherDate", beneficiary.getVoucherDate());

@@ -131,7 +131,6 @@ public class PaymentInstructionEnrichment {
         String mstAllotmentDistId = selectedSanction.getAllotmentDetails().get(0).getMstAllotmentDistId();
         PIStatus piStatus = hasFunds ? PIStatus.INITIATED : PIStatus.FAILED;
         String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
-//        String jitBillNo = "Demo";
         PaymentInstruction piRequest = PaymentInstruction.builder()
                 .id(UUID.randomUUID().toString())
                 .jitBillNo(jitBillNo)
@@ -322,18 +321,22 @@ public class PaymentInstructionEnrichment {
                 piBeneficiary.setBenfAcctNo(bankAccount.getBankAccountDetails().get(0).getAccountNumber());
                 piBeneficiary.setBenfBankIfscCode(bankAccount.getBankAccountDetails().get(0).getBankBranchIdentifier().getCode());
                 piBeneficiary.setBenfAccountType(bankAccount.getBankAccountDetails().get(0).getAccountType());
+                piBeneficiary.setBankAccountId(bankAccount.getBankAccountDetails().get(0).getId());
             }
 
             Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
             Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
 
             if (individual != null) {
+                piBeneficiary.setBeneficiaryType(BeneficiaryType.IND);
                 piBeneficiary.setBenfMobileNo(individual.getMobileNumber());
                 piBeneficiary.setBenfAddress(individual.getAddress().get(0).getWard().getCode() + " " +individual.getAddress().get(0).getLocality().getCode());
             } else if (organisation != null) {
+                piBeneficiary.setBeneficiaryType(BeneficiaryType.ORG);
                 piBeneficiary.setBenfMobileNo(organisation.getContactDetails().get(0).getContactMobileNumber());
                 piBeneficiary.setBenfAddress(organisation.getOrgAddress().get(0).getBoundaryCode() + " " +organisation.getOrgAddress().get(0).getCity());
             } else {
+                piBeneficiary.setBeneficiaryType(BeneficiaryType.DEPT);
                 piBeneficiary.setBenfMobileNo("9999999999");
                 piBeneficiary.setBenfAddress("Temp address");
             }

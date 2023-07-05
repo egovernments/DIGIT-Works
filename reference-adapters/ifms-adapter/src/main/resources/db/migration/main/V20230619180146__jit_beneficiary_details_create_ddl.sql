@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS jit_beneficiary_details (
   muktaReferenceId varchar(256),
   piId varchar(256) NOT NULL,
   beneficiaryId varchar(256) NOT NULL,
+  beneficiaryType varchar(256) NOT NULL,
+  bankAccountId varchar(256),
   amount numeric(12,2),
   voucherNumber varchar(256),
   voucherDate timestamp,

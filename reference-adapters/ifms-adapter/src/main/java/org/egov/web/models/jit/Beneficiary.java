@@ -7,6 +7,7 @@ import digit.models.coremodels.AuditDetails;
 import lombok.*;
 import org.egov.common.data.query.annotations.Exclude;
 import org.egov.web.models.enums.BeneficiaryPaymentStatus;
+import org.egov.web.models.enums.BeneficiaryType;
 import org.egov.web.models.enums.PaymentStatus;
 
 import java.math.BigDecimal;
@@ -42,6 +43,14 @@ public class Beneficiary {
     @JsonProperty("beneficiaryId")
     @Exclude
     private String beneficiaryId;
+
+    @JsonProperty("beneficiaryType")
+    @Exclude
+    private BeneficiaryType beneficiaryType;
+
+    @JsonProperty("bankAccountId")
+    @Exclude
+    private String bankAccountId;
 
     @JsonProperty("amount")
     @Exclude

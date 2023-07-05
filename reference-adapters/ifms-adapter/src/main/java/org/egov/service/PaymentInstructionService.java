@@ -75,9 +75,6 @@ public class PaymentInstructionService {
                 // Get enriched PI request to store on DB
                 piRequest = piEnrichment.getEnrichedPaymentRequest(paymentRequest, beneficiaries, hoaSsuMap);
 
-                // update fund summary amount
-                selectedSanction.getFundsSummary().setAvailableAmount(selectedSanction.getFundsSummary().getAvailableAmount().subtract(totalAmount));
-
                 JITRequest jitPiRequest = piEnrichment.getJitPaymentInstructionRequestForIFMS(piRequest);
                 try {
                     JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
@@ -110,10 +107,15 @@ public class PaymentInstructionService {
                         beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
                     }
                 }
+                // IF pi is initiated then add transaction records
                 if (paymentStatus.equals(PaymentStatus.INITIATED)) {
                     piEnrichment.addTransactionDetailsInPiRequest(piRequest, paymentRequest, selectedSanction);
+                    // update fund summary amount
+                    selectedSanction.getFundsSummary().setAvailableAmount(selectedSanction.getFundsSummary().getAvailableAmount().subtract(totalAmount));
+                    selectedSanction.getFundsSummary().getAuditDetails().setLastModifiedTime(piRequest.getAuditDetails().getLastModifiedTime());
+                    selectedSanction.getFundsSummary().getAuditDetails().setLastModifiedBy(piRequest.getAuditDetails().getLastModifiedBy());
                 }
-                piRepository.save(Collections.singletonList(piRequest));
+                piRepository.save(Collections.singletonList(piRequest), selectedSanction.getFundsSummary(), paymentStatus);
             } else {
                 paymentStatus = PaymentStatus.FAILED;
             }

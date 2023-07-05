@@ -18,7 +18,7 @@ public class BillConsumer {
     @Autowired
     private PaymentInstructionService piService;
 
-    @KafkaListener(topics = {"${billing.payment.create.topic}"})
+    @KafkaListener(topics = {"${payment.create.topic}"})
     public void listen(PaymentRequest paymentRequest) {
         try {
             PaymentInstruction paymentInstruction = piService.processPaymentRequestForPI(paymentRequest);

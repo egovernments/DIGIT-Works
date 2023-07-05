@@ -35,7 +35,7 @@ public class IfmsAdapterConfig {
     @Value("${ifms.jit.public.key.filepath}")
     private String ifmsJitPublicKeyFilePath;
 
-    @Value("${billing.payment.create.topic}")
+    @Value("${payment.create.topic}")
     private String paymentCreateTopic;
 
     @Value("${state.level.tenant.id}")
