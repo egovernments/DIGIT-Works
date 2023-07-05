@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS jit_beneficiary_details (
-  id varchar(256) PRIMARY KEY,
+  id varchar(256),
   tenantId varchar(64) NOT NULL,
   muktaReferenceId varchar(256),
   piId varchar(256) NOT NULL,
@@ -20,3 +20,4 @@ CREATE TABLE IF NOT EXISTS jit_beneficiary_details (
   lastmodifiedtime bigint,
   lastmodifiedby varchar(256)
 );
+ALTER TABLE jit_beneficiary_details ADD CONSTRAINT jit_beneficiary_details_pkey PRIMARY KEY (id);

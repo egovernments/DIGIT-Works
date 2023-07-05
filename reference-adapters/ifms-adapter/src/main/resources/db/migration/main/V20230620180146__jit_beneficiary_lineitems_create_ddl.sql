@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS jit_beneficiary_lineitems (
-  id varchar(256) PRIMARY KEY,
+  id varchar(256),
   beneficiaryId varchar(256),
   lineItemId varchar(256),
   createdtime bigint,
@@ -7,3 +7,4 @@ CREATE TABLE IF NOT EXISTS jit_beneficiary_lineitems (
   lastmodifiedtime bigint,
   lastmodifiedby varchar(256)
 );
+ALTER TABLE jit_beneficiary_lineitems ADD CONSTRAINT jit_beneficiary_lineitems_pkey PRIMARY KEY (id);

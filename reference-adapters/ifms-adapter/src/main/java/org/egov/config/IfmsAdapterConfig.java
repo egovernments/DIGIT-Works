@@ -14,16 +14,13 @@ import org.springframework.stereotype.Component;
 @Getter
 public class IfmsAdapterConfig {
 
-    @Value("${payment.status.kafka.topic}")
-    private String paymentStatusTopic;
-
     @Value("${ifms.jit.hostname}")
     private String ifmsJitHostName;
 
     @Value("${ifms.jit.authenticate.endpoint}")
     private String ifmsJitAuthEndpoint;
 
-    @Value("${ifms.jit.request.data.endpoint}")
+    @Value("${ifms.jit.service.endpoint}")
     private String ifmsJitRequestEndpoint;
 
     @Value("${ifms.jit.client.id}")
@@ -38,7 +35,7 @@ public class IfmsAdapterConfig {
     @Value("${ifms.jit.public.key.filepath}")
     private String ifmsJitPublicKeyFilePath;
 
-    @Value("${billing.payment.create}")
+    @Value("${billing.payment.create.topic}")
     private String paymentCreateTopic;
 
     @Value("${state.level.tenant.id}")
@@ -89,7 +86,7 @@ public class IfmsAdapterConfig {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
-    @Value("${egov.idgen.ifms.bill.reference.number}")
+    @Value("${egov.idgen.ifms.pi.reference.number}")
     private String paymentInstructionNumberFormat;
 
 }

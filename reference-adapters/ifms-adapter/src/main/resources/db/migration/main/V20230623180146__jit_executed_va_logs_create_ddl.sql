@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS jit_executed_va_logs (
-  id varchar(256) PRIMARY KEY,
+  id varchar(256),
   tenantId varchar NOT NULL,
   hoaCode varchar(64) NOT NULL,
   ddoCode varchar(64) NOT NULL,
@@ -11,3 +11,4 @@ CREATE TABLE IF NOT EXISTS jit_executed_va_logs (
   lastmodifiedtime bigint,
   lastmodifiedby varchar(256)
 );
+ALTER TABLE jit_executed_va_logs ADD CONSTRAINT jit_executed_va_logs_pkey PRIMARY KEY (id);

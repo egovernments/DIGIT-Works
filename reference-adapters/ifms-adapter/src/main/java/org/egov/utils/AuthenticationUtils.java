@@ -6,6 +6,8 @@ import org.egov.enc.SymmetricEncryptionService;
 import org.egov.key.KeyGenerator;
 import org.egov.key.PublicKeyLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -16,13 +18,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.TimeZone;
 
 @Component
 public class AuthenticationUtils {
 
     @Autowired
     IfmsAdapterConfig config;
+    @Autowired
+    ResourceLoader resourceLoader;
 
     PublicKey publicKey;
 
@@ -32,7 +35,9 @@ public class AuthenticationUtils {
     public void initialize() throws Exception {
         // Commenting loading of public key from file because will load this from application.properties
         String fileName = config.getIfmsJitPublicKeyFilePath();
-        publicKey = PublicKeyLoader.getPublicKeyFromByteFile(fileName);
+        Resource resource = resourceLoader.getResource(fileName);
+        String publicKeyPath = resource.getFile().getAbsolutePath();
+        publicKey = PublicKeyLoader.getPublicKeyFromByteFile(publicKeyPath);
 //        publicKey = getPublicKey();
     }
 

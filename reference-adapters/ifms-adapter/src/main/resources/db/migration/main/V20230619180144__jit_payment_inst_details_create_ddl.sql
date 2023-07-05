@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS jit_payment_inst_details (
-  id varchar(256) PRIMARY KEY,
+  id varchar(256),
   tenantId varchar(64) NOT NULL,
   piNumber varchar(256),
   parentPiNumber varchar(256),
@@ -19,3 +19,4 @@ CREATE TABLE IF NOT EXISTS jit_payment_inst_details (
   lastmodifiedtime bigint,
   lastmodifiedby varchar(256)
 );
+ALTER TABLE jit_payment_inst_details ADD CONSTRAINT jit_payment_inst_details_pkey PRIMARY KEY (id);

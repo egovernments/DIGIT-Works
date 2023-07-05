@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS jit_sanction_details (
-  id varchar(256) PRIMARY KEY,
+  id varchar(256),
   tenantId varchar(64) NOT NULL,
   hoaCode varchar(64) NOT NULL,
   ddoCode varchar(64) NOT NULL,
@@ -12,3 +12,4 @@ CREATE TABLE IF NOT EXISTS jit_sanction_details (
   lastmodifiedtime bigint,
   lastmodifiedby varchar(256)
 );
+ALTER TABLE jit_sanction_details ADD CONSTRAINT jit_sanction_details_pkey PRIMARY KEY (id);
