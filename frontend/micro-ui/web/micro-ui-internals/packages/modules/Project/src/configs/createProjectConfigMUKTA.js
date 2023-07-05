@@ -244,20 +244,26 @@ export const createProjectConfigMUKTA = {
               }
             },
             {
-              label: "WORKS_LOCALITY",
-              type: "apidropdown",
-              isMandatory: false,
-              disable: false,
-              populators: {
+              "isMandatory": true,
+              "key": "noSubProject_locality",
+              "type": "radioordropdown",
+              "label": "WORKS_LOCALITY",
+              "disable": false,
+              "preProcess": {
+                "updateDependent": [
+                  "populators.options"
+                ]
+              },
+              "populators": {
                 "name": "noSubProject_locality",
                 "optionsKey": "i18nKey",
-                "allowMultiSelect": false,
-                "url": "/egov-location/location/v11/boundarys/_search",
-                "params": { "hierarchyTypeCode" : "ADMIN", "boundaryType": "locality", "tenantId":"od.testing" },
-                "selectFun": function(data, headerLocale) {
-                  return data?.TenantBoundary[0]?.boundary.slice(0,10)?.map(item => ({ code: item.code, name: item.name, i18nKey: `${headerLocale}_ADMIN_${item?.code}` }))
-                }
-              },
+                "error": "WORKS_REQUIRED_ERR",
+                "required": false,
+                "optionsCustomStyle": {
+                  "top": "2.5rem"
+                },
+                "options": []
+              }
             }
           ]
         },

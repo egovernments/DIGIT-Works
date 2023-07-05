@@ -104,7 +104,7 @@ const createDocumentsPayload = (documents, otherDocFileName, configs, tenantId, 
 }
 
 function createProjectList(data, selectedProjectType, parentProjectID, tenantId, docConfigData, modifyParams, configs) {
-
+    
     let projects_payload = [];
     let project_details;
     let basic_details = data?.basicDetails;
@@ -174,7 +174,7 @@ function createProjectList(data, selectedProjectType, parentProjectID, tenantId,
             // "subScheme" :  project_details?.subScheme?.code,  
             "dateOfProposal" : convertDateToEpoch(basic_details?.dateOfProposal),
             "recommendedModeOfEntrustment" : project_details?.recommendedModeOfEntrustment?.code,
-            "locality" : project_details?.locality?.code || project_details?.locality?.[0]?.code,
+            "locality" : project_details?.locality?.code,
             "creator": Digit.UserService.getUser()?.info?.name,
             "targetDemography" : project_details?.targetDemography?.code,
           },
