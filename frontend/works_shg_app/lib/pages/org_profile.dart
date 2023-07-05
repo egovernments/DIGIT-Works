@@ -128,7 +128,7 @@ class _ORGProfilePage extends State<ORGProfilePage> {
                                           i18.common.funcCat: e.functions?.first
                                                       .category !=
                                                   null
-                                              ? '${'COMMON_MASTERS_ORG_${e.functions?.first.category?.split('.').first.toString()}'}, ${'COMMON_MASTERS_FUNCATEGORY_${e.functions?.first.category?.split('.').last.toString()}'}'
+                                              ? '${t.translate('COMMON_MASTERS_ORG_${e.functions?.first.category?.split('.').first.toString()}')}, ${t.translate('COMMON_MASTERS_FUNCATEGORY_${e.functions?.first.category?.split('.').last.toString()}')}'
                                               : i18.common.noValue,
                                           i18.common.classOrRank:
                                               'COMMON_MASTERS_CLASS_${e.functions?.first.orgClass ?? 'NA'}',

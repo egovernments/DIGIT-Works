@@ -124,6 +124,7 @@ class IndividualWMSSearchBloc
   FutureOr<void> _onDispose(DisposeSearchWMSIndividualEvent event,
       IndividualWMSSearchEmitter emit) async {
     emit(const IndividualWMSSearchState.initial());
+    emit(IndividualWMSSearchState.loaded(WMSIndividualListModel()));
   }
 }
 

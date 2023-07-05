@@ -53,7 +53,7 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
 
   const onModalSubmit = ({comments}) => {
     //here we have access to action, selectedApprover, action
-    submitBasedOnAction(action, comments,selectedApprover)
+    submitBasedOnAction(action, comments)
     
   }
 
@@ -99,10 +99,10 @@ const AttendanceActionModal = ({ t, action, tenantId, state, id, closeModal, sub
     submitBasedOnAction(action, data?.comments)
   }
 
-  const submitBasedOnAction = (action, comments,selectedApprover) => {
+  const submitBasedOnAction = (action, comments) => {
     //passing complete muster object with updated additionalDetails
     let musterRoll = updateMusterObject(applicationDetails)
-    let workflow = { action: action?.action, comment: (comments || `${action?.action} done`), assignees: selectedApprover?[selectedApprover.uuid] : [] }
+    let workflow = { action: action?.action, comment: (comments || `${action?.action} done`), assignees: selectedApprover.uuid ? [selectedApprover.uuid] : [] }
 
     const selectedAction = action?.action
     switch(selectedAction) {

@@ -15,7 +15,6 @@ import 'package:works_shg_app/widgets/molecules/digit_table.dart' as shg_app;
 
 import '../blocs/attendance/create_attendee.dart';
 import '../blocs/attendance/de_enroll_attendee.dart';
-import '../blocs/attendance/individual_search.dart';
 import '../blocs/attendance/individual_wms_search.dart';
 import '../blocs/attendance/search_projects/search_individual_project.dart';
 import '../blocs/localization/app_localization.dart';
@@ -94,8 +93,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     context.read<AttendanceIndividualProjectSearchBloc>().add(
           const DisposeIndividualAttendanceRegisterEvent(),
         );
-    context.read<IndividualSearchBloc>().add(
-          const DisposeSearchIndividualEvent(),
+    context.read<IndividualWMSSearchBloc>().add(
+          const DisposeSearchWMSIndividualEvent(),
         );
     context.read<AttendeeCreateBloc>().add(
           const CreateAttendeeDisposeEvent(),
@@ -652,7 +651,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                     .isEmpty
             ? addToTableList
                 .map((e) => {
-                      "registerId": registerId?.toString(),
+                      "registerId": registerId.toString(),
                       "individualId": e["uuid"],
                       "enrollmentDate": registerStartDate,
                       "tenantId": e["tenantId"],
@@ -698,15 +697,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
     await Future.delayed(const Duration(milliseconds: 500));
 
     setState(() {
-      filteredUserList = userList.where((e) {
-        if (e["name"]!
-            .toLowerCase()
-            .contains(pattern.toString().trim().toLowerCase())) {
-          return true;
-        } else {
-          return false;
-        }
-      }).toList();
+      filteredUserList = userList;
     });
     return filteredUserList;
   }
