@@ -223,7 +223,7 @@ public class PaymentInstructionService {
         try {
             PaymentInstruction pi = (PaymentInstruction) paymentInstruction;
             pi.setPaDetails(null);
-            for(Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
+            for (Beneficiary beneficiary : pi.getBeneficiaryDetails()) {
                 beneficiary.setBenefName(null);
                 beneficiary.setBenfAcctNo(null);
                 beneficiary.setBenfBankIfscCode(null);
@@ -239,6 +239,13 @@ public class PaymentInstructionService {
         } catch (Exception e) {
             log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
         }
+    }
+
+    public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
+        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchRequest);
+
+        log.info("Sending search response");
+        return paymentInstructions;
     }
 
 }
