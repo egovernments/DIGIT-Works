@@ -1595,7 +1595,7 @@ export const UICustomizations = {
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
-        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
         return responseToReturn
       }
     }
@@ -1735,7 +1735,7 @@ export const UICustomizations = {
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
-        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
         return responseToReturn
       }
     }
@@ -1849,7 +1849,7 @@ export const UICustomizations = {
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
-        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
         return responseToReturn
       }
     }

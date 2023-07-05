@@ -106,8 +106,8 @@ export const UserService = {
     return roles && Array.isArray(roles) && roles.filter((role) => accessTo.includes(role.code)).length;
   },
 
-  changePassword: async (details, stateCode) => {
-    const data = await ServiceRequest({
+  changePassword: async (details, stateCode) => 
+    ServiceRequest({
       serviceName: "changePassword",
       url: Digit.SessionStorage.get("User")?.info ? Urls.ChangePassword1 : Urls.ChangePassword,
       data: {
@@ -115,12 +115,7 @@ export const UserService = {
       },
       auth: true,
       params: { tenantId: stateCode },
-    })
-
-    if (data?.responseInfo?.status == "200") {
-      return await UserService.logout();
-    }
-  },
+    }),
     
 
   employeeSearch: (tenantId, filters) => {

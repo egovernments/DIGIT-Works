@@ -220,6 +220,7 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
+import { FormComposer as FormComposerV2 } from "./hoc/FormComposer";
 import RenderFormFields from "./molecules/RenderFormFields";
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
@@ -426,6 +427,7 @@ export {
   CustomDropdown,
   // hoc
   FormComposer,
+  FormComposerV2,
   RenderFormFields,
   WorkflowTimeline,
   WorkflowActions,
