@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS jit_executed_va_logs (
   createdtime bigint,
   createdby varchar(256),
   lastmodifiedtime bigint,
-  lastmodifiedby varchar(256)
+  lastmodifiedby varchar(256),
+  CONSTRAINT jit_executed_va_logs_pkey PRIMARY KEY (id)
 );
-ALTER TABLE jit_executed_va_logs ADD CONSTRAINT jit_executed_va_logs_pkey PRIMARY KEY (id);

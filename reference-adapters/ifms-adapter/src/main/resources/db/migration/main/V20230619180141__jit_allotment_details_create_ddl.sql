@@ -12,5 +12,6 @@ CREATE TABLE IF NOT EXISTS jit_allotment_details (
   createdtime bigint,
   createdby varchar(256),
   lastmodifiedtime bigint,
-  lastmodifiedby varchar(256)
+  lastmodifiedby varchar(256),
+  CONSTRAINT fk_jit_allotment_details_sanction_id FOREIGN KEY (sanctionId) REFERENCES jit_sanction_details (id)
 );

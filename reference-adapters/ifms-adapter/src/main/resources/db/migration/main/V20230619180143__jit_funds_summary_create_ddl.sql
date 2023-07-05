@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS jit_funds_summary (
   createdtime bigint,
   createdby varchar(256),
   lastmodifiedtime bigint,
-  lastmodifiedby varchar(256)
+  lastmodifiedby varchar(256),
+  CONSTRAINT jit_funds_summary_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_jit_funds_summary_sanction_id FOREIGN KEY (sanctionId) REFERENCES jit_sanction_details (id)
 );
-ALTER TABLE jit_funds_summary ADD CONSTRAINT jit_funds_summary_pkey PRIMARY KEY (id);

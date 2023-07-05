@@ -10,6 +10,6 @@ CREATE TABLE IF NOT EXISTS jit_sanction_details (
   createdtime bigint,
   createdby varchar(256),
   lastmodifiedtime bigint,
-  lastmodifiedby varchar(256)
+  lastmodifiedby varchar(256),
+  CONSTRAINT jit_sanction_details_pkey PRIMARY KEY (id)
 );
-ALTER TABLE jit_sanction_details ADD CONSTRAINT jit_sanction_details_pkey PRIMARY KEY (id);

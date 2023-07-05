@@ -110,6 +110,9 @@ public class PaymentInstructionService {
                         beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
                     }
                 }
+                if (paymentStatus.equals(PaymentStatus.INITIATED)) {
+                    piEnrichment.addTransactionDetailsInPiRequest(piRequest, paymentRequest, selectedSanction);
+                }
                 piRepository.save(Collections.singletonList(piRequest));
             } else {
                 paymentStatus = PaymentStatus.FAILED;
@@ -118,6 +121,7 @@ public class PaymentInstructionService {
             log.info("Exception " + e);
             paymentStatus = PaymentStatus.FAILED;
         }
+
         updatePaymentForStatus(paymentRequest, paymentStatus);
 
         return piRequest;

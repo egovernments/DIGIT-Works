@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS jit_payment_advice_details (
   createdtime bigint,
   createdby varchar(256),
   lastmodifiedtime bigint,
-  lastmodifiedby varchar(256)
+  lastmodifiedby varchar(256),
+  CONSTRAINT jit_payment_advice_details_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_jit_payment_advice_details_pi_id FOREIGN KEY (piId) REFERENCES jit_payment_inst_details (id)
 );
-ALTER TABLE jit_payment_advice_details ADD CONSTRAINT jit_payment_advice_details_pkey PRIMARY KEY (id);

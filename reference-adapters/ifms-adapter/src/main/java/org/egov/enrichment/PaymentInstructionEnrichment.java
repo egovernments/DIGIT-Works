@@ -172,18 +172,6 @@ public class PaymentInstructionEnrichment {
             piRequest.setId(UUID.randomUUID().toString());
         piRequest.setAdditionalDetails(emptyObject);
         piRequest.setAuditDetails(auditDetails);
-        // Create transaction details and push i
-        TransactionDetails transactionDetails = TransactionDetails.builder()
-                .id(UUID.randomUUID().toString())
-                .tenantId(tenantId)
-                .sanctionId(sanctionDetail.getId())
-                .paymentInstId(piRequest.getId())
-                .transactionAmount(piRequest.getNetAmount())
-                .additionalDetails(emptyObject)
-                .transactionType(TransactionType.DEBIT)
-                .auditDetails(auditDetails)
-                .build();
-        piRequest.setTransactionDetails(Collections.singletonList(transactionDetails));
 
         // Update payment advice details
         PADetails paDetails = PADetails.builder()
@@ -211,6 +199,26 @@ public class PaymentInstructionEnrichment {
                 lineItem.setAuditDetails(auditDetails);
             }
         }
+    }
+
+    public void addTransactionDetailsInPiRequest(PaymentInstruction piRequest, PaymentRequest paymentRequest, SanctionDetail sanctionDetail) {
+        // Create transaction details and push into piRequest
+        String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
+        String tenantId = paymentRequest.getPayment().getTenantId();
+        JsonNode emptyObject = objectMapper.createObjectNode();
+        Long time = System.currentTimeMillis();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
+                .sanctionId(sanctionDetail.getId())
+                .paymentInstId(piRequest.getId())
+                .transactionAmount(piRequest.getNetAmount())
+                .additionalDetails(emptyObject)
+                .transactionType(TransactionType.DEBIT)
+                .auditDetails(auditDetails)
+                .build();
+        piRequest.setTransactionDetails(Collections.singletonList(transactionDetails));
 
     }
 
