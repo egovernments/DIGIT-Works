@@ -8,6 +8,7 @@ import org.egov.common.producer.Producer;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
+import org.egov.tracer.model.CustomException;
 import org.egov.utils.BankAccountUtils;
 import org.egov.utils.BillUtils;
 import org.egov.utils.IndividualUtils;
@@ -19,9 +20,12 @@ import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.enums.Status;
 import org.egov.web.models.jit.*;
+import org.egov.web.models.jit.PISearchCriteria;
 import org.egov.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpServerErrorException;
 
 import java.math.BigDecimal;
@@ -243,10 +247,20 @@ public class PaymentInstructionService {
     }
 
     public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
+        searchValidator(piSearchRequest.getSearchCriteria());
         List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchRequest);
 
         log.info("Sending search response");
         return paymentInstructions;
+    }
+
+    public void searchValidator(PISearchCriteria piSearchCriteria){
+        if(StringUtils.isEmpty(piSearchCriteria.getTenantId()))
+            throw new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory");
+
+        if(CollectionUtils.isEmpty(piSearchCriteria.getIds()) && StringUtils.isEmpty(piSearchCriteria.getJitBillNo())
+                && StringUtils.isEmpty(piSearchCriteria.getMuktaReferenceId()) && StringUtils.isEmpty(piSearchCriteria.getPiStatus()))
+            throw new CustomException("SEARCH_CRITERIA_MANDATORY", "Atleast one search parameter should be provided");
     }
 
 }
