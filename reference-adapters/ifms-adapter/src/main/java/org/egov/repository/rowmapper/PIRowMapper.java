@@ -32,14 +32,10 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
 
     public List<PaymentInstruction> extractData(ResultSet rs) throws SQLException, DataAccessException{
         Map<String, PaymentInstruction> paymentInstructionMap = new LinkedHashMap<>();
-        Map<String, TransactionDetails> transactionDetailsMap = new LinkedHashMap<>();
-        Map<String, PADetails> paDetailsMap = new HashMap<>();
-        Map<String, Beneficiary> beneficiaryMap = new HashMap<>();
-        Map<String, BenfLineItems> benfLineItemsMap = new HashMap<>();
 
-        while(rs.next()){
+        while(rs.next()) {
             String id = rs.getString("jpiId");
-            PaymentInstruction paymentInstruction = paymentInstructionMap.get("jpiId");
+            PaymentInstruction paymentInstruction = paymentInstructionMap.get(id);
 
             if(paymentInstruction == null){
 
@@ -56,7 +52,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
                 String piApprovedId = rs.getString("jpiPiApprovedId");
                 String piApprovalDate = rs.getString("jpiPiApprovalDate");
                 String piErrorResp = rs.getString("jpiPiErrorResp");
-                Object additionalDetails = getadditionalDetail(rs, "jpiAdditionalDetails");
+                Object additionalDetails = getAdditionalDetail(rs, "jpiAdditionalDetails");
 
                 AuditDetails auditDetails = getAuditDetailsForKey(rs, "jpiCreatedBy","jpiCreatedTime",
                         "jpiLastModifiedBy","jpiLastModifiedTime") ;
@@ -81,185 +77,208 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
                         .build();
 
                 paymentInstructionMap.put(paymentInstruction.getId(), paymentInstruction);
-                addTransactionDetails(rs, paymentInstruction);
-                addPADetails(rs, paymentInstruction);
-                addBenificiaryDetails(rs, paymentInstruction);
-
             }
 
-
-
+            addTransactionDetails(rs, paymentInstruction);
+            addPADetails(rs, paymentInstruction);
+            addBenificiaryDetails(rs, paymentInstruction);
         }
         log.debug("converting map to list object ::: " + paymentInstructionMap.values());
         return new ArrayList<>(paymentInstructionMap.values());
     }
 
-    private void addTransactionDetails(ResultSet rs, PaymentInstruction paymentInstruction)throws SQLException{
-
+    private void addTransactionDetails(ResultSet rs, PaymentInstruction paymentInstruction) throws SQLException{
+        if(paymentInstruction.getTransactionDetails() == null) {
+            paymentInstruction.setTransactionDetails(new ArrayList<>());
+        }
+        TransactionDetails transactionDetail = null;
         String transactionDetailId = rs.getString("jtdId");
-        String transactionDetailTenantId = rs.getString("jtdTenantId");
-        String sanctionId = rs.getString("jtdSanctionId");
-        String paymentInstId = rs.getString("jtdPaymentInstId");
-        BigDecimal transactionAmount = rs.getBigDecimal("jtdTransactionAmount");
-        Long transactionDate = rs.getLong("jtdTransactionDate");
-        TransactionType transactionType = TransactionType.fromValue(rs.getString("jtdTransactionType"));
-        Object transactionAdditionalDetails = rs.getObject("jtdAdditionalDetails");
-
-        AuditDetails auditDetails = getAuditDetailsForKey(rs, "jtdCreatedBy","jtdCreatedTime",
-                "jtdLastModifiedBy","jtdLastModifiedTime") ;
-
-        if(StringUtils.isNotEmpty(transactionDetailId) && paymentInstruction.getId().equalsIgnoreCase(paymentInstId)) {
-
-            TransactionDetails transactionDetail = TransactionDetails.builder()
-                    .id(transactionDetailId)
-                    .tenantId(transactionDetailTenantId)
-                    .sanctionId(sanctionId)
-                    .paymentInstId(paymentInstId)
-                    .transactionAmount(transactionAmount)
-                    .transactionDate(transactionDate)
-                    .transactionType(transactionType)
-                    .additionalDetails(transactionAdditionalDetails)
-                    .auditDetails(auditDetails)
-                    .build();
-            if(paymentInstruction.getTransactionDetails() == null){
-                List<TransactionDetails> transactionDetails = new ArrayList<>();
-                transactionDetails.add(transactionDetail);
-                paymentInstruction.setTransactionDetails(transactionDetails);
+        for(TransactionDetails transactionDetails1 : paymentInstruction.getTransactionDetails()) {
+            if(transactionDetails1.getId().equalsIgnoreCase(transactionDetailId)) {
+                transactionDetail = transactionDetails1;
+                break;
             }
-            else{
+        }
+
+        if(transactionDetail == null) {
+            String transactionDetailTenantId = rs.getString("jtdTenantId");
+            String sanctionId = rs.getString("jtdSanctionId");
+            String paymentInstId = rs.getString("jtdPaymentInstId");
+            BigDecimal transactionAmount = rs.getBigDecimal("jtdTransactionAmount");
+            Long transactionDate = rs.getLong("jtdTransactionDate");
+            TransactionType transactionType = TransactionType.fromValue(rs.getString("jtdTransactionType"));
+            Object transactionAdditionalDetails = rs.getObject("jtdAdditionalDetails");
+
+            AuditDetails auditDetails = getAuditDetailsForKey(rs, "jtdCreatedBy","jtdCreatedTime",
+                    "jtdLastModifiedBy","jtdLastModifiedTime") ;
+
+            if(StringUtils.isNotEmpty(transactionDetailId) && paymentInstruction.getId().equalsIgnoreCase(paymentInstId)) {
+
+                transactionDetail = TransactionDetails.builder()
+                        .id(transactionDetailId)
+                        .tenantId(transactionDetailTenantId)
+                        .sanctionId(sanctionId)
+                        .paymentInstId(paymentInstId)
+                        .transactionAmount(transactionAmount)
+                        .transactionDate(transactionDate)
+                        .transactionType(transactionType)
+                        .additionalDetails(transactionAdditionalDetails)
+                        .auditDetails(auditDetails)
+                        .build();
+
                 paymentInstruction.getTransactionDetails().add(transactionDetail);
             }
         }
     }
+
     private void addPADetails(ResultSet rs, PaymentInstruction paymentInstruction)throws SQLException{
+        if(paymentInstruction.getPaDetails() == null){
+            paymentInstruction.setPaDetails(new ArrayList<>());
+        }
         String jpaId = rs.getString("jpaId");
-        String jpaTenantId = rs.getString("jpaTenantId");
-        String jpaMuktaReferenceId = rs.getString("jpaMuktaReferenceId");
-        String jpaPiId = rs.getString("jpaPiId");
-        String jpaPaBillRefNumber = rs.getString("jpaPaBillRefNumber");
-        String jpaPaFinYear = rs.getString("jpaPaFinYear");
-        String jpaPaAdviceId = rs.getString("jpaPaAdviceId");
-        String jpaPaAdviceDate = rs.getString("jpaPaAdviceDate");
-        String jpaPaTokenNumber = rs.getString("jpaPaTokenNumber");
-        String jpaPaTokenDate = rs.getString("jpaPaTokenDate");
-        String jpaPaErrorMsg = rs.getString("jpaPaErrorMsg");
-        Object jpaAdditionalDetails = getadditionalDetail(rs, "jpaAdditionalDetails");
-
-        AuditDetails auditDetails = getAuditDetailsForKey(rs, "jpaCreatedBy","jpaCreatedTime",
-                "jpaLastModifiedBy","jpaLastModifiedTime") ;
-
-        if(StringUtils.isNotEmpty(jpaId) && jpaPiId.equalsIgnoreCase(paymentInstruction.getId())) {
-            PADetails paDetail = PADetails.builder()
-                    .id(jpaId)
-                    .tenantId(jpaTenantId)
-                    .muktaReferenceId(jpaMuktaReferenceId)
-                    .piId(jpaPiId)
-                    .paBillRefNumber(jpaPaBillRefNumber)
-                    .paFinYear(jpaPaFinYear)
-                    .paAdviceId(jpaPaAdviceId)
-                    .paAdviceDate(jpaPaAdviceDate)
-                    .paTokenNumber(jpaPaTokenNumber)
-                    .paTokenDate(jpaPaTokenDate)
-                    .paErrorMsg(jpaPaErrorMsg)
-                    .additionalDetails(jpaAdditionalDetails)
-                    .auditDetails(auditDetails)
-                    .build();
-            if(paymentInstruction.getPaDetails() == null){
-                List<PADetails> paDetails = new ArrayList<>();
-                paDetails.add(paDetail);
-                paymentInstruction.setPaDetails(paDetails);
+        PADetails paDetail = null;
+        for(PADetails paDetails1 : paymentInstruction.getPaDetails()) {
+            if(paDetails1.getId().equalsIgnoreCase(jpaId)) {
+                paDetail = paDetails1;
+                break;
             }
-            else{
+        }
+        if(paDetail == null) {
+            String jpaTenantId = rs.getString("jpaTenantId");
+            String jpaMuktaReferenceId = rs.getString("jpaMuktaReferenceId");
+            String jpaPiId = rs.getString("jpaPiId");
+            String jpaPaBillRefNumber = rs.getString("jpaPaBillRefNumber");
+            String jpaPaFinYear = rs.getString("jpaPaFinYear");
+            String jpaPaAdviceId = rs.getString("jpaPaAdviceId");
+            String jpaPaAdviceDate = rs.getString("jpaPaAdviceDate");
+            String jpaPaTokenNumber = rs.getString("jpaPaTokenNumber");
+            String jpaPaTokenDate = rs.getString("jpaPaTokenDate");
+            String jpaPaErrorMsg = rs.getString("jpaPaErrorMsg");
+            Object jpaAdditionalDetails = getAdditionalDetail(rs, "jpaAdditionalDetails");
+
+            AuditDetails auditDetails = getAuditDetailsForKey(rs, "jpaCreatedBy","jpaCreatedTime",
+                    "jpaLastModifiedBy","jpaLastModifiedTime") ;
+
+            if(StringUtils.isNotEmpty(jpaId) && jpaPiId.equalsIgnoreCase(paymentInstruction.getId())) {
+                paDetail = PADetails.builder()
+                        .id(jpaId)
+                        .tenantId(jpaTenantId)
+                        .muktaReferenceId(jpaMuktaReferenceId)
+                        .piId(jpaPiId)
+                        .paBillRefNumber(jpaPaBillRefNumber)
+                        .paFinYear(jpaPaFinYear)
+                        .paAdviceId(jpaPaAdviceId)
+                        .paAdviceDate(jpaPaAdviceDate)
+                        .paTokenNumber(jpaPaTokenNumber)
+                        .paTokenDate(jpaPaTokenDate)
+                        .paErrorMsg(jpaPaErrorMsg)
+                        .additionalDetails(jpaAdditionalDetails)
+                        .auditDetails(auditDetails)
+                        .build();
+
                 paymentInstruction.getPaDetails().add(paDetail);
             }
         }
-
-
     }
+
     private void addBenificiaryDetails(ResultSet rs, PaymentInstruction paymentInstruction)throws SQLException{
-
+        if(paymentInstruction.getBeneficiaryDetails() == null) {
+            paymentInstruction.setBeneficiaryDetails(new ArrayList<>());
+        }
         String jbdId = rs.getString("jbdId");
-        String jbdTenantId = rs.getString("jbdTenantId");
-        String jbdMuktaReferenceId = rs.getString("jbdMuktaReferenceId");
-        String jbdPiId = rs.getString("jbdPiId");
-        String jbdBeneficiaryId = rs.getString("jbdBeneficiaryId");
-        BeneficiaryType jbdBeneficiaryType = BeneficiaryType.fromValue(rs.getString("jbdBeneficiaryType"));
-        String jbdBankAccountId = rs.getString("jbdBankAccountId");
-        BigDecimal jbdAmount = rs.getBigDecimal("jbdAmount");
-        String jbdVoucherNumber = rs.getString("jbdVoucherNumber");
-        Long jbdVoucherDate = rs.getLong("jbdVoucherDate");
-        String jbdUtrNo = rs.getString("jbdUtrNo");
-        String jbdUtrDate = rs.getString("jbdUtrDate");
-        String jbdEndToEndId = rs.getString("jbdEndToEndId");
-        String jbdChallanNumber = rs.getString("jbdChallanNumber");
-        String jbdChallanDate = rs.getString("jbdChallanDate");
-        BeneficiaryPaymentStatus jbdPaymentStatus = BeneficiaryPaymentStatus.fromValue(rs.getString("jbdPaymentStatus"));
-        String jbdPaymentStatusMessage = rs.getString("jbdPaymentStatusMessage");
-        Object jbdAdditionalDetails = getadditionalDetail(rs, "jbdAdditionalDetails") ;
+        Beneficiary beneficiary = null;
+        for (Beneficiary beneficiary1 : paymentInstruction.getBeneficiaryDetails()) {
+            if(beneficiary1.getId().equalsIgnoreCase(jbdId)) {
+                beneficiary = beneficiary1;
+                break;
+            }
+        }
 
-        AuditDetails auditDetails = getAuditDetailsForKey(rs, "jbdCreatedBy","jbdCreatedTime",
-                "jbdLastModifiedBy","jbdLastModifiedTime") ;
+        if(beneficiary == null) {
+            String jbdTenantId = rs.getString("jbdTenantId");
+            String jbdMuktaReferenceId = rs.getString("jbdMuktaReferenceId");
+            String jbdPiId = rs.getString("jbdPiId");
+            String jbdBeneficiaryId = rs.getString("jbdBeneficiaryId");
+            BeneficiaryType jbdBeneficiaryType = BeneficiaryType.fromValue(rs.getString("jbdBeneficiaryType"));
+            String jbdBankAccountId = rs.getString("jbdBankAccountId");
+            BigDecimal jbdAmount = rs.getBigDecimal("jbdAmount");
+            String jbdVoucherNumber = rs.getString("jbdVoucherNumber");
+            Long jbdVoucherDate = rs.getLong("jbdVoucherDate");
+            String jbdUtrNo = rs.getString("jbdUtrNo");
+            String jbdUtrDate = rs.getString("jbdUtrDate");
+            String jbdEndToEndId = rs.getString("jbdEndToEndId");
+            String jbdChallanNumber = rs.getString("jbdChallanNumber");
+            String jbdChallanDate = rs.getString("jbdChallanDate");
+            BeneficiaryPaymentStatus jbdPaymentStatus = BeneficiaryPaymentStatus.fromValue(rs.getString("jbdPaymentStatus"));
+            String jbdPaymentStatusMessage = rs.getString("jbdPaymentStatusMessage");
+            Object jbdAdditionalDetails = getAdditionalDetail(rs, "jbdAdditionalDetails") ;
 
-        if(StringUtils.isNotEmpty(jbdId) && jbdPiId.equalsIgnoreCase(paymentInstruction.getId())) {
-            Beneficiary beneficiary = Beneficiary.builder()
-                    .id(jbdId)
-                    .tenantId(jbdTenantId)
-                    .muktaReferenceId(jbdMuktaReferenceId)
-                    .piId(jbdPiId)
-                    .beneficiaryId(jbdBeneficiaryId)
-                    .beneficiaryType(jbdBeneficiaryType)
-                    .bankAccountId(jbdBankAccountId)
-                    .amount(jbdAmount)
-                    .voucherNumber(jbdVoucherNumber)
-                    .voucherDate(jbdVoucherDate)
-                    .utrNo(jbdUtrNo)
-                    .utrDate(jbdUtrDate)
-                    .endToEndId(jbdEndToEndId)
-                    .challanNumber(jbdChallanNumber)
-                    .challanDate(jbdChallanDate)
-                    .paymentStatus(jbdPaymentStatus)
-                    .paymentStatusMessage(jbdPaymentStatusMessage)
-                    .additionalDetails(jbdAdditionalDetails)
-                    .auditDetails(auditDetails)
-                    .build();
-            addBenificiaryLineItems(rs, beneficiary);
+            AuditDetails auditDetails = getAuditDetailsForKey(rs, "jbdCreatedBy","jbdCreatedTime",
+                    "jbdLastModifiedBy","jbdLastModifiedTime") ;
 
-            if (paymentInstruction.getBeneficiaryDetails() == null) {
-                List<Beneficiary> beneficiaries = new ArrayList<>();
-                beneficiaries.add(beneficiary);
-                paymentInstruction.setBeneficiaryDetails(beneficiaries);
-            } else {
+            if(StringUtils.isNotEmpty(jbdId) && jbdPiId.equalsIgnoreCase(paymentInstruction.getId())) {
+                beneficiary = Beneficiary.builder()
+                        .id(jbdId)
+                        .tenantId(jbdTenantId)
+                        .muktaReferenceId(jbdMuktaReferenceId)
+                        .piId(jbdPiId)
+                        .beneficiaryId(jbdBeneficiaryId)
+                        .beneficiaryType(jbdBeneficiaryType)
+                        .bankAccountId(jbdBankAccountId)
+                        .amount(jbdAmount)
+                        .voucherNumber(jbdVoucherNumber)
+                        .voucherDate(jbdVoucherDate)
+                        .utrNo(jbdUtrNo)
+                        .utrDate(jbdUtrDate)
+                        .endToEndId(jbdEndToEndId)
+                        .challanNumber(jbdChallanNumber)
+                        .challanDate(jbdChallanDate)
+                        .paymentStatus(jbdPaymentStatus)
+                        .paymentStatusMessage(jbdPaymentStatusMessage)
+                        .additionalDetails(jbdAdditionalDetails)
+                        .auditDetails(auditDetails)
+                        .build();
+
                 paymentInstruction.getBeneficiaryDetails().add(beneficiary);
             }
         }
+        addBeneficiaryLineItems(rs, beneficiary);
     }
 
-    private void addBenificiaryLineItems(ResultSet rs, Beneficiary beneficiary)throws SQLException{
+    private void addBeneficiaryLineItems(ResultSet rs, Beneficiary beneficiary)throws SQLException{
+        if(beneficiary.getBenfLineItems() == null) {
+            beneficiary.setBenfLineItems(new ArrayList<>());
+        }
         String jblId = rs.getString("jblId");
-        String jblBeneficiaryId = rs.getString("jblBeneficiaryId");
-        String jblLineItemId = rs.getString("jblLineItemId");
 
-        AuditDetails auditDetails = getAuditDetailsForKey(rs, "jblCreatedBy","jblCreatedTime",
-                "jblLastModifiedBy","jblLastModifiedTime") ;
+        BenfLineItems benfLineItem = null;
+        for(BenfLineItems benfLineItems1 : beneficiary.getBenfLineItems()) {
+            if(benfLineItems1.getId().equalsIgnoreCase(jblId)) {
+                benfLineItem = benfLineItems1;
+                break;
+            }
+        }
 
-        if(StringUtils.isNotEmpty(jblId) && jblBeneficiaryId.equalsIgnoreCase(beneficiary.getId())) {
-            BenfLineItems benfLineItem = BenfLineItems.builder()
-                    .id(jblId)
-                    .beneficiaryId(jblBeneficiaryId)
-                    .lineItemId(jblLineItemId)
-                    .auditDetails(auditDetails)
-                    .build();
-            if (beneficiary.getBenfLineItems() == null) {
-                List<BenfLineItems> benfLineItems = new ArrayList<>();
-                benfLineItems.add(benfLineItem);
-                beneficiary.setBenfLineItems(benfLineItems);
-            } else {
+        if(benfLineItem == null) {
+            String jblBeneficiaryId = rs.getString("jblBeneficiaryId");
+            String jblLineItemId = rs.getString("jblLineItemId");
+
+            AuditDetails auditDetails = getAuditDetailsForKey(rs, "jblCreatedBy","jblCreatedTime",
+                    "jblLastModifiedBy","jblLastModifiedTime") ;
+
+            if(StringUtils.isNotEmpty(jblId) && jblBeneficiaryId.equalsIgnoreCase(beneficiary.getId())) {
+                benfLineItem = BenfLineItems.builder()
+                        .id(jblId)
+                        .beneficiaryId(jblBeneficiaryId)
+                        .lineItemId(jblLineItemId)
+                        .auditDetails(auditDetails)
+                        .build();
                 beneficiary.getBenfLineItems().add(benfLineItem);
             }
         }
     }
 
-    private JsonNode getadditionalDetail(ResultSet rs, String key) throws SQLException {
+    private JsonNode getAdditionalDetail(ResultSet rs, String key) throws SQLException {
 
         JsonNode additionalDetails = null;
 
@@ -280,6 +299,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
         return additionalDetails;
 
     }
+
     private AuditDetails getAuditDetailsForKey (ResultSet rs, String createdBy, String createdTime, String modifiedBy, String modifiedTime) throws SQLException {
 
         return AuditDetails.builder()
@@ -289,6 +309,5 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
                 .createdBy(rs.getString(createdBy))
                 .build();
     }
-
 
 }
