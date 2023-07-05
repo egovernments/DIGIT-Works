@@ -88,6 +88,7 @@ public class PaymentInstructionService {
                         piRequest.setPiSuccessDesc(piSucessDescrp);
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
+                        piRequest.setPiStatus(PIStatus.FAILED);
                         piRequest.setPiErrorResp(jitResponse.getErrorMsg());
                     }
                 } catch (Exception e) {
