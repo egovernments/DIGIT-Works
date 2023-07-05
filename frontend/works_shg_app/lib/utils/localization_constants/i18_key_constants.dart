@@ -146,6 +146,7 @@ class Common {
   String get individualAlreadyAdded => 'IND_ALREADY_ADDED_TO_THE_TABLE';
   String get noValue => 'ES_COMMON_NA';
   String get noOrgLinkedWithMob => 'ES_COMMON_NO_ORG_LINKED_WITH_MOBILE_NUMBER';
+  String get takeAction => 'ES_COMMON_TAKE_ACTION';
 }
 
 class Home {

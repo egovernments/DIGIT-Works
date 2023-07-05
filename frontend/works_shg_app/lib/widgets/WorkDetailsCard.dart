@@ -330,7 +330,8 @@ class WorkDetailsCard extends StatelessWidget {
                   )),
               child: Center(
                 child: Text(
-                    AppLocalizations.of(context).translate('Take Action'),
+                    AppLocalizations.of(context)
+                        .translate(i18.common.takeAction),
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium!
