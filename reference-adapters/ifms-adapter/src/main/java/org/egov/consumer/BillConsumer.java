@@ -25,9 +25,6 @@ public class BillConsumer {
     private PaymentService paymentService;
 
     @Autowired
-    private Producer producer;
-
-    @Autowired
     private IfmsAdapterConfig serviceConfiguration;
 
     @KafkaListener(topics = {"${billing.payment.create}"})
@@ -38,18 +35,16 @@ public class BillConsumer {
             log.error("Error occurred while processing the consumed create payment request : " + paymentRequest, e);
         }
         try {
-            paymentService.fetchedBillDetails(paymentRequest);
-            producer.push(serviceConfiguration.getPaymentEnrichTopic(), paymentRequest);
+            paymentService.updatePayments(paymentRequest);
         } catch (Exception e) {
             log.error("Error occurred while processing the consumed create payment request : " + paymentRequest, e);
         }
     }
 
-    @KafkaListener(topics = {"${billing.payment.update}"})
+    @KafkaListener(topics = {"${payment.update.topic}"})
     public void listenUpdate(PaymentRequest paymentRequest) {
         try {
-            paymentService.fetchedBillDetails(paymentRequest);
-            producer.push(serviceConfiguration.getPaymentEnrichTopic(), paymentRequest);
+            paymentService.updatePayments(paymentRequest);
         } catch (Exception e) {
             log.error("Error occurred while processing the consumed update payment request : " + paymentRequest, e);
         }

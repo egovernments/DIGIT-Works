@@ -44,10 +44,10 @@ public class IfmsAdapterConfig {
     @Value("${billing.payment.create}")
     private String paymentCreateTopic;
 
-    @Value("${billing.payment.update}")
+    @Value("${payment.update.topic}")
     private String paymentUpdateTopic;
 
-    @Value("${billing.payment.enrich}")
+    @Value("${payment.enrichment.topic}")
     private String paymentEnrichTopic;
 
     @Value("${state.level.tenant.id}")
