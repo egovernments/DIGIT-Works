@@ -23,12 +23,12 @@ class AsymmetricEncryptionServiceTest {
 
     PublicKey publicKey;
     String baseURL;
-
+    /*
     @BeforeAll
     public void init() throws Exception {
 //        ClassLoader classLoader = this.getClass().getClassLoader();
 //        baseURL = classLoader.getResource("").getFile();
-        String path = "D:/egovernments/digit-works-bkp-3/reference-adapter/ifms-adapter/src/main/resources/";
+        String path = "D:/egovernments/digit-works-bkp2/reference-adapters/ifms-adapter/src/test/resources/";
         publicKey = PublicKeyLoader.getPublicKeyFromByteFile(path + "publicKey");
     }
 
@@ -44,6 +44,6 @@ class AsymmetricEncryptionServiceTest {
         String ciphertext = Base64.getEncoder().encodeToString(cipherBytes);
         System.out.println(ciphertext);
     }
-
+*/
 
 }

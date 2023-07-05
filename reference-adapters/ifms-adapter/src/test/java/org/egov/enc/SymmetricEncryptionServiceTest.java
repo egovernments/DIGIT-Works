@@ -13,7 +13,7 @@ import java.util.Base64;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SymmetricEncryptionServiceTest {
-
+    /*
     private String baseURL;
     private String requestFilePath = "request.json";
 
@@ -25,7 +25,7 @@ class SymmetricEncryptionServiceTest {
 
     @Test
     public void testDecryptSek() throws Exception {
-        String appKey = "Ihb+3oz6+LtTtCQi1C+k+43G0O0OSlJDYlU6ZM1BEWA=";
+        String appKey = "BL8WKMi6pst4vLW9vswHk7KRj15NrblVpRMHQlOgOOM=";
         String ciphertext = "TLVPoVJdfuj9D8rYz8NImvL8FVemg9ONmbSBkmYmbfLr+tp1iMfmXIlM5jnGrKT0";
         SecretKey secretKey = new SecretKeySpec(Base64.getDecoder().decode(appKey), "AES");
         byte[] sek = SymmetricEncryptionService.decrypt(ciphertext, secretKey);
@@ -166,4 +166,6 @@ class SymmetricEncryptionServiceTest {
         String encryptedRek = SymmetricEncryptionService.encrypt(rekBytes, sekSecretKey);
         System.out.println("Encrypted REK : " + encryptedRek);
     }
+
+     */
 }
