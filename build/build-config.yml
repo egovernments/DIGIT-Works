@@ -142,3 +142,12 @@ config:
       - work-dir: "utilities/expense-cronjob"
         image-name: "expense-cronjob"
         dockerfile: "utilities/expense-cronjob/Dockerfile"
+
+# reference-adapters
+  - name: "builds/digit-works/reference-adapters/ifms-adapter"
+    build:
+      - work-dir: "reference-adapters/ifms-adapter"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "ifms-adapter"
+      - work-dir: "reference-adapters/ifms-adapter/src/main/resources/db"
+        image-name: "ifms-adapter-db"
