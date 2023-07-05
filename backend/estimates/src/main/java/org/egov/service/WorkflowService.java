@@ -172,10 +172,17 @@ public class WorkflowService {
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
         if(workflow.getAction().equals("SENDBACK") && CollectionUtils.isEmpty(workflow.getAssignees())) {
-            String assignees =  callWorkFlowForAssignees(request);
-            List<String> uuids = new ArrayList<>();
-            uuids.add(assignees);
-            workflow.setAssignees(uuids);
+            String assignee = null;
+            List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
+            String nextState = getNextStateValueForProcessInstance(processInstanceList.get(0));
+            for(ProcessInstance processInstance: processInstanceList){
+                if(processInstance.getState().getUuid().equals(nextState)) {
+                    assignee = processInstance.getAssignes().get(0).getUuid();
+                    List<String> uuids = new ArrayList<>();
+                    uuids.add(assignee);
+                    workflow.setAssignees(uuids);
+                }
+            }
         }
 
         ProcessInstance processInstance = new ProcessInstance();
@@ -205,6 +212,16 @@ public class WorkflowService {
         return processInstance;
     }
 
+    private String getNextStateValueForProcessInstance(ProcessInstance processInstance){
+            List<Action> actions = processInstance.getState().getActions();
+            String nextState = null;
+            for(Action action: actions) {
+                if (action.getAction().equals("SENDBACK")) {
+                     nextState = action.getNextState();
+                }
+            }
+            return nextState;
+    }
     /*
      * @param processInstances
      */
@@ -249,13 +266,14 @@ public class WorkflowService {
         return response.getProcessInstances().get(0).getState();
     }
 
-    private String callWorkFlowForAssignees(EstimateRequest estimateRequest) {
+    private List<ProcessInstance> callWorkFlowForAssignees(EstimateRequest estimateRequest) {
         log.info("WorkflowService::callWorkFlow");
         ProcessInstanceResponse response = null;
         StringBuilder url = getprocessInstanceHistorySearchURL(estimateRequest.getEstimate().getTenantId(), estimateRequest.getEstimate().getEstimateNumber(), true);
         Object optional = repository.fetchResult(url, estimateRequest);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-        return response.getProcessInstances().get(1).getAssignes().get(0).getUuid();
+        //return response.getProcessInstances().get(1).getAssignes().get(0).getUuid();
+        return response.getProcessInstances();
     }
 
     public StringBuilder getprocessInstanceSearchURL(String tenantId, String estimateNumber) {
