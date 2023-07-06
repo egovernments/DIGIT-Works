@@ -182,9 +182,6 @@ public class WorkflowService {
                         assignee = processInstance.getAssignes().get(0).getUuid();
                         uuids.add(assignee);
                         workflow.setAssignees(uuids);
-                    }else{
-                        uuids.add(estimate.getAuditDetails().getCreatedBy());
-                        workflow.setAssignees(uuids);
                     }
                 }
             }
