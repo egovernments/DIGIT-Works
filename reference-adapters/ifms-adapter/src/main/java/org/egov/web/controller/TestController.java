@@ -1,17 +1,15 @@
 package org.egov.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 import org.egov.service.PaymentInstructionService;
 import org.egov.service.VirtualAllotmentService;
 import org.egov.web.models.jit.PaymentInstruction;
-import org.egov.web.models.jit.SanctionAllotmentRequest;
+import org.egov.web.models.jit.SchedulerRequest;
 import org.egov.web.models.bill.PaymentRequest;
 import org.egov.service.IfmsService;
 import org.egov.utils.AuthenticationUtils;
 import org.egov.utils.JitRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
@@ -93,9 +89,9 @@ public class TestController {
     }
 
     @RequestMapping(path = "/create-sanction-allotments", method = RequestMethod.POST)
-    public ResponseEntity<Object> createSanctionAllotments(@RequestBody SanctionAllotmentRequest allotmentRequest) {
+    public ResponseEntity<Object> createSanctionAllotments(@RequestBody SchedulerRequest schedulerRequest) {
         try {
-            virtualAllotmentService.generateVirtualAllotment(allotmentRequest);
+            virtualAllotmentService.generateVirtualAllotment(schedulerRequest.getRequestInfo());
             ResponseEntity<Object> responseEntity = new ResponseEntity<>("Generated", HttpStatus.OK);
             return responseEntity;
         } catch (Exception e) {

@@ -43,10 +43,7 @@ public class VirtualAllotmentService {
     @Autowired
     SanctionDetailsRepository sanctionDetailsRepository;
 
-    public void generateVirtualAllotment(SanctionAllotmentRequest allotmentRequest) {
-
-        RequestInfo requestInfo = allotmentRequest.getRequestInfo();
-
+    public void generateVirtualAllotment(RequestInfo requestInfo) {
         List<String> tenants = getTenants(requestInfo);
 
         if (tenants != null && !tenants.isEmpty()) {

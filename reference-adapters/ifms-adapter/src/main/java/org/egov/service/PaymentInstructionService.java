@@ -3,6 +3,7 @@ package org.egov.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.producer.Producer;
 import org.egov.config.IfmsAdapterConfig;
@@ -121,7 +122,7 @@ public class PaymentInstructionService {
                     selectedSanction.getFundsSummary().getAuditDetails().setLastModifiedBy(piRequest.getAuditDetails().getLastModifiedBy());
                 }
                 piRepository.save(Collections.singletonList(piRequest), selectedSanction.getFundsSummary(), paymentStatus);
-                updatePiForIndexer(paymentRequest, piRequest);
+                updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
             } else {
                 paymentStatus = PaymentStatus.FAILED;
             }
@@ -224,7 +225,7 @@ public class PaymentInstructionService {
         billUtils.updatePaymentsData(paymentRequest);
     }
 
-    public void updatePiForIndexer(PaymentRequest paymentRequest, PaymentInstruction paymentInstruction) {
+    public void updatePiForIndexer(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         try {
             PaymentInstruction pi = (PaymentInstruction) paymentInstruction;
             pi.setPaDetails(null);
@@ -237,7 +238,7 @@ public class PaymentInstructionService {
                 beneficiary.setBenfAccountType(null);
             }
             Map<String, Object> indexerRequest = new HashMap<>();
-            indexerRequest.put("RequestInfo", paymentRequest.getRequestInfo());
+            indexerRequest.put("RequestInfo", requestInfo);
             indexerRequest.put("paymentInstruction", pi);
             producer.push(adapterConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
 

@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @Getter
 @Setter
-public class SanctionAllotmentRequest {
+public class SchedulerRequest {
 
     @JsonProperty("RequestInfo")
     @Valid
