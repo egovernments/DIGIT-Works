@@ -1,5 +1,6 @@
 package org.egov.utils;
 
+import org.apache.commons.io.IOUtils;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.enc.AsymmetricEncryptionService;
 import org.egov.enc.SymmetricEncryptionService;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -36,9 +39,10 @@ public class AuthenticationUtils {
         // Commenting loading of public key from file because will load this from application.properties
 //        String fileName = config.getIfmsJitPublicKeyFilePath();
 //        Resource resource = resourceLoader.getResource(fileName);
-        Resource resource = resourceLoader.getResource("classpath:publicKey");
-        String publicKeyPath = resource.getFile().getAbsolutePath();
-        publicKey = PublicKeyLoader.getPublicKeyFromByteFile(publicKeyPath);
+//        Resource resource = resourceLoader.getResource("classpath:publicKey");
+//        InputStream publicKeyFile = resource.getInputStream();
+//        String res = IOUtils.toString(publicKeyFile, StandardCharsets.UTF_8.name());
+//        publicKey = PublicKeyLoader.getPublicKeyFromByteFile(res);
 //        publicKey = getPublicKey();
     }
 
