@@ -4,11 +4,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.util.GenderUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillRequest;
@@ -36,6 +38,9 @@ public class EnrichmentUtil {
 
     @Autowired
     private IdgenUtil idgenUtil;
+
+    @Autowired
+    private GenderUtil genderUtil;
 
     public BillRequest encrichBillForCreate(BillRequest billRequest) {
 
@@ -66,7 +71,12 @@ public class EnrichmentUtil {
             billDetail.getPayee().setParentId(billDetail.getBillId());
             billDetail.getPayee().setAuditDetails(audit);
             billDetail.getPayee().setStatus(Status.ACTIVE);
-            
+
+            List<String> Ids = new ArrayList<>();
+            Ids.add(billDetail.getPayee().getIdentifier());
+            Object additionalDetails = genderUtil.getGenderDetails(billRequest.getRequestInfo(),billDetail.getPayee().getTenantId(),Ids);
+            billDetail.getPayee().setAdditionalDetails(additionalDetails);
+
             for (LineItem lineItem : billDetail.getLineItems()) {
                 lineItem.setId(UUID.randomUUID().toString());
                 lineItem.setAuditDetails(audit);
