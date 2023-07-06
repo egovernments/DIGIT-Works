@@ -6,6 +6,7 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.ServiceRequestRepository;
+import org.egov.web.models.Pagination;
 import org.egov.web.models.bill.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -84,6 +85,37 @@ public class BillUtils {
 
 		log.info(paymentResponse.toString());
 		return paymentResponse.getPayments();
+	}
+
+	public @Valid Object fetchBillFromCalculator(PaymentRequest paymentRequest, List<String> billNumbers) {
+		RequestInfo requestInfo = paymentRequest.getRequestInfo();
+		String tenantId = paymentRequest.getPayment().getTenantId();
+		Map<String, Object> searchCriteria = new HashMap<>();
+		searchCriteria.put("tenantId", tenantId);
+		searchCriteria.put("billNumbers", billNumbers);
+		Map<String, Object> requestParams = new HashMap<>();
+		requestParams.put("RequestInfo", requestInfo);
+		requestParams.put("searchCriteria", searchCriteria);
+		Pagination pagination = Pagination.builder().limit(billNumbers.size()).offSet(0).build();
+		requestParams.put("pagination", pagination);
+
+		return fetchBillCalculatorData(requestParams);
+	}
+
+	public @Valid Object fetchBillCalculatorData(Object billRequest) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getBillCalculatorHost()).append(config.getBillCalculatorSearchEndPoint());
+		Object response = new HashMap<>();
+		Object billCalcResponse = new Object();
+		try {
+			response = restTemplate.postForObject(uri.toString(), billRequest, Map.class);
+			billCalcResponse = mapper.convertValue(response, Object.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+		}
+
+		log.info(billCalcResponse.toString());
+		return billCalcResponse;
 	}
 
 

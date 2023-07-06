@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.models.individual.Individual;
+import org.egov.common.producer.Producer;
+import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
 import org.egov.tracer.model.CustomException;
@@ -37,25 +39,24 @@ public class PaymentInstructionService {
 
     @Autowired
     BillUtils billUtils;
-
     @Autowired
     BankAccountUtils bankAccountUtils;
-
     @Autowired
     IndividualUtils individualUtils;
-
     @Autowired
     OrganisationUtils organisationUtils;
     @Autowired
     PaymentInstructionEnrichment piEnrichment;
-
     @Autowired
     IfmsService ifmsService;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
     PIRepository piRepository;
-
+    @Autowired
+    Producer producer;
+    @Autowired
+    IfmsAdapterConfig adapterConfig;
     public PaymentInstruction processPaymentRequestForPI(PaymentRequest paymentRequest) {
         PaymentInstruction piRequest = null;
         PaymentStatus paymentStatus = null;
@@ -91,6 +92,7 @@ public class PaymentInstructionService {
                         piRequest.setPiSuccessDesc(piSucessDescrp);
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
+                        piRequest.setPiStatus(PIStatus.FAILED);
                         piRequest.setPiErrorResp(jitResponse.getErrorMsg());
                     }
                 } catch (Exception e) {
@@ -119,6 +121,7 @@ public class PaymentInstructionService {
                     selectedSanction.getFundsSummary().getAuditDetails().setLastModifiedBy(piRequest.getAuditDetails().getLastModifiedBy());
                 }
                 piRepository.save(Collections.singletonList(piRequest), selectedSanction.getFundsSummary(), paymentStatus);
+                updatePiForIndexer(paymentRequest, piRequest);
             } else {
                 paymentStatus = PaymentStatus.FAILED;
             }
@@ -135,7 +138,6 @@ public class PaymentInstructionService {
 
 
     private List<Beneficiary> getBeneficiariesFromPayment(PaymentRequest paymentRequest) throws Exception {
-        log.info("paymentRequest : " + paymentRequest);
 
         // Get the list of bills based on payment request
         List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
@@ -222,14 +224,36 @@ public class PaymentInstructionService {
         billUtils.updatePaymentsData(paymentRequest);
     }
 
-    public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
+    public void updatePiForIndexer(PaymentRequest paymentRequest, PaymentInstruction paymentInstruction) {
+        try {
+            PaymentInstruction pi = (PaymentInstruction) paymentInstruction;
+            pi.setPaDetails(null);
+            for (Beneficiary beneficiary : pi.getBeneficiaryDetails()) {
+                beneficiary.setBenefName(null);
+                beneficiary.setBenfAcctNo(null);
+                beneficiary.setBenfBankIfscCode(null);
+                beneficiary.setBenfMobileNo(null);
+                beneficiary.setBenfAddress(null);
+                beneficiary.setBenfAccountType(null);
+            }
+            Map<String, Object> indexerRequest = new HashMap<>();
+            indexerRequest.put("RequestInfo", paymentRequest.getRequestInfo());
+            indexerRequest.put("paymentInstruction", pi);
+            producer.push(adapterConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
 
+        } catch (Exception e) {
+            log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
+        }
+    }
+
+    public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
         searchValidator(piSearchRequest.getSearchCriteria());
         List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchRequest);
 
         log.info("Sending search response");
         return paymentInstructions;
     }
+
     public void searchValidator(PISearchCriteria piSearchCriteria){
 
         if(CollectionUtils.isEmpty(piSearchCriteria.getIds()) && StringUtils.isEmpty(piSearchCriteria.getJitBillNo())

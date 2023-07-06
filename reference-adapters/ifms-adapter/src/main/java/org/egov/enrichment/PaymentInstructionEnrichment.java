@@ -2,6 +2,7 @@ package org.egov.enrichment;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -156,6 +157,8 @@ public class PaymentInstructionEnrichment {
                 .piStatus(piStatus)
                 .build();
         enrichPiRequestForInsert(piRequest, paymentRequest, selectedSanction, hasFunds);
+        // update piRequest for payment search indexer
+        updateBillFieldsForIndexer(piRequest, paymentRequest);
         return piRequest;
     }
 
@@ -396,6 +399,39 @@ public class PaymentInstructionEnrichment {
         }
         return headCodeMap;
     }
+
+    private void updateBillFieldsForIndexer(PaymentInstruction paymentInstruction, PaymentRequest paymentRequest) {
+        try {
+            // Get the list of bills based on payment request
+            List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
+            Map<String, Object>  additionalDetails = new HashMap<>();
+            List<String> billNumber = new ArrayList<>();
+            List<String> referenceId = new ArrayList<>();
+            if (billList != null && !billList.isEmpty()) {
+                for (Bill bill: billList) {
+                    billNumber.add(bill.getBillNumber());
+                }
+            }
+            billNumber = billNumber.stream().distinct().collect(Collectors.toList());
+            Object billCalculatorResponse =  billUtils.fetchBillFromCalculator(paymentRequest, billNumber);
+            JsonNode node = objectMapper.valueToTree(billCalculatorResponse);
+            JsonNode billsNode= node.get("bills");
+            if (billsNode.isArray()) {
+                for (JsonNode bill : billsNode) {
+                    referenceId.add(bill.get("contractNumber").asText());
+                }
+            }
+            // Convert the array to a Set to get distinct elements
+            referenceId = referenceId.stream().distinct().collect(Collectors.toList());
+            additionalDetails.put("billNumber", billNumber);
+            additionalDetails.put("referenceId", referenceId);
+            paymentInstruction.setAdditionalDetails(additionalDetails);
+        } catch (Exception e) {
+            log.error("Exception in PaymentInstructionEnrichment:updateBillFieldsForIndexer : " + e);
+        }
+    }
+
+
 
 
 }
