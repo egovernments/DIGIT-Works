@@ -3,7 +3,6 @@ package org.egov.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.egov.common.models.individual.Individual;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
@@ -24,7 +23,6 @@ import org.egov.web.models.organisation.Organisation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -233,11 +231,10 @@ public class PaymentInstructionService {
         return paymentInstructions;
     }
     public void searchValidator(PISearchCriteria piSearchCriteria){
-        if(StringUtils.isEmpty(piSearchCriteria.getTenantId()))
-            throw new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory");
 
         if(CollectionUtils.isEmpty(piSearchCriteria.getIds()) && StringUtils.isEmpty(piSearchCriteria.getJitBillNo())
-            && StringUtils.isEmpty(piSearchCriteria.getMuktaReferenceId()) && StringUtils.isEmpty(piSearchCriteria.getPiStatus()))
+                && StringUtils.isEmpty(piSearchCriteria.getMuktaReferenceId()) && StringUtils.isEmpty(piSearchCriteria.getPiStatus())
+                && StringUtils.isEmpty(piSearchCriteria.getTenantId()))
             throw new CustomException("SEARCH_CRITERIA_MANDATORY", "Atleast one search parameter should be provided");
     }
 

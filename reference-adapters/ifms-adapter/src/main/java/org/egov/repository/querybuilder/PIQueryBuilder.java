@@ -39,6 +39,8 @@ public class PIQueryBuilder {
             + "(id, beneficiaryId, lineItemId, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
             + " VALUES (:id, :beneficiaryId, :lineItemId, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
 
+    public static final String PAYMENT_INSTRUCTION_DETAIL_STATUS_UPDATE = "UPDATE jit_payment_inst_details " +
+            "SET piApprovedId=:piApprovedId, piApprovalDate=:piApprovalDate, piStatus=:piStatus WHERE id=:id;";
 
 
     public static final String SEARCH_PI_QUERY = " SELECT jpi.id as jpiId, " +
