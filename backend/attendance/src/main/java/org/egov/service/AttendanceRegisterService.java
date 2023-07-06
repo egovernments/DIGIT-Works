@@ -12,6 +12,7 @@ import org.egov.kafka.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.web.models.*;
@@ -51,6 +52,8 @@ public class AttendanceRegisterService {
 
     @Autowired
     private StaffEnrichmentService staffEnrichmentService;
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     /**
      * Create Attendance register
@@ -99,8 +102,10 @@ public class AttendanceRegisterService {
             /*
                Make sure response register list should contain only those register for which logged-in is associated.
             */
-            String uuid = requestInfoWrapper.getRequestInfo().getUserInfo().getUuid();
-            Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(uuid);
+            Long userId = requestInfoWrapper.getRequestInfo().getUserInfo().getId();
+
+            String individualId = individualServiceUtil.getIndividualDetailsFromUserId(userId,requestInfoWrapper.getRequestInfo(), searchCriteria.getTenantId()).get(0).getId();
+            Set<String> registers = fetchRegistersAssociatedToLoggedInStaffUser(individualId);
             updateSearchCriteriaAndFetchAndFilterRegisters(registers, searchCriteria, resultAttendanceRegisters);
         }
         return resultAttendanceRegisters;
