@@ -231,11 +231,10 @@ public class PaymentInstructionService {
         return paymentInstructions;
     }
     public void searchValidator(PISearchCriteria piSearchCriteria){
-        if(StringUtils.isEmpty(piSearchCriteria.getTenantId()))
-            throw new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory");
 
         if(CollectionUtils.isEmpty(piSearchCriteria.getIds()) && StringUtils.isEmpty(piSearchCriteria.getJitBillNo())
-            && StringUtils.isEmpty(piSearchCriteria.getMuktaReferenceId()) && StringUtils.isEmpty(piSearchCriteria.getPiStatus()))
+                && StringUtils.isEmpty(piSearchCriteria.getMuktaReferenceId()) && StringUtils.isEmpty(piSearchCriteria.getPiStatus())
+                && StringUtils.isEmpty(piSearchCriteria.getTenantId()))
             throw new CustomException("SEARCH_CRITERIA_MANDATORY", "Atleast one search parameter should be provided");
     }
 
