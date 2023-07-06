@@ -182,6 +182,9 @@ public class WorkflowService {
                     if(assignee != null){
                         uuids.add(assignee);
                         workflow.setAssignees(uuids);
+                    }else{
+                        uuids.add(estimate.getAuditDetails().getCreatedBy());
+                        workflow.setAssignees(uuids);
                     }
                 }
             }
