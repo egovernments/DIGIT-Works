@@ -9,11 +9,15 @@ import org.egov.key.PublicKeyLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -36,14 +40,27 @@ public class AuthenticationUtils {
 
     @PostConstruct
     public void initialize() throws Exception {
-        // Commenting loading of public key from file because will load this from application.properties
-//        String fileName = config.getIfmsJitPublicKeyFilePath();
-//        Resource resource = resourceLoader.getResource(fileName);
-//        Resource resource = resourceLoader.getResource("classpath:publicKey");
-//        InputStream publicKeyFile = resource.getInputStream();
-//        String res = IOUtils.toString(publicKeyFile, StandardCharsets.UTF_8.name());
-//        publicKey = PublicKeyLoader.getPublicKeyFromByteFile(res);
-//        publicKey = getPublicKey();
+        InputStream publicKeyFile = null;
+        try {
+            Resource resource = resourceLoader.getResource("classpath:publicKey");
+            publicKeyFile = resource.getInputStream();
+            byte[] publicKeyBytes = getBytesFromInputStream(publicKeyFile);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            publicKey = keyFactory.generatePublic(keySpec);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private byte[] getBytesFromInputStream(InputStream inputStream) throws IOException, NoSuchAlgorithmException, IOException {
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            byteStream.write(buffer, 0, bytesRead);
+        }
+        return byteStream.toByteArray();
     }
 
     public String genEncryptedAppKey() throws NoSuchAlgorithmException {

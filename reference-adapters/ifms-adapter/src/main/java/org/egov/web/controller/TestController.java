@@ -103,17 +103,4 @@ public class TestController {
         }
     }
 
-    @RequestMapping(path = "/load-resource", method = RequestMethod.POST)
-    public ResponseEntity<Object> loadResource(@RequestBody SanctionAllotmentRequest allotmentRequest) {
-        InputStream mockDataFile = null;
-        try {
-            Resource resource = resourceLoader.getResource("classpath:publicKey");
-            mockDataFile = resource.getInputStream();
-            String res = IOUtils.toString(mockDataFile, StandardCharsets.UTF_8.name());
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }
