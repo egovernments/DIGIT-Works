@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.RegisterRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.util.MDMSUtils;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class AttendanceServiceValidator {
 
     @Autowired
     private RegisterRepository registerRepository;
+    @Autowired
+    private IndividualServiceUtil individualServiceUtil;
 
     /* Validates create Attendance Register request body */
     public void validateCreateAttendanceRegister(AttendanceRegisterRequest request) {
@@ -134,7 +137,8 @@ public class AttendanceServiceValidator {
             // If the user who is trying to update the register is not associated with the register, throw error that the user does not have permission to modify the attendance register
             if (registerFromDB.getStaff() != null) {
                 Set<String> staffUserIdsFromDB = registerFromDB.getStaff().stream().map(StaffPermission:: getUserId).collect(Collectors.toSet());
-                if (!staffUserIdsFromDB.contains(attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid())) {
+                String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceRegisterRequest.getRequestInfo().getUserInfo().getId(),attendanceRegisterRequest.getRequestInfo(), registerFromRequest.getTenantId()).get(0).getId();
+                if (!staffUserIdsFromDB.contains(individualId)) {
                     log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                     throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 }
