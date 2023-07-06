@@ -178,12 +178,13 @@ public class WorkflowService {
             for(ProcessInstance processInstance: processInstanceList){
                 if(processInstance.getState().getUuid().equals(nextState)) {
                     assignee = processInstance.getAssignes().get(0).getUuid();
+                    List<String> uuids = new ArrayList<>();
                     if(assignee != null){
-                        List<String> uuids = new ArrayList<>();
                         uuids.add(assignee);
                         workflow.setAssignees(uuids);
-                    } else{
-                        //do nothing
+                    } else {
+                        uuids.add(estimate.getAuditDetails().getCreatedBy());
+                        workflow.setAssignees(uuids);
                     }
                 }
             }
