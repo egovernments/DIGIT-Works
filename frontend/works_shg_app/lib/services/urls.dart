@@ -58,6 +58,7 @@ class UserServices {
   String get editProfile => 'user/profile/_update';
   String get changePassword => 'user/password/_update';
   String get sendOtp => 'user-otp/v1/_send';
+  String get logOut => 'user/_logout';
 }
 
 class WorkServices {

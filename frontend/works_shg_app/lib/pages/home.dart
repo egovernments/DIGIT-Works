@@ -70,6 +70,11 @@ class _HomePage extends State<HomePage> {
               listener: (context, orgState) {
             orgState.maybeWhen(
                 orElse: () => false,
+                error: (String? error) {
+                  Notifiers.getToastMessage(context,
+                      t.translate(i18.common.noOrgLinkedWithMob), 'ERROR');
+                  context.read<AuthBloc>().add(const AuthLogoutEvent());
+                },
                 loaded: (OrganisationListModel? organisationListModel) async {
                   var currLoc = await GlobalVariables.selectedLocale();
                   context.read<LocalizationBloc>().add(
