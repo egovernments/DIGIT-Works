@@ -54,4 +54,18 @@ class AuthRepository {
       rethrow;
     }
   }
+
+  Future logOutUser(
+      {Map<String, String>? queryParameters,
+      dynamic body,
+      required String url,
+      Options? options}) async {
+    try {
+      await _client.post(url,
+          queryParameters: queryParameters, data: body ?? {}, options: options);
+    } on DioError catch (ex) {
+      // Assuming there will be an errorMessage property in the JSON object
+      rethrow;
+    }
+  }
 }
