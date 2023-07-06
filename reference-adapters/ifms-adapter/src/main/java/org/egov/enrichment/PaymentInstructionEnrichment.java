@@ -145,8 +145,8 @@ public class PaymentInstructionEnrichment {
                 .ssuAllotmentId(selectedSanction.getAllotmentDetails().get(0).getSsuAllotmentId())
                 .allotmentTxnSlNo(String.valueOf(selectedSanction.getAllotmentDetails().get(0).getAllotmentSerialNo()))
                 .purpose("Mukta")
-                .billGrossAmount(totalAmount.toString())
-                .billNetAmount(totalAmount.toString())
+                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .beneficiaryDetails(beneficiaries)
                 .numBeneficiaries(beneficiaries.size())
                 .billNumberOfBenf(String.valueOf(beneficiaries.size()))
@@ -188,7 +188,7 @@ public class PaymentInstructionEnrichment {
 
         // Update beneficiary details
         for (Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
-            beneficiary.setId(UUID.randomUUID().toString());
+            beneficiary.setId(UUID.randomUUID().toString().substring(0,8) + "-" + time);
             beneficiary.setTenantId(tenantId);
             beneficiary.setMuktaReferenceId(muktaReferenceId);
             beneficiary.setPiId(piRequest.getId());
@@ -360,9 +360,8 @@ public class PaymentInstructionEnrichment {
                     .benfEmailId("")
                     .benfAddress(beneficiary.getBenfAddress())
                     .benfAccountType(beneficiary.getBenfAccountType())
-                    .benfAmount(beneficiary.getAmount().toString())
-                    .panNo("")
-                    .adhaarNumber("")
+                    .benfAmount(beneficiary.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                    .purpose("Mukta Payment")
                     .build();
             beneficiaryList.add(reqBeneficiary);
         }
