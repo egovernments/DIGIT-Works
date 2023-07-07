@@ -1727,73 +1727,11 @@ export const UICustomizations = {
 
       }
     },
-    MobileDetailsOnClick: (row, tenantId) => {
-      let link;
-      Object.keys(row).map((key) => {
-        if (key === "WORKS_BILL_NUMBER")
-          link = `/${window.contextPath}/employee/expenditure/view-bill?tenantId=${tenantId}&billNumber=${row[key]}`;
-      });
-      return link;
-    },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
-    populateReqCriteria: () => {
-      const tenantId = Digit.ULBService.getCurrentTenantId();
-
-      return {
-        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
-        params: { tenantId, businessServices:Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase") },
-        body: {},
-        config: {
-          enabled: true,
-          select: (data) => {
-            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
-              return {
-                "code": state?.state,
-                "i18nKey":`WF_${Digit.Utils.locale.getTransformedLocale(Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase"))}_STATUS_${state?.state}`,
-                "wfStatus":state?.state
-              }
-            })
-            return states  
-          },
-        },
-      };
-    },
-    selectionHandler: async (selectedRows,t) => {
-
-    /// here do expense calc search and get the response and send the list of bills to getCreatePaymentPayload
-      const ids = selectedRows?.map(row=> row?.original?.businessObject?.id)
-      
-      const result = await Digit.WorksService.searchBill({
-        "billCriteria": {
-          "tenantId": Digit.ULBService.getCurrentTenantId(),
-          ids,
-          // "businessService":[bsPurchaseBill,bsWageBill,bsSupervisionBill]
-          // "businessService":bsPurchaseBill
-        },
-         "pagination": {
-          "limit": 50,
-          "offSet": 0,
-          "sortBy": "ASC",
-          "order": "ASC"
-        }
-      })
-
-      const payload = getCreatePaymentPayload(result.bills);
-      let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_INITIATED_TOAST"}
-      try {
-        const response = await Digit.ExpenseService.createPayment(payload);
-        responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
-        return responseToReturn
-      } catch (error) {
-        responseToReturn.isSuccess = false
-        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
-        return responseToReturn
-      }
-    }
   },
   SearchPaymentInstruction: {
     customValidationCheck: (data) => {
