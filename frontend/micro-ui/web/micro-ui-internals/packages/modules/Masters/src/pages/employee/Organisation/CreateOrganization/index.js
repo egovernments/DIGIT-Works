@@ -26,8 +26,6 @@ const CreateOrganisation = () => {
         ],
         {
             select: (data) => {
-                const orgTypeObj = data?.[Digit.Utils.getConfigModuleName()]?.CreateOrganizationConfig[0].form.find(formObj => formObj.head === 'MASTERS_FUNCTIONAL_DETAILS').body.find(body => body.key === 'funDetails_orgType');
-                orgTypeObj.disable = isModify ? true : false;
                 return  data?.[Digit.Utils.getConfigModuleName()]?.CreateOrganizationConfig[0];
             },
         }

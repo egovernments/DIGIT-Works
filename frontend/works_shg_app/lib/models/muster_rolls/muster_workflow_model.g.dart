@@ -33,6 +33,9 @@ _$_ProcessInstances _$$_ProcessInstancesFromJson(Map<String, dynamic> json) =>
       assignes: (json['assignes'] as List<dynamic>?)
           ?.map((e) => Assignees.fromJson(e as Map<String, dynamic>))
           .toList(),
+      documents: (json['documents'] as List<dynamic>?)
+          ?.map((e) => WorkflowDocument.fromJson(e as Map<String, dynamic>))
+          .toList(),
       comment: json['comment'] as String?,
       nextActions: (json['nextActions'] as List<dynamic>?)
           ?.map((e) => NextActions.fromJson(e as Map<String, dynamic>))
@@ -51,6 +54,7 @@ Map<String, dynamic> _$$_ProcessInstancesToJson(_$_ProcessInstances instance) =>
       'action': instance.action,
       'auditDetails': instance.auditDetails,
       'assignes': instance.assignes,
+      'documents': instance.documents,
       'comment': instance.comment,
       'nextActions': instance.nextActions,
       'state': instance.workflowState,
@@ -64,6 +68,24 @@ _$_NextActions _$$_NextActionsFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$_NextActionsToJson(_$_NextActions instance) =>
     <String, dynamic>{
       'action': instance.action,
+    };
+
+_$_WorkflowDocument _$$_WorkflowDocumentFromJson(Map<String, dynamic> json) =>
+    _$_WorkflowDocument(
+      documentType: json['documentType'] as String?,
+      documentUid: json['documentUid'] as String?,
+      fileStoreId: json['fileStoreId'] as String?,
+      id: json['id'] as String?,
+      tenantId: json['tenantId'] as String?,
+    );
+
+Map<String, dynamic> _$$_WorkflowDocumentToJson(_$_WorkflowDocument instance) =>
+    <String, dynamic>{
+      'documentType': instance.documentType,
+      'documentUid': instance.documentUid,
+      'fileStoreId': instance.fileStoreId,
+      'id': instance.id,
+      'tenantId': instance.tenantId,
     };
 
 _$_Assignees _$$_AssigneesFromJson(Map<String, dynamic> json) => _$_Assignees(
