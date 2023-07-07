@@ -225,7 +225,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                 'NA',
                                             i18.attendanceMgmt.musterRollPeriod:
                                             '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                                            i18.common.status: 'WF_MUSTOR_${e.musterRollStatus}',
+                                            i18.common.status: 'CBO_MUSTER_${e.musterRollStatus}',
                                             Constants.activeInboxStatus : e.musterRollStatus == sentBackToCBOCode
                                                 ? 'false'
                                                 : 'true'
@@ -309,7 +309,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                           if(musterWorkFlowModel?.processInstances != null && musterWorkFlowModel!.processInstances!.isNotEmpty){
                                                             timeLineAttributes = musterWorkFlowModel.processInstances!.mapIndexed((i, e) =>
                                                                 DigitTimelineOptions(
-                                                                  title: t.translate('WF_MUSTOR_${e.workflowState?.state}'),
+                                                                  title: t.translate('CBO_MUSTER_${e.workflowState?.state}'),
                                                                   subTitle: DateFormats.getTimeLineDate(e.auditDetails?.lastModifiedTime ?? 0),
                                                                   isCurrentState: i == 0,
                                                                   comments: e.comment,

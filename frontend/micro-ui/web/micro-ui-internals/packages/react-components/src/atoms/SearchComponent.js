@@ -8,7 +8,7 @@ import LinkLabel from '../atoms/LinkLabel';
 import SubmitBar from "../atoms/SubmitBar";
 import Toast from "../atoms/Toast";
 import { FilterIcon, RefreshIcon } from "./svgindex";
-import HorizontalNav from "./HorizontalNav";
+import HorizontalNavV2 from "./HorizontalNavV2";
 
 const setUIConf = (uiConfig) => {
   if(uiConfig.additionalTabs)
@@ -16,10 +16,10 @@ const setUIConf = (uiConfig) => {
   return [{uiConfig}]
 }
 
-const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data}) => {
+const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data,activeLink,setActiveLink}) => {
   
   //whenever activeLink changes we'll change uiConfig
-  const [activeLink,setActiveLink] = useState(uiConfig?.configNavItems?.filter(row=>row.activeByDefault)?.[0]?.name)
+  // const [activeLink,setActiveLink] = useState(uiConfig?.configNavItems?.filter(row=>row.activeByDefault)?.[0]?.name)
   const [navConfig,setNavConfig] = useState(uiConfig?.configNavItems)
   const [allUiConfigs,setAllUiConfigs] = useState(setUIConf(uiConfig))
   const { t } = useTranslation();
@@ -76,7 +76,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
       return
     }
 
-    if(updatedFields?.length >= uiConfig?.minReqFields) {
+    if(updatedFields?.length >= (activeLink ? allUiConfigs?.filter(uiConf => activeLink?.name === uiConf.uiConfig.navLink)?.[0]?.uiConfig?.minReqFields : uiConfig?.minReqFields)) {
      // here based on screenType call respective dispatch fn
       dispatch({
         type: uiConfig?.type === "filter" ? "filterForm" : "searchForm",
@@ -130,7 +130,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   }
 
   return (
-    <HorizontalNav configNavItems={navConfig?.length > 0 ? navConfig : []} showNav={navConfig?.length > 0 ? true : false} activeLink={activeLink} setActiveLink={setActiveLink} fromSearchComp={true} >
+    <HorizontalNavV2 configNavItems={navConfig?.length > 0 ? navConfig : []} showNav={navConfig?.length > 0 ? true : false} activeLink={activeLink} setActiveLink={setActiveLink} fromSearchComp={true} horizontalLine={uiConfig?.horizontalLine}>
       <div className={'search-wrapper'}>
         {header && renderHeader()}
         <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
@@ -139,7 +139,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
             <div className={`search-field-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.formClassName?uiConfig?.formClassName:""}`}>
               <RenderFormFields 
                 // fields={uiConfig?.fields} 
-                fields={activeLink ? allUiConfigs?.filter(uiConf => activeLink === uiConf.uiConfig.navLink)?.[0]?.uiConfig?.fields : uiConfig?.fields}
+                fields={activeLink ? allUiConfigs?.filter(uiConf => activeLink?.name === uiConf.uiConfig.navLink)?.[0]?.uiConfig?.fields : uiConfig?.fields}
                 control={control} 
                 formData={formData}
                 errors={errors}
@@ -167,7 +167,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
           onClose={closeToast} />
         }
       </div>
-    </HorizontalNav>
+    </HorizontalNavV2>
   )
 }
 
