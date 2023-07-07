@@ -45,7 +45,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     
     //here I am just checking state.searchForm has all empty keys or not(when clicked on clear search)
     useEffect(() => {
-        if(apiDetails?.minParametersForSearchForm !== 0 && Object.keys(state.searchForm).length > 0 && !Object.keys(state.searchForm).some(key => state.searchForm[key]!=="") && type==="search" && activeLink?.name !== "Pending for action"){
+        if(apiDetails?.minParametersForSearchForm !== 0 && Object.keys(state.searchForm).length > 0 && !Object.keys(state.searchForm).some(key => state.searchForm[key]!=="") && type==="search" && activeLink?.minParametersForSearchForm !== 0){
             setShowResultsTable(false)
         }
         // else{

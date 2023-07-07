@@ -33,7 +33,7 @@ const InboxSearchComposer = ({configs}) => {
     );
     const [sessionFormData, setSessionFormData, clearSessionFormData] = mobileSearchSession;
     const [activeLink,setActiveLink] = useState(configs?.sections?.search?.uiConfig?.configNavItems?.filter(row=>row.activeByDefault)?.[0])
-    console.log(activeLink);
+    
     //for mobile view
     useEffect(() => {
         if (type) setPopup(true);
