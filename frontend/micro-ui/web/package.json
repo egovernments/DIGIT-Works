@@ -13,7 +13,6 @@
     "micro-ui-internals/packages/modules/Contracts",
     "micro-ui-internals/packages/modules/Estimate",
     "micro-ui-internals/packages/modules/Expenditure",
-    "micro-ui-internals/packages/modules/Masters",
     "micro-ui-internals/packages/Mukta"
   ],
   "homepage": "/works-ui",
