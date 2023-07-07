@@ -94,8 +94,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await AuthRepository(client.init()).logOutUser(
         url: Urls.userServices.logOut,
         queryParameters: {
-          'tenantId': GlobalVariables
-              .organisationListModel!.organisations!.first.tenantId
+          'tenantId': GlobalVariables.userRequestModel!['tenantId']
         },
         body: {'access_token': GlobalVariables.authToken},
         options: Options(extra: {"accessToken": GlobalVariables.authToken}),

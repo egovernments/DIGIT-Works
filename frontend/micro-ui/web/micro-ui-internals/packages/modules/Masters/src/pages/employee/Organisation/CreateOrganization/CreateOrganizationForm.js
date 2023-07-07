@@ -33,6 +33,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
     const [showDuplicateContactToast, setShowDuplicateContactToast] = useState(false)
     const [showValidToError, setShowValidToError] = useState(false)
+    const [showCBOToVendorError, setShowCBOToVendorError] = useState(false)
 
     const { mutate: CreateOrganisationMutation } = Digit.Hooks.organisation.useCreateOrganisation();
     const { mutate: UpdateOrganisationMutation } = Digit.Hooks.organisation.useUpdateOrganisation();
@@ -269,8 +270,10 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const closeToast = () => {
         setTimeout(() => {
             setShowDuplicateContactToast(false)
+            setShowCBOToVendorError(false)
         }, 10000);
     }
+    
 
 
     const onSubmit = async (data) => {
@@ -302,6 +305,10 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             setShowDuplicateContactToast(true)
             closeToast()
             return 
+        }
+
+        if(isModify && searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.functions?.[0]?.type.includes("CBO")){
+            setShowCBOToVendorError(true);
         }
 
         if((data?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)) < Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validFrom)){
@@ -355,6 +362,9 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         )}
         {showDuplicateContactToast && (
           <Toast warning={true} label={t("ES_COMMON_ORG_EXISTS_WITH_MOBILE_NUMBER")} isDleteBtn={true} onClose={() => setShowDuplicateContactToast(false)} />
+        )}
+        {showCBOToVendorError && (
+          <Toast warning={true} label={t("ORG_CBO_CANNOT_BE_CHANGE_TO_VENDOR")} isDleteBtn={true} onClose={() => setShowCBOToVendorError(false)} />
         )}
       </React.Fragment>
     );
