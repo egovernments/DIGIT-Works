@@ -1,7 +1,7 @@
 export const SearchPaymentInstructionConfig = {
   "tenantId": "pg",
   "moduleName": "commonMuktaUiConfig",
-  "SearchBillWMSConfig": [
+  "SearchPaymentInstructionConfig": [
     {
       "label": "EXP_SEARCH_PAYMENT_INS",
       "type": "search",
