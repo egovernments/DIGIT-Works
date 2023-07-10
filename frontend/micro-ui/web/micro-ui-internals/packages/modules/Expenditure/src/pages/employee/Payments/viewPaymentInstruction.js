@@ -6,16 +6,20 @@ import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 const ViewPaymentInstruction = () => {
   const { t } = useTranslation();
   const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
-  const { tenantId, billNumber } = Digit.Hooks.useQueryParams();
+  const { tenantId, piNumber } = Digit.Hooks.useQueryParams();
   const [showDataError, setShowDataError] = useState(null)
 
   const payload = {
-    billCriteria: {
+    "searchCriteria": {
       tenantId,
-      billNumbers: ["PB/2023-24/000433" ],
-      businessService: "EXPENSE.PURCHASE",
-    },
-    pagination: { limit: 10, offSet: 0, sortBy: "ASC", order: "ASC"}
+      piNumber
+  },
+  "pagination": {
+      "limit": "10",
+      "offset": "0",
+      "sortBy": "",
+      "order": "ASC"
+  } 
   }
   const {isLoading, data, isError, isSuccess, error} = Digit.Hooks.paymentInstruction.useViewPaymentInstruction({tenantId, data: payload, config: { cacheTime:0 }})
   
@@ -27,28 +31,35 @@ const ViewPaymentInstruction = () => {
 
   return (
     <React.Fragment>
-      <Header className="works-header-view">{t("EXP_PAYMENT_INSTRUCTION")}</Header>
+      <Header className="works-header-view">{t("EXP_PAYMENT_INS")}</Header>
       {
         showDataError === null && (
           <ApplicationDetails
-            applicationDetails={data?.applicationDetails}
+            applicationDetails={data?.[0]?.applicationDetails}
             isLoading={isLoading}
-            applicationData={data?.applicationData}
+            applicationData={data?.[0]?.applicationData}
             moduleCode="AttendenceMgmt"
-            isDataLoading={false}
-            workflowDetails={data?.workflowDetails}
             showTimeLine={false}
-            timelineStatusPrefix={`WF_${businessService}_`}
-            applicationNo={billNumber}
             businessService={businessService}
-            statusAttribute={"state"}
-            mutate={()=>{}}
             tenantId={tenantId}
           />
         )
       }
       {
-        showDataError && <Toast error={true} label={t("COMMON_ERROR_FETCHING_BILL_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
+        showDataError === null && (
+          <ApplicationDetails
+            applicationDetails={data?.[1]?.applicationDetails}
+            isLoading={isLoading}
+            applicationData={data?.[1]?.applicationData}
+            moduleCode="AttendenceMgmt"
+            showTimeLine={false}
+            businessService={businessService}
+            tenantId={tenantId}
+          />
+        )
+      }
+      {
+        showDataError && <Toast error={true} label={t("COMMON_ERROR_FETCHING_PI_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
       }
     </React.Fragment>
   )

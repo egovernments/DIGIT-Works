@@ -23,11 +23,12 @@ const SearchPaymentInstruction = () => {
       ],
       {
         select: (data) => {
-          
+          // debugger
             // const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchPaymentInstructionConfig[0];
-            const result =  SearchPaymentInstructionConfig?.SearchBillWMSConfig[0];
+            // const result =  SearchPaymentInstructionConfig?.SearchPaymentInstructionConfig[0];
             // const result =  SearchPIConfigNew?.SearchPaymentInstructionConfig[0];
-          
+            //mdms config
+            const result = data?.[Digit.Utils.getConfigModuleName()]?.SearchPaymentInstructionConfig[0]
             
           //for 2nd tab
               let configs =  Digit.Utils.preProcessMDMSConfigInboxSearch(t, result, "sections.search.uiConfig.additionalTabs[0].uiConfig.fields",{

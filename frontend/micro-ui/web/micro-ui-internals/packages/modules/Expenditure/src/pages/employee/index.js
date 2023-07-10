@@ -62,7 +62,7 @@ const ExpenditureBreadCrumbs = ({ location }) => {
       },
       {
         // path: `/${window.contextPath}/employee/expenditure/search-payment-instruction`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_PAYMENT_INS")}` : t("EXP_VIEW_PAYMENT_INS"),
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_PI")}` : t("EXP_VIEW_PI"),
         show: location.pathname.includes("/expenditure/view-payment-instruction") ? true : false,
         isBack: fromScreen && true,
       },
