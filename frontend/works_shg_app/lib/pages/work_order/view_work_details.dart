@@ -283,7 +283,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                             i18.attendanceMgmt.projectId:
                                                 e.additionalDetails?.projectId ?? 'NA',
                                             i18.common.location:
-                                                '${'${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}'}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
+                                                '${t.translate('${CommonMethods.getConvertedLocalizedCode('locality', subString: e.additionalDetails?.locality ?? 'NA')}')}, ${t.translate(CommonMethods.getConvertedLocalizedCode('ward', subString: e.additionalDetails?.ward ?? 'NA'))}',
                                             i18.attendanceMgmt.projectType:
                                                 'ES_COMMON_${e.additionalDetails?.projectType ?? 'NA'}',
                                             i18.attendanceMgmt.projectName:
@@ -361,12 +361,12 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                 // fileStoreList = ;
                                 attachedFiles = contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.documents!.where((d) => d.fileStore != null && d.status != 'INACTIVE')
                                     .map((e) => FileStoreModel(
-                                        name: e.documentType ?? '', fileStoreId: e.fileStore)),
+                                        name: e.documentType != 'OTHERS' ? e.documentType ?? '' : e.additionalDetails?.otherCategoryName ?? '', fileStoreId: e.fileStore)),
                                 ...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
                                     .map((e) => FileStoreModel(
                                     name: e.fileType != 'Others' ?  e.fileType ?? '' : e.fileName ?? '', fileStoreId: e.fileStoreId))] : contracts.contracts!.first.documents != null && contracts.contracts!.first.additionalDetails?.estimateDocs == null  ? [...contracts.contracts!.first.documents!.where((d) => d.fileStore != null && d.status != 'INACTIVE')
                                     .map((e) => FileStoreModel(
-                                    name: e.documentType ?? '', fileStoreId: e.fileStore))] : contracts.contracts!.first.documents == null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
+                                    name: e.documentType != 'OTHERS' ? e.documentType ?? '' : e.additionalDetails?.otherCategoryName ?? '', fileStoreId: e.fileStore))] : contracts.contracts!.first.documents == null && contracts.contracts!.first.additionalDetails?.estimateDocs != null ? [...contracts.contracts!.first.additionalDetails!.estimateDocs!.where((m) => m.fileStoreId != null)
                                     .map((e) => FileStoreModel(
                                     name: e.fileType != 'Others' ?  e.fileType ?? '' : e.fileName ?? '', fileStoreId: e.fileStoreId))] : [];
                               }

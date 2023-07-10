@@ -839,7 +839,7 @@ export const UICustomizations = {
 
 
       if (key === "CORE_COMMON_STATUS") {
-        return <span>{t(`WF_MUSTOR_${value}`)}</span>
+        return <span>{t(`WF_MR_STATUS_${value}`)}</span>
       }
 
       if(key === "MUSTER_WAGE_AMOUNT") {
@@ -1595,7 +1595,7 @@ export const UICustomizations = {
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
-        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
         return responseToReturn
       }
     }
@@ -1735,7 +1735,7 @@ export const UICustomizations = {
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
-        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
         return responseToReturn
       }
     }
@@ -1849,7 +1849,7 @@ export const UICustomizations = {
         return responseToReturn
       } catch (error) {
         responseToReturn.isSuccess = false
-        responseToReturn.label = "BILL_STATUS_PAYMENT_FAILED"
+        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
         return responseToReturn
       }
     }

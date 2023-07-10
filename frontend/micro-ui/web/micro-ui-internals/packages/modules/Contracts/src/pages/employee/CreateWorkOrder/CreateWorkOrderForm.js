@@ -124,7 +124,8 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                 approvers,
                 selectedApprover,
                 setSelectedApprover,
-                approverLoading
+                approverLoading,
+                isModify
             })
         )
     }, [approvers]);

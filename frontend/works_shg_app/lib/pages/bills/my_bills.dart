@@ -108,6 +108,22 @@ class _MyBillsPage extends State<MyBillsPage> {
                                 billList = bills.map((e) {
                                   if (e.bill?.businessService ==
                                       Constants.myBillsWageType) {
+                                    num deduction = 0;
+                                    for (var billDetail
+                                        in e.bill?.billDetails ?? []) {
+                                      List<PayableLineItems>? payableLineItems =
+                                          billDetail.payableLineItems;
+                                      if (payableLineItems != null &&
+                                          payableLineItems.isNotEmpty) {
+                                        for (var lineItem in payableLineItems) {
+                                          if (lineItem.type == 'DEDUCTION' &&
+                                              lineItem.status == 'ACTIVE') {
+                                            num amount = lineItem.amount ?? 0;
+                                            deduction += amount;
+                                          }
+                                        }
+                                      }
+                                    }
                                     return {
                                       i18.myBills.billType:
                                           'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
@@ -135,7 +151,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                                           ? '${DateFormats.getDateFromTimestamp(e.bill?.fromPeriod ?? 0)} - ${DateFormats.getDateFromTimestamp(e.bill?.toPeriod ?? 0)}'
                                           : i18.common.noValue,
                                       i18.myBills.netPayable:
-                                          (e.bill?.totalAmount ?? 0),
+                                          '₹ ${((e.bill?.totalAmount ?? 0) - deduction).ceil()}',
                                       i18.common.status:
                                           'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:
@@ -147,6 +163,23 @@ class _MyBillsPage extends State<MyBillsPage> {
                                     };
                                   } else if (e.bill?.businessService ==
                                       Constants.myBillsPurchaseType) {
+                                    num deduction = 0;
+
+                                    for (var billDetail
+                                        in e.bill?.billDetails ?? []) {
+                                      List<BillLineItems>? lineItems =
+                                          billDetail.lineItems;
+                                      if (lineItems != null &&
+                                          lineItems.isNotEmpty) {
+                                        for (var lineItem in lineItems) {
+                                          if (lineItem.type == 'DEDUCTION' &&
+                                              lineItem.status == 'ACTIVE') {
+                                            num amount = lineItem.amount ?? 0;
+                                            deduction += amount;
+                                          }
+                                        }
+                                      }
+                                    }
                                     return {
                                       i18.myBills.billType:
                                           'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
@@ -181,7 +214,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                                       i18.myBills.payeeName:
                                           e.bill?.payer?.identifier,
                                       i18.myBills.netPayable:
-                                          (e.bill?.totalAmount ?? 0),
+                                          '₹ ${((e.bill?.totalAmount ?? 0) - deduction).ceil()}',
                                       i18.common.status:
                                           'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:
@@ -192,6 +225,23 @@ class _MyBillsPage extends State<MyBillsPage> {
                                                   : 'none'
                                     };
                                   } else {
+                                    num deduction = 0;
+
+                                    for (var billDetail
+                                        in e.bill?.billDetails ?? []) {
+                                      List<PayableLineItems>? payableLineItems =
+                                          billDetail.payableLineItems;
+                                      if (payableLineItems != null &&
+                                          payableLineItems.isNotEmpty) {
+                                        for (var lineItem in payableLineItems) {
+                                          if (lineItem.type == 'DEDUCTION' &&
+                                              lineItem.status == 'ACTIVE') {
+                                            num amount = lineItem.amount ?? 0;
+                                            deduction += amount;
+                                          }
+                                        }
+                                      }
+                                    }
                                     return {
                                       i18.myBills.billType:
                                           'EXP_BILL_TYPE_${e.bill?.businessService ?? 'NA'}',
@@ -213,7 +263,7 @@ class _MyBillsPage extends State<MyBillsPage> {
                                       i18.myBills.payeeName:
                                           e.bill?.payer?.identifier,
                                       i18.myBills.netPayable:
-                                          (e.bill?.totalAmount ?? 0),
+                                          '₹ ${((e.bill?.totalAmount ?? 0) - deduction).ceil()}',
                                       i18.common.status:
                                           'BILL_STATUS_${e.bill?.wfStatus ?? 'NA'}',
                                       Constants.activeInboxStatus:

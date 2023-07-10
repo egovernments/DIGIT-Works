@@ -22,6 +22,7 @@ import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/blocs/my_bills/my_bills_inbox_bloc.dart';
 import 'package:works_shg_app/blocs/work_orders/decline_work_order.dart';
+import 'package:works_shg_app/data/init_client.dart';
 import 'package:works_shg_app/data/repositories/attendance_mdms.dart';
 import 'package:works_shg_app/data/repositories/common_repository/common_repository.dart';
 import 'package:works_shg_app/router/app_navigator_observer.dart';
@@ -168,13 +169,14 @@ class _MainApplicationState extends State<MainApplication> {
   @override
   Widget build(BuildContext context) {
     Client client = Client();
+    InitClient initClient = InitClient();
 
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => AppInitializationBloc(
             const AppInitializationState(),
-            MdmsRepository(client.init()),
+            MdmsRepository(initClient.init()),
           )..add(const AppInitializationSetupEvent(selectedLang: 'en_IN')),
           lazy: false,
         ),
@@ -264,12 +266,16 @@ class _MainApplicationState extends State<MainApplication> {
                                 null)
                         ? (context) => LocalizationBloc(
                               const LocalizationState.initial(),
-                              LocalizationRepository(client.init()),
+                              LocalizationRepository(initClient.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
                                 module:
                                     'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
-                                tenantId: appInitState.initMdmsModel!.tenant!
-                                    .tenantListModel!.first.code
+                                tenantId: appInitState
+                                    .initMdmsModel!
+                                    .commonMastersModel!
+                                    .stateInfoListModel!
+                                    .first
+                                    .code
                                     .toString(),
                                 locale: appInitState.digitRowCardItems!
                                     .firstWhere((e) => e.isSelected)
@@ -277,7 +283,7 @@ class _MainApplicationState extends State<MainApplication> {
                               ))
                         : (context) => LocalizationBloc(
                               const LocalizationState.initial(),
-                              LocalizationRepository(client.init()),
+                              LocalizationRepository(initClient.init()),
                             ),
                     child: MaterialApp.router(
                       title: 'MUKTA CBO App',

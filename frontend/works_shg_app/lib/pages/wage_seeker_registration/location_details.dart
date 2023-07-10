@@ -206,6 +206,15 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                                 context,
                                 t.translate(i18.wageSeeker.pinCodeValidation),
                                 'ERROR');
+                          } else if (form.value[pinCodeKey]
+                                  .toString()
+                                  .isNotEmpty &&
+                              int.parse(form.value[pinCodeKey].toString()) <
+                                  100000) {
+                            Notifiers.getToastMessage(
+                                context,
+                                t.translate(i18.wageSeeker.pinCodeValidation),
+                                'ERROR');
                           } else {
                             final locationDetails = LocationDetails(
                                 pinCode: form.value[pinCodeKey].toString(),

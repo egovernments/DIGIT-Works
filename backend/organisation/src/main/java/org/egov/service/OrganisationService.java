@@ -73,9 +73,13 @@ public class OrganisationService {
         organisationServiceValidator.validateUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         //userService.updateUser(orgRequest);
-        //individualService.updateIndividual(orgRequest);
+        individualService.updateIndividual(orgRequest);
         producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
-        notificationService.sendNotification(orgRequest,false);
+        try {
+            notificationService.sendNotification(orgRequest,false);
+        }catch (Exception e){
+            log.error("Exception while sending notification: " + e);
+        }
         return orgRequest;
     }
 

@@ -87,13 +87,29 @@ const UploadFileComposer = ({module, config, Controller, control, register, form
             
               <div className="field">
                 {
-                  item?.showTextInput ? 
-                    <TextInput 
-                      style={{ "marginBottom": "16px" }} 
-                      name={`${config?.name}.${item?.name}_name`} 
-                      placeholder={t('ES_COMMON_ENTER_NAME')}
-                      inputRef={register({minLength: 2})}/> : 
-                    null  
+                  item?.showTextInput &&
+                  <div>
+                    <Controller
+                      defaultValue={formData?.[`${config.name}`]?.[`${item?.name}_name`] || ""}
+                      render={({ onChange, ref, value }) => (
+                        <TextInput
+                          value={formData?.[`${config.name}`]?.[`${item?.name}_name`]}
+                          name={`${config?.name}.${item?.name}_name`}
+                          onChange={onChange}
+                          inputRef={register({minLength: 2})}
+                          errorStyle={errors?.[`${config.name}`]?.[`${item?.name}_name`]}
+                        />
+                      )}
+                      name={`${config?.name}.${item?.name}_name`}
+                      rules={{ pattern: /^[a-zA-Z0-9\. ]*$/, required: false }}
+                      control={control}
+                    />
+                    {formData?.[`${config.name}`]?.[`${item?.name}_name`] && errors && errors?.[`${config.name}`]?.[`${item?.name}_name`] && Object.keys(errors?.[`${config.name}`]?.[`${item?.name}_name`]).length ? (
+                      <CardLabelError style={{ fontSize: "12px", marginTop: "-20px" }}>
+                        {t("COMMON_PATTERN_ERR_MSG_DOCS_INPUT_TEXT")}
+                      </CardLabelError>) : null
+                    }
+                  </div>
                 }
                 <div  style={{marginBottom: '24px'}}>
                   <Controller
