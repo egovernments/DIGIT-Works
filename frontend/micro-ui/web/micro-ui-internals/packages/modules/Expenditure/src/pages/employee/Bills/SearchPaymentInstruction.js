@@ -27,6 +27,7 @@ const SearchPaymentInstruction = () => {
             // const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchPaymentInstructionConfig[0];
             // const result =  SearchPaymentInstructionConfig?.SearchPaymentInstructionConfig[0];
             // const result =  SearchPIConfigNew?.SearchPaymentInstructionConfig[0];
+          
             //mdms config
             const result = data?.[Digit.Utils.getConfigModuleName()]?.SearchPaymentInstructionConfig[0]
             

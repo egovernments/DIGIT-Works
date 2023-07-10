@@ -460,6 +460,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                       e.musterIndividualAdditionalDetails?.skillCode ?? '',
                                                                                   name: e.musterIndividualAdditionalDetails?.userName ??
                                                                                       '',
+                                                                                  gender: e.musterIndividualAdditionalDetails?.gender,
                                                                                   aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ??
                                                                                       '',
                                                                                   individualGaurdianName:
@@ -520,6 +521,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                           aadhaar:
                                                                               e.additionalDetails?.identifierId ??
                                                                                   '',
+                                                                          gender: e.additionalDetails?.gender,
                                                                           individualId:
                                                                               e.individualId,
                                                                           individualGaurdianName: e.additionalDetails?.individualGaurdianName ?? ''))
@@ -559,6 +561,11 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                   : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
                                                                                       ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.userName ?? e.additionalDetails?.individualName
                                                                                       : e.additionalDetails?.individualName ?? '',
+                                                                              gender: existingSkills.where((s) => s.individualId == e.individualId).toList().isNotEmpty && existingSkills.where((s) => s.individualId == e.individualId).first.gender != null
+                                                                                  ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).gender
+                                                                                  : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
+                                                                                  ? estimateMusterRoll.where((m) => m.individualId == e.individualId).first.musterIndividualAdditionalDetails?.gender ?? e.additionalDetails?.gender
+                                                                                  : e.additionalDetails?.gender ?? '',
                                                                               aadhaar: existingSkills.where((s) => s.individualId == e.individualId).toList().isNotEmpty
                                                                                   ? existingSkills.firstWhere((s) => s.individualId == e.individualId, orElse: () => IndividualSkills()).aadhaar
                                                                                   : estimateMusterRoll!.where((mu) => mu.individualId == e.individualId).toList().isNotEmpty
@@ -619,6 +626,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                           data.aadhaar =
                                                                               item1.aadhaar ??
                                                                                   '';
+                                                                          data.gender = item1.gender ?? '';
                                                                           data.individualGaurdianName =
                                                                               item1.individualGaurdianName ??
                                                                                   '';
@@ -731,6 +739,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                           data.aadhaar =
                                                                               item1.aadhaar ??
                                                                                   '';
+                                                                          data.gender = item1.gender ?? '';
                                                                           data.individualGaurdianName =
                                                                               item1.individualGaurdianName ??
                                                                                   '';

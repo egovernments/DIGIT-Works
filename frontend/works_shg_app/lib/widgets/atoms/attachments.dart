@@ -8,8 +8,10 @@ import '../../utils/common_methods.dart';
 
 class Attachments extends StatelessWidget {
   final String label;
+  final TextStyle? labelStyle;
   final List<FileStoreModel>? fileStoreList;
-  const Attachments(this.label, this.fileStoreList, {super.key});
+  const Attachments(this.label, this.fileStoreList,
+      {this.labelStyle, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +27,9 @@ class Attachments extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     label,
-                    style: DigitTheme
-                        .instance.mobileTheme.textTheme.headlineLarge
-                        ?.apply(color: const DigitColors().black),
+                    style: labelStyle ??
+                        DigitTheme.instance.mobileTheme.textTheme.headlineLarge
+                            ?.apply(color: const DigitColors().black),
                     textAlign: TextAlign.left,
                   ),
                 )
