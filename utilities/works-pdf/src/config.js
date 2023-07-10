@@ -28,33 +28,36 @@ module.exports = {
     estimate_template: process.env.ESTIMATE_TEMPLATE || "estimate",
     nominal_muster_roll_template:
       process.env.NOMINAL_MUSTER_ROLL_TEMPLATE || "nominal-muster-roll",
-    work_order_template:
-      process.env.WORK_ORDER_TEMPLATE || "work-order",
+    work_order_ip_template:
+      process.env.WORK_ORDER_TEMPLATE || "work-order_ip",
+    work_order_ia_template:
+      process.env.WORK_ORDER_TEMPLATE || "work-order_ia",  
     work_order_template_hindi:
       process.env.WORK_ORDER_TEMPLATE_HINDI || "work-order-hindi",
     work_order_template_odiya:
       process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya",
   },
   app: {
-    port: parseInt(process.env.APP_PORT) || 8080,
+    port: parseInt(process.env.APP_PORT || 8077) ,
     host: HOST,
     contextPath: process.env.CONTEXT_PATH || "/egov-pdf",
   },
   host: {
-    mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8083',
+    mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8099',
     pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8082',
     user: process.env.EGOV_USER_HOST || HOST,
-    workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
+    workflow: process.env.EGOV_WORKFLOW_HOST || 'http://localhost:8094',
     projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/',
     estimates: process.env.EGOV_ESTIMATE_HOST || 'http://localhost:8084/',
     musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
     contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086',
     organisation: process.env.EGOV_ORGANISATION_HOST || 'http://localhost:8087',
-    localization: process.env.EGOV_LOCALIZATION_HOST || 'http://localhost:8088',
+    localization: process.env.EGOV_LOCALIZATION_HOST || 'http://localhost:8098',
     expense: process.env.EXPENSE_SERVICE_HOST || 'http://localhost:8090',
     bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
     expense_calculator: process.env.EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
+    hrms: process.env.EGOV_HRMS_HOST || 'http://localhost:8095',
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -72,7 +75,8 @@ module.exports = {
     bankaccount_search: "/bankaccount-service/bankaccount/v1/_search",
     expense_calculator_estimate: "/expense-calculator/v1/_estimate",
     expense_calculator_search: "/expense-calculator/v1/_search",
-    localization_search: "/localization/messages/v1/_search"
+    localization_search: "/localization/messages/v1/_search",
+    hrms_search: "/egov-hrms/employees/_search"
   },
   constraints: {
     "beneficiaryIdByHeadCode": "Deduction_{tanentId}_{headcode}"

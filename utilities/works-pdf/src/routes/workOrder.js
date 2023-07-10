@@ -3,7 +3,7 @@ var router = express.Router();
 var url = require("url");
 var config = require("../config");
 
-var { search_organisation, search_contract, create_pdf, search_workflow, search_localization } = require("../api");
+var { search_organisation, search_contract, create_pdf, search_workflow, search_localization, search_hrms } = require("../api");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 const get = require("lodash.get");
 const { getStateLocalizationModule, getLanguageFromRequest, getCityLocalizationModule, getLocalizationByKey } = require("../utils/localization");
@@ -68,13 +68,21 @@ router.post(
                 if (ex.response && ex.response.data) console.log(ex.response.data);
                 return renderError(res, "Failed to query details of the workflow", 500);
             }
+            try {
+                resHrms = await search_hrms(tenantId, requestinfo);
+            }
+            catch (ex) {
+                if (ex.response && ex.response.data) console.log(ex.response.data);
+                return renderError(res, "Failed to fetch the result from HRMS", 500);
+            }
 
             // Get localizations as map
             let localizationMaps = await getLocalizaitons(requestinfo, tenantId);
             
 
             var contract = resContract.data;
-            var organisation = resOrg.data
+            var organisation = resOrg.data;
+            var hrms = resHrms.data;
             let worflow = resWorkFlow?.data || {};
             if (contract && contract.contracts && contract.contracts.length > 0 && organisation && organisation.organisations && organisation.organisations.length > 0 && worflow?.ProcessInstances?.length) {
                 var pdfResponse;
@@ -89,7 +97,12 @@ router.post(
                          pdfkey = config.pdf.work_order_template_odiya;
                         break;
                    default:
-                         pdfkey = config.pdf.work_order_template;
+                         if(contract.contracts[0].executingAuthority=="IA"){
+                            pdfkey = config.pdf.work_order_ia_template;
+                         }else{
+                            pdfkey = config.pdf.work_order_ip_template;
+                         }
+                         
                 }
 
                 contract.contracts[0].contactName = organisation.organisations[0].contactDetails[0].contactName
@@ -130,6 +143,39 @@ router.post(
                 var slaDate = workflowAuditDetails.createdTime + sla;
                 contract.contracts[0].pdfSlaDate = slaDate;
                 contract.contracts[0].pdfAcceptedDate  = workflowAuditDetails.createdTime;
+
+                let officerInChargeDetails = hrms.Employees.filter(emp => 
+                    emp.code == contract.contracts[0].additionalDetails.officerInChargeId);
+
+                contract.contracts[0].officerInChargeNumber=officerInChargeDetails[0].user.mobileNumber;
+                contract.contracts[0].officerInChargeName=get(contract.contracts[0], 'additionalDetails.officerInChargeName.name', null);
+ 
+                
+
+                var accountantDetails = new Map();
+                var accountantRoles=["WORK_ORDER_VIEWER", "BILL_ACCOUNTANT", "EMPLOYEE_COMMON", "BILL_VIEWER","ORG_VIEWER","BILL_CREATOR","MUSTER_ROLL_VERIFIER"];
+                for(var emp in hrms.Employees){
+                    var obj= hrms.Employees[emp];
+                    var roles= obj.user.roles;
+                    var user = obj.user;
+                    var roleCodes=[];
+                    for(var codes in roles){
+                        roleCodes.push(roles[codes].code);
+                    }
+                    let accountantRoleChecker = (accountantRoles, roleCodes) => roleCodes.every(v => accountantRoles.includes(v));
+                    if(roleCodes.length==accountantRoles.length && accountantRoleChecker){
+                        accountantDetails.set('name',obj.user.name);
+                        accountantDetails.set('mobileNumber', obj.user.mobileNumber);
+                        accountantDetails.set('designation',obj.assignments[0].designation);
+
+                    }
+
+                }
+                contract.contracts[0].accountantDetailsName=accountantDetails.get('name');
+                contract.contracts[0].accountantDetailsNumber=accountantDetails.get('mobileNumber');
+                contract.contracts[0].accountantDetailsDesignation=accountantDetails.get('designation');
+                
+
 
                 try {
                     pdfResponse = await create_pdf(

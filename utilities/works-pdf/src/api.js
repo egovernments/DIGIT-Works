@@ -475,6 +475,19 @@ async function create_bulk_pdf_pt(kafkaData) {
 
 }
 
+async function search_hrms(tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    sortOrder: "ASC",
+  };
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.hrms, config.paths.hrms_search),
+    data: requestinfo,
+    params,
+  });
+}
+
 module.exports = {
   pool,
   create_pdf,
@@ -498,5 +511,6 @@ module.exports = {
   upload_file_using_filestore,
   create_eg_payments_excel,
   reset_eg_payments_excel,
-  exec_query_eg_payments_excel
+  exec_query_eg_payments_excel,
+  search_hrms
 };
