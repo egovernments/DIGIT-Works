@@ -1,5 +1,6 @@
 package org.egov.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -116,6 +117,29 @@ public class BillUtils {
 
 		log.info(billCalcResponse.toString());
 		return billCalcResponse;
+	}
+
+
+	public @Valid List<Payment> fetchPaymentDetails(RequestInfo requestInfo, Set<String> paymentNumbers, String tenantId) {
+		Map<String, Object> searchCriteria = new HashMap<>();
+		searchCriteria.put("tenantId", tenantId);
+		searchCriteria.put("paymentNumbers", paymentNumbers);
+		Map<String, Object> requestParams = new HashMap<>();
+		requestParams.put("RequestInfo", requestInfo);
+		requestParams.put("paymentCriteria", searchCriteria);
+		Pagination pagination = Pagination.builder().limit(10).offSet(0).build();
+		requestParams.put("pagination", pagination);
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getBillHost()).append(config.getPaymentSearchEndPoint());
+		Object response = new HashMap<>();
+		PaymentResponse paymentResponse = null;
+		try {
+			response = restTemplate.postForObject(uri.toString(), requestParams, Map.class);
+			paymentResponse = mapper.convertValue(response, PaymentResponse.class);
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+		}
+		return paymentResponse.getPayments();
 	}
 
 
