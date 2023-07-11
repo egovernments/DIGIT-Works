@@ -54,7 +54,7 @@ public class GenderUtil {
         if(!individualGender.isEmpty()) {
             individualDetails.put(GENDER, individualGender.get(0));
         }else{
-            log.info("The Payee is not available in the individual index");
+            log.info("The Payee is not available in the individual index, Ids : ", ids);
         }
 
         return individualDetails;
