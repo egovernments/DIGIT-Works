@@ -307,18 +307,19 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             return 
         }
 
-        if(isModify && searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.functions?.[0]?.type.includes("CBO")){
-            setShowCBOToVendorError(true);
-        }
-
         if((data?.funDetails_validTo ? Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validTo) : Digit.Utils.pt.convertDateToEpoch(ORG_VALIDTO_DATE)) < Digit.Utils.pt.convertDateToEpoch(data?.funDetails_validFrom)){
             setShowValidToError(true);
         }
         else{
             const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
+            if(searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.functions?.[0]?.type.includes("CBO")){
+                setShowCBOToVendorError(true);
+            }
+            else{
             const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
             handleResponseForUpdate(orgPayload, bankAccountPayload);
+            }
         }else {
             const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
             if(userData?.user?.length > 0 && userData?.user?.[0]?.roles.some(role => role.code === "ORG_ADMIN")) {
