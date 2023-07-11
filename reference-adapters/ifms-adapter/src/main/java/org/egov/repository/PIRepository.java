@@ -228,4 +228,91 @@ public class PIRepository {
         }
         return paymentInstructionParamList;
     }
+
+    @Transactional
+    public void update(List<PaymentInstruction> piRequests, FundsSummary fundsSummary, PaymentStatus paymentStatus) {
+
+        log.debug("PIRepository save, the request object : " + piRequests);
+        List<MapSqlParameterSource> piRequestSqlParameterSources = getSqlParameterListForPIUpdateRequest(piRequests);
+        List<MapSqlParameterSource> paDetailsSqlParameterSources = getSqlParameterListForPAUpdateDetails(piRequests);
+        List<MapSqlParameterSource> beneficiarySqlParameterSources = getSqlParameterListForBenefUpdateDetails(piRequests);
+
+        namedJdbcTemplate.batchUpdate(PIQueryBuilder.PAYMENT_INSTRUCTION_UPDATE_QUERY, piRequestSqlParameterSources.toArray(new MapSqlParameterSource[0]));
+        namedJdbcTemplate.batchUpdate(PIQueryBuilder.PAYMENT_ADVICE_DETAILS_UPDATE_QUERY, paDetailsSqlParameterSources.toArray(new MapSqlParameterSource[0]));
+        namedJdbcTemplate.batchUpdate(PIQueryBuilder.BENEFICIARY_DETAILS_UPDATE_QUERY, beneficiarySqlParameterSources.toArray(new MapSqlParameterSource[0]));
+
+//        if (paymentStatus.equals(PIStatus.INITIATED)) {
+//            sanctionDetailsRepository.updateFundsSummary(Collections.singletonList(fundsSummary));
+//        }
+    }
+
+    private List<MapSqlParameterSource> getSqlParameterListForPIUpdateRequest(List<PaymentInstruction> piRequests) {
+
+        List<MapSqlParameterSource> piDetailParamMapList = new ArrayList<>();
+        for (PaymentInstruction piRequest: piRequests) {
+
+            MapSqlParameterSource piRequestParamMap = new MapSqlParameterSource();
+            piRequestParamMap.addValue("id", piRequest.getId());
+            piRequestParamMap.addValue("piStatus", piRequest.getPiStatus().toString());
+            piRequestParamMap.addValue("piSuccessCode", piRequest.getPiSuccessCode());
+            piRequestParamMap.addValue("piSuccessDesc", piRequest.getPiSuccessDesc());
+            piRequestParamMap.addValue("piApprovedId", piRequest.getPiApprovedId());
+            piRequestParamMap.addValue("piApprovalDate", piRequest.getPiApprovalDate());
+            piRequestParamMap.addValue("piErrorResp", piRequest.getPiErrorResp());
+            piRequestParamMap.addValue("additionalDetails", util.getPGObject(piRequest.getAdditionalDetails()));
+            piRequestParamMap.addValue("lastmodifiedby", piRequest.getAuditDetails().getLastModifiedBy());
+            piRequestParamMap.addValue("lastmodifiedtime", piRequest.getAuditDetails().getLastModifiedTime());
+            piDetailParamMapList.add(piRequestParamMap);
+        }
+        return piDetailParamMapList;
+    }
+
+    private List<MapSqlParameterSource> getSqlParameterListForPAUpdateDetails(List<PaymentInstruction> piRequests) {
+
+        List<MapSqlParameterSource> paDetailParamMapList = new ArrayList<>();
+        for (PaymentInstruction piRequest: piRequests) {
+            for (PADetails paDetails: piRequest.getPaDetails()) {
+                MapSqlParameterSource paRequestParamMap = new MapSqlParameterSource();
+                paRequestParamMap.addValue("id", paDetails.getId());
+                paRequestParamMap.addValue("paBillRefNumber", paDetails.getPaBillRefNumber());
+                paRequestParamMap.addValue("paFinYear", paDetails.getPaFinYear());
+                paRequestParamMap.addValue("paAdviceId", paDetails.getPaAdviceId());
+                paRequestParamMap.addValue("paAdviceDate", paDetails.getPaAdviceDate());
+                paRequestParamMap.addValue("paTokenNumber", paDetails.getPaTokenNumber());
+                paRequestParamMap.addValue("paTokenDate", paDetails.getPaTokenDate());
+                paRequestParamMap.addValue("paErrorMsg", paDetails.getPaErrorMsg());
+                paRequestParamMap.addValue("additionalDetails", util.getPGObject(paDetails.getAdditionalDetails()));
+                paRequestParamMap.addValue("lastmodifiedby", paDetails.getAuditDetails().getLastModifiedBy());
+                paRequestParamMap.addValue("lastmodifiedtime", paDetails.getAuditDetails().getLastModifiedTime());
+                paDetailParamMapList.add(paRequestParamMap);
+            }
+        }
+        return paDetailParamMapList;
+    }
+
+    private List<MapSqlParameterSource> getSqlParameterListForBenefUpdateDetails(List<PaymentInstruction> piRequests) {
+
+        List<MapSqlParameterSource> beneficiaryParamMapList = new ArrayList<>();
+        for (PaymentInstruction piRequest: piRequests) {
+            for (Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
+                MapSqlParameterSource beneficiaryParamMap = new MapSqlParameterSource();
+                beneficiaryParamMap.addValue("id", beneficiary.getId());
+                beneficiaryParamMap.addValue("voucherNumber", beneficiary.getVoucherNumber());
+                beneficiaryParamMap.addValue("voucherDate", beneficiary.getVoucherDate());
+                beneficiaryParamMap.addValue("utrNo", beneficiary.getUtrNo());
+                beneficiaryParamMap.addValue("utrDate", beneficiary.getUtrDate());
+                beneficiaryParamMap.addValue("endToEndId", beneficiary.getEndToEndId());
+                beneficiaryParamMap.addValue("challanNumber", beneficiary.getChallanNumber());
+                beneficiaryParamMap.addValue("challanDate", beneficiary.getChallanDate());
+                beneficiaryParamMap.addValue("paymentStatus", beneficiary.getPaymentStatus().toString());
+                beneficiaryParamMap.addValue("paymentStatusMessage", beneficiary.getPaymentStatusMessage());
+                beneficiaryParamMap.addValue("additionalDetails", util.getPGObject(beneficiary.getAdditionalDetails()));
+                beneficiaryParamMap.addValue("lastmodifiedby", beneficiary.getAuditDetails().getLastModifiedBy());
+                beneficiaryParamMap.addValue("lastmodifiedtime", beneficiary.getAuditDetails().getLastModifiedTime());
+                beneficiaryParamMapList.add(beneficiaryParamMap);
+            }
+        }
+        return beneficiaryParamMapList;
+    }
+
 }
