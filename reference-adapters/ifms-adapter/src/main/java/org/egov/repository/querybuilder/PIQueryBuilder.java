@@ -42,6 +42,12 @@ public class PIQueryBuilder {
     public static final String PAYMENT_INSTRUCTION_DETAIL_STATUS_UPDATE = "UPDATE jit_payment_inst_details " +
             "SET piApprovedId=:piApprovedId, piApprovalDate=:piApprovalDate, piStatus=:piStatus WHERE id=:id;";
 
+    public static final String PAYMENT_INSTRUCTION_DETAIL_PAG_UPDATE = "UPDATE jit_payment_advice_details " +
+            "SET paFinYear=:paFinYear, paAdviceId=:paAdviceId, paAdviceDate=:paAdviceDate, paBillRefNumber=:paBillRefNumber, " +
+            "paTokenNumber=:paTokenNumber, paTokenDate=:paTokenDate WHERE id=:id;";
+
+    public static final String PAYMENT_INSTRUCTION_STATUS_UPDATE_QUERY = "UPDATE jit_payment_inst_details " +
+            "SET piStatus=:piStatus WHERE id=:id;";
 
     public static final String SEARCH_PI_QUERY = " SELECT jpi.id as jpiId, " +
             "jpi.tenantId as jpiTenantId, " +

@@ -22,19 +22,15 @@ import java.util.*;
 public class PISService {
 
     @Autowired
-    MdmsUtils mdmsUtils;
+    private PaymentInstructionService paymentInstructionService;
     @Autowired
-    IfmsAdapterConfig ifmsAdapterConfig;
+    private IfmsService ifmsService;
     @Autowired
-    PaymentInstructionService paymentInstructionService;
+    private PIRepository piRepository;
     @Autowired
-    IfmsService ifmsService;
-    @Autowired
-    PIRepository piRepository;
-    @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
-    public void updatePIStatus(){
+    public void updatePIStatus(RequestInfo requestInfo){
         List<PaymentInstruction> paymentInstructions = getInitiatedPaymentInstructions();
 
         for(PaymentInstruction paymentInstruction : paymentInstructions){
