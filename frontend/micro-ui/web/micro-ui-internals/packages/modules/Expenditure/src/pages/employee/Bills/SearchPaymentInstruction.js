@@ -25,10 +25,15 @@ const SearchPaymentInstruction = () => {
         select: (data) => {
           
             // const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchPaymentInstructionConfig[0];
-            const result =  SearchPIConfigNew?.SearchPaymentInstructionConfig[0];
+            // const result =  SearchPaymentInstructionConfig?.SearchPaymentInstructionConfig[0];
+            // const result =  SearchPIConfigNew?.SearchPaymentInstructionConfig[0];
           
-              const configs =  Digit.Utils.preProcessMDMSConfigInboxSearch(t, result, "sections.search.uiConfig.fields",{
-              updateDependent : [
+            //mdms config
+            const result = data?.[Digit.Utils.getConfigModuleName()]?.SearchPaymentInstructionConfig[0]
+            
+          //for 2nd tab
+              let configs =  Digit.Utils.preProcessMDMSConfigInboxSearch(t, result, "sections.search.uiConfig.additionalTabs[0].uiConfig.fields",{
+              updateDependent : [            
                {
                  key : "createdFrom",
                  value : [new Date().toISOString().split("T")[0]]
@@ -39,6 +44,8 @@ const SearchPaymentInstruction = () => {
                }
              ]
            })
+           //for 1st tab
+              configs =  Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields")
            return configs
         },
       }

@@ -257,6 +257,7 @@ import ToggleSwitch from "./atoms/ToggleSwitch";
 import WeekPicker from "./atoms/WeekPicker";
 import CollapseAndExpandGroups from "./atoms/CollapseAndExpandGroups";
 import HorizontalNav from "./atoms/HorizontalNav";
+import HorizontalNavV2 from "./atoms/HorizontalNavV2";
 import NoResultsFound from "./atoms/NoResultsFound";
 import { ViewImages } from "./atoms/ViewImages";
 import InboxSearchComposer from "./hoc/InboxSearchComposer";
@@ -363,6 +364,7 @@ export {
   ViewDetailsCard,
   CollapseAndExpandGroups,
   HorizontalNav,
+  HorizontalNavV2,
   NoResultsFound,
   Amount,
   // Icons

@@ -1301,6 +1301,7 @@ MusterIndividualAdditionalDetails _$MusterIndividualAdditionalDetailsFromJson(
 mixin _$MusterIndividualAdditionalDetails {
   String? get userName => throw _privateConstructorUsedError;
   String? get fatherName => throw _privateConstructorUsedError;
+  String? get gender => throw _privateConstructorUsedError;
   String? get aadharNumber => throw _privateConstructorUsedError;
   String? get bankDetails => throw _privateConstructorUsedError;
   String? get userId => throw _privateConstructorUsedError;
@@ -1326,6 +1327,7 @@ abstract class $MusterIndividualAdditionalDetailsCopyWith<$Res> {
   $Res call(
       {String? userName,
       String? fatherName,
+      String? gender,
       String? aadharNumber,
       String? bankDetails,
       String? userId,
@@ -1351,6 +1353,7 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
   $Res call({
     Object? userName = freezed,
     Object? fatherName = freezed,
+    Object? gender = freezed,
     Object? aadharNumber = freezed,
     Object? bankDetails = freezed,
     Object? userId = freezed,
@@ -1367,6 +1370,10 @@ class _$MusterIndividualAdditionalDetailsCopyWithImpl<$Res,
       fatherName: freezed == fatherName
           ? _value.fatherName
           : fatherName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
               as String?,
       aadharNumber: freezed == aadharNumber
           ? _value.aadharNumber
@@ -1412,6 +1419,7 @@ abstract class _$$_MusterIndividualAdditionalDetailsCopyWith<$Res>
   $Res call(
       {String? userName,
       String? fatherName,
+      String? gender,
       String? aadharNumber,
       String? bankDetails,
       String? userId,
@@ -1436,6 +1444,7 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
   $Res call({
     Object? userName = freezed,
     Object? fatherName = freezed,
+    Object? gender = freezed,
     Object? aadharNumber = freezed,
     Object? bankDetails = freezed,
     Object? userId = freezed,
@@ -1452,6 +1461,10 @@ class __$$_MusterIndividualAdditionalDetailsCopyWithImpl<$Res>
       fatherName: freezed == fatherName
           ? _value.fatherName
           : fatherName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gender: freezed == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
               as String?,
       aadharNumber: freezed == aadharNumber
           ? _value.aadharNumber
@@ -1492,6 +1505,7 @@ class _$_MusterIndividualAdditionalDetails
   const _$_MusterIndividualAdditionalDetails(
       {this.userName,
       this.fatherName,
+      this.gender,
       this.aadharNumber,
       this.bankDetails,
       this.userId,
@@ -1509,6 +1523,8 @@ class _$_MusterIndividualAdditionalDetails
   @override
   final String? fatherName;
   @override
+  final String? gender;
+  @override
   final String? aadharNumber;
   @override
   final String? bankDetails;
@@ -1525,7 +1541,7 @@ class _$_MusterIndividualAdditionalDetails
 
   @override
   String toString() {
-    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, aadharNumber: $aadharNumber, bankDetails: $bankDetails, userId: $userId, accountHolderName: $accountHolderName, accountType: $accountType, skillCode: $skillCode, skillValue: $skillValue)';
+    return 'MusterIndividualAdditionalDetails(userName: $userName, fatherName: $fatherName, gender: $gender, aadharNumber: $aadharNumber, bankDetails: $bankDetails, userId: $userId, accountHolderName: $accountHolderName, accountType: $accountType, skillCode: $skillCode, skillValue: $skillValue)';
   }
 
   @override
@@ -1537,6 +1553,7 @@ class _$_MusterIndividualAdditionalDetails
                 other.userName == userName) &&
             (identical(other.fatherName, fatherName) ||
                 other.fatherName == fatherName) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.aadharNumber, aadharNumber) ||
                 other.aadharNumber == aadharNumber) &&
             (identical(other.bankDetails, bankDetails) ||
@@ -1558,6 +1575,7 @@ class _$_MusterIndividualAdditionalDetails
       runtimeType,
       userName,
       fatherName,
+      gender,
       aadharNumber,
       bankDetails,
       userId,
@@ -1587,6 +1605,7 @@ abstract class _MusterIndividualAdditionalDetails
   const factory _MusterIndividualAdditionalDetails(
       {final String? userName,
       final String? fatherName,
+      final String? gender,
       final String? aadharNumber,
       final String? bankDetails,
       final String? userId,
@@ -1603,6 +1622,8 @@ abstract class _MusterIndividualAdditionalDetails
   String? get userName;
   @override
   String? get fatherName;
+  @override
+  String? get gender;
   @override
   String? get aadharNumber;
   @override

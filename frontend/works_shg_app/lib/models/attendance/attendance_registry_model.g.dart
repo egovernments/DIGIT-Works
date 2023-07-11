@@ -162,6 +162,7 @@ _$_AttendeesAdditionalDetails _$$_AttendeesAdditionalDetailsFromJson(
         Map<String, dynamic> json) =>
     _$_AttendeesAdditionalDetails(
       individualName: json['individualName'] as String?,
+      gender: json['gender'] as String?,
       individualGaurdianName: json['individualGaurdianName'] as String?,
       individualID: json['individualID'] as String?,
       identifierId: json['identifierId'] as String?,
@@ -172,6 +173,7 @@ Map<String, dynamic> _$$_AttendeesAdditionalDetailsToJson(
         _$_AttendeesAdditionalDetails instance) =>
     <String, dynamic>{
       'individualName': instance.individualName,
+      'gender': instance.gender,
       'individualGaurdianName': instance.individualGaurdianName,
       'individualID': instance.individualID,
       'identifierId': instance.identifierId,

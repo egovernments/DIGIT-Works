@@ -26,6 +26,7 @@ class ProcessInstances with _$ProcessInstances {
     String? action,
     AuditDetails? auditDetails,
     List<Assignees>? assignes,
+    List<WorkflowDocument>? documents,
     String? comment,
     List<NextActions>? nextActions,
     @JsonKey(name: 'state') WorkflowState? workflowState,
@@ -47,6 +48,22 @@ class NextActions with _$NextActions {
     Map<String, dynamic> json,
   ) =>
       _$NextActionsFromJson(json);
+}
+
+@freezed
+class WorkflowDocument with _$WorkflowDocument {
+  const factory WorkflowDocument({
+    String? documentType,
+    String? documentUid,
+    String? fileStoreId,
+    String? id,
+    String? tenantId,
+  }) = _WorkflowDocument;
+
+  factory WorkflowDocument.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$WorkflowDocumentFromJson(json);
 }
 
 @freezed
