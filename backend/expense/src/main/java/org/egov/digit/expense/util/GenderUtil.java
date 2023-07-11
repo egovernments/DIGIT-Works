@@ -51,7 +51,11 @@ public class GenderUtil {
             throw new CustomException("PARSING_INDIVIDUAL_ERROR", "Failed to parse response from individual");
         }
 
-        individualDetails.put(GENDER, individualGender.get(0));
+        if(!individualGender.isEmpty()) {
+            individualDetails.put(GENDER, individualGender.get(0));
+        }else{
+            log.info("The Payee is not available in the individual index");
+        }
 
         return individualDetails;
     }
