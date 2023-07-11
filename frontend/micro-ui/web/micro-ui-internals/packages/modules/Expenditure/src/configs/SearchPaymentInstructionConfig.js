@@ -1,15 +1,12 @@
 export const SearchPaymentInstructionConfig = {
   "tenantId": "pg",
   "moduleName": "commonMuktaUiConfig",
-  "SearchBillWMSConfig": [
+  "SearchPaymentInstructionConfig": [
     {
       "label": "EXP_SEARCH_PAYMENT_INS",
       "type": "search",
-      "actionLabel": "ES_COMMON_DOWNLOAD_PAYMENT_ADVICE",
-      "actionRole": "BILL_ACCOUNTANT",
-      "actionLink": "expenditure/download-bill",
       "apiDetails": {
-        "serviceName": "/wms/expense/_search",
+        "serviceName": "/wms/ifms-pi/_search",
         "requestParam": {},
         "requestBody": {
           "inbox": {
@@ -18,8 +15,7 @@ export const SearchPaymentInstructionConfig = {
         },
         "minParametersForSearchForm": 1,
         "masterName": "commonUiConfig",
-        // "moduleName": "SearchPaymentInstruction",
-        "moduleName": "SearchBillWMSConfig",
+        "moduleName": "SearchPIWMS",
         "tableFormJsonPath": "requestBody.inbox",
         "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
         "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria"
@@ -37,9 +33,8 @@ export const SearchPaymentInstructionConfig = {
                   "minReqFields": 1,
                   "showFormInstruction": "PAYMENT_INS_SELECT_ONE_PARAM_TO_SEARCH",
                   "defaultValues": {
-                    "ward": "",
-                    "billType": "",
-                    "projectName": "",
+                    "piType": "",
+                    "jitBillNo": "",
                     "billNumber": "",
                     "status": "",
                     "createdFrom": "",
@@ -47,54 +42,20 @@ export const SearchPaymentInstructionConfig = {
                   },
                   "fields": [
                     {
-                      "label": "COMMON_WARD",
-                      "type": "locationdropdown",
-                      "isMandatory": false,
-                      "disable": false,
-                      "populators": {
-                        "name": "ward",
-                        "type": "ward",
-                        "optionsKey": "i18nKey",
-                        "allowMultiSelect": false,
-                        "optionsCustomStyle": {
-                          "top": "2.3rem"
-                        }
-                      }
-                    },
-                    {
-                      "label": "WORKS_PROJECT_TYPE",
+                      "label": "WORKS_PI_TYPE",
                       "type": "dropdown",
                       "isMandatory": false,
                       "disable": false,
                       "populators": {
-                        "name": "projectType",
+                        "name": "piType",
                         "optionsKey": "name",
                         "optionsCustomStyle": {
                           "top": "2.3rem"
                         },
                         "mdmsConfig": {
-                          "masterName": "ProjectType",
-                          "moduleName": "works",
-                          "localePrefix": "COMMON_MASTERS"
-                        }
-                      }
-                    },
-                    {
-                      "label": "WORKS_PROJECT_NAME",
-                      "type": "text",
-                      "isMandatory": false,
-                      "disable": false,
-                      "preProcess": {
-                        "convertStringToRegEx": [
-                          "populators.validation.pattern"
-                        ]
-                      },
-                      "populators": {
-                        "name": "projectName",
-                        "error": "PROJECT_PATTERN_ERR_MSG",
-                        "validation": {
-                          "pattern": "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$",
-                          "minlength": 2
+                          "masterName": "PaymentInstructionType",
+                          "moduleName": "expense",
+                          "localePrefix": "EXP_PI_TYPE",
                         }
                       }
                     },
@@ -113,20 +74,40 @@ export const SearchPaymentInstructionConfig = {
                       }
                     },
                     {
+                      "label": "EXP_PI_ID",
+                      "type": "text",
+                      "isMandatory": false,
+                      "disable": false,
+                      "preProcess": {
+                        "convertStringToRegEx": [
+                          "populators.validation.pattern"
+                        ]
+                      },
+                      "populators": {
+                        "name": "jitBillNo",
+                        // "error": "PROJECT_PATTERN_ERR_MSG",
+                        // "validation": {
+                        //   "pattern": "PI\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
+                        //   "minlength": 2
+                        // }
+                      }
+                    },
+                    {
                       "label": "CORE_COMMON_STATUS",
-                      "type": "apidropdown",
+                      "type": "dropdown",
                       "isMandatory": false,
                       "disable": false,
                       "populators": {
+                        "name": "status",
+                        "optionsKey": "name",
                         "optionsCustomStyle": {
                           "top": "2.3rem"
                         },
-                        "name": "status",
-                        "optionsKey": "i18nKey",
-                        "allowMultiSelect": false,
-                        "masterName": "commonUiConfig",
-                        "moduleName": "SearchBillWMSConfig",
-                        "customfn": "populateReqCriteria"
+                        "mdmsConfig": {
+                          "masterName": "PaymentInstructionStatus",
+                          "moduleName": "expense",
+                          "localePrefix": "EXP_PI_STATUS",
+                        }
                       }
                     },
                     {
@@ -177,77 +158,67 @@ export const SearchPaymentInstructionConfig = {
                   "name": "Pending for action",
                   "code": "PENDING_FOR_ACTION",
                   "activeByDefault": true,
+                  "minParametersForSearchForm":0
               },
               {
                   "name": "Open Search",
                   "code": "OPEN_SEARCH",
+                  "minParametersForSearchForm":1
               }
             ],
+            "horizontalLine":true,
             "navLink":"Pending for action",
             "headerStyle": null,
             "primaryLabel": "ES_COMMON_SEARCH",
             "secondaryLabel": "ES_COMMON_CLEAR_SEARCH",
-            "minReqFields": 1,
+            "minReqFields": 0,
             "showFormInstruction": "PAYMENT_INS_SELECT_ONE_PARAM_TO_SEARCH",
             "defaultValues": {
-              "ward": "",
-              "projectType": "",
-              "projectName": "",
+              "piType": "",
+              "jitBillNo": "",
               "billNumber": "",
+              "status": "",
+              "createdFrom": "",
+              "createdTo": ""
             },
             "fields": [
               {
-                "label": "COMMON_WARD",
-                "type": "locationdropdown",
-                "isMandatory": false,
-                "disable": false,
-                "populators": {
-                  "name": "ward",
-                  "type": "ward",
-                  "optionsKey": "i18nKey",
-                  "allowMultiSelect": false,
-                  "optionsCustomStyle": {
-                    "top": "2.3rem"
-                  }
-                }
-              },
-              {
-                "label": "WORKS_PROJECT_TYPE",
+                "label": "WORKS_PI_TYPE",
                 "type": "dropdown",
                 "isMandatory": false,
                 "disable": false,
                 "populators": {
-                  "name": "projectType",
+                  "name": "piType",
                   "optionsKey": "name",
                   "optionsCustomStyle": {
                     "top": "2.3rem"
                   },
                   "mdmsConfig": {
-                    "masterName": "ProjectType",
-                    "moduleName": "works",
-                    "localePrefix": "COMMON_MASTERS"
-                  }
-                }
-              },,
-              {
-                "label": "WORKS_PROJECT_NAME",
-                "type": "text",
-                "isMandatory": false,
-                "disable": false,
-                "preProcess": {
-                  "convertStringToRegEx": [
-                    "populators.validation.pattern"
-                  ]
-                },
-                "populators": {
-                  "name": "projectName",
-                  "error": "PROJECT_PATTERN_ERR_MSG",
-                  "validation": {
-                    "pattern": "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$",
-                    "minlength": 2
+                    "masterName": "PaymentInstructionType",
+                    "moduleName": "expense",
+                    "localePrefix": "EXP_PI_TYPE",
                   }
                 }
               },
+              // {
+              //   "label": "WORKS_PROJECT_ID",
+              //   "type": "text",
+              //   "isMandatory": false,
+              //   "disable": false,
+              //   "preProcess": {
+              //     "convertStringToRegEx": [
+              //       "populators.validation.pattern"
+              //     ]
+              //   },
+              //   "populators": {
+              //     "name": "projectNumber",
+              //     "error": "PROJECT_PATTERN_ERR_MSG",
+              //     "validation": {
+              //       "pattern": "PJ\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
+              //       "minlength": 2
+              //     }
+              //   }
+              // },
               {
                 "label": "WORKS_BILL_NUMBER",
                 "type": "text",
@@ -261,7 +232,26 @@ export const SearchPaymentInstructionConfig = {
                     "minlength": 2
                   }
                 }
-              }
+              },
+              {
+                "label": "EXP_PI_ID",
+                "type": "text",
+                "isMandatory": false,
+                "disable": false,
+                "preProcess": {
+                  "convertStringToRegEx": [
+                    "populators.validation.pattern"
+                  ]
+                },
+                "populators": {
+                  "name": "jitBillNo",
+                  // "error": "PROJECT_PATTERN_ERR_MSG",
+                  // "validation": {
+                  //   "pattern": "PI\\/[0-9]+-[0-9]+\\/[0-9]+\\/[0-9]+",
+                  //   "minlength": 2
+                  // }
+                }
+              },
             ]
           },
           "label": "",
@@ -273,47 +263,45 @@ export const SearchPaymentInstructionConfig = {
           "uiConfig": {
             "columns": [
               {
-                "label": "WORKS_BILL_NUMBER",
-                "jsonPath": "businessObject.billNumber",
+                "label": "EXP_PI_ID",
+                "jsonPath": "businessObject.jitBillNo",
                 "additionalCustomization": true
               },
               {
-                "label": "WORKS_PROJECT_NAME",
-                "jsonPath": "businessObject.additionalDetails.projectName",
+                "label": "EXP_PI_DATE",
+                "jsonPath": "businessObject.auditDetails.createdTime",
                 "additionalCustomization":true
               },
               {
-                "label": "ES_COMMON_LOCATION",
-                "jsonPath": "businessObject.additionalDetails",
+                "label": "EXP_NO_BENE",
+                "jsonPath": "businessObject.numBeneficiaries",
+                
+              },
+              {
+                "label": "EXP_NO_SUCC_PAYMENTS",
+                "jsonPath": "businessObject.beneficiaryDetails",
                 "additionalCustomization": true
               },
               {
-                "label": "ES_COMMON_CBO_NAME",
-                "jsonPath": "businessObject.additionalDetails.orgName"
-              },
-              {
-                "label": "WORKS_BILL_TYPE",
-                "jsonPath": "ProcessInstance.businessService",
+                "label": "EXP_NO_FAIL_PAYMENTS",
+                "jsonPath": "businessObject",
                 "additionalCustomization": true
               },
               {
                 "label": "CORE_COMMON_STATUS",
-                "jsonPath": "businessObject.paymentStatus",
+                "jsonPath": "businessObject.piStatus",
                 "additionalCustomization": true
               },
               {
-                "label": "EXP_BILL_AMOUNT",
-                "jsonPath": "businessObject.totalAmount",
+                "label": "ES_COMMON_TOTAL_AMOUNT",
+                "jsonPath": "businessObject.netAmount",
                 "additionalCustomization": true,
                 "headerAlign": "right"
               }
             ],
             "enableGlobalSearch": false,
             "enableColumnSort": true,
-            "resultsJsonPath": "items",
-            "showCheckBox": true,
-            "checkBoxActionLabel": "ES_COMMON_GENERATE_PAYMENT_ADVICE",
-            "showTableInstruction": "EXP_DOWNLOAD_BILL_INSTRUCTION"
+            "resultsJsonPath": "items"
           },
           "children": {},
           "show": true

@@ -92,9 +92,10 @@ const Urls = {
   },
 expense:{
   createPayment: "/expense/payment/v1/_create",
-  searchPayment: "/expense/payment/v1/_search",
+  searchPayment: "/ifms/pi/v1/_search",
   updatePayment: "/expense/payment/v1/_update",
-  regenerate : '/egov-pdf/bill/_generate'
+  regenerate : '/egov-pdf/bill/_generate',
+  searchPaymentWMS:"/wms/ifms-pi/_search"
 
 },
   pt: {

@@ -32,7 +32,8 @@ const InboxSearchComposer = ({configs}) => {
         {}
     );
     const [sessionFormData, setSessionFormData, clearSessionFormData] = mobileSearchSession;
-
+    const [activeLink,setActiveLink] = useState(configs?.sections?.search?.uiConfig?.configNavItems?.filter(row=>row.activeByDefault)?.[0])
+    
     //for mobile view
     useEffect(() => {
         if (type) setPopup(true);
@@ -66,7 +67,7 @@ const InboxSearchComposer = ({configs}) => {
         const searchFormParamCount = Object.keys(state.searchForm).reduce((count,key)=>state.searchForm[key]===""?count:count+1,0)
         const filterFormParamCount = Object.keys(state.filterForm).reduce((count, key) => state.filterForm[key] === "" ? count : count + 1, 0)
         
-        if (Object.keys(state.tableForm)?.length > 0 && (searchFormParamCount >= apiDetails?.minParametersForSearchForm || filterFormParamCount >= apiDetails?.minParametersForFilterForm)){
+        if (Object.keys(state.tableForm)?.length > 0 && (searchFormParamCount >= ( activeLink ?activeLink?.minParametersForSearchForm : apiDetails?.minParametersForSearchForm) || filterFormParamCount >= apiDetails?.minParametersForFilterForm)){
             setEnable(true)
         }
 
@@ -106,7 +107,7 @@ const InboxSearchComposer = ({configs}) => {
     
 
 
-    const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria,configs?.sections?.search?.uiConfig?.defaultValues) : requestCriteria 
+    const updatedReqCriteria = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.preProcess(requestCriteria,configs?.sections?.search?.uiConfig?.defaultValues,activeLink?.name) : requestCriteria 
 
     
     const { isLoading, data, revalidate,isFetching } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
@@ -150,6 +151,8 @@ const InboxSearchComposer = ({configs}) => {
                                 screenType={configs.type}
                                 fullConfig={configs}
                                 data={data}
+                                activeLink={activeLink}
+                                setActiveLink={setActiveLink}
                                 />
                         </div>
 
@@ -164,6 +167,8 @@ const InboxSearchComposer = ({configs}) => {
                                 screenType={configs.type}
                                 fullConfig={configs}
                                 data={data}
+                                activeLink={activeLink}
+                                setActiveLink={setActiveLink}
                                 />
                         </div> 
                 }
@@ -233,6 +238,7 @@ const InboxSearchComposer = ({configs}) => {
                                 isFetching={isFetching} 
                                 fullConfig={configs}
                                 type={configs?.type}
+                                activeLink={activeLink}
                                 />
                             </MediaQuery>
                             <MediaQuery maxWidth={426}>
