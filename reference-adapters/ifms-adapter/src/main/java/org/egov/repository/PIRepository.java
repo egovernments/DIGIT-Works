@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -72,6 +73,15 @@ public class PIRepository {
     public void updatePaymentAdviceByPAG(List<PaymentInstruction> paymentInstructions) {
         List<MapSqlParameterSource> sqlParameterSourcesForPAG = getParametersForPAGUpdate(paymentInstructions);
         namedJdbcTemplate.batchUpdate(PAYMENT_INSTRUCTION_DETAIL_PAG_UPDATE, sqlParameterSourcesForPAG.toArray(new MapSqlParameterSource[0]));
+
+        List<MapSqlParameterSource> sqlParameterSourcesForStatusUpdate = getParametersForStatusUpdate(paymentInstructions);
+        namedJdbcTemplate.batchUpdate(PAYMENT_INSTRUCTION_STATUS_UPDATE_QUERY, sqlParameterSourcesForStatusUpdate.toArray(new MapSqlParameterSource[0]));
+    }
+
+    @Transactional
+    public void updateBeneficiaryByPD(List<PaymentInstruction> paymentInstructions) {
+        List<MapSqlParameterSource> sqlParameterSourcesForPDUpdate = getParameterListForPDUpdate(paymentInstructions);
+        namedJdbcTemplate.batchUpdate(BENEFICIARY_DETAIL_UPDATE_QUERY, sqlParameterSourcesForPDUpdate.toArray(new MapSqlParameterSource[0]));
 
         List<MapSqlParameterSource> sqlParameterSourcesForStatusUpdate = getParametersForStatusUpdate(paymentInstructions);
         namedJdbcTemplate.batchUpdate(PAYMENT_INSTRUCTION_STATUS_UPDATE_QUERY, sqlParameterSourcesForStatusUpdate.toArray(new MapSqlParameterSource[0]));
@@ -372,5 +382,25 @@ public class PIRepository {
         }
         return beneficiaryParamMapList;
     }
+
+    private List<MapSqlParameterSource> getParameterListForPDUpdate (List<PaymentInstruction> paymentInstructions) {
+        List<MapSqlParameterSource> paymentInstructionParamList = new ArrayList<>();
+        for (PaymentInstruction paymentInstruction : paymentInstructions) {
+            for (Beneficiary beneficiary : paymentInstruction.getBeneficiaryDetails()) {
+                MapSqlParameterSource paymentInstructionParamMap = new MapSqlParameterSource();
+                paymentInstructionParamMap.addValue("voucherNumber", beneficiary.getVoucherNumber());
+                paymentInstructionParamMap.addValue("voucherDate", beneficiary.getVoucherDate());
+                paymentInstructionParamMap.addValue("utrNo", beneficiary.getUtrNo());
+                paymentInstructionParamMap.addValue("utrDate",beneficiary.getUtrDate());
+                paymentInstructionParamMap.addValue("endToEndId",beneficiary.getEndToEndId());
+                paymentInstructionParamMap.addValue("paymentStatus", beneficiary.getPaymentStatus().toString());
+                paymentInstructionParamMap.addValue("paymentStatusMessage",beneficiary.getPaymentStatusMessage());
+                paymentInstructionParamMap.addValue("id",beneficiary.getId());
+                paymentInstructionParamList.add(paymentInstructionParamMap);
+            }
+        }
+        return paymentInstructionParamList;
+    }
+
 
 }

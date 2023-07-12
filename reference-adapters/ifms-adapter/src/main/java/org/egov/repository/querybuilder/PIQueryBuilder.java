@@ -154,6 +154,10 @@ public class PIQueryBuilder {
             "jit_beneficiary_lineitems as jbl " +
             "ON (jbd.id=jbl.beneficiaryId)";
 
+    public static final String BENEFICIARY_DETAIL_UPDATE_QUERY = "UPDATE jit_beneficiary_details " +
+            "SET voucherNumber=:voucherNumber, voucherDate=:voucherDate, utrNo=:utrNo, utrDate=:utrDate, " +
+            "endToEndId=:endToEndId, paymentStatus=:paymentStatus, paymentStatusMessage=:paymentStatusMessage " +
+            "WHERE id=:id;";
 
     public String getPaymentInstructionSearchQuery(PISearchCriteria criteria, List<Object> preparedStmtList){
         StringBuilder query = new StringBuilder(SEARCH_PI_QUERY);
