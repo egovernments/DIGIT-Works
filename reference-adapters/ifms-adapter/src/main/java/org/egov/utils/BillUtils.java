@@ -9,6 +9,7 @@ import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.web.models.Pagination;
 import org.egov.web.models.bill.*;
+import org.egov.web.models.enums.PaymentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -142,7 +143,19 @@ public class BillUtils {
 		return paymentResponse.getPayments();
 	}
 
-
+	public void updatePaymentForStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus) {
+		paymentRequest.getPayment().setStatus(paymentStatus);
+		for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
+			bill.setStatus(paymentStatus);
+			for (PaymentBillDetail billDetail: bill.getBillDetails()) {
+				billDetail.setStatus(paymentStatus);
+				for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+					lineItem.setStatus(paymentStatus);
+				}
+			}
+		}
+		updatePaymentsData(paymentRequest);
+	}
 
 	public JSONArray getHeadCode(RequestInfo requestInfo, String tenantId) {
 		String rootTenantId = tenantId.split("\\.")[0];
