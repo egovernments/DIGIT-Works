@@ -83,10 +83,14 @@ public class PAGService {
                     paDetails.setPaBillRefNumber(onlineBillRefNo);
                     paDetails.setPaTokenNumber(tokenNumber);
                     paDetails.setPaTokenDate(tokenDate);
+                    paDetails.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                    paDetails.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 }
 
+                paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 paymentInstruction.setPiStatus(PIStatus.IN_PROCESS);
-                piRepository.updatePaymentAdviceByPAG(Collections.singletonList(paymentInstruction));
+                piRepository.update(Collections.singletonList(paymentInstruction),null);
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
             }
         }

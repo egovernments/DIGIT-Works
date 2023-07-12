@@ -63,36 +63,9 @@ public class PDService {
                     .tokenDate(paymentInstruction.getPaDetails().get(0).getPaTokenDate())
                     .build();
 
-            //JITResponse jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
-            //        .serviceId(JITServiceId.PD).params(pdRequest).build());
+            JITResponse jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
+                    .serviceId(JITServiceId.PD).params(pdRequest).build());
 
-            Map<String, Object> testMap = new HashMap<>();
-            testMap.put("billNumber","MUKTA/2022-23/05/25/105");
-            testMap.put("voucherNo","22171");
-            testMap.put("voucherDate","2023-06-01");
-            testMap.put("billRefNo","202311171279");
-            testMap.put("paymentStatus","Paid by RBI eKuber,please check with your bank");
-            testMap.put("tokenNumber","4");
-            testMap.put("tokenDate","2023-05-29");
-            Map<String, String > obj1 = new HashMap<>();
-            obj1.put("benfAcctNo","389201502452");
-            obj1.put("benfBankIfscCode","ICIC0003892");
-            obj1.put("utrNo","RBI504");
-            obj1.put("utrDate","2023-06-01");
-            obj1.put("endToEndId","EP112202320000003231520002");
-            obj1.put("benfId","1");
-            Map<String, String > obj2 = new HashMap<>();
-            obj2.put("benfAcctNo","389201502453");
-            obj2.put("benfBankIfscCode","ICIC0003892");
-            obj2.put("utrNo","RBI504");
-            obj2.put("utrDate","2023-06-01");
-            obj2.put("endToEndId","EP112202320000002231520002");
-            obj2.put("benfId","0f1e7c2b-2e1e-41e9-9008-091049030269");
-            Object[] objects = new Object[2];
-            objects[0] = obj1;
-            objects[1] = obj2;
-            testMap.put("benfDtls",objects);
-            JITResponse jitResponse = JITResponse.builder().data(Collections.singletonList(testMap)).build();
 
             if (jitResponse.getErrorMsg() != null) {
                 //TODO
@@ -131,11 +104,15 @@ public class PDService {
                                 beneficiaryFromDB.setUtrNo(benf.get("utrNo").asText());
                                 beneficiaryFromDB.setUtrDate(benf.get("utrDate").asText());
                                 beneficiaryFromDB.setEndToEndId(benf.get("endToEndId").asText());
+                                beneficiaryFromDB.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                                beneficiaryFromDB.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 
                             }
                         }
                     }
                 }
+                paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 paymentInstruction.setPiStatus(PIStatus.SUCCESSFUL);
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 //piRepository.updateBeneficiaryByPD(Collections.singletonList(paymentInstruction));

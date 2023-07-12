@@ -34,6 +34,7 @@ public class Scheduler {
     private FailureDetailsService failureDetailsService;
     @Autowired
     private PDService pdService;
+    @Autowired
     private PAGService pagService;
 
     @RequestMapping(path = "_scheduler", method = RequestMethod.POST)

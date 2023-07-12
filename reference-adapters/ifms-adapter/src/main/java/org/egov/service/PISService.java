@@ -62,8 +62,10 @@ public class PISService {
                 paymentInstruction.setPiApprovedId(piApprovedId);
                 paymentInstruction.setPiApprovalDate(piApprovalDate);
                 paymentInstruction.setPiStatus(PIStatus.APPROVED);
+                paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 
-                piRepository.updatePaymentInstructionByPIS(Collections.singletonList(paymentInstruction));
+                piRepository.update(Collections.singletonList(paymentInstruction),null);
             }
 
         }

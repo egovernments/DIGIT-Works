@@ -40,16 +40,6 @@ public class PIQueryBuilder {
             + "(id, beneficiaryId, lineItemId, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
             + " VALUES (:id, :beneficiaryId, :lineItemId, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
 
-    public static final String PAYMENT_INSTRUCTION_DETAIL_STATUS_UPDATE = "UPDATE jit_payment_inst_details " +
-            "SET piApprovedId=:piApprovedId, piApprovalDate=:piApprovalDate, piStatus=:piStatus WHERE id=:id;";
-
-    public static final String PAYMENT_INSTRUCTION_DETAIL_PAG_UPDATE = "UPDATE jit_payment_advice_details " +
-            "SET paFinYear=:paFinYear, paAdviceId=:paAdviceId, paAdviceDate=:paAdviceDate, paBillRefNumber=:paBillRefNumber, " +
-            "paTokenNumber=:paTokenNumber, paTokenDate=:paTokenDate WHERE id=:id;";
-
-    public static final String PAYMENT_INSTRUCTION_STATUS_UPDATE_QUERY = "UPDATE jit_payment_inst_details " +
-            "SET piStatus=:piStatus WHERE id=:id;";
-
     public static final String PAYMENT_INSTRUCTION_UPDATE_QUERY = "UPDATE jit_payment_inst_details "
             + "SET piStatus=:piStatus, piSuccessCode=:piSuccessCode, piSuccessDesc=:piSuccessDesc, piApprovedId=:piApprovedId, piApprovalDate=:piApprovalDate, "
             +" piErrorResp=:piErrorResp, additionalDetails=:additionalDetails, lastmodifiedtime=:lastmodifiedtime, lastmodifiedby=:lastmodifiedby "
