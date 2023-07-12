@@ -10,13 +10,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class PISRequest {
+public class PAGRequest {
 
-    @JsonProperty("jitBillNo")
-    private String jitBillNo;
+    @JsonProperty("pmtInstId")
+    private String pmtInstId;
 
-    @JsonProperty("jitBillDate")
-    private String jitBillDate;
+    @JsonProperty("pmtInstDate")
+    private String pmtInstDate;
+
+    @JsonProperty("billNo")
+    private String billNo;
+
+    @JsonProperty("billDate")
+    private String billDate;
 
     @JsonProperty("ssuIaId")
     private String ssuIaId;

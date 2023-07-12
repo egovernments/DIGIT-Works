@@ -6,6 +6,7 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.PIRepository;
+import org.egov.utils.HelperUtil;
 import org.egov.utils.MdmsUtils;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.enums.PIStatus;
@@ -16,25 +17,25 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
+import static org.egov.config.Constants.JIT_BILL_DATE_FORMAT;
+
 
 @Service
 @Slf4j
 public class PISService {
 
     @Autowired
-    MdmsUtils mdmsUtils;
+    private PaymentInstructionService paymentInstructionService;
     @Autowired
-    IfmsAdapterConfig ifmsAdapterConfig;
+    private IfmsService ifmsService;
     @Autowired
-    PaymentInstructionService paymentInstructionService;
+    private PIRepository piRepository;
     @Autowired
-    IfmsService ifmsService;
+    private ObjectMapper mapper;
     @Autowired
-    PIRepository piRepository;
-    @Autowired
-    ObjectMapper mapper;
+    private HelperUtil helperUtil;
 
-    public void updatePIStatus(){
+    public void updatePIStatus(RequestInfo requestInfo){
         List<PaymentInstruction> paymentInstructions = getInitiatedPaymentInstructions();
 
         for(PaymentInstruction paymentInstruction : paymentInstructions){
@@ -42,7 +43,7 @@ public class PISService {
             Map<String,String> ssuIaDetailsMap = (Map<String, String>) ssuIaDetails.get(0);
             String ssuId = ssuIaDetailsMap.get("ssuId");
             PISRequest pisRequest = PISRequest.builder()
-                    .jitBillDate(paymentInstruction.getJitBillDate())
+                    .jitBillDate(helperUtil.getFormattedTimeFromTimestamp(paymentInstruction.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
                     .jitBillNo(paymentInstruction.getJitBillNo())
                     .ssuIaId(ssuId)
                     .build();

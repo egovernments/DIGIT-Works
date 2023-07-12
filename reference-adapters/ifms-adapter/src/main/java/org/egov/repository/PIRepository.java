@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.egov.repository.querybuilder.PIQueryBuilder.PAYMENT_INSTRUCTION_DETAIL_STATUS_UPDATE;
+import static org.egov.repository.querybuilder.PIQueryBuilder.*;
 
 @Repository
 @Slf4j
@@ -61,6 +61,20 @@ public class PIRepository {
         if (paymentStatus.equals(PIStatus.INITIATED)) {
             sanctionDetailsRepository.updateFundsSummary(Collections.singletonList(fundsSummary));
         }
+    }
+
+    @Transactional
+    public void updatePaymentInstructionByPIS(List<PaymentInstruction> paymentInstructions){
+        List<MapSqlParameterSource> sqlParameterSourcesForPIS = getParameterListForPISUpdate(paymentInstructions);
+        namedJdbcTemplate.batchUpdate(PAYMENT_INSTRUCTION_DETAIL_STATUS_UPDATE, sqlParameterSourcesForPIS.toArray(new MapSqlParameterSource[0]) );
+    }
+
+    public void updatePaymentAdviceByPAG(List<PaymentInstruction> paymentInstructions) {
+        List<MapSqlParameterSource> sqlParameterSourcesForPAG = getParametersForPAGUpdate(paymentInstructions);
+        namedJdbcTemplate.batchUpdate(PAYMENT_INSTRUCTION_DETAIL_PAG_UPDATE, sqlParameterSourcesForPAG.toArray(new MapSqlParameterSource[0]));
+
+        List<MapSqlParameterSource> sqlParameterSourcesForStatusUpdate = getParametersForStatusUpdate(paymentInstructions);
+        namedJdbcTemplate.batchUpdate(PAYMENT_INSTRUCTION_STATUS_UPDATE_QUERY, sqlParameterSourcesForStatusUpdate.toArray(new MapSqlParameterSource[0]));
     }
 
     private List<MapSqlParameterSource> getSqlParameterListForPIRequest(List<PaymentInstruction> piRequests) {
@@ -216,18 +230,41 @@ public class PIRepository {
         return paymentInstructions;
     }
 
-    @Transactional
-    public void updatePaymentInstructionByPIS(List<PaymentInstruction> paymentInstructions){
-        List<MapSqlParameterSource> sqlParameterSources = getParameterListForPISUpdate(paymentInstructions);
-        namedJdbcTemplate.batchUpdate(PAYMENT_INSTRUCTION_DETAIL_STATUS_UPDATE, sqlParameterSources.toArray(new MapSqlParameterSource[0]) );
-    }
     private List<MapSqlParameterSource> getParameterListForPISUpdate(List<PaymentInstruction> paymentInstructions){
         List<MapSqlParameterSource> paymentInstructionParamList = new ArrayList<>();
         for (PaymentInstruction paymentInstruction : paymentInstructions){
-
             MapSqlParameterSource paymentInstructionParamMap = new MapSqlParameterSource();
             paymentInstructionParamMap.addValue("piApprovedId", paymentInstruction.getPiApprovedId());
             paymentInstructionParamMap.addValue("piApprovalDate", paymentInstruction.getPiApprovalDate());
+            paymentInstructionParamMap.addValue("piStatus", paymentInstruction.getPiStatus().toString());
+            paymentInstructionParamMap.addValue("id", paymentInstruction.getId());
+            paymentInstructionParamList.add(paymentInstructionParamMap);
+        }
+        return paymentInstructionParamList;
+    }
+
+    private List<MapSqlParameterSource> getParametersForPAGUpdate(List<PaymentInstruction> paymentInstructions) {
+        List<MapSqlParameterSource> paymentInstructionParamList = new ArrayList<>();
+        for (PaymentInstruction paymentInstruction : paymentInstructions) {
+            MapSqlParameterSource paymentInstructionParamMap = new MapSqlParameterSource();
+
+            paymentInstructionParamMap.addValue("paFinYear", paymentInstruction.getPaDetails().get(0).getPaFinYear());
+            paymentInstructionParamMap.addValue("paAdviceId", paymentInstruction.getPaDetails().get(0).getPaAdviceId());
+            paymentInstructionParamMap.addValue("paAdviceDate", paymentInstruction.getPaDetails().get(0).getPaAdviceDate());
+            paymentInstructionParamMap.addValue("paBillRefNumber", paymentInstruction.getPaDetails().get(0).getPaBillRefNumber());
+            paymentInstructionParamMap.addValue("paTokenNumber", paymentInstruction.getPaDetails().get(0).getPaTokenNumber());
+            paymentInstructionParamMap.addValue("paTokenDate", paymentInstruction.getPaDetails().get(0).getPaTokenDate());
+            paymentInstructionParamMap.addValue("id", paymentInstruction.getPaDetails().get(0).getId());
+            paymentInstructionParamList.add(paymentInstructionParamMap);
+        }
+        return paymentInstructionParamList;
+    }
+
+    private List<MapSqlParameterSource> getParametersForStatusUpdate ( List<PaymentInstruction> paymentInstructions) {
+        List<MapSqlParameterSource> paymentInstructionParamList = new ArrayList<>();
+        for (PaymentInstruction paymentInstruction : paymentInstructions) {
+            MapSqlParameterSource paymentInstructionParamMap = new MapSqlParameterSource();
+
             paymentInstructionParamMap.addValue("piStatus", paymentInstruction.getPiStatus().toString());
             paymentInstructionParamMap.addValue("id", paymentInstruction.getId());
             paymentInstructionParamList.add(paymentInstructionParamMap);
