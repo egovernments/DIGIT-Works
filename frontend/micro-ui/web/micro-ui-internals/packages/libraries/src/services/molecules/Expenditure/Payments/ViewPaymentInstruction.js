@@ -42,7 +42,7 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
       { title: "EXP_MASTER_ALLT_ID", value: paymentInstruction?.headOfAccount || t("ES_COMMON_NA")},
       { title: "EXP_PAYMENT_GROSS_AMT", value: paymentInstruction?.grossAmount || t("ES_COMMON_NA") },
       { title: "EXP_PAYMENT_NET_AMT", value: paymentInstruction?.netAmount || t("ES_COMMON_NA") },
-      { title: "CORE_COMMON_STATUS", value: `EXP_PI_STATUS_${paymentInstruction?.piStatus}` || t("ES_COMMON_NA") }
+      { title: "CORE_COMMON_STATUS", value: t(`EXP_PI_STATUS_${paymentInstruction?.piStatus}`)  }
 
     ]
   }
