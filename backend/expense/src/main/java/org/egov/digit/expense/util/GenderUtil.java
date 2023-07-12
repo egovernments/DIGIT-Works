@@ -1,18 +1,17 @@
 package org.egov.digit.expense.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
-import org.egov.digit.expense.web.models.IndividualSearch;
-import org.egov.digit.expense.web.models.IndividualSearchRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,17 +30,14 @@ public class GenderUtil {
     @Autowired
     private ObjectMapper mapper;
 
-    private Map<String,String> fetchGenderDetails(RequestInfo requestInfo, String tenantId, List<String> ids)  {
+    private String fetchGenderDetails(RequestInfo requestInfo, String tenantId, String identifier)  {
         String uri = getIndividualSearchURLWithParams(tenantId).toUriString();
 
-        IndividualSearch individualSearch = IndividualSearch.builder().id(ids).build();
-        IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
-                .requestInfo(requestInfo).individual(individualSearch).build();
-
+        Object individualSearchRequest = getIndividualSearchRequest(requestInfo,identifier);
         log.info("Individual search request -> {}", individualSearchRequest);
         Object individualRes =  restRepo.fetchResult(new StringBuilder(uri), individualSearchRequest);
 
-        Map<String, String> individualDetails = new HashMap<>();
+         String gender = "";
         List<String> individualGender = null;
 
         try{
@@ -52,12 +48,12 @@ public class GenderUtil {
         }
 
         if(!individualGender.isEmpty()) {
-            individualDetails.put(GENDER, individualGender.get(0));
+            gender= individualGender.get(0);
         }else{
-            log.info("The Payee is not available in the individual index, Ids : ", ids.get(0));
+            log.info("The Payee is not available in the individual index, Ids : ", identifier);
         }
 
-        return individualDetails;
+        return gender;
     }
 
     private UriComponentsBuilder getIndividualSearchURLWithParams(String tenantId) {
@@ -71,8 +67,22 @@ public class GenderUtil {
         return uriBuilder;
     }
 
-    public Map<String, String> getGenderDetails(RequestInfo requestInfo, String tenantId, List<String> ids){
-        Map<String, String> GenderDetails = fetchGenderDetails(requestInfo, tenantId, ids);
-        return GenderDetails;
+    private Object getIndividualSearchRequest(RequestInfo requestInfo, String Identifier){
+        ObjectNode individualSearchRequestNode = mapper.createObjectNode();
+        ObjectNode individualNode = mapper.createObjectNode();
+
+        ArrayNode Ids = mapper.createArrayNode();
+
+        Ids.add(Identifier);
+        individualNode.putPOJO(ID,Ids);
+
+        individualSearchRequestNode.putPOJO(REQUEST_INFO,requestInfo);
+        individualSearchRequestNode.putPOJO(INDIVIDUAL,individualNode);
+
+        return individualSearchRequestNode;
+    }
+    public  String getGenderDetails(RequestInfo requestInfo, String tenantId, String identifier){
+        String Gender = fetchGenderDetails(requestInfo, tenantId, identifier);
+        return Gender;
     }
 }

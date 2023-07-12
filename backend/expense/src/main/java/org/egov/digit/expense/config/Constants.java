@@ -14,6 +14,7 @@ public class Constants {
 	public static final String ORG_ID_PATH = "$.contracts.*.orgId";
 	public static final String ID = "id";
 	public static final String SEARCH_CRITERIA = "SearchCriteria";
+	public static final String INDIVIDUAL = "Individual";
 	public static final String ORG_NAME_PATH = "$.organisations.*.name";
 	public static final String INDIVIDUAL_GENDER_PATH = "$.Individual.*.gender";
 	public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";
