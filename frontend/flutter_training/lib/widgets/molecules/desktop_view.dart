@@ -11,20 +11,20 @@ class DesktopView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (BackgroundContainer(
-        Column(
+        ScrollableContent(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              (Center(
+            children: [
+              Center(
                   child: Container(
                       width: MediaQuery.of(context).size.width / 2.25,
                       padding: const EdgeInsets.all(15),
                       child: Container(
-                          padding: const EdgeInsets.all(8), child: widget)))),
+                          padding: const EdgeInsets.all(8), child: widget))),
               const Center(
                   child: PoweredByDigit(
                 isWhiteLogo: true,
-              ))
+              )),
             ]),
         bannerURL));
   }

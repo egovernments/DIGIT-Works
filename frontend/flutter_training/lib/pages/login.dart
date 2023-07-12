@@ -76,7 +76,7 @@ class _LoginPage extends State<LoginPage> {
               builder: (context, form, child) {
                 return Column(
                   children: [
-                    AppLogo(),
+                    const AppLogo(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -284,13 +284,14 @@ class _LoginPage extends State<LoginPage> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
         ),
+        resizeToAvoidBottomInset: true,
         body: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 720) {
             return MobileView(
               getEmployeeLoginCard(context),
               GlobalVariables.stateInfoListModel!.bannerUrl.toString(),
-              logoBottomPosition: constraints.maxHeight / 8,
-              cardBottomPosition: constraints.maxHeight / 3,
+              logoBottomPosition: constraints.maxHeight / 16,
+              cardBottomPosition: constraints.maxHeight / 8,
             );
           } else {
             return DesktopView(getEmployeeLoginCard(context),
