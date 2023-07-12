@@ -45,17 +45,17 @@ public class PIQueryBuilder {
 
 
     public static final String PAYMENT_INSTRUCTION_UPDATE_QUERY = "UPDATE jit_payment_inst_details "
-            + "SET piStatus:piStatus, piSuccessCode:piSuccessCode, piSuccessDesc:piSuccessDesc, piApprovedId:piApprovedId, piApprovalDate:piApprovalDate, "
-            +" piErrorResp:piErrorResp, additionalDetails:additionalDetails, lastmodifiedtime:lastmodifiedtime, lastmodifiedby:lastmodifiedby "
+            + "SET piStatus=:piStatus, piSuccessCode=:piSuccessCode, piSuccessDesc=:piSuccessDesc, piApprovedId=:piApprovedId, piApprovalDate=:piApprovalDate, "
+            +" piErrorResp=:piErrorResp, additionalDetails=:additionalDetails, lastmodifiedtime=:lastmodifiedtime, lastmodifiedby=:lastmodifiedby "
             + " WHERE id=:id;";
 
     public static final String PAYMENT_ADVICE_DETAILS_UPDATE_QUERY = "UPDATE jit_payment_advice_details "
-            + "SET paBillRefNumber:paBillRefNumber, paFinYear:paFinYear, paAdviceId:paAdviceId, paAdviceDate:paAdviceDate, paTokenNumber:paTokenNumber, paTokenDate:paTokenDate,"
-            + "paErrorMsg:paErrorMsg, additionalDetails:additionalDetails, lastmodifiedtime:lastmodifiedtime, lastmodifiedby:lastmodifiedby "
+            + "SET paBillRefNumber=:paBillRefNumber, paFinYear=:paFinYear, paAdviceId=:paAdviceId, paAdviceDate=:paAdviceDate, paTokenNumber=:paTokenNumber, paTokenDate=:paTokenDate,"
+            + "paErrorMsg=:paErrorMsg, additionalDetails=:additionalDetails, lastmodifiedtime=:lastmodifiedtime, lastmodifiedby=:lastmodifiedby "
             + " WHERE id=:id;";
     public static final String BENEFICIARY_DETAILS_UPDATE_QUERY = "UPDATE jit_beneficiary_details "
-            + "SET  voucherNumber:voucherNumber, voucherDate:voucherDate, utrNo:utrNo, utrDate:utrDate, endToEndId:endToEndId, challanNumber:challanNumber, "
-            + "challanDate:challanDate, paymentStatus:paymentStatus, paymentStatusMessage:paymentStatusMessage, additionalDetails:additionalDetails, lastmodifiedtime:lastmodifiedtime, lastmodifiedby:lastmodifiedby "
+            + "SET  voucherNumber=:voucherNumber, voucherDate=:voucherDate, utrNo=:utrNo, utrDate=:utrDate, endToEndId=:endToEndId, challanNumber=:challanNumber, "
+            + "challanDate=:challanDate, paymentStatus=:paymentStatus, paymentStatusMessage=:paymentStatusMessage, additionalDetails=:additionalDetails, lastmodifiedtime=:lastmodifiedtime, lastmodifiedby=:lastmodifiedby "
             + " WHERE id=:id;";
 
     public static final String SEARCH_PI_QUERY = " SELECT jpi.id as jpiId, " +

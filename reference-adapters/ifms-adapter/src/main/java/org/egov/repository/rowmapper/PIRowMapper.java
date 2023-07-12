@@ -204,6 +204,8 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
             BigDecimal jbdAmount = rs.getBigDecimal("jbdAmount");
             String jbdVoucherNumber = rs.getString("jbdVoucherNumber");
             Long jbdVoucherDate = rs.getLong("jbdVoucherDate");
+            if (jbdVoucherDate.equals(0L))
+                jbdVoucherDate = null;
             String jbdUtrNo = rs.getString("jbdUtrNo");
             String jbdUtrDate = rs.getString("jbdUtrDate");
             String jbdEndToEndId = rs.getString("jbdEndToEndId");
