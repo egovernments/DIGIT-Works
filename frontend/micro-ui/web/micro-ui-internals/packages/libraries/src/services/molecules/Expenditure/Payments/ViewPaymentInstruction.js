@@ -139,7 +139,7 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
     beneficiary.indDetails = indDetails[beneficiary.beneficiaryId]
   })
   
-  // console.log(beneficiaryDetails);
+  
   
   const tableRows = beneficiaryDetails?.map((beneficiary,idx) => {
     
@@ -238,7 +238,7 @@ export const ViewPaymentInstruction = {
     fetchPaymentInstruction: async (t, tenantId, data) => {
       try {
         const response = await ExpenseService.searchPayment(data);
-        // debugger
+        
         //dummy response 
         // const dresponse =  {
         //   "id": "2538edc2-8abd-4ca1-adcc-3a38367c30ff",

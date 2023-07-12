@@ -23,7 +23,7 @@ const SearchPaymentInstruction = () => {
       ],
       {
         select: (data) => {
-          // debugger
+          
             // const result =  data?.[Digit.Utils.getConfigModuleName()]?.SearchPaymentInstructionConfig[0];
             // const result =  SearchPaymentInstructionConfig?.SearchPaymentInstructionConfig[0];
             // const result =  SearchPIConfigNew?.SearchPaymentInstructionConfig[0];
