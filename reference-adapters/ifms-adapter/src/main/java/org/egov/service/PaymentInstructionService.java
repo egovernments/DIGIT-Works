@@ -85,7 +85,6 @@ public class PaymentInstructionService {
                         piRequest.setPiSuccessDesc(piSucessDescrp);
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
-                        piRequest.setPiStatus(PIStatus.FAILED);
                         piRequest.setPiErrorResp(jitResponse.getErrorMsg());
                     }
                 } catch (Exception e) {
@@ -100,9 +99,12 @@ public class PaymentInstructionService {
                     }
                     log.error("Exception while calling request." + e);
                     piRequest.setPiErrorResp(errorMessage);
+                }
+                // Set beneficiary and pi status to failed if payment is failed
+                if (paymentStatus.equals(PaymentStatus.FAILED)) {
                     piRequest.setPiStatus(PIStatus.FAILED);
                     for(Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
-                        beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+                        beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.PENDING);
                     }
                 }
                 // IF pi is initiated then add transaction records

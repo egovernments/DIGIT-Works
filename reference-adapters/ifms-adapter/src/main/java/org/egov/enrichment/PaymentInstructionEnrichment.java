@@ -19,13 +19,11 @@ import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.egov.web.models.organisation.Organisation;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.egov.config.Constants.VA_REQUEST_TIME_FORMAT;
@@ -135,7 +133,7 @@ public class PaymentInstructionEnrichment {
         PaymentInstruction piRequest = PaymentInstruction.builder()
                 .id(UUID.randomUUID().toString())
                 .jitBillNo(jitBillNo)
-                .jitBillDate(util.getFormattedTimeFromTimestamp(paymentRequest.getPayment().getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
+//                .jitBillDate(util.getFormattedTimeFromTimestamp(paymentRequest.getPayment().getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
                 .jitBillDdoCode(ddoCode)
                 .granteeAgCode(granteeAgCode)
                 .schemeCode(schemeCode)
@@ -174,6 +172,7 @@ public class PaymentInstructionEnrichment {
             piRequest.setId(UUID.randomUUID().toString());
         piRequest.setAdditionalDetails(emptyObject);
         piRequest.setAuditDetails(auditDetails);
+        piRequest.setJitBillDate(util.getFormattedTimeFromTimestamp(auditDetails.getCreatedTime(), VA_REQUEST_TIME_FORMAT));
 
         // Update payment advice details
         PADetails paDetails = PADetails.builder()

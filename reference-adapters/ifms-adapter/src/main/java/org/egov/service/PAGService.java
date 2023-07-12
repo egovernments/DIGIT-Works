@@ -8,6 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.PIRepository;
 import org.egov.utils.HelperUtil;
 import org.egov.utils.PIUtils;
+import org.egov.web.models.enums.BeneficiaryPaymentStatus;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.jit.*;
@@ -85,6 +86,11 @@ public class PAGService {
                     paDetails.setPaTokenDate(tokenDate);
                     paDetails.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     paDetails.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                }
+                for (Beneficiary beneficiary: paymentInstruction.getBeneficiaryDetails()) {
+                    beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.IN_PROCESS);
+                    beneficiary.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                    beneficiary.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 }
 
                 paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
