@@ -31,8 +31,6 @@ public class Scheduler {
     @Autowired
     private FailureDetailsService failureDetailsService;
     private PAGService pagService;
-    @Autowired
-    private VirtualAllotmentService virtualAllotmentService;
 
     @RequestMapping(path = "_scheduler", method = RequestMethod.POST)
     public ResponseInfo scheduler(@RequestBody @Valid SchedulerRequest schedulerRequest, @RequestParam("serviceId") JITServiceId serviceId )throws Exception{

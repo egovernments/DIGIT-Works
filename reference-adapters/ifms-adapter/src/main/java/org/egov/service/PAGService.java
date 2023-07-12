@@ -7,6 +7,7 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.PIRepository;
 import org.egov.utils.HelperUtil;
+import org.egov.utils.PIUtils;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.jit.*;
@@ -38,6 +39,9 @@ public class PAGService {
 
     @Autowired
     private HelperUtil helperUtil;
+
+    @Autowired
+    private PIUtils piUtils;
 
     public void updatePAG( RequestInfo requestInfo ){
         List<PaymentInstruction> paymentInstructions = getApprovedPaymentInstructions();
@@ -83,6 +87,7 @@ public class PAGService {
 
                 paymentInstruction.setPiStatus(PIStatus.IN_PROCESS);
                 piRepository.updatePaymentAdviceByPAG(Collections.singletonList(paymentInstruction));
+                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
             }
         }
     }
