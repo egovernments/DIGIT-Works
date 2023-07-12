@@ -46,6 +46,7 @@
     "build:estimate": "cd packages/modules/Estimate && yarn build",
     "build:mukta": "cd packages/Mukta && yarn build",
     "buildD:project": "cd packages/modules/Project && yarn build",
+    "build:project": "cd packages/modules/Project && yarn build",
     "buildD:works": "cd packages/modules/works && yarn build",
     "build:expenditure": "cd packages/modules/Expenditure && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
@@ -54,7 +55,7 @@
   "devDependencies": {
     "husky": "7.0.4",
     "lint-staged": "12.3.7",
-    "npm-run-all": "4.1.5",
+    "npm-run-all": "^4.1.5",
     "prettier": "2.1.2",
     "react-responsive": "9.0.2"
   },
