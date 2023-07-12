@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 import 'package:works_shg_app/blocs/auth/otp_bloc.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/global_variables.dart';
@@ -30,6 +31,9 @@ class _LoginPage extends State<LoginPage> {
   bool autoValidation = false;
   bool phoneNumberAutoValidation = false;
   final FocusNode _numberFocus = FocusNode();
+  String userNameKey = 'userName';
+  String passwordKey = 'password';
+  String tenantIdKey = 'tenantId';
 
   @override
   void initState() {
@@ -58,6 +62,59 @@ class _LoginPage extends State<LoginPage> {
       });
     }
   }
+
+  Widget getEmployeeLoginCard(BuildContext loginContext) {
+    final t = AppLocalizations.of(loginContext);
+    return DigitCard(
+        child: ReactiveFormBuilder(
+            form: buildEmployeeForm, builder: (context, form, child) {
+              return Column(
+                children: [
+                  DigitTextFormField(
+                      formControlName: userNameKey,
+                      padding: const EdgeInsets.only(top: 32),
+                      label: t.translate(i18.login.loginUserName),
+                      validationMessages: {
+                        'required': (_) => t.translate(
+                          i18.common.requiredField,
+                        ),
+                      },
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
+                      ]),
+                  DigitTextFormField(
+                      formControlName: passwordKey,
+                      padding: const EdgeInsets.only(top: 32),
+                      label: t.translate(i18.login.loginPassword),
+                      obscureText: true,
+                      validationMessages: {
+                        'required': (_) => t.translate(
+                          i18.common.requiredField,
+                        ),
+                      },
+                      suffix: Icon(Icons.remove_red_eye_rounded),
+                      inputFormatter: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
+                      ]),
+                ],
+              );
+        });
+    );
+  }
+
+  FormGroup buildEmployeeForm() => fb.group(<String, Object>{
+        userNameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+        ]),
+    passwordKey: FormControl<String>(value: '', validators: [
+      Validators.required,
+    ]),
+    tenantIdKey: FormControl<String>(value: '', validators: [
+      Validators.required,
+    ]),
+      });
 
   Widget getLoginCard(BuildContext loginContext) {
     return Form(
