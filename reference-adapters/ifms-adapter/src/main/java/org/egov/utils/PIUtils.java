@@ -31,6 +31,11 @@ public class PIUtils {
                 beneficiary.setBenfAddress(null);
                 beneficiary.setBenfAccountType(null);
             }
+            if (pi.getParentPiNumber() == null)
+                pi.setParentPiNumber("");
+            if (pi.getPiErrorResp() == null)
+                pi.setPiErrorResp("");
+
             Map<String, Object> indexerRequest = new HashMap<>();
             indexerRequest.put("RequestInfo", requestInfo);
             indexerRequest.put("paymentInstruction", pi);
