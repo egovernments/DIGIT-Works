@@ -2,6 +2,7 @@ package org.egov.web.controller;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.service.FailureDetailsService;
 import org.egov.service.PISService;
 import org.egov.service.VirtualAllotmentService;
 import org.egov.utils.ResponseInfoFactory;
@@ -27,6 +28,8 @@ public class Scheduler {
     private PISService pisService;
     @Autowired
     VirtualAllotmentService virtualAllotmentService;
+    @Autowired
+    private FailureDetailsService failureDetailsService;
 
     @RequestMapping(path = "_scheduler", method = RequestMethod.POST)
     public ResponseInfo scheduler(@RequestBody @Valid SchedulerRequest schedulerRequest, @RequestParam("serviceId") JITServiceId serviceId )throws Exception{
@@ -40,6 +43,9 @@ public class Scheduler {
                 break;
             case VA:
                 virtualAllotmentService.generateVirtualAllotment(schedulerRequest.getRequestInfo());
+                break;
+            case FD:
+                failureDetailsService.updateFailureDetails(schedulerRequest.getRequestInfo());
                 break;
 
         }

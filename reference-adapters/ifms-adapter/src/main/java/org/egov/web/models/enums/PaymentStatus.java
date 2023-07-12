@@ -16,7 +16,8 @@ public enum PaymentStatus {
 
 	FAILED("FAILED"),
 
-	CANCELLED("CANCELLED");
+	CANCELLED("CANCELLED"),
+	PARTIAL("PARTIAL");
 
 	private String value;
 

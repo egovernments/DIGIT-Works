@@ -9,6 +9,7 @@ import org.egov.common.data.query.annotations.Exclude;
 import org.egov.web.models.enums.PIStatus;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,6 +31,9 @@ public class PISearchCriteria {
 
     @JsonProperty("piNumber")
     private String jitBillNo;
+
+    @JsonProperty("piNumbers")
+    private Set<String> jitBillNumbers;
 
     @JsonProperty("limit")
     private Integer limit;
