@@ -11,6 +11,7 @@ import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.utils.BillUtils;
 import org.egov.utils.HelperUtil;
+import org.egov.utils.PIUtils;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
@@ -42,12 +43,14 @@ public class FailureDetailsService {
     SanctionDetailsRepository sanctionDetailsRepository;
     @Autowired
     PIRepository piRepository;
+    @Autowired
+    PIUtils piUtils;
 
     public void updateFailureDetails(RequestInfo requestInfo) {
         try {
             JITRequest jitFDRequest = getFailedPayload();
-//            JITResponse fdResponse = ifmsService.sendRequestToIFMS(jitFDRequest);
-            JITResponse fdResponse = virtualAllotmentEnrichment.vaResponse();
+            JITResponse fdResponse = ifmsService.sendRequestToIFMS(jitFDRequest);
+//            JITResponse fdResponse = virtualAllotmentEnrichment.vaResponse();
             if (fdResponse != null && fdResponse.getErrorMsg() == null) {
                 System.out.println(fdResponse);
                 for (Object failedPI: fdResponse.getData()) {
@@ -124,7 +127,6 @@ public class FailureDetailsService {
     }
 
     private void updatePiAndPaymentForFailedBenef(PaymentInstruction pi, Payment payment, Map<String, JsonNode> failedBeneficiariesMapById) {
-        Map<String, JsonNode> failedPiBenfMap = new HashMap<>();
         Map<String, PaymentLineItem> paymentPayableLineItemMap = payment.getBills().stream()
                 .map(PaymentBill::getBillDetails)
                 .flatMap(Collection::stream)
@@ -157,7 +159,7 @@ public class FailureDetailsService {
             pi.setPiStatus(PIStatus.PARTIAL);
             for (Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
                 if (beneficiary.getPaymentStatus().equals(BeneficiaryPaymentStatus.FAILED)) {
-                    amount.add(beneficiary.getAmount());
+                    amount = amount.add(beneficiary.getAmount());
                     beneficiary.getAuditDetails().setLastModifiedBy(userId);
                     beneficiary.getAuditDetails().setLastModifiedTime(currentTime);
                 }
@@ -177,14 +179,52 @@ public class FailureDetailsService {
                     .sanctionId(sanctionDetail.getId())
                     .paymentInstId(pi.getId())
                     .transactionAmount(amount)
+                    .transactionDate(currentTime)
                     .transactionType(TransactionType.REVERSAL)
                     .additionalDetails(objectMapper.createObjectNode())
                     .auditDetails(auditDetails)
                     .build();
             pi.getTransactionDetails().add(transactionDetails);
             piRepository.update(Collections.singletonList(pi), sanctionDetail.getFundsSummary());
+            updatePaymentStatusForPartial(payment, requestInfo);
+            // Update PI indexer based on updated PI
+            piUtils.updatePiForIndexer(requestInfo, pi);
+
         } catch (Exception e) {
             log.error("Failed in FailureDetailsService:addReversalTransactionAndUpdatePIPa " + e);
+        }
+    }
+
+    private void updatePaymentStatusForPartial(Payment payment, RequestInfo requestInfo) {
+        System.out.println("Payment "+ payment);
+        try {
+            boolean updatePaymentStatus = false;
+            for (PaymentBill bill: payment.getBills()) {
+                boolean updateBillStatus = false;
+                for (PaymentBillDetail billDetail: bill.getBillDetails()) {
+                    boolean updateBillDetailsStatus = false;
+                    for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+                        if (lineItem.getStatus().equals(PaymentStatus.FAILED)) {
+                            updateBillDetailsStatus = true;
+                        }
+                    }
+                    if (updateBillDetailsStatus) {
+                        billDetail.setStatus(PaymentStatus.PARTIAL);
+                        updateBillStatus = true;
+                    }
+                }
+                if (updateBillStatus) {
+                    bill.setStatus(PaymentStatus.PARTIAL);
+                    updatePaymentStatus = true;
+                }
+            }
+            if (updatePaymentStatus) {
+                payment.setStatus(PaymentStatus.PARTIAL);
+                PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
+                billUtils.updatePaymentsData(paymentRequest);
+            }
+        }catch (Exception e) {
+            log.error("Exception while updating the payment status FailureDetailsService:updatePaymentStatusForPartial : " + e);
         }
     }
 

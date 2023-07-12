@@ -3,17 +3,11 @@ package org.egov.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
-import org.egov.common.producer.Producer;
-import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.utils.BankAccountUtils;
-import org.egov.utils.BillUtils;
-import org.egov.utils.IndividualUtils;
-import org.egov.utils.OrganisationUtils;
+import org.egov.utils.*;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.BeneficiaryPaymentStatus;
@@ -55,9 +49,7 @@ public class PaymentInstructionService {
     @Autowired
     PIRepository piRepository;
     @Autowired
-    Producer producer;
-    @Autowired
-    IfmsAdapterConfig adapterConfig;
+    PIUtils piUtils;
     public PaymentInstruction processPaymentRequestForPI(PaymentRequest paymentRequest) {
         PaymentInstruction piRequest = null;
         PaymentStatus paymentStatus = null;
@@ -122,7 +114,7 @@ public class PaymentInstructionService {
                     selectedSanction.getFundsSummary().getAuditDetails().setLastModifiedBy(piRequest.getAuditDetails().getLastModifiedBy());
                 }
                 piRepository.save(Collections.singletonList(piRequest), selectedSanction.getFundsSummary(), paymentStatus);
-                updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
+                piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
             } else {
                 paymentStatus = PaymentStatus.FAILED;
             }
@@ -223,28 +215,6 @@ public class PaymentInstructionService {
             }
         }
         billUtils.updatePaymentsData(paymentRequest);
-    }
-
-    public void updatePiForIndexer(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
-        try {
-            PaymentInstruction pi = (PaymentInstruction) paymentInstruction;
-            pi.setPaDetails(null);
-            for (Beneficiary beneficiary : pi.getBeneficiaryDetails()) {
-                beneficiary.setBenefName(null);
-                beneficiary.setBenfAcctNo(null);
-                beneficiary.setBenfBankIfscCode(null);
-                beneficiary.setBenfMobileNo(null);
-                beneficiary.setBenfAddress(null);
-                beneficiary.setBenfAccountType(null);
-            }
-            Map<String, Object> indexerRequest = new HashMap<>();
-            indexerRequest.put("RequestInfo", requestInfo);
-            indexerRequest.put("paymentInstruction", pi);
-            producer.push(adapterConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
-
-        } catch (Exception e) {
-            log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
-        }
     }
 
     public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
