@@ -8,6 +8,7 @@ import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.PIRepository;
 import org.egov.utils.HelperUtil;
 import org.egov.utils.MdmsUtils;
+import org.egov.utils.PIUtils;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.enums.PIStatus;
 import org.egov.web.models.jit.*;
@@ -34,6 +35,8 @@ public class PISService {
     private ObjectMapper mapper;
     @Autowired
     private HelperUtil helperUtil;
+    @Autowired
+    private PIUtils piUtils;
 
     public void updatePIStatus(RequestInfo requestInfo){
         List<PaymentInstruction> paymentInstructions = getInitiatedPaymentInstructions();
@@ -66,6 +69,7 @@ public class PISService {
                 paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
+                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
             }
 
         }
