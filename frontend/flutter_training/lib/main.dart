@@ -15,6 +15,7 @@ import 'package:flutter_training/blocs/attendance/individual_search.dart';
 import 'package:flutter_training/blocs/attendance/search_projects/search_projects.dart';
 import 'package:flutter_training/blocs/attendance/skills/skills_bloc.dart';
 import 'package:flutter_training/blocs/auth/otp_bloc.dart';
+import 'package:flutter_training/blocs/bnd/create_birth_bloc.dart';
 import 'package:flutter_training/blocs/muster_rolls/create_muster.dart';
 import 'package:flutter_training/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:flutter_training/blocs/muster_rolls/search_muster_roll.dart';
@@ -211,6 +212,7 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => WageSeekerBloc()),
         BlocProvider(create: (context) => WageSeekerLocationBloc()),
         BlocProvider(create: (context) => WageSeekerCreateBloc()),
+        BlocProvider(create: (context) => BirthRegBloc()),
         BlocProvider(create: (context) => WageSeekerBankCreateBloc()),
         BlocProvider(create: (context) => ORGSearchBloc()),
         BlocProvider(create: (context) => ORGFinanceBloc()),

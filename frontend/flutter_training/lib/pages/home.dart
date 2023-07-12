@@ -1,9 +1,8 @@
-import 'package:digit_components/widgets/digit_card.dart';
-import 'package:digit_components/widgets/molecules/digit_loader.dart';
-import 'package:digit_components/widgets/powered_by_digit.dart';
-import 'package:digit_components/widgets/scrollable_content.dart';
+import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:flutter_training/widgets/atoms/app_bar_logo.dart';
 
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/app_initilization/home_screen_bloc.dart';
@@ -14,7 +13,6 @@ import '../utils/common_methods.dart';
 import '../utils/global_variables.dart';
 import '../widgets/ButtonLink.dart';
 import '../widgets/SideBar.dart';
-import '../widgets/atoms/app_logo.dart';
 import '../widgets/drawer_wrapper.dart';
 
 class HomePage extends StatefulWidget {
@@ -45,7 +43,7 @@ class _HomePage extends State<HomePage> {
     return Scaffold(
         appBar: AppBar(
           titleSpacing: 0,
-          title: const AppLogo(),
+          title: const AppBarLogo(),
         ),
         drawer: const DrawerWrapper(Drawer(child: SideBar())),
         body: BlocBuilder<LocalizationBloc, LocalizationState>(
@@ -72,13 +70,38 @@ class _HomePage extends State<HomePage> {
                             children: homeScreenConfig?.map((e) {
                                   return DigitCard(
                                     child: Column(
-                                      children: e.links?.map((l) {
-                                            return ButtonLink(
-                                              t.translate(l.label ?? ''),
-                                              () {},
-                                            );
-                                          }).toList() ??
-                                          [],
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              t.translate(e.header),
+                                              style: DigitTheme
+                                                  .instance
+                                                  .mobileTheme
+                                                  .textTheme
+                                                  .headlineLarge,
+                                            ),
+                                            e.icon != null
+                                                ? SvgPicture.asset(
+                                                    e.icon ?? '',
+                                                    color: const DigitColors()
+                                                        .burningOrange,
+                                                  )
+                                                : const SizedBox.shrink()
+                                          ],
+                                        ),
+                                        Column(
+                                          children: e.links?.map((l) {
+                                                return ButtonLink(
+                                                  t.translate(l.label ?? ''),
+                                                  () {},
+                                                );
+                                              }).toList() ??
+                                              [],
+                                        ),
+                                      ],
                                     ),
                                   );
                                 }).toList() ??

@@ -165,6 +165,8 @@ class Home {
   String get trackAttendance => 'TRACK_ATTENDENCE';
   String get inbox => 'ES_COMMON_INBOX';
   String get musterRolls => 'WORKS_MUSTERROLLS';
+  String get birthRegistration => 'ACTION_TEST_BIRTH_MODULE';
+  String get deathRegistration => 'ACTION_TEST_DEATH_MODULE';
 }
 
 class WorkOrder {

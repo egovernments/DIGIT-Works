@@ -9,6 +9,7 @@ class Urls {
   static WorkServices workServices = const WorkServices();
   static ORGServices orgServices = const ORGServices();
   static BillServices billServices = const BillServices();
+  static BNDServices bndServices = const BNDServices();
 }
 
 class CommonServices {
@@ -28,6 +29,13 @@ class ORGServices {
 
   String get orgSearch => 'org-services/organisation/v1/_search';
   String get financeSearch => 'bankaccount-service/bankaccount/v1/_search';
+}
+
+class BNDServices {
+  const BNDServices();
+
+  String get createBirth => 'birth-death-services/common/savebirthimport';
+  String get searchBirth => 'birth-death-services/birth/_search';
 }
 
 class BillServices {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_training/utils/global_variables.dart';
 
+import '../../blocs/localization/app_localization.dart';
+
 class AppBarLogo extends StatelessWidget {
   const AppBarLogo({super.key});
 
@@ -23,27 +25,14 @@ class AppBarLogo extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    GlobalVariables.organisationListModel != null
-                        ? GlobalVariables.organisationListModel?.organisations
-                                ?.first.name ??
-                            ''
-                        : '',
+                    AppLocalizations.of(context).translate(
+                        'TENANT_TENANTS_${GlobalVariables.userRequestModel?['tenantId'].toString().replaceAll('.', '_').toUpperCase()}'),
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
                     ),
                     textAlign: TextAlign.start,
                   ),
-                  Text(
-                    GlobalVariables.organisationListModel?.organisations?.first
-                            .orgNumber ??
-                        '',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                    ),
-                    textAlign: TextAlign.start,
-                  )
                 ],
               )
               // Icon(
