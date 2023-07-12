@@ -84,7 +84,7 @@ public class PaymentService {
         log.info("PaymentService::update");
         Payment payment = paymentRequest.getPayment();
         List<Payment> paymentsFromSearch = validator.validateUpdateRequest(paymentRequest);
-        enrichmentUtil.encrichUpdatePayment(paymentRequest);
+        enrichmentUtil.encrichUpdatePayment(paymentRequest, paymentsFromSearch.get(0));
         paymentRequest.setPayment(paymentsFromSearch.get(0));
         backUpdateBillForPayment(paymentRequest);
 
