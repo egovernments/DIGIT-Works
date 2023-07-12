@@ -6,7 +6,7 @@ import { useHistory,Link } from 'react-router-dom';
 const SubWorkTableDetails = ({data}) => {
 
     const tableStyles = data?.tableStyles
-    const {rowStyle,cellStyle} = tableStyles
+    const {rowStyle,cellStyle,tableStyle} = tableStyles
     const { t } = useTranslation();
     
     const renderHeader = (headers) => {
@@ -42,7 +42,7 @@ const SubWorkTableDetails = ({data}) => {
     }
 
   return (
-      <table className='table reports-table sub-work-table'>
+      <table className='table reports-table sub-work-table' style={tableStyle}>
           <thead>
               <tr>{renderHeader(data?.headers)}</tr>
           </thead>
