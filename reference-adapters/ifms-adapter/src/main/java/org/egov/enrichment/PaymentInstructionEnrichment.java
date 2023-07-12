@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.egov.config.Constants.VA_REQUEST_TIME_FORMAT;
+import static org.egov.config.Constants.VA_TRANSACTION_TYPE_WITHDRAWAL;
 
 @Service
 @Slf4j
@@ -272,10 +273,17 @@ public class PaymentInstructionEnrichment {
                 }
             }
         }
+
+        if (selectedSanction != null) {
+            // Filter TRANSACTION TYPE WITHDRAWAL from selected sanction allotment
+            List<Allotment> allotments = selectedSanction.getAllotmentDetails().stream()
+                    .filter(allotment -> !allotment.getAllotmentTxnType().equalsIgnoreCase(VA_TRANSACTION_TYPE_WITHDRAWAL))
+                    .collect(Collectors.toList());
+            selectedSanction.setAllotmentDetails(allotments);
+        }
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("ssu", ssuNode);
         objectMap.put("hoa", hoaNode);
-        objectMap.put("sanction", selectedSanction);
         objectMap.put("sanction", selectedSanction);
         objectMap.put("hasFunds", hasFunds);
         return objectMap;
