@@ -14,8 +14,7 @@ import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 
 class CreateBirthRegistrationPage extends StatefulWidget {
-  final String title;
-  const CreateBirthRegistrationPage({required this.title, super.key});
+  const CreateBirthRegistrationPage({super.key});
 
   @override
   CreateBirthRegistrationPageState createState() =>
@@ -66,7 +65,7 @@ class CreateBirthRegistrationPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text('Flutter Training'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_training/pages/birth-registration/create_birth_registration.dart';
 import 'package:flutter_training/pages/org_profile.dart';
 import 'package:flutter_training/pages/wage_seeker_registration/register_individual.dart';
 
@@ -41,6 +42,9 @@ part 'app_router.gr.dart';
         AutoRoute(page: ViewMusterRollsPage, path: 'muster-rolls'),
         AutoRoute(page: RegisterIndividualPage, path: 'register-individual'),
         AutoRoute(page: SuccessResponsePage, path: 'success'),
+        AutoRoute(
+            page: CreateBirthRegistrationPage,
+            path: 'create-birth-certificate'),
       ],
     ),
   ],

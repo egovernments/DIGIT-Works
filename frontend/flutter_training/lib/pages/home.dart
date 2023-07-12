@@ -9,7 +9,9 @@ import '../blocs/app_initilization/home_screen_bloc.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
 import '../models/screen_config/home_screen_config.dart';
+import '../router/app_router.dart';
 import '../utils/common_methods.dart';
+import '../utils/constants.dart';
 import '../utils/global_variables.dart';
 import '../widgets/ButtonLink.dart';
 import '../widgets/SideBar.dart';
@@ -96,7 +98,8 @@ class _HomePage extends State<HomePage> {
                                           children: e.links?.map((l) {
                                                 return ButtonLink(
                                                   t.translate(l.label ?? ''),
-                                                  () {},
+                                                  getRoute(l.key.toString(),
+                                                      context),
                                                 );
                                               }).toList() ??
                                               [],
@@ -134,6 +137,11 @@ class _HomePage extends State<HomePage> {
 
   void Function()? getRoute(String key, BuildContext context) {
     switch (key) {
+      case Constants.homeCreateBirthRegistration:
+        return () {
+          localeLoad();
+          context.router.push(const CreateBirthRegistrationRoute());
+        };
       default:
         return null;
     }

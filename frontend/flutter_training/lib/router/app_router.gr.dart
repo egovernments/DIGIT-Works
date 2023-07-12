@@ -99,6 +99,12 @@ class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    CreateBirthRegistrationRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const CreateBirthRegistrationPage(),
+      );
+    },
   };
 
   @override
@@ -165,6 +171,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               SuccessResponseRoute.name,
               path: 'success',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              CreateBirthRegistrationRoute.name,
+              path: 'create-birth-certificate',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -406,4 +417,16 @@ class SuccessResponseRouteArgs {
   String toString() {
     return 'SuccessResponseRouteArgs{key: $key, header: $header, subHeader: $subHeader, subText: $subText, subTitle: $subTitle, callBack: $callBack, callBackWhatsapp: $callBackWhatsapp, callBackDownload: $callBackDownload, callBackPrint: $callBackPrint, backButton: $backButton, buttonLabel: $buttonLabel, isWithoutLogin: $isWithoutLogin, downloadLabel: $downloadLabel, printLabel: $printLabel, whatsAppLabel: $whatsAppLabel, backButtonLabel: $backButtonLabel}';
   }
+}
+
+/// generated route for
+/// [CreateBirthRegistrationPage]
+class CreateBirthRegistrationRoute extends PageRouteInfo<void> {
+  const CreateBirthRegistrationRoute()
+      : super(
+          CreateBirthRegistrationRoute.name,
+          path: 'create-birth-certificate',
+        );
+
+  static const String name = 'CreateBirthRegistrationRoute';
 }
