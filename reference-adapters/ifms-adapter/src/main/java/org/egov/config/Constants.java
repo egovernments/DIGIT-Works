@@ -23,5 +23,6 @@ public class Constants {
 	public static final String HEAD_CODE_DEDUCTION_CATEGORY = "deduction";
 	public static final String JIT_UNAUTHORIZED_REQUEST_EXCEPTION="No valid session encryption key";
 
+	public static final String JIT_FD_EXT_APP_NAME = "MUKTA";
 
 }

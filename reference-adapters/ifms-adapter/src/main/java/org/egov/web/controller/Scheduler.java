@@ -2,6 +2,7 @@ package org.egov.web.controller;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.service.FailureDetailsService;
 import org.egov.service.PAGService;
 import org.egov.service.PISService;
 import org.egov.service.VirtualAllotmentService;
@@ -26,6 +27,9 @@ public class Scheduler {
     @Autowired
     private PISService pisService;
     @Autowired
+    VirtualAllotmentService virtualAllotmentService;
+    @Autowired
+    private FailureDetailsService failureDetailsService;
     private PAGService pagService;
     @Autowired
     private VirtualAllotmentService virtualAllotmentService;
@@ -42,6 +46,9 @@ public class Scheduler {
                 break;
             case VA:
                 virtualAllotmentService.generateVirtualAllotment(schedulerRequest.getRequestInfo());
+                break;
+            case FD:
+                failureDetailsService.updateFailureDetails(schedulerRequest.getRequestInfo());
                 break;
 
         }

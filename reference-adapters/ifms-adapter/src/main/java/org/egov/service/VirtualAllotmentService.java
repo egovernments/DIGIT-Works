@@ -26,22 +26,22 @@ import static org.egov.config.Constants.*;
 public class VirtualAllotmentService {
 
     @Autowired
-    MdmsUtils mdmsUtils;
+    private MdmsUtils mdmsUtils;
 
     @Autowired
-    IfmsAdapterConfig ifmsAdapterConfig;
+    private IfmsAdapterConfig ifmsAdapterConfig;
 
     @Autowired
-    IfmsService ifmsService;
+    private IfmsService ifmsService;
 
     @Autowired
-    ExecutedVALogsRepository executedVALogsRepository;
+    private ExecutedVALogsRepository executedVALogsRepository;
 
     @Autowired
-    VirtualAllotmentEnrichment vaEnrichment;
+    private VirtualAllotmentEnrichment vaEnrichment;
 
     @Autowired
-    SanctionDetailsRepository sanctionDetailsRepository;
+    private SanctionDetailsRepository sanctionDetailsRepository;
 
     public void generateVirtualAllotment(RequestInfo requestInfo) {
         List<String> tenants = getTenants(requestInfo);
