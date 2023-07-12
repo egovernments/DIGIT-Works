@@ -1,10 +1,6 @@
 package org.egov.digit.expense.util;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -242,12 +238,55 @@ public class EnrichmentUtil {
         return paymentRequest;
     }
 
-    public PaymentRequest encrichUpdatePayment(PaymentRequest paymentRequest) {
+    public PaymentRequest encrichUpdatePayment(PaymentRequest paymentRequest, Payment searchPayment) {
 
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        payment.setAuditDetails(getAuditDetails(createdBy, false));
-        
+        Long time = System.currentTimeMillis();
+//        payment.setAuditDetails(getAuditDetails(createdBy, false));
+
+        // Update each payment status based on request status
+        Map<String, PaymentBill> billMap = payment.getBills().stream()
+                .collect(Collectors.toMap(PaymentBill::getId, Function.identity()));
+
+        Map<String, PaymentBillDetail> billDetailMap = payment.getBills().stream()
+                .map(PaymentBill::getBillDetails)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(PaymentBillDetail::getId, Function.identity()));
+
+        Map<String, PaymentLineItem> payableLineItemMap = payment.getBills().stream()
+                .map(PaymentBill::getBillDetails)
+                .flatMap(Collection::stream)
+                .map(PaymentBillDetail::getPayableLineItems)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(PaymentLineItem::getId, Function.identity()));
+
+        searchPayment.setStatus(payment.getStatus());
+        searchPayment.getAuditDetails().setLastModifiedBy(createdBy);
+        searchPayment.getAuditDetails().setLastModifiedTime(time);
+
+        for (PaymentBill bill: searchPayment.getBills()) {
+            if (billMap.containsKey(bill.getId())) {
+                bill.setStatus(billMap.get(bill.getId()).getStatus());
+                bill.getAuditDetails().setLastModifiedBy(createdBy);
+                bill.getAuditDetails().setLastModifiedTime(time);
+            }
+            for (PaymentBillDetail billDetail: bill.getBillDetails()) {
+                if (billDetailMap.containsKey(billDetail.getId())) {
+                    billDetail.setStatus(billDetailMap.get(billDetail.getId()).getStatus());
+                    billDetail.getAuditDetails().setLastModifiedBy(createdBy);
+                    billDetail.getAuditDetails().setLastModifiedTime(time);
+                }
+                for (PaymentLineItem payableLineItem: billDetail.getPayableLineItems()) {
+                    if (payableLineItemMap.containsKey(payableLineItem.getId())) {
+                        payableLineItem.setStatus(payableLineItemMap.get(payableLineItem.getId()).getStatus());
+                        payableLineItem.getAuditDetails().setLastModifiedBy(createdBy);
+                        payableLineItem.getAuditDetails().setLastModifiedTime(time);
+                    }
+                }
+            }
+        }
+
         return paymentRequest;
     }
 
