@@ -182,7 +182,7 @@ public class FailureDetailsService {
                     .auditDetails(auditDetails)
                     .build();
             pi.getTransactionDetails().add(transactionDetails);
-            piRepository.update(Collections.singletonList(pi), sanctionDetail.getFundsSummary(), pi.getPiStatus());
+            piRepository.update(Collections.singletonList(pi), sanctionDetail.getFundsSummary());
         } catch (Exception e) {
             log.error("Failed in FailureDetailsService:addReversalTransactionAndUpdatePIPa " + e);
         }
