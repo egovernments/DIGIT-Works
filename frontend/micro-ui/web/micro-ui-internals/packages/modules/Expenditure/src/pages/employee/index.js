@@ -61,6 +61,12 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         isBack: fromScreen && true,
       },
       {
+        // path: `/${window.contextPath}/employee/expenditure/search-payment-instruction`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_PI")}` : t("EXP_VIEW_PI"),
+        show: location.pathname.includes("/expenditure/view-payment-instruction") ? true : false,
+        isBack: fromScreen && true,
+      },
+      {
         // path: `/${window.contextPath}/employee/expenditure/wage-bill-details`,
         content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_BILL")}` : t("EXP_VIEW_BILL"),
         show: location.pathname.includes("/expenditure/wage-bill-details") ? true : false,
@@ -100,6 +106,7 @@ const App = ({ path }) => {
     const PurchaseBillResponse = Digit?.ComponentRegistryService?.getComponent("CreatePurchaseBillResponse");
     const ViewWageBill = Digit?.ComponentRegistryService?.getComponent("ViewWageBill");
     const DownloadBill = Digit?.ComponentRegistryService?.getComponent("DownloadBill");
+    const ViewPaymentInstruction = Digit?.ComponentRegistryService?.getComponent("ViewPaymentInstruction");
 
     const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
     const [sessionFormData, clearSessionFormData] = PurchaseBillSession;
@@ -127,6 +134,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBillWMS parentRoute={path} />} />
           <PrivateRoute path={`${path}/search-bill-plain`} component={() => <SearchBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/search-payment-instruction`} component={() => <SearchPaymentInstruction parentRoute={path} />} />
+          <PrivateRoute path={`${path}/view-payment-instruction`} component={() => <ViewPaymentInstruction parentRoute={path} />} />
           <PrivateRoute path={`${path}/inbox-payment-instruction`} component={() => <InboxPaymentInstruction parentRoute={path} />} />
           <PrivateRoute path={`${path}/wage-bill-details`} component={() => <ViewWageBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/supervision-bill-details`} component={() => <ViewSupervisionbill parentRoute={path} />} />
