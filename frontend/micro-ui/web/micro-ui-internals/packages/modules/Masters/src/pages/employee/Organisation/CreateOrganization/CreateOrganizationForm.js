@@ -33,6 +33,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const [showDuplicateUserError, setShowDuplicateUserError] = useState(false)
     const [showDuplicateContactToast, setShowDuplicateContactToast] = useState(false)
     const [showValidToError, setShowValidToError] = useState(false)
+    const [showCBOToVendorError, setShowCBOToVendorError] = useState(false)
 
     const { mutate: CreateOrganisationMutation } = Digit.Hooks.organisation.useCreateOrganisation();
     const { mutate: UpdateOrganisationMutation } = Digit.Hooks.organisation.useUpdateOrganisation();
@@ -269,6 +270,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     const closeToast = () => {
         setTimeout(() => {
             setShowDuplicateContactToast(false)
+            setShowCBOToVendorError(false)
         }, 10000);
     }
 
@@ -310,8 +312,13 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         else{
             const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
-            const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
+            if(searchOrgResponse?.organisations?.length>0 && data?.funDetails_orgType?.code === 'VEN' && searchOrgResponse?.organisations?.[0]?.functions?.[0]?.type.includes("CBO")){
+                setShowCBOToVendorError(true);
+            }
+            else{
+                const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
             handleResponseForUpdate(orgPayload, bankAccountPayload);
+        }
         }else {
             const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
             if(userData?.user?.length > 0) {
@@ -355,6 +362,9 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         )}
         {showDuplicateContactToast && (
           <Toast warning={true} label={t("ES_COMMON_ORG_EXISTS_WITH_MOBILE_NUMBER")} isDleteBtn={true} onClose={() => setShowDuplicateContactToast(false)} />
+        )}
+        {showCBOToVendorError && (
+          <Toast warning={true} label={t("ORG_CBO_CANNOT_BE_CHANGE_TO_VENDOR")} isDleteBtn={true} onClose={() => setShowCBOToVendorError(false)} />
         )}
       </React.Fragment>
     );
