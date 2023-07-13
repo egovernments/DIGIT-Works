@@ -6,11 +6,16 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.PIRepository;
+import org.egov.utils.BillUtils;
 import org.egov.utils.HelperUtil;
 import org.egov.utils.MdmsUtils;
 import org.egov.utils.PIUtils;
+import org.egov.web.models.bill.Payment;
+import org.egov.web.models.bill.PaymentRequest;
+import org.egov.web.models.enums.BeneficiaryPaymentStatus;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.enums.PIStatus;
+import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +42,8 @@ public class PISService {
     private HelperUtil helperUtil;
     @Autowired
     private PIUtils piUtils;
-
+    @Autowired
+    private BillUtils billUtils;
     public void updatePIStatus(RequestInfo requestInfo){
         List<PaymentInstruction> paymentInstructions = getInitiatedPaymentInstructions();
 
@@ -53,7 +59,10 @@ public class PISService {
             JITRequest jitRequest = JITRequest.builder().serviceId(JITServiceId.PIS).params(pisRequest).build();
 
             JITResponse pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
-
+            if (pisResponse.getErrorMsg() != null) {
+                updateStatusToFailed(requestInfo, paymentInstruction);
+                continue;
+            }
             if(CollectionUtils.isEmpty(pisResponse.getData())){
                 continue;
             }
@@ -81,8 +90,23 @@ public class PISService {
         List<PaymentInstruction> paymentInstructions = paymentInstructionService.searchPi(piSearchRequest);
         return paymentInstructions;
     }
+    private void updateStatusToFailed(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
+        for (Beneficiary beneficiary : paymentInstruction.getBeneficiaryDetails()) {
+            beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+        }
+        paymentInstruction.setPiStatus(PIStatus.FAILED);
+        piRepository.update(Collections.singletonList(paymentInstruction),null);
 
+        List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
+                Collections.singleton(paymentInstruction.getMuktaReferenceId()),
+                paymentInstruction.getTenantId());
+        for (Payment payment : payments) {
+            PaymentRequest paymentRequest = PaymentRequest.builder()
+                    .requestInfo(requestInfo).payment(payment).build();
 
-
+            billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED);
+        }
+        piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+    }
 
 }
