@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.util.GenderUtil;
@@ -31,6 +32,7 @@ import digit.models.coremodels.AuditDetails;
 import static org.egov.digit.expense.config.Constants.GENDER;
 
 @Component
+@Slf4j
 public class EnrichmentUtil {
 
     @Autowired
@@ -73,14 +75,16 @@ public class EnrichmentUtil {
             billDetail.getPayee().setStatus(Status.ACTIVE);
 
             String gender = genderUtil.getGenderDetails(billRequest.getRequestInfo(),billDetail.getPayee().getTenantId(),billDetail.getPayee().getIdentifier());
+
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, Object> map = objectMapper.convertValue(billDetail.getPayee().getAdditionalDetails(), new TypeReference<Map<String, Object>>() {});
             if(map == null){
                 map = new HashMap<>();
             }
             map.put(GENDER,gender);
+            log.info("map -> {}", map);
             billDetail.getPayee().setAdditionalDetails(objectMapper.convertValue(map,Object.class));
-
+            log.info("Additional details -> {}",billDetail.getPayee().getAdditionalDetails().toString());
             for (LineItem lineItem : billDetail.getLineItems()) {
                 lineItem.setId(UUID.randomUUID().toString());
                 lineItem.setAuditDetails(audit);
