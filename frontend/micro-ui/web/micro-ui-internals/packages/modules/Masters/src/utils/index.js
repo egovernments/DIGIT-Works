@@ -342,7 +342,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         geoLocation: {}
     }]
     organisation.additionalDetails = {
-        locality: formData?.locDetails_locality?.code,
+        locality: formData?.locDetails_locality?.code || formData?.locDetails_locality?.[0]?.code,
         registeredByDept: formData?.basicDetails_regDept,
         deptRegistrationNum: formData?.basicDetails_regDeptNo
     }
