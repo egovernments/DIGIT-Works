@@ -46,6 +46,7 @@ const SearchPaymentInstruction = () => {
            })
            //for 1st tab
               configs =  Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.search.uiConfig.fields")
+              
            return configs
         },
       }
@@ -64,6 +65,17 @@ const SearchPaymentInstruction = () => {
     <React.Fragment>
       <div className="jk-header-btn-wrapper">
         <Header className="works-header-search">{t(configs?.label)}</Header>
+        {Digit.Utils.didEmployeeHasRole(configs?.actionRole) && (
+            <Button
+              label={t(configs?.actionLabel)}
+              variation="secondary"
+              // icon={<DownloadImgIcon style={{height : "20px", width : "20px"}}/>}
+              onButtonClick={() => {
+                history.push(`/${window?.contextPath}/employee/${configs?.actionLink}`);
+              }}
+              type="button"
+            />
+          )}
       </div>
       <div className="inbox-search-wrapper">
           <InboxSearchComposer configs={configs}></InboxSearchComposer>
