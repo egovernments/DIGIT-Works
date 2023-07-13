@@ -1,26 +1,26 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.PIRepository;
+import org.egov.repository.SanctionDetailsRepository;
 import org.egov.utils.BillUtils;
 import org.egov.utils.HelperUtil;
 import org.egov.utils.MdmsUtils;
 import org.egov.utils.PIUtils;
 import org.egov.web.models.bill.Payment;
 import org.egov.web.models.bill.PaymentRequest;
-import org.egov.web.models.enums.BeneficiaryPaymentStatus;
-import org.egov.web.models.enums.JITServiceId;
-import org.egov.web.models.enums.PIStatus;
-import org.egov.web.models.enums.PaymentStatus;
+import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.egov.config.Constants.JIT_BILL_DATE_FORMAT;
@@ -44,6 +44,10 @@ public class PISService {
     private PIUtils piUtils;
     @Autowired
     private BillUtils billUtils;
+    @Autowired
+    private SanctionDetailsRepository sanctionDetailsRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
     public void updatePIStatus(RequestInfo requestInfo){
         List<PaymentInstruction> paymentInstructions = getInitiatedPaymentInstructions();
 
@@ -59,8 +63,11 @@ public class PISService {
             JITRequest jitRequest = JITRequest.builder().serviceId(JITServiceId.PIS).params(pisRequest).build();
 
             JITResponse pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
-            if (pisResponse.getErrorMsg() != null) {
+            if (pisResponse.getErrorMsg() != null
+                    && pisResponse.getErrorMsg().contains(paymentInstruction.getMuktaReferenceId())
+                    && pisResponse.getErrorMsg().contains("rejected")) {
                 updateStatusToFailed(requestInfo, paymentInstruction);
+                updateFundsSummary(requestInfo, paymentInstruction);
                 continue;
             }
             if(CollectionUtils.isEmpty(pisResponse.getData())){
@@ -106,6 +113,41 @@ public class PISService {
 
             billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED);
         }
+        piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+    }
+    private void updateFundsSummary(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
+        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
+                .ids(Collections.singletonList(paymentInstruction.getTransactionDetails().get(0).getSanctionId()))
+                .build();
+        List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
+        SanctionDetail sanctionDetail = sanctionDetails.get(0);
+        BigDecimal totalAmount = new BigDecimal(0);
+        List<Beneficiary> beneficiaries = paymentInstruction.getBeneficiaryDetails();
+        if (beneficiaries != null && !beneficiaries.isEmpty()) {
+            for (Beneficiary piBeneficiary: beneficiaries) {
+                totalAmount = totalAmount.add(piBeneficiary.getAmount());
+            }
+        }
+        sanctionDetail.getFundsSummary().getAvailableAmount().add(totalAmount);
+        sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+        sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+        AuditDetails auditDetails = AuditDetails.builder()
+                .createdBy(requestInfo.getUserInfo().getUuid()).createdTime(System.currentTimeMillis())
+                .lastModifiedBy(requestInfo.getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis())
+                .build();
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .tenantId(paymentInstruction.getTenantId())
+                .sanctionId(sanctionDetail.getId())
+                .paymentInstId(paymentInstruction.getId())
+                .transactionAmount(totalAmount)
+                .transactionDate(System.currentTimeMillis())
+                .transactionType(TransactionType.REVERSAL)
+                .additionalDetails(objectMapper.createObjectNode())
+                .auditDetails(auditDetails)
+                .build();
+        paymentInstruction.getTransactionDetails().add(transactionDetails);
+        piRepository.update(Collections.singletonList(paymentInstruction), sanctionDetail.getFundsSummary());
+        // Update PI indexer based on updated PI
         piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
     }
 
