@@ -23,6 +23,7 @@ const getBillType = (businessService) => {
 }
 const PAYMENT_UPDATE_STATUS="SUCCESSFUL";
 
+
 const getCreatePaymentPayload = (data) => {
   let payment = {}
   payment.tenantId = Digit.ULBService.getCurrentTenantId()
@@ -1586,18 +1587,37 @@ export const UICustomizations = {
           "order": "ASC"
         }
       })
-
-      const payload = getCreatePaymentPayload(result.bills);
+      
+      // const payload = getCreatePaymentPayload(result.bills);
+      //Updated this code to call create n number of times(one for every bill)
       let responseToReturn = { isSuccess: true, label: "BILL_STATUS_PAYMENT_INITIATED_TOAST"}
-      try {
-        const response = await Digit.ExpenseService.createPayment(payload);
-        responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
-        return responseToReturn
-      } catch (error) {
-        responseToReturn.isSuccess = false
-        responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
-        return responseToReturn
+      let statuses = []
+      for(let i=0;i<result.bills.length;i++){
+        try {
+          const payload = getCreatePaymentPayload([result.bills?.[i]]);
+          const response = await Digit.ExpenseService.createPayment(payload);
+          // responseToReturn.label=`${t(responseToReturn?.label)} ${response?.payments?.[0]?.paymentNumber}`
+          statuses.push([result.bills?.[i]?.billNumber,"success",response?.payments?.[0]?.paymentNumber])
+          // return responseToReturn
+        } catch (error) {
+          // responseToReturn.isSuccess = false
+          // responseToReturn.label = t("BILL_STATUS_PAYMENT_FAILED")
+          statuses.push([result.bills?.[i]?.billNumber,"failed"])
+          // return responseToReturn
+        }
       }
+      
+      let atleastOnePaymentSuccess = statuses?.some(status => status?.[1]==="success")
+      responseToReturn.isSuccess = atleastOnePaymentSuccess ? true : false
+      let initiatedBills = ""
+      let failedBills = ""
+      statuses?.forEach(status => {
+        if(status[1]==="success") initiatedBills += `${status[0]}, `
+        else failedBills += `${status[0]}, `
+      })
+      const returnLabel = `${t("BILL_STATUS_PAYMENT_INITIATED")}:${initiatedBills} ${t("BILL_STATUS_PAYMENT_FAILED")}:${failedBills}`
+      responseToReturn.label = returnLabel
+      return responseToReturn
     }
   },
   SearchPIWMS:{

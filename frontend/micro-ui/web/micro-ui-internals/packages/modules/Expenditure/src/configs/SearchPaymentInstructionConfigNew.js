@@ -5,33 +5,176 @@ export const SearchPIConfigNew = {
     {
       "label": "EXP_SEARCH_PAYMENT_INS",
       "type": "search",
+      "actionLabel": "EXP_CREATE_PA",
+      "actionRole": "BILL_ACCOUNTANT",
+      "actionLink": "expenditure/create-pa?status=APPROVED",
       "apiDetails": {
-        "serviceName": "/expense/payment/v1/_search",
+        "serviceName": "/wms/ifms-pi/_search",
         "requestParam": {},
         "requestBody": {
-          "paymentCriteria": {
-            
+          "inbox": {
+            "moduleSearchCriteria": {}
           }
         },
         "minParametersForSearchForm": 1,
         "masterName": "commonUiConfig",
-        "moduleName": "SearchPaymentInstruction",
-        "tableFormJsonPath": "requestBody",
-        "filterFormJsonPath": "requestBody.paymentCriteria",
-        "searchFormJsonPath": "requestBody.paymentCriteria"
+        "moduleName": "SearchPIWMS",
+        "tableFormJsonPath": "requestBody.inbox",
+        "filterFormJsonPath": "requestBody.inbox.moduleSearchCriteria",
+        "searchFormJsonPath": "requestBody.inbox.moduleSearchCriteria"
       },
       "sections": {
         "search": {
           "uiConfig": {
+            "additionalTabs":[
+              {
+                "uiConfig": {
+                  "navLink":"Open Search",
+                  "headerStyle": null,
+                  "primaryLabel": "ES_COMMON_SEARCH",
+                  "secondaryLabel": "ES_COMMON_CLEAR_SEARCH",
+                  "minReqFields": 1,
+                  "showFormInstruction": "PAYMENT_INS_SELECT_ONE_PARAM_TO_SEARCH",
+                  "defaultValues": {
+                    "piType": "",
+                    "jitBillNo": "",
+                    "billNumber": "",
+                    "status": "",
+                    "createdFrom": "",
+                    "createdTo": ""
+                  },
+                  "fields": [
+                    {
+                      "label": "WORKS_PI_TYPE",
+                      "type": "dropdown",
+                      "isMandatory": false,
+                      "disable": false,
+                      "populators": {
+                        "name": "piType",
+                        "optionsKey": "name",
+                        "optionsCustomStyle": {
+                          "top": "2.3rem"
+                        },
+                        "mdmsConfig": {
+                          "masterName": "PaymentInstructionType",
+                          "moduleName": "expense",
+                          "localePrefix": "EXP_PI_TYPE"
+                        }
+                      }
+                    },
+                    {
+                      "label": "WORKS_BILL_NUMBER",
+                      "type": "text",
+                      "isMandatory": false,
+                      "disable": false,
+                      "populators": {
+                        "name": "billNumber",
+                        "error": "ES_COMMON_BILL_PATTERN_ERR_MSG",
+                        "validation": {
+                          "pattern": "^[A-Za-z0-9\\/-]*$",
+                          "minlength": 2
+                        }
+                      }
+                    },
+                    {
+                      "label": "EXP_PI_ID",
+                      "type": "text",
+                      "isMandatory": false,
+                      "disable": false,
+                      "preProcess": {
+                        "convertStringToRegEx": [
+                          "populators.validation.pattern"
+                        ]
+                      },
+                      "populators": {
+                        "name": "jitBillNo"
+                        
+                      }
+                    },
+                    {
+                      "label": "CORE_COMMON_STATUS",
+                      "type": "dropdown",
+                      "isMandatory": false,
+                      "disable": false,
+                      "populators": {
+                        "name": "status",
+                        "optionsKey": "name",
+                        "optionsCustomStyle": {
+                          "top": "2.3rem"
+                        },
+                        "mdmsConfig": {
+                          "masterName": "PaymentInstructionStatus",
+                          "moduleName": "expense",
+                          "localePrefix": "EXP_PI_STATUS"
+                        }
+                      }
+                    },
+                    {
+                      "label": "CREATED_FROM_DATE",
+                      "type": "date",
+                      "isMandatory": false,
+                      "disable": false,
+                      "key": "createdFrom",
+                      "preProcess": {
+                        "updateDependent": [
+                          "populators.max"
+                        ]
+                      },
+                      "populators": {
+                        "name": "createdFrom",
+                        "max": "currentDate"
+                      }
+                    },
+                    {
+                      "label": "CREATED_TO_DATE",
+                      "type": "date",
+                      "isMandatory": false,
+                      "disable": false,
+                      "key": "createdTo",
+                      "preProcess": {
+                        "updateDependent": [
+                          "populators.max"
+                        ]
+                      },
+                      "populators": {
+                        "name": "createdTo",
+                        "error": "DATE_VALIDATION_MSG",
+                        "max": "currentDate"
+                      },
+                      "additionalValidation": {
+                        "type": "date",
+                        "keys": {
+                          "start": "createdFrom",
+                          "end": "createdTo"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "configNavItems":[{
+                  "name": "Pending for action",
+                  "code": "PENDING_FOR_ACTION",
+                  "activeByDefault": true,
+                  "minParametersForSearchForm":0
+              },
+              {
+                  "name": "Open Search",
+                  "code": "OPEN_SEARCH",
+                  "minParametersForSearchForm":1
+              }
+            ],
+            "horizontalLine":true,
+            "navLink":"Pending for action",
             "headerStyle": null,
             "primaryLabel": "ES_COMMON_SEARCH",
             "secondaryLabel": "ES_COMMON_CLEAR_SEARCH",
-            "minReqFields": 1,
+            "minReqFields": 0,
             "showFormInstruction": "PAYMENT_INS_SELECT_ONE_PARAM_TO_SEARCH",
             "defaultValues": {
-              "ward": "",
-              "billType": "",
-              "projectName": "",
+              "piType": "",
+              "jitBillNo": "",
               "billNumber": "",
               "status": "",
               "createdFrom": "",
@@ -39,54 +182,20 @@ export const SearchPIConfigNew = {
             },
             "fields": [
               {
-                "label": "COMMON_WARD",
-                "type": "locationdropdown",
-                "isMandatory": false,
-                "disable": false,
-                "populators": {
-                  "name": "ward",
-                  "type": "ward",
-                  "optionsKey": "i18nKey",
-                  "allowMultiSelect": false,
-                  "optionsCustomStyle": {
-                    "top": "2.3rem"
-                  }
-                }
-              },
-              {
                 "label": "WORKS_PI_TYPE",
                 "type": "dropdown",
                 "isMandatory": false,
                 "disable": false,
                 "populators": {
-                  "name": "projectType",
+                  "name": "piType",
                   "optionsKey": "name",
                   "optionsCustomStyle": {
                     "top": "2.3rem"
                   },
                   "mdmsConfig": {
-                    "masterName": "ProjectType",
-                    "moduleName": "works",
-                    "localePrefix": "COMMON_MASTERS"
-                  }
-                }
-              },
-              {
-                "label": "WORKS_PROJECT_NAME",
-                "type": "text",
-                "isMandatory": false,
-                "disable": false,
-                "preProcess": {
-                  "convertStringToRegEx": [
-                    "populators.validation.pattern"
-                  ]
-                },
-                "populators": {
-                  "name": "projectName",
-                  "error": "PROJECT_PATTERN_ERR_MSG",
-                  "validation": {
-                    "pattern": "^[^\\$\"<>?\\\\~`!@$%^()+={}\\[\\]*:;“”‘’]{1,50}$",
-                    "minlength": 2
+                    "masterName": "PaymentInstructionType",
+                    "moduleName": "expense",
+                    "localePrefix": "EXP_PI_TYPE"
                   }
                 }
               },
@@ -105,60 +214,17 @@ export const SearchPIConfigNew = {
                 }
               },
               {
-                "label": "CORE_COMMON_STATUS",
-                "type": "apidropdown",
+                "label": "EXP_PI_ID",
+                "type": "text",
                 "isMandatory": false,
                 "disable": false,
-                "populators": {
-                  "optionsCustomStyle": {
-                    "top": "2.3rem"
-                  },
-                  "name": "status",
-                  "optionsKey": "i18nKey",
-                  "allowMultiSelect": false,
-                  "masterName": "commonUiConfig",
-                  "moduleName": "SearchBillWMSConfig",
-                  "customfn": "populateReqCriteria"
-                }
-              },
-              {
-                "label": "CREATED_FROM_DATE",
-                "type": "date",
-                "isMandatory": false,
-                "disable": false,
-                "key": "createdFrom",
                 "preProcess": {
-                  "updateDependent": [
-                    "populators.max"
+                  "convertStringToRegEx": [
+                    "populators.validation.pattern"
                   ]
                 },
                 "populators": {
-                  "name": "createdFrom",
-                  "max": "currentDate"
-                }
-              },
-              {
-                "label": "CREATED_TO_DATE",
-                "type": "date",
-                "isMandatory": false,
-                "disable": false,
-                "key": "createdTo",
-                "preProcess": {
-                  "updateDependent": [
-                    "populators.max"
-                  ]
-                },
-                "populators": {
-                  "name": "createdTo",
-                  "error": "DATE_VALIDATION_MSG",
-                  "max": "currentDate"
-                },
-                "additionalValidation": {
-                  "type": "date",
-                  "keys": {
-                    "start": "createdFrom",
-                    "end": "createdTo"
-                  }
+                  "name": "jitBillNo"
                 }
               }
             ]
@@ -173,43 +239,44 @@ export const SearchPIConfigNew = {
             "columns": [
               {
                 "label": "EXP_PI_ID",
-                "jsonPath": "businessObject.billNumber",
-                // "additionalCustomization": true
+                "jsonPath": "businessObject.jitBillNo",
+                "additionalCustomization": true
               },
               {
                 "label": "EXP_PI_DATE",
-                "jsonPath": "businessObject.additionalDetails.projectName",
-                // "additionalCustomization": true
+                "jsonPath": "businessObject.auditDetails.createdTime",
+                "additionalCustomization":true
               },
               {
                 "label": "EXP_NO_BENE",
-                "jsonPath": "businessObject.additionalDetails",
-                // "additionalCustomization": true
+                "jsonPath": "businessObject.numBeneficiaries"
+                
               },
               {
                 "label": "EXP_NO_SUCC_PAYMENTS",
-                "jsonPath": "businessObject.additionalDetails.orgName"
+                "jsonPath": "businessObject.beneficiaryDetails",
+                "additionalCustomization": true
               },
               {
                 "label": "EXP_NO_FAIL_PAYMENTS",
-                "jsonPath": "ProcessInstance.businessService",
-                // "additionalCustomization": true
+                "jsonPath": "businessObject",
+                "additionalCustomization": true
               },
               {
                 "label": "CORE_COMMON_STATUS",
-                "jsonPath": "businessObject.paymentStatus",
-                // "additionalCustomization": true
+                "jsonPath": "businessObject.piStatus",
+                "additionalCustomization": true
               },
               {
                 "label": "ES_COMMON_TOTAL_AMOUNT",
-                "jsonPath": "businessObject.totalAmount",
-                // "additionalCustomization": true,
+                "jsonPath": "businessObject.netAmount",
+                "additionalCustomization": true,
                 "headerAlign": "right"
               }
             ],
             "enableGlobalSearch": false,
             "enableColumnSort": true,
-            "resultsJsonPath": "payments",
+            "resultsJsonPath": "items"
           },
           "children": {},
           "show": true
@@ -219,4 +286,3 @@ export const SearchPIConfigNew = {
     }
   ]
 }
-
