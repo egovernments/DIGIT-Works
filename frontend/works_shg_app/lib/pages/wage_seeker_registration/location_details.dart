@@ -21,12 +21,14 @@ import '../../utils/global_variables.dart';
 class LocationDetailsPage extends StatefulWidget {
   final void Function() onPressed;
   final String? city;
-  final Location? location;
+  final Location? ward;
+  final Location? locality;
   final WageSeekerMDMS? wageSeekerMDMS;
   const LocationDetailsPage(
       {required this.onPressed,
       this.city,
-      this.location,
+        this.ward,
+      this.locality,
       this.wageSeekerMDMS,
       super.key});
 
@@ -45,7 +47,6 @@ class LocationDetailsState extends State<LocationDetailsPage> {
   String localityKey = 'locality';
   String streetNameKey = 'streetName';
   String doorNoKey = 'doorNo';
-  List<String> locality = [];
 
   @override
   void initState() {
@@ -55,14 +56,6 @@ class LocationDetailsState extends State<LocationDetailsPage> {
     skillDetails = registrationState.skillDetails;
     if (registrationState.locationDetails != null) {
       locationDetails = registrationState.locationDetails!;
-      locality = registrationState.locationDetails?.ward != null
-          ? widget.location!.tenantBoundaryList!.first.boundaryList!
-              .where((w) => w.code == registrationState.locationDetails?.ward)
-              .first
-              .localityChildren!
-              .map((e) => e.code.toString())
-              .toList()
-          : [];
       financialDetails = registrationState.financialDetails;
     }
   }
@@ -79,7 +72,10 @@ class LocationDetailsState extends State<LocationDetailsPage> {
             .map((e) => e.code.toString())
             .toList() ??
         [];
-    List<String> ward = widget.location!.tenantBoundaryList!.first.boundaryList!
+    List<String> ward = widget.ward!.tenantBoundaryList!.first.boundaryList!
+        .map((e) => e.code.toString())
+        .toList();
+    List<String> locality = widget.locality!.tenantBoundaryList!.first.boundaryList!
         .map((e) => e.code.toString())
         .toList();
     return ReactiveFormBuilder(
@@ -136,20 +132,10 @@ class LocationDetailsState extends State<LocationDetailsPage> {
                           '${GlobalVariables.organisationListModel?.organisations?.first.tenantId?.toUpperCase().replaceAll('.', '_')}_ADMIN_$value'),
                       validationMessages: {
                         'required': (_) => t.translate(
-                              i18.wageSeeker.localityRequired,
+                              i18.wageSeeker.wardRequired,
                             ),
                       },
                       onChanged: (value) {
-                        setState(() {
-                          locality = widget
-                              .location!.tenantBoundaryList!.first.boundaryList!
-                              .where((w) => w.code == value)
-                              .first
-                              .localityChildren!
-                              .map((e) => e.code.toString())
-                              .toList();
-                          form.control(localityKey).value = null;
-                        });
                       },
                     ),
                     DigitReactiveDropdown<String>(
