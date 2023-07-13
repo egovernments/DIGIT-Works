@@ -42,6 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await Future.delayed(const Duration(seconds: 1));
       GlobalVariables.authToken = userDetailsModel.access_token;
       GlobalVariables.uuid = userDetailsModel.userRequestModel?.uuid;
+      GlobalVariables.userInfo = userDetailsModel.userRequestModel;
       GlobalVariables.userRequestModel =
           jsonDecode(jsonEncode(userDetailsModel.userRequestModel));
       if (kIsWeb) {

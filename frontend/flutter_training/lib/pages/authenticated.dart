@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_training/Env/env_config.dart';
 
 import '../blocs/localization/localization.dart';
 import '../blocs/muster_rolls/search_muster_roll.dart';
@@ -49,9 +50,7 @@ class _AuthenticatedPageWrapper extends State<AuthenticatedPageWrapper> {
             LocalizationRepository(initClient.init()),
           )..add(LocalizationEvent.onLoadLocalization(
               module: 'rainmaker-attendencemgmt',
-              tenantId: GlobalVariables
-                  .globalConfigObject!.globalConfigs!.stateTenantId
-                  .toString(),
+              tenantId: envConfig.variables.tenantId,
               locale: selectedLocale.toString(),
             )),
           child: const AutoRouter(),

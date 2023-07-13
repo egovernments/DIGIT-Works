@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_training/Env/env_config.dart';
 import 'package:flutter_training/blocs/auth/auth.dart';
 import 'package:flutter_training/icons/shg_icons.dart';
 import 'package:flutter_training/router/app_router.dart';
@@ -133,11 +134,7 @@ class _SideBar extends State<SideBar> {
                             context.read<LocalizationBloc>().add(
                                 OnLoadLocalizationEvent(
                                     module: widget.module,
-                                    tenantId: GlobalVariables
-                                        .globalConfigObject!
-                                        .globalConfigs!
-                                        .stateTenantId
-                                        .toString(),
+                                    tenantId: envConfig.variables.tenantId,
                                     locale: data.value));
                             context.read<AppInitializationBloc>().add(
                                 AppInitializationSetupEvent(

@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter_training/Env/env_config.dart';
 import 'package:flutter_training/data/repositories/common_repository/common_repository.dart';
 import 'package:flutter_training/services/urls.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../utils/global_variables.dart';
 import '../../data/remote_client.dart';
 import '../../models/init_mdms/init_mdms_model.dart';
 
@@ -29,9 +29,7 @@ class AppVersionBloc extends Bloc<AppVersionBlocEvent, AppVersionBlocState> {
       AppVersionModel appVersionModel = await CommonRepository(client.init())
           .getAppVersion(
               apiEndPoint: Urls.initServices.mdms,
-              tenantId: GlobalVariables
-                  .globalConfigObject!.globalConfigs!.stateTenantId
-                  .toString(),
+              tenantId: envConfig.variables.tenantId,
               moduleDetails: [
             {
               "moduleName": "common-masters",

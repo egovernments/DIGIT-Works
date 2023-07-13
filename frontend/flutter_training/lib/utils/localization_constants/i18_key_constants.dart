@@ -148,6 +148,8 @@ class Common {
   String get noValue => 'ES_COMMON_NA';
   String get noOrgLinkedWithMob => 'ES_COMMON_NO_ORG_LINKED_WITH_MOBILE_NUMBER';
   String get takeAction => 'ES_COMMON_TAKE_ACTION';
+  String get registrationNoAlreadyExists => 'ES_REG_NO_ALREADY_EXISTS';
+  String get someErrorOccurred => 'ES_COMMON_SOME_ERROR_OCCURRED';
 }
 
 class Home {

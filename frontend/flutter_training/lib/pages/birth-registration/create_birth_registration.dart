@@ -170,14 +170,9 @@ class CreateBirthRegistrationPageState
                                 "Med Card Multispeciality Hospital",
                                 "Taj Hospital Mattewal"
                               ],
-                              isRequired: true,
                               formControlName: hospitalKey,
-                              valueMapper: (value) => value.toUpperCase(),
+                              valueMapper: (value) => value,
                               onChanged: (value) {},
-                              validationMessages: {
-                                'required': (_) =>
-                                    'Please mention the hospital the child was born',
-                              },
                             ),
                             DigitRadioButtonList(
                                 formControlName: genderKey,
@@ -640,13 +635,15 @@ class CreateBirthRegistrationPageState
   }
 
   FormGroup buildForm() => fb.group(<String, Object>{
+        regNoKey: FormControl<String>(
+            value: '',
+            validators: [Validators.required, Validators.maxLength(32)]),
         firstNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
           Validators.minLength(2),
           Validators.maxLength(128)
         ]),
-        hospitalKey:
-            FormControl<String>(value: null, validators: [Validators.required]),
+        hospitalKey: FormControl<String>(value: null),
         dobKey: FormControl<DateTime>(
             value: null, validators: [Validators.required]),
         genderKey: FormControl<String>(value: null),

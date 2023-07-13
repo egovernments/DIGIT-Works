@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_training/Env/env_config.dart';
 import 'package:flutter_training/widgets/atoms/app_bar_logo.dart';
 
 import '../blocs/app_initilization/app_initilization.dart';
@@ -95,7 +96,10 @@ class _HomePage extends State<HomePage> {
                                           ],
                                         ),
                                         Column(
-                                          children: e.links?.map((l) {
+                                          children: e.links
+                                                  ?.where((link) =>
+                                                      link.active ?? false)
+                                                  .map((l) {
                                                 return ButtonLink(
                                                   t.translate(l.label ?? ''),
                                                   getRoute(l.key.toString(),
@@ -122,9 +126,7 @@ class _HomePage extends State<HomePage> {
     context.read<LocalizationBloc>().add(
           LocalizationEvent.onLoadLocalization(
               module: CommonMethods.getLocaleModules(),
-              tenantId: GlobalVariables
-                  .globalConfigObject!.globalConfigs!.stateTenantId
-                  .toString(),
+              tenantId: envConfig.variables.tenantId,
               locale: currentLocale.toString()),
         );
     context.read<AppInitializationBloc>().add(

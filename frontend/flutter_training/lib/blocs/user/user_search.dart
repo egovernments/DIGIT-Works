@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter_training/Env/env_config.dart';
 import 'package:flutter_training/models/user_search/user_search_model.dart';
 import 'package:flutter_training/services/urls.dart';
 import 'package:flutter_training/utils/global_variables.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../data/remote_client.dart';
 import '../../data/repositories/user_search_repository/user_search.dart';
@@ -25,9 +26,7 @@ class UserSearchBloc extends Bloc<UserSearchEvent, UserSearchState> {
     emit(state.copyWith(loading: true));
     UserSearchModel userSearchModel = await UserSearchRepository(client.init())
         .searchUser(url: Urls.userServices.userSearchProfile, body: {
-      "tenantId": GlobalVariables
-          .globalConfigObject!.globalConfigs!.stateTenantId
-          .toString(),
+      "tenantId": envConfig.variables.tenantId,
       "uuid": [GlobalVariables.uuid]
     });
     await Future.delayed(const Duration(seconds: 1));
