@@ -139,7 +139,16 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
     beneficiary.indDetails = indDetails[beneficiary.beneficiaryId]
   })
   
-  
+  const returnPaymentStatusObject = (paymentStatus) => {
+    return {
+      value:t(Digit.Utils.locale.getTransformedLocale(`BILL_STATUS_${paymentStatus}`)),
+      type:"paymentStatus",
+      styles:paymentStatus==="Payment Success"?{color:"green"}:(paymentStatus==="Payment Failed"?{color:"red"}:{}),
+      hoverIcon: paymentStatus==="Payment Failed"?"infoIcon":"",
+      iconHoverTooltipText: paymentStatus==="Payment Failed" ? "Err Msg":"",
+      toolTipStyles:{}
+    }
+  }
   
   const tableRows = beneficiaryDetails?.map((beneficiary,idx) => {
     
@@ -148,38 +157,39 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
         {
           label: beneficiary?.orgDetails?.orgNumber || t("ES_COMMON_NA"),
           type: "link",
-          path: `/masters/view-organization?tenantId=${tenantId}&orgNumber=${beneficiary?.orgDetails?.orgNumber}`,
+          path: `/${window?.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgNumber=${beneficiary?.orgDetails?.orgNumber}`,
         },
         beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
         beneficiary?.orgDetails?.name,
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.bankBranchIdentifier?.code || t("ES_COMMON_NA"),
-        t(Digit.Utils.locale.getTransformedLocale(`BILL_STATUS_${beneficiary?.paymentStatus}`)),
-        beneficiary?.amount || t("ES_COMMON_NA"),
+        returnPaymentStatusObject(beneficiary?.paymentStatus),
+        beneficiary?.amount ? `₹ ${beneficiary?.amount}` : t("ES_COMMON_NA"),
       ];
     } else if (beneficiary.beneficiaryType === "IND") {
       return [
         {
           label: beneficiary?.indDetails?.individualId || t("ES_COMMON_NA"),
           type: "link",
-          path: `/masters/view-wageseeker?tenantId=${tenantId}&individualId=${beneficiary?.indDetails?.individualId}`,
+          path: `/${window?.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&individualId=${beneficiary?.indDetails?.individualId}`,
         },
         beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
         beneficiary?.indDetails?.name?.givenName || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.bankBranchIdentifier?.code || t("ES_COMMON_NA"),
-        t(Digit.Utils.locale.getTransformedLocale(`BILL_STATUS_${beneficiary?.paymentStatus}`)),
-        beneficiary?.amount || t("ES_COMMON_NA"),
+        returnPaymentStatusObject(beneficiary?.paymentStatus),
+        beneficiary?.amount ? `₹ ${beneficiary?.amount}` : t("ES_COMMON_NA"),
       ];
     } else if (beneficiary.beneficiaryType === "DEPT") {
       return [
-        beneficiary?.beneficiaryId || t("ES_COMMON_NA"),
+        // beneficiary?.beneficiaryId || t("ES_COMMON_NA"),
+        t("ES_COMMON_NA"),
         beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
         t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber,
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.bankBranchIdentifier?.code || t("ES_COMMON_NA"),
-        t(Digit.Utils.locale.getTransformedLocale(`BILL_STATUS_${beneficiary?.paymentStatus}`)),
-        beneficiary?.amount || t("ES_COMMON_NA"),
+        returnPaymentStatusObject(beneficiary?.paymentStatus),
+        beneficiary?.amount ? `₹ ${beneficiary?.amount}` : t("ES_COMMON_NA"),
       ];
     }
   })
@@ -214,7 +224,7 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
       // infoIconFill:"red",
       style:{
         // "backgroundColor":"#EFC7C1",
-        "width":"60%"
+        "width":"80%"
       }
     }
   }

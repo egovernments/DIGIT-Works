@@ -1,4 +1,4 @@
-import { EditIcon } from '@egovernments/digit-ui-react-components';
+import { EditIcon,DownloadImgIcon,InfoBannerIcon } from '@egovernments/digit-ui-react-components';
 import React from 'react'
 import { useTranslation } from "react-i18next";
 import { useHistory,Link } from 'react-router-dom';
@@ -28,6 +28,19 @@ const SubWorkTableDetails = ({data}) => {
                         </div>
                       </td>
                     );
+                    else if(lineItem?.type === "paymentStatus") return (
+                        <td>
+                            <div class="tooltip">
+                                <span class="textoverflow" style={{display:"flex",...lineItem?.styles,alignItems:"center"}}>         
+                                <p>{String(lineItem.value)}</p>
+                                {lineItem?.hoverIcon && <InfoBannerIcon styles={{"margin-left":"10px"}} fill={"#ff0000"}/>}
+                                </span>
+                                {lineItem?.iconHoverTooltipText && <span class="tooltiptext" style={{ whiteSpace: "nowrap",...lineItem?.toolTipStyles }}>
+                                {lineItem?.iconHoverTooltipText}
+                                </span>}
+                            </div>
+                        </td>
+                    )
                     return <td style={{ ...cellStyle?.[idx], ...extraStyles }}>{lineItem}</td>
                 })}
             </tr>
