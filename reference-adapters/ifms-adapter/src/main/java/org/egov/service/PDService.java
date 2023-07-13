@@ -67,10 +67,7 @@ public class PDService {
                     .serviceId(JITServiceId.PD).params(pdRequest).build());
 
 
-            if (jitResponse.getErrorMsg() != null) {
-                //TODO
-            }
-            if (jitResponse.getData().isEmpty()) {
+            if (jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
                 continue;
             }
             for (Object data : jitResponse.getData()) {
