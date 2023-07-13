@@ -313,7 +313,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         else{
             const orgPayload = getOrgPayload({formData: data, orgDataFromAPI, tenantId, isModify})
         if(isModify) {
-            if(searchOrgResponse?.organisations?.length>0 && searchOrgResponse?.organisations?.[0]?.functions?.[0]?.type.includes("CBO")){
+            if(searchOrgResponse?.organisations?.length>0 && data?.funDetails_orgType?.code === 'VEN' && searchOrgResponse?.organisations?.[0]?.functions?.[0]?.type.includes("CBO")){
                 setShowCBOToVendorError(true);
             }
             else{
