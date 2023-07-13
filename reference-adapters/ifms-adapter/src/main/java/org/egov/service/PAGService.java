@@ -65,7 +65,7 @@ public class PAGService {
 
             JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
 
-            if(jitResponse.getData().isEmpty()) {
+            if(jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
                 continue;
             }
             for( Object data : jitResponse.getData() ){
