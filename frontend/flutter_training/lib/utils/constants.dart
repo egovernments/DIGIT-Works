@@ -28,6 +28,7 @@ class Constants {
   static const homeMusterRolls = 'HOME_MUSTER_ROLLS';
   static const homeMyBills = 'HOME_MY_BILLS';
   static const homeCreateBirthRegistration = 'HOME_BIRTH_REGISTRATION_CREATE';
+  static const homeSearchBirthRegistration = 'HOME_BIRTH_REGISTRATION_SEARCH';
   static const homeRegisterWageSeeker = 'HOME_REGISTER_WAGE_SEEKER';
   static const myBillsWageType = 'EXPENSE.WAGES';
   static const myBillsPurchaseType = 'EXPENSE.PURCHASE';

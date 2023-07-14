@@ -31,62 +31,61 @@ class BirthRegBloc extends Bloc<BirthRegEvent, BirthRegState> {
     try {
       emit(const BirthRegState.loading());
       CreateBirthResponse createBirthResponse =
-          await BNDRepository(client.init())
-              .createBirthCertificate(url: Urls.bndServices.createBirth, body: {
-        BirthCertificatesList(birthCerts: [
-          BirthCertificate(
-              birthFatherInfo: BirthFatherInfo(
-                  firstname: event.childFatherDetails.firstName,
-                  lastname: event.childFatherDetails.lastName,
-                  aadharno: event.childFatherDetails.aadhaarNo ?? '',
-                  mobileno: event.childFatherDetails.mobileNo ?? '',
-                  religion: event.childFatherDetails.religion ?? '',
-                  nationality: event.childFatherDetails.nationality),
-              birthMotherInfo: BirthMotherInfo(
-                  firstname: event.childFatherDetails.firstName,
-                  lastname: event.childMotherDetails.lastName,
-                  aadharno: event.childMotherDetails.aadhaarNo ?? '',
-                  mobileno: event.childMotherDetails.mobileNo ?? '',
-                  religion: event.childMotherDetails.religion ?? '',
-                  nationality: event.childMotherDetails.nationality),
-              birthPresentaddr: BirthAddress(
-                  buildingno: event.childAddressDetails.buildingNo,
-                  houseno: event.childAddressDetails.houseNo,
-                  streetname: event.childAddressDetails.streetname ?? '',
-                  locality: event.childAddressDetails.locality ?? '',
-                  tehsil: event.childAddressDetails.tehsil,
-                  district: event.childAddressDetails.district,
-                  city: event.childAddressDetails.city,
-                  state: event.childAddressDetails.state,
-                  pinno: event.childAddressDetails.pinNo,
-                  country: event.childAddressDetails.country),
-              birthPermaddr: BirthAddress(
-                  buildingno: event.childAddressDetails.buildingNo,
-                  houseno: event.childAddressDetails.houseNo,
-                  streetname: event.childAddressDetails.streetname ?? '',
-                  locality: event.childAddressDetails.locality ?? '',
-                  tehsil: event.childAddressDetails.tehsil,
-                  district: event.childAddressDetails.district,
-                  city: event.childAddressDetails.city,
-                  state: event.childAddressDetails.state,
-                  pinno: event.childAddressDetails.pinNo,
-                  country: event.childAddressDetails.country),
-              registrationno: event.childDetails.regNo,
-              hospitalname: event.childDetails.hospitalName,
-              dateofreportepoch: event.childDetails.dateOfReport,
-              dateofbirthepoch: event.childDetails.dateOfBirth,
-              genderStr: event.childDetails.genderStr,
-              firstname: event.childDetails.firstName,
-              lastname: event.childDetails.lastName,
-              placeofbirth: event.childDetails.placeOfBirth,
-              checkboxforaddress: true,
-              informantsname: event.childDetails.informantName,
-              informantsaddress: event.childDetails.informantAddress,
-              tenantid: GlobalVariables.userInfo!.tenantId,
-              excelrowindex: -1,
-              counter: 0)
-        ]).toJson()
-      });
+          await BNDRepository(client.init()).createBirthCertificate(
+              url: Urls.bndServices.createBirth,
+              body: BirthCertificatesList(birthCerts: [
+                BirthCertificate(
+                    birthFatherInfo: BirthFatherInfo(
+                        firstname: event.childFatherDetails.firstName,
+                        lastname: event.childFatherDetails.lastName,
+                        aadharno: event.childFatherDetails.aadhaarNo ?? '',
+                        mobileno: event.childFatherDetails.mobileNo ?? '',
+                        religion: event.childFatherDetails.religion ?? '',
+                        nationality: event.childFatherDetails.nationality),
+                    birthMotherInfo: BirthMotherInfo(
+                        firstname: event.childFatherDetails.firstName,
+                        lastname: event.childMotherDetails.lastName,
+                        aadharno: event.childMotherDetails.aadhaarNo ?? '',
+                        mobileno: event.childMotherDetails.mobileNo ?? '',
+                        religion: event.childMotherDetails.religion ?? '',
+                        nationality: event.childMotherDetails.nationality),
+                    birthPresentaddr: BirthAddress(
+                        buildingno: event.childAddressDetails.buildingNo,
+                        houseno: event.childAddressDetails.houseNo,
+                        streetname: event.childAddressDetails.streetname ?? '',
+                        locality: event.childAddressDetails.locality ?? '',
+                        tehsil: event.childAddressDetails.tehsil,
+                        district: event.childAddressDetails.district,
+                        city: event.childAddressDetails.city,
+                        state: event.childAddressDetails.state,
+                        pinno: event.childAddressDetails.pinNo,
+                        country: event.childAddressDetails.country),
+                    birthPermaddr: BirthAddress(
+                        buildingno: event.childAddressDetails.buildingNo,
+                        houseno: event.childAddressDetails.houseNo,
+                        streetname: event.childAddressDetails.streetname ?? '',
+                        locality: event.childAddressDetails.locality ?? '',
+                        tehsil: event.childAddressDetails.tehsil,
+                        district: event.childAddressDetails.district,
+                        city: event.childAddressDetails.city,
+                        state: event.childAddressDetails.state,
+                        pinno: event.childAddressDetails.pinNo,
+                        country: event.childAddressDetails.country),
+                    registrationno: event.childDetails.regNo,
+                    hospitalname: event.childDetails.hospitalName,
+                    dateofreportepoch: event.childDetails.dateOfReport,
+                    dateofbirthepoch: event.childDetails.dateOfBirth,
+                    genderStr: event.childDetails.genderStr,
+                    firstname: event.childDetails.firstName,
+                    lastname: event.childDetails.lastName,
+                    placeofbirth: event.childDetails.placeOfBirth,
+                    checkboxforaddress: true,
+                    informantsname: event.childDetails.informantName,
+                    informantsaddress: event.childDetails.informantAddress,
+                    tenantid: GlobalVariables.userInfo!.tenantId,
+                    excelrowindex: -1,
+                    counter: 0)
+              ]).toJson());
       if (createBirthResponse != null &&
           createBirthResponse.statsMap?.successfulRecords == 1) {
         emit(const BirthRegState.loaded());

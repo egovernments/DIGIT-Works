@@ -2,13 +2,15 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_training/blocs/bnd/create_birth_bloc.dart';
+import 'package:flutter_training/blocs/localization/app_localization.dart';
 import 'package:flutter_training/models/create-birth-registration/child_address_details.dart';
 import 'package:flutter_training/models/create-birth-registration/child_details.dart';
 import 'package:flutter_training/models/create-birth-registration/child_father_details.dart';
 import 'package:flutter_training/models/create-birth-registration/child_mother_details.dart';
 import 'package:flutter_training/widgets/atoms/radio_button_list.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-
+import 'package:flutter_training/utils/localization_constants/i18_key_constants.dart'
+as i18;
 import '../../router/app_router.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
@@ -63,6 +65,7 @@ class CreateBirthRegistrationPageState
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Training'),
@@ -86,77 +89,77 @@ class CreateBirthRegistrationPageState
                             child: Column(
                           children: [
                             DigitTextFormField(
-                              label: 'Registration Number',
+                              label: t.translate(i18.common.registrationNo),
                               formControlName: regNoKey,
                               isRequired: true,
                               validationMessages: {
                                 'required': (_) =>
-                                    'Registration no. is required',
+                                    t.translate(i18.common.registrationNoRequired) ,
                                 'minLength': (_) =>
-                                    'Name should be minimum of 2 characters',
+                                    t.translate(i18.common.registrationNoMinChars),
                                 'maxLength': (_) =>
-                                    'Name should be maximum of 128 characters',
+                                    t.translate(i18.common.registrationNoMaxChars),
                               },
                             ),
                             DigitTextFormField(
-                              label: 'First Name',
+                              label: t.translate(i18.common.firstName),
                               formControlName: firstNameKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) => 'First Name is required',
+                                'required': (_) => t.translate(i18.common.firstNameRequired),
                                 'minLength': (_) =>
-                                    'Name should be minimum of 2 characters',
+                                    t.translate(i18.common.firstNameMinChars),
                                 'maxLength': (_) =>
-                                    'Name should be maximum of 128 characters',
+                                    t.translate(i18.common.firstNameMaxChars),
                               },
                             ),
                             DigitTextFormField(
-                              label: 'Last Name',
+                              label: t.translate(i18.common.lastName),
                               formControlName: lastNameKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) => 'Last Name is required',
+                                'required': (_) => t.translate(i18.common.lastNameRequired),
                                 'minLength': (_) =>
-                                    'Name should be minimum of 2 characters',
+                                    t.translate(i18.common.lastNameMinChars),
                                 'maxLength': (_) =>
-                                    'Name should be maximum of 128 characters',
+                                    t.translate(i18.common.lastNameMaxChars),
                               },
                             ),
                             DigitTextFormField(
-                              label: 'PlaceOfBirth',
+                              label: t.translate(i18.common.placeOfBirth),
                               formControlName: placeOfBirthKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) => 'Place Of Birth is required',
+                                'required': (_) => t.translate(i18.common.placeOfBirthRequired),
                                 'minLength': (_) =>
-                                    'Place Of Birth should be minimum of 2 characters',
+                                    t.translate(i18.common.placeOfBirthMinChars),
                                 'maxLength': (_) =>
-                                    'Place Of Birth should be maximum of 128 characters',
+                                    t.translate(i18.common.placeOfBirthMaxChars),
                               },
                             ),
                             DigitTextFormField(
-                              label: 'Informant Name',
+                              label: t.translate(i18.common.informantName),
                               formControlName: informantNameKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) => 'Informant Name is required',
+                                'required': (_) => t.translate(i18.common.informantNameRequired),
                                 'minLength': (_) =>
-                                    'Informant Name should be minimum of 2 characters',
+                                    t.translate(i18.common.informantNameMinChars),
                                 'maxLength': (_) =>
-                                    'Informant Name should be maximum of 128 characters',
+                                    t.translate(i18.common.informantAddressMaxChars),
                               },
                             ),
                             DigitTextFormField(
-                              label: 'Informant Address',
+                              label: t.translate(i18.common.informantAddress),
                               formControlName: informantAddressKey,
                               isRequired: true,
                               validationMessages: {
                                 'required': (_) =>
-                                    'Informant Address is required',
+                                    t.translate(i18.common.informantAddressRequired),
                                 'minLength': (_) =>
-                                    'Informant Address should be minimum of 2 characters',
+                                    t.translate(i18.common.informantAddressMinChars),
                                 'maxLength': (_) =>
-                                    'Informant Address should be maximum of 128 characters',
+                                    t.translate(i18.common.informantAddressMaxChars),
                               },
                             ),
                             DigitReactiveDropdown<String>(
@@ -183,27 +186,27 @@ class CreateBirthRegistrationPageState
                                   'Transgender'
                                 ]),
                             DigitDateFormPicker(
-                              label: 'Date of report',
+                              label: t.translate(i18.common.dateOfReport),
                               isRequired: true,
                               icon: Icons.info_outline_rounded,
                               formControlName: dobKey,
                               autoValidation: AutovalidateMode.always,
-                              requiredMessage: 'Date of report is required',
-                              cancelText: 'Cancel',
-                              confirmText: 'OK',
+                              requiredMessage: t.translate(i18.common.dateOfReportRequired),
+                              cancelText: t.translate(i18.common.cancel),
+                              confirmText: t.translate(i18.common.confirm),
                               toolTipMsg:
-                                  'Date on which the birth of the child was reported',
+                                  t.translate(i18.common.dateOfReportToolTip),
                             ),
                             DigitDateFormPicker(
-                              label: 'Date of birth',
+                              label: t.translate(i18.common.dateOfBirth),
                               isRequired: true,
                               icon: Icons.info_outline_rounded,
                               formControlName: dorKey,
                               autoValidation: AutovalidateMode.always,
-                              requiredMessage: 'Date of birth is required',
-                              toolTipMsg: 'Date of birth of the child',
-                              cancelText: 'Cancel',
-                              confirmText: 'OK',
+                              requiredMessage: t.translate(i18.common.dateOfBirthRequired),
+                              toolTipMsg: t.translate(i18.common.dateOfBirthToolTip),
+                              cancelText: t.translate(i18.common.cancel),
+                              confirmText: t.translate(i18.common.confirm),
                             ),
                           ],
                         )),
@@ -640,19 +643,120 @@ class CreateBirthRegistrationPageState
             validators: [Validators.required, Validators.maxLength(32)]),
         firstNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(2),
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        lastNameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
           Validators.maxLength(128)
         ]),
         hospitalKey: FormControl<String>(value: null),
         dobKey: FormControl<DateTime>(
             value: null, validators: [Validators.required]),
+        dorKey: FormControl<DateTime>(
+            value: null, validators: [Validators.required]),
         genderKey: FormControl<String>(value: null),
-        fatherMobileNoKey: FormControl<String>(value: '', validators: [
+        placeOfBirthKey: FormControl<String>(value: '', validators: [
           Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        informantNameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        informantAddressKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        fatherFirstNameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        fatherLastNameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        fatherMobileNoKey: FormControl<String>(value: '', validators: [
           Validators.minLength(10),
           Validators.maxLength(10),
           Validators.min('5999999999'),
           Validators.max('9999999999'),
-        ])
+        ]),
+        fatherAadhaarKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(12),
+          Validators.maxLength(12),
+        ]),
+        fatherNationalityKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        fatherReligionKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        motherFirstNameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        motherLastNameKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        motherMobileNumberKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(10),
+          Validators.maxLength(10),
+          Validators.min('5999999999'),
+          Validators.max('9999999999'),
+        ]),
+        motherAadhaarKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(12),
+          Validators.maxLength(12),
+        ]),
+        motherNationalityKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(128)
+        ]),
+        motherReligionKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        buildingNoKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        houseNoKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        streetNameKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        localityKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        tehsilKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        districtKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        cityKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        stateKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        pinCodeKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        countryKey: FormControl<String>(
+            value: '',
+            validators: [Validators.minLength(4), Validators.maxLength(128)]),
       });
 }

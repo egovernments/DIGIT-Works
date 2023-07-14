@@ -13,8 +13,6 @@ import 'package:flutter_training/utils/localization_constants/i18_key_constants.
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
-import '../blocs/organisation/org_search_bloc.dart';
-import '../models/organisation/organisation_model.dart';
 
 class SideBar extends StatefulWidget {
   final String module;
@@ -55,47 +53,6 @@ class _SideBar extends State<SideBar> {
       return ScrollableContent(
         footer: const PoweredByDigit(),
         children: [
-          BlocBuilder<LocalizationBloc, LocalizationState>(
-              builder: (context, localeState) {
-            return BlocBuilder<ORGSearchBloc, ORGSearchState>(
-                builder: (context, orgState) {
-              return orgState.maybeWhen(
-                  orElse: () => Container(),
-                  loading: () => SizedBox(
-                      height: MediaQuery.of(buildContext).size.height / 3,
-                      child: Loaders.circularLoader(context)),
-                  loaded: (OrganisationListModel? organisationListModel) {
-                    return organisationListModel?.organisations != null
-                        ? Container(
-                            width: MediaQuery.of(buildContext).size.width,
-                            height: MediaQuery.of(buildContext).size.height / 3,
-                            color: const DigitColors().quillGray,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  organisationListModel!
-                                      .organisations!.first.name
-                                      .toString(),
-                                  style: theme
-                                      .mobileTheme.textTheme.headlineMedium
-                                      ?.apply(color: const DigitColors().black),
-                                ),
-                                Text(
-                                  organisationListModel.organisations!.first
-                                      .contactDetails!.first.contactMobileNumber
-                                      .toString(),
-                                  style: theme.mobileTheme.textTheme.bodyMedium
-                                      ?.apply(
-                                          color: const DigitColors().davyGray),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Container();
-                  });
-            });
-          }),
           Row(
             children: [
               context.router.currentPath == '/home'
@@ -148,34 +105,12 @@ class _SideBar extends State<SideBar> {
                               ?.map(
                                   (e) => DigitRowCardModel.fromJson(e.toJson()))
                               .toList() as List<DigitRowCardModel>,
-                          width: 80)
+                          width: MediaQuery.of(context).size.width / 6)
                       : const Text('');
                 },
               ),
             ),
             onPressed: () {},
-          ),
-          Row(
-            children: [
-              context.router.currentPath.contains('orgProfile')
-                  ? Container(
-                      alignment: Alignment.centerLeft,
-                      height: 50,
-                      width: 9,
-                      color: const DigitColors().burningOrange,
-                    )
-                  : const SizedBox.shrink(),
-              Expanded(
-                child: DigitIconTile(
-                    title: AppLocalizations.of(context)
-                        .translate(i18.common.orgProfile),
-                    selected: context.router.currentPath.contains('orgProfile'),
-                    icon: Icons.perm_contact_cal_sharp,
-                    onPressed: () {
-                      context.router.push(const ORGProfileRoute());
-                    }),
-              ),
-            ],
           ),
           DigitIconTile(
               title: AppLocalizations.of(context).translate(i18.common.logOut),

@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_training/blocs/bnd/search_birth_certificate_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../blocs/bnd/create_birth_bloc.dart';
@@ -117,42 +118,26 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                                     onPressed: () {
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
-                                      DigitDialog.show(context,
-                                          options: DigitDialogOptions(
-                                              titleIcon: const Icon(
-                                                Icons.warning,
-                                                color: Colors.red,
-                                              ),
-                                              titleText: 'Warning',
-                                              contentText:
-                                                  'Please confirm your details before submitting',
-                                              primaryAction: DigitDialogActions(
-                                                label: 'Confirm',
-                                                action: (BuildContext context) {
-                                                  if (form.valid) {
-                                                  } else {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                            const SnackBar(
-                                                                content: Text(
-                                                                    'Oops ! Please fill the mandatory details')));
-                                                  }
-                                                  Navigator.of(context,
-                                                          rootNavigator: true)
-                                                      .pop();
-                                                },
-                                              ),
-                                              secondaryAction:
-                                                  DigitDialogActions(
-                                                label: 'Back',
-                                                action:
-                                                    (BuildContext context) =>
-                                                        Navigator.of(context,
-                                                                rootNavigator:
-                                                                    true)
-                                                            .pop(),
-                                              )));
+                                      final queryParams = <String, String>{
+                                        fromDateKey: form
+                                            .control(fromDateKey)
+                                            .value
+                                            .toString(),
+                                        toDateKey: form
+                                            .control(toDateKey)
+                                            .value
+                                            .toString(),
+                                      };
+
+                                      form.value.forEach((key, value) {
+                                        if (value != null &&
+                                            value.toString().isNotEmpty) {
+                                          queryParams[key] = value.toString();
+                                        }
+                                      });
+                                      context.read<BirthSearchCertBloc>().add(
+                                          SearchBirthCertEvent(
+                                              queryParams: queryParams));
                                     },
                                     child: const Text('Submit')),
                               )),
