@@ -1611,8 +1611,6 @@ export const UICustomizations = {
       return false;
     },
     preProcess: (data,defaultValues) => {
-      
-      
       let requestBody = { ...data.body.inbox.moduleSearchCriteria };
       const dateConfig = {
         createdFrom: "daystart",
@@ -1764,7 +1762,7 @@ export const UICustomizations = {
         },
       };
     },
-    SelectionHandler:async (selectedRows,t) => {
+    selectionHandler: async (selectedRows,t) => {
 
       /// here do expense calc search and get the response and send the list of bills to getCreatePaymentPayload
         const ids = selectedRows?.map(row=> row?.original?.businessObject?.id)
