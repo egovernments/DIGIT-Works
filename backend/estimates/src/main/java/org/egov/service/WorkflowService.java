@@ -65,7 +65,7 @@ public class WorkflowService {
         ProcessInstance processInstance = getProcessInstanceForEstimate(estimateRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(estimateRequest.getRequestInfo(), Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
-        estimateRequest.getEstimate().setWfStatus(state.getState());        
+        estimateRequest.getEstimate().setWfStatus(state.getState());
         estimateRequest.getEstimate().setStatus(Estimate.StatusEnum.fromValue(state.getApplicationStatus()));
         return state.getApplicationStatus();
     }
@@ -173,17 +173,17 @@ public class WorkflowService {
 
         if(workflow.getAction().equals("SENDBACK") && CollectionUtils.isEmpty(workflow.getAssignees())) {
             String assignee = null;
-            Boolean isAssignee = null;
+            Boolean statusFound = false;
             List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
             String nextState = getNextStateValueForProcessInstance(processInstanceList.get(0));
             for(ProcessInstance processInstance: processInstanceList){
-                if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState)) && (isAssignee == false) ) {
-                    List<String> uuids = new ArrayList<>();
+                if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState)) && (statusFound != true)) {
+                    statusFound = true;
                     if(processInstance.getAssignes() != null){
+                        List<String> uuids = new ArrayList<>();
                         assignee = processInstance.getAssignes().get(0).getUuid();
                         uuids.add(assignee);
                         workflow.setAssignees(uuids);
-                        isAssignee = true;
                     }
                 }
             }
