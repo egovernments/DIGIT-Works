@@ -69,34 +69,14 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                           DigitTextFormField(
                             label: "Child's Name",
                             formControlName: childNameKey,
-                            isRequired: true,
-                            validationMessages: {
-                              'minLength': (_) =>
-                                  "Child's Name should be minimum of 4 characters",
-                              'maxLength': (_) =>
-                                  "Child's Name should be maximum of 128 characters",
-                            },
                           ),
                           DigitTextFormField(
                             label: 'Father Name',
                             formControlName: fatherNameKey,
-                            isRequired: true,
-                            validationMessages: {
-                              'minLength': (_) =>
-                                  "Father Name should be minimum of 4 characters",
-                              'maxLength': (_) =>
-                                  "Father Name should be maximum of 128 characters",
-                            },
                           ),
                           DigitTextFormField(
                             label: 'Mother Name',
                             formControlName: motherNameKey,
-                            validationMessages: {
-                              'minLength': (_) =>
-                                  "Mother Name should be minimum of 4 characters",
-                              'maxLength': (_) =>
-                                  "Mother Name should be maximum of 128 characters",
-                            },
                           ),
                           const SizedBox(
                             height: 16.0,
@@ -118,15 +98,17 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                                     onPressed: () {
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
-                                      final queryParams = <String, String>{
-                                        fromDateKey: form
-                                            .control(fromDateKey)
-                                            .value
-                                            .toString(),
-                                        toDateKey: form
-                                            .control(toDateKey)
-                                            .value
-                                            .toString(),
+                                      DateTime fromDate =
+                                          form.value[fromDateKey] as DateTime;
+                                      DateTime toDate =
+                                          form.value[toDateKey] as DateTime;
+                                      final queryParams = <String, dynamic>{
+                                        fromDateKey:
+                                            (fromDate.millisecondsSinceEpoch ~/
+                                                1000),
+                                        toDateKey:
+                                            (toDate.millisecondsSinceEpoch ~/
+                                                1000),
                                       };
 
                                       form.value.forEach((key, value) {
@@ -149,15 +131,13 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
   }
 
   FormGroup buildForm() => fb.group(<String, Object>{
-        childNameKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        childNameKey: FormControl<String>(value: ''),
         fatherNameKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+          value: '',
+        ),
         motherNameKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+          value: '',
+        ),
         hospitalNameKey: FormControl<String>(
           value: null,
         ),

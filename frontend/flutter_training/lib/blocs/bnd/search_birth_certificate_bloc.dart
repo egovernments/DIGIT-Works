@@ -3,13 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_training/data/repositories/bnd-repository/bnd_repository.dart';
-import 'package:flutter_training/models/create-birth-registration/child_address_details.dart';
-import 'package:flutter_training/models/create-birth-registration/child_details.dart';
-import 'package:flutter_training/models/create-birth-registration/child_father_details.dart';
-import 'package:flutter_training/models/create-birth-registration/child_mother_details.dart';
-import 'package:flutter_training/models/create-birth-registration/create_birth_response.dart';
 import 'package:flutter_training/services/urls.dart';
-import 'package:flutter_training/utils/global_variables.dart';
 import 'package:flutter_training/utils/localization_constants/i18_key_constants.dart'
     as i18;
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -55,7 +49,7 @@ class BirthSearchCertBloc
 @freezed
 class BirthSearchCertEvent with _$BirthSearchCertEvent {
   const factory BirthSearchCertEvent.search({
-    required Map<String, String>? queryParams,
+    required Map<String, dynamic>? queryParams,
   }) = SearchBirthCertEvent;
 }
 

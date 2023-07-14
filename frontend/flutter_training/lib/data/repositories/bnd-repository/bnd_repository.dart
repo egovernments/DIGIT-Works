@@ -33,7 +33,7 @@ class BNDRepository {
   }
 
   Future<BirthCertificatesList> searchBirthCertificates({
-    Map<String, String>? queryParameters,
+    Map<String, dynamic>? queryParameters,
     dynamic body,
     required String url,
   }) async {

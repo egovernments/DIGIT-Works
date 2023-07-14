@@ -16,20 +16,20 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$BirthSearchCertEvent {
-  Map<String, String>? get queryParams => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get queryParams => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(Map<String, String>? queryParams) search,
+    required TResult Function(Map<String, dynamic>? queryParams) search,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(Map<String, String>? queryParams)? search,
+    TResult? Function(Map<String, dynamic>? queryParams)? search,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Map<String, String>? queryParams)? search,
+    TResult Function(Map<String, dynamic>? queryParams)? search,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -61,7 +61,7 @@ abstract class $BirthSearchCertEventCopyWith<$Res> {
           $Res Function(BirthSearchCertEvent) then) =
       _$BirthSearchCertEventCopyWithImpl<$Res, BirthSearchCertEvent>;
   @useResult
-  $Res call({Map<String, String>? queryParams});
+  $Res call({Map<String, dynamic>? queryParams});
 }
 
 /// @nodoc
@@ -84,7 +84,7 @@ class _$BirthSearchCertEventCopyWithImpl<$Res,
       queryParams: freezed == queryParams
           ? _value.queryParams
           : queryParams // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
+              as Map<String, dynamic>?,
     ) as $Val);
   }
 }
@@ -97,7 +97,7 @@ abstract class _$$SearchBirthCertEventCopyWith<$Res>
       __$$SearchBirthCertEventCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Map<String, String>? queryParams});
+  $Res call({Map<String, dynamic>? queryParams});
 }
 
 /// @nodoc
@@ -117,7 +117,7 @@ class __$$SearchBirthCertEventCopyWithImpl<$Res>
       queryParams: freezed == queryParams
           ? _value._queryParams
           : queryParams // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
+              as Map<String, dynamic>?,
     ));
   }
 }
@@ -126,12 +126,12 @@ class __$$SearchBirthCertEventCopyWithImpl<$Res>
 
 class _$SearchBirthCertEvent implements SearchBirthCertEvent {
   const _$SearchBirthCertEvent(
-      {required final Map<String, String>? queryParams})
+      {required final Map<String, dynamic>? queryParams})
       : _queryParams = queryParams;
 
-  final Map<String, String>? _queryParams;
+  final Map<String, dynamic>? _queryParams;
   @override
-  Map<String, String>? get queryParams {
+  Map<String, dynamic>? get queryParams {
     final value = _queryParams;
     if (value == null) return null;
     if (_queryParams is EqualUnmodifiableMapView) return _queryParams;
@@ -167,7 +167,7 @@ class _$SearchBirthCertEvent implements SearchBirthCertEvent {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(Map<String, String>? queryParams) search,
+    required TResult Function(Map<String, dynamic>? queryParams) search,
   }) {
     return search(queryParams);
   }
@@ -175,7 +175,7 @@ class _$SearchBirthCertEvent implements SearchBirthCertEvent {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(Map<String, String>? queryParams)? search,
+    TResult? Function(Map<String, dynamic>? queryParams)? search,
   }) {
     return search?.call(queryParams);
   }
@@ -183,7 +183,7 @@ class _$SearchBirthCertEvent implements SearchBirthCertEvent {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(Map<String, String>? queryParams)? search,
+    TResult Function(Map<String, dynamic>? queryParams)? search,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -223,11 +223,11 @@ class _$SearchBirthCertEvent implements SearchBirthCertEvent {
 
 abstract class SearchBirthCertEvent implements BirthSearchCertEvent {
   const factory SearchBirthCertEvent(
-          {required final Map<String, String>? queryParams}) =
+          {required final Map<String, dynamic>? queryParams}) =
       _$SearchBirthCertEvent;
 
   @override
-  Map<String, String>? get queryParams;
+  Map<String, dynamic>? get queryParams;
   @override
   @JsonKey(ignore: true)
   _$$SearchBirthCertEventCopyWith<_$SearchBirthCertEvent> get copyWith =>
