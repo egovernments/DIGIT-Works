@@ -147,7 +147,7 @@ class _HomePage extends State<HomePage> {
       case Constants.homeSearchBirthRegistration:
         return () {
           localeLoad();
-          context.router.push(const CreateBirthRegistrationRoute());
+          context.router.push(const BirthRegSearchInboxRoute());
         };
       default:
         return null;
