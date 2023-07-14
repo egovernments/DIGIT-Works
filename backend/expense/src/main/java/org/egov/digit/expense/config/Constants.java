@@ -14,10 +14,13 @@ public class Constants {
 	public static final String ORG_ID_PATH = "$.contracts.*.orgId";
 	public static final String ID = "id";
 	public static final String SEARCH_CRITERIA = "SearchCriteria";
+	public static final String INDIVIDUAL = "Individual";
 	public static final String ORG_NAME_PATH = "$.organisations.*.name";
+	public static final String INDIVIDUAL_GENDER_PATH = "$.Individual.*.gender";
 	public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";
 	public static final String CONTACT_MOBILE_NUMBER_PATH = "$.organisations.*.contactDetails.*.contactMobileNumber";
 	public static final String ORG_NAME = "orgName";
+	public static final String GENDER = "gender";
 	public static final String CONTACT_NAME = "contactName";
 	public static final String EXPENSE_CALCULATOR_LOCALIZATION_CODE_JSONPATH = "$.messages.*.code";
 	public static final String EXPENSE_CALCULATOR_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
