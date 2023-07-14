@@ -1,15 +1,15 @@
-FROM egovio/alpine-node-builder-14:yarn
+FROM manastanmay0809/node-builder-16:yarn
 
 ARG WORK_DIR
 ENV npm_config_cache=/tmp
 WORKDIR /app
 
-COPY ${WORK_DIR}/package.json ${WORK_DIR}/yarn.lock .
+COPY ${WORK_DIR}/package.json ${WORK_DIR}/yarn.lock 
 
-# RUN yarn
+RUN yarn
 
-CMD ["npm", "install" "-f"]
-CMD ["npm", "audit" "fix"]
+# CMD ["npm", "install" "-f"]
+# CMD ["npm", "audit" "fix"]
 
 COPY ${WORK_DIR}/src .
 
