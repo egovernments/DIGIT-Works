@@ -63,9 +63,9 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
     asSectionHeader: true,
     values: [
       { title: "EXP_PA_ID", value: paymentInstruction?.paDetails?.[0]?.paAdviceId || t("ES_COMMON_NA")},
-      { title: "EXP_PA_DATE", value:Digit.DateUtils.ConvertTimestampToDate(paymentInstruction?.paDetails?.[0]?.paAdviceDate, 'dd/MM/yyyy') || t("ES_COMMON_NA")},
+      { title: "EXP_PA_DATE", value:paymentInstruction?.paDetails?.[0]?.paAdviceDate || t("ES_COMMON_NA")},
       { title: "EXP_PA_TOKEN_NO", value: paymentInstruction?.paDetails?.[0]?.paTokenNumber || t("ES_COMMON_NA")},
-      { title: "EXP_PA_TOKEN_DATE", value:Digit.DateUtils.ConvertTimestampToDate(paymentInstruction?.paDetails?.[0]?.paTokenDate, 'dd/MM/yyyy') || t("ES_COMMON_NA")},
+      { title: "EXP_PA_TOKEN_DATE", value:paymentInstruction?.paDetails?.[0]?.paTokenDate || t("ES_COMMON_NA")},
       { title: "EXP_PA_ONLINE_BILL_NO", value:paymentInstruction?.paDetails?.[0]?.paBillRefNumber || t("ES_COMMON_NA") }
     ]
   }
