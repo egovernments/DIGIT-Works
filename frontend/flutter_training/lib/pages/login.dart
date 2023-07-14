@@ -87,6 +87,7 @@ class _LoginPage extends State<LoginPage> {
                         formControlName: userNameKey,
                         padding: const EdgeInsets.only(top: 32),
                         label: t.translate(i18.login.loginUserName),
+                        isRequired: true,
                         validationMessages: {
                           'required': (_) => t.translate(
                                 i18.common.requiredField,
@@ -101,6 +102,7 @@ class _LoginPage extends State<LoginPage> {
                         padding: const EdgeInsets.only(top: 32),
                         label: t.translate(i18.login.loginPassword),
                         obscureText: passwordVisible ? false : true,
+                        isRequired: true,
                         validationMessages: {
                           'required': (_) => t.translate(
                                 i18.common.requiredField,
@@ -112,7 +114,7 @@ class _LoginPage extends State<LoginPage> {
                               RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
                         ]),
                     DigitReactiveDropdown<String>(
-                      label: t.translate(i18.common.ward),
+                      label: t.translate(i18.common.city),
                       menuMaxHeight: 300,
                       padding: const EdgeInsets.only(top: 32),
                       menuItems:

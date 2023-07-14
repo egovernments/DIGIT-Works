@@ -36,19 +36,16 @@ class _AuthenticatedPageWrapper extends State<AuthenticatedPageWrapper> {
     Client client = Client();
     InitClient initClient = InitClient();
     return Scaffold(
-      body: MultiBlocProvider(
-        providers: [],
-        child: BlocProvider(
-          create: (context) => LocalizationBloc(
-            const LocalizationState.initial(),
-            LocalizationRepository(initClient.init()),
-          )..add(LocalizationEvent.onLoadLocalization(
-              module: 'rainmaker-bnd',
-              tenantId: envConfig.variables.tenantId,
-              locale: selectedLocale.toString(),
-            )),
-          child: const AutoRouter(),
-        ),
+      body: BlocProvider(
+        create: (context) => LocalizationBloc(
+          const LocalizationState.initial(),
+          LocalizationRepository(initClient.init()),
+        )..add(LocalizationEvent.onLoadLocalization(
+            module: 'rainmaker-bnd',
+            tenantId: envConfig.variables.tenantId,
+            locale: selectedLocale.toString(),
+          )),
+        child: const AutoRouter(),
       ),
     );
   }

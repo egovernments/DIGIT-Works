@@ -30,7 +30,7 @@ class Common {
   const Common();
   String get continueLabel => 'CORE_COMMON_CONTINUE';
   String get nameLabel => 'CORE_COMMON_NAME';
-  String get requiredField => 'WORKS_REQUIRED_ERR';
+  String get requiredField => 'CORE_COMMON_REQUIRED_ERRMSG';
   String get continueToLogin => 'CONTINUE_TO_LOGIN';
   String get mobileNumber => 'CORE_COMMON_MOBILE_NUMBER';
   String get logOut => 'CORE_COMMON_LOGOUT';
