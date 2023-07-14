@@ -34,10 +34,9 @@ public class GenderUtil {
         String uri = getIndividualSearchURLWithParams(tenantId).toUriString();
 
         Object individualSearchRequest = getIndividualSearchRequest(requestInfo,identifier);
-        log.info("Individual search request -> {}", individualSearchRequest);
         Object individualRes =  restRepo.fetchResult(new StringBuilder(uri), individualSearchRequest);
 
-         String gender = "";
+        String gender = "";
         List<String> individualGender = null;
 
         try{
@@ -49,7 +48,6 @@ public class GenderUtil {
 
         if(!individualGender.isEmpty()) {
             gender= individualGender.get(0);
-            log.info("gender: " + gender);
         }else{
             log.info("The Payee is not available in the individual index, Ids : ", identifier);
         }
@@ -83,7 +81,12 @@ public class GenderUtil {
         return individualSearchRequestNode;
     }
     public  String getGenderDetails(RequestInfo requestInfo, String tenantId, String identifier){
-        String Gender = fetchGenderDetails(requestInfo, tenantId, identifier);
+        String Gender = "";
+        try{
+            Gender = fetchGenderDetails(requestInfo, tenantId, identifier);
+        }catch (Exception e){
+            log.info("The Exception occured in fetching gender of payee: ",e);
+        }
         return Gender;
     }
 }
