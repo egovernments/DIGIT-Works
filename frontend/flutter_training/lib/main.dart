@@ -261,7 +261,7 @@ class _MainApplicationState extends State<MainApplication> {
                               LocalizationRepository(initClient.init()),
                             )..add(LocalizationEvent.onLoadLocalization(
                                 module:
-                                    'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
+                                    'rainmaker-common,rainmaker-common-masters,rainmaker-bnd,rainmaker-${appInitState.stateInfoListModel?.code}',
                                 tenantId: appInitState.initMdmsModel!.tenant!
                                     .tenantListModel!.first.code
                                     .toString(),
@@ -274,7 +274,7 @@ class _MainApplicationState extends State<MainApplication> {
                               LocalizationRepository(initClient.init()),
                             ),
                     child: MaterialApp.router(
-                      title: 'MUKTA CBO App',
+                      title: 'BND App',
                       supportedLocales: appInitState.initMdmsModel != null
                           ? appInitState.digitRowCardItems!.map((e) {
                               final results = e.value.split('_');

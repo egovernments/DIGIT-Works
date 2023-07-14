@@ -1,9 +1,11 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_training/blocs/localization/app_localization.dart';
 
 class CommonWidgets {
   static getItemWidget(BuildContext context,
       {String title = '', String description = '', String subtitle = ''}) {
+    var t = AppLocalizations.of(context);
     return Container(
         padding: const EdgeInsets.all(8.0),
         child: (Row(
@@ -19,7 +21,7 @@ class CommonWidgets {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        t.translate(title),
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w700),
                         textAlign: TextAlign.start,

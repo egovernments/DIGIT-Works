@@ -6,6 +6,7 @@ import 'package:flutter_training/pages/wage_seeker_registration/register_individ
 
 import '../pages/authenticated.dart';
 import '../pages/birth-registration/birth_search_inbox.dart';
+import '../pages/birth-registration/view_birth_certificates.dart';
 import '../pages/home.dart';
 import '../pages/language_selection_page.dart';
 import '../pages/login.dart';
@@ -47,6 +48,7 @@ part 'app_router.gr.dart';
             page: CreateBirthRegistrationPage,
             path: 'create-birth-certificate'),
         AutoRoute(page: BirthRegSearchInboxPage, path: 'search-birth-cert'),
+        AutoRoute(page: ViewBirthCertificatesPage, path: 'view-birth-certs'),
       ],
     ),
   ],

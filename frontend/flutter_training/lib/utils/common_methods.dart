@@ -4,12 +4,12 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_training/services/local_storage.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_training/services/local_storage.dart';
 
 import '../data/repositories/core_repo/core_repository.dart';
 import '../models/file_store/file_store_model.dart';
@@ -167,7 +167,7 @@ class CommonMethods {
   }
 
   static String getLocaleModules() {
-    return 'rainmaker-common,rainmaker-common-masters,rainmaker-contracts,rainmaker-expenditure,rainmaker-attendencemgmt,rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}';
+    return 'rainmaker-common,rainmaker-bnd';
   }
 
   static DateTime firstDayOfWeek(DateTime date) {

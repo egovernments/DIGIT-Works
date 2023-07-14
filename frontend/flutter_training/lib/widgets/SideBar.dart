@@ -18,8 +18,7 @@ class SideBar extends StatefulWidget {
   final String module;
   const SideBar(
       {super.key,
-      this.module =
-          'rainmaker-common,rainmaker-attendencemgmt,rainmaker-common-masters'});
+      this.module = 'rainmaker-common,rainmaker-bnd,rainmaker-common-masters'});
   @override
   State<StatefulWidget> createState() {
     return _SideBar();
@@ -78,7 +77,7 @@ class _SideBar extends State<SideBar> {
             title: AppLocalizations.of(context).translate(i18.common.language),
             icon: SHGIcons.language,
             content: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(top: 16),
               child: BlocBuilder<AppInitializationBloc, AppInitializationState>(
                 builder: (context, state) {
                   return state.digitRowCardItems != null &&
@@ -105,7 +104,12 @@ class _SideBar extends State<SideBar> {
                               ?.map(
                                   (e) => DigitRowCardModel.fromJson(e.toJson()))
                               .toList() as List<DigitRowCardModel>,
-                          width: MediaQuery.of(context).size.width / 6)
+                          width: MediaQuery.of(context).size.width < 720
+                              ? (MediaQuery.of(context).size.width *
+                                      0.56 /
+                                      (state.digitRowCardItems ?? []).length) -
+                                  (3 * (state.digitRowCardItems ?? []).length)
+                              : MediaQuery.of(context).size.width / 16)
                       : const Text('');
                 },
               ),

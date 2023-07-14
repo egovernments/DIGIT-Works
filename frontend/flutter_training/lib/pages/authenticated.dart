@@ -49,7 +49,7 @@ class _AuthenticatedPageWrapper extends State<AuthenticatedPageWrapper> {
             const LocalizationState.initial(),
             LocalizationRepository(initClient.init()),
           )..add(LocalizationEvent.onLoadLocalization(
-              module: 'rainmaker-attendencemgmt',
+              module: 'rainmaker-bnd',
               tenantId: envConfig.variables.tenantId,
               locale: selectedLocale.toString(),
             )),

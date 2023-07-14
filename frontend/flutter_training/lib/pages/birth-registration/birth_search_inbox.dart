@@ -1,11 +1,18 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_training/blocs/bnd/search_birth_certificate_bloc.dart';
+import 'package:flutter_training/router/app_router.dart';
+import 'package:flutter_training/utils/date_formats.dart';
+import 'package:flutter_training/utils/global_variables.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../../blocs/bnd/create_birth_bloc.dart';
+import '../../blocs/bnd/search_birth_certificate_bloc.dart';
+import '../../models/create-birth-registration/birth_certificates_model.dart';
 import '../../utils/notifiers.dart';
+import '../../widgets/Back.dart';
+import '../../widgets/SideBar.dart';
+import '../../widgets/atoms/app_bar_logo.dart';
+import '../../widgets/drawer_wrapper.dart';
 
 class BirthRegSearchInboxPage extends StatefulWidget {
   const BirthRegSearchInboxPage({super.key});
@@ -32,12 +39,22 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter Training'),
+          titleSpacing: 0,
+          title: const AppBarLogo(),
         ),
+        drawer: const DrawerWrapper(Drawer(child: SideBar())),
         body: ScrollableContent(
-          header: const Text(
-            'Search Birth Certificate',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
+          header: const Column(
+            children: [
+              Back(),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Search Birth Certificate',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
           ),
           children: [
             DigitCard(
@@ -47,7 +64,7 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                       return Column(
                         children: [
                           DigitDateFormPicker(
-                            label: 'From Date',
+                            label: 'From (Date of birth)',
                             isRequired: true,
                             icon: Icons.info_outline_rounded,
                             formControlName: fromDateKey,
@@ -57,7 +74,7 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                             confirmText: 'OK',
                           ),
                           DigitDateFormPicker(
-                            label: 'To Date',
+                            label: 'To (Date of birth)',
                             isRequired: true,
                             icon: Icons.info_outline_rounded,
                             formControlName: toDateKey,
@@ -81,13 +98,18 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                           const SizedBox(
                             height: 16.0,
                           ),
-                          BlocListener<BirthRegBloc, BirthRegState>(
-                              listener: (context, createState) {
-                                createState.maybeWhen(
+                          BlocListener<BirthSearchCertBloc,
+                                  BirthSearchCertState>(
+                              listener: (context, searchState) {
+                                searchState.maybeWhen(
                                     orElse: () => false,
                                     loading: () =>
                                         Loaders.circularLoader(context),
-                                    loaded: () {},
+                                    loaded: (BirthCertificatesList?
+                                        birthCertificatesList) {
+                                      context.router.push(
+                                          const ViewBirthCertificatesRoute());
+                                    },
                                     error: (String? error) =>
                                         Notifiers.getToastMessage(context,
                                             error.toString(), 'ERROR'));
@@ -98,25 +120,29 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                                     onPressed: () {
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
-                                      DateTime fromDate =
-                                          form.value[fromDateKey] as DateTime;
-                                      DateTime toDate =
-                                          form.value[toDateKey] as DateTime;
-                                      final queryParams = <String, dynamic>{
+                                      int fromDate = DateTime.parse(form
+                                              .value[fromDateKey]
+                                              .toString())
+                                          .millisecondsSinceEpoch;
+                                      int toDate = DateTime.parse(
+                                              form.value[toDateKey].toString())
+                                          .millisecondsSinceEpoch;
+                                      print(form.value[fromDateKey]);
+                                      print(fromDate);
+                                      final Map<String, String> queryParams = {
                                         fromDateKey:
-                                            (fromDate.millisecondsSinceEpoch ~/
-                                                1000),
-                                        toDateKey:
-                                            (toDate.millisecondsSinceEpoch ~/
-                                                1000),
+                                            DateFormats.getFilteredDate(
+                                                form.value[fromDateKey]
+                                                    .toString(),
+                                                dateFormat: 'dd-MM-yyyy'),
+                                        toDateKey: DateFormats.getFilteredDate(
+                                            form.value[toDateKey].toString(),
+                                            dateFormat: 'dd-MM-yyyy'),
                                       };
-
-                                      form.value.forEach((key, value) {
-                                        if (value != null &&
-                                            value.toString().isNotEmpty) {
-                                          queryParams[key] = value.toString();
-                                        }
-                                      });
+                                      queryParams['tenantId'] = GlobalVariables
+                                          .userInfo!.tenantId
+                                          .toString();
+                                      print(queryParams);
                                       context.read<BirthSearchCertBloc>().add(
                                           SearchBirthCertEvent(
                                               queryParams: queryParams));

@@ -87,7 +87,7 @@ class _LanguageSelectionPage extends State<LanguageSelectionPage> {
                               context.read<LocalizationBloc>().add(
                                   OnLoadLocalizationEvent(
                                       module:
-                                          'rainmaker-common,rainmaker-common-masters,rainmaker-${GlobalVariables.stateInfoListModel?.code}',
+                                          'rainmaker-common,rainmaker-common-masters,rainmaker-bnd,rainmaker-${GlobalVariables.stateInfoListModel?.code}',
                                       tenantId: state.stateInfoListModel!.code
                                           .toString(),
                                       locale: data.value));

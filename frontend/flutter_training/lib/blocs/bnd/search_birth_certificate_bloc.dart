@@ -28,13 +28,13 @@ class BirthSearchCertBloc
       emit(const BirthSearchCertState.loading());
       BirthCertificatesList birthCertificatesList =
           await BNDRepository(client.init()).searchBirthCertificates(
-              url: Urls.bndServices.createBirth,
+              url: Urls.bndServices.searchBirth,
               body: {},
               queryParameters: event.queryParams);
-      if (birthCertificatesList != null &&
+      if (birthCertificatesList.birthCerts != null &&
           birthCertificatesList.birthCerts.isNotEmpty) {
         emit(BirthSearchCertState.loaded(birthCertificatesList));
-      } else if (birthCertificatesList != null &&
+      } else if (birthCertificatesList.birthCerts != null &&
           birthCertificatesList.birthCerts.isEmpty) {
         emit(BirthSearchCertState.error(i18.common.noCertificatesExists));
       } else {

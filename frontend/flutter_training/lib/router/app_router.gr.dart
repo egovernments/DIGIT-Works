@@ -111,6 +111,12 @@ class _$AppRouter extends RootStackRouter {
         child: const BirthRegSearchInboxPage(),
       );
     },
+    ViewBirthCertificatesRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ViewBirthCertificatesPage(),
+      );
+    },
   };
 
   @override
@@ -187,6 +193,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               BirthRegSearchInboxRoute.name,
               path: 'search-birth-cert',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ViewBirthCertificatesRoute.name,
+              path: 'view-birth-certs',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -452,4 +463,16 @@ class BirthRegSearchInboxRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'BirthRegSearchInboxRoute';
+}
+
+/// generated route for
+/// [ViewBirthCertificatesPage]
+class ViewBirthCertificatesRoute extends PageRouteInfo<void> {
+  const ViewBirthCertificatesRoute()
+      : super(
+          ViewBirthCertificatesRoute.name,
+          path: 'view-birth-certs',
+        );
+
+  static const String name = 'ViewBirthCertificatesRoute';
 }

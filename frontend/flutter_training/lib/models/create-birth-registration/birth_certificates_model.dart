@@ -11,108 +11,111 @@ class BirthCertificatesList with BirthCertificatesListMappable {
 
 @MappableClass()
 class BirthCertificate with BirthCertificateMappable {
-  BirthFatherInfo birthFatherInfo;
-  BirthMotherInfo birthMotherInfo;
-  BirthAddress birthPresentaddr;
-  BirthAddress birthPermaddr;
+  BirthFatherInfo? birthFatherInfo;
+  BirthMotherInfo? birthMotherInfo;
+  BirthAddress? birthPresentaddr;
+  BirthAddress? birthPermaddr;
   String registrationno;
-  String hospitalname;
-  int dateofreportepoch;
-  int dateofbirthepoch;
+  String? hospitalname;
+  int? dateofbirth;
+  int? dateofreportepoch;
+  int? dateofbirthepoch;
+  int? dateofreport;
   String genderStr;
-  String firstname;
-  String lastname;
-  String placeofbirth;
-  bool checkboxforaddress;
-  String informantsname;
-  String informantsaddress;
+  String? firstname;
+  String? lastname;
+  String? placeofbirth;
+  bool? checkboxforaddress;
+  String? informantsname;
+  String? informantsaddress;
   String tenantid;
-  int excelrowindex;
-  int counter;
+  int? excelrowindex;
+  int? counter;
 
-  BirthCertificate({
-    required this.birthFatherInfo,
-    required this.birthMotherInfo,
-    required this.birthPresentaddr,
-    required this.birthPermaddr,
-    required this.registrationno,
-    required this.hospitalname,
-    required this.dateofreportepoch,
-    required this.dateofbirthepoch,
-    required this.genderStr,
-    required this.firstname,
-    required this.lastname,
-    required this.placeofbirth,
-    required this.checkboxforaddress,
-    required this.informantsname,
-    required this.informantsaddress,
-    required this.tenantid,
-    required this.excelrowindex,
-    required this.counter,
-  });
+  BirthCertificate(
+      {this.birthFatherInfo,
+      this.birthMotherInfo,
+      this.birthPresentaddr,
+      this.birthPermaddr,
+      required this.registrationno,
+      this.hospitalname,
+      this.dateofreportepoch,
+      this.dateofbirthepoch,
+      required this.genderStr,
+      this.firstname,
+      this.lastname,
+      this.placeofbirth,
+      this.checkboxforaddress,
+      this.informantsname,
+      this.informantsaddress,
+      required this.tenantid,
+      this.excelrowindex,
+      this.counter,
+      this.dateofbirth,
+      this.dateofreport});
 }
 
 @MappableClass()
 class BirthFatherInfo with BirthFatherInfoMappable {
-  String firstname;
-  String lastname;
-  String aadharno;
-  String mobileno;
-  String religion;
-  String nationality;
+  String? firstname;
+  String? lastname;
+  String? aadharno;
+  String? mobileno;
+  String? religion;
+  String? nationality;
 
   BirthFatherInfo({
-    required this.firstname,
-    required this.lastname,
-    required this.aadharno,
-    required this.mobileno,
-    required this.religion,
-    required this.nationality,
+    this.firstname,
+    this.lastname,
+    this.aadharno,
+    this.mobileno,
+    this.religion,
+    this.nationality,
   });
 }
 
 @MappableClass()
 class BirthMotherInfo with BirthMotherInfoMappable {
-  String firstname;
-  String lastname;
-  String aadharno;
-  String mobileno;
-  String religion;
-  String nationality;
+  String? firstname;
+  String? lastname;
+  String? aadharno;
+  String? mobileno;
+  String? religion;
+  String? nationality;
 
   BirthMotherInfo({
-    required this.firstname,
-    required this.lastname,
-    required this.aadharno,
-    required this.mobileno,
-    required this.religion,
-    required this.nationality,
+    this.firstname,
+    this.lastname,
+    this.aadharno,
+    this.mobileno,
+    this.religion,
+    this.nationality,
   });
 }
 
 @MappableClass()
 class BirthAddress with BirthAddressMappable {
-  String buildingno;
-  String houseno;
-  String streetname;
-  String locality;
-  String tehsil;
-  String district;
-  String city;
-  String state;
-  String pinno;
-  String country;
+  String? buildingno;
+  String? houseno;
+  String? streetname;
+  String? locality;
+  String? tehsil;
+  String? district;
+  String? city;
+  String? state;
+  String? pinno;
+  String? country;
 
   BirthAddress({
-    required this.buildingno,
-    required this.houseno,
-    required this.streetname,
-    required this.locality,
-    required this.tehsil,
-    required this.district,
-    required this.city,
-    required this.state,
-    required this.pinno,
-    required this.country,
+    this.buildingno,
+    this.houseno,
+    this.streetname,
+    this.locality,
+    this.tehsil,
+    this.district,
+    this.city,
+    this.state,
+    this.pinno,
+    this.country,
   });
 }

@@ -9,11 +9,15 @@ import 'package:flutter_training/models/create-birth-registration/child_father_d
 import 'package:flutter_training/models/create-birth-registration/child_mother_details.dart';
 import 'package:flutter_training/utils/localization_constants/i18_key_constants.dart'
     as i18;
+import 'package:flutter_training/widgets/atoms/app_bar_logo.dart';
 import 'package:flutter_training/widgets/atoms/radio_button_list.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../router/app_router.dart';
 import '../../utils/notifiers.dart';
+import '../../widgets/Back.dart';
+import '../../widgets/SideBar.dart';
+import '../../widgets/drawer_wrapper.dart';
 
 class CreateBirthRegistrationPage extends StatefulWidget {
   const CreateBirthRegistrationPage({super.key});
@@ -68,15 +72,14 @@ class CreateBirthRegistrationPageState
     var t = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter Training'),
+        titleSpacing: 0,
+        title: const AppBarLogo(),
       ),
+      drawer: const DrawerWrapper(Drawer(child: SideBar())),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ScrollableContent(
-          header: const Text(
-            'Child Details',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
-          ),
+          header: const Back(),
           children: [
             ReactiveFormBuilder(
                 form: buildForm,
@@ -88,6 +91,15 @@ class CreateBirthRegistrationPageState
                         DigitCard(
                             child: Column(
                           children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Child Details",
+                                style: TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.w700),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
                             DigitTextFormField(
                               label: t.translate(i18.common.registrationNo),
                               formControlName: regNoKey,
@@ -182,6 +194,7 @@ class CreateBirthRegistrationPageState
                               onChanged: (value) {},
                             ),
                             DigitRadioButtonList(
+                                labelText: t.translate(i18.common.gender),
                                 formControlName: genderKey,
                                 valueMapper: (value) => value,
                                 options: const [
@@ -220,10 +233,14 @@ class CreateBirthRegistrationPageState
                         DigitCard(
                             child: Column(
                           children: [
-                            const Text(
-                              "Child's Father Details",
-                              style: TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.w700),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Child's Father Details",
+                                style: TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.w700),
+                                textAlign: TextAlign.left,
+                              ),
                             ),
                             DigitTextFormField(
                               label: 'Father First Name',
@@ -314,10 +331,16 @@ class CreateBirthRegistrationPageState
                         DigitCard(
                             child: Column(
                           children: [
-                            const Text(
-                              "Child's Mother Details",
-                              style: TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.w700),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Child's Mother Details",
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
                             ),
                             DigitTextFormField(
                               label: 'Mother First Name',
@@ -408,10 +431,14 @@ class CreateBirthRegistrationPageState
                         DigitCard(
                             child: Column(
                           children: [
-                            const Text(
-                              "Address Details",
-                              style: TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.w700),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Address Details",
+                                style: TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.w700),
+                                textAlign: TextAlign.left,
+                              ),
                             ),
                             DigitTextFormField(
                               label: 'Building No',
@@ -739,29 +766,23 @@ class CreateBirthRegistrationPageState
             value: '',
             validators: [Validators.minLength(4), Validators.maxLength(128)]),
         houseNoKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+          value: '',
+        ),
         streetNameKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+            value: '', validators: [Validators.maxLength(64)]),
         localityKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+            value: '', validators: [Validators.maxLength(64)]),
         tehsilKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+            value: '', validators: [Validators.maxLength(64)]),
         districtKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+            value: '', validators: [Validators.maxLength(64)]),
         cityKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+            value: '', validators: [Validators.maxLength(64)]),
         stateKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+            value: '', validators: [Validators.maxLength(64)]),
         pinCodeKey: FormControl<String>(
             value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+            validators: [Validators.minLength(6), Validators.maxLength(6)]),
         countryKey: FormControl<String>(
             value: '',
             validators: [Validators.minLength(4), Validators.maxLength(128)]),

@@ -142,24 +142,26 @@ class BirthCertificateMapperElement
   BirthCertificate decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   BirthCertificate fromMap(Map<String, dynamic> map) => BirthCertificate(
-      birthFatherInfo: container.$get(map, 'birthFatherInfo'),
-      birthMotherInfo: container.$get(map, 'birthMotherInfo'),
-      birthPresentaddr: container.$get(map, 'birthPresentaddr'),
-      birthPermaddr: container.$get(map, 'birthPermaddr'),
+      birthFatherInfo: container.$getOpt(map, 'birthFatherInfo'),
+      birthMotherInfo: container.$getOpt(map, 'birthMotherInfo'),
+      birthPresentaddr: container.$getOpt(map, 'birthPresentaddr'),
+      birthPermaddr: container.$getOpt(map, 'birthPermaddr'),
       registrationno: container.$get(map, 'registrationno'),
-      hospitalname: container.$get(map, 'hospitalname'),
-      dateofreportepoch: container.$get(map, 'dateofreportepoch'),
-      dateofbirthepoch: container.$get(map, 'dateofbirthepoch'),
+      hospitalname: container.$getOpt(map, 'hospitalname'),
+      dateofreportepoch: container.$getOpt(map, 'dateofreportepoch'),
+      dateofbirthepoch: container.$getOpt(map, 'dateofbirthepoch'),
       genderStr: container.$get(map, 'genderStr'),
-      firstname: container.$get(map, 'firstname'),
-      lastname: container.$get(map, 'lastname'),
-      placeofbirth: container.$get(map, 'placeofbirth'),
-      checkboxforaddress: container.$get(map, 'checkboxforaddress'),
-      informantsname: container.$get(map, 'informantsname'),
-      informantsaddress: container.$get(map, 'informantsaddress'),
+      firstname: container.$getOpt(map, 'firstname'),
+      lastname: container.$getOpt(map, 'lastname'),
+      placeofbirth: container.$getOpt(map, 'placeofbirth'),
+      checkboxforaddress: container.$getOpt(map, 'checkboxforaddress'),
+      informantsname: container.$getOpt(map, 'informantsname'),
+      informantsaddress: container.$getOpt(map, 'informantsaddress'),
       tenantid: container.$get(map, 'tenantid'),
-      excelrowindex: container.$get(map, 'excelrowindex'),
-      counter: container.$get(map, 'counter'));
+      excelrowindex: container.$getOpt(map, 'excelrowindex'),
+      counter: container.$getOpt(map, 'counter'),
+      dateofbirth: container.$getOpt(map, 'dateofbirth'),
+      dateofreport: container.$getOpt(map, 'dateofreport'));
 
   @override
   Function get encoder => encode;
@@ -187,12 +189,14 @@ class BirthCertificateMapperElement
             container.$enc(b.informantsaddress, 'informantsaddress'),
         'tenantid': container.$enc(b.tenantid, 'tenantid'),
         'excelrowindex': container.$enc(b.excelrowindex, 'excelrowindex'),
-        'counter': container.$enc(b.counter, 'counter')
+        'counter': container.$enc(b.counter, 'counter'),
+        'dateofbirth': container.$enc(b.dateofbirth, 'dateofbirth'),
+        'dateofreport': container.$enc(b.dateofreport, 'dateofreport')
       };
 
   @override
   String stringify(BirthCertificate self) =>
-      'BirthCertificate(birthFatherInfo: ${container.asString(self.birthFatherInfo)}, birthMotherInfo: ${container.asString(self.birthMotherInfo)}, birthPresentaddr: ${container.asString(self.birthPresentaddr)}, birthPermaddr: ${container.asString(self.birthPermaddr)}, registrationno: ${container.asString(self.registrationno)}, hospitalname: ${container.asString(self.hospitalname)}, dateofreportepoch: ${container.asString(self.dateofreportepoch)}, dateofbirthepoch: ${container.asString(self.dateofbirthepoch)}, genderStr: ${container.asString(self.genderStr)}, firstname: ${container.asString(self.firstname)}, lastname: ${container.asString(self.lastname)}, placeofbirth: ${container.asString(self.placeofbirth)}, checkboxforaddress: ${container.asString(self.checkboxforaddress)}, informantsname: ${container.asString(self.informantsname)}, informantsaddress: ${container.asString(self.informantsaddress)}, tenantid: ${container.asString(self.tenantid)}, excelrowindex: ${container.asString(self.excelrowindex)}, counter: ${container.asString(self.counter)})';
+      'BirthCertificate(birthFatherInfo: ${container.asString(self.birthFatherInfo)}, birthMotherInfo: ${container.asString(self.birthMotherInfo)}, birthPresentaddr: ${container.asString(self.birthPresentaddr)}, birthPermaddr: ${container.asString(self.birthPermaddr)}, registrationno: ${container.asString(self.registrationno)}, hospitalname: ${container.asString(self.hospitalname)}, dateofbirth: ${container.asString(self.dateofbirth)}, dateofreportepoch: ${container.asString(self.dateofreportepoch)}, dateofbirthepoch: ${container.asString(self.dateofbirthepoch)}, dateofreport: ${container.asString(self.dateofreport)}, genderStr: ${container.asString(self.genderStr)}, firstname: ${container.asString(self.firstname)}, lastname: ${container.asString(self.lastname)}, placeofbirth: ${container.asString(self.placeofbirth)}, checkboxforaddress: ${container.asString(self.checkboxforaddress)}, informantsname: ${container.asString(self.informantsname)}, informantsaddress: ${container.asString(self.informantsaddress)}, tenantid: ${container.asString(self.tenantid)}, excelrowindex: ${container.asString(self.excelrowindex)}, counter: ${container.asString(self.counter)})';
   @override
   int hash(BirthCertificate self) =>
       container.hash(self.birthFatherInfo) ^
@@ -201,8 +205,10 @@ class BirthCertificateMapperElement
       container.hash(self.birthPermaddr) ^
       container.hash(self.registrationno) ^
       container.hash(self.hospitalname) ^
+      container.hash(self.dateofbirth) ^
       container.hash(self.dateofreportepoch) ^
       container.hash(self.dateofbirthepoch) ^
+      container.hash(self.dateofreport) ^
       container.hash(self.genderStr) ^
       container.hash(self.firstname) ^
       container.hash(self.lastname) ^
@@ -221,8 +227,10 @@ class BirthCertificateMapperElement
       container.isEqual(self.birthPermaddr, other.birthPermaddr) &&
       container.isEqual(self.registrationno, other.registrationno) &&
       container.isEqual(self.hospitalname, other.hospitalname) &&
+      container.isEqual(self.dateofbirth, other.dateofbirth) &&
       container.isEqual(self.dateofreportepoch, other.dateofreportepoch) &&
       container.isEqual(self.dateofbirthepoch, other.dateofbirthepoch) &&
+      container.isEqual(self.dateofreport, other.dateofreport) &&
       container.isEqual(self.genderStr, other.genderStr) &&
       container.isEqual(self.firstname, other.firstname) &&
       container.isEqual(self.lastname, other.lastname) &&
@@ -267,12 +275,12 @@ abstract class BirthCertificateCopyWith<$R, $In extends BirthCertificate,
   BirthCertificateCopyWith<$R2, $In, $Out2>
       chain<$R2, $Out2 extends BirthCertificate>(
           Then<BirthCertificate, $Out2> t, Then<$Out2, $R2> t2);
-  BirthFatherInfoCopyWith<$R, BirthFatherInfo, BirthFatherInfo>
+  BirthFatherInfoCopyWith<$R, BirthFatherInfo, BirthFatherInfo>?
       get birthFatherInfo;
-  BirthMotherInfoCopyWith<$R, BirthMotherInfo, BirthMotherInfo>
+  BirthMotherInfoCopyWith<$R, BirthMotherInfo, BirthMotherInfo>?
       get birthMotherInfo;
-  BirthAddressCopyWith<$R, BirthAddress, BirthAddress> get birthPresentaddr;
-  BirthAddressCopyWith<$R, BirthAddress, BirthAddress> get birthPermaddr;
+  BirthAddressCopyWith<$R, BirthAddress, BirthAddress>? get birthPresentaddr;
+  BirthAddressCopyWith<$R, BirthAddress, BirthAddress>? get birthPermaddr;
   $R call(
       {BirthFatherInfo? birthFatherInfo,
       BirthMotherInfo? birthMotherInfo,
@@ -291,7 +299,9 @@ abstract class BirthCertificateCopyWith<$R, $In extends BirthCertificate,
       String? informantsaddress,
       String? tenantid,
       int? excelrowindex,
-      int? counter});
+      int? counter,
+      int? dateofbirth,
+      int? dateofreport});
 }
 
 class _BirthCertificateCopyWithImpl<$R, $Out extends BirthCertificate>
@@ -305,60 +315,64 @@ class _BirthCertificateCopyWithImpl<$R, $Out extends BirthCertificate>
           _BirthCertificateCopyWithImpl($value, t, t2);
 
   @override
-  BirthFatherInfoCopyWith<$R, BirthFatherInfo, BirthFatherInfo>
-      get birthFatherInfo => $value.birthFatherInfo.copyWith
+  BirthFatherInfoCopyWith<$R, BirthFatherInfo, BirthFatherInfo>?
+      get birthFatherInfo => $value.birthFatherInfo?.copyWith
           .chain($identity, (v) => call(birthFatherInfo: v));
   @override
-  BirthMotherInfoCopyWith<$R, BirthMotherInfo, BirthMotherInfo>
-      get birthMotherInfo => $value.birthMotherInfo.copyWith
+  BirthMotherInfoCopyWith<$R, BirthMotherInfo, BirthMotherInfo>?
+      get birthMotherInfo => $value.birthMotherInfo?.copyWith
           .chain($identity, (v) => call(birthMotherInfo: v));
   @override
-  BirthAddressCopyWith<$R, BirthAddress, BirthAddress> get birthPresentaddr =>
-      $value.birthPresentaddr.copyWith
+  BirthAddressCopyWith<$R, BirthAddress, BirthAddress>? get birthPresentaddr =>
+      $value.birthPresentaddr?.copyWith
           .chain($identity, (v) => call(birthPresentaddr: v));
   @override
-  BirthAddressCopyWith<$R, BirthAddress, BirthAddress> get birthPermaddr =>
-      $value.birthPermaddr.copyWith
+  BirthAddressCopyWith<$R, BirthAddress, BirthAddress>? get birthPermaddr =>
+      $value.birthPermaddr?.copyWith
           .chain($identity, (v) => call(birthPermaddr: v));
   @override
   $R call(
-          {BirthFatherInfo? birthFatherInfo,
-          BirthMotherInfo? birthMotherInfo,
-          BirthAddress? birthPresentaddr,
-          BirthAddress? birthPermaddr,
+          {Object? birthFatherInfo = $none,
+          Object? birthMotherInfo = $none,
+          Object? birthPresentaddr = $none,
+          Object? birthPermaddr = $none,
           String? registrationno,
-          String? hospitalname,
-          int? dateofreportepoch,
-          int? dateofbirthepoch,
+          Object? hospitalname = $none,
+          Object? dateofreportepoch = $none,
+          Object? dateofbirthepoch = $none,
           String? genderStr,
-          String? firstname,
-          String? lastname,
-          String? placeofbirth,
-          bool? checkboxforaddress,
-          String? informantsname,
-          String? informantsaddress,
+          Object? firstname = $none,
+          Object? lastname = $none,
+          Object? placeofbirth = $none,
+          Object? checkboxforaddress = $none,
+          Object? informantsname = $none,
+          Object? informantsaddress = $none,
           String? tenantid,
-          int? excelrowindex,
-          int? counter}) =>
+          Object? excelrowindex = $none,
+          Object? counter = $none,
+          Object? dateofbirth = $none,
+          Object? dateofreport = $none}) =>
       $then(BirthCertificate(
-          birthFatherInfo: birthFatherInfo ?? $value.birthFatherInfo,
-          birthMotherInfo: birthMotherInfo ?? $value.birthMotherInfo,
-          birthPresentaddr: birthPresentaddr ?? $value.birthPresentaddr,
-          birthPermaddr: birthPermaddr ?? $value.birthPermaddr,
+          birthFatherInfo: or(birthFatherInfo, $value.birthFatherInfo),
+          birthMotherInfo: or(birthMotherInfo, $value.birthMotherInfo),
+          birthPresentaddr: or(birthPresentaddr, $value.birthPresentaddr),
+          birthPermaddr: or(birthPermaddr, $value.birthPermaddr),
           registrationno: registrationno ?? $value.registrationno,
-          hospitalname: hospitalname ?? $value.hospitalname,
-          dateofreportepoch: dateofreportepoch ?? $value.dateofreportepoch,
-          dateofbirthepoch: dateofbirthepoch ?? $value.dateofbirthepoch,
+          hospitalname: or(hospitalname, $value.hospitalname),
+          dateofreportepoch: or(dateofreportepoch, $value.dateofreportepoch),
+          dateofbirthepoch: or(dateofbirthepoch, $value.dateofbirthepoch),
           genderStr: genderStr ?? $value.genderStr,
-          firstname: firstname ?? $value.firstname,
-          lastname: lastname ?? $value.lastname,
-          placeofbirth: placeofbirth ?? $value.placeofbirth,
-          checkboxforaddress: checkboxforaddress ?? $value.checkboxforaddress,
-          informantsname: informantsname ?? $value.informantsname,
-          informantsaddress: informantsaddress ?? $value.informantsaddress,
+          firstname: or(firstname, $value.firstname),
+          lastname: or(lastname, $value.lastname),
+          placeofbirth: or(placeofbirth, $value.placeofbirth),
+          checkboxforaddress: or(checkboxforaddress, $value.checkboxforaddress),
+          informantsname: or(informantsname, $value.informantsname),
+          informantsaddress: or(informantsaddress, $value.informantsaddress),
           tenantid: tenantid ?? $value.tenantid,
-          excelrowindex: excelrowindex ?? $value.excelrowindex,
-          counter: counter ?? $value.counter));
+          excelrowindex: or(excelrowindex, $value.excelrowindex),
+          counter: or(counter, $value.counter),
+          dateofbirth: or(dateofbirth, $value.dateofbirth),
+          dateofreport: or(dateofreport, $value.dateofreport)));
 }
 
 class BirthFatherInfoMapper extends MapperBase<BirthFatherInfo> {
@@ -386,12 +400,12 @@ class BirthFatherInfoMapperElement extends MapperElementBase<BirthFatherInfo> {
   BirthFatherInfo decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   BirthFatherInfo fromMap(Map<String, dynamic> map) => BirthFatherInfo(
-      firstname: container.$get(map, 'firstname'),
-      lastname: container.$get(map, 'lastname'),
-      aadharno: container.$get(map, 'aadharno'),
-      mobileno: container.$get(map, 'mobileno'),
-      religion: container.$get(map, 'religion'),
-      nationality: container.$get(map, 'nationality'));
+      firstname: container.$getOpt(map, 'firstname'),
+      lastname: container.$getOpt(map, 'lastname'),
+      aadharno: container.$getOpt(map, 'aadharno'),
+      mobileno: container.$getOpt(map, 'mobileno'),
+      religion: container.$getOpt(map, 'religion'),
+      nationality: container.$getOpt(map, 'nationality'));
 
   @override
   Function get encoder => encode;
@@ -479,19 +493,19 @@ class _BirthFatherInfoCopyWithImpl<$R, $Out extends BirthFatherInfo>
 
   @override
   $R call(
-          {String? firstname,
-          String? lastname,
-          String? aadharno,
-          String? mobileno,
-          String? religion,
-          String? nationality}) =>
+          {Object? firstname = $none,
+          Object? lastname = $none,
+          Object? aadharno = $none,
+          Object? mobileno = $none,
+          Object? religion = $none,
+          Object? nationality = $none}) =>
       $then(BirthFatherInfo(
-          firstname: firstname ?? $value.firstname,
-          lastname: lastname ?? $value.lastname,
-          aadharno: aadharno ?? $value.aadharno,
-          mobileno: mobileno ?? $value.mobileno,
-          religion: religion ?? $value.religion,
-          nationality: nationality ?? $value.nationality));
+          firstname: or(firstname, $value.firstname),
+          lastname: or(lastname, $value.lastname),
+          aadharno: or(aadharno, $value.aadharno),
+          mobileno: or(mobileno, $value.mobileno),
+          religion: or(religion, $value.religion),
+          nationality: or(nationality, $value.nationality)));
 }
 
 class BirthMotherInfoMapper extends MapperBase<BirthMotherInfo> {
@@ -519,12 +533,12 @@ class BirthMotherInfoMapperElement extends MapperElementBase<BirthMotherInfo> {
   BirthMotherInfo decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   BirthMotherInfo fromMap(Map<String, dynamic> map) => BirthMotherInfo(
-      firstname: container.$get(map, 'firstname'),
-      lastname: container.$get(map, 'lastname'),
-      aadharno: container.$get(map, 'aadharno'),
-      mobileno: container.$get(map, 'mobileno'),
-      religion: container.$get(map, 'religion'),
-      nationality: container.$get(map, 'nationality'));
+      firstname: container.$getOpt(map, 'firstname'),
+      lastname: container.$getOpt(map, 'lastname'),
+      aadharno: container.$getOpt(map, 'aadharno'),
+      mobileno: container.$getOpt(map, 'mobileno'),
+      religion: container.$getOpt(map, 'religion'),
+      nationality: container.$getOpt(map, 'nationality'));
 
   @override
   Function get encoder => encode;
@@ -612,19 +626,19 @@ class _BirthMotherInfoCopyWithImpl<$R, $Out extends BirthMotherInfo>
 
   @override
   $R call(
-          {String? firstname,
-          String? lastname,
-          String? aadharno,
-          String? mobileno,
-          String? religion,
-          String? nationality}) =>
+          {Object? firstname = $none,
+          Object? lastname = $none,
+          Object? aadharno = $none,
+          Object? mobileno = $none,
+          Object? religion = $none,
+          Object? nationality = $none}) =>
       $then(BirthMotherInfo(
-          firstname: firstname ?? $value.firstname,
-          lastname: lastname ?? $value.lastname,
-          aadharno: aadharno ?? $value.aadharno,
-          mobileno: mobileno ?? $value.mobileno,
-          religion: religion ?? $value.religion,
-          nationality: nationality ?? $value.nationality));
+          firstname: or(firstname, $value.firstname),
+          lastname: or(lastname, $value.lastname),
+          aadharno: or(aadharno, $value.aadharno),
+          mobileno: or(mobileno, $value.mobileno),
+          religion: or(religion, $value.religion),
+          nationality: or(nationality, $value.nationality)));
 }
 
 class BirthAddressMapper extends MapperBase<BirthAddress> {
@@ -652,16 +666,16 @@ class BirthAddressMapperElement extends MapperElementBase<BirthAddress> {
   BirthAddress decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   BirthAddress fromMap(Map<String, dynamic> map) => BirthAddress(
-      buildingno: container.$get(map, 'buildingno'),
-      houseno: container.$get(map, 'houseno'),
-      streetname: container.$get(map, 'streetname'),
-      locality: container.$get(map, 'locality'),
-      tehsil: container.$get(map, 'tehsil'),
-      district: container.$get(map, 'district'),
-      city: container.$get(map, 'city'),
-      state: container.$get(map, 'state'),
-      pinno: container.$get(map, 'pinno'),
-      country: container.$get(map, 'country'));
+      buildingno: container.$getOpt(map, 'buildingno'),
+      houseno: container.$getOpt(map, 'houseno'),
+      streetname: container.$getOpt(map, 'streetname'),
+      locality: container.$getOpt(map, 'locality'),
+      tehsil: container.$getOpt(map, 'tehsil'),
+      district: container.$getOpt(map, 'district'),
+      city: container.$getOpt(map, 'city'),
+      state: container.$getOpt(map, 'state'),
+      pinno: container.$getOpt(map, 'pinno'),
+      country: container.$getOpt(map, 'country'));
 
   @override
   Function get encoder => encode;
@@ -762,25 +776,25 @@ class _BirthAddressCopyWithImpl<$R, $Out extends BirthAddress>
 
   @override
   $R call(
-          {String? buildingno,
-          String? houseno,
-          String? streetname,
-          String? locality,
-          String? tehsil,
-          String? district,
-          String? city,
-          String? state,
-          String? pinno,
-          String? country}) =>
+          {Object? buildingno = $none,
+          Object? houseno = $none,
+          Object? streetname = $none,
+          Object? locality = $none,
+          Object? tehsil = $none,
+          Object? district = $none,
+          Object? city = $none,
+          Object? state = $none,
+          Object? pinno = $none,
+          Object? country = $none}) =>
       $then(BirthAddress(
-          buildingno: buildingno ?? $value.buildingno,
-          houseno: houseno ?? $value.houseno,
-          streetname: streetname ?? $value.streetname,
-          locality: locality ?? $value.locality,
-          tehsil: tehsil ?? $value.tehsil,
-          district: district ?? $value.district,
-          city: city ?? $value.city,
-          state: state ?? $value.state,
-          pinno: pinno ?? $value.pinno,
-          country: country ?? $value.country));
+          buildingno: or(buildingno, $value.buildingno),
+          houseno: or(houseno, $value.houseno),
+          streetname: or(streetname, $value.streetname),
+          locality: or(locality, $value.locality),
+          tehsil: or(tehsil, $value.tehsil),
+          district: or(district, $value.district),
+          city: or(city, $value.city),
+          state: or(state, $value.state),
+          pinno: or(pinno, $value.pinno),
+          country: or(country, $value.country)));
 }

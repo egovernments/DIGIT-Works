@@ -39,7 +39,7 @@ class UnauthenticatedPageWrapper extends StatelessWidget {
                       LocalizationRepository(initClient.init()),
                     )..add(LocalizationEvent.onLoadLocalization(
                         module:
-                            'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
+                            'rainmaker-common,rainmaker-common-masters,rainmaker-bnd,rainmaker-${appInitState.stateInfoListModel?.code}',
                         tenantId: appInitState.initMdmsModel!
                             .commonMastersModel!.stateInfoListModel!.first.code
                             .toString(),

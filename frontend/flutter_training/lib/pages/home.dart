@@ -78,13 +78,15 @@ class _HomePage extends State<HomePage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              t.translate(e.header),
-                                              style: DigitTheme
-                                                  .instance
-                                                  .mobileTheme
-                                                  .textTheme
-                                                  .headlineLarge,
+                                            Flexible(
+                                              child: Text(
+                                                t.translate(e.header),
+                                                style: DigitTheme
+                                                    .instance
+                                                    .mobileTheme
+                                                    .textTheme
+                                                    .headlineLarge,
+                                              ),
                                             ),
                                             e.icon != null
                                                 ? SvgPicture.asset(
@@ -101,7 +103,7 @@ class _HomePage extends State<HomePage> {
                                                       link.active ?? false)
                                                   .map((l) {
                                                 return ButtonLink(
-                                                  t.translate(l.label ?? ''),
+                                                  t.translate(l.key ?? ''),
                                                   getRoute(l.key.toString(),
                                                       context),
                                                 );
