@@ -85,7 +85,7 @@ class BirthRegBloc extends Bloc<BirthRegEvent, BirthRegState> {
                     tenantid: GlobalVariables.userInfo!.tenantId,
                     excelrowindex: -1,
                     counter: 0)
-              ]).toJson());
+              ]).toMap());
       if (createBirthResponse != null &&
           createBirthResponse.statsMap?.successfulRecords == 1) {
         emit(const BirthRegState.loaded());

@@ -17,12 +17,10 @@ class BNDRepository {
     required String url,
   }) async {
     try {
-      print(body);
       final response = await _client.post(url,
           queryParameters: queryParameters,
           data: body ?? {},
           options: Options(extra: {
-            "userInfo": GlobalVariables.userRequestModel,
             "accessToken": GlobalVariables.authToken,
           }));
 

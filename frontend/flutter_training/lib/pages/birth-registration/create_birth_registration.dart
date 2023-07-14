@@ -7,12 +7,12 @@ import 'package:flutter_training/models/create-birth-registration/child_address_
 import 'package:flutter_training/models/create-birth-registration/child_details.dart';
 import 'package:flutter_training/models/create-birth-registration/child_father_details.dart';
 import 'package:flutter_training/models/create-birth-registration/child_mother_details.dart';
+import 'package:flutter_training/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:flutter_training/widgets/atoms/radio_button_list.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:flutter_training/utils/localization_constants/i18_key_constants.dart'
-as i18;
+
 import '../../router/app_router.dart';
-import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 
 class CreateBirthRegistrationPage extends StatefulWidget {
@@ -93,12 +93,12 @@ class CreateBirthRegistrationPageState
                               formControlName: regNoKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) =>
-                                    t.translate(i18.common.registrationNoRequired) ,
-                                'minLength': (_) =>
-                                    t.translate(i18.common.registrationNoMinChars),
-                                'maxLength': (_) =>
-                                    t.translate(i18.common.registrationNoMaxChars),
+                                'required': (_) => t.translate(
+                                    i18.common.registrationNoRequired),
+                                'minLength': (_) => t.translate(
+                                    i18.common.registrationNoMinChars),
+                                'maxLength': (_) => t.translate(
+                                    i18.common.registrationNoMaxChars),
                               },
                             ),
                             DigitTextFormField(
@@ -106,7 +106,8 @@ class CreateBirthRegistrationPageState
                               formControlName: firstNameKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) => t.translate(i18.common.firstNameRequired),
+                                'required': (_) =>
+                                    t.translate(i18.common.firstNameRequired),
                                 'minLength': (_) =>
                                     t.translate(i18.common.firstNameMinChars),
                                 'maxLength': (_) =>
@@ -118,7 +119,8 @@ class CreateBirthRegistrationPageState
                               formControlName: lastNameKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) => t.translate(i18.common.lastNameRequired),
+                                'required': (_) =>
+                                    t.translate(i18.common.lastNameRequired),
                                 'minLength': (_) =>
                                     t.translate(i18.common.lastNameMinChars),
                                 'maxLength': (_) =>
@@ -130,11 +132,12 @@ class CreateBirthRegistrationPageState
                               formControlName: placeOfBirthKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) => t.translate(i18.common.placeOfBirthRequired),
-                                'minLength': (_) =>
-                                    t.translate(i18.common.placeOfBirthMinChars),
-                                'maxLength': (_) =>
-                                    t.translate(i18.common.placeOfBirthMaxChars),
+                                'required': (_) => t
+                                    .translate(i18.common.placeOfBirthRequired),
+                                'minLength': (_) => t
+                                    .translate(i18.common.placeOfBirthMinChars),
+                                'maxLength': (_) => t
+                                    .translate(i18.common.placeOfBirthMaxChars),
                               },
                             ),
                             DigitTextFormField(
@@ -142,11 +145,12 @@ class CreateBirthRegistrationPageState
                               formControlName: informantNameKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) => t.translate(i18.common.informantNameRequired),
-                                'minLength': (_) =>
-                                    t.translate(i18.common.informantNameMinChars),
-                                'maxLength': (_) =>
-                                    t.translate(i18.common.informantAddressMaxChars),
+                                'required': (_) => t.translate(
+                                    i18.common.informantNameRequired),
+                                'minLength': (_) => t.translate(
+                                    i18.common.informantNameMinChars),
+                                'maxLength': (_) => t.translate(
+                                    i18.common.informantAddressMaxChars),
                               },
                             ),
                             DigitTextFormField(
@@ -154,12 +158,12 @@ class CreateBirthRegistrationPageState
                               formControlName: informantAddressKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) =>
-                                    t.translate(i18.common.informantAddressRequired),
-                                'minLength': (_) =>
-                                    t.translate(i18.common.informantAddressMinChars),
-                                'maxLength': (_) =>
-                                    t.translate(i18.common.informantAddressMaxChars),
+                                'required': (_) => t.translate(
+                                    i18.common.informantAddressRequired),
+                                'minLength': (_) => t.translate(
+                                    i18.common.informantAddressMinChars),
+                                'maxLength': (_) => t.translate(
+                                    i18.common.informantAddressMaxChars),
                               },
                             ),
                             DigitReactiveDropdown<String>(
@@ -191,7 +195,8 @@ class CreateBirthRegistrationPageState
                               icon: Icons.info_outline_rounded,
                               formControlName: dobKey,
                               autoValidation: AutovalidateMode.always,
-                              requiredMessage: t.translate(i18.common.dateOfReportRequired),
+                              requiredMessage:
+                                  t.translate(i18.common.dateOfReportRequired),
                               cancelText: t.translate(i18.common.cancel),
                               confirmText: t.translate(i18.common.confirm),
                               toolTipMsg:
@@ -203,8 +208,10 @@ class CreateBirthRegistrationPageState
                               icon: Icons.info_outline_rounded,
                               formControlName: dorKey,
                               autoValidation: AutovalidateMode.always,
-                              requiredMessage: t.translate(i18.common.dateOfBirthRequired),
-                              toolTipMsg: t.translate(i18.common.dateOfBirthToolTip),
+                              requiredMessage:
+                                  t.translate(i18.common.dateOfBirthRequired),
+                              toolTipMsg:
+                                  t.translate(i18.common.dateOfBirthToolTip),
                               cancelText: t.translate(i18.common.cancel),
                               confirmText: t.translate(i18.common.confirm),
                             ),
@@ -588,9 +595,9 @@ class CreateBirthRegistrationPageState
                                                                     .toString(),
                                                                 informantAddress: form.value[informantAddressKey]
                                                                     .toString(),
-                                                                dateOfBirth: (DateFormats.dateToTimeStamp(dob.toString() ?? '')) ~/
+                                                                dateOfBirth: dob.millisecondsSinceEpoch ~/
                                                                     1000,
-                                                                dateOfReport: (DateFormats.dateToTimeStamp(dor.toString() ?? '')) ~/
+                                                                dateOfReport: dor.millisecondsSinceEpoch ~/
                                                                     1000),
                                                             childAddressDetails: ChildAddressDetails(
                                                                 state: form.value[stateKey].toString(),
