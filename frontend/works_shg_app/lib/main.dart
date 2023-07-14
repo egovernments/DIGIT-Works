@@ -21,6 +21,7 @@ import 'package:works_shg_app/blocs/muster_rolls/create_muster.dart';
 import 'package:works_shg_app/blocs/muster_rolls/muster_roll_estimate.dart';
 import 'package:works_shg_app/blocs/muster_rolls/search_muster_roll.dart';
 import 'package:works_shg_app/blocs/my_bills/my_bills_inbox_bloc.dart';
+import 'package:works_shg_app/blocs/wage_seeker_registration/wage_seeker_locality_bloc.dart';
 import 'package:works_shg_app/blocs/work_orders/decline_work_order.dart';
 import 'package:works_shg_app/data/init_client.dart';
 import 'package:works_shg_app/data/repositories/attendance_mdms.dart';
@@ -221,6 +222,7 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => SearchIndividualWorkBloc()),
         BlocProvider(create: (context) => WageSeekerBloc()),
         BlocProvider(create: (context) => WageSeekerLocationBloc()),
+        BlocProvider(create: (context) => WageSeekerLocalityBloc()),
         BlocProvider(create: (context) => WageSeekerCreateBloc()),
         BlocProvider(create: (context) => WageSeekerBankCreateBloc()),
         BlocProvider(create: (context) => ORGSearchBloc()),
