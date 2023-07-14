@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_training/Env/env_config.dart';
 
 import '../blocs/localization/localization.dart';
-import '../blocs/muster_rolls/search_muster_roll.dart';
 import '../data/init_client.dart';
 import '../data/remote_client.dart';
 import '../data/repositories/remote/localization.dart';
@@ -38,12 +37,7 @@ class _AuthenticatedPageWrapper extends State<AuthenticatedPageWrapper> {
     InitClient initClient = InitClient();
     return Scaffold(
       body: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) =>
-                MusterRollSearchBloc()..add(const SearchMusterRollEvent()),
-          )
-        ],
+        providers: [],
         child: BlocProvider(
           create: (context) => LocalizationBloc(
             const LocalizationState.initial(),

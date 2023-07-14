@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_training/models/init_mdms/init_mdms_model.dart';
 
 import '../../../models/mdms/location_mdms.dart';
-import '../../../models/muster_rolls/business_service_workflow.dart';
 import '../../../models/screen_config/home_screen_config.dart';
 import '../../../utils/save_file_mobile.dart'
     if (dart.library.html) '../../../utils/save_file_web.dart';
@@ -73,25 +72,6 @@ class CommonRepository {
             ['AppVersion'][0],
       );
     } on DioError catch (ex) {
-      // Assuming there will be an errorMessage property in the JSON object
-      rethrow;
-    }
-  }
-
-  Future<BusinessServiceWorkflowModel> getBusinessWorkflow(
-      {dynamic body,
-      required String url,
-      Map<String, String>? queryParameters,
-      required Options options}) async {
-    try {
-      // var formData = FormData.fromMap(body);
-      final response = await _client.post(url,
-          data: body ?? {}, queryParameters: queryParameters, options: options);
-
-      return BusinessServiceWorkflowModel.fromJson(
-        json.decode(response.toString()),
-      );
-    } on DioError catch (e) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
     }

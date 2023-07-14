@@ -41,38 +41,10 @@ class _$AppRouter extends RootStackRouter {
         child: const LoginPage(),
       );
     },
-    OTPVerificationRoute.name: (routeData) {
-      final args = routeData.argsAs<OTPVerificationRouteArgs>();
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: OTPVerificationPage(
-          key: args.key,
-          mobileNumber: args.mobileNumber,
-        ),
-      );
-    },
     HomeRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: const HomePage(),
-      );
-    },
-    ORGProfileRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: const ORGProfilePage(),
-      );
-    },
-    ViewMusterRollsRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: const ViewMusterRollsPage(),
-      );
-    },
-    RegisterIndividualRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-        routeData: routeData,
-        child: const RegisterIndividualPage(),
       );
     },
     SuccessResponseRoute.name: (routeData) {
@@ -142,11 +114,6 @@ class _$AppRouter extends RootStackRouter {
               path: 'login',
               parent: UnauthenticatedRouteWrapper.name,
             ),
-            RouteConfig(
-              OTPVerificationRoute.name,
-              path: 'otp',
-              parent: UnauthenticatedRouteWrapper.name,
-            ),
           ],
         ),
         RouteConfig(
@@ -163,21 +130,6 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               HomeRoute.name,
               path: 'home',
-              parent: AuthenticatedRouteWrapper.name,
-            ),
-            RouteConfig(
-              ORGProfileRoute.name,
-              path: 'orgProfile',
-              parent: AuthenticatedRouteWrapper.name,
-            ),
-            RouteConfig(
-              ViewMusterRollsRoute.name,
-              path: 'muster-rolls',
-              parent: AuthenticatedRouteWrapper.name,
-            ),
-            RouteConfig(
-              RegisterIndividualRoute.name,
-              path: 'register-individual',
               parent: AuthenticatedRouteWrapper.name,
             ),
             RouteConfig(
@@ -256,40 +208,6 @@ class LoginRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [OTPVerificationPage]
-class OTPVerificationRoute extends PageRouteInfo<OTPVerificationRouteArgs> {
-  OTPVerificationRoute({
-    Key? key,
-    required String mobileNumber,
-  }) : super(
-          OTPVerificationRoute.name,
-          path: 'otp',
-          args: OTPVerificationRouteArgs(
-            key: key,
-            mobileNumber: mobileNumber,
-          ),
-        );
-
-  static const String name = 'OTPVerificationRoute';
-}
-
-class OTPVerificationRouteArgs {
-  const OTPVerificationRouteArgs({
-    this.key,
-    required this.mobileNumber,
-  });
-
-  final Key? key;
-
-  final String mobileNumber;
-
-  @override
-  String toString() {
-    return 'OTPVerificationRouteArgs{key: $key, mobileNumber: $mobileNumber}';
-  }
-}
-
-/// generated route for
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute()
@@ -299,42 +217,6 @@ class HomeRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'HomeRoute';
-}
-
-/// generated route for
-/// [ORGProfilePage]
-class ORGProfileRoute extends PageRouteInfo<void> {
-  const ORGProfileRoute()
-      : super(
-          ORGProfileRoute.name,
-          path: 'orgProfile',
-        );
-
-  static const String name = 'ORGProfileRoute';
-}
-
-/// generated route for
-/// [ViewMusterRollsPage]
-class ViewMusterRollsRoute extends PageRouteInfo<void> {
-  const ViewMusterRollsRoute()
-      : super(
-          ViewMusterRollsRoute.name,
-          path: 'muster-rolls',
-        );
-
-  static const String name = 'ViewMusterRollsRoute';
-}
-
-/// generated route for
-/// [RegisterIndividualPage]
-class RegisterIndividualRoute extends PageRouteInfo<void> {
-  const RegisterIndividualRoute()
-      : super(
-          RegisterIndividualRoute.name,
-          path: 'register-individual',
-        );
-
-  static const String name = 'RegisterIndividualRoute';
 }
 
 /// generated route for

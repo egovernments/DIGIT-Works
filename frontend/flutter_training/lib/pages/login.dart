@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_training/blocs/auth/otp_bloc.dart';
-import 'package:flutter_training/router/app_router.dart';
 import 'package:flutter_training/utils/global_variables.dart';
 import 'package:flutter_training/utils/localization_constants/i18_key_constants.dart'
     as i18;
@@ -13,7 +12,6 @@ import 'package:reactive_forms/reactive_forms.dart';
 import '../blocs/app_initilization/app_initilization.dart';
 import '../blocs/auth/auth.dart';
 import '../blocs/localization/app_localization.dart';
-import '../utils/notifiers.dart';
 import '../widgets/molecules/desktop_view.dart';
 import '../widgets/molecules/mobile_view.dart';
 
@@ -236,42 +234,6 @@ class _LoginPage extends State<LoginPage> {
               maxLength: 10,
             ),
             const SizedBox(height: 16),
-            BlocListener<OTPBloc, OTPBlocState>(
-              listener: (context, state) {
-                state.maybeWhen(
-                    orElse: () => Container(),
-                    loaded: () {
-                      context.router.push(OTPVerificationRoute(
-                          mobileNumber: userIdController.text));
-                    },
-                    error: () => Notifiers.getToastMessage(
-                        context,
-                        AppLocalizations.of(context)
-                            .translate(i18.login.enteredMobileNotRegistered),
-                        'ERROR'));
-              },
-              child: DigitElevatedButton(
-                onPressed: canContinue
-                    ? () {
-                        if (formKey.currentState!.validate()) {
-                          loginContext.read<OTPBloc>().add(
-                                OTPSendEvent(
-                                  mobileNumber: userIdController.text,
-                                ),
-                              );
-                        } else {
-                          setState(() {
-                            autoValidation = true;
-                          });
-                        }
-                      }
-                    : null,
-                child: Center(
-                  child: Text(AppLocalizations.of(loginContext)
-                      .translate(i18.common.continueLabel)),
-                ),
-              ),
-            ),
           ],
         ),
       ),

@@ -9,9 +9,6 @@ import 'package:flutter_training/widgets/atoms/button_group.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
-import '../models/attendance/attendance_registry_model.dart';
-import '../models/muster_rolls/muster_roll_model.dart';
-import '../models/works/contracts_model.dart';
 import '../utils/constants.dart';
 
 class WorkDetailsCard extends StatelessWidget {
@@ -26,9 +23,6 @@ class WorkDetailsCard extends StatelessWidget {
   final bool isSHGInbox;
   final String? cardTitle;
   final bool isTrackAttendance;
-  final List<AttendanceRegister>? attendanceRegistersModel;
-  final List<MusterRoll>? musterRollsModel;
-  final ContractsModel? contractModel;
   final bool? showButtonLink;
   final String? linkLabel;
   final void Function()? onLinkPressed;
@@ -48,9 +42,6 @@ class WorkDetailsCard extends StatelessWidget {
       this.elevatedButtonLabel = '',
       this.outlinedButtonLabel = '',
       this.cardTitle,
-      this.attendanceRegistersModel,
-      this.musterRollsModel,
-      this.contractModel,
       this.orgProfile = false,
       this.acceptWorkOrderCode,
       this.musterBackToCBOCode,
@@ -59,17 +50,7 @@ class WorkDetailsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var list = <Widget>[];
-    if (isManageAttendance || isTrackAttendance) {
-      for (int i = 0; i < detailsList.length; i++) {
-        list.add(GestureDetector(
-          child: DigitCard(
-              padding: const EdgeInsets.all(8.0),
-              child: getCardDetails(context, detailsList[i],
-                  attendanceRegisterId: attendanceRegistersModel![i].id,
-                  attendanceRegister: attendanceRegistersModel![i])),
-        ));
-      }
-    } else if (isWorkOrderInbox || viewWorkOrder) {
+    if (isWorkOrderInbox || viewWorkOrder) {
       for (int i = 0; i < detailsList.length; i++) {
         list.add(GestureDetector(
           child: DigitCard(
@@ -84,15 +65,6 @@ class WorkDetailsCard extends StatelessWidget {
                       : true,
                   contractNumber: detailsList[i]['cardDetails']
                       [i18.workOrder.workOrderNo])),
-        ));
-      }
-    } else if (isSHGInbox) {
-      for (int i = 0; i < detailsList.length; i++) {
-        list.add(GestureDetector(
-          child: DigitCard(
-              padding: const EdgeInsets.all(8.0),
-              child: getCardDetails(context, detailsList[i],
-                  musterRoll: musterRollsModel![i])),
         ));
       }
     } else {
@@ -114,11 +86,9 @@ class WorkDetailsCard extends StatelessWidget {
 
   Widget getCardDetails(BuildContext context, Map<String, dynamic> cardDetails,
       {List<String>? userList,
-      AttendanceRegister? attendanceRegister,
       String? attendanceRegisterId,
       Map<String, dynamic>? payload,
       bool? isAccept,
-      MusterRoll? musterRoll,
       String? contractNumber,
       String? registerNumber}) {
     var labelList = <Widget>[];
@@ -322,24 +292,6 @@ class WorkDetailsCard extends StatelessWidget {
           onPressed: () {},
           child: Center(
             child: Text(elevatedButtonLabel,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .apply(color: Colors.white)),
-          ),
-        ),
-      ));
-    } else if (isSHGInbox) {
-      labelList.add(Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: DigitElevatedButton(
-          onPressed: () {},
-          child: Center(
-            child: Text(
-                musterRoll!.musterRollStatus == musterBackToCBOCode
-                    ? AppLocalizations.of(context)
-                        .translate(i18.attendanceMgmt.editMusterRoll)
-                    : elevatedButtonLabel,
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium!

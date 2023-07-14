@@ -99,7 +99,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         body: {'access_token': GlobalVariables.authToken},
         options: Options(extra: {"accessToken": GlobalVariables.authToken}),
       );
-      GlobalVariables.organisationListModel = null;
       GlobalVariables.authToken = null;
       emit(const AuthState.loaded(null, null));
       emit(const AuthState.initial());

@@ -3,14 +3,14 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:universal_html/html.dart' as html;
 import 'package:flutter_training/Env/app_config.dart';
 import 'package:flutter_training/models/file_store/file_store_model.dart';
 import 'package:flutter_training/services/urls.dart';
 import 'package:flutter_training/utils/global_variables.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:universal_html/html.dart' as html;
 
 import '../../../Env/env_config.dart';
 import '../../../utils/common_methods.dart';
@@ -53,9 +53,8 @@ class CoreRepository {
           request.files.add(multipartFile);
         }
       }
-      request.fields['tenantId'] = GlobalVariables
-          .organisationListModel!.organisations!.first.tenantId!
-          .toString();
+      request.fields['tenantId'] =
+          GlobalVariables.userInfo!.tenantId.toString();
       request.fields['module'] = moduleName;
       await request.send().then((response) async {
         if (response.statusCode == 201) {

@@ -9,7 +9,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../models/init_mdms/init_mdms_model.dart';
-import '../models/organisation/organisation_model.dart';
 import '../models/user_details/user_details_model.dart';
 import '../services/local_storage.dart';
 
@@ -101,7 +100,6 @@ class GlobalVariables {
   static GlobalConfigModel? globalConfigObject;
   static StateInfoListModel? stateInfoListModel;
   static String? uuid;
-  static OrganisationListModel? organisationListModel;
   static String? authToken;
   static Map<String, dynamic>? userRequestModel;
   static UserRequestModel? userInfo;

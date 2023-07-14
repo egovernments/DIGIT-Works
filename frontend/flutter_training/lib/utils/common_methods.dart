@@ -112,8 +112,7 @@ class CommonMethods {
     var random = Random();
     List<FileStoreModel>? file = await CoreRepository().fetchFiles(
         [store.fileStoreId.toString()],
-        GlobalVariables.organisationListModel!.organisations!.first.tenantId
-            .toString());
+        GlobalVariables.userInfo!.tenantId.toString());
     var fileName = CommonMethods.getExtension(file!.first.url.toString());
     CoreRepository().fileDownload(file.first.url.toString(),
         '${random.nextInt(200)}${random.nextInt(100)}$fileName');
@@ -154,15 +153,14 @@ class CommonMethods {
   static getConvertedLocalizedCode(String type, {String subString = ''}) {
     switch (type) {
       case 'city':
-        return GlobalVariables
-            .organisationListModel!.organisations!.first.tenantId
+        return GlobalVariables.userInfo!.tenantId
             .toString()
             .toUpperCase()
             .replaceAll('.', '_');
 
       case 'ward':
       case 'locality':
-        return '${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString().toUpperCase().replaceAll('.', '_')}_ADMIN_${subString.toUpperCase()}';
+        return '${GlobalVariables.userInfo!.tenantId.toString().toUpperCase().replaceAll('.', '_')}_ADMIN_${subString.toUpperCase()}';
     }
   }
 
