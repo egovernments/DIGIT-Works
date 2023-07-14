@@ -173,15 +173,17 @@ public class WorkflowService {
 
         if(workflow.getAction().equals("SENDBACK") && CollectionUtils.isEmpty(workflow.getAssignees())) {
             String assignee = null;
+            Boolean isAssignee = null;
             List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
             String nextState = getNextStateValueForProcessInstance(processInstanceList.get(0));
             for(ProcessInstance processInstance: processInstanceList){
-                if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState))) {
+                if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState)) && (isAssignee == false) ) {
                     List<String> uuids = new ArrayList<>();
                     if(processInstance.getAssignes() != null){
                         assignee = processInstance.getAssignes().get(0).getUuid();
                         uuids.add(assignee);
                         workflow.setAssignees(uuids);
+                        isAssignee = true;
                     }
                 }
             }
