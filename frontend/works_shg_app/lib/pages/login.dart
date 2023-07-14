@@ -67,7 +67,8 @@ class _LoginPage extends State<LoginPage> {
     final t = AppLocalizations.of(loginContext);
     return DigitCard(
         child: ReactiveFormBuilder(
-            form: buildEmployeeForm, builder: (context, form, child) {
+            form: buildEmployeeForm,
+            builder: (context, form, child) {
               return Column(
                 children: [
                   DigitTextFormField(
@@ -76,8 +77,8 @@ class _LoginPage extends State<LoginPage> {
                       label: t.translate(i18.login.loginUserName),
                       validationMessages: {
                         'required': (_) => t.translate(
-                          i18.common.requiredField,
-                        ),
+                              i18.common.requiredField,
+                            ),
                       },
                       inputFormatter: [
                         FilteringTextInputFormatter.allow(
@@ -90,8 +91,8 @@ class _LoginPage extends State<LoginPage> {
                       obscureText: true,
                       validationMessages: {
                         'required': (_) => t.translate(
-                          i18.common.requiredField,
-                        ),
+                              i18.common.requiredField,
+                            ),
                       },
                       suffix: Icon(Icons.remove_red_eye_rounded),
                       inputFormatter: [
@@ -100,20 +101,19 @@ class _LoginPage extends State<LoginPage> {
                       ]),
                 ],
               );
-        });
-    );
+            }));
   }
 
   FormGroup buildEmployeeForm() => fb.group(<String, Object>{
         userNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
         ]),
-    passwordKey: FormControl<String>(value: '', validators: [
-      Validators.required,
-    ]),
-    tenantIdKey: FormControl<String>(value: '', validators: [
-      Validators.required,
-    ]),
+        passwordKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+        ]),
+        tenantIdKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+        ]),
       });
 
   Widget getLoginCard(BuildContext loginContext) {
