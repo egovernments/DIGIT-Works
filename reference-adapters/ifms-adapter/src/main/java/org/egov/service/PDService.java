@@ -72,6 +72,9 @@ public class PDService {
             }
             for (Object data : jitResponse.getData()) {
                 Map<String, Object> dataObjMap = objectMapper.convertValue(data, Map.class);
+                String billNumber = dataObjMap.get("billNumber").toString();
+                if (billNumber == null)
+                    continue;
                 String voucherNo = dataObjMap.get("voucherNo").toString();
                 String voucherDate = dataObjMap.get("voucherDate").toString();
                 String paymentStatusMessage = dataObjMap.get("paymentStatus").toString();
@@ -112,7 +115,6 @@ public class PDService {
                 paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 paymentInstruction.setPiStatus(PIStatus.SUCCESSFUL);
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
-                //piRepository.updateBeneficiaryByPD(Collections.singletonList(paymentInstruction));
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
                         Collections.singleton(paymentInstruction.getMuktaReferenceId()),
