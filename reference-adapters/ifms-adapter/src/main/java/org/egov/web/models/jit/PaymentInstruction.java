@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.AuditDetails;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.egov.common.data.query.annotations.Exclude;
 import org.egov.web.models.enums.PIStatus;
 
@@ -20,6 +17,8 @@ import java.util.List;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+@Setter
 public class PaymentInstruction {
 
     // Fields
@@ -90,6 +89,10 @@ public class PaymentInstruction {
     @JsonProperty("paDetails")
     @Exclude
     private List<PADetails> paDetails;
+
+    @JsonProperty("isActive")
+    @Exclude
+    private Boolean isActive = true;
 
     // PI request fields
     @JsonProperty("jitBillNo")

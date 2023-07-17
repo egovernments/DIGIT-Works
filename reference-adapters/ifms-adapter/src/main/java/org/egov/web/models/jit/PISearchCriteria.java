@@ -32,6 +32,9 @@ public class PISearchCriteria {
     @JsonProperty("piNumber")
     private String jitBillNo;
 
+    @JsonProperty("isActive")
+    private String isActive;
+
     @JsonProperty("piNumbers")
     private Set<String> jitBillNumbers;
 

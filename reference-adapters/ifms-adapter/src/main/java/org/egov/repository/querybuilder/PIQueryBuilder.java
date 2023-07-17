@@ -14,9 +14,9 @@ import java.util.Set;
 public class PIQueryBuilder {
 
     public static final String PAYMENT_INSTRUCTION_INSERT_QUERY = "INSERT INTO jit_payment_inst_details "
-            + "(id, tenantId, piNumber, parentPiNumber, muktaReferenceId, numBeneficiaries, grossAmount, netAmount, piStatus, piSuccessCode, piSuccessDesc, "
+            + "(id, tenantId, piNumber, parentPiNumber, muktaReferenceId, numBeneficiaries, grossAmount, netAmount, piStatus, isActive, piSuccessCode, piSuccessDesc, "
             + "piApprovedId, piApprovalDate, piErrorResp, additionalDetails, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
-            + " VALUES (:id, :tenantId, :piNumber, :parentPiNumber, :muktaReferenceId, :numBeneficiaries, :grossAmount, :netAmount, :piStatus, :piSuccessCode, :piSuccessDesc, "
+            + " VALUES (:id, :tenantId, :piNumber, :parentPiNumber, :muktaReferenceId, :numBeneficiaries, :grossAmount, :netAmount, :piStatus, :isActive, :piSuccessCode, :piSuccessDesc, "
             + " :piApprovedId, :piApprovalDate, :piErrorResp, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
 
     public static final String PAYMENT_ADVICE_DETAILS_INSERT_QUERY = "INSERT INTO jit_payment_advice_details "
@@ -63,6 +63,7 @@ public class PIQueryBuilder {
             "jpi.grossAmount as jpiGrossAmount, " +
             "jpi.netAmount as jpiNetAmount, " +
             "jpi.piStatus as jpiPiStatus, " +
+            "jpi.isActive as jpiIsActive, " +
             "jpi.piSuccessCode as jpiPiSuccessCode, " +
             "jpi.piSuccessDesc as jpiPiSuccessDesc, " +
             "jpi.piApprovedId as jpiPiApprovedId, " +
@@ -181,6 +182,15 @@ public class PIQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" jpi.piNumber IN (").append(createQuery(piNumbers)).append(")");
             addToPreparedStatement(preparedStmtList, piNumbers);
+        }
+        if (criteria.getIsActive() != null && criteria.getIsActive().isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" jpi.isActive=? ");
+            preparedStmtList.add(criteria.getIsActive());
+        } else {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" jpi.isActive=? ");
+            preparedStmtList.add(true);
         }
 
 

@@ -54,7 +54,7 @@ public class PIController {
     @RequestMapping(path = "_create", method = RequestMethod.POST)
     public ResponseEntity<Object> request(@RequestBody PaymentRequest paymentRequest) {
         try {
-            PaymentInstruction createdPI = paymentInstruction.processPaymentRequestForPI(paymentRequest);
+            PaymentInstruction createdPI = paymentInstruction.processPaymentRequest(paymentRequest);
             Map<String, Object> response = new HashMap<>();
             ResponseInfo requestInfo = responseInfoFactory.createResponseInfoFromRequestInfo(paymentRequest.getRequestInfo(), true);
             response.put("ResponseInfo", requestInfo);
