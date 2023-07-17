@@ -109,7 +109,7 @@ class CreateBirthRegistrationPageState
                               ),
                             ),
                             DigitTextFormField(
-                              label: t.translate(i18.common.registrationNo),
+                              label: t.translate(i18.bnd.regNo),
                               formControlName: regNoKey,
                               isRequired: true,
                               validationMessages: {
@@ -207,7 +207,7 @@ class CreateBirthRegistrationPageState
                               requiredMessage:
                                   t.translate(i18.common.dateOfReportRequired),
                               cancelText: t.translate(i18.common.cancel),
-                              confirmText: t.translate(i18.common.confirm),
+                              confirmText: t.translate(i18.common.oK),
                               toolTipMsg:
                                   t.translate(i18.common.dateOfReportToolTip),
                             ),
@@ -239,12 +239,12 @@ class CreateBirthRegistrationPageState
                               ),
                             ),
                             DigitTextFormField(
-                              label: t.translate(i18.common.fatherFirstName),
+                              label: t.translate(i18.common.firstName),
                               formControlName: fatherFirstNameKey,
                               isRequired: true,
                               validationMessages: {
-                                'required': (_) =>
-                                    t.translate(i18.common.firstName),
+                                'required': (_) => t.translate(
+                                    i18.common.fatherFirstNameRequired),
                                 'minLength': (_) => t.translate(
                                     i18.common.fatherFirstNameMinChars),
                                 'maxLength': (_) => t.translate(
@@ -252,7 +252,7 @@ class CreateBirthRegistrationPageState
                               },
                             ),
                             DigitTextFormField(
-                              label: t.translate(i18.common.fatherLastName),
+                              label: t.translate(i18.common.lastName),
                               formControlName: fatherLastNameKey,
                               isRequired: true,
                               validationMessages: {
@@ -265,7 +265,7 @@ class CreateBirthRegistrationPageState
                               },
                             ),
                             DigitTextFormField(
-                              label: t.translate(i18.common.fatherMobileNO),
+                              label: t.translate(i18.common.mobileNumber),
                               formControlName: fatherMobileNoKey,
                               isRequired: true,
                               minLength: 10,
@@ -432,7 +432,7 @@ class CreateBirthRegistrationPageState
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                t.translate(i18.common.addressDetails),
+                                t.translate(i18.bnd.addressInfo),
                                 style: const TextStyle(
                                     fontSize: 32, fontWeight: FontWeight.w700),
                                 textAlign: TextAlign.left,
@@ -726,7 +726,7 @@ class CreateBirthRegistrationPageState
         fatherMobileNoKey: FormControl<String>(value: '', validators: [
           Validators.minLength(10),
           Validators.maxLength(10),
-          Validators.min('5999999999'),
+          Validators.min('6000000000'),
           Validators.max('9999999999'),
         ]),
         fatherAadhaarKey: FormControl<String>(value: '', validators: [
@@ -754,7 +754,7 @@ class CreateBirthRegistrationPageState
         motherMobileNumberKey: FormControl<String>(value: '', validators: [
           Validators.minLength(10),
           Validators.maxLength(10),
-          Validators.min('5999999999'),
+          Validators.min('6000000000'),
           Validators.max('9999999999'),
         ]),
         motherAadhaarKey: FormControl<String>(value: '', validators: [

@@ -55,7 +55,7 @@ class Common {
   String get termsAndConditions => 'WORK_ORDER_TERMS_AND_CONDITIONS';
   String get noTermsNConditions => 'NO_TERMS_AND_CONDITIONS';
   String get confirm => 'CORE_BUTTON_CONFIRM';
-  String get back => 'CORE_BACK_BUTTON';
+  String get back => 'CS_COMMON_BACK';
   String get sendForApproval => 'SEND_FOR_APPROVAL';
   String get saveAsDraft => 'SAVE_AS_DRAFT';
   String get warning => 'CORE_MSG_WARNING';

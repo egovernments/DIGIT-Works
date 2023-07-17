@@ -130,18 +130,18 @@ class StatsMapMapperElement extends MapperElementBase<StatsMap> {
   StatsMap decode(dynamic v) =>
       checkedType(v, (Map<String, dynamic> map) => fromMap(map));
   StatsMap fromMap(Map<String, dynamic> map) => StatsMap(
-      failedRecords: container.$getOpt(map, 'failedRecords'),
-      successfulRecords: container.$getOpt(map, 'successfulRecords'),
-      totalRecords: container.$getOpt(map, 'totalRecords'));
+      failedRecords: container.$getOpt(map, 'Failed Records'),
+      successfulRecords: container.$getOpt(map, 'Sucessful Records'),
+      totalRecords: container.$getOpt(map, 'Total Records'));
 
   @override
   Function get encoder => encode;
   dynamic encode(StatsMap v) => toMap(v);
   Map<String, dynamic> toMap(StatsMap s) => {
-        'failedRecords': container.$enc(s.failedRecords, 'failedRecords'),
-        'successfulRecords':
+        'Failed Records': container.$enc(s.failedRecords, 'failedRecords'),
+        'Sucessful Records':
             container.$enc(s.successfulRecords, 'successfulRecords'),
-        'totalRecords': container.$enc(s.totalRecords, 'totalRecords')
+        'Total Records': container.$enc(s.totalRecords, 'totalRecords')
       };
 
   @override
