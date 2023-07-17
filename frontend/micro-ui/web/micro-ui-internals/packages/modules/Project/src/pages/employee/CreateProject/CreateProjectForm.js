@@ -210,7 +210,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const { mutate: UpdateProjectMutation } = Digit.Hooks.works.useUpdateProject();
 
     const onSubmit = (data) => {
-      const trimmedData = Digit.Utils.pt.trimStringsInObject(data)
+      const trimmedData = Digit.Utils.trimStringsInObject(data)
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
       const transformedPayload = CreateProjectUtils.payload.transform(trimmedData);
 
