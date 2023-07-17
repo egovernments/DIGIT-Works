@@ -684,12 +684,12 @@ class CreateBirthRegistrationPageState
             validators: [Validators.required, Validators.maxLength(32)]),
         firstNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(2),
           Validators.maxLength(128)
         ]),
         lastNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(1),
           Validators.maxLength(128)
         ]),
         hospitalKey: FormControl<String>(value: null),
@@ -705,22 +705,22 @@ class CreateBirthRegistrationPageState
         ]),
         informantNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(2),
           Validators.maxLength(128)
         ]),
         informantAddressKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(2),
           Validators.maxLength(128)
         ]),
         fatherFirstNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(2),
           Validators.maxLength(128)
         ]),
         fatherLastNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(1),
           Validators.maxLength(128)
         ]),
         fatherMobileNoKey: FormControl<String>(value: '', validators: [
@@ -735,20 +735,20 @@ class CreateBirthRegistrationPageState
         ]),
         fatherNationalityKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(2),
           Validators.maxLength(128)
         ]),
         fatherReligionKey: FormControl<String>(
             value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+            validators: [Validators.minLength(2), Validators.maxLength(128)]),
         motherFirstNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(2),
           Validators.maxLength(128)
         ]),
         motherLastNameKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(1),
           Validators.maxLength(128)
         ]),
         motherMobileNumberKey: FormControl<String>(value: '', validators: [
@@ -763,35 +763,55 @@ class CreateBirthRegistrationPageState
         ]),
         motherNationalityKey: FormControl<String>(value: '', validators: [
           Validators.required,
-          Validators.minLength(4),
+          Validators.minLength(2),
           Validators.maxLength(128)
         ]),
         motherReligionKey: FormControl<String>(
             value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
-        buildingNoKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
-        houseNoKey: FormControl<String>(
-          value: '',
-        ),
+            validators: [Validators.minLength(2), Validators.maxLength(128)]),
+        buildingNoKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(2),
+          Validators.required,
+          Validators.maxLength(128)
+        ]),
+        houseNoKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(2),
+          Validators.required,
+          Validators.maxLength(128)
+        ]),
         streetNameKey: FormControl<String>(
             value: '', validators: [Validators.maxLength(64)]),
         localityKey: FormControl<String>(
             value: '', validators: [Validators.maxLength(64)]),
-        tehsilKey: FormControl<String>(
-            value: '', validators: [Validators.maxLength(64)]),
-        districtKey: FormControl<String>(
-            value: '', validators: [Validators.maxLength(64)]),
-        cityKey: FormControl<String>(
-            value: '', validators: [Validators.maxLength(64)]),
-        stateKey: FormControl<String>(
-            value: '', validators: [Validators.maxLength(64)]),
-        pinCodeKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(6), Validators.maxLength(6)]),
-        countryKey: FormControl<String>(
-            value: '',
-            validators: [Validators.minLength(4), Validators.maxLength(128)]),
+        tehsilKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(2),
+          Validators.maxLength(64),
+          Validators.required,
+        ]),
+        districtKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(2),
+          Validators.maxLength(64),
+          Validators.required,
+        ]),
+        cityKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(2),
+          Validators.maxLength(64),
+          Validators.required,
+        ]),
+        stateKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(2),
+          Validators.maxLength(64),
+          Validators.required,
+        ]),
+        pinCodeKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(6),
+          Validators.required,
+          Validators.maxLength(6)
+        ]),
+        countryKey: FormControl<String>(value: '', validators: [
+          Validators.minLength(2),
+          Validators.required,
+          Validators.maxLength(128)
+        ]),
       });
 }
