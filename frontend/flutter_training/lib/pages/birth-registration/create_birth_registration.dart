@@ -222,7 +222,7 @@ class CreateBirthRegistrationPageState
                               toolTipMsg:
                                   t.translate(i18.common.dateOfBirthToolTip),
                               cancelText: t.translate(i18.common.cancel),
-                              confirmText: t.translate(i18.common.confirm),
+                              confirmText: t.translate(i18.common.oK),
                             ),
                           ],
                         )),
@@ -288,6 +288,8 @@ class CreateBirthRegistrationPageState
                               label: t.translate(i18.bnd.aadhaarNo),
                               formControlName: fatherAadhaarKey,
                               isRequired: true,
+                              maxLength: 12,
+                              minLength: 12,
                               validationMessages: {
                                 'required': (_) =>
                                     t.translate(i18.common.aadhaarNoRequired),
@@ -389,6 +391,8 @@ class CreateBirthRegistrationPageState
                               label: t.translate(i18.bnd.aadhaarNo),
                               formControlName: motherAadhaarKey,
                               isRequired: true,
+                              maxLength: 12,
+                              minLength: 12,
                               validationMessages: {
                                 'required': (_) =>
                                     t.translate(i18.common.aadhaarNoRequired),
@@ -581,7 +585,7 @@ class CreateBirthRegistrationPageState
                                           context, error.toString(), 'ERROR'));
                             },
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(4.0),
                               child: DigitElevatedButton(
                                   onPressed: () {
                                     form.markAllAsTouched();

@@ -54,14 +54,19 @@ class ViewBirthCertificatesPageState extends State<ViewBirthCertificatesPage> {
                         const Back(),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            t.translate(i18.bnd.viewCertificate),
-                            style: const TextStyle(
-                                fontSize: 32, fontWeight: FontWeight.w700),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              t.translate(i18.bnd.viewCertificate),
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.w700),
+                            ),
                           ),
                         ),
                       ],
                     ),
+                    footer: const PoweredByDigit(),
                     children: (birthCertificatesList?.birthCerts ?? [])
                         .map((e) => DigitCard(
                                 child: Column(

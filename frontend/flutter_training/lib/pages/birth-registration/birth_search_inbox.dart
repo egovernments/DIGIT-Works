@@ -66,6 +66,7 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
               ),
             ],
           ),
+          footer: const PoweredByDigit(),
           children: [
             DigitCard(
                 child: ReactiveFormBuilder(
@@ -125,7 +126,7 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                                             error.toString(), 'ERROR'));
                               },
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(4.0),
                                 child: DigitElevatedButton(
                                     onPressed: () {
                                       form.markAllAsTouched();
@@ -143,7 +144,6 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                                       queryParams['tenantId'] = GlobalVariables
                                           .userInfo!.tenantId
                                           .toString();
-                                      print(queryParams);
                                       context.read<BirthSearchCertBloc>().add(
                                           SearchBirthCertEvent(
                                               queryParams: queryParams));
