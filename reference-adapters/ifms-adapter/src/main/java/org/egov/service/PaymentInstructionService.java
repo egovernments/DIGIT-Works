@@ -76,7 +76,7 @@ public class PaymentInstructionService {
 //            PaymentInstruction paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
 //            return paymentInstruction;
         } else {
-            throw new RuntimeException("No Payment Advice exists of payment number : "+ paymentRequest.getReferenceId() + " for tenantId : " + paymentRequest.getTenantId());
+            throw new RuntimeException("Enter valid parameters : referenceId, tenantId, parentPI");
         }
         return paymentInstruction;
     }

@@ -3,6 +3,7 @@ package org.egov.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
+import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Constants;
@@ -55,11 +56,14 @@ public class FailureDetailsService {
                 System.out.println(fdResponse);
                 for (Object failedPI: fdResponse.getData()) {
                     JsonNode node = objectMapper.valueToTree(failedPI);
-                    processPiForFailedTransaction(node, requestInfo);
+                    JsonNode benef = node.get("benfDtls");
+                    if (benef != null && benef.isArray() && !benef.isEmpty()) {
+                        processPiForFailedTransaction(node, requestInfo);
+                    }
                 }
             }
         } catch (Exception e) {
-
+            log.info("Exception in FailureDetailsService:updateFailureDetails : " + e.getMessage());
         }
 
     }
@@ -69,7 +73,6 @@ public class FailureDetailsService {
         String piNumber = failedPi.findValue("billNumber").asText();
         PaymentInstruction pi = getCompletedPaymentInstructionByBill(piNumber);
         if (pi != null) {
-            System.out.println(pi);
             Map<String, JsonNode> failedBeneficiariesMapById =  getFailedBeneficiaryMap(failedPi);
 
             List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, Collections.singleton(pi.getMuktaReferenceId()), pi.getTenantId());
@@ -88,7 +91,7 @@ public class FailureDetailsService {
     private JITRequest getFailedPayload() {
 
         Map<String, String> failedRequestParams = new HashMap<>();
-        Long subtractedTimeMillis = System.currentTimeMillis() - (72L * 60L * 60L * 1000L);
+        Long subtractedTimeMillis = System.currentTimeMillis() - (120 * 60L * 60L * 1000L);
         //subtractedTimeMillis = 1683755974760L;
         String finYear = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy");
         String voucherDate = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy-MM-dd");
