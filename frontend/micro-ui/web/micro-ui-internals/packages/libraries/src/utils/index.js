@@ -294,6 +294,29 @@ const getConfigModuleName = () => {
   return window?.globalConfigs?.getConfig("UICONFIG_MODULENAME") || "commonUiConfig";
 };
 
+const trimStringsInObject =  ( obj ) => {
+  if (typeof obj !== 'object' || obj === null) {
+    // If the input is not an object or is null, return as is
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    // If the input is an array, trim the strings in each element
+    return obj.map((item) => trimStringsInObject(item));
+  }
+
+  // If the input is an object, recursively trim strings in each value
+  const trimmedObj = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'string') {
+      trimmedObj[key] = value.trim();
+    } else {
+      trimmedObj[key] = trimStringsInObject(value);
+    }
+  }
+  return trimmedObj;
+}
+
 export default {
   pdf: PDFUtil,
   downloadReceipt,
@@ -338,5 +361,6 @@ export default {
   ...privacy,
   getConfigModuleName,
   createFunction,
-  configUpdater
+  configUpdater,
+  trimStringsInObject
 };
