@@ -139,7 +139,7 @@ public class FailureDetailsService {
 
         for (Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
             String benfId = beneficiary.getId();
-            if (!failedBeneficiariesMapById.get(benfId).isEmpty()) {
+            if (failedBeneficiariesMapById.get(benfId) != null && !failedBeneficiariesMapById.get(benfId).isEmpty()) {
                 JsonNode benfDtl = failedBeneficiariesMapById.get(benfId);
                 beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
                 beneficiary.setPaymentStatusMessage(benfDtl.get("failedReason").asText());
