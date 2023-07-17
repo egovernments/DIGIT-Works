@@ -68,6 +68,8 @@ public class PISService {
                     && pisResponse.getErrorMsg().contains("rejected")) {
                 updateStatusToFailed(requestInfo, paymentInstruction);
                 updateFundsSummary(requestInfo, paymentInstruction);
+                // Update PI indexer based on updated PI
+                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
                 continue;
             }
             if(CollectionUtils.isEmpty(pisResponse.getData())){
@@ -102,7 +104,6 @@ public class PISService {
             beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
         }
         paymentInstruction.setPiStatus(PIStatus.FAILED);
-        piRepository.update(Collections.singletonList(paymentInstruction),null);
 
         List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
                 Collections.singleton(paymentInstruction.getMuktaReferenceId()),
@@ -113,7 +114,6 @@ public class PISService {
 
             billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED);
         }
-        piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
     }
     private void updateFundsSummary(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
@@ -147,8 +147,6 @@ public class PISService {
                 .build();
         paymentInstruction.getTransactionDetails().add(transactionDetails);
         piRepository.update(Collections.singletonList(paymentInstruction), sanctionDetail.getFundsSummary());
-        // Update PI indexer based on updated PI
-        piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
     }
 
 }
