@@ -77,16 +77,6 @@ public class TestController {
             throw new RuntimeException(e);
         }
     }
-    @RequestMapping(path = "/pi-request", method = RequestMethod.POST)
-    public ResponseEntity<Object> request(@RequestBody PaymentRequest paymentRequest) {
-        try {
-            PaymentInstruction piRequest = paymentInstruction.processPaymentRequestForPI(paymentRequest);
-            ResponseEntity<Object> responseEntity = new ResponseEntity<>(piRequest, HttpStatus.OK);
-            return responseEntity;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @RequestMapping(path = "/create-sanction-allotments", method = RequestMethod.POST)
     public ResponseEntity<Object> createSanctionAllotments(@RequestBody SchedulerRequest schedulerRequest) {
