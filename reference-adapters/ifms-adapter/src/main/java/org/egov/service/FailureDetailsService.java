@@ -89,7 +89,7 @@ public class FailureDetailsService {
 
         Map<String, String> failedRequestParams = new HashMap<>();
         Long subtractedTimeMillis = System.currentTimeMillis() - (72L * 60L * 60L * 1000L);
-        subtractedTimeMillis = 1683755974760L;
+        //subtractedTimeMillis = 1683755974760L;
         String finYear = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy");
         String voucherDate = helperUtil.getFormattedTimeFromTimestamp(subtractedTimeMillis, "yyyy-MM-dd");
         failedRequestParams.put("finYear", finYear);

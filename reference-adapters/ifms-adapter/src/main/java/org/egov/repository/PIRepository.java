@@ -78,6 +78,7 @@ public class PIRepository {
             piRequestParamMap.addValue("grossAmount", piRequest.getGrossAmount());
             piRequestParamMap.addValue("netAmount", piRequest.getNetAmount());
             piRequestParamMap.addValue("piStatus", piRequest.getPiStatus().toString());
+            piRequestParamMap.addValue("isActive", piRequest.getIsActive());
             piRequestParamMap.addValue("piSuccessCode", piRequest.getPiSuccessCode());
             piRequestParamMap.addValue("piSuccessDesc", piRequest.getPiSuccessDesc());
             piRequestParamMap.addValue("piApprovedId", piRequest.getPiApprovedId());
@@ -208,9 +209,9 @@ public class PIRepository {
         return benfLineItemsParamMapList;
     }
 
-    public List<PaymentInstruction> searchPi (PISearchRequest piSearchRequest){
+    public List<PaymentInstruction> searchPi (PISearchCriteria piSearchCriteria){
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = piQueryBuilder.getPaymentInstructionSearchQuery(piSearchRequest.getSearchCriteria(), preparedStmtList);
+        String query = piQueryBuilder.getPaymentInstructionSearchQuery(piSearchCriteria, preparedStmtList);
         List<PaymentInstruction> paymentInstructions = jdbcTemplate.query(query, piRowMapper, preparedStmtList.toArray());
 
         return paymentInstructions;

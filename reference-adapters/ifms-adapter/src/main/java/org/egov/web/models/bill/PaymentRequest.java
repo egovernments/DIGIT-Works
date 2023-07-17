@@ -35,6 +35,10 @@ public class PaymentRequest {
   @Valid
   private String referenceId;
 
+  @JsonProperty("tenantId")
+  @Valid
+  private String tenantId;
+
   @JsonProperty("parentPI")
   @Valid
   private String parentPI;

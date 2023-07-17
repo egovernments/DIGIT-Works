@@ -47,6 +47,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
                 BigDecimal grossAmount = rs.getBigDecimal("jpiGrossAmount");
                 BigDecimal netAmount = rs.getBigDecimal("jpiNetAmount");
                 PIStatus piStatus = PIStatus.fromValue(rs.getString("jpiPiStatus"));
+                Boolean piIsActive = rs.getBoolean("jpiIsActive");
                 String piSuccessCode = rs.getString("jpiPiSuccessCode");
                 String piSuccessDesc = rs.getString("jpiPiSuccessDesc");
                 String piApprovedId = rs.getString("jpiPiApprovedId");
@@ -67,6 +68,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
                         .grossAmount(grossAmount)
                         .netAmount(netAmount)
                         .piStatus(piStatus)
+                        .isActive(piIsActive)
                         .piSuccessCode(piSuccessCode)
                         .piSuccessDesc(piSuccessDesc)
                         .piApprovedId(piApprovedId)

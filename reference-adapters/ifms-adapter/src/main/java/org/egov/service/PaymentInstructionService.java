@@ -3,6 +3,7 @@ package org.egov.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.models.individual.Individual;
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
@@ -50,7 +51,37 @@ public class PaymentInstructionService {
     PIRepository piRepository;
     @Autowired
     PIUtils piUtils;
-    public PaymentInstruction processPaymentRequestForPI(PaymentRequest paymentRequest) {
+
+    public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
+        PaymentInstruction paymentInstruction = null;
+        if (paymentRequest.getReferenceId() != null && !paymentRequest.getReferenceId().isEmpty() && paymentRequest.getTenantId() != null && !paymentRequest.getTenantId().isEmpty()) {
+            // GET payment details
+            List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(),
+                    Collections.singleton(paymentRequest.getReferenceId()),
+                    paymentRequest.getTenantId());
+            if (!payments.isEmpty()) {
+                boolean createNewPi = isPaymentValidForCreateNewPI(payments.get(0));
+                if (createNewPi) {
+                    paymentRequest.setPayment(payments.get(0));
+                    paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
+                } else {
+                    throw new RuntimeException("PI is already created for Payment Advice "+ paymentRequest.getReferenceId());
+                }
+            } else {
+                throw new RuntimeException("No Payment Advice exists of payment number : "+ paymentRequest.getReferenceId() + " for tenantId : " + paymentRequest.getTenantId());
+            }
+        } else if (paymentRequest.getParentPI() != null) {
+            // TODO: ADD parent pi use case to generate revised PI
+//        } else if (paymentRequest.getPayment() != null) {
+//            PaymentInstruction paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
+//            return paymentInstruction;
+        } else {
+            throw new RuntimeException("No Payment Advice exists of payment number : "+ paymentRequest.getReferenceId() + " for tenantId : " + paymentRequest.getTenantId());
+        }
+        return paymentInstruction;
+    }
+
+    public PaymentInstruction processPaymentRequestForNewPI(PaymentRequest paymentRequest) {
         PaymentInstruction piRequest = null;
         PaymentStatus paymentStatus = null;
         try {
@@ -103,6 +134,7 @@ public class PaymentInstructionService {
                 // Set beneficiary and pi status to failed if payment is failed
                 if (paymentStatus.equals(PaymentStatus.FAILED)) {
                     piRequest.setPiStatus(PIStatus.FAILED);
+                    piRequest.setIsActive(false);
                     for(Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
                         beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.PENDING);
                     }
@@ -114,6 +146,7 @@ public class PaymentInstructionService {
                     selectedSanction.getFundsSummary().setAvailableAmount(selectedSanction.getFundsSummary().getAvailableAmount().subtract(totalAmount));
                     selectedSanction.getFundsSummary().getAuditDetails().setLastModifiedTime(piRequest.getAuditDetails().getLastModifiedTime());
                     selectedSanction.getFundsSummary().getAuditDetails().setLastModifiedBy(piRequest.getAuditDetails().getLastModifiedBy());
+                    piRequest.setIsActive(true);
                 }
                 piRepository.save(Collections.singletonList(piRequest), selectedSanction.getFundsSummary(), paymentStatus);
                 piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
@@ -196,7 +229,7 @@ public class PaymentInstructionService {
                 List<LineItem> lineItems = new ArrayList<>();
                 for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
                     LineItem lineItem = billPayableLineItemMap.get(payableLineItem.getLineItemId());
-                    if (lineItem != null && lineItem.getStatus().equals(Status.ACTIVE) && payableLineItem.getStatus().equals(PaymentStatus.INITIATED))
+                    if (lineItem != null && lineItem.getStatus().equals(Status.ACTIVE) && (payableLineItem.getStatus().equals(PaymentStatus.INITIATED) || payableLineItem.getStatus().equals(PaymentStatus.FAILED)))
                         lineItems.add(lineItem);
                 }
                 billDetailMap.get(paymentBillDetail.getBillDetailId()).setPayableLineItems(lineItems);
@@ -221,7 +254,7 @@ public class PaymentInstructionService {
 
     public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
         searchValidator(piSearchRequest.getSearchCriteria());
-        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchRequest);
+        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchRequest.getSearchCriteria());
 
         log.info("Sending search response");
         return paymentInstructions;
@@ -233,6 +266,30 @@ public class PaymentInstructionService {
                 && StringUtils.isEmpty(piSearchCriteria.getMuktaReferenceId()) && StringUtils.isEmpty(piSearchCriteria.getPiStatus())
                 && StringUtils.isEmpty(piSearchCriteria.getTenantId()))
             throw new CustomException("SEARCH_CRITERIA_MANDATORY", "Atleast one search parameter should be provided");
+    }
+
+    /**
+     * Check for the payment advice new PI can be created
+     * @param payment - Payment advice object
+     * @return boolean
+     */
+    private boolean isPaymentValidForCreateNewPI(Payment payment) {
+        boolean createPI = true;
+        PISearchCriteria searchCriteria = PISearchCriteria.builder()
+                .muktaReferenceId(payment.getPaymentNumber())
+                .tenantId(payment.getTenantId())
+                .build();
+        List<PaymentInstruction>  paymentInstructions = piRepository.searchPi(searchCriteria);
+        if (paymentInstructions != null && !paymentInstructions.isEmpty()) {
+            List<PIStatus> piStatus =   paymentInstructions.stream()
+                    .map(PaymentInstruction::getPiStatus)
+                    .distinct()
+                    .collect(Collectors.toList());
+            if (piStatus.contains(PIStatus.INITIATED) || piStatus.contains(PIStatus.APPROVED) || piStatus.contains(PIStatus.PARTIAL) || piStatus.contains(PIStatus.IN_PROCESS) || piStatus.contains(PIStatus.SUCCESSFUL)) {
+                createPI = false;
+            }
+        }
+        return createPI;
     }
 
 }
