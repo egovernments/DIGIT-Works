@@ -33,6 +33,16 @@ class Constants {
   static const myBillsWageType = 'EXPENSE.WAGES';
   static const myBillsPurchaseType = 'EXPENSE.PURCHASE';
   static const myBillsSupervisionType = 'EXPENSE.WAGES';
+  static List<String> bndHospitalNamesList = [
+    "Neelkanth Hospital",
+    "Ajit Hospital",
+    "Dashmesh Hospital",
+    "Biala Orthopaedics And Multispeciality Hospital",
+    "Dr. Parminder Singh Pannu Memorial Janta Hospital",
+    "Med Card Multispeciality Hospital",
+    "Taj Hospital Mattewal"
+  ];
+  static List<String> bndGenderList = ['Male', 'Female', 'Transgender'];
 }
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();

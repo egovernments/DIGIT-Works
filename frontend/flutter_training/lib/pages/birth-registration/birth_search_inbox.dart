@@ -1,9 +1,12 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_training/blocs/localization/app_localization.dart';
 import 'package:flutter_training/router/app_router.dart';
 import 'package:flutter_training/utils/date_formats.dart';
 import 'package:flutter_training/utils/global_variables.dart';
+import 'package:flutter_training/utils/localization_constants/i18_key_constants.dart'
+    as i18;
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../blocs/bnd/search_birth_certificate_bloc.dart';
@@ -21,6 +24,11 @@ class BirthRegSearchInboxPage extends StatefulWidget {
   BirthRegSearchInboxPageState createState() => BirthRegSearchInboxPageState();
 }
 
+/*
+  * @author Ramkrishna
+  * ramkrishna.sahoo@egovernments.org
+  *
+  * */
 class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
   String regNoKey = 'registrationNo';
   String childNameKey = 'childName';
@@ -37,6 +45,7 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
           titleSpacing: 0,
@@ -44,14 +53,15 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
         ),
         drawer: const DrawerWrapper(Drawer(child: SideBar())),
         body: ScrollableContent(
-          header: const Column(
+          header: Column(
             children: [
-              Back(),
+              const Back(),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'Search Birth Certificate',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
+                  t.translate(i18.bnd.searchBirthCertificate),
+                  style: const TextStyle(
+                      fontSize: 32, fontWeight: FontWeight.w700),
                 ),
               ),
             ],
@@ -64,35 +74,35 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                       return Column(
                         children: [
                           DigitDateFormPicker(
-                            label: 'From (Date of birth)',
+                            label: t.translate(i18.bnd.fromDateOfBirth),
                             isRequired: true,
                             icon: Icons.info_outline_rounded,
                             formControlName: fromDateKey,
                             autoValidation: AutovalidateMode.always,
                             requiredMessage: 'From Date is required',
-                            cancelText: 'Cancel',
-                            confirmText: 'OK',
+                            cancelText: t.translate(i18.common.cancel),
+                            confirmText: t.translate(i18.common.oK),
                           ),
                           DigitDateFormPicker(
-                            label: 'To (Date of birth)',
+                            label: t.translate(i18.bnd.toDateOfBirth),
                             isRequired: true,
                             icon: Icons.info_outline_rounded,
                             formControlName: toDateKey,
                             autoValidation: AutovalidateMode.always,
                             requiredMessage: 'To Date is required',
-                            cancelText: 'Cancel',
-                            confirmText: 'OK',
+                            cancelText: t.translate(i18.common.cancel),
+                            confirmText: t.translate(i18.common.oK),
                           ),
                           DigitTextFormField(
-                            label: "Child's Name",
-                            formControlName: childNameKey,
+                            label: t.translate(i18.bnd.regNo),
+                            formControlName: regNoKey,
                           ),
                           DigitTextFormField(
-                            label: 'Father Name',
+                            label: t.translate(i18.bnd.fatherName),
                             formControlName: fatherNameKey,
                           ),
                           DigitTextFormField(
-                            label: 'Mother Name',
+                            label: t.translate(i18.bnd.motherName),
                             formControlName: motherNameKey,
                           ),
                           const SizedBox(
@@ -120,15 +130,6 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                                     onPressed: () {
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
-                                      int fromDate = DateTime.parse(form
-                                              .value[fromDateKey]
-                                              .toString())
-                                          .millisecondsSinceEpoch;
-                                      int toDate = DateTime.parse(
-                                              form.value[toDateKey].toString())
-                                          .millisecondsSinceEpoch;
-                                      print(form.value[fromDateKey]);
-                                      print(fromDate);
                                       final Map<String, String> queryParams = {
                                         fromDateKey:
                                             DateFormats.getFilteredDate(
@@ -147,7 +148,8 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
                                           SearchBirthCertEvent(
                                               queryParams: queryParams));
                                     },
-                                    child: const Text('Submit')),
+                                    child:
+                                        Text(t.translate(i18.common.submit))),
                               )),
                         ],
                       );
@@ -157,7 +159,7 @@ class BirthRegSearchInboxPageState extends State<BirthRegSearchInboxPage> {
   }
 
   FormGroup buildForm() => fb.group(<String, Object>{
-        childNameKey: FormControl<String>(value: ''),
+        regNoKey: FormControl<String>(value: ''),
         fatherNameKey: FormControl<String>(
           value: '',
         ),

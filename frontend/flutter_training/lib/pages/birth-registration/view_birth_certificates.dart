@@ -22,6 +22,11 @@ class ViewBirthCertificatesPage extends StatefulWidget {
       ViewBirthCertificatesPageState();
 }
 
+/*
+  * @author Ramkrishna
+  * ramkrishna.sahoo@egovernments.org
+  *
+  * */
 class ViewBirthCertificatesPageState extends State<ViewBirthCertificatesPage> {
   @override
   void initState() {
@@ -44,14 +49,14 @@ class ViewBirthCertificatesPageState extends State<ViewBirthCertificatesPage> {
               loading: () => Loaders.circularLoader(context),
               loaded: (BirthCertificatesList? birthCertificatesList) =>
                   ScrollableContent(
-                    header: const Column(
+                    header: Column(
                       children: [
-                        Back(),
+                        const Back(),
                         Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            'View Birth Certificate',
-                            style: TextStyle(
+                            t.translate(i18.bnd.viewCertificate),
+                            style: const TextStyle(
                                 fontSize: 32, fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -61,35 +66,32 @@ class ViewBirthCertificatesPageState extends State<ViewBirthCertificatesPage> {
                         .map((e) => DigitCard(
                                 child: Column(
                               children: [
+                                //CommonWidgets.getItemWidget(context,title: 'title',description: 'description),
+                                // A card field widget to show the card title and the description in row
                                 CommonWidgets.getItemWidget(context,
-                                    title: 'Registration No.',
+                                    title: t.translate(i18.bnd.regNo),
                                     description: e.registrationno),
                                 CommonWidgets.getItemWidget(context,
-                                    title: 'Name',
+                                    title: t.translate(i18.bnd.name),
                                     description:
                                         '${e.firstname} ${e.lastname}'),
                                 CommonWidgets.getItemWidget(context,
-                                    title: 'Birth Date',
+                                    title: t.translate(i18.bnd.birthDate),
                                     description: e.dateofbirth != null
                                         ? DateFormats.getDateFromTimestamp(
                                             e.dateofbirth ?? 0)
                                         : i18.common.noValue),
                                 CommonWidgets.getItemWidget(context,
-                                    title: 'Gender', description: e.genderStr),
+                                    title: t.translate(i18.bnd.gender),
+                                    description: e.genderStr),
                                 CommonWidgets.getItemWidget(context,
-                                    title: 'Mother Name',
+                                    title: t.translate(i18.bnd.motherName),
                                     description:
                                         '${e.birthMotherInfo?.firstname} ${e.birthMotherInfo?.lastname}'),
                                 CommonWidgets.getItemWidget(context,
-                                    title: 'Father Name',
+                                    title: t.translate(i18.bnd.fatherName),
                                     description:
                                         '${e.birthFatherInfo?.firstname} ${e.birthFatherInfo?.lastname}'),
-                                // Padding(
-                                //   padding: const EdgeInsets.only(
-                                //       top: 4.0, bottom: 4.0),
-                                //   child: ButtonLink(
-                                //       t.translate('View Details'), () {}),
-                                // )
                               ],
                             )))
                         .toList(),

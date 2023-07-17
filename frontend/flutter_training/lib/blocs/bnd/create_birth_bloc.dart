@@ -29,6 +29,7 @@ class BirthRegBloc extends Bloc<BirthRegEvent, BirthRegState> {
   FutureOr<void> _onCreate(RegBirthEvent event, BirthRegEmitter emit) async {
     Client client = Client();
     try {
+      //API call starts from here, and loading state is emitted
       emit(const BirthRegState.loading());
       CreateBirthResponse createBirthResponse =
           await BNDRepository(client.init()).createBirthCertificate(
@@ -88,14 +89,21 @@ class BirthRegBloc extends Bloc<BirthRegEvent, BirthRegState> {
               ]).toMap());
       if (createBirthResponse != null &&
           createBirthResponse.statsMap?.successfulRecords == 1) {
+        //After API call,
+        // Checks if the certificate creation was success and return the loaded state,
+        // Based on the loaded state, Make the calls in UI
         emit(const BirthRegState.loaded());
       } else if (createBirthResponse != null &&
           createBirthResponse.statsMap?.failedRecords == 1) {
+        // Checks if the certificate creation was failed and return the error state
         emit(BirthRegState.error(i18.common.registrationNoAlreadyExists));
       } else {
         emit(BirthRegState.error(i18.common.someErrorOccurred));
       }
     } on DioError catch (e) {
+      // on API failure, to show the error message we can emit the error state here
+      // emit(BirthRegState.error(
+      //           e.response?.data['Errors'][0]['code'])
       emit(BirthRegState.error(i18.common.someErrorOccurred));
     }
   }
@@ -103,6 +111,8 @@ class BirthRegBloc extends Bloc<BirthRegEvent, BirthRegState> {
 
 @freezed
 class BirthRegEvent with _$BirthRegEvent {
+  //Call this event on Submit of Certificate Details
+  //This event accepts childDetails, father, mother , and address Details, to pass to the API call
   const factory BirthRegEvent.create({
     required ChildDetails childDetails,
     required ChildFatherDetails childFatherDetails,
@@ -114,8 +124,13 @@ class BirthRegEvent with _$BirthRegEvent {
 @freezed
 class BirthRegState with _$BirthRegState {
   const BirthRegState._();
-  const factory BirthRegState.initial() = _Initial;
-  const factory BirthRegState.loading() = _Loading;
-  const factory BirthRegState.loaded() = _Loaded;
-  const factory BirthRegState.error(String? error) = _Error;
+  // Mention the states that need to be handled here
+  const factory BirthRegState.initial() =
+      _Initial; //Initial State is the first state,
+  const factory BirthRegState.loading() =
+      _Loading; // Loading state will show a loader on the page when the API call is made
+  const factory BirthRegState.loaded() =
+      _Loaded; // after the successful response in API call, emit the loaded state
+  const factory BirthRegState.error(String? error) =
+      _Error; // If API response fails with error status or we do not get the desired response, Error state will be emitted
 }
