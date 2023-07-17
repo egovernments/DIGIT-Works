@@ -1,5 +1,8 @@
 package org.egov.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.producer.Producer;
@@ -19,6 +22,8 @@ public class PIUtils {
     Producer producer;
     @Autowired
     IfmsAdapterConfig adapterConfig;
+    @Autowired
+    ObjectMapper objectMapper;
     public void updatePiForIndexer(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         try {
             PaymentInstruction pi = (PaymentInstruction) paymentInstruction;
@@ -31,14 +36,22 @@ public class PIUtils {
                 beneficiary.setBenfAddress(null);
                 beneficiary.setBenfAccountType(null);
             }
-            if (pi.getParentPiNumber() == null)
-                pi.setParentPiNumber("");
-            if (pi.getPiErrorResp() == null)
-                pi.setPiErrorResp("");
+            JsonNode node = objectMapper.valueToTree(pi);
+            ObjectNode piObjectNode = (ObjectNode) node;
+            if (pi.getParentPiNumber() == null || pi.getParentPiNumber().equals("")) {
+                piObjectNode.put("parentPiNumber", "");
+                piObjectNode.put("piType", "ORIGINAL");
+            }
+            else {
+                piObjectNode.put("piType", "REVISED");
+            }
+            if (pi.getPiErrorResp() == null) {
+                piObjectNode.put("piErrorResp", "");
+            }
 
             Map<String, Object> indexerRequest = new HashMap<>();
             indexerRequest.put("RequestInfo", requestInfo);
-            indexerRequest.put("paymentInstruction", pi);
+            indexerRequest.put("paymentInstruction", piObjectNode);
             producer.push(adapterConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
 
         } catch (Exception e) {
