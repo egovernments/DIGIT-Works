@@ -96,7 +96,8 @@ expense:{
   updatePayment: "/expense/payment/v1/_update",
   regenerate : '/egov-pdf/bill/_generate',
   searchPaymentWMS:"/wms/ifms-pi/_search",
-  updatePI:"/ifms/pi/v1/_create"
+  updatePI:"/ifms/pi/v1/_create",
+  searchPA:"/expense/payment/v1/_search"
 
 },
   pt: {

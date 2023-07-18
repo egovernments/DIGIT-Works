@@ -3,30 +3,26 @@ import { useTranslation } from "react-i18next";
 import { Header, Toast,SubmitBar,ActionBar } from '@egovernments/digit-ui-react-components';
 import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
-const ViewPaymentInstruction = () => {
+const ViewPayment = () => {
   const { t } = useTranslation();
   const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
-  const { tenantId, piNumber } = Digit.Hooks.useQueryParams();
+  const { tenantId, paymentNumber } = Digit.Hooks.useQueryParams();
   const [showDataError, setShowDataError] = useState(null)
   const [toast,setShowToast] = useState(null)
   const [showActionBar,setShowActionBar] = useState(true)
   const payload = {
-    "searchCriteria": {
+    "paymentCriteria": {
       tenantId,
-      piNumber
-  },
-  "pagination": {
-      "limit": "10",
-      "offset": "0",
-      "sortBy": "",
-      "order": "ASC"
-  } 
+      "paymentNumbers": [
+          paymentNumber
+      ]
   }
-  const {isLoading, data, isError, isSuccess, error,refetch} = Digit.Hooks.paymentInstruction.useViewPaymentInstruction({tenantId, data: payload, config: { cacheTime:0 }})
+  }
+  const {isLoading, data, isError, isSuccess, error,refetch} = Digit.Hooks.paymentInstruction.useViewPayment({tenantId, data: payload, config: { cacheTime:0 }})
 
   const { mutate: updatePIMutation } = Digit.Hooks.paymentInstruction.useUpdatePI();
 
-  const piStatus = data?.[0]?.applicationData?.piStatus
+  const paStatus = data?.[0]?.applicationData?.status
   
   const closeToast = () => {
     setTimeout(() => {
@@ -35,19 +31,19 @@ const ViewPaymentInstruction = () => {
   }
 
   const handleUpdatePI = async () => {
-    const piDetails = data?.[0]?.applicationData
+    const paDetails = data?.[0]?.applicationData
     // console.log("pi update");
     const payloadForUpdate = {
       tenantId,
     }
     
     //retry
-    if(piDetails?.piStatus==="FAILED") {
-      payloadForUpdate.referenceId = piDetails?.muktaReferenceId
+    if(paStatus==="FAILED") {
+      payloadForUpdate.referenceId = paDetails?.paymentNumber
     }
     //revised
     else{
-      payloadForUpdate.parentPI = piDetails?.jitBillNo
+      payloadForUpdate.parentPI = data?.[0]?.latestPaymentInstruction?.jitBillNo
     }
     //in case of retry (Failed status) send referenceId
     // in case of Partial status, send piNumber to generate revised pi
@@ -80,7 +76,7 @@ const ViewPaymentInstruction = () => {
 
   return (
     <React.Fragment>
-      <Header className="works-header-view">{t("EXP_PAYMENT_INS")}</Header>
+      <Header className="works-header-view">{t("EXP_PAYMENT_DETAILS")}</Header>
       {
         showDataError === null && (
           <ApplicationDetails
@@ -110,9 +106,9 @@ const ViewPaymentInstruction = () => {
       {
         showDataError && <Toast error={true} label={t("COMMON_ERROR_FETCHING_PI_DETAILS")} isDleteBtn={true} onClose={() => setShowDataError(false)} />
       }
-      { (piStatus==="FAILED" || piStatus==="PARTIAL") && showActionBar && 
+      { (paStatus==="FAILED" || paStatus==="PARTIAL") && showActionBar && 
         <ActionBar> 
-          <SubmitBar label={piStatus==="FAILED" ?t("EXP_RETRY_PI"):t("EXP_GENERATE_REVISED_PI")} onSubmit={handleUpdatePI} />
+          <SubmitBar label={paStatus==="FAILED" ? t("EXP_RETRY_PI"):t("EXP_GENERATE_REVISED_PI")} onSubmit={handleUpdatePI} />
         </ActionBar>
       }
       {
@@ -122,4 +118,4 @@ const ViewPaymentInstruction = () => {
   )
 }
 
-export default ViewPaymentInstruction;
+export default ViewPayment;

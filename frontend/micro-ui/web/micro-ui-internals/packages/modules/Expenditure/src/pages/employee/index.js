@@ -61,10 +61,16 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         show: location.pathname.includes("/expenditure/search-payment-instruction") ? true : false,
         isBack: fromScreen && true,
       },
+      // {
+      //   // path: `/${window.contextPath}/employee/expenditure/search-payment-instruction`,
+      //   content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_PI")}` : t("EXP_VIEW_PI"),
+      //   show: location.pathname.includes("/expenditure/view-payment-instruction") ? true : false,
+      //   isBack: fromScreen && true,
+      // },
       {
         // path: `/${window.contextPath}/employee/expenditure/search-payment-instruction`,
-        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_PI")}` : t("EXP_VIEW_PI"),
-        show: location.pathname.includes("/expenditure/view-payment-instruction") ? true : false,
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_PAYMENT_DETAILS")}` : t("EXP_PAYMENT_DETAILS"),
+        show: location.pathname.includes("/expenditure/view-payment") ? true : false,
         isBack: fromScreen && true,
       },
       {
@@ -114,7 +120,7 @@ const App = ({ path }) => {
     const ViewWageBill = Digit?.ComponentRegistryService?.getComponent("ViewWageBill");
     const DownloadBill = Digit?.ComponentRegistryService?.getComponent("DownloadBill");
     const ViewPaymentInstruction = Digit?.ComponentRegistryService?.getComponent("ViewPaymentInstruction");
-
+    const ViewPayment = Digit?.ComponentRegistryService?.getComponent("ViewPayment");
     const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
     const [sessionFormData, clearSessionFormData] = PurchaseBillSession;
   
@@ -142,6 +148,7 @@ const App = ({ path }) => {
           
           <PrivateRoute path={`${path}/search-bill-plain`} component={() => <SearchBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/search-payment-instruction`} component={() => <SearchPaymentInstruction parentRoute={path} />} />
+          <PrivateRoute path={`${path}/view-payment`} component={() => <ViewPayment parentRoute={path} />} />
           <PrivateRoute path={`${path}/view-payment-instruction`} component={() => <ViewPaymentInstruction parentRoute={path} />} />
           <PrivateRoute path={`${path}/inbox-payment-instruction`} component={() => <InboxPaymentInstruction parentRoute={path} />} />
           <PrivateRoute path={`${path}/wage-bill-details`} component={() => <ViewWageBill parentRoute={path} />} />

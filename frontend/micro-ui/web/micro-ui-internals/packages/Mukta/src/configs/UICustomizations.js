@@ -1898,6 +1898,9 @@ export const UICustomizations = {
               to={`/${
                 window.contextPath
               }/employee/expenditure/view-payment-instruction?tenantId=${tenantId}&piNumber=${value}`}
+              // to={`/${
+              //   window.contextPath
+              // }/employee/expenditure/view-payment?tenantId=${tenantId}&paymentNumber=${row?.businessObject?.muktaReferenceId}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
@@ -2370,7 +2373,7 @@ export const UICustomizations = {
                     downloadPdf(imageLink);
                     const paySearchResponse =
                       row?.paymentNumber &&
-                      (await Digit.ExpenseService.searchPayment({
+                      (await Digit.ExpenseService.searchPA({
                         paymentCriteria: {
                           tenantId: row?.tenantId,
                           paymentNumbers: [row?.paymentNumber],
