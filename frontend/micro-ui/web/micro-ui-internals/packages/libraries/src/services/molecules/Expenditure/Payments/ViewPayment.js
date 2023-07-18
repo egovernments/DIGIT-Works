@@ -45,8 +45,8 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       { title: "WORKS_BILL_NUMBER", value: billNumber || t("ES_COMMON_NA"), isLink: true, to: billUrl },
       { title: "EXP_PAYMENT_ID", value: paymentNumber || t("ES_COMMON_NA") },
       { title: "EXP_PAYMENT_DATE", value: Digit.DateUtils.ConvertTimestampToDate(createdTime) || t("ES_COMMON_NA") },
-      { title: "EXP_PAYMENT_GROSS_AMT", value: `₹ ${Digit.Utils.dss.formatterWithoutRound(netPayableAmount,"number")}` || t("ES_COMMON_NA") },
-      { title: "EXP_PAYMENT_NET_AMT", value: `₹ ${Digit.Utils.dss.formatterWithoutRound(netPaidAmount,"number")}` || t("ES_COMMON_NA") },
+      { title: "EXP_PAYMENT_GROSS_AMT", value:netPayableAmount ? `₹ ${Digit.Utils.dss.formatterWithoutRound(netPayableAmount,"number")}` : t("ES_COMMON_NA") },
+      { title: "EXP_PAYMENT_NET_AMT", value:netPaidAmount? `₹ ${Digit.Utils.dss.formatterWithoutRound(netPaidAmount,"number")}` : t("ES_COMMON_NA") },
       {
         title: "CORE_COMMON_STATUS",
         value: t(`EXP_PI_STATUS_${status}`),
@@ -122,7 +122,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       t("ES_COMMON_NA"),
       t("ES_COMMON_NA"),
       returnPaymentStatusObjectForPI(piStatus,pi),
-      `₹ ${Digit.Utils.dss.formatterWithoutRound(netAmount,"number")}`
+      netAmount ? `₹ ${Digit.Utils.dss.formatterWithoutRound(netAmount,"number")}` : t("ES_COMMON_NA")
     ]
   })  
 
