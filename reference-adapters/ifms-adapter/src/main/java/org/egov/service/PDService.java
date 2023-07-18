@@ -72,8 +72,7 @@ public class PDService {
             }
             for (Object data : jitResponse.getData()) {
                 Map<String, Object> dataObjMap = objectMapper.convertValue(data, Map.class);
-                String billNumber = dataObjMap.get("billNumber").toString();
-                if (billNumber == null)
+                if (dataObjMap.get("billNumber") == null)
                     continue;
                 String voucherNo = dataObjMap.get("voucherNo").toString();
                 String voucherDate = dataObjMap.get("voucherDate").toString();
