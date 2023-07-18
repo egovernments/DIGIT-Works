@@ -185,7 +185,7 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
         // beneficiary?.beneficiaryId || t("ES_COMMON_NA"),
         t("ES_COMMON_NA"),
         beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
-        t("ES_COMMON_NA"),
+        beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountHolderName || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber,
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.bankBranchIdentifier?.code || t("ES_COMMON_NA"),
         returnPaymentStatusObject(beneficiary?.paymentStatus),

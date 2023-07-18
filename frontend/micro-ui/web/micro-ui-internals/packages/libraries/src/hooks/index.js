@@ -160,7 +160,7 @@ import useUpdatePurchaseBill from "./bills/useUpdatePurchaseBill";
 import useSearchBill from "./bills/useSearchBill";
 
 import useViewPaymentInstruction from "./payments/useViewPaymentInstruction";
-
+import useUpdatePI from "./expenditure/useUpdatePI";
 const works = {
   useViewEstimateDetails,
   useViewProjectDetails,
@@ -309,7 +309,8 @@ const bankAccount = {
 }
 
 const paymentInstruction = {
-  useViewPaymentInstruction
+  useViewPaymentInstruction,
+  useUpdatePI
 }
 
 const Hooks = {

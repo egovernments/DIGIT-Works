@@ -39,6 +39,15 @@ export const ExpenseService = {
       userService: false,
       data: data,
       params: { tenantId}
-    })
+    }),
+    updatePI: (data) => 
+      Request({
+        url: Urls.expense.updatePI,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: false,
+        data: data
+      })
 
 };
