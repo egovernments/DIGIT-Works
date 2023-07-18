@@ -1885,7 +1885,7 @@ export const UICustomizations = {
       let numSuccess = 0
       let numFailed = 0
       row?.businessObject?.beneficiaryDetails?.forEach(bene => {
-        if(bene?.paymentStatus === "Payment Completed"){
+        if(bene?.paymentStatus === "Payment Successful"){
           numSuccess +=1
         }else if(bene?.paymentStatus === "Payment Failed"){
           numFailed += 1
@@ -1931,7 +1931,7 @@ export const UICustomizations = {
       }
 
       if(key === "CORE_COMMON_STATUS") {
-        return t(`EXP_PI_STATUS_${value}`)
+        return t(Digit.Utils.locale.getTransformedLocale(`EXP_PI_STATUS_${value}`))
       }
       
       if(key === "ES_COMMON_TOTAL_AMOUNT") {
