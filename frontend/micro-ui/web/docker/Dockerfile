@@ -4,7 +4,7 @@ RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=4792"
+ENV NODE_OPTIONS "--max-old-space-size=8500"
 
 COPY ${WORK_DIR} .
 RUN ls -lah
@@ -15,7 +15,7 @@ RUN cd web/ \
     && node -e 'console.log("Works with MUKTA")' \
     &&  ./install-deps.sh \
     && yarn install \
-    && yarn build 
+    && yarn build:webpack 
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
