@@ -7,7 +7,7 @@
     "example",
     "packages/css",
     "packages/react-components",
-    "packages/modules/Estimate",
+    "packages/modules/*",
     "packages/Mukta"
   ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
