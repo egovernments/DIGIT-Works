@@ -48,6 +48,15 @@ export const ExpenseService = {
         auth: true,
         userService: false,
         data: data
-      })
+      }),
+    searchPA: (data) => 
+    Request({
+      url: Urls.expense.searchPA,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: false,
+      data: data
+    })
 
 };

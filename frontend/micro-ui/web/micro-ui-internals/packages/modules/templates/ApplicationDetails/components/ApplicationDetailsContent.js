@@ -173,6 +173,9 @@ function ApplicationDetailsContent({
         marginBottom:"1rem"
       }
     }
+    else if(tab?.type==="statusColor"){
+      return tab?.style
+    }
     else {
       return {};
     }
@@ -184,6 +187,7 @@ function ApplicationDetailsContent({
         width:"100%"
       }
     }
+    
     else {
       return {};
     }
@@ -369,7 +373,7 @@ function ApplicationDetailsContent({
                       privacy={value?.privacy}
                       // TODO, Later will move to classes
                       rowContainerStyle={getRowStyles(detail?.tab)}
-                      textStyle={getTextStyles(detail?.tab)}
+                      textStyle={getTextStyles(value?.tab)}
                       labelStyle={getLabelStyles(detail?.tab)}
                       amountStyle={detail?.amountStyle}
                     />
