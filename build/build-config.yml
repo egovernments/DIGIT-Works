@@ -109,6 +109,7 @@ config:
     build:
       - work-dir: "utilities/ifms-cronjob"
         image-name: "ifms-cronjob"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
