@@ -1895,12 +1895,12 @@ export const UICustomizations = {
         return (
           <span className="link">
             <Link
-              to={`/${
-                window.contextPath
-              }/employee/expenditure/view-payment-instruction?tenantId=${tenantId}&piNumber=${value}`}
               // to={`/${
               //   window.contextPath
-              // }/employee/expenditure/view-payment?tenantId=${tenantId}&paymentNumber=${row?.businessObject?.muktaReferenceId}`}
+              // }/employee/expenditure/view-payment-instruction?tenantId=${tenantId}&piNumber=${value}`}
+              to={`/${
+                window.contextPath
+              }/employee/expenditure/view-payment?tenantId=${tenantId}&paymentNumber=${row?.businessObject?.muktaReferenceId}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
