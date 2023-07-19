@@ -15,7 +15,7 @@ RUN cd web/ \
     && node -e 'console.log("Works with MUKTA")' \
     &&  ./install-deps.sh \
     && yarn install \
-    && yarn build-webpack 
+    && yarn build:webpack 
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
