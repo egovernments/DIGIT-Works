@@ -3,7 +3,6 @@ import json, os
 from dotenv import load_dotenv
 import logging
 import sys
-import pdb
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -70,8 +69,11 @@ if __name__ == "__main__":
         logging.info('Scheduler Started')
         load_dotenv()
         userInfo = getUser()
-        requestInfo=getRequestInfo(userInfo)
-        scheduleStatusUpdate(requestInfo,sys.argv[1])
+        if userInfo != None:
+            requestInfo=getRequestInfo(userInfo)
+            scheduleStatusUpdate(requestInfo,sys.argv[1])
+        else:
+            logging.error("Could not fetch user")
 
     except Exception as ex:
         logging.error("Exception occured on main.", exc_info=True)
