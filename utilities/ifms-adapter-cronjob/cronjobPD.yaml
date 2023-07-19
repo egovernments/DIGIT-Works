@@ -1,0 +1,32 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: IFMS-PD
+spec:
+  schedule: "0 11 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: IFMS-PD
+            image: egovio/ifms-cronjob
+            command: ["python3","cronJobAPIConfig.py"]
+            args: ["PD"]  
+            env:
+              - name: TENANT_ID
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-config
+                    key: state-level-tenant-id
+              - name: USER_SERVICE_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-service-host
+                    key: egov-user-egov
+              - name: IFMS_ADAPTER_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: egov-service-host
+                    key: ifms-adapter
+          restartPolicy: OnFailure
