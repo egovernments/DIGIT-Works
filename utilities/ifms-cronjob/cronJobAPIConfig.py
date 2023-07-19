@@ -31,6 +31,7 @@ def getUser():
         user_payload = json.dumps(user_payload)
         user_headers = {'Content-Type': 'application/json'}
         user_response = requests.request("POST", user_url, headers=user_headers, data = user_payload)
+        logging.info("Recieved response from user:{}".format(user_response.status_code))
         users = user_response.json()['user']
         if len(users)==0:
             raise Exception("user not found")
@@ -46,6 +47,7 @@ def scheduleStatusUpdate(requestInfo, status):
     success = 0
     failed = 0
     try:
+        logging.info("Service Id = {}".format(status))
         ifms_adapter_host = os.getenv('IFMS_ADAPTER_HOST')
         ifms_scheduler = os.getenv('IFMS_SCHEDULER')
         serviceid_status = "?serviceId={}".format(status)
