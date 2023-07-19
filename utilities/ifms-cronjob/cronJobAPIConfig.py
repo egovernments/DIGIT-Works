@@ -44,7 +44,6 @@ def getUser():
         return None
 
 def scheduleStatusUpdate(requestInfo, status):
-    status = "VA"
     success = 0
     failed = 0
     try:
@@ -72,7 +71,7 @@ if __name__ == "__main__":
         load_dotenv()
         userInfo = getUser()
         requestInfo=getRequestInfo(userInfo)
-        scheduleStatusUpdate(requestInfo,sys.argv)
+        scheduleStatusUpdate(requestInfo,sys.argv[1])
 
     except Exception as ex:
         logging.error("Exception occured on main.", exc_info=True)

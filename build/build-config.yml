@@ -105,6 +105,10 @@ config:
     build:
       - work-dir: "utilities/egov-bff-service"
         image-name: "egov-bff-service"  
+  - name: "builds/digit-works/utilities/ifms-cronjob"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
