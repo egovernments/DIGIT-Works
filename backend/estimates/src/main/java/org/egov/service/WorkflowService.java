@@ -188,7 +188,11 @@ public class WorkflowService {
                 }
             }
         }
-
+        if(workflow.getAction().equals("SENDBACKTOORIGINATOR") && CollectionUtils.isEmpty(workflow.getAssignees())){
+            List<String> uuids = new ArrayList<>();
+            uuids.add(estimate.getAuditDetails().getCreatedBy());
+            workflow.setAssignees(uuids);
+        }
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(estimate.getEstimateNumber());
         processInstance.setAction(request.getWorkflow().getAction());
