@@ -46,7 +46,7 @@ public class OrganisationUtils {
 					.id(new ArrayList<>(uniqueIds))
 					.build();
 		} else {
-			throw new Exception("");
+			throw new RuntimeException("Request info, or ids are empty in organisation search");
 		}
 
 		Pagination pagination = Pagination.builder()

@@ -1,5 +1,6 @@
 package org.egov.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,25 +31,28 @@ import static org.egov.config.Constants.*;
 public class IfmsService {
 
     @Autowired
-    IfmsAdapterConfig config;
+    private IfmsAdapterConfig config;
 
     @Autowired
-    ServiceRequestRepository requestRepository;
+    private ServiceRequestRepository requestRepository;
 
     @Autowired
-    AuthenticationUtils authenticationUtils;
+    private AuthenticationUtils authenticationUtils;
 
     @Autowired
-    JitRequestUtils jitRequestUtils;
+    private JitRequestUtils jitRequestUtils;
 
     @Autowired
-    MdmsUtils mdmsUtils;
+    private MdmsUtils mdmsUtils;
 
     @Autowired
-    IfmsAdapterConfig ifmsAdapterConfig;
+    private IfmsAdapterConfig ifmsAdapterConfig;
 
     @Autowired
-    JITAuthValues jitAuthValues;
+    private JITAuthValues jitAuthValues;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
@@ -176,6 +182,21 @@ public class IfmsService {
         Map<String, Map<String, JSONArray>> ssuDetailsResponse = mdmsUtils.fetchMdmsData(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, ssuMasters);
         JSONArray ssuDetailsList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
         return ssuDetailsList;
+    }
+
+    /*
+        It's for testing the multiple combination of VA response
+        TODO: Remove after development
+     */
+    public JITResponse loadCustomResponse() {
+        JITResponse vaResponse = null;
+        try {
+            File file = new File("D:/egovernments/digit-works-bkp2/reference-adapters/ifms-adapter/src/test/resources/7CORSuccess.json");
+            vaResponse = objectMapper.readValue(file, JITResponse.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return vaResponse;
     }
 
 

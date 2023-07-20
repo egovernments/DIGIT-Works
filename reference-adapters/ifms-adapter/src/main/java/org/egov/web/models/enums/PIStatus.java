@@ -12,6 +12,7 @@ public enum PIStatus {
     PARTIAL("PARTIAL"),
     APPROVED("APPROVED"),
     IN_PROCESS("IN PROCESS"),
+    COMPLETED("COMPLETED"),
     SUCCESSFUL("SUCCESSFUL");
 
     private String value;

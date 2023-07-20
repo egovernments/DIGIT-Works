@@ -2,6 +2,7 @@ package org.egov.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.web.models.enums.PIType;
 import org.egov.web.models.jit.PISearchCriteria;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +26,9 @@ public class PIQueryBuilder {
             + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :paBillRefNumber, :paFinYear, :paAdviceId, :paAdviceDate, :paTokenNumber, :paTokenDate,"
             + " :paErrorMsg, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
     public static final String BENEFICIARY_DETAILS_INSERT_QUERY = "INSERT INTO jit_beneficiary_details "
-            + "(id, tenantId, muktaReferenceId, piId, beneficiaryId, beneficiaryType, bankAccountId, amount, voucherNumber, voucherDate, utrNo, utrDate, endToEndId, challanNumber, "
+            + "(id, tenantId, muktaReferenceId, piId, beneficiaryId, beneficiaryType, beneficiaryNumber, bankAccountId, amount, voucherNumber, voucherDate, utrNo, utrDate, endToEndId, challanNumber, "
             + "challanDate, paymentStatus, paymentStatusMessage, additionalDetails, createdtime, createdby, lastmodifiedtime, lastmodifiedby)"
-            + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :beneficiaryId, :beneficiaryType, :bankAccountId, :amount, :voucherNumber, :voucherDate, :utrNo, :utrDate, :endToEndId, :challanNumber, "
+            + " VALUES (:id, :tenantId, :muktaReferenceId, :piId, :beneficiaryId, :beneficiaryType, :beneficiaryNumber, :bankAccountId, :amount, :voucherNumber, :voucherDate, :utrNo, :utrDate, :endToEndId, :challanNumber, "
             + " :challanDate, :paymentStatus, :paymentStatusMessage, :additionalDetails, :createdtime, :createdby, :lastmodifiedtime, :lastmodifiedby);";
 
     public static final String TRANSACTION_DETAILS_INSERT_QUERY = "INSERT INTO jit_transaction_details "
@@ -96,6 +97,7 @@ public class PIQueryBuilder {
             "jbd.piId as jbdPiId, " +
             "jbd.beneficiaryId as jbdBeneficiaryId, " +
             "jbd.beneficiaryType as jbdBeneficiaryType, " +
+            "jbd.beneficiaryNumber as jbdBeneficiaryNumber, " +
             "jbd.bankAccountId as jbdBankAccountId, " +
             "jbd.amount as jbdAmount, " +
             "jbd.voucherNumber as jbdVoucherNumber, " +
@@ -177,13 +179,18 @@ public class PIQueryBuilder {
             query.append(" jpi.piNumber=? ");
             preparedStmtList.add(criteria.getJitBillNo());
         }
+        if (StringUtils.isNotBlank(criteria.getParentPiNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" jpi.parentPiNumber=? ");
+            preparedStmtList.add(criteria.getParentPiNumber());
+        }
         Set<String> piNumbers = criteria.getJitBillNumbers();
         if (piNumbers != null && !piNumbers.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" jpi.piNumber IN (").append(createQuery(piNumbers)).append(")");
             addToPreparedStatement(preparedStmtList, piNumbers);
         }
-        if (criteria.getIsActive() != null && criteria.getIsActive().isEmpty()) {
+        if (criteria.getIsActive() != null) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" jpi.isActive=? ");
             preparedStmtList.add(criteria.getIsActive());
@@ -192,6 +199,14 @@ public class PIQueryBuilder {
             query.append(" jpi.isActive=? ");
             preparedStmtList.add(true);
         }
+//        if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.ORIGINAL)) {
+//            addClauseIfRequired(query, preparedStmtList);
+//            query.append(" jpi.parentPiNumber IS NULL OR jpi.parentPiNumber= '' ");
+//        } else if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.REVISED)) {
+//            addClauseIfRequired(query, preparedStmtList);
+//            query.append(" jpi.parentPiNumber IS NOT NULL AND jpi.parentPiNumber <> '' ");
+//        }
+
 
 
 
@@ -239,6 +254,8 @@ public class PIQueryBuilder {
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
             queryBuilder.append(" ORDER BY jpi.lastmodifiedtime ");
+        } else if (criteria.getSortBy() != null && !StringUtils.isEmpty(criteria.getSortBy().name())) {
+            queryBuilder.append(" ORDER BY jpi."+ criteria.getSortBy().toString() +" ");
         }
 
         if (criteria.getSortOrder() == PISearchCriteria.SortOrder.ASC)

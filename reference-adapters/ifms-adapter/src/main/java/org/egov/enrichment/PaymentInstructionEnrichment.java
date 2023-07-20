@@ -11,9 +11,7 @@ import org.egov.config.Constants;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.service.IfmsService;
-import org.egov.utils.BillUtils;
-import org.egov.utils.HelperUtil;
-import org.egov.utils.IdgenUtil;
+import org.egov.utils.*;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
@@ -26,8 +24,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.config.Constants.VA_REQUEST_TIME_FORMAT;
-import static org.egov.config.Constants.VA_TRANSACTION_TYPE_WITHDRAWAL;
+import static org.egov.config.Constants.*;
 
 @Service
 @Slf4j
@@ -46,6 +43,10 @@ public class PaymentInstructionEnrichment {
     ObjectMapper objectMapper;
     @Autowired
     IfmsAdapterConfig config;
+    @Autowired
+    AuditLogUtils auditLogUtils;
+    @Autowired
+    BankAccountUtils bankAccountUtils;
 
     public List<Beneficiary> getBeneficiariesFromBills(List<Bill> billList, PaymentRequest paymentRequest) {
         List<Beneficiary> beneficiaryList = new ArrayList<>();
@@ -64,6 +65,7 @@ public class PaymentInstructionEnrichment {
         combineBeneficiaryById(beneficiaryList);
         return beneficiaryList;
     }
+
     private void combineBeneficiaryById(List<Beneficiary> beneficiaryList) {
         Map<String, Beneficiary> benfMap = new HashMap<>();
         for(Beneficiary beneficiary: beneficiaryList) {
@@ -155,13 +157,13 @@ public class PaymentInstructionEnrichment {
                 .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
                 .piStatus(piStatus)
                 .build();
-        enrichPiRequestForInsert(piRequest, paymentRequest, selectedSanction, hasFunds);
+        enrichPiRequestForInsert(piRequest, paymentRequest, hasFunds);
         // update piRequest for payment search indexer
         updateBillFieldsForIndexer(piRequest, paymentRequest);
         return piRequest;
     }
 
-    private void enrichPiRequestForInsert(PaymentInstruction piRequest, PaymentRequest paymentRequest, SanctionDetail sanctionDetail, Boolean hasFunds) {
+    private void enrichPiRequestForInsert(PaymentInstruction piRequest, PaymentRequest paymentRequest, Boolean hasFunds) {
         String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         Long time = System.currentTimeMillis();
         String tenantId = paymentRequest.getPayment().getTenantId();
@@ -186,9 +188,14 @@ public class PaymentInstructionEnrichment {
                 .build();
         piRequest.setPaDetails(Collections.singletonList(paDetails));
 
+        // GET IDGEN id for beneficiary
+        List<String> benefIdList = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPiBenefInstructionNumberFormat(), null, piRequest.getBeneficiaryDetails().size());
+
+        int idx = 0;
         // Update beneficiary details
         for (Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
-            beneficiary.setId(UUID.randomUUID().toString().substring(0,8) + "-" + time);
+            beneficiary.setId(UUID.randomUUID().toString());
+            beneficiary.setBeneficiaryNumber(benefIdList.get(idx));
             beneficiary.setTenantId(tenantId);
             beneficiary.setMuktaReferenceId(muktaReferenceId);
             beneficiary.setPiId(piRequest.getId());
@@ -200,6 +207,8 @@ public class PaymentInstructionEnrichment {
                 lineItem.setBeneficiaryId(beneficiary.getId());
                 lineItem.setAuditDetails(auditDetails);
             }
+            // Increase idx
+            idx = idx + 1;
         }
     }
 
@@ -359,7 +368,7 @@ public class PaymentInstructionEnrichment {
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         for(Beneficiary beneficiary: existingPI.getBeneficiaryDetails()) {
             Beneficiary reqBeneficiary = Beneficiary.builder()
-                    .benefId(beneficiary.getId())
+                    .benefId(beneficiary.getBeneficiaryNumber())
                     .benefName(beneficiary.getBenefName())
                     .benfAcctNo(beneficiary.getBenfAcctNo())
                     .benfBankIfscCode(beneficiary.getBenfBankIfscCode())
@@ -396,6 +405,66 @@ public class PaymentInstructionEnrichment {
                 .build();
         return jitPiRequest;
     }
+
+    public JITRequest getCorRequest(PaymentRequest paymentRequest, PaymentInstruction paymentInstruction, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) throws Exception {
+        List<CORBeneficiaryDetails> corBenfDetails = new ArrayList<>();
+        List<String> beneficiaryIds =   paymentInstruction.getBeneficiaryDetails().stream()
+                .map(Beneficiary::getBeneficiaryId)
+                .distinct()
+                .collect(Collectors.toList());
+        List<BankAccount> bankAccounts = bankAccountUtils.getBankAccountsByIdentifier(paymentRequest.getRequestInfo(), beneficiaryIds, paymentRequest.getPayment().getTenantId());
+        Map<String, BankAccount> bankAccountMap = new HashMap<>();
+        if (bankAccounts != null && !bankAccounts.isEmpty()) {
+            for(BankAccount bankAccount: bankAccounts) {
+                bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);
+            }
+        }
+
+        for (Beneficiary beneficiary: paymentInstruction.getBeneficiaryDetails()) {
+            Map<String, String> originalPiBankDetails = auditLogUtils.getLastUpdatedBankAccountDetailsFromAuditLogFromTime(paymentRequest, bankAccountMap.get(beneficiary.getBeneficiaryId()), originalPi.getAuditDetails().getCreatedTime());
+            String originalPiBankAccountNo = originalPiBankDetails.get("bankAccountNumber");
+            String originalPiIFSC = originalPiBankDetails.get("bankIFSCCode");
+
+            // Get bank account details by beneficiary ids
+            CORBeneficiaryDetails corBeneficiaryDetails = CORBeneficiaryDetails.builder()
+                    .benefId(beneficiary.getBeneficiaryNumber())
+                    .jitCurBillRefNo(lastRevisedPi != null ? lastRevisedPi.getPaDetails().get(0).getPaBillRefNumber() : originalPi.getPaDetails().get(0).getPaBillRefNumber())
+                    .orgAccountNo(originalPiBankAccountNo)
+                    .orgIfsc(originalPiIFSC)
+                    .correctedAccountNo(beneficiary.getBenfAcctNo())
+                    .correctedIfsc(beneficiary.getBenfBankIfscCode())
+                    .build();
+
+            if (lastRevisedPi != null) {
+                Map<String, String> lastPiBankDetails = auditLogUtils.getLastUpdatedBankAccountDetailsFromAuditLogFromTime(paymentRequest, bankAccountMap.get(beneficiary.getBeneficiaryId()), lastRevisedPi.getAuditDetails().getCreatedTime());
+                String lastPiBankAccountNo = lastPiBankDetails.get("bankAccountNumber");
+                String lastPiIFSC = lastPiBankDetails.get("bankIFSCCode");
+                corBeneficiaryDetails.setCurAccountNo(lastPiBankAccountNo);
+                corBeneficiaryDetails.setCurIfsc(lastPiIFSC);
+            } else {
+                corBeneficiaryDetails.setCurAccountNo(originalPiBankAccountNo);
+                corBeneficiaryDetails.setCurIfsc(originalPiIFSC);
+            }
+            corBenfDetails.add(corBeneficiaryDetails);
+        }
+
+        CORRequest corRequest = CORRequest.builder()
+                .jitCorBillNo(paymentInstruction.getJitBillNo())
+                .jitCorBillDate(util.getFormattedTimeFromTimestamp(paymentInstruction.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
+                .jitCorBillDeptCode(JIT_FD_EXT_APP_NAME)
+                .jitOrgBillRefNo(originalPi.getPaDetails().get(0).getPaBillRefNumber())
+                .jitOrgBillNo(originalPi.getJitBillNo())
+                .jitOrgBillDate(util.getFormattedTimeFromTimestamp(originalPi.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
+                .beneficiaryDetails(corBenfDetails)
+                .build();
+        JITRequest jitPiRequest = JITRequest.builder()
+                .serviceId(JITServiceId.COR)
+                .params(corRequest)
+                .build();
+
+        return jitPiRequest;
+    }
+
 
     private Map<String, JsonNode> getHeadCodeHashMap(JSONArray headCodesList) {
         Map<String, JsonNode> headCodeMap = new HashMap<>();
@@ -437,7 +506,108 @@ public class PaymentInstructionEnrichment {
         }
     }
 
+    /**
+     * Get failed beneficiary list from existing PI with line items
+     * @param existingPI
+     * @return list of beneficiaries
+     */
+    public List<Beneficiary> getFailedBeneficiariesFromExistingPI(PaymentInstruction existingPI) {
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        if (existingPI != null && !existingPI.getBeneficiaryDetails().isEmpty()) {
+            for (Beneficiary beneficiary: existingPI.getBeneficiaryDetails()) {
+                if (beneficiary.getPaymentStatus().equals(BeneficiaryPaymentStatus.FAILED)) {
+                    List<BenfLineItems> benfLineItems = new ArrayList<>();
+                    for (BenfLineItems lineItems: beneficiary.getBenfLineItems()) {
+                        BenfLineItems benfLineItem = BenfLineItems.builder()
+                                .lineItemId(lineItems.getLineItemId())
+                                .build();
+                        benfLineItems.add(benfLineItem);
+                    }
+                    Beneficiary newBenef = Beneficiary.builder()
+                            .tenantId(beneficiary.getTenantId())
+                            .muktaReferenceId(beneficiary.getMuktaReferenceId())
+                            .beneficiaryId(beneficiary.getBeneficiaryId())
+                            .beneficiaryNumber(beneficiary.getBeneficiaryNumber())
+                            .beneficiaryType(beneficiary.getBeneficiaryType())
+                            .amount(beneficiary.getAmount())
+                            .benfLineItems(benfLineItems)
+                            .build();
+                    beneficiaryList.add(newBenef);
+                }
+            }
+        }
+        return beneficiaryList;
+    }
 
+    public PaymentInstruction getRevisedEnrichedPaymentRequest(PaymentRequest paymentRequest, PaymentInstruction existingPi, List<Beneficiary> beneficiaries) {
+
+        BigDecimal totalAmount = new BigDecimal(0);
+        if (beneficiaries != null && !beneficiaries.isEmpty()) {
+            for (Beneficiary piBeneficiary: beneficiaries) {
+                totalAmount = totalAmount.add(piBeneficiary.getAmount());
+            }
+        }
+
+        String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
+        Long time = System.currentTimeMillis();
+        String tenantId = existingPi.getTenantId();
+        String muktaReferenceId = existingPi.getMuktaReferenceId();
+        JsonNode emptyObject = objectMapper.createObjectNode();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
+
+        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), tenantId, config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        PaymentInstruction paymentInstruction = PaymentInstruction.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
+                .jitBillNo(jitBillNo)
+                .jitBillDate(util.getFormattedTimeFromTimestamp(time, JIT_BILL_DATE_FORMAT))
+                .parentPiNumber(existingPi.getJitBillNo())
+                .muktaReferenceId(muktaReferenceId)
+                .numBeneficiaries(beneficiaries.size())
+                .grossAmount(totalAmount)
+                .netAmount(totalAmount)
+                .piStatus(PIStatus.INITIATED)
+                .auditDetails(auditDetails)
+                .additionalDetails(emptyObject)
+                .build();
+
+        // Add payment advise details
+        List<PADetails> paDetails = new ArrayList<>();
+        PADetails paDetail = PADetails.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
+                .muktaReferenceId(muktaReferenceId)
+                .piId(paymentInstruction.getId())
+                .additionalDetails(emptyObject)
+                .auditDetails(auditDetails)
+                .build();
+        paDetails.add(paDetail);
+
+        // GET IDGEN id for beneficiary
+        List<String> benefIdList = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPiBenefInstructionNumberFormat(), null, beneficiaries.size());
+        int idx = 0;
+        for (Beneficiary beneficiary: beneficiaries) {
+            beneficiary.setId(UUID.randomUUID().toString());
+            beneficiary.setBeneficiaryNumber(benefIdList.get(idx));
+            beneficiary.setTenantId(tenantId);
+            beneficiary.setMuktaReferenceId(muktaReferenceId);
+            beneficiary.setPiId(paymentInstruction.getId());
+            beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.INITIATED);
+            beneficiary.setAdditionalDetails(emptyObject);
+            beneficiary.setAuditDetails(auditDetails);
+            for (BenfLineItems lineItem: beneficiary.getBenfLineItems()) {
+                lineItem.setId(UUID.randomUUID().toString());
+                lineItem.setBeneficiaryId(beneficiary.getId());
+                lineItem.setAuditDetails(auditDetails);
+            }
+            // Increase idx
+            idx = idx + 1;
+        }
+        paymentInstruction.setBeneficiaryDetails(beneficiaries);
+        // update piRequest for payment search indexer
+        updateBillFieldsForIndexer(paymentInstruction, paymentRequest);
+        return paymentInstruction;
+    }
 
 
 }

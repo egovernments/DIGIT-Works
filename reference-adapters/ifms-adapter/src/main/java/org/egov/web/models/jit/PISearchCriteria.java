@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.data.query.annotations.Exclude;
 import org.egov.web.models.enums.PIStatus;
+import org.egov.web.models.enums.PIType;
 
 import java.util.List;
 import java.util.Set;
@@ -32,8 +33,14 @@ public class PISearchCriteria {
     @JsonProperty("piNumber")
     private String jitBillNo;
 
+    @JsonProperty("parentPiNumber")
+    private String parentPiNumber;
+
     @JsonProperty("isActive")
-    private String isActive;
+    private Boolean isActive;
+
+    @JsonProperty("piType")
+    private PIType piType;
 
     @JsonProperty("piNumbers")
     private Set<String> jitBillNumbers;
@@ -56,6 +63,7 @@ public class PISearchCriteria {
     }
 
     public enum SortBy {
-        lastModifiedTime
+        lastModifiedTime,
+        createdTime
     }
 }

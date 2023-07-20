@@ -166,6 +166,7 @@ public class PIRepository {
                 beneficiaryParamMap.addValue("piId", beneficiary.getPiId());
                 beneficiaryParamMap.addValue("beneficiaryId", beneficiary.getBeneficiaryId());
                 beneficiaryParamMap.addValue("beneficiaryType", beneficiary.getBeneficiaryType().toString());
+                beneficiaryParamMap.addValue("beneficiaryNumber", beneficiary.getBeneficiaryNumber());
                 beneficiaryParamMap.addValue("bankAccountId", beneficiary.getBankAccountId());
                 beneficiaryParamMap.addValue("amount", beneficiary.getAmount());
                 beneficiaryParamMap.addValue("voucherNumber", beneficiary.getVoucherNumber());

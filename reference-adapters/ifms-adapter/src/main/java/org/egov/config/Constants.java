@@ -24,5 +24,7 @@ public class Constants {
 	public static final String JIT_UNAUTHORIZED_REQUEST_EXCEPTION="No valid session encryption key";
 
 	public static final String JIT_FD_EXT_APP_NAME = "MUKTA";
+	public static final String BANK_ACCOUNT_TABLE_NAME = "eg_bank_account_detail";
+	public static final String BANK_IFSC_TABLE_NAME = "eg_bank_branch_identifier";
 
 }
