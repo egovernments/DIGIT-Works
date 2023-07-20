@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST;
+HOST = process.env.EGOV_HOST || "localhost";
 
 
 if (!HOST) {
@@ -44,7 +44,7 @@ module.exports = {
   },
   host: {
     mdms: process.env.EGOV_MDMS_HOST || 'http://localhost:8099',
-    pdf: process.env.EGOV_PDF_HOST || 'http://localhost:8082',
+    pdf: process.env.EGOV_PDF_HOST || 'http://localhost:9057',
     user: process.env.EGOV_USER_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || 'http://localhost:8094',
     projectDetails: process.env.EGOV_PROJECT_HOST || 'http://localhost:8081/',

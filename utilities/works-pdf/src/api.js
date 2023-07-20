@@ -488,6 +488,24 @@ async function search_hrms(tenantId, requestinfo) {
   });
 }
 
+async function search_mdms_terms_and_conditions(tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId.split(".")[0],
+    moduleName: "tenant",
+    masterName: "footer",
+  };
+
+  var searchEndpoint = config.paths.mdms_get;
+
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.mdms, searchEndpoint),
+    data: Object.assign(requestinfo),
+    params
+
+  });
+}
+
 module.exports = {
   pool,
   create_pdf,
@@ -512,5 +530,6 @@ module.exports = {
   create_eg_payments_excel,
   reset_eg_payments_excel,
   exec_query_eg_payments_excel,
-  search_hrms
+  search_hrms,
+  search_mdms_terms_and_conditions
 };
