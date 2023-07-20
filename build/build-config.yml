@@ -105,11 +105,6 @@ config:
     build:
       - work-dir: "utilities/egov-bff-service"
         image-name: "egov-bff-service"  
-  - name: "builds/digit-works/utilities/ifms-cronjob"
-    build:
-      - work-dir: "utilities/ifms-cronjob"
-        image-name: "ifms-cronjob"
-        dockerfile: "utilities/ifms-cronjob/Dockerfile"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
@@ -147,6 +142,32 @@ config:
       - work-dir: "utilities/expense-cronjob"
         image-name: "expense-cronjob"
         dockerfile: "utilities/expense-cronjob/Dockerfile"
+
+  - name: "builds/digit-works/utilities/ifms-cronjob-VA"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-VA"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-PIS"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-PIS"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-PAG"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-PAG"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-PD"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-PD"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-FD"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-FD"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
 
 # reference-adapters
   - name: "builds/digit-works/reference-adapters/ifms-adapter"
