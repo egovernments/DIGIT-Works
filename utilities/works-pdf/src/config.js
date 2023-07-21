@@ -34,8 +34,10 @@ module.exports = {
       process.env.WORK_ORDER_TEMPLATE || "work-order_ia",  
     work_order_template_hindi:
       process.env.WORK_ORDER_TEMPLATE_HINDI || "work-order-hindi",
-    work_order_template_odiya:
-      process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya",
+    work_order_template_odiya_ia:
+      process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya_ia",
+    work_order_template_odiya_ip:
+      process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya_ip",  
   },
   app: {
     port: parseInt(process.env.APP_PORT || 8077) ,
