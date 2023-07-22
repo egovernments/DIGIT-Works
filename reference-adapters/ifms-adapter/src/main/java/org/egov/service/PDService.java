@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.config.Constants;
 import org.egov.repository.PIRepository;
 import org.egov.utils.BillUtils;
 import org.egov.utils.PIUtils;
@@ -57,7 +58,7 @@ public class PDService {
         for (PaymentInstruction paymentInstruction : inProcessPaymentInstructions) {
 
             PDRequest pdRequest = PDRequest.builder().finYear(paymentInstruction.getPaDetails().get(0).getPaFinYear())
-                    .extAppName("MUKTA")
+                    .extAppName(Constants.JIT_FD_EXT_APP_NAME)
                     .billRefNo(paymentInstruction.getPaDetails().get(0).getPaBillRefNumber())
                     .tokenNumber(paymentInstruction.getPaDetails().get(0).getPaTokenNumber())
                     .tokenDate(paymentInstruction.getPaDetails().get(0).getPaTokenDate())

@@ -2,19 +2,20 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.models.individual.Individual;
+import org.egov.config.Constants;
 import org.egov.enrichment.PaymentInstructionEnrichment;
+import org.egov.enrichment.VirtualAllotmentEnrichment;
 import org.egov.repository.PIRepository;
+import org.egov.repository.SanctionDetailsRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
-import org.egov.web.models.enums.BeneficiaryPaymentStatus;
-import org.egov.web.models.enums.PIStatus;
-import org.egov.web.models.enums.PaymentStatus;
-import org.egov.web.models.enums.Status;
+import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.egov.web.models.jit.PISearchCriteria;
 import org.egov.web.models.organisation.Organisation;
@@ -34,23 +35,28 @@ import java.util.stream.Collectors;
 public class PaymentInstructionService {
 
     @Autowired
-    BillUtils billUtils;
+    private BillUtils billUtils;
     @Autowired
-    BankAccountUtils bankAccountUtils;
+    private BankAccountUtils bankAccountUtils;
     @Autowired
-    IndividualUtils individualUtils;
+    private IndividualUtils individualUtils;
     @Autowired
-    OrganisationUtils organisationUtils;
+    private OrganisationUtils organisationUtils;
     @Autowired
-    PaymentInstructionEnrichment piEnrichment;
+    private PaymentInstructionEnrichment piEnrichment;
     @Autowired
-    IfmsService ifmsService;
+    private IfmsService ifmsService;
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     @Autowired
-    PIRepository piRepository;
+    private PIRepository piRepository;
     @Autowired
-    PIUtils piUtils;
+    private PIUtils piUtils;
+    @Autowired
+    private SanctionDetailsRepository sanctionDetailsRepository;
+
+    @Autowired
+    VirtualAllotmentEnrichment virtualAllotmentEnrichment;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
         PaymentInstruction paymentInstruction = null;
@@ -71,10 +77,27 @@ public class PaymentInstructionService {
                 throw new RuntimeException("No Payment Advice exists of payment number : "+ paymentRequest.getReferenceId() + " for tenantId : " + paymentRequest.getTenantId());
             }
         } else if (paymentRequest.getParentPI() != null) {
-            // TODO: ADD parent pi use case to generate revised PI
-//        } else if (paymentRequest.getPayment() != null) {
-//            PaymentInstruction paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
-//            return paymentInstruction;
+            Map<String, Object>  createRevisedPiMap = canCreateRevisedPi(paymentRequest);
+            boolean createRevisedPi = Boolean.parseBoolean(createRevisedPiMap.get("createRevisedPi").toString());
+            // Original PI
+            PaymentInstruction originalPi = (PaymentInstruction) createRevisedPiMap.get("originalPi");
+            // Revised PI
+            PaymentInstruction lastRevisedPi = (PaymentInstruction) createRevisedPiMap.get("lastRevisedPi");
+            if (createRevisedPi) {
+                List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(),
+                        Collections.singleton(originalPi.getMuktaReferenceId()),
+                        paymentRequest.getTenantId());
+                if (payments != null && !payments.isEmpty()) {
+                    paymentRequest.setPayment(payments.get(0));
+                    paymentInstruction = processPaymentRequestForRevisedPI(paymentRequest, originalPi, lastRevisedPi);
+                } else {
+                    throw new RuntimeException("Failed to fetch payment details for PI : "+ paymentRequest.getParentPI());
+                }
+            } else {
+                throw new RuntimeException("Revised PI can not be generated for PI : "+ paymentRequest.getParentPI());
+            }
+        } else if (paymentRequest.getPayment() != null) {
+            paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
         } else {
             throw new RuntimeException("Enter valid parameters : referenceId, tenantId, parentPI");
         }
@@ -164,6 +187,102 @@ public class PaymentInstructionService {
     }
 
 
+    public PaymentInstruction processPaymentRequestForRevisedPI(PaymentRequest paymentRequest, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) {
+        PaymentInstruction paymentInstruction = null;
+        PaymentStatus paymentStatus = null;
+        try {
+            // Get the beneficiaries
+            List<Beneficiary> beneficiaries = getBeneficiariesForRevisedPayment(paymentRequest, originalPi, lastRevisedPi);
+            BigDecimal totalAmount = new BigDecimal(0);
+            if (beneficiaries != null && !beneficiaries.isEmpty()) {
+                for (Beneficiary piBeneficiary: beneficiaries) {
+                    totalAmount = totalAmount.add(piBeneficiary.getAmount());
+                }
+            }
+
+            // Get enriched PI request to store on DB
+            paymentInstruction = piEnrichment.getRevisedEnrichedPaymentRequest(paymentRequest, originalPi, beneficiaries);
+            // GET failure pi JIT request data from PI
+            JITRequest jitPiRequest = piEnrichment.getCorRequest(paymentRequest, paymentInstruction, originalPi, lastRevisedPi);
+            try {
+//                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                JITResponse jitResponse = ifmsService.loadCustomResponse();
+                if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
+                    paymentStatus = PaymentStatus.INITIATED;
+                    Object piResponseNode = jitResponse.getData().get(0);
+                    JsonNode node = objectMapper.valueToTree(piResponseNode);
+                    String piSuccessCode = node.get("successCode").asText();
+                    String piSucessDescrp = node.get("sucessDescrp").asText();
+                    paymentInstruction.setPiSuccessCode(piSuccessCode);
+                    paymentInstruction.setPiSuccessDesc(piSucessDescrp);
+                } else {
+                    Object piResponseNode = jitResponse.getErrorMsgs().get(0);
+                    JsonNode node = objectMapper.valueToTree(piResponseNode);
+                    String piErrorCode = node.get("errorCode").asText();
+                    String piErrorDescrp = node.get("errorMsg").asText();
+                    paymentStatus = PaymentStatus.PARTIAL;
+                    paymentInstruction.setPiErrorResp(piErrorDescrp);
+                }
+            } catch (Exception e) {
+                paymentStatus = PaymentStatus.PARTIAL;
+                String errorMessage = e.toString();
+                errorMessage = e.getMessage();
+                Throwable cause = e.getCause();
+                if (cause instanceof HttpServerErrorException.InternalServerError) {
+                    errorMessage = ((HttpServerErrorException.InternalServerError) cause).getResponseBodyAsString();
+                } else {
+                    errorMessage = e.getMessage();
+                }
+                log.error("Exception while calling request." + e);
+                paymentInstruction.setPiErrorResp(errorMessage);
+            }
+            savePIData(paymentRequest, paymentInstruction, originalPi, lastRevisedPi, paymentStatus);
+
+        } catch (Exception e) {
+            log.info("Exception " + e);
+            throw new RuntimeException("Exception while generating revised PI" + e);
+        }
+
+        return paymentInstruction;
+    }
+
+    private void savePIData(PaymentRequest paymentRequest, PaymentInstruction pi, PaymentInstruction originalPI, PaymentInstruction lastPI, PaymentStatus paymentStatus) {
+        // IF pi is initiated then add transaction records
+        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
+                .ids(Collections.singletonList(originalPI.getTransactionDetails().get(0).getSanctionId()))
+                .build();
+        SanctionDetail sanctionDetail = sanctionDetailsRepository.getSanctionDetails(searchCriteria).get(0);
+
+        if (paymentStatus.equals(PaymentStatus.INITIATED)) {
+            piEnrichment.addTransactionDetailsInPiRequest(pi, paymentRequest, sanctionDetail);
+            // update fund summary amount
+            sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().subtract(pi.getNetAmount()));
+            sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedTime(pi.getAuditDetails().getLastModifiedTime());
+            sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(pi.getAuditDetails().getLastModifiedBy());
+            pi.setIsActive(true);
+        } else if (paymentStatus.equals(PaymentStatus.PARTIAL)) {
+            // Set beneficiary and pi status to failed if payment is failed
+            pi.setPiStatus(PIStatus.FAILED);
+            pi.setIsActive(false);
+            for(Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
+                beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+            }
+        }
+        // If PI posted then update the existing PI status
+        if (paymentStatus.equals(PaymentStatus.INITIATED)) {
+            PaymentInstruction lastPiForUpdate = lastPI == null ? originalPI : lastPI;
+            // Update last revised PI status to COMPLETED
+            lastPiForUpdate.setPiStatus(PIStatus.COMPLETED);
+            lastPiForUpdate.getAuditDetails().setLastModifiedTime(pi.getAuditDetails().getLastModifiedTime());
+            lastPiForUpdate.getAuditDetails().setLastModifiedBy(pi.getAuditDetails().getLastModifiedBy());
+            piRepository.update(Collections.singletonList(lastPiForUpdate), null);
+            piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), lastPiForUpdate);
+            updateLineItemsPaymentStatus(paymentRequest, PaymentStatus.FAILED, paymentStatus);
+        }
+        log.info(""+pi);
+        piRepository.save(Collections.singletonList(pi), sanctionDetail.getFundsSummary(), paymentStatus);
+        piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), pi);
+    }
 
     private List<Beneficiary> getBeneficiariesFromPayment(PaymentRequest paymentRequest) throws Exception {
 
@@ -175,18 +294,43 @@ public class PaymentInstructionService {
         List<Beneficiary> beneficiaryList = piEnrichment.getBeneficiariesFromBills(billList, paymentRequest);
 
         // Get all beneficiary ids from pi request
-        List<String> individualBeneficiaryIds = new ArrayList<>();
-        List<String> orgBeneficiaryIds = new ArrayList<>();
+        List<String> individualIds = new ArrayList<>();
+        List<String> orgIds = new ArrayList<>();
         for(Bill bill: billList) {
             for (BillDetail billDetail: bill.getBillDetails()) {
                 Party payee = billDetail.getPayee();
                 if (payee != null && payee.getType().equals("INDIVIDUAL")) {
-                    individualBeneficiaryIds.add(billDetail.getPayee().getIdentifier());
+                    individualIds.add(billDetail.getPayee().getIdentifier());
                 } else if (payee != null) {
-                    orgBeneficiaryIds.add(billDetail.getPayee().getIdentifier());
+                    orgIds.add(billDetail.getPayee().getIdentifier());
                 }
             }
         }
+        List<String> beneficiaryIds = new ArrayList<>();
+        for (Beneficiary beneficiary :beneficiaryList) {
+            beneficiaryIds.add(beneficiary.getBeneficiaryId());
+        }
+        return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, orgIds);
+    }
+
+    private List<Beneficiary> getBeneficiariesForRevisedPayment(PaymentRequest paymentRequest, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) throws Exception {
+        PaymentInstruction selectedPi = lastRevisedPi != null ? lastRevisedPi : originalPi;
+        List<Beneficiary> beneficiaryList = piEnrichment.getFailedBeneficiariesFromExistingPI(selectedPi);
+
+        // Get all beneficiary ids from pi request
+        List<String> individualIds = new ArrayList<>();
+        List<String> orgIds = new ArrayList<>();
+        for(Beneficiary beneficiary: beneficiaryList) {
+            if (beneficiary.getBeneficiaryType().equals(BeneficiaryType.IND)) {
+                individualIds.add(beneficiary.getBeneficiaryId());
+            } else if (beneficiary.getBeneficiaryType().equals(BeneficiaryType.ORG)) {
+                orgIds.add(beneficiary.getBeneficiaryId());
+            }
+        }
+        return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds);
+    }
+
+    private List<Beneficiary> getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds) throws Exception {
         List<String> beneficiaryIds = new ArrayList<>();
         for (Beneficiary beneficiary :beneficiaryList) {
             beneficiaryIds.add(beneficiary.getBeneficiaryId());
@@ -197,12 +341,12 @@ public class PaymentInstructionService {
         // Get bank account details by beneficiary ids
         List<BankAccount> bankAccounts = bankAccountUtils.getBankAccountsByIdentifier(paymentRequest.getRequestInfo(), beneficiaryIds, paymentRequest.getPayment().getTenantId());
         // Get organizations details
-        if (orgBeneficiaryIds != null && !orgBeneficiaryIds.isEmpty()) {
-            organizations = organisationUtils.getOrganisationsById(paymentRequest.getRequestInfo(), orgBeneficiaryIds, paymentRequest.getPayment().getTenantId());
+        if (orgIds != null && !orgIds.isEmpty()) {
+            organizations = organisationUtils.getOrganisationsById(paymentRequest.getRequestInfo(), orgIds, paymentRequest.getPayment().getTenantId());
         }
         // Get bank account details by beneficiary ids
-        if (individualBeneficiaryIds != null && !individualBeneficiaryIds.isEmpty()) {
-            individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualBeneficiaryIds, paymentRequest.getPayment().getTenantId());
+        if (individualIds != null && !individualIds.isEmpty()) {
+            individuals = individualUtils.getIndividualById(paymentRequest.getRequestInfo(), individualIds, paymentRequest.getPayment().getTenantId());
         }
         // Enrich PI request with beneficiary bankaccount details
         piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations);
@@ -252,6 +396,23 @@ public class PaymentInstructionService {
         billUtils.updatePaymentsData(paymentRequest);
     }
 
+    private void updateLineItemsPaymentStatus(PaymentRequest paymentRequest, PaymentStatus fromStatus, PaymentStatus paymentStatus) {
+        for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
+            for (PaymentBillDetail billDetail: bill.getBillDetails()) {
+                for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
+                    if (lineItem.getStatus().equals(fromStatus)) {
+                        lineItem.setStatus(paymentStatus);
+                    }
+                }
+            }
+        }
+        PaymentRequest request = PaymentRequest.builder()
+                .requestInfo(paymentRequest.getRequestInfo())
+                .payment(paymentRequest.getPayment())
+                .build();
+        billUtils.updatePaymentsData(request);
+    }
+
     public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
         searchValidator(piSearchRequest.getSearchCriteria());
         List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchRequest.getSearchCriteria());
@@ -290,6 +451,51 @@ public class PaymentInstructionService {
             }
         }
         return createPI;
+    }
+
+    private Map<String, Object> canCreateRevisedPi(PaymentRequest paymentRequest) {
+        boolean createRevisedPi = true;
+        PaymentInstruction originalPi = null;
+        PaymentInstruction lastRevisedPi = null;
+        Map<String, Object> revisedPIInitialData = new HashMap<>();
+        PISearchCriteria searchCriteria = PISearchCriteria.builder()
+                .jitBillNo(paymentRequest.getParentPI())
+                .tenantId(paymentRequest.getTenantId())
+                .build();
+        List<PaymentInstruction>  paymentInstructions = piRepository.searchPi(searchCriteria);
+
+        if (paymentInstructions != null && !paymentInstructions.isEmpty() && paymentInstructions.get(0).getParentPiNumber() == null) {
+            PIStatus piSt = paymentInstructions.get(0).getPiStatus();
+            if (!(piSt.equals(PIStatus.PARTIAL) || piSt.equals(PIStatus.COMPLETED))) {
+                createRevisedPi = false;
+            }
+            originalPi = paymentInstructions.get(0);
+            PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder()
+                    .parentPiNumber(paymentRequest.getParentPI())
+                    .tenantId(paymentRequest.getTenantId())
+                    .sortBy(PISearchCriteria.SortBy.createdTime)
+                    .sortOrder(PISearchCriteria.SortOrder.DESC)
+                    .build();
+            List<PaymentInstruction>  revisedPaymentInstructions = piRepository.searchPi(revisedPiSearchCriteria);
+            if (revisedPaymentInstructions != null && !revisedPaymentInstructions.isEmpty()) {
+                lastRevisedPi = revisedPaymentInstructions.get(0);
+                List<PIStatus> piStatus = revisedPaymentInstructions.stream()
+                        .map(PaymentInstruction::getPiStatus)
+                        .distinct()
+                        .collect(Collectors.toList());
+                if (piStatus.contains(PIStatus.INITIATED) || piStatus.contains(PIStatus.SUCCESSFUL)) {
+                    createRevisedPi = false;
+                }
+            }
+        } else {
+            createRevisedPi = false;
+        }
+        revisedPIInitialData.put("createRevisedPi", createRevisedPi);
+        // Original PI
+        revisedPIInitialData.put("originalPi", originalPi);
+        // Revised PI
+        revisedPIInitialData.put("lastRevisedPi", lastRevisedPi);
+        return revisedPIInitialData;
     }
 
 }

@@ -199,13 +199,13 @@ public class PIQueryBuilder {
             query.append(" jpi.isActive=? ");
             preparedStmtList.add(true);
         }
-//        if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.ORIGINAL)) {
-//            addClauseIfRequired(query, preparedStmtList);
-//            query.append(" jpi.parentPiNumber IS NULL OR jpi.parentPiNumber= '' ");
-//        } else if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.REVISED)) {
-//            addClauseIfRequired(query, preparedStmtList);
-//            query.append(" jpi.parentPiNumber IS NOT NULL AND jpi.parentPiNumber <> '' ");
-//        }
+        if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.ORIGINAL)) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" jpi.parentPiNumber IS NULL OR jpi.parentPiNumber= '' ");
+        } else if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.REVISED)) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" jpi.parentPiNumber IS NOT NULL AND jpi.parentPiNumber <> '' ");
+        }
 
 
 

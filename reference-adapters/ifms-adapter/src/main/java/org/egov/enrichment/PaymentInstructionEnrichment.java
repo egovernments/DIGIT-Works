@@ -408,7 +408,7 @@ public class PaymentInstructionEnrichment {
 
     public JITRequest getCorRequest(PaymentRequest paymentRequest, PaymentInstruction paymentInstruction, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) throws Exception {
         List<CORBeneficiaryDetails> corBenfDetails = new ArrayList<>();
-        List<String> beneficiaryIds =   paymentInstruction.getBeneficiaryDetails().stream()
+        List<String> beneficiaryIds = paymentInstruction.getBeneficiaryDetails().stream()
                 .map(Beneficiary::getBeneficiaryId)
                 .distinct()
                 .collect(Collectors.toList());
@@ -582,13 +582,14 @@ public class PaymentInstructionEnrichment {
                 .auditDetails(auditDetails)
                 .build();
         paDetails.add(paDetail);
+        paymentInstruction.setPaDetails(paDetails);
 
         // GET IDGEN id for beneficiary
-        List<String> benefIdList = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPiBenefInstructionNumberFormat(), null, beneficiaries.size());
+        // List<String> benefIdList = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPiBenefInstructionNumberFormat(), null, beneficiaries.size());
         int idx = 0;
         for (Beneficiary beneficiary: beneficiaries) {
             beneficiary.setId(UUID.randomUUID().toString());
-            beneficiary.setBeneficiaryNumber(benefIdList.get(idx));
+            beneficiary.setBeneficiaryNumber(beneficiary.getBeneficiaryNumber());
             beneficiary.setTenantId(tenantId);
             beneficiary.setMuktaReferenceId(muktaReferenceId);
             beneficiary.setPiId(paymentInstruction.getId());
