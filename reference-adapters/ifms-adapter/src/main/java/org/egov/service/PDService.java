@@ -85,7 +85,7 @@ public class PDService {
                 for (Beneficiary beneficiaryFromDB : paymentInstruction.getBeneficiaryDetails()) {
                     if (benfDtlsNode.isArray() && !benfDtlsNode.isEmpty()) {
                         for (JsonNode benf : benfDtlsNode) {
-                            if (beneficiaryFromDB.getId().equalsIgnoreCase(benf.get("benfId").asText())) {
+                            if (beneficiaryFromDB.getBeneficiaryNumber().equalsIgnoreCase(benf.get("benfId").asText())) {
                                 String dateFormat = "yyyy-MM-dd";
                                 SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
                                 long voucherNumberTimestamp = 1;
