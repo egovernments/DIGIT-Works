@@ -145,7 +145,7 @@ public class PaymentInstructionEnrichment {
                 .mstAllotmentDistId(selectedSanction.getMasterAllotmentId())
                 .ssuAllotmentId(selectedSanction.getAllotmentDetails().get(0).getSsuAllotmentId())
                 .allotmentTxnSlNo(String.valueOf(selectedSanction.getAllotmentDetails().get(0).getAllotmentSerialNo()))
-                .purpose("Mukta")
+                .purpose(JIT_FD_EXT_APP_NAME)
                 .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .beneficiaryDetails(beneficiaries)
@@ -608,6 +608,21 @@ public class PaymentInstructionEnrichment {
         // update piRequest for payment search indexer
         updateBillFieldsForIndexer(paymentInstruction, paymentRequest);
         return paymentInstruction;
+    }
+
+    public List<Beneficiary> groupBeneficiariesByAccountNumberIfsc(List<Beneficiary> beneficiaries) {
+        Map<String, Beneficiary> newBeneficiaryMap = new HashMap<>();
+        for (Beneficiary beneficiary: beneficiaries) {
+            String key = beneficiary.getBenfAcctNo() + "_" + beneficiary.getBenfBankIfscCode();
+            if (newBeneficiaryMap.containsKey(key)){
+                newBeneficiaryMap.get(key).getBenfLineItems().addAll(beneficiary.getBenfLineItems());
+                newBeneficiaryMap.get(key).setAmount(newBeneficiaryMap.get(key).getAmount().add(beneficiary.getAmount()));
+            } else {
+                newBeneficiaryMap.put(key, beneficiary);
+            }
+        }
+        List<Beneficiary> newBeneficiaryList = new ArrayList<>(newBeneficiaryMap.values());
+        return newBeneficiaryList;
     }
 
 

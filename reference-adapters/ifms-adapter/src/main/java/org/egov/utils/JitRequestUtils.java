@@ -19,13 +19,15 @@ public class JitRequestUtils {
     @Autowired
     IfmsAdapterConfig config;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     public Object getEncryptedRequestBody(String sekString, Object jitRequest) throws Exception {
         //Get SEK bytes
         byte[] sekBytes = Base64.getDecoder().decode(sekString);
         //Construct secret key using SEK bytes
         SecretKey sekSecretKey = new SecretKeySpec(sekBytes, "AES");
         // Convert the JSON object to a string
-        ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(jitRequest);
         System.out.println(requestBody);
         byte[] plainBytes = requestBody.getBytes();
@@ -53,7 +55,6 @@ public class JitRequestUtils {
         SecretKey secretKey = new SecretKeySpec(secret, "AES");
         byte[] plainBytes = SymmetricEncryptionService.decrypt(encryptedResponse, secretKey);
         String plaintext = new String(plainBytes);
-        ObjectMapper objectMapper = new ObjectMapper();
         JITResponse response = objectMapper.readValue(plaintext, JITResponse.class);
         return response;
     }

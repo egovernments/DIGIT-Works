@@ -110,6 +110,7 @@ public class PaymentInstructionService {
         try {
             // Get the beneficiaries
             List<Beneficiary> beneficiaries = getBeneficiariesFromPayment(paymentRequest);
+            beneficiaries = piEnrichment.groupBeneficiariesByAccountNumberIfsc(beneficiaries);
             BigDecimal totalAmount = new BigDecimal(0);
             if (beneficiaries != null && !beneficiaries.isEmpty()) {
                 for (Beneficiary piBeneficiary: beneficiaries) {
@@ -299,18 +300,14 @@ public class PaymentInstructionService {
         for(Bill bill: billList) {
             for (BillDetail billDetail: bill.getBillDetails()) {
                 Party payee = billDetail.getPayee();
-                if (payee != null && payee.getType().equals("INDIVIDUAL")) {
+                if (payee != null && payee.getType().equals(Constants.PAYEE_TYPE_INDIVIDUAL)) {
                     individualIds.add(billDetail.getPayee().getIdentifier());
                 } else if (payee != null) {
                     orgIds.add(billDetail.getPayee().getIdentifier());
                 }
             }
         }
-        List<String> beneficiaryIds = new ArrayList<>();
-        for (Beneficiary beneficiary :beneficiaryList) {
-            beneficiaryIds.add(beneficiary.getBeneficiaryId());
-        }
-        return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, orgIds);
+        return getBeneficiariesEnrichedData(paymentRequest, beneficiaryList, orgIds, individualIds);
     }
 
     private List<Beneficiary> getBeneficiariesForRevisedPayment(PaymentRequest paymentRequest, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) throws Exception {

@@ -194,10 +194,6 @@ public class PIQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" jpi.isActive=? ");
             preparedStmtList.add(criteria.getIsActive());
-        } else {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.isActive=? ");
-            preparedStmtList.add(true);
         }
         if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.ORIGINAL)) {
             addClauseIfRequired(query, preparedStmtList);

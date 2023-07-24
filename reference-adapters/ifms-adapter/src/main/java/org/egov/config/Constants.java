@@ -10,6 +10,8 @@ public class Constants {
 	public static final String MDMS_HEAD_OF_ACCOUNT_MASTER = "HeadOfAccounts";
 	public static final String MDMS_SCHEMA_DETAILS_MASTER = "SchemeDetails";
 	public static final String MDMS_SSU_DETAILS_MASTER = "SSUDetails";
+	public static final String PAYEE_TYPE_INDIVIDUAL = "INDIVIDUAL";
+
 	public static final String VA_REQUEST_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String JIT_BILL_DATE_FORMAT = "yyyy-MM-dd";
 	public static final String VA_TRANSACTION_TYPE_INITIAL_ALLOTMENT = "Initial Allotment";
