@@ -13,6 +13,7 @@ import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
+import org.egov.validators.PaymentInstructionValidator;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
@@ -54,11 +55,12 @@ public class PaymentInstructionService {
     private PIUtils piUtils;
     @Autowired
     private SanctionDetailsRepository sanctionDetailsRepository;
-
     @Autowired
+    private PaymentInstructionValidator paymentInstructionValidator;
     VirtualAllotmentEnrichment virtualAllotmentEnrichment;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
+        paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
         PaymentInstruction paymentInstruction = null;
         if (paymentRequest.getReferenceId() != null && !paymentRequest.getReferenceId().isEmpty() && paymentRequest.getTenantId() != null && !paymentRequest.getTenantId().isEmpty()) {
             // GET payment details
@@ -107,6 +109,7 @@ public class PaymentInstructionService {
     public PaymentInstruction processPaymentRequestForNewPI(PaymentRequest paymentRequest) {
         PaymentInstruction piRequest = null;
         PaymentStatus paymentStatus = null;
+        ReferenceStatus referenceStatus = null;
         try {
             // Get the beneficiaries
             List<Beneficiary> beneficiaries = getBeneficiariesFromPayment(paymentRequest);
@@ -132,6 +135,7 @@ public class PaymentInstructionService {
                     JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
                     if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                         paymentStatus = PaymentStatus.INITIATED;
+                        referenceStatus = ReferenceStatus.PAYMENT_INITIATED;
                         Object piResponseNode = jitResponse.getData().get(0);
                         JsonNode node = objectMapper.valueToTree(piResponseNode);
                         String piSuccessCode = node.get("successCode").asText();
@@ -140,10 +144,12 @@ public class PaymentInstructionService {
                         piRequest.setPiSuccessDesc(piSucessDescrp);
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
+                        referenceStatus = ReferenceStatus.PAYMENT_FAILED;
                         piRequest.setPiErrorResp(jitResponse.getErrorMsg());
                     }
                 } catch (Exception e) {
                     paymentStatus = PaymentStatus.FAILED;
+                    referenceStatus = ReferenceStatus.PAYMENT_SERVER_UNREACHABLE;
                     String errorMessage = e.toString();
                     errorMessage = e.getMessage();
                     Throwable cause = e.getCause();
@@ -176,13 +182,14 @@ public class PaymentInstructionService {
                 piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
             } else {
                 paymentStatus = PaymentStatus.FAILED;
+                referenceStatus = ReferenceStatus.PAYMENT_INSUFFICIENT_FUNDS;
             }
         } catch (Exception e) {
             log.info("Exception " + e);
             paymentStatus = PaymentStatus.FAILED;
         }
 
-        updatePaymentForStatus(paymentRequest, paymentStatus);
+        billUtils.updatePaymentForStatus(paymentRequest, paymentStatus, referenceStatus);
 
         return piRequest;
     }
@@ -351,7 +358,7 @@ public class PaymentInstructionService {
     }
 
 
-    private List<Bill> filterBillsPayableLineItemByPayments(Payment payment, List<Bill> billList) {
+    public List<Bill> filterBillsPayableLineItemByPayments(Payment payment, List<Bill> billList) {
         Map<String, Bill> billMap = billList.stream()
                 .collect(Collectors.toMap(Bill::getId, Function.identity()));
 
@@ -379,19 +386,6 @@ public class PaymentInstructionService {
         return billList;
     }
 
-    private void updatePaymentForStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus) {
-        paymentRequest.getPayment().setStatus(paymentStatus);
-        for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
-            bill.setStatus(paymentStatus);
-            for (PaymentBillDetail billDetail: bill.getBillDetails()) {
-                billDetail.setStatus(paymentStatus);
-                for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
-                    lineItem.setStatus(paymentStatus);
-                }
-            }
-        }
-        billUtils.updatePaymentsData(paymentRequest);
-    }
 
     private void updateLineItemsPaymentStatus(PaymentRequest paymentRequest, PaymentStatus fromStatus, PaymentStatus paymentStatus) {
         for (PaymentBill bill: paymentRequest.getPayment().getBills()) {

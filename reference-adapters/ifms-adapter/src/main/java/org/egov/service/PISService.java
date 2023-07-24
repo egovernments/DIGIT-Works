@@ -8,6 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
+import org.egov.tracer.model.CustomException;
 import org.egov.utils.BillUtils;
 import org.egov.utils.HelperUtil;
 import org.egov.utils.MdmsUtils;
@@ -61,8 +62,22 @@ public class PISService {
                     .ssuIaId(ssuId)
                     .build();
             JITRequest jitRequest = JITRequest.builder().serviceId(JITServiceId.PIS).params(pisRequest).build();
+            JITResponse pisResponse;
+            try {
+                pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
+            }catch (Exception e){
+                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
+                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
+                        paymentInstruction.getTenantId());
+                for (Payment payment : payments) {
+                    PaymentRequest paymentRequest = PaymentRequest.builder()
+                            .requestInfo(requestInfo).payment(payment).build();
 
-            JITResponse pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
+                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_SERVER_UNREACHABLE);
+                }
+                throw new CustomException("SERVER_UNREACHABLE","Server is currently unreachable");
+            }
+
             if (pisResponse.getErrorMsg() != null
                     && pisResponse.getErrorMsg().contains(paymentInstruction.getMuktaReferenceId())
                     && pisResponse.getErrorMsg().contains("rejected")) {
@@ -112,7 +127,7 @@ public class PISService {
             PaymentRequest paymentRequest = PaymentRequest.builder()
                     .requestInfo(requestInfo).payment(payment).build();
 
-            billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED);
+            billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_DECLINED);
         }
     }
     private void updateFundsSummary(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {

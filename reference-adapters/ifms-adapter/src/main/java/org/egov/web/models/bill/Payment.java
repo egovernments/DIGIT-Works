@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.web.models.enums.PaymentStatus;
+import org.egov.web.models.enums.ReferenceStatus;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -49,6 +50,9 @@ public class Payment {
 
 	@JsonProperty("status")
 	private PaymentStatus status;
+
+	@JsonProperty("referenceStatus")
+	private ReferenceStatus referenceStatus;
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
