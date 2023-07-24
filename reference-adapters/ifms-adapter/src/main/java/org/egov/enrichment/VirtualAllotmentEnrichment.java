@@ -264,19 +264,4 @@ public class VirtualAllotmentEnrichment {
         return executedVALog;
     }
 
-    /*
-        It's for testing the multiple combination of VA response
-        TODO: Remove after development
-     */
-    public JITResponse vaResponse() {
-        JITResponse vaResponse = null;
-        try {
-            File file = new File("D:/egovernments/digit-works-bkp2/reference-adapters/ifms-adapter/src/test/resources/1VAResponse.json");
-            vaResponse = objectMapper.readValue(file, JITResponse.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return vaResponse;
-    }
-
 }

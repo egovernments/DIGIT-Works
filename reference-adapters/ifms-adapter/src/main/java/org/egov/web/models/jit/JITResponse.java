@@ -1,6 +1,7 @@
 package org.egov.web.models.jit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.egov.web.models.enums.JITServiceId;
 
@@ -17,6 +18,9 @@ public class JITResponse {
 
     @JsonProperty("errorMsg")
     private String errorMsg;
+
+    @JsonProperty("errorMsgs")
+    private List<Object> errorMsgs;
 
     @JsonProperty("data")
     private List<Object> data;

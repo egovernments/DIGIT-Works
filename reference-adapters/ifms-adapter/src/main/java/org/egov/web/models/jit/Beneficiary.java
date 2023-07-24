@@ -48,6 +48,10 @@ public class Beneficiary {
     @Exclude
     private BeneficiaryType beneficiaryType;
 
+    @JsonProperty("beneficiaryNumber")
+    @Exclude
+    private String beneficiaryNumber;
+
     @JsonProperty("bankAccountId")
     @Exclude
     private String bankAccountId;

@@ -2,11 +2,7 @@ package org.egov.web.controller;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.service.PDService;
-import org.egov.service.FailureDetailsService;
-import org.egov.service.PAGService;
-import org.egov.service.PISService;
-import org.egov.service.VirtualAllotmentService;
+import org.egov.service.*;
 import org.egov.utils.ResponseInfoFactory;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.jit.SchedulerRequest;
@@ -55,6 +51,12 @@ public class Scheduler {
                 break;
             case FD:
                 failureDetailsService.updateFailureDetails(schedulerRequest.getRequestInfo());
+                break;
+            case FTPS:
+                failureDetailsService.updateFTPSStatus(schedulerRequest.getRequestInfo());
+                break;
+            case FTFPS:
+                failureDetailsService.updateFTFPSStatus(schedulerRequest.getRequestInfo());
                 break;
 
         }

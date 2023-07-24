@@ -59,7 +59,7 @@ public class PIRepository {
         if (!transactionSqlParameterSources.isEmpty()) {
             namedJdbcTemplate.batchUpdate(PIQueryBuilder.TRANSACTION_DETAILS_INSERT_QUERY, transactionSqlParameterSources.toArray(new MapSqlParameterSource[0]));
         }
-        if (paymentStatus.equals(PIStatus.INITIATED)) {
+        if (paymentStatus.equals(PaymentStatus.INITIATED)) {
             sanctionDetailsRepository.updateFundsSummary(Collections.singletonList(fundsSummary));
         }
     }
@@ -166,6 +166,7 @@ public class PIRepository {
                 beneficiaryParamMap.addValue("piId", beneficiary.getPiId());
                 beneficiaryParamMap.addValue("beneficiaryId", beneficiary.getBeneficiaryId());
                 beneficiaryParamMap.addValue("beneficiaryType", beneficiary.getBeneficiaryType().toString());
+                beneficiaryParamMap.addValue("beneficiaryNumber", beneficiary.getBeneficiaryNumber());
                 beneficiaryParamMap.addValue("bankAccountId", beneficiary.getBankAccountId());
                 beneficiaryParamMap.addValue("amount", beneficiary.getAmount());
                 beneficiaryParamMap.addValue("voucherNumber", beneficiary.getVoucherNumber());

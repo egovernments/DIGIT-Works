@@ -7,7 +7,6 @@ import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Constants;
-import org.egov.enrichment.VirtualAllotmentEnrichment;
 import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.utils.BillUtils;
@@ -21,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,26 +40,22 @@ public class FailureDetailsService {
     @Autowired
     private BillUtils billUtils;
     @Autowired
-    private VirtualAllotmentEnrichment virtualAllotmentEnrichment;
+    private SanctionDetailsRepository sanctionDetailsRepository;
     @Autowired
-    SanctionDetailsRepository sanctionDetailsRepository;
+    private PIRepository piRepository;
     @Autowired
-    PIRepository piRepository;
-    @Autowired
-    PIUtils piUtils;
+    private PIUtils piUtils;
 
     public void updateFailureDetails(RequestInfo requestInfo) {
         try {
             JITRequest jitFDRequest = getFailedPayload();
             JITResponse fdResponse = ifmsService.sendRequestToIFMS(jitFDRequest);
-//            JITResponse fdResponse = virtualAllotmentEnrichment.vaResponse();
             if (fdResponse != null && fdResponse.getErrorMsg() == null) {
-                System.out.println(fdResponse);
                 for (Object failedPI: fdResponse.getData()) {
                     JsonNode node = objectMapper.valueToTree(failedPI);
                     JsonNode benef = node.get("benfDtls");
                     if (benef != null && benef.isArray() && !benef.isEmpty()) {
-                        processPiForFailedTransaction(node, requestInfo);
+                        processPiForFailedTransaction(node, requestInfo, null);
                     }
                 }
             }
@@ -68,17 +65,24 @@ public class FailureDetailsService {
 
     }
 
-    private void processPiForFailedTransaction(JsonNode failedPi, RequestInfo requestInfo) {
-        System.out.println(failedPi);
-        String piNumber = failedPi.findValue("billNumber").asText();
-        PaymentInstruction pi = getCompletedPaymentInstructionByBill(piNumber);
+    private void processPiForFailedTransaction(JsonNode failedPiResponse, RequestInfo requestInfo, PaymentInstruction pi) {
+        String piNumber = null;
+        if (failedPiResponse.findValue("billNumber") != null) {
+            piNumber = failedPiResponse.findValue("billNumber").asText();
+        } else if (failedPiResponse.findValue("jitCorBillNo") != null) {
+            piNumber = failedPiResponse.findValue("jitCorBillNo").asText();
+        }
+
+        if (pi == null) {
+            pi = getCompletedPaymentInstructionByBill(piNumber);
+        }
+
         if (pi != null) {
-            Map<String, JsonNode> failedBeneficiariesMapById =  getFailedBeneficiaryMap(failedPi);
+            Map<String, JsonNode> failedBeneficiariesMapById =  getFailedBeneficiaryMap(failedPiResponse);
 
             List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo, Collections.singleton(pi.getMuktaReferenceId()), pi.getTenantId());
             if (payments != null && !payments.isEmpty()) {
                 Payment payment = payments.get(0);
-                System.out.println(payment);
                 updatePiAndPaymentForFailedBenef(pi, payment, failedBeneficiariesMapById);
                 addReversalTransactionAndUpdatePIPa(pi, payment, requestInfo);
             } else {
@@ -138,9 +142,9 @@ public class FailureDetailsService {
                 .collect(Collectors.toMap(PaymentLineItem::getLineItemId, Function.identity()));
 
         for (Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
-            String benfId = beneficiary.getId();
-            if (failedBeneficiariesMapById.get(benfId) != null && !failedBeneficiariesMapById.get(benfId).isEmpty()) {
-                JsonNode benfDtl = failedBeneficiariesMapById.get(benfId);
+            String benfNumber = beneficiary.getBeneficiaryNumber();
+            if (failedBeneficiariesMapById.get(benfNumber) != null && !failedBeneficiariesMapById.get(benfNumber).isEmpty()) {
+                JsonNode benfDtl = failedBeneficiariesMapById.get(benfNumber);
                 beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
                 beneficiary.setPaymentStatusMessage(benfDtl.get("failedReason").asText());
                 beneficiary.setChallanNumber(benfDtl.get("challanNumber").asText());
@@ -173,7 +177,7 @@ public class FailureDetailsService {
                     .build();
             List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
             SanctionDetail sanctionDetail = sanctionDetails.get(0);
-            sanctionDetail.getFundsSummary().getAvailableAmount().add(amount);
+            sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().add(amount));
             sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedTime(currentTime);
             sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(userId);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(currentTime).lastModifiedBy(userId).lastModifiedTime(currentTime).build();
@@ -229,6 +233,144 @@ public class FailureDetailsService {
             }
         }catch (Exception e) {
             log.error("Exception while updating the payment status FailureDetailsService:updatePaymentStatusForPartial : " + e);
+        }
+    }
+
+
+    public void updateFTPSStatus(RequestInfo requestInfo) {
+
+        PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder().piType(PIType.REVISED).piStatus(PIStatus.INITIATED).build();
+        List<PaymentInstruction> revisedPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(revisedPiSearchCriteria).build());
+
+        for (PaymentInstruction pi : revisedPI) {
+
+            PISearchCriteria originalPiSearchCriteria = PISearchCriteria.builder().jitBillNo(pi.getJitBillNo()).build();
+            PaymentInstruction originalPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(originalPiSearchCriteria).build()).get(0);
+
+
+            FTPSRequest ftpsRequest = FTPSRequest.builder()
+                    .jitCorBillNo(pi.getJitBillNo())
+                    .jitCorBillDate(helperUtil.getFormattedTimeFromTimestamp(pi.getAuditDetails().getCreatedTime(), Constants.VA_REQUEST_TIME_FORMAT))
+                    .jitCorBillDeptCode(Constants.JIT_FD_EXT_APP_NAME)
+                    .jitOrgBillNo(originalPI.getJitBillNo())
+                    .jitOrgBillRefNo(originalPI.getPaDetails().get(0).getPaBillRefNumber())
+                    .jitOrgBillDate(helperUtil.getFormattedTimeFromTimestamp(originalPI.getAuditDetails().getCreatedTime(), Constants.VA_REQUEST_TIME_FORMAT))
+                    .build();
+
+            JITResponse jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
+                    .serviceId(JITServiceId.FTPS).params(ftpsRequest).build());
+
+
+            if (jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
+                continue;
+            }
+            for (Object data : jitResponse.getData()) {
+                processFTPSResponse(data, pi, requestInfo);
+            }
+        }
+    }
+
+    private void processFTPSResponse(Object ftpsResponse, PaymentInstruction paymentInstruction, RequestInfo requestInfo) {
+        try {
+            Map<String, Object> dataObjMap = objectMapper.convertValue(ftpsResponse, Map.class);
+            if (dataObjMap.get("jitCorBillNo") != null) {
+
+                String voucherNo = dataObjMap.get("voucherNo").toString();
+                String voucherDate = dataObjMap.get("voucherDate").toString();
+                String paymentStatusMessage = dataObjMap.get("paymentStatus").toString();
+                String billRefNo = dataObjMap.get("billRefNo").toString();
+                String tokenNumber = dataObjMap.get("tokenNumber").toString();
+                String tokenDate = dataObjMap.get("tokenDate").toString();
+                JsonNode benfDtlsNode = objectMapper.valueToTree(dataObjMap.get("benfDtls"));
+
+                // Set pa  details
+                paymentInstruction.getPaDetails().get(0).setPaBillRefNumber(billRefNo);
+                paymentInstruction.getPaDetails().get(0).setPaTokenNumber(tokenNumber);
+                paymentInstruction.getPaDetails().get(0).setPaTokenDate(tokenDate);
+                paymentInstruction.getPaDetails().get(0).getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                paymentInstruction.getPaDetails().get(0).getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+
+                // Set beneficiaries  details
+                for (Beneficiary beneficiaryFromDB : paymentInstruction.getBeneficiaryDetails()) {
+                    if (benfDtlsNode.isArray() && !benfDtlsNode.isEmpty()) {
+                        for (JsonNode benf : benfDtlsNode) {
+                            if (beneficiaryFromDB.getBeneficiaryNumber().equalsIgnoreCase(benf.get("benfId").asText())) {
+                                String dateFormat = "yyyy-MM-dd";
+                                SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+                                long voucherNumberTimestamp = 1;
+                                try {
+                                    Date date = sdf.parse(voucherDate);
+                                    voucherNumberTimestamp = date.getTime();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                beneficiaryFromDB.setVoucherNumber(voucherNo);
+                                beneficiaryFromDB.setVoucherDate(voucherNumberTimestamp);
+                                beneficiaryFromDB.setPaymentStatus(BeneficiaryPaymentStatus.SUCCESS);
+                                beneficiaryFromDB.setPaymentStatusMessage(paymentStatusMessage);
+                                beneficiaryFromDB.setBenfAcctNo(benf.get("benfAcctNo").asText());
+                                beneficiaryFromDB.setBenfBankIfscCode(benf.get("benfBankIfscCode").asText());
+                                beneficiaryFromDB.setUtrNo(benf.get("utrNo").asText());
+                                beneficiaryFromDB.setUtrDate(benf.get("utrDate").asText());
+                                beneficiaryFromDB.setEndToEndId(benf.get("endToEndId").asText());
+                                beneficiaryFromDB.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                                beneficiaryFromDB.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                            }
+                        }
+                    }
+                }
+                paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                paymentInstruction.setPiStatus(PIStatus.SUCCESSFUL);
+                piRepository.update(Collections.singletonList(paymentInstruction),null);
+                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
+                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
+                        paymentInstruction.getTenantId());
+
+                for (Payment payment : payments) {
+                    PaymentRequest paymentRequest = PaymentRequest.builder()
+                            .requestInfo(requestInfo).payment(payment).build();
+
+                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL,ReferenceStatus.PAYMENT_SUCCESS);
+                }
+            }
+        } catch (Exception e) {
+            log.info("Exception in FailedPaymentUpdateService:processFTPSResponse " + e);
+        }
+
+    }
+
+    public void updateFTFPSStatus(RequestInfo requestInfo) {
+
+        PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder().piType(PIType.REVISED).piStatus(PIStatus.SUCCESSFUL).build();
+        List<PaymentInstruction> revisedPIs =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(revisedPiSearchCriteria).build());
+
+        for (PaymentInstruction pi : revisedPIs) {
+
+            FTFPSRequest ftfpsRequest = FTFPSRequest.builder()
+                    .jitCorBillNo(pi.getJitBillNo())
+                    .jitCorBillDate(helperUtil.getFormattedTimeFromTimestamp(pi.getAuditDetails().getCreatedTime(), Constants.VA_REQUEST_TIME_FORMAT))
+                    .billRefNo(pi.getPaDetails().get(0).getPaBillRefNumber())
+                    .tokenNumber(pi.getPaDetails().get(0).getPaTokenNumber())
+                    .tokenDate(pi.getPaDetails().get(0).getPaTokenDate())
+                    .build();
+
+            JITResponse jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
+                    .serviceId(JITServiceId.FTFPS).params(ftfpsRequest).build());
+//            JITResponse jitResponse = ifmsService.loadCustomResponse();
+
+            if (jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
+                continue;
+            }
+
+            for (Object failedPI: jitResponse.getData()) {
+                JsonNode node = objectMapper.valueToTree(failedPI);
+                JsonNode benef = node.get("benfDtls");
+                if (benef != null && benef.isArray() && !benef.isEmpty()) {
+                    processPiForFailedTransaction(node, requestInfo, pi);
+                }
+            }
         }
     }
 

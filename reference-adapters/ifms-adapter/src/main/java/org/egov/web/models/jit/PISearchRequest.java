@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 public class PISearchRequest {
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
     @NotNull
     @Valid
     private RequestInfo requestInfo = null;
@@ -30,7 +30,7 @@ public class PISearchRequest {
     @NotNull
     private PISearchCriteria searchCriteria = null;
 
-    @JsonProperty("pagination")
-    @Valid
-    private Pagination pagination = null;
+//    @JsonProperty("pagination")
+//    @Valid
+//    private Pagination pagination = null;
 }
