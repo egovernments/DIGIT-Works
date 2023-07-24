@@ -202,6 +202,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
             String jbdPiId = rs.getString("jbdPiId");
             String jbdBeneficiaryId = rs.getString("jbdBeneficiaryId");
             BeneficiaryType jbdBeneficiaryType = BeneficiaryType.fromValue(rs.getString("jbdBeneficiaryType"));
+            String jbdBeneficiaryNumber = rs.getString("jbdBeneficiaryNumber");
             String jbdBankAccountId = rs.getString("jbdBankAccountId");
             BigDecimal jbdAmount = rs.getBigDecimal("jbdAmount");
             String jbdVoucherNumber = rs.getString("jbdVoucherNumber");
@@ -228,6 +229,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
                         .piId(jbdPiId)
                         .beneficiaryId(jbdBeneficiaryId)
                         .beneficiaryType(jbdBeneficiaryType)
+                        .beneficiaryNumber(jbdBeneficiaryNumber)
                         .bankAccountId(jbdBankAccountId)
                         .amount(jbdAmount)
                         .voucherNumber(jbdVoucherNumber)

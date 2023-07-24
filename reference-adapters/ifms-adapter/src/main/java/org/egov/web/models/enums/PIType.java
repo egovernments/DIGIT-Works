@@ -5,19 +5,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.validation.constraints.NotNull;
 
-public enum PIStatus {
+public enum PIType {
 
-    FAILED("FAILED"),
-    INITIATED("INITIATED"),
-    PARTIAL("PARTIAL"),
-    APPROVED("APPROVED"),
-    IN_PROCESS("IN PROCESS"),
-    COMPLETED("COMPLETED"),
-    SUCCESSFUL("SUCCESSFUL");
+    ORIGINAL("ORIGINAL"),
+    REVISED("REVISED");
 
     private String value;
 
-    PIStatus(String value) {
+    PIType(String value) {
         this.value = value;
     }
 
@@ -29,8 +24,8 @@ public enum PIStatus {
 
     @JsonCreator
     @NotNull
-    public static PIStatus fromValue(String text) {
-        for (PIStatus b : PIStatus.values()) {
+    public static PIType fromValue(String text) {
+        for (PIType b : PIType.values()) {
             if (String.valueOf(b.value).equalsIgnoreCase(text)) {
                 return b;
             }
