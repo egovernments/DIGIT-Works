@@ -130,20 +130,6 @@ public class NotificationService {
                 producer.push(config.getSmsNotifTopic(), smsRequestForNewMobileNumber);
             }
         }
-//        List<Organisation> organisations = request.getOrganisations();
-//        String modifiedByUuid=request.getOrganisations().get(0).getAuditDetails().getLastModifiedBy();
-//
-//
-//            //get orgName, ID, contactPerson, mobileNumber, cbo-url
-//            log.info("get orgName, ID, contactPerson, mobileNumber, cbo-url");
-//            Map<String, String> smsDetails = getSMSDetailsForUpdate(request);
-//
-//            log.info("build Message For update Action for " + smsDetails.get("orgName"));
-//            String customizedMessage = buildMessageForUpdateAction(smsDetails, message);
-//            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
-//
-//            log.info("push message for update Action");
-//            producer.push(config.getSmsNotifTopic(), smsRequest);
     }
 
     private Map<String, List<String>> getDetailsForSMS(Organisation organisation) {
