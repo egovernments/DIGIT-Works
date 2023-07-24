@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST;
+HOST = process.env.EGOV_HOST || "localhost";
 
 
 if (!HOST) {
@@ -35,12 +35,12 @@ module.exports = {
     work_order_template_hindi:
       process.env.WORK_ORDER_TEMPLATE_HINDI || "work-order-hindi",
     work_order_template_odiya_ia:
-      process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya_ia",
+      process.env.WORK_ORDER_TEMPLATE_ODIYA_IA || "work-order-odiya_ia",
     work_order_template_odiya_ip:
-      process.env.WORK_ORDER_TEMPLATE_ODIYA || "work-order-odiya_ip",  
+      process.env.WORK_ORDER_TEMPLATE_ODIYA_IP || "work-order-odiya_ip",  
   },
   app: {
-    port: parseInt(process.env.APP_PORT || 8077) ,
+    port: parseInt(process.env.APP_PORT || 8098) ,
     host: HOST,
     contextPath: process.env.CONTEXT_PATH || "/egov-pdf",
   },
@@ -53,9 +53,9 @@ module.exports = {
     estimates: process.env.EGOV_ESTIMATE_HOST || 'http://localhost:8084/',
     musterRoll: process.env.EGOV_MUSTER_ROLL_HOST || 'http://localhost:8085',
     contract: process.env.EGOV_CONTRACT_HOST || 'http://localhost:8086',
-    organisation: process.env.EGOV_ORGANISATION_HOST || 'http://localhost:8087',
+    organisation: process.env.EGOV_ORGANISATION_HOST || 'http://localhost:8090',
     localization: process.env.EGOV_LOCALIZATION_HOST || 'http://localhost:8098',
-    expense: process.env.EXPENSE_SERVICE_HOST || 'http://localhost:8090',
+    expense: process.env.EXPENSE_SERVICE_HOST || 'http://localhost:8087',
     bankaccount: process.env.BANKACCOUNT_SERVICE_HOST || 'http://localhost:8091',
     filestore: process.env.EGOV_FILESTORE_SERVICE_HOST || 'http://localhost:8092',
     expense_calculator: process.env.EXPENSE_CALCULATOR_SERVICE_HOST || 'http://localhost:8093',
