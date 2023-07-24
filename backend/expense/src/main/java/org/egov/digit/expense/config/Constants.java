@@ -64,7 +64,8 @@ public class Constants {
 			
 			
 			+ " payment.id as p_id, payment.tenantid as p_tenantid, netpayableamount, netpaidamount,"
-			+ " payment.status as p_status, payment.createdby as p_createdby, payment.createdtime as p_createdtime,"
+			+ " payment.status as p_status, payment.referencestatus as p_referencestatus,"
+			+ " payment.createdby as p_createdby, payment.createdtime as p_createdtime,"
 			+ " payment.lastmodifiedby as p_lastmodifiedby, payment.lastmodifiedtime as p_lastmodifiedtime,"
 			+ " payment.additionaldetails as p_additionaldetails, paymentnumber, "
 			
