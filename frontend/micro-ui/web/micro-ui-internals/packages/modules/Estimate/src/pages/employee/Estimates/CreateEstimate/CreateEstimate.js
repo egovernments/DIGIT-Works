@@ -215,7 +215,7 @@ const CreateEstimate = () => {
 
 
     const onFormSubmit = async (_data) => {
-        
+        _data = Digit.Utils.trimStringsInObject(_data)
         //added this totalEst amount logic here because setValues in pageComponents don't work
         //after setting the value, in consequent renders value changes to undefined
         //check TotalEstAmount.js
@@ -255,7 +255,7 @@ const CreateEstimate = () => {
         setShowModal(true);
     };
     const onModalSubmit = async (_data) => {
-        
+        _data = Digit.Utils.trimStringsInObject(_data)
         const completeFormData = {
             ..._data,
             ...inputFormData,
