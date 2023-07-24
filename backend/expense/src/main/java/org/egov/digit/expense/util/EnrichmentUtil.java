@@ -203,7 +203,7 @@ public class EnrichmentUtil {
          * TODO needs to be removed when jit integration is implemented
          */
         PaymentStatus defaultStatus = PaymentStatus.fromValue(config.getDefaultPaymentStatus());
-        ReferenceStatus defaultReferenceStatus = ReferenceStatus.fromValue(config.defaultReferenceStatus);
+        ReferenceStatus defaultReferenceStatus = ReferenceStatus.fromValue(config.getDefaultReferenceStatus());
         payment.setStatus(defaultStatus);
         payment.setReferenceStatus(defaultReferenceStatus);
         

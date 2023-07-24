@@ -109,6 +109,7 @@ public class PaymentInstructionService {
     public PaymentInstruction processPaymentRequestForNewPI(PaymentRequest paymentRequest) {
         PaymentInstruction piRequest = null;
         PaymentStatus paymentStatus = null;
+        ReferenceStatus referenceStatus = null;
         try {
             // Get the beneficiaries
             List<Beneficiary> beneficiaries = getBeneficiariesFromPayment(paymentRequest);
@@ -133,6 +134,7 @@ public class PaymentInstructionService {
                     JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
                     if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                         paymentStatus = PaymentStatus.INITIATED;
+                        referenceStatus = ReferenceStatus.PAYMENT_INITIATED;
                         Object piResponseNode = jitResponse.getData().get(0);
                         JsonNode node = objectMapper.valueToTree(piResponseNode);
                         String piSuccessCode = node.get("successCode").asText();
@@ -141,10 +143,12 @@ public class PaymentInstructionService {
                         piRequest.setPiSuccessDesc(piSucessDescrp);
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
+                        referenceStatus = ReferenceStatus.PAYMENT_FAILED;
                         piRequest.setPiErrorResp(jitResponse.getErrorMsg());
                     }
                 } catch (Exception e) {
                     paymentStatus = PaymentStatus.FAILED;
+                    referenceStatus = ReferenceStatus.PAYMENT_SERVER_UNREACHABLE;
                     String errorMessage = e.toString();
                     errorMessage = e.getMessage();
                     Throwable cause = e.getCause();
@@ -177,13 +181,14 @@ public class PaymentInstructionService {
                 piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
             } else {
                 paymentStatus = PaymentStatus.FAILED;
+                referenceStatus = ReferenceStatus.PAYMENT_INSUFFICIENT_FUNDS;
             }
         } catch (Exception e) {
             log.info("Exception " + e);
             paymentStatus = PaymentStatus.FAILED;
         }
 
-        updatePaymentForStatus(paymentRequest, paymentStatus);
+        billUtils.updatePaymentForStatus(paymentRequest, paymentStatus, referenceStatus);
 
         return piRequest;
     }
@@ -384,19 +389,6 @@ public class PaymentInstructionService {
         return billList;
     }
 
-    private void updatePaymentForStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus) {
-        paymentRequest.getPayment().setStatus(paymentStatus);
-        for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
-            bill.setStatus(paymentStatus);
-            for (PaymentBillDetail billDetail: bill.getBillDetails()) {
-                billDetail.setStatus(paymentStatus);
-                for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
-                    lineItem.setStatus(paymentStatus);
-                }
-            }
-        }
-        billUtils.updatePaymentsData(paymentRequest);
-    }
 
     private void updateLineItemsPaymentStatus(PaymentRequest paymentRequest, PaymentStatus fromStatus, PaymentStatus paymentStatus) {
         for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
