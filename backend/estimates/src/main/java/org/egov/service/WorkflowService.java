@@ -176,7 +176,6 @@ public class WorkflowService {
             Boolean statusFound = false;
             List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
             String nextState = getNextStateValueForProcessInstance(processInstanceList.get(0));
-            String prevUser = getPrevUserFromProcessInstance(processInstanceList, nextState);
             for(ProcessInstance processInstance: processInstanceList){
                 if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState)) && (statusFound != true)) {
                     statusFound = true;
@@ -187,9 +186,7 @@ public class WorkflowService {
                         workflow.setAssignees(uuids);
                     } else{
                         List<String> uuids = new ArrayList<>();
-//                        uuids.add(request.getRequestInfo().getUserInfo().getUuid());
-                        uuids.add(prevUser);
-            //            uuids.add(processInstance.get);
+                        uuids.add(estimate.getAuditDetails().getLastModifiedBy());
                         workflow.setAssignees(uuids);
                     }
                 }
@@ -237,16 +234,6 @@ public class WorkflowService {
                 }
             }
             return nextState;
-    }
-
-    private String getPrevUserFromProcessInstance(List<ProcessInstance> processInstanceList, String nextState){
-        String prevUser = null;
-        for(ProcessInstance processInstance: processInstanceList){
-            if (processInstance.getState().getUuid().equals(nextState)) {
-                prevUser = processInstance.getId();
-            }
-        }
-        return prevUser;
     }
     /*
      * @param processInstances
