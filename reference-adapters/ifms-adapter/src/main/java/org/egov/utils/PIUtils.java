@@ -27,8 +27,8 @@ public class PIUtils {
     public void updatePiForIndexer(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         try {
             PaymentInstruction pi = (PaymentInstruction) paymentInstruction;
-            if (paymentInstruction.getIsActive().equals(false))
-                return;
+//            if (paymentInstruction.getIsActive().equals(false))
+//                return;
             pi.setPaDetails(null);
             for (Beneficiary beneficiary : pi.getBeneficiaryDetails()) {
                 beneficiary.setBenefName(null);

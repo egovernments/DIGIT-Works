@@ -9,10 +9,13 @@ import org.egov.config.IfmsAdapterConfig;
 import org.egov.enrichment.VirtualAllotmentEnrichment;
 import org.egov.repository.ExecutedVALogsRepository;
 import org.egov.repository.SanctionDetailsRepository;
+import org.egov.tracer.model.CustomException;
 import org.egov.utils.MdmsUtils;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +28,9 @@ import static org.egov.config.Constants.*;
 @Slf4j
 public class VirtualAllotmentService {
 
+
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private MdmsUtils mdmsUtils;
 
@@ -57,7 +63,6 @@ public class VirtualAllotmentService {
         // Get MDMS data
         JSONArray hoaList = ifmsService.getHeadOfAccounts(requestInfo);
         // Create ObjectMapper instance
-        ObjectMapper objectMapper = new ObjectMapper();
 
         // Get SSU details for each tenants
         for (String tenantId: tenants) {
@@ -107,7 +112,6 @@ public class VirtualAllotmentService {
                 List<Allotment> allotmentList = new ArrayList<>();
                 if (vaResponseList != null && !vaResponseList.isEmpty()) {
                     for(Object va: vaResponseList) {
-                        ObjectMapper objectMapper = new ObjectMapper();
                         Allotment allotment = objectMapper.convertValue(va, Allotment.class);
                         allotmentList.add(allotment);
                     }
@@ -160,7 +164,6 @@ public class VirtualAllotmentService {
         System.out.println(tenantValues);
         for (Object tenant: tenantValues) {
             // Create ObjectMapper instance
-            ObjectMapper objectMapper = new ObjectMapper();
             // Convert object to JsonNode
             JsonNode tenantNode = objectMapper.valueToTree(tenant);
             String tenantId = tenantNode.get("code").textValue();
@@ -181,6 +184,22 @@ public class VirtualAllotmentService {
             executedVALog = executedVALogs.get(0);
         }
         return executedVALog;
+    }
+
+    public List<SanctionDetail> searchSanctions(FundsSearchRequest fundsSearchRequest){
+        searchValidator(fundsSearchRequest.getSearchCriteria());
+        List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(fundsSearchRequest.getSearchCriteria());
+
+        log.info("Sending search response");
+        return sanctionDetails;
+    }
+
+    private void searchValidator(SanctionDetailsSearchCriteria searchCriteria){
+
+        if(CollectionUtils.isEmpty(searchCriteria.getIds()) && StringUtils.isEmpty(searchCriteria.getHoaCode())
+                && StringUtils.isEmpty(searchCriteria.getDdoCode()) && StringUtils.isEmpty(searchCriteria.getMasterAllotmentId())
+                && StringUtils.isEmpty(searchCriteria.getTenantId()))
+            throw new CustomException("SEARCH_CRITERIA_MANDATORY", "Atleast one search parameter should be provided");
     }
 
 }
