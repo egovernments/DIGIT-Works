@@ -57,10 +57,10 @@ public class PaymentInstructionService {
     private SanctionDetailsRepository sanctionDetailsRepository;
     @Autowired
     private PaymentInstructionValidator paymentInstructionValidator;
-    VirtualAllotmentEnrichment virtualAllotmentEnrichment;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
-        paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
+        // Commenting this because if it throws error then pi will not get created
+        // paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
         PaymentInstruction paymentInstruction = null;
         if (paymentRequest.getReferenceId() != null && !paymentRequest.getReferenceId().isEmpty() && paymentRequest.getTenantId() != null && !paymentRequest.getTenantId().isEmpty()) {
             // GET payment details

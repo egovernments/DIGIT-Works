@@ -30,9 +30,9 @@ import static org.egov.config.Constants.*;
 public class VirtualAllotmentEnrichment {
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     @Autowired
-    HelperUtil util;
+    private HelperUtil util;
 
     public JITRequest constructVARequest(JsonNode hoaNode, JsonNode ssuNode, Long lastExecuted) {
         String hoaCode = hoaNode.get("code").asText();
