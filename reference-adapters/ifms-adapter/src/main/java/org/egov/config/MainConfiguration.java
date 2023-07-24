@@ -38,18 +38,12 @@ public class MainConfiguration {
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
     }
-
+    @Primary
     @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
-    }
-
-    @Bean
-    @Autowired
-    public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setObjectMapper(objectMapper);
-        return converter;
+    public ObjectMapper ifmsObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return objectMapper;
     }
 
     @Bean
@@ -60,5 +54,16 @@ public class MainConfiguration {
         RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
         restTemplate.setInterceptors(Collections.singletonList(new RestTemplateLoggingInterceptor(tracerProperties)));
         return restTemplate;
+    }
+
+    @Primary
+    @Bean
+    public MappingJackson2HttpMessageConverter jacksonConverter(ObjectMapper objectMapper) {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        //ObjectMapper mapper = new ObjectMapper();
+        //mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        //mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        converter.setObjectMapper(objectMapper);
+        return converter;
     }
 }
