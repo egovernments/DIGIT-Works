@@ -227,6 +227,7 @@ public class FailureDetailsService {
             }
             if (updatePaymentStatus) {
                 payment.setStatus(PaymentStatus.PARTIAL);
+                payment.setReferenceStatus(ReferenceStatus.PAYMENT_PARTIAL);
                 PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
                 billUtils.updatePaymentsData(paymentRequest);
             }
@@ -331,7 +332,7 @@ public class FailureDetailsService {
                     PaymentRequest paymentRequest = PaymentRequest.builder()
                             .requestInfo(requestInfo).payment(payment).build();
 
-                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL);
+                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL,ReferenceStatus.PAYMENT_SUCCESS);
                 }
             }
         } catch (Exception e) {

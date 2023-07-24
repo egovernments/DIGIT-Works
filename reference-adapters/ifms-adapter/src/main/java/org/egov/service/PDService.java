@@ -10,14 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Constants;
 import org.egov.repository.PIRepository;
+import org.egov.tracer.model.CustomException;
 import org.egov.utils.BillUtils;
 import org.egov.utils.PIUtils;
 import org.egov.web.models.bill.Payment;
 import org.egov.web.models.bill.PaymentRequest;
-import org.egov.web.models.enums.BeneficiaryPaymentStatus;
-import org.egov.web.models.enums.JITServiceId;
-import org.egov.web.models.enums.PIStatus;
-import org.egov.web.models.enums.PaymentStatus;
+import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,11 +62,35 @@ public class PDService {
                     .tokenDate(paymentInstruction.getPaDetails().get(0).getPaTokenDate())
                     .build();
 
-            JITResponse jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
-                    .serviceId(JITServiceId.PD).params(pdRequest).build());
+            JITResponse jitResponse;
+            try {
+                jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
+                        .serviceId(JITServiceId.PD).params(pdRequest).build());
+            }catch (Exception e){
+                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
+                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
+                        paymentInstruction.getTenantId());
+                for (Payment payment : payments) {
+                    PaymentRequest paymentRequest = PaymentRequest.builder()
+                            .requestInfo(requestInfo).payment(payment).build();
 
+                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_SERVER_UNREACHABLE);
+                }
+                throw new CustomException("SERVER_UNREACHABLE","Server is currently unreachable");
+            }
 
-            if (jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
+            if (jitResponse.getErrorMsg() != null) {
+                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
+                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
+                        paymentInstruction.getTenantId());
+                for (Payment payment : payments) {
+                    PaymentRequest paymentRequest = PaymentRequest.builder()
+                            .requestInfo(requestInfo).payment(payment).build();
+
+                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_ERROR_PROCESSING_PAYMENT);
+                }
+                continue;
+            } else if (jitResponse.getData().isEmpty()) {
                 continue;
             }
             for (Object data : jitResponse.getData()) {
@@ -124,7 +146,7 @@ public class PDService {
                     PaymentRequest paymentRequest = PaymentRequest.builder()
                             .requestInfo(requestInfo).payment(payment).build();
 
-                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL);
+                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
                 }
             }
 
