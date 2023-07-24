@@ -22,6 +22,7 @@ import org.egov.digit.expense.web.models.PaymentBillDetail;
 import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.ReferenceStatus;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -202,7 +203,9 @@ public class EnrichmentUtil {
          * TODO needs to be removed when jit integration is implemented
          */
         PaymentStatus defaultStatus = PaymentStatus.fromValue(config.getDefaultPaymentStatus());
+        ReferenceStatus defaultReferenceStatus = ReferenceStatus.fromValue(config.defaultReferenceStatus);
         payment.setStatus(defaultStatus);
+        payment.setReferenceStatus(defaultReferenceStatus);
         
 		String paymentNumber = idgenUtil.getIdList(paymentRequest.getRequestInfo(),
 				payment.getTenantId().split("\\.")[0],
