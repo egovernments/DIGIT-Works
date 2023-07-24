@@ -184,14 +184,9 @@ public class WorkflowService {
                         assignee = processInstance.getAssignes().get(0).getUuid();
                         uuids.add(assignee);
                         workflow.setAssignees(uuids);
-                    } else{
-                        List<String> uuids = new ArrayList<>();
-                        uuids.add(estimate.getAuditDetails().getLastModifiedBy());
-                        workflow.setAssignees(uuids);
                     }
                 }
             }
-
         }
         if(workflow.getAction().equals("SENDBACKTOORIGINATOR") && CollectionUtils.isEmpty(workflow.getAssignees())){
             List<String> uuids = new ArrayList<>();
