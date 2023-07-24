@@ -218,6 +218,15 @@ router.post(
                 }
                 contract.contracts[0].termsAndConditionList = newTC;
 
+                var fiscalyear = "";
+                var date = new Date(contract.contracts[0].issueDate);
+                if ((date.getMonth() + 1) <= 3) {
+                  fiscalyear = (date.getFullYear() - 1) + "-" + date.getFullYear()
+                } else {
+                  fiscalyear = date.getFullYear() + "-" + (date.getFullYear() + 1)
+                }
+
+                contract.contracts[0].financialYear= fiscalyear;
 
                 try {
                     pdfResponse = await create_pdf(
