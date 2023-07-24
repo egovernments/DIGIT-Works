@@ -40,6 +40,13 @@ public class PaymentQueryBuilder {
 			paymentSearchQuery.append(" payment.status = ? ");
 			preparedStatementValues.add(paymentCriteria.getStatus());
 		}
+
+		if (!StringUtils.isEmpty(paymentCriteria.getReferenceStatus())) {
+
+			builderUtils.addClauseIfRequired(preparedStatementValues, paymentSearchQuery);
+			paymentSearchQuery.append(" payment.referencestatus = ? ");
+			preparedStatementValues.add(paymentCriteria.getReferenceStatus());
+		}
 		
 		Set<String> paymentNums = paymentCriteria.getPaymentNumbers();
 		if (!CollectionUtils.isEmpty(paymentNums)) {
