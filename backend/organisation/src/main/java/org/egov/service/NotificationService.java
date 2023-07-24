@@ -113,21 +113,20 @@ public class NotificationService {
                     .searchCriteria(OrgSearchCriteria.builder().orgNumber(organisation.getOrgNumber()).build()).build();
             ContactDetails oldContactDetails = organisationRepository.getOrganisations(orgSearchRequest).get(0).getContactDetails().get(0);
 
+
+            Map<String, String> smsDetails = new HashMap<>();
+            smsDetails.put("orgNumber", organisation.getOrgNumber());
+            smsDetails.put("oldMobileNumber",oldContactDetails.getContactMobileNumber());
+            smsDetails.put("newMobileNumber", organisation.getContactDetails().get(0).getContactMobileNumber());
+            smsDetails.put("orgName",organisation.getName());
+            log.info("build Message For update Action for " + smsDetails.get("orgName"));
+            String customizedMessage = buildMessageForUpdateAction(smsDetails, message);
+            SMSRequest smsRequestForOldMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("oldMobileNumber")).message(customizedMessage).build();
+
+            log.info("push message for update Action");
+            producer.push(config.getSmsNotifTopic(), smsRequestForOldMobileNumber);
             if(!organisation.getContactDetails().get(0).getContactMobileNumber().equalsIgnoreCase(oldContactDetails.getContactMobileNumber())){
-                Map<String, String> smsDetails = new HashMap<>();
-                smsDetails.put("orgNumber", organisation.getOrgNumber());
-                smsDetails.put("oldMobileNumber",oldContactDetails.getContactMobileNumber());
-                smsDetails.put("newMobileNumber", organisation.getContactDetails().get(0).getContactMobileNumber());
-                smsDetails.put("orgName",organisation.getName());
-
-
-                log.info("build Message For update Action for " + smsDetails.get("orgName"));
-                String customizedMessage = buildMessageForUpdateAction(smsDetails, message);
-                SMSRequest smsRequestForOldMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("oldMobileNumber")).message(customizedMessage).build();
                 SMSRequest smsRequestForNewMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("newMobileNumber")).message(customizedMessage).build();
-
-                log.info("push message for update Action");
-                producer.push(config.getSmsNotifTopic(), smsRequestForOldMobileNumber);
                 producer.push(config.getSmsNotifTopic(), smsRequestForNewMobileNumber);
             }
         }
