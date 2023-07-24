@@ -205,8 +205,8 @@ public class PaymentInstructionService {
             // GET failure pi JIT request data from PI
             JITRequest jitPiRequest = piEnrichment.getCorRequest(paymentRequest, paymentInstruction, originalPi, lastRevisedPi);
             try {
-//                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
-                JITResponse jitResponse = ifmsService.loadCustomResponse();
+                JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                // JITResponse jitResponse = ifmsService.loadCustomResponse();
                 if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                     paymentStatus = PaymentStatus.INITIATED;
                     Object piResponseNode = jitResponse.getData().get(0);

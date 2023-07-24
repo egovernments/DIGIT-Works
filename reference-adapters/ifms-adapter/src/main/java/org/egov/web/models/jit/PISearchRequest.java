@@ -30,7 +30,7 @@ public class PISearchRequest {
     @NotNull
     private PISearchCriteria searchCriteria = null;
 
-    @JsonProperty("pagination")
-    @Valid
-    private Pagination pagination = null;
+//    @JsonProperty("pagination")
+//    @Valid
+//    private Pagination pagination = null;
 }
