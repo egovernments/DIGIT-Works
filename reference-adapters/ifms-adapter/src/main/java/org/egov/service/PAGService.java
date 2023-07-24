@@ -6,11 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.PIRepository;
+import org.egov.tracer.model.CustomException;
+import org.egov.utils.BillUtils;
 import org.egov.utils.HelperUtil;
 import org.egov.utils.PIUtils;
-import org.egov.web.models.enums.BeneficiaryPaymentStatus;
-import org.egov.web.models.enums.JITServiceId;
-import org.egov.web.models.enums.PIStatus;
+import org.egov.web.models.bill.Payment;
+import org.egov.web.models.bill.PaymentRequest;
+import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,9 @@ public class PAGService {
     @Autowired
     private PIUtils piUtils;
 
+    @Autowired
+    private BillUtils billUtils;
+
     public void updatePAG( RequestInfo requestInfo ){
         List<PaymentInstruction> paymentInstructions = getApprovedPaymentInstructions();
         for(PaymentInstruction paymentInstruction : paymentInstructions){
@@ -63,7 +68,21 @@ public class PAGService {
                     .serviceId(JITServiceId.PAG)
                     .params(pagRequest).build();
 
-            JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
+            JITResponse jitResponse;
+            try {
+                jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
+            }catch (Exception e){
+                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
+                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
+                        paymentInstruction.getTenantId());
+                for (Payment payment : payments) {
+                    PaymentRequest paymentRequest = PaymentRequest.builder()
+                            .requestInfo(requestInfo).payment(payment).build();
+
+                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_SERVER_UNREACHABLE);
+                }
+                throw new CustomException("SERVER_UNREACHABLE","Server is currently unreachable");
+            }
 
             if(jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
                 continue;

@@ -26,28 +26,12 @@
       "granteeName": "ANGUL MUNICIPALITY",
       "ssuId": "1621",
       "ssuOffice": "angul_op",
-      "allotmentDate": "2023-05-10",
-      "allotmentTxnSlNo": "0",
-      "allotmentAmount": "3000",
-      "availableBalance": "5000",
-      "allotmentTxnType": "Initial Allotment",
-      "mstAllotmentDistId": "921",
-      "ssuAllotmentId": "860"
-    },
-    {
-      "ddoCode": "OLSHUD001",
-      "schemeCode": "13145",
-      "schemeName": "Mukhyamantri Karma Tatpara Abhiyan (MUKTA)",
-      "granteeAgCode": "GOHUDULBMPL0036",
-      "granteeName": "ANGUL MUNICIPALITY",
-      "ssuId": "1621",
-      "ssuOffice": "angul_op",
       "allotmentDate": "2023-05-18",
       "allotmentTxnSlNo": "1",
       "allotmentAmount": "10",
       "availableBalance": "5990",
       "allotmentTxnType": "Additional allotment",
-      "mstAllotmentDistId": "921",
+      "mstAllotmentDistId": "920",
       "ssuAllotmentId": "898"
     },
     {
@@ -63,7 +47,7 @@
       "allotmentAmount": "10",
       "availableBalance": "5980",
       "allotmentTxnType": "Additional allotment",
-      "mstAllotmentDistId": "921",
+      "mstAllotmentDistId": "920",
       "ssuAllotmentId": "899"
     },
     {
@@ -252,7 +236,7 @@
       "ssuOffice": "angul_op",
       "allotmentDate": "2023-05-29",
       "allotmentTxnSlNo": "14",
-      "allotmentAmount": "41",
+      "allotmentAmount": "4",
       "availableBalance": "5435",
       "allotmentTxnType": "Additional allotment",
       "mstAllotmentDistId": "920",

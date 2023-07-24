@@ -10,6 +10,7 @@ import org.egov.repository.ServiceRequestRepository;
 import org.egov.web.models.Pagination;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.PaymentStatus;
+import org.egov.web.models.enums.ReferenceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -143,8 +144,9 @@ public class BillUtils {
 		return paymentResponse.getPayments();
 	}
 
-	public void updatePaymentForStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus) {
+	public void updatePaymentForStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus, ReferenceStatus referenceStatus) {
 		paymentRequest.getPayment().setStatus(paymentStatus);
+		paymentRequest.getPayment().setReferenceStatus(referenceStatus);
 		for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
 			bill.setStatus(paymentStatus);
 			for (PaymentBillDetail billDetail: bill.getBillDetails()) {
