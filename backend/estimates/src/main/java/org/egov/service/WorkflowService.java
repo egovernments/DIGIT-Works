@@ -9,6 +9,7 @@ import org.egov.common.contract.request.User;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.EstimateServiceConstant;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,7 +172,7 @@ public class WorkflowService {
         Estimate estimate = request.getEstimate();
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
-        if(workflow.getAction().equals("SENDBACK") && CollectionUtils.isEmpty(workflow.getAssignees())) {
+        if(workflow.getAction().equals(EstimateServiceConstant.ACTION_SENDBACK) && CollectionUtils.isEmpty(workflow.getAssignees())) {
             String assignee = null;
             Boolean statusFound = false;
             List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
@@ -188,7 +189,7 @@ public class WorkflowService {
                 }
             }
         }
-        if(workflow.getAction().equals("SENDBACKTOORIGINATOR") && CollectionUtils.isEmpty(workflow.getAssignees())){
+        if(workflow.getAction().equals(EstimateServiceConstant.ACTION_SENDBACKTOORIGINATOR) && CollectionUtils.isEmpty(workflow.getAssignees())){
             List<String> uuids = new ArrayList<>();
             uuids.add(estimate.getAuditDetails().getCreatedBy());
             workflow.setAssignees(uuids);
