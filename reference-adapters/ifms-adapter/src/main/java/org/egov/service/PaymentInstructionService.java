@@ -9,6 +9,7 @@ import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.PIRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.utils.*;
+import org.egov.validators.PaymentInstructionValidator;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.BeneficiaryPaymentStatus;
@@ -51,8 +52,11 @@ public class PaymentInstructionService {
     PIRepository piRepository;
     @Autowired
     PIUtils piUtils;
+    @Autowired
+    private PaymentInstructionValidator paymentInstructionValidator;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
+        paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
         PaymentInstruction paymentInstruction = null;
         if (paymentRequest.getReferenceId() != null && !paymentRequest.getReferenceId().isEmpty() && paymentRequest.getTenantId() != null && !paymentRequest.getTenantId().isEmpty()) {
             // GET payment details
@@ -210,7 +214,7 @@ public class PaymentInstructionService {
     }
 
 
-    private List<Bill> filterBillsPayableLineItemByPayments(Payment payment, List<Bill> billList) {
+    public List<Bill> filterBillsPayableLineItemByPayments(Payment payment, List<Bill> billList) {
         Map<String, Bill> billMap = billList.stream()
                 .collect(Collectors.toMap(Bill::getId, Function.identity()));
 

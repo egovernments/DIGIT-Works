@@ -223,6 +223,7 @@ public class FailureDetailsService {
             }
             if (updatePaymentStatus) {
                 payment.setStatus(PaymentStatus.PARTIAL);
+                payment.setReferenceStatus(ReferenceStatus.PAYMENT_PARTIAL);
                 PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
                 billUtils.updatePaymentsData(paymentRequest);
             }
