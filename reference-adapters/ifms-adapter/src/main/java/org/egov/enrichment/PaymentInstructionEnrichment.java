@@ -30,23 +30,23 @@ import static org.egov.config.Constants.*;
 @Slf4j
 public class PaymentInstructionEnrichment {
     @Autowired
-    BillUtils billUtils;
+    private BillUtils billUtils;
     @Autowired
-    IfmsService ifmsService;
+    private IfmsService ifmsService;
     @Autowired
-    HelperUtil util;
+    private HelperUtil util;
     @Autowired
-    SanctionDetailsRepository sanctionDetailsRepository;
+    private SanctionDetailsRepository sanctionDetailsRepository;
     @Autowired
-    IdgenUtil idgenUtil;
+    private IdgenUtil idgenUtil;
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     @Autowired
-    IfmsAdapterConfig config;
+    private IfmsAdapterConfig config;
     @Autowired
-    AuditLogUtils auditLogUtils;
+    private AuditLogUtils auditLogUtils;
     @Autowired
-    BankAccountUtils bankAccountUtils;
+    private BankAccountUtils bankAccountUtils;
 
     public List<Beneficiary> getBeneficiariesFromBills(List<Bill> billList, PaymentRequest paymentRequest) {
         List<Beneficiary> beneficiaryList = new ArrayList<>();
@@ -70,11 +70,8 @@ public class PaymentInstructionEnrichment {
         Map<String, Beneficiary> benfMap = new HashMap<>();
         for(Beneficiary beneficiary: beneficiaryList) {
             if (benfMap.containsKey(beneficiary.getBeneficiaryId())) {
-                Beneficiary benf = benfMap.get(beneficiary.getBeneficiaryId());
-                List<BenfLineItems> combinedList = new ArrayList<>();
-                combinedList.addAll(beneficiary.getBenfLineItems());
-                combinedList.addAll(benf.getBenfLineItems());
-                benf.setBenfLineItems(combinedList);
+                benfMap.get(beneficiary.getBeneficiaryId()).getBenfLineItems().addAll(beneficiary.getBenfLineItems());
+                benfMap.get(beneficiary.getBeneficiaryId()).setAmount(benfMap.get(beneficiary.getBeneficiaryId()).getAmount().add(beneficiary.getAmount()));
             } else {
                 benfMap.put(beneficiary.getBeneficiaryId(), beneficiary);
             }
