@@ -134,7 +134,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
         },
         label:jitBillNo
       },
-      pi?.parentId ? t("EXP_PI_TYPE_REVISED") : t("EXP_PI_TYPE_ORIGINAL"),
+      pi?.parentPiNumber ? t("EXP_PI_TYPE_REVISED") : t("EXP_PI_TYPE_ORIGINAL"),
       Digit.DateUtils.ConvertTimestampToDate(createdTime),
       imfsFundsResponse?.funds?.find((obj) => obj?.id == pi?.transactionDetails?.[0]?.sanctionId)?.hoaCode || t("ES_COMMON_NA"),
       imfsFundsResponse?.funds?.find((obj) => obj?.id == pi?.transactionDetails?.[0]?.sanctionId)?.masterAllotmentId || t("ES_COMMON_NA"),
