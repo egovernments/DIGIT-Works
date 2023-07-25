@@ -51,6 +51,9 @@ public class PaymentValidator {
 		if(null == paymentRequest.getPayment().getStatus()) {
 			throw new CustomException("EG_PAYMENT_UPDATE_STATUS_NOTNULL"," Payment status is mandatory in update request");
 		}
+		if (null == paymentRequest.getPayment().getReferenceStatus()) {
+			throw new CustomException("EG_PAYMENT_UPDATE_REFERENCE_STATUS_NOTNULL","Payment reference status is mandatory in update request");
+		}
 		
 		PaymentSearchRequest searchRequest = getPaymentSearchRequest(paymentRequest);
 		List<Payment> payments = paymentService.search(searchRequest).getPayments();
