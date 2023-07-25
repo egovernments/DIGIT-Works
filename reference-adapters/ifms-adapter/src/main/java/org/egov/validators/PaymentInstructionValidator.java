@@ -66,20 +66,21 @@ public class PaymentInstructionValidator {
                         billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
                         throw new CustomException("EG_IFMS_DDO_SSU_HOA_DETAILS_EMPTY", "DDO and SSUID or HOA configuration is missing");
                     }
-                    else {
-                        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
-                                .tenantId(paymentRequest.getPayment().getTenantId())
-                                .ddoCode(ddoCode)
-                                .hoaCode(hoaCode)
-                                .build();
-                        List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
-                        for (SanctionDetail sanctionDetail: sanctionDetails) {
-                            if (sanctionDetail.getFundsSummary().getAvailableAmount().compareTo(paymentRequest.getPayment().getNetPayableAmount()) < 0) {
-                                billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
-                                throw new CustomException("EG_IFMS_INSUFFICIENT_FUNDS","Insufficient fund");
-                            }
-                        }
-                    }
+                    // removing this as in case of insufficient funds we have to create a PI and it is already handled.
+//                    else {
+//                        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
+//                                .tenantId(paymentRequest.getPayment().getTenantId())
+//                                .ddoCode(ddoCode)
+//                                .hoaCode(hoaCode)
+//                                .build();
+//                        List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
+//                        for (SanctionDetail sanctionDetail: sanctionDetails) {
+//                            if (sanctionDetail.getFundsSummary().getAvailableAmount().compareTo(paymentRequest.getPayment().getNetPayableAmount()) < 0) {
+//                                billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
+//                                throw new CustomException("EG_IFMS_INSUFFICIENT_FUNDS","Insufficient fund");
+//                            }
+//                        }
+//                    }
                 }
             }
         }
