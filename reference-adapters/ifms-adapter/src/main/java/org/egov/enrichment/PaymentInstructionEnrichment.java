@@ -62,11 +62,11 @@ public class PaymentInstructionEnrichment {
             }
         }
         // Combine beneficiary by beneficiaryId
-        combineBeneficiaryById(beneficiaryList);
+        beneficiaryList = combineBeneficiaryById(beneficiaryList);
         return beneficiaryList;
     }
 
-    private void combineBeneficiaryById(List<Beneficiary> beneficiaryList) {
+    private List<Beneficiary> combineBeneficiaryById(List<Beneficiary> beneficiaryList) {
         Map<String, Beneficiary> benfMap = new HashMap<>();
         for(Beneficiary beneficiary: beneficiaryList) {
             if (benfMap.containsKey(beneficiary.getBeneficiaryId())) {
@@ -79,6 +79,8 @@ public class PaymentInstructionEnrichment {
                 benfMap.put(beneficiary.getBeneficiaryId(), beneficiary);
             }
         }
+        List<Beneficiary> beneficiaries = new ArrayList<>(benfMap.values());
+        return beneficiaries;
     }
 
     private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId) {

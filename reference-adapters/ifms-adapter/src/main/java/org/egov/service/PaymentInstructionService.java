@@ -68,7 +68,7 @@ public class PaymentInstructionService {
             if (!payments.isEmpty()) {
                 boolean createNewPi = isPaymentValidForCreateNewPI(payments.get(0));
                 if (createNewPi) {
-                    paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
+                    // paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
                     paymentRequest.setPayment(payments.get(0));
                     paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
                 } else {
@@ -98,7 +98,7 @@ public class PaymentInstructionService {
                 throw new RuntimeException("Revised PI can not be generated for PI : "+ paymentRequest.getParentPI());
             }
         } else if (paymentRequest.getPayment() != null) {
-            paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
+            // paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
             paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
         } else {
             throw new RuntimeException("Enter valid parameters : referenceId, tenantId, parentPI");
@@ -150,21 +150,13 @@ public class PaymentInstructionService {
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
                         referenceStatus = ReferenceStatus.PAYMENT_FAILED;
-                        piRequest.setPiErrorResp(jitResponse.getErrorMsg());
+                        piRequest.setPiErrorResp(referenceStatus.toString());
                     }
                 } catch (Exception e) {
                     paymentStatus = PaymentStatus.FAILED;
                     referenceStatus = ReferenceStatus.PAYMENT_SERVER_UNREACHABLE;
-                    String errorMessage = e.toString();
-                    errorMessage = e.getMessage();
-                    Throwable cause = e.getCause();
-                    if (cause instanceof HttpServerErrorException.InternalServerError) {
-                        errorMessage = ((HttpServerErrorException.InternalServerError) cause).getResponseBodyAsString();
-                    } else {
-                        errorMessage = e.getMessage();
-                    }
-                    log.error("Exception while calling request." + e);
-                    piRequest.setPiErrorResp(errorMessage);
+                log.error("Exception while calling request." + e);
+                    piRequest.setPiErrorResp(referenceStatus.toString());
                 }
                 // Set beneficiary and pi status to failed if payment is failed
                 if (paymentStatus.equals(PaymentStatus.FAILED)) {
@@ -188,10 +180,13 @@ public class PaymentInstructionService {
             } else {
                 paymentStatus = PaymentStatus.FAILED;
                 referenceStatus = ReferenceStatus.PAYMENT_INSUFFICIENT_FUNDS;
+                piRequest.setPiErrorResp(referenceStatus.toString());
             }
         } catch (Exception e) {
             log.info("Exception " + e);
             paymentStatus = PaymentStatus.FAILED;
+            referenceStatus = ReferenceStatus.PAYMENT_FAILED;
+            piRequest.setPiErrorResp(referenceStatus.toString());
         }
 
         billUtils.updatePaymentForStatus(paymentRequest, paymentStatus, referenceStatus);
@@ -253,8 +248,8 @@ public class PaymentInstructionService {
                 } else {
                     errorMessage = e.getMessage();
                 }
-                log.error("Exception while calling request." + e);
                 paymentInstruction.setPiErrorResp(errorMessage);
+                log.error("Exception while calling request." + e);
             }
             savePIData(paymentRequest, paymentInstruction, originalPi, lastRevisedPi, paymentStatus);
 

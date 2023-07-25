@@ -57,7 +57,7 @@ public class PaymentInstructionValidator {
         JsonNode hoaNode = null;
         JsonNode ssuNode = null;
         Boolean hasFunds = true;
-        if (!CollectionUtils.isEmpty(ssuDetailList) && !CollectionUtils.isEmpty(hoaList)) {
+        if (ssuDetailList != null && !ssuDetailList.isEmpty() && hoaList != null && !hoaList.isEmpty()) {
             for (Object ssuDetails : ssuDetailList) {
                 for (Object hoa : hoaList) {
                     hoaNode = objectMapper.valueToTree(hoa);
