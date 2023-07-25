@@ -1,35 +1,43 @@
 package org.egov.utils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
+import static org.egov.config.Constants.BANK_ACCOUNT_DECRYPT_KEY;
+import static org.egov.config.Constants.BANK_IFSC_TABLE_NAME;
+import static org.egov.config.Constants.REQUEST_INFO;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import org.apache.http.client.utils.URIBuilder;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Constants;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.service.EncryptionService;
-import org.egov.web.models.Pagination;
 import org.egov.web.models.bankaccount.AuditLogsResponse;
 import org.egov.web.models.bankaccount.BankAccount;
 import org.egov.web.models.bankaccount.BankAccountDetails;
-import org.egov.web.models.bankaccount.BankAccountResponse;
-import org.egov.web.models.bill.*;
-import org.egov.web.models.enums.PaymentStatus;
-import org.egov.web.models.jit.PaymentInstruction;
+import org.egov.web.models.bill.PaymentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.egov.config.Constants.*;
+import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This class fetches bank account audit log details, fetches the relevant bank account, decrypts it
+ * and provides a response.
+ *
+ */
 @Component
 @Slf4j
 public class AuditLogUtils {
@@ -75,6 +83,16 @@ public class AuditLogUtils {
 		return auditLogs;
 	}
 
+	/**
+	 * If bank account table details change, then this method needs to be modified. Audit logs for a particular entity
+	 * returns the table names as the entityID. Based on this, details from appropriate entity are returned. This means that if the 
+	 * entityID (table name) changes, we will have problems. TODO: Needs to be reviewed and confirmed with core team.
+	 * 
+	 * @param paymentRequest
+	 * @param bankAccount
+	 * @param time
+	 * @return
+	 */
 	public Map<String, String> getLastUpdatedBankAccountDetailsFromAuditLogFromTime(PaymentRequest paymentRequest, BankAccount bankAccount, long time) {
 		String bankAccountNumber = null;
 		String bankIFSCCode = null;

@@ -106,6 +106,11 @@ public class PaymentInstructionService {
         return paymentInstruction;
     }
 
+    /**
+     * Creates a new JIT payment instruction based on the payment advice object
+     * @param paymentRequest
+     * @return
+     */
     public PaymentInstruction processPaymentRequestForNewPI(PaymentRequest paymentRequest) {
         PaymentInstruction piRequest = null;
         PaymentStatus paymentStatus = null;
@@ -195,6 +200,13 @@ public class PaymentInstructionService {
     }
 
 
+    /**
+     * Create revision payment instruction request
+     * @param paymentRequest
+     * @param originalPi
+     * @param lastRevisedPi
+     * @return
+     */
     public PaymentInstruction processPaymentRequestForRevisedPI(PaymentRequest paymentRequest, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) {
         PaymentInstruction paymentInstruction = null;
         PaymentStatus paymentStatus = null;

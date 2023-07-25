@@ -14,6 +14,10 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This clas provides methods to encrypt/decrypt JIT responses.
+ *
+ */
 @Component
 public class JitRequestUtils {
     @Autowired

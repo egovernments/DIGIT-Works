@@ -1,31 +1,31 @@
 package org.egov.utils;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.config.IfmsAdapterConfig;
-import org.egov.enc.AsymmetricEncryptionService;
-import org.egov.enc.SymmetricEncryptionService;
-import org.egov.key.KeyGenerator;
-import org.egov.key.PublicKeyLoader;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
+import javax.annotation.PostConstruct;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.egov.config.IfmsAdapterConfig;
+import org.egov.enc.AsymmetricEncryptionService;
+import org.egov.enc.SymmetricEncryptionService;
+import org.egov.key.KeyGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
+
+/**
+ * This class houses utility methods to read auth related artifacts and keys.
+ *
+ */
 @Component
 public class AuthenticationUtils {
 

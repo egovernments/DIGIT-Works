@@ -1,9 +1,7 @@
 package org.egov.validators;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
+import java.util.List;
+
 import org.egov.enrichment.PaymentInstructionEnrichment;
 import org.egov.repository.SanctionDetailsRepository;
 import org.egov.service.IfmsService;
@@ -15,15 +13,21 @@ import org.egov.web.models.bill.PaymentRequest;
 import org.egov.web.models.enums.PaymentStatus;
 import org.egov.web.models.enums.ReferenceStatus;
 import org.egov.web.models.jit.Beneficiary;
-import org.egov.web.models.jit.SanctionDetail;
-import org.egov.web.models.jit.SanctionDetailsSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 
 
+/**
+ * Class contains all validations for a payment instruction
+ *
+ */
 @Component
 @Slf4j
 public class PaymentInstructionValidator {
