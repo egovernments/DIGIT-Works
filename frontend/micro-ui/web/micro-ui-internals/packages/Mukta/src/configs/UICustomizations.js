@@ -54,7 +54,7 @@ const getCreatePaymentPayload = (data) => {
 
         billDetailObj.totalPaidAmount = detail?.totalAmount
         //billDetailObj.status = 'INITIATED'
-        billDetailObj.payableLineItems = detail?.payableLineItems?.map(item => (
+        billDetailObj.payableLineItems = detail?.payableLineItems?.filter((row => row.status==="ACTIVE"))?.map(item => (
           {
             lineItemId: item?.id,
             tenantId: item?.tenantId,

@@ -5,6 +5,7 @@ import ApplicationDetails from '../../../../../templates/ApplicationDetails';
 
 const ViewPayment = () => {
   const { t } = useTranslation();
+  
   const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
   const { tenantId, paymentNumber } = Digit.Hooks.useQueryParams();
   const [showDataError, setShowDataError] = useState(null)
@@ -54,7 +55,10 @@ const ViewPayment = () => {
             label:`${t("EXP_RETRY_PI_ERR_MESSAGE")} : ${error?.response.data.Errors[0].description}`
           })
           closeToast()
-          refetch()
+          setTimeout(() => {
+            refetch()
+          }, 3000);
+          // refetch()
         },
       onSuccess: async (responseData, variables) => {
           setShowToast({
@@ -62,7 +66,10 @@ const ViewPayment = () => {
             label:`${t("EXP_RETRY_PI_MESSAGE")} : ${responseData?.paymentInstruction?.jitBillNo}`
           })
           closeToast()
-          refetch()
+          // refetch()
+          setTimeout(() => {
+            refetch()
+          }, 3000);
       },
   });
 
