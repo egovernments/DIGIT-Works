@@ -59,8 +59,6 @@ public class PaymentInstructionService {
     private PaymentInstructionValidator paymentInstructionValidator;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
-        // Commenting this because if it throws error then pi will not get created
-        // paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
         PaymentInstruction paymentInstruction = null;
         if (paymentRequest.getReferenceId() != null && !paymentRequest.getReferenceId().isEmpty() && paymentRequest.getTenantId() != null && !paymentRequest.getTenantId().isEmpty()) {
             // GET payment details
@@ -70,6 +68,7 @@ public class PaymentInstructionService {
             if (!payments.isEmpty()) {
                 boolean createNewPi = isPaymentValidForCreateNewPI(payments.get(0));
                 if (createNewPi) {
+                    paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
                     paymentRequest.setPayment(payments.get(0));
                     paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
                 } else {
@@ -99,6 +98,7 @@ public class PaymentInstructionService {
                 throw new RuntimeException("Revised PI can not be generated for PI : "+ paymentRequest.getParentPI());
             }
         } else if (paymentRequest.getPayment() != null) {
+            paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
             paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
         } else {
             throw new RuntimeException("Enter valid parameters : referenceId, tenantId, parentPI");
