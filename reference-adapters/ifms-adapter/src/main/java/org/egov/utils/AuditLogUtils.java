@@ -106,7 +106,6 @@ public class AuditLogUtils {
 					JsonNode jsonNode = mapper.readTree(json);
 					auditLogs.add(jsonNode);
 				}
-				time = 1690011218256L;
 				// Sort the List<JsonNode> based on the "name" key
 				Collections.sort(auditLogs, new JsonNodeComparator("changeDate"));
 				Collections.reverse(auditLogs);
