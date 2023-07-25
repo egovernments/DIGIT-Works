@@ -88,7 +88,8 @@ const Urls = {
     obps_Reciept_Search: "/collection-services/payments/_search",
     billAmendmentSearch: "/billing-service/amendment/_search",
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
-    createPayment: "/expense/payment/v1/_create"
+    createPayment: "/expense/payment/v1/_create",
+    ifms_funds_search : "/ifms/funds/v1/_search"
   },
 expense:{
   createPayment: "/expense/payment/v1/_create",

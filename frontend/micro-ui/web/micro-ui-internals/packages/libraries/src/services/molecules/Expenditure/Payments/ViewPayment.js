@@ -3,6 +3,7 @@ import { ExpenseService } from "../../../elements/Expense";
 import { WageSeekerService } from "../../../elements/WageSeeker";
 import { BankAccountService } from "../../../elements/BankAccount";
 import { OrganisationService } from "../../../elements/Organisation";
+import { PaymentService } from "../../../elements/Payment";
 
 const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
   if (!payment) throw new Error("No data found");
@@ -99,7 +100,23 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
   //make pi table
 
   const piTableHeaders = [t("EXP_PI_ID"), t("EXP_COMMON_TYPE"), t("ES_COMMON_DATE"), t("WORKS_HEAD_OF_ACCOUNTS"), t("EXP_MASTER_ALLT_ID"), t("CORE_COMMON_STATUS"), t("EXP_PAYMENT_NET_AMT")]
+  let sanctionIds = []
 
+  const transactionDetails = paymentInstructions?.forEach((pIObj) => {
+    pIObj?.transactionDetails?.forEach((txn) => {
+      sanctionIds.push(txn?.sanctionId);
+    })
+  })
+
+
+  let fundsSearchPayload = {
+    searchCriteria:{
+     tenantId,
+     ids: sanctionIds?.length !== 0 ? sanctionIds : []
+    }
+   } 
+
+   const imfsFundsResponse = await PaymentService.ifms_funds_search(fundsSearchPayload);
   const piTableRows = paymentInstructions?.map((pi,idx)=>{
     const { piStatus,auditDetails:{createdTime},netAmount,jitBillNo } = pi
     return [
@@ -119,8 +136,8 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       },
       pi?.parentId ? t("EXP_PI_TYPE_REVISED") : t("EXP_PI_TYPE_ORIGINAL"),
       Digit.DateUtils.ConvertTimestampToDate(createdTime),
-      t("ES_COMMON_NA"),
-      t("ES_COMMON_NA"),
+      imfsFundsResponse?.funds?.find((obj) => obj?.id == pi?.transactionDetails?.[0]?.sanctionId)?.hoaCode || t("ES_COMMON_NA"),
+      imfsFundsResponse?.funds?.find((obj) => obj?.id == pi?.transactionDetails?.[0]?.sanctionId)?.masterAllotmentId || t("ES_COMMON_NA"),
       returnPaymentStatusObjectForPI(piStatus,pi),
       netAmount ? `₹ ${Digit.Utils.dss.formatterWithoutRound(netAmount,"number")}` : t("ES_COMMON_NA")
     ]
@@ -249,7 +266,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
     } else if (beneficiary.beneficiaryType === "DEPT") {
       return [
         // beneficiary?.beneficiaryId || t("ES_COMMON_NA"),
-        t("ES_COMMON_NA"),
+        beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountHolderName || t("ES_COMMON_NA"),
         beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountHolderName || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber,
