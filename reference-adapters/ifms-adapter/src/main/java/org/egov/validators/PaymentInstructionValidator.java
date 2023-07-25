@@ -98,7 +98,7 @@ public class PaymentInstructionValidator {
         billList = paymentInstructionService.filterBillsPayableLineItemByPayments(paymentRequest.getPayment(), billList);
 
         List<Beneficiary> beneficiaryList = paymentInstructionEnrichment.getBeneficiariesFromBills(billList, paymentRequest);
-        if (CollectionUtils.isEmpty(beneficiaryList)) {
+        if (beneficiaryList == null || beneficiaryList.isEmpty()) {
             billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
             throw new CustomException("EG_IFMS_BENF_DETAILS_EMPTY", "Beneficiary detail is missing");
         }
