@@ -155,7 +155,7 @@ public class PaymentInstructionService {
                 } catch (Exception e) {
                     paymentStatus = PaymentStatus.FAILED;
                     referenceStatus = ReferenceStatus.PAYMENT_SERVER_UNREACHABLE;
-                log.error("Exception while calling request." + e);
+                    log.error("Exception while calling request." + e);
                     piRequest.setPiErrorResp(referenceStatus.toString());
                 }
                 // Set beneficiary and pi status to failed if payment is failed
@@ -205,6 +205,7 @@ public class PaymentInstructionService {
     public PaymentInstruction processPaymentRequestForRevisedPI(PaymentRequest paymentRequest, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) {
         PaymentInstruction paymentInstruction = null;
         PaymentStatus paymentStatus = null;
+        ReferenceStatus referenceStatus = null;
         try {
             // Get the beneficiaries
             List<Beneficiary> beneficiaries = getBeneficiariesForRevisedPayment(paymentRequest, originalPi, lastRevisedPi);
@@ -240,15 +241,8 @@ public class PaymentInstructionService {
                 }
             } catch (Exception e) {
                 paymentStatus = PaymentStatus.PARTIAL;
-                String errorMessage = e.toString();
-                errorMessage = e.getMessage();
-                Throwable cause = e.getCause();
-                if (cause instanceof HttpServerErrorException.InternalServerError) {
-                    errorMessage = ((HttpServerErrorException.InternalServerError) cause).getResponseBodyAsString();
-                } else {
-                    errorMessage = e.getMessage();
-                }
-                paymentInstruction.setPiErrorResp(errorMessage);
+                referenceStatus = ReferenceStatus.PAYMENT_SERVER_UNREACHABLE;
+                paymentInstruction.setPiErrorResp(referenceStatus.toString());
                 log.error("Exception while calling request." + e);
             }
             savePIData(paymentRequest, paymentInstruction, originalPi, lastRevisedPi, paymentStatus);
@@ -464,7 +458,9 @@ public class PaymentInstructionService {
 
         if (paymentInstructions != null && !paymentInstructions.isEmpty() && paymentInstructions.get(0).getParentPiNumber() == null) {
             PIStatus piSt = paymentInstructions.get(0).getPiStatus();
-            if (!(piSt.equals(PIStatus.PARTIAL) || piSt.equals(PIStatus.COMPLETED))) {
+            if (piSt.equals(PIStatus.PARTIAL) || piSt.equals(PIStatus.COMPLETED)) {
+                createRevisedPi = true;
+            } else {
                 createRevisedPi = false;
             }
             originalPi = paymentInstructions.get(0);
@@ -473,6 +469,7 @@ public class PaymentInstructionService {
                     .tenantId(paymentRequest.getTenantId())
                     .sortBy(PISearchCriteria.SortBy.createdTime)
                     .sortOrder(PISearchCriteria.SortOrder.DESC)
+                    .isActive(true)
                     .build();
             List<PaymentInstruction>  revisedPaymentInstructions = piRepository.searchPi(revisedPiSearchCriteria);
             if (revisedPaymentInstructions != null && !revisedPaymentInstructions.isEmpty()) {
