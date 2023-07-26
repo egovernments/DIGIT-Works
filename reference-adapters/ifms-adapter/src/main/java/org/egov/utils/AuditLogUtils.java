@@ -56,7 +56,7 @@ public class AuditLogUtils {
 	EncryptionService encryptionService;
 
 	public @Valid List<Object> fetchAuditLogs(RequestInfo requestInfo, String tenantId, String objectId, int limit, int offset) throws IOException {
-
+		log.info("Fetching data from audit log service.");
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getAuditLogHost()).append(config.getAuditLogSearchEndPoint());
 		URIBuilder builder = new URIBuilder();
@@ -73,7 +73,7 @@ public class AuditLogUtils {
 		try {
 			response = restTemplate.postForObject(uri.toString(), auditLogRequest, Map.class);
 			auditLogsResponse = mapper.convertValue(response, AuditLogsResponse.class);
-
+			log.info("Fetched audit details from audit service.");
 		} catch (Exception e) {
 			log.error("Exception occurred while fetching bill lists from bill service: ", e);
 		}

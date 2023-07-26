@@ -34,29 +34,29 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
         Map<String, PaymentInstruction> paymentInstructionMap = new LinkedHashMap<>();
 
         while(rs.next()) {
-            String id = rs.getString("jpiId");
+            String id = rs.getString("pymtInstId");
             PaymentInstruction paymentInstruction = paymentInstructionMap.get(id);
 
             if(paymentInstruction == null){
 
-                String tenantId = rs.getString("jpiTenantId");
-                String jitBillNo = rs.getString("jpiPiNumber");
-                String parentPiNumber = rs.getString("jpiParentPiNumber");
-                String muktaReferenceId = rs.getString("jpiMuktaReferenceId");
-                Integer numBeneficiaries = rs.getInt("jpiNumBeneficiaries");
-                BigDecimal grossAmount = rs.getBigDecimal("jpiGrossAmount");
-                BigDecimal netAmount = rs.getBigDecimal("jpiNetAmount");
-                PIStatus piStatus = PIStatus.fromValue(rs.getString("jpiPiStatus"));
-                Boolean piIsActive = rs.getBoolean("jpiIsActive");
-                String piSuccessCode = rs.getString("jpiPiSuccessCode");
-                String piSuccessDesc = rs.getString("jpiPiSuccessDesc");
-                String piApprovedId = rs.getString("jpiPiApprovedId");
-                String piApprovalDate = rs.getString("jpiPiApprovalDate");
-                String piErrorResp = rs.getString("jpiPiErrorResp");
-                Object additionalDetails = getAdditionalDetail(rs, "jpiAdditionalDetails");
+                String tenantId = rs.getString("pymtInstTenantId");
+                String jitBillNo = rs.getString("pymtInstPiNumber");
+                String parentPiNumber = rs.getString("pymtInstParentPiNumber");
+                String muktaReferenceId = rs.getString("pymtInstMuktaReferenceId");
+                Integer numBeneficiaries = rs.getInt("pymtInstNumBeneficiaries");
+                BigDecimal grossAmount = rs.getBigDecimal("pymtInstGrossAmount");
+                BigDecimal netAmount = rs.getBigDecimal("pymtInstNetAmount");
+                PIStatus piStatus = PIStatus.fromValue(rs.getString("pymtInstPiStatus"));
+                Boolean piIsActive = rs.getBoolean("pymtInstIsActive");
+                String piSuccessCode = rs.getString("pymtInstPiSuccessCode");
+                String piSuccessDesc = rs.getString("pymtInstPiSuccessDesc");
+                String piApprovedId = rs.getString("pymtInstPiApprovedId");
+                String piApprovalDate = rs.getString("pymtInstPiApprovalDate");
+                String piErrorResp = rs.getString("pymtInstPiErrorResp");
+                Object additionalDetails = getAdditionalDetail(rs, "pymtInstAdditionalDetails");
 
-                AuditDetails auditDetails = getAuditDetailsForKey(rs, "jpiCreatedBy","jpiCreatedTime",
-                        "jpiLastModifiedBy","jpiLastModifiedTime") ;
+                AuditDetails auditDetails = getAuditDetailsForKey(rs, "pymtInstCreatedBy","pymtInstCreatedTime",
+                        "pymtInstLastModifiedBy","pymtInstLastModifiedTime") ;
 
                 paymentInstruction = PaymentInstruction.builder()
                         .id(id)
@@ -94,7 +94,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
             paymentInstruction.setTransactionDetails(new ArrayList<>());
         }
         TransactionDetails transactionDetail = null;
-        String transactionDetailId = rs.getString("jtdId");
+        String transactionDetailId = rs.getString("transDetailId");
         for(TransactionDetails transactionDetails1 : paymentInstruction.getTransactionDetails()) {
             if(transactionDetails1.getId().equalsIgnoreCase(transactionDetailId)) {
                 transactionDetail = transactionDetails1;
@@ -103,16 +103,16 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
         }
 
         if(transactionDetail == null) {
-            String transactionDetailTenantId = rs.getString("jtdTenantId");
-            String sanctionId = rs.getString("jtdSanctionId");
-            String paymentInstId = rs.getString("jtdPaymentInstId");
-            BigDecimal transactionAmount = rs.getBigDecimal("jtdTransactionAmount");
-            Long transactionDate = rs.getLong("jtdTransactionDate");
-            TransactionType transactionType = TransactionType.fromValue(rs.getString("jtdTransactionType"));
-            Object transactionAdditionalDetails = rs.getObject("jtdAdditionalDetails");
+            String transactionDetailTenantId = rs.getString("transDetailTenantId");
+            String sanctionId = rs.getString("transDetailSanctionId");
+            String paymentInstId = rs.getString("transDetailPaymentInstId");
+            BigDecimal transactionAmount = rs.getBigDecimal("transDetailTransactionAmount");
+            Long transactionDate = rs.getLong("transDetailTransactionDate");
+            TransactionType transactionType = TransactionType.fromValue(rs.getString("transDetailTransactionType"));
+            Object transactionAdditionalDetails = rs.getObject("transDetailAdditionalDetails");
 
-            AuditDetails auditDetails = getAuditDetailsForKey(rs, "jtdCreatedBy","jtdCreatedTime",
-                    "jtdLastModifiedBy","jtdLastModifiedTime") ;
+            AuditDetails auditDetails = getAuditDetailsForKey(rs, "transDetailCreatedBy","transDetailCreatedTime",
+                    "transDetailLastModifiedBy","transDetailLastModifiedTime") ;
 
             if(StringUtils.isNotEmpty(transactionDetailId) && paymentInstruction.getId().equalsIgnoreCase(paymentInstId)) {
 
@@ -137,7 +137,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
         if(paymentInstruction.getPaDetails() == null){
             paymentInstruction.setPaDetails(new ArrayList<>());
         }
-        String jpaId = rs.getString("jpaId");
+        String jpaId = rs.getString("pymtAdvDtlId");
         PADetails paDetail = null;
         for(PADetails paDetails1 : paymentInstruction.getPaDetails()) {
             if(paDetails1.getId().equalsIgnoreCase(jpaId)) {
@@ -146,20 +146,20 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
             }
         }
         if(paDetail == null) {
-            String jpaTenantId = rs.getString("jpaTenantId");
-            String jpaMuktaReferenceId = rs.getString("jpaMuktaReferenceId");
-            String jpaPiId = rs.getString("jpaPiId");
-            String jpaPaBillRefNumber = rs.getString("jpaPaBillRefNumber");
-            String jpaPaFinYear = rs.getString("jpaPaFinYear");
-            String jpaPaAdviceId = rs.getString("jpaPaAdviceId");
-            String jpaPaAdviceDate = rs.getString("jpaPaAdviceDate");
-            String jpaPaTokenNumber = rs.getString("jpaPaTokenNumber");
-            String jpaPaTokenDate = rs.getString("jpaPaTokenDate");
-            String jpaPaErrorMsg = rs.getString("jpaPaErrorMsg");
-            Object jpaAdditionalDetails = getAdditionalDetail(rs, "jpaAdditionalDetails");
+            String jpaTenantId = rs.getString("pymtAdvDtlTenantId");
+            String jpaMuktaReferenceId = rs.getString("pymtAdvDtlMuktaReferenceId");
+            String jpaPiId = rs.getString("pymtAdvDtlPiId");
+            String jpaPaBillRefNumber = rs.getString("pymtAdvDtlPaBillRefNumber");
+            String jpaPaFinYear = rs.getString("pymtAdvDtlPaFinYear");
+            String jpaPaAdviceId = rs.getString("pymtAdvDtlPaAdviceId");
+            String jpaPaAdviceDate = rs.getString("pymtAdvDtlPaAdviceDate");
+            String jpaPaTokenNumber = rs.getString("pymtAdvDtlPaTokenNumber");
+            String jpaPaTokenDate = rs.getString("pymtAdvDtlPaTokenDate");
+            String jpaPaErrorMsg = rs.getString("pymtAdvDtlPaErrorMsg");
+            Object jpaAdditionalDetails = getAdditionalDetail(rs, "pymtAdvDtlAdditionalDetails");
 
-            AuditDetails auditDetails = getAuditDetailsForKey(rs, "jpaCreatedBy","jpaCreatedTime",
-                    "jpaLastModifiedBy","jpaLastModifiedTime") ;
+            AuditDetails auditDetails = getAuditDetailsForKey(rs, "pymtAdvDtlCreatedBy","pymtAdvDtlCreatedTime",
+                    "pymtAdvDtlLastModifiedBy","pymtAdvDtlLastModifiedTime") ;
 
             if(StringUtils.isNotEmpty(jpaId) && jpaPiId.equalsIgnoreCase(paymentInstruction.getId())) {
                 paDetail = PADetails.builder()
@@ -187,7 +187,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
         if(paymentInstruction.getBeneficiaryDetails() == null) {
             paymentInstruction.setBeneficiaryDetails(new ArrayList<>());
         }
-        String jbdId = rs.getString("jbdId");
+        String jbdId = rs.getString("benfDetailId");
         Beneficiary beneficiary = null;
         for (Beneficiary beneficiary1 : paymentInstruction.getBeneficiaryDetails()) {
             if(beneficiary1.getId().equalsIgnoreCase(jbdId)) {
@@ -197,29 +197,29 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
         }
 
         if(beneficiary == null) {
-            String jbdTenantId = rs.getString("jbdTenantId");
-            String jbdMuktaReferenceId = rs.getString("jbdMuktaReferenceId");
-            String jbdPiId = rs.getString("jbdPiId");
-            String jbdBeneficiaryId = rs.getString("jbdBeneficiaryId");
-            BeneficiaryType jbdBeneficiaryType = BeneficiaryType.fromValue(rs.getString("jbdBeneficiaryType"));
-            String jbdBeneficiaryNumber = rs.getString("jbdBeneficiaryNumber");
-            String jbdBankAccountId = rs.getString("jbdBankAccountId");
-            BigDecimal jbdAmount = rs.getBigDecimal("jbdAmount");
-            String jbdVoucherNumber = rs.getString("jbdVoucherNumber");
-            Long jbdVoucherDate = rs.getLong("jbdVoucherDate");
+            String jbdTenantId = rs.getString("benfDetailTenantId");
+            String jbdMuktaReferenceId = rs.getString("benfDetailMuktaReferenceId");
+            String jbdPiId = rs.getString("benfDetailPiId");
+            String jbdBeneficiaryId = rs.getString("benfDetailBeneficiaryId");
+            BeneficiaryType jbdBeneficiaryType = BeneficiaryType.fromValue(rs.getString("benfDetailBeneficiaryType"));
+            String jbdBeneficiaryNumber = rs.getString("benfDetailBeneficiaryNumber");
+            String jbdBankAccountId = rs.getString("benfDetailBankAccountId");
+            BigDecimal jbdAmount = rs.getBigDecimal("benfDetailAmount");
+            String jbdVoucherNumber = rs.getString("benfDetailVoucherNumber");
+            Long jbdVoucherDate = rs.getLong("benfDetailVoucherDate");
             if (jbdVoucherDate.equals(0L))
                 jbdVoucherDate = null;
-            String jbdUtrNo = rs.getString("jbdUtrNo");
-            String jbdUtrDate = rs.getString("jbdUtrDate");
-            String jbdEndToEndId = rs.getString("jbdEndToEndId");
-            String jbdChallanNumber = rs.getString("jbdChallanNumber");
-            String jbdChallanDate = rs.getString("jbdChallanDate");
-            BeneficiaryPaymentStatus jbdPaymentStatus = BeneficiaryPaymentStatus.fromValue(rs.getString("jbdPaymentStatus"));
-            String jbdPaymentStatusMessage = rs.getString("jbdPaymentStatusMessage");
-            Object jbdAdditionalDetails = getAdditionalDetail(rs, "jbdAdditionalDetails") ;
+            String jbdUtrNo = rs.getString("benfDetailUtrNo");
+            String jbdUtrDate = rs.getString("benfDetailUtrDate");
+            String jbdEndToEndId = rs.getString("benfDetailEndToEndId");
+            String jbdChallanNumber = rs.getString("benfDetailChallanNumber");
+            String jbdChallanDate = rs.getString("benfDetailChallanDate");
+            BeneficiaryPaymentStatus jbdPaymentStatus = BeneficiaryPaymentStatus.fromValue(rs.getString("benfDetailPaymentStatus"));
+            String jbdPaymentStatusMessage = rs.getString("benfDetailPaymentStatusMessage");
+            Object jbdAdditionalDetails = getAdditionalDetail(rs, "benfDetailAdditionalDetails") ;
 
-            AuditDetails auditDetails = getAuditDetailsForKey(rs, "jbdCreatedBy","jbdCreatedTime",
-                    "jbdLastModifiedBy","jbdLastModifiedTime") ;
+            AuditDetails auditDetails = getAuditDetailsForKey(rs, "benfDetailCreatedBy","benfDetailCreatedTime",
+                    "benfDetailLastModifiedBy","benfDetailLastModifiedTime") ;
 
             if(StringUtils.isNotEmpty(jbdId) && jbdPiId.equalsIgnoreCase(paymentInstruction.getId())) {
                 beneficiary = Beneficiary.builder()
@@ -255,7 +255,7 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
         if(beneficiary.getBenfLineItems() == null) {
             beneficiary.setBenfLineItems(new ArrayList<>());
         }
-        String jblId = rs.getString("jblId");
+        String jblId = rs.getString("benfLineItemId");
 
         BenfLineItems benfLineItem = null;
         for(BenfLineItems benfLineItems1 : beneficiary.getBenfLineItems()) {
@@ -266,11 +266,11 @@ public class PIRowMapper implements ResultSetExtractor<List<PaymentInstruction>>
         }
 
         if(benfLineItem == null) {
-            String jblBeneficiaryId = rs.getString("jblBeneficiaryId");
-            String jblLineItemId = rs.getString("jblLineItemId");
+            String jblBeneficiaryId = rs.getString("benfLineItemBeneficiaryId");
+            String jblLineItemId = rs.getString("benfLineItemLineItemId");
 
-            AuditDetails auditDetails = getAuditDetailsForKey(rs, "jblCreatedBy","jblCreatedTime",
-                    "jblLastModifiedBy","jblLastModifiedTime") ;
+            AuditDetails auditDetails = getAuditDetailsForKey(rs, "benfLineItemCreatedBy","benfLineItemCreatedTime",
+                    "benfLineItemLastModifiedBy","benfLineItemLastModifiedTime") ;
 
             if(StringUtils.isNotEmpty(jblId) && jblBeneficiaryId.equalsIgnoreCase(beneficiary.getId())) {
                 benfLineItem = BenfLineItems.builder()

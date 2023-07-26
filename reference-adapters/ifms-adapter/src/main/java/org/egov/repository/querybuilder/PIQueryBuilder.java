@@ -55,97 +55,97 @@ public class PIQueryBuilder {
             + "challanDate=:challanDate, paymentStatus=:paymentStatus, paymentStatusMessage=:paymentStatusMessage, additionalDetails=:additionalDetails, lastmodifiedtime=:lastmodifiedtime, lastmodifiedby=:lastmodifiedby "
             + " WHERE id=:id;";
 
-    public static final String SEARCH_PI_QUERY = " SELECT jpi.id as jpiId, " +
-            "jpi.tenantId as jpiTenantId, " +
-            "jpi.piNumber as jpiPiNumber, " +
-            "jpi.parentPiNumber as jpiParentPiNumber, " +
-            "jpi.muktaReferenceId as jpiMuktaReferenceId, " +
-            "jpi.numBeneficiaries as jpiNumBeneficiaries, " +
-            "jpi.grossAmount as jpiGrossAmount, " +
-            "jpi.netAmount as jpiNetAmount, " +
-            "jpi.piStatus as jpiPiStatus, " +
-            "jpi.isActive as jpiIsActive, " +
-            "jpi.piSuccessCode as jpiPiSuccessCode, " +
-            "jpi.piSuccessDesc as jpiPiSuccessDesc, " +
-            "jpi.piApprovedId as jpiPiApprovedId, " +
-            "jpi.piApprovalDate as jpiPiApprovalDate, " +
-            "jpi.piErrorResp as jpiPiErrorResp, " +
-            "jpi.additionalDetails as jpiAdditionalDetails, " +
-            "jpi.createdtime as jpiCreatedTime, " +
-            "jpi.createdby as jpiCreatedBy, " +
-            "jpi.lastmodifiedtime as jpiLastModifiedTime, " +
-            "jpi.lastmodifiedby as jpiLastModifiedBy, " +
-            "jpa.id as jpaId, " +
-            "jpa.tenantId as jpaTenantId, " +
-            "jpa.muktaReferenceId as jpaMuktaReferenceId, " +
-            "jpa.piId as jpaPiId, " +
-            "jpa.paBillRefNumber as jpaPaBillRefNumber, " +
-            "jpa.paFinYear as jpaPaFinYear, " +
-            "jpa.paAdviceId as jpaPaAdviceId, " +
-            "jpa.paAdviceDate as jpaPaAdviceDate, " +
-            "jpa.paTokenNumber as jpaPaTokenNumber, " +
-            "jpa.paTokenDate as jpaPaTokenDate, " +
-            "jpa.paErrorMsg as jpaPaErrorMsg, " +
-            "jpa.additionalDetails as jpaAdditionalDetails, " +
-            "jpa.createdtime as jpaCreatedTime, " +
-            "jpa.createdby as jpaCreatedBy, " +
-            "jpa.lastmodifiedtime as jpaLastModifiedTime, " +
-            "jpa.lastmodifiedby as jpaLastModifiedBy, " +
-            "jbd.id as jbdId, " +
-            "jbd.tenantId as jbdTenantId, " +
-            "jbd.muktaReferenceId as jbdMuktaReferenceId, " +
-            "jbd.piId as jbdPiId, " +
-            "jbd.beneficiaryId as jbdBeneficiaryId, " +
-            "jbd.beneficiaryType as jbdBeneficiaryType, " +
-            "jbd.beneficiaryNumber as jbdBeneficiaryNumber, " +
-            "jbd.bankAccountId as jbdBankAccountId, " +
-            "jbd.amount as jbdAmount, " +
-            "jbd.voucherNumber as jbdVoucherNumber, " +
-            "jbd.voucherDate as jbdVoucherDate, " +
-            "jbd.utrNo as jbdUtrNo, " +
-            "jbd.utrDate as jbdUtrDate, " +
-            "jbd.endToEndId as jbdEndToEndId, " +
-            "jbd.challanNumber as jbdChallanNumber, " +
-            "jbd.challanDate as jbdChallanDate, " +
-            "jbd.paymentStatus as jbdPaymentStatus, " +
-            "jbd.paymentStatusMessage as jbdPaymentStatusMessage, " +
-            "jbd.additionalDetails as jbdAdditionalDetails, " +
-            "jbd.createdtime as jbdCreatedTime, " +
-            "jbd.createdby as jbdCreatedBy, " +
-            "jbd.lastmodifiedtime as jbdLastModifiedTime, " +
-            "jbd.lastmodifiedby as jbdLastModifiedBy, " +
-            "jtd.id as jtdId, " +
-            "jtd.tenantId as jtdTenantId, " +
-            "jtd.sanctionId as jtdSanctionId, " +
-            "jtd.paymentInstId as jtdPaymentInstId, " +
-            "jtd.transactionAmount as jtdTransactionAmount, " +
-            "jtd.transactionDate as jtdTransactionDate, " +
-            "jtd.transactionType as jtdTransactionType, " +
-            "jtd.additionalDetails as jtdAdditionalDetails, " +
-            "jtd.createdtime as jtdCreatedTime, " +
-            "jtd.createdby as jtdCreatedBy, " +
-            "jtd.lastmodifiedtime as jtdLastModifiedTime, " +
-            "jtd.lastmodifiedby as jtdLastModifiedBy, " +
-            "jbl.id as jblId, " +
-            "jbl.beneficiaryId as jblBeneficiaryId, " +
-            "jbl.lineItemId as jblLineItemId, " +
-            "jbl.createdtime as jblCreatedTime, " +
-            "jbl.createdby as jblCreatedBy, " +
-            "jbl.lastmodifiedtime as jblLastModifiedTime, " +
-            "jbl.lastmodifiedby as jblLastModifiedBy " +
-            "FROM jit_payment_inst_details AS jpi " +
+    public static final String SEARCH_PI_QUERY = " SELECT pymtInst.id as pymtInstId, " +
+            "pymtInst.tenantId as pymtInstTenantId, " +
+            "pymtInst.piNumber as pymtInstPiNumber, " +
+            "pymtInst.parentPiNumber as pymtInstParentPiNumber, " +
+            "pymtInst.muktaReferenceId as pymtInstMuktaReferenceId, " +
+            "pymtInst.numBeneficiaries as pymtInstNumBeneficiaries, " +
+            "pymtInst.grossAmount as pymtInstGrossAmount, " +
+            "pymtInst.netAmount as pymtInstNetAmount, " +
+            "pymtInst.piStatus as pymtInstPiStatus, " +
+            "pymtInst.isActive as pymtInstIsActive, " +
+            "pymtInst.piSuccessCode as pymtInstPiSuccessCode, " +
+            "pymtInst.piSuccessDesc as pymtInstPiSuccessDesc, " +
+            "pymtInst.piApprovedId as pymtInstPiApprovedId, " +
+            "pymtInst.piApprovalDate as pymtInstPiApprovalDate, " +
+            "pymtInst.piErrorResp as pymtInstPiErrorResp, " +
+            "pymtInst.additionalDetails as pymtInstAdditionalDetails, " +
+            "pymtInst.createdtime as pymtInstCreatedTime, " +
+            "pymtInst.createdby as pymtInstCreatedBy, " +
+            "pymtInst.lastmodifiedtime as pymtInstLastModifiedTime, " +
+            "pymtInst.lastmodifiedby as pymtInstLastModifiedBy, " +
+            "pymtAdvDtl.id as pymtAdvDtlId, " +
+            "pymtAdvDtl.tenantId as pymtAdvDtlTenantId, " +
+            "pymtAdvDtl.muktaReferenceId as pymtAdvDtlMuktaReferenceId, " +
+            "pymtAdvDtl.piId as pymtAdvDtlPiId, " +
+            "pymtAdvDtl.paBillRefNumber as pymtAdvDtlPaBillRefNumber, " +
+            "pymtAdvDtl.paFinYear as pymtAdvDtlPaFinYear, " +
+            "pymtAdvDtl.paAdviceId as pymtAdvDtlPaAdviceId, " +
+            "pymtAdvDtl.paAdviceDate as pymtAdvDtlPaAdviceDate, " +
+            "pymtAdvDtl.paTokenNumber as pymtAdvDtlPaTokenNumber, " +
+            "pymtAdvDtl.paTokenDate as pymtAdvDtlPaTokenDate, " +
+            "pymtAdvDtl.paErrorMsg as pymtAdvDtlPaErrorMsg, " +
+            "pymtAdvDtl.additionalDetails as pymtAdvDtlAdditionalDetails, " +
+            "pymtAdvDtl.createdtime as pymtAdvDtlCreatedTime, " +
+            "pymtAdvDtl.createdby as pymtAdvDtlCreatedBy, " +
+            "pymtAdvDtl.lastmodifiedtime as pymtAdvDtlLastModifiedTime, " +
+            "pymtAdvDtl.lastmodifiedby as pymtAdvDtlLastModifiedBy, " +
+            "benfDetail.id as benfDetailId, " +
+            "benfDetail.tenantId as benfDetailTenantId, " +
+            "benfDetail.muktaReferenceId as benfDetailMuktaReferenceId, " +
+            "benfDetail.piId as benfDetailPiId, " +
+            "benfDetail.beneficiaryId as benfDetailBeneficiaryId, " +
+            "benfDetail.beneficiaryType as benfDetailBeneficiaryType, " +
+            "benfDetail.beneficiaryNumber as benfDetailBeneficiaryNumber, " +
+            "benfDetail.bankAccountId as benfDetailBankAccountId, " +
+            "benfDetail.amount as benfDetailAmount, " +
+            "benfDetail.voucherNumber as benfDetailVoucherNumber, " +
+            "benfDetail.voucherDate as benfDetailVoucherDate, " +
+            "benfDetail.utrNo as benfDetailUtrNo, " +
+            "benfDetail.utrDate as benfDetailUtrDate, " +
+            "benfDetail.endToEndId as benfDetailEndToEndId, " +
+            "benfDetail.challanNumber as benfDetailChallanNumber, " +
+            "benfDetail.challanDate as benfDetailChallanDate, " +
+            "benfDetail.paymentStatus as benfDetailPaymentStatus, " +
+            "benfDetail.paymentStatusMessage as benfDetailPaymentStatusMessage, " +
+            "benfDetail.additionalDetails as benfDetailAdditionalDetails, " +
+            "benfDetail.createdtime as benfDetailCreatedTime, " +
+            "benfDetail.createdby as benfDetailCreatedBy, " +
+            "benfDetail.lastmodifiedtime as benfDetailLastModifiedTime, " +
+            "benfDetail.lastmodifiedby as benfDetailLastModifiedBy, " +
+            "transDetail.id as transDetailId, " +
+            "transDetail.tenantId as transDetailTenantId, " +
+            "transDetail.sanctionId as transDetailSanctionId, " +
+            "transDetail.paymentInstId as transDetailPaymentInstId, " +
+            "transDetail.transactionAmount as transDetailTransactionAmount, " +
+            "transDetail.transactionDate as transDetailTransactionDate, " +
+            "transDetail.transactionType as transDetailTransactionType, " +
+            "transDetail.additionalDetails as transDetailAdditionalDetails, " +
+            "transDetail.createdtime as transDetailCreatedTime, " +
+            "transDetail.createdby as transDetailCreatedBy, " +
+            "transDetail.lastmodifiedtime as transDetailLastModifiedTime, " +
+            "transDetail.lastmodifiedby as transDetailLastModifiedBy, " +
+            "benfLineItem.id as benfLineItemId, " +
+            "benfLineItem.beneficiaryId as benfLineItemBeneficiaryId, " +
+            "benfLineItem.lineItemId as benfLineItemLineItemId, " +
+            "benfLineItem.createdtime as benfLineItemCreatedTime, " +
+            "benfLineItem.createdby as benfLineItemCreatedBy, " +
+            "benfLineItem.lastmodifiedtime as benfLineItemLastModifiedTime, " +
+            "benfLineItem.lastmodifiedby as benfLineItemLastModifiedBy " +
+            "FROM jit_payment_inst_details AS pymtInst " +
             "LEFT JOIN " +
-            "jit_payment_advice_details AS jpa " +
-            "ON (jpi.id=jpa.piId) " +
+            "jit_payment_advice_details AS pymtAdvDtl " +
+            "ON (pymtInst.id=pymtAdvDtl.piId) " +
             "LEFT JOIN " +
-            "jit_transaction_details AS jtd " +
-            "ON (jpi.id=jtd.paymentInstId) " +
+            "jit_transaction_details AS transDetail " +
+            "ON (pymtInst.id=transDetail.paymentInstId) " +
             "LEFT JOIN " +
-            "jit_beneficiary_details AS jbd " +
-            "ON (jpi.id=jbd.piId) " +
+            "jit_beneficiary_details AS benfDetail " +
+            "ON (pymtInst.id=benfDetail.piId) " +
             "LEFT JOIN " +
-            "jit_beneficiary_lineitems as jbl " +
-            "ON (jbd.id=jbl.beneficiaryId)";
+            "jit_beneficiary_lineitems as benfLineItem " +
+            "ON (benfDetail.id=benfLineItem.beneficiaryId)";
 
 
     public String getPaymentInstructionSearchQuery(PISearchCriteria criteria, List<Object> preparedStmtList){
@@ -154,57 +154,54 @@ public class PIQueryBuilder {
         List<String> ids = criteria.getIds();
         if (ids != null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.id IN (").append(createQuery(ids)).append(")");
+            query.append(" pymtInst.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
 
         if (StringUtils.isNotBlank(criteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.tenantId=? ");
+            query.append(" pymtInst.tenantId=? ");
             preparedStmtList.add(criteria.getTenantId());
         }
 
         if (StringUtils.isNotBlank(criteria.getMuktaReferenceId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.muktaReferenceId=? ");
+            query.append(" pymtInst.muktaReferenceId=? ");
             preparedStmtList.add(criteria.getMuktaReferenceId());
         }
         if (criteria.getPiStatus() != null && !StringUtils.isEmpty(criteria.getPiStatus().toString())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.piStatus=? ");
+            query.append(" pymtInst.piStatus=? ");
             preparedStmtList.add(criteria.getPiStatus().toString());
         }
         if (StringUtils.isNotBlank(criteria.getJitBillNo())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.piNumber=? ");
+            query.append(" pymtInst.piNumber=? ");
             preparedStmtList.add(criteria.getJitBillNo());
         }
         if (StringUtils.isNotBlank(criteria.getParentPiNumber())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.parentPiNumber=? ");
+            query.append(" pymtInst.parentPiNumber=? ");
             preparedStmtList.add(criteria.getParentPiNumber());
         }
         Set<String> piNumbers = criteria.getJitBillNumbers();
         if (piNumbers != null && !piNumbers.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.piNumber IN (").append(createQuery(piNumbers)).append(")");
+            query.append(" pymtInst.piNumber IN (").append(createQuery(piNumbers)).append(")");
             addToPreparedStatement(preparedStmtList, piNumbers);
         }
         if (criteria.getIsActive() != null) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.isActive=? ");
+            query.append(" pymtInst.isActive=? ");
             preparedStmtList.add(criteria.getIsActive());
         }
         if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.ORIGINAL)) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.parentPiNumber IS NULL OR jpi.parentPiNumber= '' ");
+            query.append(" pymtInst.parentPiNumber IS NULL OR pymtInst.parentPiNumber= '' ");
         } else if (criteria.getPiType() != null && criteria.getPiType().equals(PIType.REVISED)) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jpi.parentPiNumber IS NOT NULL AND jpi.parentPiNumber <> '' ");
+            query.append(" pymtInst.parentPiNumber IS NOT NULL AND pymtInst.parentPiNumber <> '' ");
         }
-
-
-
 
         addOrderByClause(query, criteria);
 
@@ -249,9 +246,9 @@ public class PIQueryBuilder {
 
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
-            queryBuilder.append(" ORDER BY jpi.lastmodifiedtime ");
+            queryBuilder.append(" ORDER BY pymtInst.lastmodifiedtime ");
         } else if (criteria.getSortBy() != null && !StringUtils.isEmpty(criteria.getSortBy().name())) {
-            queryBuilder.append(" ORDER BY jpi."+ criteria.getSortBy().toString() +" ");
+            queryBuilder.append(" ORDER BY pymtInst."+ criteria.getSortBy().toString() +" ");
         }
 
         if (criteria.getSortOrder() == PISearchCriteria.SortOrder.ASC)

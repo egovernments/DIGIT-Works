@@ -10,49 +10,49 @@ import java.util.List;
 @Component
 public class SanctionDetailQueryBuilder {
 
-    private static final String SANCTION_DETAILS_SELECT_QUERY = " SELECT jsd.id as jsdId, " +
-            "jsd.tenantId as jsdTenantId, " +
-            "jsd.hoaCode as jsdHoaCode, " +
-            "jsd.ddoCode as jsdDdoCode, " +
-            "jsd.masterAllotmentId as jsdMasterAllotmentId, " +
-            "jsd.sanctionedAmount as jsdSanctionedAmount, " +
-            "jsd.financialYear as jsdFinancialYear, " +
-            "jsd.additionalDetails as jsdAdditionalDetails, " +
-            "jsd.createdby as jsdCreatedBy, " +
-            "jsd.lastmodifiedby as jsdLastModifiedBy, " +
-            "jsd.createdtime as jsdCreatedTime, " +
-            "jsd.lastmodifiedtime as jsdLastModifiedTime, " +
-            "jfs.id as jfsId, " +
-            "jfs.tenantId as jfsTenantId, " +
-            "jfs.sanctionId as jfsSanctionId, " +
-            "jfs.allottedAmount as jfsAllottedAmount, " +
-            "jfs.availableAmount as jfsAvailableAmount, " +
-            "jfs.additionalDetails as jfsAdditionalDetails, " +
-            "jfs.createdby as jfsCreatedBy, " +
-            "jfs.lastmodifiedby as jfsLastModifiedBy, " +
-            "jfs.createdtime as jfsCreatedTime, " +
-            "jfs.lastmodifiedtime as jfsLastModifiedTime, " +
-            "jad.id as jadId, " +
-            "jad.tenantId as jadTenantId, " +
-            "jad.sanctionId as jadSanctionId, " +
-            "jad.allotmentSerialNo as jadAllotmentSerialNo, " +
-            "jad.ssuAllotmentId as jadSsuAllotmentId, " +
-            "jad.allotmentAmount as jadAllotmentAmount, " +
-            "jad.allotmentTransactionType as jadAllotmentTransactionType, " +
-            "jad.sanctionBalance as jadSanctionBalance, " +
-            "jad.allotmentDate as jadAllotmentDate, " +
-            "jad.additionalDetails as jadAdditionalDetails, " +
-            "jad.createdtime as jadCreatedtime, " +
-            "jad.createdby as jadCreatedby, " +
-            "jad.lastmodifiedtime as jadLastmodifiedtime, " +
-            "jad.lastmodifiedby as jadLastmodifiedby " +
-            "FROM jit_sanction_details AS jsd " +
+    private static final String SANCTION_DETAILS_SELECT_QUERY = " SELECT snacDetails.id as snacDetailsId, " +
+            "snacDetails.tenantId as snacDetailsTenantId, " +
+            "snacDetails.hoaCode as snacDetailsHoaCode, " +
+            "snacDetails.ddoCode as snacDetailsDdoCode, " +
+            "snacDetails.masterAllotmentId as snacDetailsMasterAllotmentId, " +
+            "snacDetails.sanctionedAmount as snacDetailsSanctionedAmount, " +
+            "snacDetails.financialYear as snacDetailsFinancialYear, " +
+            "snacDetails.additionalDetails as snacDetailsAdditionalDetails, " +
+            "snacDetails.createdby as snacDetailsCreatedBy, " +
+            "snacDetails.lastmodifiedby as snacDetailsLastModifiedBy, " +
+            "snacDetails.createdtime as snacDetailsCreatedTime, " +
+            "snacDetails.lastmodifiedtime as snacDetailsLastModifiedTime, " +
+            "fundsSummary.id as fundsSummaryId, " +
+            "fundsSummary.tenantId as fundsSummaryTenantId, " +
+            "fundsSummary.sanctionId as fundsSummarySanctionId, " +
+            "fundsSummary.allottedAmount as fundsSummaryAllottedAmount, " +
+            "fundsSummary.availableAmount as fundsSummaryAvailableAmount, " +
+            "fundsSummary.additionalDetails as fundsSummaryAdditionalDetails, " +
+            "fundsSummary.createdby as fundsSummaryCreatedBy, " +
+            "fundsSummary.lastmodifiedby as fundsSummaryLastModifiedBy, " +
+            "fundsSummary.createdtime as fundsSummaryCreatedTime, " +
+            "fundsSummary.lastmodifiedtime as fundsSummaryLastModifiedTime, " +
+            "allotmentDetails.id as allotmentDetailsId, " +
+            "allotmentDetails.tenantId as allotmentDetailsTenantId, " +
+            "allotmentDetails.sanctionId as allotmentDetailsSanctionId, " +
+            "allotmentDetails.allotmentSerialNo as allotmentDetailsAllotmentSerialNo, " +
+            "allotmentDetails.ssuAllotmentId as allotmentDetailsSsuAllotmentId, " +
+            "allotmentDetails.allotmentAmount as allotmentDetailsAllotmentAmount, " +
+            "allotmentDetails.allotmentTransactionType as allotmentDetailsAllotmentTransactionType, " +
+            "allotmentDetails.sanctionBalance as allotmentDetailsSanctionBalance, " +
+            "allotmentDetails.allotmentDate as allotmentDetailsAllotmentDate, " +
+            "allotmentDetails.additionalDetails as allotmentDetailsAdditionalDetails, " +
+            "allotmentDetails.createdtime as allotmentDetailsCreatedtime, " +
+            "allotmentDetails.createdby as allotmentDetailsCreatedby, " +
+            "allotmentDetails.lastmodifiedtime as allotmentDetailsLastmodifiedtime, " +
+            "allotmentDetails.lastmodifiedby as allotmentDetailsLastmodifiedby " +
+            "FROM jit_sanction_details AS snacDetails " +
             "LEFT JOIN " +
-            "jit_funds_summary AS jfs " +
-            "ON (jsd.id=jfs.sanctionId) " +
+            "jit_funds_summary AS fundsSummary " +
+            "ON (snacDetails.id=fundsSummary.sanctionId) " +
             "LEFT JOIN " +
-            "jit_allotment_details AS jad " +
-            "ON (jsd.id=jad.sanctionId)";
+            "jit_allotment_details AS allotmentDetails " +
+            "ON (snacDetails.id=allotmentDetails.sanctionId)";
 
     public static final String SANCTION_DETAILS_INSERT_QUERY = "INSERT INTO jit_sanction_details (id, tenantId, hoaCode, ddoCode,"
             + " masterAllotmentId, sanctionedAmount, financialYear, additionalDetails, createdby, createdtime, lastmodifiedby, lastmodifiedtime) "
@@ -81,29 +81,29 @@ public class SanctionDetailQueryBuilder {
         List<String> ids = criteria.getIds();
         if (ids != null && !ids.isEmpty()) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jsd.id IN (").append(createQuery(ids)).append(")");
+            query.append(" snacDetails.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
 
         if (StringUtils.isNotBlank(criteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jsd.tenantId=? ");
+            query.append(" snacDetails.tenantId=? ");
             preparedStmtList.add(criteria.getTenantId());
         }
 
         if (StringUtils.isNotBlank(criteria.getHoaCode())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jsd.hoaCode=? ");
+            query.append(" snacDetails.hoaCode=? ");
             preparedStmtList.add(criteria.getHoaCode());
         }
         if (StringUtils.isNotBlank(criteria.getDdoCode())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jsd.ddoCode=? ");
+            query.append(" snacDetails.ddoCode=? ");
             preparedStmtList.add(criteria.getDdoCode());
         }
         if (StringUtils.isNotBlank(criteria.getMasterAllotmentId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" jsd.masterAllotmentId=? ");
+            query.append(" snacDetails.masterAllotmentId=? ");
             preparedStmtList.add(criteria.getMasterAllotmentId());
         }
 
@@ -119,7 +119,7 @@ public class SanctionDetailQueryBuilder {
 
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
-            queryBuilder.append(" ORDER BY jsd.lastmodifiedtime ");
+            queryBuilder.append(" ORDER BY snacDetails.lastmodifiedtime ");
         }
 
         if (criteria.getSortOrder() == SanctionDetailsSearchCriteria.SortOrder.ASC)

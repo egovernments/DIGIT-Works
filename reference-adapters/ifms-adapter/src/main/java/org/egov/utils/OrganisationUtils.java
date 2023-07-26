@@ -37,6 +37,7 @@ public class OrganisationUtils {
     private IfmsAdapterConfig config;
 
 	public @Valid List<Organisation> getOrganisationsById(RequestInfo requestInfo, List<String> ids, String tenantId) throws Exception {
+		log.info("Fetching organisations details.");
 		List<String> billIds = new ArrayList<>();
 		OrgSearchCriteria orgSearchCriteria = null;
 		if (requestInfo != null && ids != null && !ids.isEmpty()) {
@@ -72,11 +73,11 @@ public class OrganisationUtils {
 		try {
 			response = restTemplate.postForObject(uri.toString(), bankAccountRequest, Map.class);
 			orgResponse = mapper.convertValue(response, OrgResponse.class);
+			log.info("Organisation details fetched.");
 		} catch (Exception e) {
-			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+			log.error("Exception occurred while fetching organisation getOrganisationsById:getOrganisations: ", e);
 		}
 
-		log.info(orgResponse.toString());
 		return orgResponse.getOrganisations();
 	}
 

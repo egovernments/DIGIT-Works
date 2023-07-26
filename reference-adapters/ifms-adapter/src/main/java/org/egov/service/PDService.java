@@ -48,13 +48,13 @@ public class PDService {
     private PIUtils piUtils;
 
     public void updatePDStatus(RequestInfo requestInfo) {
-
+        log.info("Start executing PD update service.");
         List<PaymentInstruction> inProcessPaymentInstructions =  paymentInstructionService.searchPi(PISearchRequest.builder()
                 .requestInfo(RequestInfo.builder().build())
                 .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.IN_PROCESS).build()).build());
 
         for (PaymentInstruction paymentInstruction : inProcessPaymentInstructions) {
-
+            log.info("Started Processing PI for PD : " + paymentInstruction.getJitBillNo());
             PDRequest pdRequest = PDRequest.builder().finYear(paymentInstruction.getPaDetails().get(0).getPaFinYear())
                     .extAppName(Constants.JIT_FD_EXT_APP_NAME)
                     .billRefNo(paymentInstruction.getPaDetails().get(0).getPaBillRefNumber())
@@ -62,11 +62,15 @@ public class PDService {
                     .tokenDate(paymentInstruction.getPaDetails().get(0).getPaTokenDate())
                     .build();
 
-            JITResponse jitResponse;
+            JITResponse jitResponse = null;
+            log.info("Calling ifms service.");
             try {
                 jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
                         .serviceId(JITServiceId.PD).params(pdRequest).build());
             }catch (Exception e){
+                log.info("Exception occurred while fetching PD from ifms." + e);
+                /*
+                TODO: commenting because this is invalid, check and remove this block
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
                         Collections.singleton(paymentInstruction.getMuktaReferenceId()),
                         paymentInstruction.getTenantId());
@@ -77,9 +81,15 @@ public class PDService {
                     billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_SERVER_UNREACHABLE);
                 }
                 throw new CustomException("SERVER_UNREACHABLE","Server is currently unreachable");
+                 */
             }
+            if (jitResponse == null)
+                continue;
 
             if (jitResponse.getErrorMsg() != null) {
+                log.info("Error Response received for PD from IFMS." + jitResponse.getErrorMsgs());
+                /*
+                TODO: commenting because this is invalid, check and remove this block
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
                         Collections.singleton(paymentInstruction.getMuktaReferenceId()),
                         paymentInstruction.getTenantId());
@@ -89,10 +99,12 @@ public class PDService {
 
                     billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_ERROR_PROCESSING_PAYMENT);
                 }
+                 */
                 continue;
             } else if (jitResponse.getData().isEmpty()) {
                 continue;
             }
+            log.info("Processing PD response for bill : " + paymentInstruction.getJitBillNo());
             for (Object data : jitResponse.getData()) {
                 Map<String, Object> dataObjMap = objectMapper.convertValue(data, Map.class);
                 if (dataObjMap.get("billNumber") == null)
@@ -102,7 +114,7 @@ public class PDService {
                 String paymentStatusMessage = dataObjMap.get("paymentStatus").toString();
                 JsonNode benfDtlsNode = objectMapper.valueToTree(dataObjMap.get("benfDtls"));
 
-
+                log.info("Updating beneficiaries details for PD.");
 
                 for (Beneficiary beneficiaryFromDB : paymentInstruction.getBeneficiaryDetails()) {
                     if (benfDtlsNode.isArray() && !benfDtlsNode.isEmpty()) {
@@ -136,12 +148,16 @@ public class PDService {
                 paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                 paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 paymentInstruction.setPiStatus(PIStatus.SUCCESSFUL);
+
+                log.info("Updating PI status and details for PD : " + paymentInstruction.getJitBillNo());
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
                         Collections.singleton(paymentInstruction.getMuktaReferenceId()),
                         paymentInstruction.getTenantId());
 
+                log.info("Updating payment details for PD : " + paymentInstruction.getJitBillNo());
                 for (Payment payment : payments) {
                     PaymentRequest paymentRequest = PaymentRequest.builder()
                             .requestInfo(requestInfo).payment(payment).build();

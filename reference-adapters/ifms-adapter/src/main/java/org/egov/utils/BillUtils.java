@@ -66,15 +66,16 @@ public class BillUtils {
 		try {
 			response = restTemplate.postForObject(uri.toString(), billRequest, Map.class);
 			billResponse = mapper.convertValue(response, BillResponse.class);
+			log.info("Fetched bill list from bill service.");
 		} catch (Exception e) {
 			log.error("Exception occurred while fetching bill lists from bill service: ", e);
 		}
 
-		log.info(billResponse.toString());
 		return billResponse.getBills();
 	}
 
 	public @Valid List<Payment> updatePaymentsData(Object paymentRequest) {
+		log.info("Updating payment using bill service");
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getBillHost()).append(config.getPaymentUpdateEndPoint());
 		Object response = new HashMap<>();
@@ -82,11 +83,11 @@ public class BillUtils {
 		try {
 			response = restTemplate.postForObject(uri.toString(), paymentRequest, Map.class);
 			paymentResponse = mapper.convertValue(response, PaymentResponse.class);
+			log.info("Payment updated in bill service");
 		} catch (Exception e) {
-			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+			log.error("Exception occurred while updating payment into bill service: ", e);
 		}
 
-		log.info(paymentResponse.toString());
 		return paymentResponse.getPayments();
 	}
 
@@ -113,11 +114,11 @@ public class BillUtils {
 		try {
 			response = restTemplate.postForObject(uri.toString(), billRequest, Map.class);
 			billCalcResponse = mapper.convertValue(response, Object.class);
+			log.info("Fetched data from bill calculator service.");
 		} catch (Exception e) {
-			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+			log.error("BillUtils:fetchBillCalculatorData - Exception occurred while fetching bill lists from bill calculator service: ", e);
 		}
 
-		log.info(billCalcResponse.toString());
 		return billCalcResponse;
 	}
 
@@ -139,7 +140,7 @@ public class BillUtils {
 			response = restTemplate.postForObject(uri.toString(), requestParams, Map.class);
 			paymentResponse = mapper.convertValue(response, PaymentResponse.class);
 		} catch (Exception e) {
-			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+			log.error("Exception occurred while fetching payment details from bill service: ", e);
 		}
 		return paymentResponse.getPayments();
 	}

@@ -62,11 +62,11 @@ public class IndividualUtils {
 		try {
 			response = restTemplate.postForObject(uri.toString(), individualRequest, Map.class);
 			individualBulkResponse = mapper.convertValue(response, IndividualBulkResponse.class);
+			log.info("Fetched data from individual service.");
 		} catch (Exception e) {
-			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+			log.error("Exception occurred while fetching individuals lists from individual service: ", e);
 		}
 
-		log.info(individualBulkResponse.toString());
 		return individualBulkResponse.getIndividual();
 	}
 

@@ -50,8 +50,10 @@ public class PAGService {
     private BillUtils billUtils;
 
     public void updatePAG( RequestInfo requestInfo ){
+        log.info("Start executing PAG update service.");
         List<PaymentInstruction> paymentInstructions = getApprovedPaymentInstructions();
         for(PaymentInstruction paymentInstruction : paymentInstructions){
+            log.info("Started Processing PI for PAG : " + paymentInstruction.getJitBillNo());
 
             JSONArray ssuIaDetails = ifmsService.getSSUDetails(RequestInfo.builder().build(), paymentInstruction.getTenantId());
             Map<String,String> ssuIaDetailsMap = (Map<String, String>) ssuIaDetails.get(0);
@@ -67,11 +69,15 @@ public class PAGService {
             JITRequest jitRequest = JITRequest.builder()
                     .serviceId(JITServiceId.PAG)
                     .params(pagRequest).build();
-
-            JITResponse jitResponse;
+            log.info("Calling ifms service.");
+            JITResponse jitResponse = null;
             try {
                 jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
             }catch (Exception e){
+                log.info("Exception occurred while fetching PAG from ifms." + e);
+
+                /*
+                TODO: commenting because this is invalid, check and remove this block
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
                         Collections.singleton(paymentInstruction.getMuktaReferenceId()),
                         paymentInstruction.getTenantId());
@@ -82,11 +88,18 @@ public class PAGService {
                     billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_SERVER_UNREACHABLE);
                 }
                 throw new CustomException("SERVER_UNREACHABLE","Server is currently unreachable");
+                 */
             }
+
+            if (jitResponse == null)
+                continue;
+
+            log.info("Response received from IFMS.");
 
             if(jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
                 continue;
             }
+            log.info("Processing PAG response for : " + paymentInstruction.getJitBillNo());
             for( Object data : jitResponse.getData() ){
                 Map<String, Object> dataMap = objectMapper.convertValue(data, Map.class);
                 String finYear = dataMap.get("finYear").toString();
@@ -95,7 +108,7 @@ public class PAGService {
                 String onlineBillRefNo = dataMap.get("onlineBillRefNo").toString();
                 String tokenNumber = dataMap.get("tokenNumber").toString();
                 String tokenDate = dataMap.get("tokenDate").toString();
-
+                log.info("Updating PAG details according to IFMS response.");
                 for (PADetails paDetails : paymentInstruction.getPaDetails()) {
                     paDetails.setPaFinYear(finYear);
                     paDetails.setPaAdviceId(adviceId);
@@ -115,9 +128,12 @@ public class PAGService {
                 paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                 paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 paymentInstruction.setPiStatus(PIStatus.IN_PROCESS);
+                log.info("Updating PI status and details for PAG : " + paymentInstruction.getJitBillNo());
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
             }
+            log.info("PAG status updated for PI : " + paymentInstruction.getJitBillNo());
+
         }
     }
 

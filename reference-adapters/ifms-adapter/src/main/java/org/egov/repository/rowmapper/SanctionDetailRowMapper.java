@@ -34,23 +34,23 @@ public class SanctionDetailRowMapper implements ResultSetExtractor<List<Sanction
         Map<String, SanctionDetail> sanctionDetailMap = new LinkedHashMap<>();
 
         while (rs.next()) {
-            String id = rs.getString("jsdId");
-            String tenantId = rs.getString("jsdTenantId");
-            String hoaCode = rs.getString("jsdHoaCode");
-            String ddoCode = rs.getString("jsdDdoCode");
-            String masterAllotmentId = rs.getString("jsdMasterAllotmentId");
-            BigDecimal sanctionedAmount = rs.getBigDecimal("jsdSanctionedAmount");
-            String financialYear = rs.getString("jsdFinancialYear");
-            String createdby = rs.getString("jsdCreatedBy");
-            String lastmodifiedby = rs.getString("jsdLastModifiedBy");
-            Long createdtime = rs.getLong("jsdCreatedTime");
-            Long lastmodifiedtime = rs.getLong("jsdLastModifiedTime");
+            String id = rs.getString("snacDetailsId");
+            String tenantId = rs.getString("snacDetailsTenantId");
+            String hoaCode = rs.getString("snacDetailsHoaCode");
+            String ddoCode = rs.getString("snacDetailsDdoCode");
+            String masterAllotmentId = rs.getString("snacDetailsMasterAllotmentId");
+            BigDecimal sanctionedAmount = rs.getBigDecimal("snacDetailsSanctionedAmount");
+            String financialYear = rs.getString("snacDetailsFinancialYear");
+            String createdby = rs.getString("snacDetailsCreatedBy");
+            String lastmodifiedby = rs.getString("snacDetailsLastModifiedBy");
+            Long createdtime = rs.getLong("snacDetailsCreatedTime");
+            Long lastmodifiedtime = rs.getLong("snacDetailsLastModifiedTime");
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
                     .build();
 
-            JsonNode additionalDetails = getAdditionalDetail("jsdAdditionalDetails", rs);
+            JsonNode additionalDetails = getAdditionalDetail("snacDetailsAdditionalDetails", rs);
 
             SanctionDetail sanctionDetail = SanctionDetail.builder()
                     .id(id)
@@ -75,16 +75,16 @@ public class SanctionDetailRowMapper implements ResultSetExtractor<List<Sanction
     }
 
     private void addFundsSummary(ResultSet rs, SanctionDetail sanctionDetail) throws SQLException {
-        String fundsSummaryId = rs.getString("jfsId");
-        String tenantId = rs.getString("jfsTenantId");
-        String sanctionId = rs.getString("jfsSanctionId");
-        BigDecimal allottedAmount = rs.getBigDecimal("jfsAllottedAmount");
-        BigDecimal availableAmount = rs.getBigDecimal("jfsAvailableAmount");
-        String createdby = rs.getString("jfsCreatedBy");
-        String lastmodifiedby = rs.getString("jfsLastModifiedBy");
-        Long createdtime = rs.getLong("jfsCreatedTime");
-        Long lastmodifiedtime = rs.getLong("jfsLastModifiedTime");
-        JsonNode additionalDetails = getAdditionalDetail("jfsAdditionalDetails", rs);
+        String fundsSummaryId = rs.getString("fundsSummaryId");
+        String tenantId = rs.getString("fundsSummaryTenantId");
+        String sanctionId = rs.getString("fundsSummarySanctionId");
+        BigDecimal allottedAmount = rs.getBigDecimal("fundsSummaryAllottedAmount");
+        BigDecimal availableAmount = rs.getBigDecimal("fundsSummaryAvailableAmount");
+        String createdby = rs.getString("fundsSummaryCreatedBy");
+        String lastmodifiedby = rs.getString("fundsSummaryLastModifiedBy");
+        Long createdtime = rs.getLong("fundsSummaryCreatedTime");
+        Long lastmodifiedtime = rs.getLong("fundsSummaryLastModifiedTime");
+        JsonNode additionalDetails = getAdditionalDetail("fundsSummaryAdditionalDetails", rs);
 
         if (StringUtils.isNotBlank(fundsSummaryId) && sanctionId.equalsIgnoreCase(sanctionDetail.getId().toString())) {
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
@@ -106,20 +106,20 @@ public class SanctionDetailRowMapper implements ResultSetExtractor<List<Sanction
     }
 
     private void addAllotmentDetails(ResultSet rs, SanctionDetail sanctionDetail) throws SQLException {
-        String allotmentId = rs.getString("jadId");
-        String tenantId = rs.getString("jadTenantId");
-        String sanctionId = rs.getString("jadSanctionId");
-        Integer allotmentSerialNo = rs.getInt("jadAllotmentSerialNo");
-        String ssuAllotmentId = rs.getString("jadSsuAllotmentId");
-        String allotmentTransactionType = rs.getString("jadAllotmentTransactionType");
-        BigDecimal allottedAmount = rs.getBigDecimal("jadAllotmentAmount");
-        BigDecimal sanctionBalance = rs.getBigDecimal("jadSanctionBalance");
-        Long allotmentDate = rs.getLong("jadAllotmentDate");
-        String createdby = rs.getString("jfsCreatedBy");
-        String lastmodifiedby = rs.getString("jfsLastModifiedBy");
-        Long createdtime = rs.getLong("jfsCreatedTime");
-        Long lastmodifiedtime = rs.getLong("jfsLastModifiedTime");
-        JsonNode additionalDetails = getAdditionalDetail("jfsAdditionalDetails", rs);
+        String allotmentId = rs.getString("allotmentDetailsId");
+        String tenantId = rs.getString("allotmentDetailsTenantId");
+        String sanctionId = rs.getString("allotmentDetailsSanctionId");
+        Integer allotmentSerialNo = rs.getInt("allotmentDetailsAllotmentSerialNo");
+        String ssuAllotmentId = rs.getString("allotmentDetailsSsuAllotmentId");
+        String allotmentTransactionType = rs.getString("allotmentDetailsAllotmentTransactionType");
+        BigDecimal allottedAmount = rs.getBigDecimal("allotmentDetailsAllotmentAmount");
+        BigDecimal sanctionBalance = rs.getBigDecimal("allotmentDetailsSanctionBalance");
+        Long allotmentDate = rs.getLong("allotmentDetailsAllotmentDate");
+        String createdby = rs.getString("allotmentDetailsCreatedBy");
+        String lastmodifiedby = rs.getString("allotmentDetailsLastModifiedBy");
+        Long createdtime = rs.getLong("allotmentDetailsCreatedTime");
+        Long lastmodifiedtime = rs.getLong("allotmentDetailsLastModifiedTime");
+        JsonNode additionalDetails = getAdditionalDetail("allotmentDetailsAdditionalDetails", rs);
 
         if (StringUtils.isNotBlank(allotmentId) && sanctionId.equalsIgnoreCase(sanctionDetail.getId().toString())) {
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)

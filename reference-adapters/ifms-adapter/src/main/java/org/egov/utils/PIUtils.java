@@ -25,6 +25,7 @@ public class PIUtils {
     @Autowired
     ObjectMapper objectMapper;
     public void updatePiForIndexer(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
+        log.info("Executing PIUtils:updatePiForIndexer");
         try {
             PaymentInstruction pi = (PaymentInstruction) paymentInstruction;
 //            if (paymentInstruction.getIsActive().equals(false))
@@ -55,7 +56,7 @@ public class PIUtils {
             indexerRequest.put("RequestInfo", requestInfo);
             indexerRequest.put("paymentInstruction", piObjectNode);
             producer.push(adapterConfig.getIfmsPiEnrichmentTopic(), indexerRequest);
-
+            log.info("PI pushed to indexer kafka topic.");
         } catch (Exception e) {
             log.error("Exception occurred in : PaymentInstructionService:updatePiForIndexer " + e);
         }

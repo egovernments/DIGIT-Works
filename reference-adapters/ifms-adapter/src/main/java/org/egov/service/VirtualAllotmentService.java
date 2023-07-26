@@ -50,7 +50,10 @@ public class VirtualAllotmentService {
     private SanctionDetailsRepository sanctionDetailsRepository;
 
     public void generateVirtualAllotment(RequestInfo requestInfo) {
+        log.info("Start executing VA service.");
+
         List<String> tenants = getTenants(requestInfo);
+        log.info("Fetched tenant details");
 
         if (tenants != null && !tenants.isEmpty()) {
             getSsuDetailsAndFetchVA(requestInfo, tenants);
@@ -60,17 +63,20 @@ public class VirtualAllotmentService {
     }
 
     private void getSsuDetailsAndFetchVA (RequestInfo requestInfo, List<String> tenants) {
+        log.info("Fetching HOA list from MDMS");
         // Get MDMS data
         JSONArray hoaList = ifmsService.getHeadOfAccounts(requestInfo);
         // Create ObjectMapper instance
 
         // Get SSU details for each tenants
         for (String tenantId: tenants) {
+            log.info("Started fetching VA for tenant : " + tenantId);
             try {
                 List<String> ssuMasters = new ArrayList<>();
                 ssuMasters.add(MDMS_SSU_DETAILS_MASTER);
+                log.info("Fetching SSU list from MDMS");
                 Map<String, Map<String, JSONArray>> ssuDetailsResponse = mdmsUtils.fetchMdmsData(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, ssuMasters);
-                System.out.println("ssuDetailsResponse : "+ ssuDetailsResponse);
+                log.info("SSU list from MDMS : " + ssuDetailsResponse);
                 JSONArray ssuList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
 
                 for (Object ssu: ssuList) {
@@ -81,10 +87,9 @@ public class VirtualAllotmentService {
                         processVAForHOA(tenantId, hoaNode, ssuNode, requestInfo);
                     }
 
-
                 }
             } catch (Exception e) {
-
+                log.info("Exception occurred while executing VirtualAllotmentService:getSsuDetailsAndFetchVA." + e);
             }
 
         }
@@ -92,6 +97,7 @@ public class VirtualAllotmentService {
     }
 
     private void processVAForHOA(String tenantId, JsonNode hoaNode, JsonNode ssuNode, RequestInfo requestInfo) {
+        log.info("Fetching allotments for HOA");
         try {
             ExecutedVALog executedVALog = getLastExecutedVA(tenantId, hoaNode, ssuNode);
             Long lastExecuted = null;
@@ -102,6 +108,7 @@ public class VirtualAllotmentService {
                 lastExecuted = Long.parseLong(effectiveFrom);
             }
 
+            log.info("Calling ifms service.");
             JITRequest vaRequest = vaEnrichment.constructVARequest(hoaNode, ssuNode, lastExecuted);
             JITResponse vaResponse = ifmsService.sendRequestToIFMS(vaRequest);
 
@@ -150,7 +157,7 @@ public class VirtualAllotmentService {
                 executedVALogsRepository.updateExecutedVALogs(Collections.singletonList(executedVALog));
             }
         } catch (Exception e) {
-            System.out.println("Exception occured.");
+            log.info("Exception occurred while executing VirtualAllotmentService:processVAForHOA." + e);
         }
     }
 
@@ -175,6 +182,8 @@ public class VirtualAllotmentService {
     }
 
     private ExecutedVALog getLastExecutedVA(String tenantId, JsonNode hoaNode, JsonNode ssuNode) {
+        log.info("Executing VirtualAllotmentService:getLastExecutedVA");
+
         String hoaCode = hoaNode.get("code").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
         String granteeCode = ssuNode.get("granteeAgCode").asText();

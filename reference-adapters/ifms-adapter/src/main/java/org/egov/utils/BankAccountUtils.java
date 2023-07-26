@@ -33,6 +33,7 @@ public class BankAccountUtils {
     private IfmsAdapterConfig config;
 
 	public @Valid List<BankAccount> getBankAccountsByIdentifier(RequestInfo requestInfo, List<String> identifiers, String tenantId) throws Exception {
+		log.info("Fetching Bank account details");
 		List<String> billIds = new ArrayList<>();
 		BankAccountSearchCriteria bankAccountSearchCriteria = null;
 		if (requestInfo != null && identifiers != null && !identifiers.isEmpty()) {
@@ -68,11 +69,11 @@ public class BankAccountUtils {
 		try {
 			response = restTemplate.postForObject(uri.toString(), bankAccountRequest, Map.class);
 			bankAccountResponse = mapper.convertValue(response, BankAccountResponse.class);
+			log.info("Bank account fetched.");
 		} catch (Exception e) {
-			log.error("Exception occurred while fetching bill lists from bill service: ", e);
+			log.error("Exception occurred while fetching bank account lists from bank account service: ", e);
 		}
 
-		log.info(bankAccountResponse.toString());
 		return bankAccountResponse.getBankAccounts();
 	}
 

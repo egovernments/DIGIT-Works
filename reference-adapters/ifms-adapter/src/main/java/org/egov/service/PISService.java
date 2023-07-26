@@ -50,9 +50,11 @@ public class PISService {
     @Autowired
     private ObjectMapper objectMapper;
     public void updatePIStatus(RequestInfo requestInfo){
+        log.info("Start executing PIS update service.");
         List<PaymentInstruction> paymentInstructions = getInitiatedPaymentInstructions();
 
         for(PaymentInstruction paymentInstruction : paymentInstructions){
+            log.info("Started Processing PI for PIS : " + paymentInstruction.getJitBillNo());
             JSONArray ssuIaDetails = ifmsService.getSSUDetails(RequestInfo.builder().build(), paymentInstruction.getTenantId());
             Map<String,String> ssuIaDetailsMap = (Map<String, String>) ssuIaDetails.get(0);
             String ssuId = ssuIaDetailsMap.get("ssuId");
@@ -62,12 +64,18 @@ public class PISService {
                     .ssuIaId(ssuId)
                     .build();
             JITRequest jitRequest = JITRequest.builder().serviceId(JITServiceId.PIS).params(pisRequest).build();
-            JITResponse pisResponse;
+            JITResponse pisResponse = null;
+            log.info("Calling ifms service.");
             try {
                 pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
             }catch (Exception e){
+                log.info("Exception occurred while fetching PIS from ifms." + e);
+
+                /*
+                TODO: commenting because this is invalid, check and remove this block
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
+
+                Collections.singleton(paymentInstruction.getMuktaReferenceId()),
                         paymentInstruction.getTenantId());
                 for (Payment payment : payments) {
                     PaymentRequest paymentRequest = PaymentRequest.builder()
@@ -76,45 +84,60 @@ public class PISService {
                     billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_SERVER_UNREACHABLE);
                 }
                 throw new CustomException("SERVER_UNREACHABLE","Server is currently unreachable");
+                 */
             }
+            if (pisResponse == null)
+                continue;
+
+            log.info("Response received from IFMS.");
 
             if (pisResponse.getErrorMsg() != null
                     && pisResponse.getErrorMsg().contains(paymentInstruction.getJitBillNo())
                     && pisResponse.getErrorMsg().contains("rejected")) {
+                log.info("PI is rejected, updating the PI to failed. " + paymentInstruction.getJitBillNo());
                 updateStatusToFailed(requestInfo, paymentInstruction);
                 updateFundsSummary(requestInfo, paymentInstruction);
                 // Update PI indexer based on updated PI
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                log.info("PI updated to failed. " + paymentInstruction.getJitBillNo());
                 continue;
             }
             if(CollectionUtils.isEmpty(pisResponse.getData())){
                 continue;
             }
-            for(Object data : pisResponse.getData()){
-                Map<String, String> dataMap = mapper.convertValue(data, Map.class);
-                String piApprovedId = dataMap.get("pmtInstId");
-                String piApprovalDate = dataMap.get("payInstDate");
+            try {
+                log.info("Processing PIS response for : " + paymentInstruction.getJitBillNo());
+                for(Object data : pisResponse.getData()){
+                    Map<String, String> dataMap = mapper.convertValue(data, Map.class);
+                    String piApprovedId = dataMap.get("pmtInstId");
+                    String piApprovalDate = dataMap.get("payInstDate");
 
-                paymentInstruction.setPiApprovedId(piApprovedId);
-                paymentInstruction.setPiApprovalDate(piApprovalDate);
-                paymentInstruction.setPiStatus(PIStatus.APPROVED);
-                paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
-                paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                    paymentInstruction.setPiApprovedId(piApprovedId);
+                    paymentInstruction.setPiApprovalDate(piApprovalDate);
+                    paymentInstruction.setPiStatus(PIStatus.APPROVED);
+                    paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+                    paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 
-                piRepository.update(Collections.singletonList(paymentInstruction),null);
-                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                    log.info("Updating PI status and details for PIS : " + paymentInstruction.getJitBillNo());
+                    piRepository.update(Collections.singletonList(paymentInstruction),null);
+                    piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                }
+            } catch (Exception e) {
+                log.info("Exception occurred while processing PIS response." + e);
             }
 
         }
     }
 
     public List<PaymentInstruction> getInitiatedPaymentInstructions(){
+        log.info("Executing PISService:getInitiatedPaymentInstructions");
         PISearchRequest piSearchRequest = PISearchRequest.builder().requestInfo(RequestInfo.builder().build())
                 .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.INITIATED).build()).build();
         List<PaymentInstruction> paymentInstructions = paymentInstructionService.searchPi(piSearchRequest);
         return paymentInstructions;
     }
     private void updateStatusToFailed(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
+        log.info("Executing PISService:updateStatusToFailed");
         for (Beneficiary beneficiary : paymentInstruction.getBeneficiaryDetails()) {
             beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
         }
@@ -131,6 +154,7 @@ public class PISService {
         }
     }
     private void updateFundsSummary(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
+        log.info("Executing PISService:updateFundsSummary");
         SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
                 .ids(Collections.singletonList(paymentInstruction.getTransactionDetails().get(0).getSanctionId()))
                 .build();
@@ -161,7 +185,9 @@ public class PISService {
                 .auditDetails(auditDetails)
                 .build();
         paymentInstruction.getTransactionDetails().add(transactionDetails);
+        log.info("Updating PI in PISService:updateFundsSummary");
         piRepository.update(Collections.singletonList(paymentInstruction), sanctionDetail.getFundsSummary());
+        log.info("PI updated in PISService:updateFundsSummary");
     }
 
 }

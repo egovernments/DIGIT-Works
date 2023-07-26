@@ -125,7 +125,6 @@ public class FailureDetailsService {
         JsonNode benfDtlsNode = failedPi.get("benfDtls");
         if (benfDtlsNode.isArray() && !benfDtlsNode.isEmpty()) {
             for (JsonNode benf: benfDtlsNode) {
-                System.out.println(benf);
                 String benfId = benf.get("benfId").asText();
                 failedPiBenfMap.put(benfId, benf);
             }
