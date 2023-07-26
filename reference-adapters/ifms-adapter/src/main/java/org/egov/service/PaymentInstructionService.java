@@ -223,21 +223,29 @@ public class PaymentInstructionService {
             try {
                 JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
                 // JITResponse jitResponse = ifmsService.loadCustomResponse();
-                if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
+                if (jitResponse.getErrorMsg() == null && jitResponse.getData().isEmpty()) {
                     paymentStatus = PaymentStatus.INITIATED;
-                    Object piResponseNode = jitResponse.getData().get(0);
-                    JsonNode node = objectMapper.valueToTree(piResponseNode);
-                    String piSuccessCode = node.get("successCode").asText();
-                    String piSucessDescrp = node.get("sucessDescrp").asText();
-                    paymentInstruction.setPiSuccessCode(piSuccessCode);
-                    paymentInstruction.setPiSuccessDesc(piSucessDescrp);
+                    try {
+                        Object piResponseNode = jitResponse.getData().get(0);
+                        JsonNode node = objectMapper.valueToTree(piResponseNode);
+                        String piSuccessCode = node.get("successCd").asText();
+                        String piSucessDescrp = node.get("sucessDescrp").asText();
+                        paymentInstruction.setPiSuccessCode(piSuccessCode);
+                        paymentInstruction.setPiSuccessDesc(piSucessDescrp);
+                    } catch (Exception e) {
+                        log.info("Exception while parsing COR success response " + e);
+                    }
                 } else {
-                    Object piResponseNode = jitResponse.getErrorMsgs().get(0);
-                    JsonNode node = objectMapper.valueToTree(piResponseNode);
-                    String piErrorCode = node.get("errorCode").asText();
-                    String piErrorDescrp = node.get("errorMsg").asText();
                     paymentStatus = PaymentStatus.PARTIAL;
-                    paymentInstruction.setPiErrorResp(piErrorDescrp);
+                    try {
+                        Object piResponseNode = jitResponse.getErrorMsgs().get(0);
+                        JsonNode node = objectMapper.valueToTree(piResponseNode);
+                        String piErrorCode = node.get("errorCode").asText();
+                        String piErrorDescrp = node.get("errorMsg").asText();
+                        paymentInstruction.setPiErrorResp(piErrorDescrp);
+                    }catch (Exception e) {
+                        log.info("Exception while parsing COR Error response " + e);
+                    }
                 }
             } catch (Exception e) {
                 paymentStatus = PaymentStatus.PARTIAL;
