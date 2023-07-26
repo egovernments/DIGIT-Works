@@ -79,7 +79,7 @@ public class PISService {
             }
 
             if (pisResponse.getErrorMsg() != null
-                    && pisResponse.getErrorMsg().contains(paymentInstruction.getMuktaReferenceId())
+                    && pisResponse.getErrorMsg().contains(paymentInstruction.getJitBillNo())
                     && pisResponse.getErrorMsg().contains("rejected")) {
                 updateStatusToFailed(requestInfo, paymentInstruction);
                 updateFundsSummary(requestInfo, paymentInstruction);
@@ -143,7 +143,7 @@ public class PISService {
                 totalAmount = totalAmount.add(piBeneficiary.getAmount());
             }
         }
-        sanctionDetail.getFundsSummary().getAvailableAmount().add(totalAmount);
+        sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().add(totalAmount));
         sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
         sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
         AuditDetails auditDetails = AuditDetails.builder()
