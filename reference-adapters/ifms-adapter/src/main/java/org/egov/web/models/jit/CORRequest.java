@@ -42,8 +42,8 @@ public class CORRequest {
     @Exclude
     private String jitOrgBillDate;
 
-    @JsonProperty("beneficiaryDetails")
+    @JsonProperty("beneficiaryDtls")
     @Exclude
-    private List<CORBeneficiaryDetails> beneficiaryDetails;
+    private List<CORBeneficiaryDetails> beneficiaryDtls;
 
 }

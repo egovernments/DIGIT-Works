@@ -454,7 +454,7 @@ public class PaymentInstructionEnrichment {
                 .jitOrgBillRefNo(originalPi.getPaDetails().get(0).getPaBillRefNumber())
                 .jitOrgBillNo(originalPi.getJitBillNo())
                 .jitOrgBillDate(util.getFormattedTimeFromTimestamp(originalPi.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
-                .beneficiaryDetails(corBenfDetails)
+                .beneficiaryDtls(corBenfDetails)
                 .build();
         JITRequest jitPiRequest = JITRequest.builder()
                 .serviceId(JITServiceId.COR)
