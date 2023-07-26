@@ -266,7 +266,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
     } else if (beneficiary.beneficiaryType === "DEPT") {
       return [
         // beneficiary?.beneficiaryId || t("ES_COMMON_NA"),
-        beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountHolderName || t("ES_COMMON_NA"),
+        t(beneficiary?.bankDetails?.referenceId) || t("ES_COMMON_NA"),
         beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountHolderName || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber,
