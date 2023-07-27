@@ -31,6 +31,8 @@ public class MusterRollServiceConstants {
     public static final String MUSTER_ROLL_LOCALIZATION_CODE_JSONPATH = "$.messages.*.code";
     public static final String MUSTER_ROLL_LOCALIZATION_MESSAGE_JSONPATH = "$.messages.*.message";
     public static final String WF_SEND_BACK_TO_CBO_CODE = "SENDBACKTOCBO";
+    public static final String ACTION_SENDBACK = "SENDBACK";
+    public static final String ACTION_SENDBACKTOORIGINATOR = "SENDBACKTOORIGINATOR";
     public static final String WF_APPROVE_CODE = "APPROVE";
     public static final String CBO_NOTIFICATION_FOR_CORRECTION_LOCALIZATION_CODE = "MUSTER_ROLL_CBO_NOTIFICATION_FOR_CORRECTION";
     public static final String CBO_NOTIFICATION_OF_APPROVAL_LOCALIZATION_CODE = "MUSTER_ROLL_CBO_NOTIFICATION_OF_APPROVAL";

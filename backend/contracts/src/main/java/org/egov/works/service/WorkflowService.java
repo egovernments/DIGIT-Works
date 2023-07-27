@@ -8,6 +8,7 @@ import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.ServiceRequestRepository;
+import org.egov.works.util.ContractServiceConstants;
 import org.egov.works.web.models.Contract;
 import org.egov.works.web.models.ContractRequest;
 import org.egov.works.web.models.Status;
@@ -58,6 +59,28 @@ public class WorkflowService {
         log.info("Get process instance for contract. ContractId ["+contract.getId()+"]");
         Workflow workflow = request.getWorkflow();
 
+        if(workflow.getAction().equals(ContractServiceConstants.ACTION_SENDBACK) && CollectionUtils.isEmpty(workflow.getAssignees())) {
+            String assignee = null;
+            Boolean statusFound = false;
+            List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
+            String nextState = getNextStateValueForProcessInstance(processInstanceList.get(0));
+            for(ProcessInstance processInstance: processInstanceList){
+                if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState)) && (statusFound != true)) {
+                    statusFound = true;
+                    if(processInstance.getAssignes() != null){
+                        List<String> uuids = new ArrayList<>();
+                        assignee = processInstance.getAssignes().get(0).getUuid();
+                        uuids.add(assignee);
+                        workflow.setAssignees(uuids);
+                    }
+                }
+            }
+        }
+        if(workflow.getAction().equals(ContractServiceConstants.ACTION_SENDBACKTOORIGINATOR) && CollectionUtils.isEmpty(workflow.getAssignees())){
+            List<String> uuids = new ArrayList<>();
+            uuids.add(contract.getAuditDetails().getCreatedBy());
+            workflow.setAssignees(uuids);
+        }
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(contract.getContractNumber());
         processInstance.setAction(request.getWorkflow().getAction());
@@ -94,6 +117,16 @@ public class WorkflowService {
      * <p>
      * and return wf-response to sets the resultant status
      */
+    private String getNextStateValueForProcessInstance(ProcessInstance processInstance){
+        List<Action> actions = processInstance.getState().getActions();
+        String nextState = null;
+        for(Action action: actions) {
+            if (action.getAction().equals("SENDBACK")) {
+                nextState = action.getNextState();
+            }
+        }
+        return nextState;
+    }
     private ProcessInstance callWorkFlow(ProcessInstanceRequest workflowReq, String id) {
         log.info("Call workflow service for contractId ["+id+"]");
         ProcessInstanceResponse response = null;
@@ -101,6 +134,15 @@ public class WorkflowService {
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0);
+    }
+
+    private List<ProcessInstance> callWorkFlowForAssignees(ContractRequest contractRequest) {
+        log.info("WorkflowService::callWorkFlow");
+        ProcessInstanceResponse response = null;
+        StringBuilder url = getprocessInstanceHistorySearchURL(contractRequest.getContract().getTenantId(), contractRequest.getContract().getContractNumber(), true);
+        Object optional = repository.fetchResult(url, contractRequest);
+        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+        return response.getProcessInstances();
     }
 
     /*
@@ -141,6 +183,19 @@ public class WorkflowService {
         url.append(tenantId);
         url.append("&businessServices=");
         url.append(businessService);
+        return url;
+    }
+
+    public StringBuilder getprocessInstanceHistorySearchURL(String tenantId, String contractNumber, boolean history) {
+        log.info("WorkflowService::getprocessInstanceSearchURL");
+        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
+        url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
+        url.append("?tenantId=");
+        url.append(tenantId);
+        url.append("&businessIds=");
+        url.append(contractNumber);
+        url.append("&history=");
+        url.append(history);
         return url;
     }
 

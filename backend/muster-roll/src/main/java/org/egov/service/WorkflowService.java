@@ -2,11 +2,13 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.*;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.MusterRollServiceConstants;
 import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.Workflow;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service
 public class WorkflowService {
 
@@ -51,6 +54,28 @@ public class WorkflowService {
 
         MusterRoll musterRoll = request.getMusterRoll();
         Workflow workflow = request.getWorkflow();
+        if(workflow.getAction().equals(MusterRollServiceConstants.ACTION_SENDBACK) && CollectionUtils.isEmpty(workflow.getAssignees())) {
+            String assignee = null;
+            Boolean statusFound = false;
+            List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
+            String nextState = getNextStateValueForProcessInstance(processInstanceList.get(0));
+            for(ProcessInstance processInstance: processInstanceList){
+                if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState)) && (statusFound != true)) {
+                    statusFound = true;
+                    if(processInstance.getAssignes() != null){
+                        List<String> uuids = new ArrayList<>();
+                        assignee = processInstance.getAssignes().get(0).getUuid();
+                        uuids.add(assignee);
+                        workflow.setAssignees(uuids);
+                    }
+                }
+            }
+        }
+        if(workflow.getAction().equals(MusterRollServiceConstants.ACTION_SENDBACKTOORIGINATOR) && CollectionUtils.isEmpty(workflow.getAssignees())){
+            List<String> uuids = new ArrayList<>();
+            uuids.add(musterRoll.getAuditDetails().getCreatedBy());
+            workflow.setAssignees(uuids);
+        }
 
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(musterRoll.getMusterRollNumber());
@@ -80,6 +105,16 @@ public class WorkflowService {
 
         return processInstance;
     }
+    private String getNextStateValueForProcessInstance(ProcessInstance processInstance){
+        List<Action> actions = processInstance.getState().getActions();
+        String nextState = null;
+        for(Action action: actions) {
+            if (action.getAction().equals("SENDBACK")) {
+                nextState = action.getNextState();
+            }
+        }
+        return nextState;
+    }
 
     /**
      * Method to integrate with workflow
@@ -95,6 +130,14 @@ public class WorkflowService {
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0);
+    }
+    private List<ProcessInstance> callWorkFlowForAssignees(MusterRollRequest musterRollRequest) {
+        log.info("WorkflowService::callWorkFlow");
+        ProcessInstanceResponse response = null;
+        StringBuilder url = getprocessInstanceHistorySearchURL(musterRollRequest.getMusterRoll().getTenantId(), musterRollRequest.getMusterRoll().getMusterRollNumber(), true);
+        Object optional = repository.fetchResult(url, musterRollRequest);
+        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+        return response.getProcessInstances();
     }
 
     /*
@@ -135,6 +178,18 @@ public class WorkflowService {
         url.append(tenantId);
         url.append("&businessServices=");
         url.append(businessService);
+        return url;
+    }
+    public StringBuilder getprocessInstanceHistorySearchURL(String tenantId, String musterRollNumber, boolean history) {
+        log.info("WorkflowService::getprocessInstanceSearchURL");
+        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
+        url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
+        url.append("?tenantId=");
+        url.append(tenantId);
+        url.append("&businessIds=");
+        url.append(musterRollNumber);
+        url.append("&history=");
+        url.append(history);
         return url;
     }
 
