@@ -121,7 +121,7 @@ public class WorkflowService {
         List<Action> actions = processInstance.getState().getActions();
         String nextState = null;
         for(Action action: actions) {
-            if (action.getAction().equals("SENDBACK")) {
+            if (action.getAction().equals("SEND_BACK")) {
                 nextState = action.getNextState();
             }
         }
