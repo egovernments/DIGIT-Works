@@ -2,8 +2,8 @@ package org.egov.works.util;
 
 public class ContractServiceConstants {
     public static final String MASTER_TENANTS = "tenants";
-    public static final String ACTION_SENDBACK = "SENDBACK";
-    public static final String ACTION_SENDBACKTOORIGINATOR = "SENDBACKTOORIGINATOR";
+    public static final String ACTION_SENDBACK = "SEND_BACK";
+    public static final String ACTION_SENDBACKTOORIGINATOR = "SEND_BACK_TO_ORIGINATOR";
     public static final String CONTRACT_ID_CONSTANT = "contractId";
     public static final String MDMS_TENANT_MODULE_NAME = "tenant";
     public static final String OFFICER_IN_CHARGE_CONSTANT = "officerInCharge";
