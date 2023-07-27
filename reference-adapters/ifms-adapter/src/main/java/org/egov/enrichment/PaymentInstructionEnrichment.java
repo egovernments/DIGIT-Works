@@ -624,5 +624,40 @@ public class PaymentInstructionEnrichment {
         return newBeneficiaryList;
     }
 
+    public PaymentInstruction getEnrichedPaymentInstructionForNoFunds(PaymentRequest paymentRequest, List<Beneficiary> beneficiaries) {
+        // Get the beneficiaries
+        BigDecimal totalAmount = new BigDecimal(0);
+        if (beneficiaries != null && !beneficiaries.isEmpty()) {
+            for (Beneficiary piBeneficiary: beneficiaries) {
+                totalAmount = totalAmount.add(piBeneficiary.getAmount());
+            }
+        }
+        SanctionDetail selectedSanction = null;
+        Boolean hasFunds = true;
+
+        // Sort the list in descending order based on the value
+        PIStatus piStatus = PIStatus.FAILED;
+        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        PaymentInstruction piRequest = PaymentInstruction.builder()
+                .id(UUID.randomUUID().toString())
+                .jitBillNo(jitBillNo)
+                .purpose(JIT_FD_EXT_APP_NAME)
+                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .beneficiaryDetails(beneficiaries)
+                .numBeneficiaries(beneficiaries.size())
+                .billNumberOfBenf(String.valueOf(beneficiaries.size()))
+                .tenantId(paymentRequest.getPayment().getTenantId())
+                .grossAmount(totalAmount)
+                .netAmount(totalAmount)
+                .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
+                .piStatus(piStatus)
+                .isActive(false)
+                .build();
+        enrichPiRequestForInsert(piRequest, paymentRequest, false);
+        // update piRequest for payment search indexer
+        updateBillFieldsForIndexer(piRequest, paymentRequest);
+        return piRequest;
+    }
 
 }

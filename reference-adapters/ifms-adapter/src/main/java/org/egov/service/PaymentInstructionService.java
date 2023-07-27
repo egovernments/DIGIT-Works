@@ -163,7 +163,7 @@ public class PaymentInstructionService {
                     piRequest.setPiStatus(PIStatus.FAILED);
                     piRequest.setIsActive(false);
                     for(Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
-                        beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.PENDING);
+                        beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
                     }
                 }
                 // IF pi is initiated then add transaction records
@@ -180,7 +180,14 @@ public class PaymentInstructionService {
             } else {
                 paymentStatus = PaymentStatus.FAILED;
                 referenceStatus = ReferenceStatus.PAYMENT_INSUFFICIENT_FUNDS;
+                // Get enriched PI request to store on DB
+                piRequest = piEnrichment.getEnrichedPaymentInstructionForNoFunds(paymentRequest, beneficiaries);
                 piRequest.setPiErrorResp(referenceStatus.toString());
+                for(Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
+                    beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+                }
+                piRepository.save(Collections.singletonList(piRequest), null, paymentStatus);
+                piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
             }
         } catch (Exception e) {
             log.info("Exception " + e);
@@ -294,9 +301,9 @@ public class PaymentInstructionService {
             lastPiForUpdate.getAuditDetails().setLastModifiedBy(pi.getAuditDetails().getLastModifiedBy());
             piRepository.update(Collections.singletonList(lastPiForUpdate), null);
             piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), lastPiForUpdate);
+            paymentRequest.getPayment().setStatus(PaymentStatus.INITIATED);
             updateLineItemsPaymentStatus(paymentRequest, PaymentStatus.FAILED, paymentStatus);
         }
-        log.info(""+pi);
         piRepository.save(Collections.singletonList(pi), sanctionDetail.getFundsSummary(), paymentStatus);
         piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), pi);
     }
@@ -396,12 +403,12 @@ public class PaymentInstructionService {
     }
 
 
-    private void updateLineItemsPaymentStatus(PaymentRequest paymentRequest, PaymentStatus fromStatus, PaymentStatus paymentStatus) {
+    private void updateLineItemsPaymentStatus(PaymentRequest paymentRequest, PaymentStatus fromLineItemStatus, PaymentStatus toLineItemStatus) {
         for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
             for (PaymentBillDetail billDetail: bill.getBillDetails()) {
                 for (PaymentLineItem lineItem : billDetail.getPayableLineItems()) {
-                    if (lineItem.getStatus().equals(fromStatus)) {
-                        lineItem.setStatus(paymentStatus);
+                    if (lineItem.getStatus().equals(fromLineItemStatus)) {
+                        lineItem.setStatus(toLineItemStatus);
                     }
                 }
             }
