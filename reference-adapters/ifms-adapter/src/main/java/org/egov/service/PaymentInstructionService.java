@@ -223,7 +223,7 @@ public class PaymentInstructionService {
             try {
                 JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
                 // JITResponse jitResponse = ifmsService.loadCustomResponse();
-                if (jitResponse.getErrorMsg() == null && jitResponse.getData().isEmpty()) {
+                if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                     paymentStatus = PaymentStatus.INITIATED;
                     try {
                         Object piResponseNode = jitResponse.getData().get(0);
