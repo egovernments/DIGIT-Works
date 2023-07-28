@@ -179,6 +179,11 @@ config:
       - work-dir: "utilities/ifms-cronjob"
         image-name: "ifms-cronjob-ftfps"
         dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pa"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pa"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
 
 # reference-adapters
   - name: "builds/digit-works/reference-adapters/ifms-adapter"
