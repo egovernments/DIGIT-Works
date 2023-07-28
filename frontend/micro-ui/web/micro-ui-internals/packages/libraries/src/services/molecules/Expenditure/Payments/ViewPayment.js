@@ -162,8 +162,16 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
   let orgsToSearch = []
   let IndsToSearch = []
   const latestPaymentInstruction = paymentInstructions?.[0]
-  const { beneficiaryDetails } = latestPaymentInstruction
-  const beneficiaryIdsToSearch = beneficiaryDetails?.map(row => {
+  const latestBeneficiaryObject = latestPaymentInstruction?.beneficiaryDetails.reduce((latest, current) => {
+    if (current.auditDetails.lastModifiedTime > latest.auditDetails.lastModifiedTime) {
+      return current;
+    } else {
+      return latest;
+    }
+  }, latestPaymentInstruction?.beneficiaryDetails[0]);
+  const  beneficiaryDetails  = paymentInstructions.length == 1 ? latestPaymentInstruction?.beneficiaryDetails : [latestBeneficiaryObject] 
+
+    const beneficiaryIdsToSearch = beneficiaryDetails?.map(row => {
     if(row?.beneficiaryType === "ORG"){
       orgsToSearch.push(row.beneficiaryId)
     }else if(row?.beneficiaryType === "IND"){
