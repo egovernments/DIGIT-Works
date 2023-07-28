@@ -3,11 +3,7 @@ package org.egov.web.controller;
 import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.service.FailureDetailsService;
-import org.egov.service.PAGService;
-import org.egov.service.PDService;
-import org.egov.service.PISService;
-import org.egov.service.VirtualAllotmentService;
+import org.egov.service.*;
 import org.egov.utils.ResponseInfoFactory;
 import org.egov.web.models.enums.JITServiceId;
 import org.egov.web.models.jit.SchedulerRequest;
@@ -35,6 +31,8 @@ public class Scheduler {
     private PDService pdService;
     @Autowired
     private PAGService pagService;
+    @Autowired
+    private PaymentService paymentService;
 
     @RequestMapping(path = "_scheduler", method = RequestMethod.POST)
     public ResponseInfo scheduler(@RequestBody @Valid SchedulerRequest schedulerRequest, @RequestParam("serviceId") JITServiceId serviceId )throws Exception{
@@ -60,6 +58,9 @@ public class Scheduler {
                 break;
             case FTFPS:
                 failureDetailsService.updateFTFPSStatus(schedulerRequest.getRequestInfo());
+                break;
+            case PA:
+                paymentService.createPaymentFromBills(schedulerRequest.getRequestInfo());
                 break;
 
         }

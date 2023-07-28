@@ -161,7 +161,7 @@ public class VirtualAllotmentService {
         }
     }
 
-    private List<String> getTenants(RequestInfo requestInfo) {
+    public List<String> getTenants(RequestInfo requestInfo) {
         List<String> tenantIds = new ArrayList<>();
         List<String> tenantsMasters = new ArrayList<>();
         tenantsMasters.add(MDMS_TENANTS_MASTER);

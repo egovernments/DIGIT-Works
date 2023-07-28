@@ -21,7 +21,8 @@ public enum JITServiceId {
     FD ("FD"),
     COR ("COR"),
     FTPS("FTPS"),
-    FTFPS("FTFPS");
+    FTFPS("FTFPS"),
+    PA("PA");
 
 	private String value;
 
