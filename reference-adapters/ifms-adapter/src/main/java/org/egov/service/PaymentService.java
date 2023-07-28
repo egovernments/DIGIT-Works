@@ -76,8 +76,13 @@ public class PaymentService {
                         .pagination(Pagination.builder().limit(limit).offSet(offset).build())
                         .build();
                 currentBills = billUtils.fetchBillsData(billSearchRequest);
-                bills.addAll(currentBills);
-                offset += limit;
+                if (currentBills == null) {
+                    currentBills = new ArrayList<>();
+                }
+                else {
+                    bills.addAll(currentBills);
+                    offset += limit;
+                }
             } while (currentBills.size() == limit);
 
         }
