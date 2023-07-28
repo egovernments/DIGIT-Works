@@ -92,7 +92,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       type:"paymentStatus",
       styles:paymentStatus==="SUCCESSFUL"?{color:"green"}:(paymentStatus==="FAILED"?{color:"red"}:{}),
       hoverIcon: paymentStatus==="FAILED"?"infoIcon":"",
-      iconHoverTooltipText: paymentStatus==="FAILED" ? pi?.piErrorResp:"",
+      iconHoverTooltipText: paymentStatus==="FAILED" ? t(pi?.piErrorResp):"",
       toolTipStyles:{}
     }
   }
@@ -162,8 +162,22 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
   let orgsToSearch = []
   let IndsToSearch = []
   const latestPaymentInstruction = paymentInstructions?.[0]
-  const { beneficiaryDetails } = latestPaymentInstruction
-  const beneficiaryIdsToSearch = beneficiaryDetails?.map(row => {
+
+  // Step 1: Get all beneficiaryDetails objects from all paymentInstructions object
+  const allBeneficiaryDetails = paymentInstructions.flatMap(payment => payment.beneficiaryDetails);
+
+  // Step 2: Create a Map to store unique beneficiaryDetails based on beneficiaryNumber
+  const uniqueBeneficiaryMap = new Map();
+  allBeneficiaryDetails.forEach(beneficiary => {
+    const { beneficiaryNumber, auditDetails } = beneficiary;
+    if (!uniqueBeneficiaryMap.has(beneficiaryNumber) || auditDetails.lastModifiedTime > uniqueBeneficiaryMap.get(beneficiaryNumber).auditDetails.lastModifiedTime) {
+      uniqueBeneficiaryMap.set(beneficiaryNumber, beneficiary);
+    }
+  });
+
+  // Step 3: Convert the Map values (unique beneficiaryDetails) to an array
+  const uniqueBeneficiaryDetails = Array.from(uniqueBeneficiaryMap.values());
+    const beneficiaryIdsToSearch = uniqueBeneficiaryDetails?.map(row => {
     if(row?.beneficiaryType === "ORG"){
       orgsToSearch.push(row.beneficiaryId)
     }else if(row?.beneficiaryType === "IND"){
@@ -214,8 +228,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
   
 
   //ENRICH the beneficiaryDetailsObject using bankAccDetails,orgDetails,indDetails
- 
-  beneficiaryDetails?.forEach(beneficiary=> {
+  uniqueBeneficiaryDetails?.forEach(beneficiary=> {
     beneficiary.bankDetails = bankAccDetails[beneficiary.beneficiaryId]
     beneficiary.orgDetails = orgDetails[beneficiary.beneficiaryId]
     beneficiary.indDetails = indDetails[beneficiary.beneficiaryId]
@@ -228,12 +241,12 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       type:"paymentStatus",
       styles:paymentStatus==="Payment Successful"?{color:"green"}:(paymentStatus==="Payment Failed"?{color:"red"}:{}),
       hoverIcon: paymentStatus==="Payment Failed"?"infoIcon":"",
-      iconHoverTooltipText: paymentStatus==="Payment Failed" ? bene?.paymentStatusMessage:"",
+      iconHoverTooltipText: paymentStatus==="Payment Failed" ? t(bene?.paymentStatusMessage):"",
       toolTipStyles:{}
     }
   }
   
-  const beneficiaryTableRows = beneficiaryDetails?.map((beneficiary,idx) => {
+  const beneficiaryTableRows = uniqueBeneficiaryDetails?.map((beneficiary,idx) => {
     
     if (beneficiary.beneficiaryType === "ORG") {
       return [
