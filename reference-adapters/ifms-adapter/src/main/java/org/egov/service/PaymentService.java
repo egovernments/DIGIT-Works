@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
-import org.egov.repository.PaymentDetailsRepository;
 import org.egov.utils.BillUtils;
 import org.egov.web.models.Pagination;
 import org.egov.web.models.bill.*;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,8 +25,6 @@ public class PaymentService {
 
     @Autowired
     private BillUtils billUtils;
-    @Autowired
-    private PaymentDetailsRepository paymentDetailsRepository;
     @Autowired
     private IfmsAdapterConfig config;
     @Autowired
