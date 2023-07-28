@@ -64,6 +64,12 @@ public class IfmsAdapterConfig {
     @Value("${egov.payment.search.endpoint}")
     private String paymentSearchEndPoint;
 
+    @Value("${egov.payment.create.endpoint}")
+    private String paymentCreateEndpoint;
+
+    @Value("${egov.bill.search.limit}")
+    private Integer billSearchLimit;
+
     // bill calculator
     @Value("${egov.bill.calculator.host}")
     private String billCalculatorHost;
