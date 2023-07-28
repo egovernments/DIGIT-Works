@@ -246,7 +246,7 @@ public class PIQueryBuilder {
 
         //default
         if (criteria.getSortBy() == null || StringUtils.isEmpty(criteria.getSortBy().name())) {
-            queryBuilder.append(" ORDER BY pymtInst.lastmodifiedtime ");
+            queryBuilder.append(" ORDER BY pymtInst.createdtime ");
         } else if (criteria.getSortBy() != null && !StringUtils.isEmpty(criteria.getSortBy().name())) {
             queryBuilder.append(" ORDER BY pymtInst."+ criteria.getSortBy().toString() +" ");
         }
