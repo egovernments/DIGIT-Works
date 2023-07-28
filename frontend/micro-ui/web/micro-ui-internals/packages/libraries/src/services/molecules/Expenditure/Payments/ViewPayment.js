@@ -228,8 +228,6 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
   
 
   //ENRICH the beneficiaryDetailsObject using bankAccDetails,orgDetails,indDetails
- console.log('Beneficiaries');
- console.log(uniqueBeneficiaryDetails);
   uniqueBeneficiaryDetails?.forEach(beneficiary=> {
     beneficiary.bankDetails = bankAccDetails[beneficiary.beneficiaryId]
     beneficiary.orgDetails = orgDetails[beneficiary.beneficiaryId]
