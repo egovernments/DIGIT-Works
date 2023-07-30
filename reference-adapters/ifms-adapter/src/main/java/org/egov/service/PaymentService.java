@@ -71,6 +71,7 @@ public class PaymentService {
         List<Bill> bills = new ArrayList<>();
         // Gets the list of tenants from MDMS
         List<String> tenantIds = virtualAllotmentService.getTenants(requestInfo);
+        log.info(tenantIds.toString());
         // Fetch bills for which payment is not yet been created for every tenant
         for (String tenantId : tenantIds) {
             BillCriteria billCriteria = BillCriteria.builder()
@@ -88,6 +89,7 @@ public class PaymentService {
                         .billCriteria(billCriteria)
                         .pagination(Pagination.builder().limit(limit).offSet(offset).build())
                         .build();
+                log.info(billSearchRequest.toString());
                 currentBills = billUtils.fetchBillsData(billSearchRequest);
                 if (currentBills == null) {
                     currentBills = new ArrayList<>();
