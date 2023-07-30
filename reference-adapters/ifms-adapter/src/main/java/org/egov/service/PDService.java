@@ -1,16 +1,12 @@
 package org.egov.service;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Constants;
 import org.egov.repository.PIRepository;
-import org.egov.tracer.model.CustomException;
 import org.egov.utils.BillUtils;
 import org.egov.utils.PIUtils;
 import org.egov.web.models.bill.Payment;
@@ -19,7 +15,6 @@ import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,12 +42,19 @@ public class PDService {
     @Autowired
     private PIUtils piUtils;
 
+    /**
+     * Call the JIT system for which payment status is in-process and update the status of payment advice based
+     * on the response.
+     * @param requestInfo
+     */
     public void updatePDStatus(RequestInfo requestInfo) {
         log.info("Start executing PD update service.");
+        // get in-process payment instructions
         List<PaymentInstruction> inProcessPaymentInstructions =  paymentInstructionService.searchPi(PISearchRequest.builder()
                 .requestInfo(RequestInfo.builder().build())
                 .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.IN_PROCESS).build()).build());
 
+        // Create JIT requests for in-process PI
         for (PaymentInstruction paymentInstruction : inProcessPaymentInstructions) {
             log.info("Started Processing PI for PD : " + paymentInstruction.getJitBillNo());
             PDRequest pdRequest = PDRequest.builder().finYear(paymentInstruction.getPaDetails().get(0).getPaFinYear())
@@ -116,6 +118,7 @@ public class PDService {
 
                 log.info("Updating beneficiaries details for PD.");
 
+                // Updating beneficiary details.
                 for (Beneficiary beneficiaryFromDB : paymentInstruction.getBeneficiaryDetails()) {
                     if (benfDtlsNode.isArray() && !benfDtlsNode.isEmpty()) {
                         for (JsonNode benf : benfDtlsNode) {
@@ -145,12 +148,15 @@ public class PDService {
                         }
                     }
                 }
+                // Updating PI status to successful
                 paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                 paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 paymentInstruction.setPiStatus(PIStatus.SUCCESSFUL);
 
                 log.info("Updating PI status and details for PD : " + paymentInstruction.getJitBillNo());
+                // Update PI DB based on updated PI
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
+                // Update PI indexer based on updated PI
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
 
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,

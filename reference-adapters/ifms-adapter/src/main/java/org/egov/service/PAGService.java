@@ -6,19 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.PIRepository;
-import org.egov.tracer.model.CustomException;
 import org.egov.utils.BillUtils;
 import org.egov.utils.HelperUtil;
 import org.egov.utils.PIUtils;
-import org.egov.web.models.bill.Payment;
-import org.egov.web.models.bill.PaymentRequest;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +44,14 @@ public class PAGService {
     @Autowired
     private BillUtils billUtils;
 
+    /**
+     * Call the JIT system for which payment status is approved and update the status of payment advice based
+     * on the response.
+     * @param requestInfo
+     */
     public void updatePAG( RequestInfo requestInfo ){
         log.info("Start executing PAG update service.");
+        // gets approved payment instructions
         List<PaymentInstruction> paymentInstructions = getApprovedPaymentInstructions();
         for(PaymentInstruction paymentInstruction : paymentInstructions){
             log.info("Started Processing PI for PAG : " + paymentInstruction.getJitBillNo());
@@ -109,6 +110,7 @@ public class PAGService {
                 String tokenNumber = dataMap.get("tokenNumber").toString();
                 String tokenDate = dataMap.get("tokenDate").toString();
                 log.info("Updating PAG details according to IFMS response.");
+                // Updated PA details status to in-process and sets the items as per response from JIT system
                 for (PADetails paDetails : paymentInstruction.getPaDetails()) {
                     paDetails.setPaFinYear(finYear);
                     paDetails.setPaAdviceId(adviceId);
@@ -119,17 +121,20 @@ public class PAGService {
                     paDetails.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     paDetails.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 }
+                // Updated Beneficiary details status to in-process and sets the items as per response from JIT system
                 for (Beneficiary beneficiary: paymentInstruction.getBeneficiaryDetails()) {
                     beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.IN_PROCESS);
                     beneficiary.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                     beneficiary.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 }
-
+                // Updated PI status to in-process and sets the items as per response from JIT system
                 paymentInstruction.getAuditDetails().setLastModifiedBy(requestInfo.getUserInfo().getUuid());
                 paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 paymentInstruction.setPiStatus(PIStatus.IN_PROCESS);
                 log.info("Updating PI status and details for PAG : " + paymentInstruction.getJitBillNo());
+                // Update PI DB based on updated PI
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
+                // Update PI indexer based on updated PI
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
             }
             log.info("PAG status updated for PI : " + paymentInstruction.getJitBillNo());
@@ -137,6 +142,10 @@ public class PAGService {
         }
     }
 
+    /**
+     * Returns payment instructions for which payment status is approved
+     * @return
+     */
     public List<PaymentInstruction> getApprovedPaymentInstructions() {
         PISearchRequest piSearchRequest = PISearchRequest.builder().requestInfo(RequestInfo.builder().build())
                 .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.APPROVED).build()).build();

@@ -34,8 +34,12 @@ public class PaymentService {
     @Autowired
     private VirtualAllotmentService virtualAllotmentService;
 
-
+    /**
+     * Creates payment automatically based by taking bills for which payment has not yet been created
+     * @param requestInfo
+     */
     public void createPaymentFromBills (RequestInfo requestInfo) {
+        // Fetches bill for which payment is not yet created
         List<Bill> bills = fetchBills(requestInfo);
 
         for (Bill bill : bills) {
@@ -43,8 +47,9 @@ public class PaymentService {
             String wfStatus = bill.getWfStatus();
             if (paymentStatus != null && !paymentStatus.isEmpty() && (wfStatus == null ||
                     wfStatus.equalsIgnoreCase("APPROVED"))) {
-
+                // Get payment request from bill
                 PaymentRequest paymentRequest = getPaymentRequest(requestInfo, bill);
+                // Payment create call
                 List<Payment> payments = createPayment(paymentRequest);
 
                 if (payments == null || payments.isEmpty()) {
@@ -56,11 +61,18 @@ public class PaymentService {
 
 
     }
+
+    /**
+     * fetches bills for which payment is not yet created by passing paymentStatus as null in search criteria.
+     * @param requestInfo
+     * @return
+     */
     private List<Bill> fetchBills(RequestInfo requestInfo) {
         List<Bill> bills = new ArrayList<>();
+        // Gets the list of tenants from MDMS
         List<String> tenantIds = virtualAllotmentService.getTenants(requestInfo);
+        // Fetch bills for which payment is not yet been created for every tenant
         for (String tenantId : tenantIds) {
-
             BillCriteria billCriteria = BillCriteria.builder()
                     .tenantId(tenantId)
                     .isPaymentStatusNull(true)
@@ -69,6 +81,7 @@ public class PaymentService {
             Integer offset = 0;
             Integer limit = config.getBillSearchLimit();
             List<Bill> currentBills;
+            // loop for adding bills from every paged call to fetch bills
             do {
                 BillSearchRequest billSearchRequest = BillSearchRequest.builder()
                         .requestInfo(requestInfo)
@@ -88,11 +101,20 @@ public class PaymentService {
         }
         return bills;
     }
+
+    /**
+     * Takes bill and creates payment create request based on the bill
+     * @param requestInfo
+     * @param bill
+     * @return
+     */
     private PaymentRequest getPaymentRequest (RequestInfo requestInfo, Bill bill) {
 
         List<PaymentBillDetail> paymentBillDetails = new ArrayList<>();
+        // loop to add list of bill details
         for(BillDetail billDetail : bill.getBillDetails()) {
             List<PaymentLineItem> payableLineItems = new ArrayList<>();
+            // loop to add list of line items
             for (LineItem lineItem : billDetail.getPayableLineItems()) {
                 if (lineItem.getStatus().equals(Status.ACTIVE)) {
                     PaymentLineItem payableLineItem = PaymentLineItem.builder().lineItemId(lineItem.getId())
@@ -100,6 +122,7 @@ public class PaymentService {
                     payableLineItems.add(payableLineItem);
                 }
             }
+            // Create PaymentBillDetail for the above items
             PaymentBillDetail paymentBillDetail = PaymentBillDetail.builder()
                     .tenantId(billDetail.getTenantId())
                     .billDetailId(billDetail.getId())
@@ -108,7 +131,7 @@ public class PaymentService {
                     .totalPaidAmount(billDetail.getTotalAmount()).build();
             paymentBillDetails.add(paymentBillDetail);
         }
-
+        // Create Payment bill from the above items
         List<PaymentBill> paymentBills = new ArrayList<>();
         PaymentBill paymentBill = PaymentBill.builder()
 
@@ -119,6 +142,7 @@ public class PaymentService {
                 .totalPaidAmount(bill.getTotalAmount()).build();
         paymentBills.add(paymentBill);
 
+        // Create payment from the above items
         Payment payment = Payment.builder()
                 .bills(paymentBills)
                 .netPaidAmount(bill.getTotalAmount())
@@ -132,6 +156,12 @@ public class PaymentService {
         log.info(paymentRequest.toString());
         return paymentRequest;
     }
+
+    /**
+     * funtion to send create payment request to payment service
+     * @param paymentRequest
+     * @return
+     */
     private @Valid List<Payment> createPayment(Object paymentRequest) {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getBillHost()).append(config.getPaymentCreateEndpoint());
