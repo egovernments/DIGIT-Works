@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.config.IfmsAdapterConfig;
 import org.egov.enc.SymmetricEncryptionService;
 import org.egov.key.KeyGenerator;
+import org.egov.web.models.jit.JITResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +14,17 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This clas provides methods to encrypt/decrypt JIT responses.
+ *
+ */
 @Component
 public class JitRequestUtils {
     @Autowired
     IfmsAdapterConfig config;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     public Object getEncryptedRequestBody(String sekString, Object jitRequest) throws Exception {
         //Get SEK bytes
@@ -24,9 +32,9 @@ public class JitRequestUtils {
         //Construct secret key using SEK bytes
         SecretKey sekSecretKey = new SecretKeySpec(sekBytes, "AES");
         // Convert the JSON object to a string
-        ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(jitRequest);
-        System.out.println(requestBody);
+        // TODO: Remove this after testing
+        System.out.println("JIT Request : " + requestBody);
         byte[] plainBytes = requestBody.getBytes();
         //Encrypt the request body with the decrypted SEK
         String encReqBody = SymmetricEncryptionService.encrypt(plainBytes, sekSecretKey);
@@ -47,13 +55,13 @@ public class JitRequestUtils {
         return requestMap;
     }
 
-    public Object decryptResponse(String decryptedRek, String encryptedResponse) throws Exception {
+    public JITResponse decryptResponse(String decryptedRek, String encryptedResponse) throws Exception {
         byte[] secret = Base64.getDecoder().decode(decryptedRek);
         SecretKey secretKey = new SecretKeySpec(secret, "AES");
         byte[] plainBytes = SymmetricEncryptionService.decrypt(encryptedResponse, secretKey);
         String plaintext = new String(plainBytes);
-        ObjectMapper objectMapper = new ObjectMapper();
-        Object response = objectMapper.readValue(plaintext, Map.class);
+        JITResponse response = objectMapper.readValue(plaintext, JITResponse.class);
+        System.out.println("Decrypted jit response : " + response);
         return response;
     }
 

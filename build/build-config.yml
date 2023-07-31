@@ -142,3 +142,53 @@ config:
       - work-dir: "utilities/expense-cronjob"
         image-name: "expense-cronjob"
         dockerfile: "utilities/expense-cronjob/Dockerfile"
+
+  - name: "builds/digit-works/utilities/ifms-cronjob-va"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-va"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pis"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pis"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pag"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pag"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pd"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pd"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-fd"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-fd"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-ftps"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-ftps"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-ftfps"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-ftfps"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+  - name: "builds/digit-works/utilities/ifms-cronjob-pa"
+    build:
+      - work-dir: "utilities/ifms-cronjob"
+        image-name: "ifms-cronjob-pa"
+        dockerfile: "utilities/ifms-cronjob/Dockerfile"
+
+# reference-adapters
+  - name: "builds/digit-works/reference-adapters/ifms-adapter"
+    build:
+      - work-dir: "reference-adapters/ifms-adapter"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "ifms-adapter"
+      - work-dir: "reference-adapters/ifms-adapter/src/main/resources/db"
+        image-name: "ifms-adapter-db"

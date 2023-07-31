@@ -26,7 +26,22 @@ public class ServiceRequestRepository {
         this.restTemplate = restTemplate;
     }
 
-    public Object fetchResult(StringBuilder uri, Object request, HttpHeaders headers) {
+    public Object fetchResult(StringBuilder uri, Object request) {
+
+        Object response = null;
+        try {
+            response = restTemplate.postForObject(uri.toString(), request, Map.class);
+        } catch (HttpClientErrorException e) {
+            log.error("External Service threw an Exception: ", e);
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+            log.error("Exception while fetching from searcher: ", e.getMessage());
+        }
+
+        return response;
+    }
+
+    public Object fetchResultWithHeader(StringBuilder uri, Object request, HttpHeaders headers) {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;
         // Create the HttpEntity with headers and payload
@@ -38,6 +53,7 @@ public class ServiceRequestRepository {
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Exception while fetching from searcher: ", e);
+            throw new RuntimeException(e);
         }
 
         return response;
@@ -55,6 +71,7 @@ public class ServiceRequestRepository {
             throw new ServiceCallException(e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Exception while fetching from searcher: ", e);
+            throw new RuntimeException(e);
         }
 
         return response;

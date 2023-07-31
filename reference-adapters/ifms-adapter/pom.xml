@@ -51,6 +51,11 @@
       <artifactId>swagger-core</artifactId>
       <version>1.5.18</version>
     </dependency>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>2.2.8</version>
+    </dependency>
     <!-- Egov dependencies -->
     <dependency>
       <groupId>org.egov.services</groupId>
@@ -60,7 +65,7 @@
     <dependency>
       <groupId>org.egov.services</groupId>
       <artifactId>services-common</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <version>1.1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.egov.services</groupId>
@@ -71,6 +76,17 @@
       <groupId>org.egov</groupId>
       <artifactId>mdms-client</artifactId>
       <version>0.0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.egov.common</groupId>
+      <artifactId>health-services-common</artifactId>
+      <version>1.0.11-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.egov.common</groupId>
+      <artifactId>health-services-models</artifactId>
+      <version>1.0.6-SNAPSHOT</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
@@ -100,6 +116,17 @@
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.egov</groupId>
+      <artifactId>enc-client</artifactId>
+      <version>2.0.5-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.egov.services</groupId>
+          <artifactId>tracer</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

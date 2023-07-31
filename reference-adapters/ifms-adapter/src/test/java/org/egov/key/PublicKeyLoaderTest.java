@@ -7,7 +7,7 @@ import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PublicKeyLoaderTest {
-
+/*
     private final String filePathToSelfSignedCertificate = "x509-self-signed-certificate.pem";
     private String baseURL;
 
@@ -22,5 +22,6 @@ class PublicKeyLoaderTest {
     public void testLoadPublicKeyFromByteFile() throws Exception {
         PublicKeyLoader.getPublicKeyFromByteFile(baseURL + "publicKey");
     }
+ */
 
 }

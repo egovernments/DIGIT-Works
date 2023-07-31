@@ -1,33 +1,58 @@
 package org.egov.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.minidev.json.JSONArray;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.IfmsAdapterConfig;
+import org.egov.config.JITAuthValues;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.utils.AuthenticationUtils;
 import org.egov.utils.JitRequestUtils;
+import org.egov.utils.MdmsUtils;
+import org.egov.web.models.jit.JITRequest;
+import org.egov.web.models.jit.JITResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.egov.config.Constants.*;
 
 
 @Service
 public class IfmsService {
 
     @Autowired
-    IfmsAdapterConfig config;
+    private IfmsAdapterConfig config;
 
     @Autowired
-    ServiceRequestRepository requestRepository;
+    private ServiceRequestRepository requestRepository;
 
     @Autowired
-    AuthenticationUtils authenticationUtils;
+    private AuthenticationUtils authenticationUtils;
 
     @Autowired
-    JitRequestUtils jitRequestUtils;
+    private JitRequestUtils jitRequestUtils;
+
+    @Autowired
+    private MdmsUtils mdmsUtils;
+
+    @Autowired
+    private IfmsAdapterConfig ifmsAdapterConfig;
+
+    @Autowired
+    private JITAuthValues jitAuthValues;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
@@ -39,6 +64,53 @@ public class IfmsService {
         keyMap.put("encodedAppKey", encodedAppKey);
         System.out.println("\n\n==================keyMap : ============== \n" + keyMap);
         return  keyMap;
+    }
+
+    public JITResponse sendRequestToIFMS(JITRequest jitRequest) {
+        if (jitAuthValues.getAuthToken() == null) {
+            getAuthDetailsFromIFMS();
+        }
+        Map<String, String> payload = null;
+        JITResponse decryptedResponse = null;
+        try {
+            payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
+            String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
+            decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
+        } catch (Exception e) {
+            String message = e.toString();
+            if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
+                try {
+                    getAuthDetailsFromIFMS();
+                    payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
+                    String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
+                    decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+        return decryptedResponse;
+    }
+
+    private void getAuthDetailsFromIFMS() {
+        try {
+            Map<String, String> appKeys = getKeys();
+            Map<String, String> authResponse = (Map<String, String>) authenticate(appKeys.get("encodedAppKey"));
+            appKeys.put("authToken", authResponse.get("authToken"));
+            appKeys.put("sek", authResponse.get("sek"));
+            String decryptedSek = authenticationUtils.getDecryptedSek(appKeys.get("appKey"), authResponse.get("sek"));
+            appKeys.put("decryptedSek", decryptedSek);
+
+            // Set authentication details to the request
+            jitAuthValues.setAuthToken(authResponse.get("authToken"));
+            jitAuthValues.setSekString(decryptedSek);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Object authenticate(String appKey) {
@@ -53,7 +125,7 @@ public class IfmsService {
         payload.put("appKey", appKey);
 
         StringBuilder uri = new StringBuilder(config.getIfmsJitHostName() + config.getIfmsJitAuthEndpoint());
-        Object res = requestRepository.fetchResult(uri, payload, headers);
+        Object res = requestRepository.fetchResultWithHeader(uri, payload, headers);
         System.out.println("res : " + res);
         return res;
     }
@@ -70,7 +142,7 @@ public class IfmsService {
         payload.put("rek", rek);
 
         StringBuilder uri = new StringBuilder(config.getIfmsJitHostName() + config.getIfmsJitRequestEndpoint());
-        Object res = requestRepository.fetchResult(uri, payload, headers);
+        Object res = requestRepository.fetchResultWithHeader(uri, payload, headers);
         System.out.println("res : " + res);
         return res;
     }
@@ -90,6 +162,43 @@ public class IfmsService {
         System.out.println("res : " + res);
         return res;
     }
+
+    public JSONArray getHeadOfAccounts(RequestInfo requestInfo) {
+        List<String> ifmsMasters = new ArrayList<>();
+        ifmsMasters.add(MDMS_HEAD_OF_ACCOUNT_MASTER);
+        Map<String, Map<String, JSONArray>> ifmsHOAResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_IFMS_MODULE_NAME, ifmsMasters);
+        return ifmsHOAResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_HEAD_OF_ACCOUNT_MASTER);
+    }
+
+    public JSONArray getSchemeDetails(RequestInfo requestInfo) {
+        List<String> ifmsMasters = new ArrayList<>();
+        ifmsMasters.add(MDMS_SCHEMA_DETAILS_MASTER);
+        Map<String, Map<String, JSONArray>> ifmsSchemaResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_IFMS_MODULE_NAME, ifmsMasters);
+        return ifmsSchemaResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SCHEMA_DETAILS_MASTER);
+    }
+    public JSONArray getSSUDetails(RequestInfo requestInfo, String tenantId) {
+        List<String> ssuMasters = new ArrayList<>();
+        ssuMasters.add(MDMS_SSU_DETAILS_MASTER);
+        Map<String, Map<String, JSONArray>> ssuDetailsResponse = mdmsUtils.fetchMdmsData(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, ssuMasters);
+        JSONArray ssuDetailsList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
+        return ssuDetailsList;
+    }
+
+    /*
+        It's for testing the multiple combination of VA response
+        TODO: Remove after development
+     */
+    public JITResponse loadCustomResponse() {
+        JITResponse vaResponse = null;
+        try {
+            File file = new File("D:/egovernments/digit-works-bkp2/reference-adapters/ifms-adapter/src/test/resources/7CORSuccess.json");
+            vaResponse = objectMapper.readValue(file, JITResponse.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return vaResponse;
+    }
+
 
 
 }
