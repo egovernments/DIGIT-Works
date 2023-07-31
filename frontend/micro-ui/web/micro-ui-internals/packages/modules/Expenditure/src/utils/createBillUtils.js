@@ -43,9 +43,10 @@ const fetchDocuments = (documents, otherDocFileName, docConfigData) => {
 const fetchDeductions = (deductions, tenantId) => {
 
     let deductionsList = deductions?.filter(row => row && row.amount!=="0" && row.name && row.amount)?.map(row => {
+        const headCode = row?.name?.name.split("_")?.[3] // for existing rows
         return {
             "tenantId": tenantId,
-            "headCode": row?.name?.code,
+            "headCode": row?.name?.code || headCode,
             "amount": row?.amount,
             "type": "DEDUCTION",
             "paidAmount": 0,
