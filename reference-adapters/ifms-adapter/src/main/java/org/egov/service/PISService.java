@@ -5,13 +5,10 @@ import digit.models.coremodels.AuditDetails;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.config.IfmsAdapterConfig;
 import org.egov.repository.PIRepository;
 import org.egov.repository.SanctionDetailsRepository;
-import org.egov.tracer.model.CustomException;
 import org.egov.utils.BillUtils;
 import org.egov.utils.HelperUtil;
-import org.egov.utils.MdmsUtils;
 import org.egov.utils.PIUtils;
 import org.egov.web.models.bill.Payment;
 import org.egov.web.models.bill.PaymentRequest;
@@ -49,8 +46,15 @@ public class PISService {
     private SanctionDetailsRepository sanctionDetailsRepository;
     @Autowired
     private ObjectMapper objectMapper;
+
+    /**
+     * Call the JIT system for which payment status is initiated and update the status of payment advice based
+     * on the response.
+     * @param requestInfo
+     */
     public void updatePIStatus(RequestInfo requestInfo){
         log.info("Start executing PIS update service.");
+        // gets initiated payment instructions
         List<PaymentInstruction> paymentInstructions = getInitiatedPaymentInstructions();
 
         for(PaymentInstruction paymentInstruction : paymentInstructions){
@@ -70,22 +74,8 @@ public class PISService {
                 pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
             }catch (Exception e){
                 log.info("Exception occurred while fetching PIS from ifms." + e);
-
-                /*
-                TODO: commenting because this is invalid, check and remove this block
-                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-
-                Collections.singleton(paymentInstruction.getMuktaReferenceId()),
-                        paymentInstruction.getTenantId());
-                for (Payment payment : payments) {
-                    PaymentRequest paymentRequest = PaymentRequest.builder()
-                            .requestInfo(requestInfo).payment(payment).build();
-
-                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_SERVER_UNREACHABLE);
-                }
-                throw new CustomException("SERVER_UNREACHABLE","Server is currently unreachable");
-                 */
             }
+
             if (pisResponse == null)
                 continue;
 
@@ -96,6 +86,7 @@ public class PISService {
                     && pisResponse.getErrorMsg().contains("rejected")) {
                 log.info("PI is rejected, updating the PI to failed. " + paymentInstruction.getJitBillNo());
                 updateStatusToFailed(requestInfo, paymentInstruction);
+                // Add the previously deducted amount in funds summary for failure case
                 updateFundsSummary(requestInfo, paymentInstruction);
                 // Update PI indexer based on updated PI
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
@@ -112,6 +103,7 @@ public class PISService {
                     String piApprovedId = dataMap.get("pmtInstId");
                     String piApprovalDate = dataMap.get("payInstDate");
 
+                    // Updated PI status to approved and sets the items as per response from JIT system
                     paymentInstruction.setPiApprovedId(piApprovedId);
                     paymentInstruction.setPiApprovalDate(piApprovalDate);
                     paymentInstruction.setPiStatus(PIStatus.APPROVED);
@@ -119,7 +111,9 @@ public class PISService {
                     paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
 
                     log.info("Updating PI status and details for PIS : " + paymentInstruction.getJitBillNo());
+                    // Update PI DB based on updated PI
                     piRepository.update(Collections.singletonList(paymentInstruction),null);
+                    // Update PI indexer based on updated PI
                     piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
                 }
             } catch (Exception e) {
@@ -129,6 +123,10 @@ public class PISService {
         }
     }
 
+    /**
+     * Returns payment instructions for which payment status is initiated
+     * @return
+     */
     public List<PaymentInstruction> getInitiatedPaymentInstructions(){
         log.info("Executing PISService:getInitiatedPaymentInstructions");
         PISearchRequest piSearchRequest = PISearchRequest.builder().requestInfo(RequestInfo.builder().build())
@@ -136,6 +134,12 @@ public class PISService {
         List<PaymentInstruction> paymentInstructions = paymentInstructionService.searchPi(piSearchRequest);
         return paymentInstructions;
     }
+
+    /**
+     * Function sets the status PI to failed and also updates payment status to failed
+     * @param requestInfo
+     * @param paymentInstruction
+     */
     private void updateStatusToFailed(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         log.info("Executing PISService:updateStatusToFailed");
         for (Beneficiary beneficiary : paymentInstruction.getBeneficiaryDetails()) {
@@ -153,6 +157,12 @@ public class PISService {
             billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_DECLINED);
         }
     }
+
+    /**
+     * Adds the previously deducted value in funds summary amount for failure cases.
+     * @param requestInfo
+     * @param paymentInstruction
+     */
     private void updateFundsSummary(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         log.info("Executing PISService:updateFundsSummary");
         SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()

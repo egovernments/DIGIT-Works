@@ -34,9 +34,18 @@ public class Scheduler {
     @Autowired
     private PaymentService paymentService;
 
+    /**
+     * The function receives request from cronjob and routes it to the appropriate service based on the serviceId in url.
+     * @param schedulerRequest
+     * @param serviceId
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(path = "_scheduler", method = RequestMethod.POST)
-    public ResponseInfo scheduler(@RequestBody @Valid SchedulerRequest schedulerRequest, @RequestParam("serviceId") JITServiceId serviceId )throws Exception{
+    public ResponseInfo scheduler(@RequestBody @Valid SchedulerRequest schedulerRequest,
+                                  @RequestParam("serviceId") JITServiceId serviceId )throws Exception{
 
+        // Switch case is used to direct request to the respective services.
         switch (serviceId){
             case PAG:
                 pagService.updatePAG(schedulerRequest.getRequestInfo());
@@ -62,7 +71,6 @@ public class Scheduler {
             case PA:
                 paymentService.createPaymentFromBills(schedulerRequest.getRequestInfo());
                 break;
-
         }
 
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(schedulerRequest.getRequestInfo(), true);
