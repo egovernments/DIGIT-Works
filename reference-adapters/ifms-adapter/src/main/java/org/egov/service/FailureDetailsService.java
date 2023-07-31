@@ -243,7 +243,7 @@ public class FailureDetailsService {
 
         for (PaymentInstruction pi : revisedPI) {
 
-            PISearchCriteria originalPiSearchCriteria = PISearchCriteria.builder().jitBillNo(pi.getJitBillNo()).build();
+            PISearchCriteria originalPiSearchCriteria = PISearchCriteria.builder().jitBillNo(pi.getParentPiNumber()).build();
             PaymentInstruction originalPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(originalPiSearchCriteria).build()).get(0);
 
 
