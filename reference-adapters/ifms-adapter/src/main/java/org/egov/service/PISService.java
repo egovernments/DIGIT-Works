@@ -74,22 +74,8 @@ public class PISService {
                 pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
             }catch (Exception e){
                 log.info("Exception occurred while fetching PIS from ifms." + e);
-
-                /*
-                TODO: commenting because this is invalid, check and remove this block
-                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-
-                Collections.singleton(paymentInstruction.getMuktaReferenceId()),
-                        paymentInstruction.getTenantId());
-                for (Payment payment : payments) {
-                    PaymentRequest paymentRequest = PaymentRequest.builder()
-                            .requestInfo(requestInfo).payment(payment).build();
-
-                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_SERVER_UNREACHABLE);
-                }
-                throw new CustomException("SERVER_UNREACHABLE","Server is currently unreachable");
-                 */
             }
+
             if (pisResponse == null)
                 continue;
 
