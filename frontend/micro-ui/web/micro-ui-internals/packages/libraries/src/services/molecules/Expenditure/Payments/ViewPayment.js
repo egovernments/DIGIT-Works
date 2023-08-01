@@ -164,7 +164,19 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
   const latestPaymentInstruction = paymentInstructions?.[0]
 
   // Step 1: Get all beneficiaryDetails objects from all paymentInstructions object
-  const allBeneficiaryDetails = paymentInstructions.flatMap(payment => payment.beneficiaryDetails);
+  
+  //Get Latest original PI
+  const filteredPaymentInsOriginal = paymentInstructions?.filter((pi,idx)=>{
+    if(pi.parentPiNumber) return false
+    else return true
+  })?.sort((a,b)=>{
+    return b.auditDetails.createdTime - a.auditDetails.createdTime 
+  })?.[0]
+
+  const allBeneficiaryDetails = [...paymentInstructions?.filter((pi,idx)=> {
+    if(pi.parentPiNumber) return true 
+    return false
+  } ),filteredPaymentInsOriginal].flatMap(payment => payment.beneficiaryDetails);
 
   // Step 2: Create a Map to store unique beneficiaryDetails based on beneficiaryNumber
   const uniqueBeneficiaryMap = new Map();
