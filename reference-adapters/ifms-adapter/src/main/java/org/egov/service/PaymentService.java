@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.config.Constants.APPROVED_STATUS;
+
 @Slf4j
 @Service
 public class PaymentService {
@@ -43,10 +45,8 @@ public class PaymentService {
         List<Bill> bills = fetchBills(requestInfo);
 
         for (Bill bill : bills) {
-            String paymentStatus = String.valueOf(bill.getPaymentStatus());
             String wfStatus = bill.getWfStatus();
-            if (paymentStatus != null && !paymentStatus.isEmpty() && (wfStatus == null ||
-                    wfStatus.equalsIgnoreCase("APPROVED"))) {
+            if (wfStatus != null && wfStatus.equalsIgnoreCase(APPROVED_STATUS)) {
                 // Get payment request from bill
                 PaymentRequest paymentRequest = getPaymentRequest(requestInfo, bill);
                 // Payment create call
