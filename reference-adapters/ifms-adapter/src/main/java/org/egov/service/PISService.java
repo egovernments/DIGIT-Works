@@ -58,6 +58,7 @@ public class PISService {
         List<PaymentInstruction> paymentInstructions = getInitiatedPaymentInstructions();
 
         for(PaymentInstruction paymentInstruction : paymentInstructions){
+            JitRespStatusForPI jitRespStatusForPI = null;
             log.info("Started Processing PI for PIS : " + paymentInstruction.getJitBillNo());
             JSONArray ssuIaDetails = ifmsService.getSSUDetails(RequestInfo.builder().build(), paymentInstruction.getTenantId());
             Map<String,String> ssuIaDetailsMap = (Map<String, String>) ssuIaDetails.get(0);
@@ -74,10 +75,14 @@ public class PISService {
                 pisResponse = ifmsService.sendRequestToIFMS(jitRequest);
             }catch (Exception e){
                 log.info("Exception occurred while fetching PIS from ifms." + e);
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_ERROR;
             }
 
-            if (pisResponse == null)
+            if (pisResponse == null) {
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PIS, jitRespStatusForPI, requestInfo);
                 continue;
+            }
 
             log.info("Response received from IFMS.");
 
@@ -86,14 +91,21 @@ public class PISService {
                     && pisResponse.getErrorMsg().contains("rejected")) {
                 log.info("PI is rejected, updating the PI to failed. " + paymentInstruction.getJitBillNo());
                 updateStatusToFailed(requestInfo, paymentInstruction);
+                paymentInstruction.setPiErrorResp(pisResponse.getErrorMsg());
                 // Add the previously deducted amount in funds summary for failure case
                 updateFundsSummary(requestInfo, paymentInstruction);
                 // Update PI indexer based on updated PI
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
                 log.info("PI updated to failed. " + paymentInstruction.getJitBillNo());
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_REJECTED;
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PIS, jitRespStatusForPI, requestInfo);
                 continue;
             }
             if(CollectionUtils.isEmpty(pisResponse.getData())){
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_NO_RESPONSE;
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PIS, jitRespStatusForPI, requestInfo);
                 continue;
             }
             try {
@@ -115,6 +127,9 @@ public class PISService {
                     piRepository.update(Collections.singletonList(paymentInstruction),null);
                     // Update PI indexer based on updated PI
                     piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                    jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_SUCCESS;
+                    // Create PI status log based on current existing PIS request
+                    paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PIS, jitRespStatusForPI, requestInfo);
                 }
             } catch (Exception e) {
                 log.info("Exception occurred while processing PIS response." + e);
@@ -130,7 +145,7 @@ public class PISService {
     public List<PaymentInstruction> getInitiatedPaymentInstructions(){
         log.info("Executing PISService:getInitiatedPaymentInstructions");
         PISearchRequest piSearchRequest = PISearchRequest.builder().requestInfo(RequestInfo.builder().build())
-                .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.INITIATED).build()).build();
+                .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.INITIATED).piType(PIType.ORIGINAL).build()).build();
         List<PaymentInstruction> paymentInstructions = paymentInstructionService.searchPi(piSearchRequest);
         return paymentInstructions;
     }
