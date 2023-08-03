@@ -57,6 +57,8 @@ public class PDService {
         // Create JIT requests for in-process PI
         for (PaymentInstruction paymentInstruction : inProcessPaymentInstructions) {
             log.info("Started Processing PI for PD : " + paymentInstruction.getJitBillNo());
+            JitRespStatusForPI jitRespStatusForPI = null;
+
             PDRequest pdRequest = PDRequest.builder().finYear(paymentInstruction.getPaDetails().get(0).getPaFinYear())
                     .extAppName(Constants.JIT_FD_EXT_APP_NAME)
                     .billRefNo(paymentInstruction.getPaDetails().get(0).getPaBillRefNumber())
@@ -71,27 +73,25 @@ public class PDService {
                         .serviceId(JITServiceId.PD).params(pdRequest).build());
             }catch (Exception e){
                 log.info("Exception occurred while fetching PD from ifms." + e);
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PD_ERROR;
             }
 
-            if (jitResponse == null)
+            if (jitResponse == null) {
+                // Create PI status log based on current existing PD request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PD, jitRespStatusForPI, requestInfo);
                 continue;
+            }
 
             if (jitResponse.getErrorMsg() != null) {
                 log.info("Error Response received for PD from IFMS." + jitResponse.getErrorMsgs());
-                /*
-                TODO: commenting because this is invalid, check and remove this block
-                List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
-                        Collections.singleton(paymentInstruction.getMuktaReferenceId()),
-                        paymentInstruction.getTenantId());
-                for (Payment payment : payments) {
-                    PaymentRequest paymentRequest = PaymentRequest.builder()
-                            .requestInfo(requestInfo).payment(payment).build();
-
-                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_ERROR_PROCESSING_PAYMENT);
-                }
-                 */
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PD_ERROR;
+                // Create PI status log based on current existing PD request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PD, jitRespStatusForPI, requestInfo);
                 continue;
             } else if (jitResponse.getData().isEmpty()) {
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PD_NO_RESPONSE;
+                // Create PI status log based on current existing PD request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PD, jitRespStatusForPI, requestInfo);
                 continue;
             }
             log.info("Processing PD response for bill : " + paymentInstruction.getJitBillNo());
@@ -158,6 +158,10 @@ public class PDService {
 
                     billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
                 }
+                // Set pi status response
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PD_SUCCESS;
+                // Create PI status log based on current existing PD request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PD, jitRespStatusForPI, requestInfo);
             }
 
         }

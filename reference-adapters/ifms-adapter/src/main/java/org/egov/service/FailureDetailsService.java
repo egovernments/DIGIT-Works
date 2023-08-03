@@ -55,7 +55,7 @@ public class FailureDetailsService {
                     JsonNode node = objectMapper.valueToTree(failedPI);
                     JsonNode benef = node.get("benfDtls");
                     if (benef != null && benef.isArray() && !benef.isEmpty()) {
-                        processPiForFailedTransaction(node, requestInfo, null);
+                        processPiForFailedTransaction(node, requestInfo, null, JITServiceId.FD);
                     }
                 }
             }
@@ -65,7 +65,7 @@ public class FailureDetailsService {
 
     }
 
-    private void processPiForFailedTransaction(JsonNode failedPiResponse, RequestInfo requestInfo, PaymentInstruction pi) {
+    private void processPiForFailedTransaction(JsonNode failedPiResponse, RequestInfo requestInfo, PaymentInstruction pi, JITServiceId serviceId) {
         String piNumber = null;
         if (failedPiResponse.findValue("billNumber") != null) {
             piNumber = failedPiResponse.findValue("billNumber").asText();
@@ -85,6 +85,10 @@ public class FailureDetailsService {
                 Payment payment = payments.get(0);
                 updatePiAndPaymentForFailedBenef(pi, payment, failedBeneficiariesMapById);
                 addReversalTransactionAndUpdatePIPa(pi, payment, requestInfo);
+                // Set success response based on service id
+                JitRespStatusForPI jitRespStatusForPI =  serviceId == JITServiceId.FD ? JitRespStatusForPI.STATUS_LOG_FD_SUCCESS: JitRespStatusForPI.STATUS_LOG_FTFPS_SUCCESS;
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(pi, serviceId, jitRespStatusForPI, requestInfo);
             } else {
                 log.info("Payment data not found for paymentNumber : "+ pi.getMuktaReferenceId());
             }
@@ -237,12 +241,13 @@ public class FailureDetailsService {
 
 
     public void updateFTPSStatus(RequestInfo requestInfo) {
+        log.info("Start executing FTPS update service.");
 
         PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder().piType(PIType.REVISED).piStatus(PIStatus.INITIATED).build();
         List<PaymentInstruction> revisedPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(revisedPiSearchCriteria).build());
 
         for (PaymentInstruction pi : revisedPI) {
-
+            JitRespStatusForPI jitRespStatusForPI = null;
             PISearchCriteria originalPiSearchCriteria = PISearchCriteria.builder().jitBillNo(pi.getParentPiNumber()).build();
             PaymentInstruction originalPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(originalPiSearchCriteria).build()).get(0);
 
@@ -256,11 +261,23 @@ public class FailureDetailsService {
                     .jitOrgBillDate(helperUtil.getFormattedTimeFromTimestamp(originalPI.getAuditDetails().getCreatedTime(), Constants.VA_REQUEST_TIME_FORMAT))
                     .build();
 
-            JITResponse jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
-                    .serviceId(JITServiceId.FTPS).params(ftpsRequest).build());
+            JITResponse jitResponse = null;
+            try {
+                jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder().serviceId(JITServiceId.FTPS).params(ftpsRequest).build());
+            } catch (Exception e) {
+                log.info("Exception occurred while fetching FTPS from ifms." + e);
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_ERROR;
+            }
 
+            if (jitResponse == null) {
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(pi, JITServiceId.PAG, jitRespStatusForPI, requestInfo);
+                continue;
+            }
 
             if (jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
+                jitRespStatusForPI = jitResponse.getErrorMsg() != null ? JitRespStatusForPI.STATUS_LOG_FTPS_ERROR : JitRespStatusForPI.STATUS_LOG_FTPS_NO_RESPONSE;
+                paymentInstructionService.createAndSavePIStatusLog(pi, JITServiceId.FTPS, jitRespStatusForPI, requestInfo);
                 continue;
             }
             for (Object data : jitResponse.getData()) {
@@ -272,6 +289,8 @@ public class FailureDetailsService {
     private void processFTPSResponse(Object ftpsResponse, PaymentInstruction paymentInstruction, RequestInfo requestInfo) {
         try {
             Map<String, Object> dataObjMap = objectMapper.convertValue(ftpsResponse, Map.class);
+            JitRespStatusForPI jitRespStatusForPI = null;
+
             if (dataObjMap.get("jitCorBillNo") != null) {
 
                 String voucherNo = dataObjMap.get("voucherNo").toString();
@@ -333,7 +352,12 @@ public class FailureDetailsService {
 
                     billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL,ReferenceStatus.PAYMENT_SUCCESS);
                 }
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_SUCCESS;
+            } else {
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_NO_RESPONSE;
             }
+            // Create PI status log based on current existing PIS request
+            paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.FTPS, jitRespStatusForPI, requestInfo);
         } catch (Exception e) {
             log.info("Exception in FailedPaymentUpdateService:processFTPSResponse " + e);
         }
@@ -341,25 +365,40 @@ public class FailureDetailsService {
     }
 
     public void updateFTFPSStatus(RequestInfo requestInfo) {
-
+        log.info("Start executing FTFPS update service.");
         PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder().piType(PIType.REVISED).piStatus(PIStatus.SUCCESSFUL).build();
         List<PaymentInstruction> revisedPIs =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(revisedPiSearchCriteria).build());
 
         for (PaymentInstruction pi : revisedPIs) {
-
+            JitRespStatusForPI jitRespStatusForPI = null;
+            PISearchCriteria originalPiSearchCriteria = PISearchCriteria.builder().jitBillNo(pi.getParentPiNumber()).build();
+            PaymentInstruction originalPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(originalPiSearchCriteria).build()).get(0);
             FTFPSRequest ftfpsRequest = FTFPSRequest.builder()
                     .jitCorBillNo(pi.getJitBillNo())
                     .jitCorBillDate(helperUtil.getFormattedTimeFromTimestamp(pi.getAuditDetails().getCreatedTime(), Constants.VA_REQUEST_TIME_FORMAT))
-                    .billRefNo(pi.getPaDetails().get(0).getPaBillRefNumber())
+                    .billRefNo(originalPI.getPaDetails().get(0).getPaBillRefNumber())
                     .tokenNumber(pi.getPaDetails().get(0).getPaTokenNumber())
                     .tokenDate(pi.getPaDetails().get(0).getPaTokenDate())
                     .build();
+            JITResponse jitResponse = null;
+            try {
+                jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
+                        .serviceId(JITServiceId.FTFPS).params(ftfpsRequest).build());
+            } catch (Exception e) {
+                log.info("Exception occurred while fetching FTFPS from ifms." + e);
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTFPS_ERROR;
+            }
 
-            JITResponse jitResponse = ifmsService.sendRequestToIFMS(JITRequest.builder()
-                    .serviceId(JITServiceId.FTFPS).params(ftfpsRequest).build());
-//            JITResponse jitResponse = ifmsService.loadCustomResponse();
+            if (jitResponse == null) {
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(pi, JITServiceId.FTFPS, jitRespStatusForPI, requestInfo);
+                continue;
+            }
 
             if (jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
+                jitRespStatusForPI = jitResponse.getErrorMsg() != null ? JitRespStatusForPI.STATUS_LOG_FTFPS_ERROR : JitRespStatusForPI.STATUS_LOG_FTFPS_NO_RESPONSE;
+                // Create PI status log based on current existing FTFPS request
+                paymentInstructionService.createAndSavePIStatusLog(pi, JITServiceId.FTFPS, jitRespStatusForPI, requestInfo);
                 continue;
             }
 
@@ -367,7 +406,7 @@ public class FailureDetailsService {
                 JsonNode node = objectMapper.valueToTree(failedPI);
                 JsonNode benef = node.get("benfDtls");
                 if (benef != null && benef.isArray() && !benef.isEmpty()) {
-                    processPiForFailedTransaction(node, requestInfo, pi);
+                    processPiForFailedTransaction(node, requestInfo, pi, JITServiceId.FTFPS);
                 }
             }
         }

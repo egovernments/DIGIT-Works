@@ -55,6 +55,7 @@ public class PAGService {
         List<PaymentInstruction> paymentInstructions = getApprovedPaymentInstructions();
         for(PaymentInstruction paymentInstruction : paymentInstructions){
             log.info("Started Processing PI for PAG : " + paymentInstruction.getJitBillNo());
+            JitRespStatusForPI jitRespStatusForPI = null;
 
             JSONArray ssuIaDetails = ifmsService.getSSUDetails(RequestInfo.builder().build(), paymentInstruction.getTenantId());
             Map<String,String> ssuIaDetailsMap = (Map<String, String>) ssuIaDetails.get(0);
@@ -76,14 +77,21 @@ public class PAGService {
                 jitResponse = ifmsService.sendRequestToIFMS(jitRequest);
             }catch (Exception e){
                 log.info("Exception occurred while fetching PAG from ifms." + e);
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PAG_ERROR;
             }
 
-            if (jitResponse == null)
+            if (jitResponse == null) {
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PAG, jitRespStatusForPI, requestInfo);
                 continue;
+            }
 
             log.info("Response received from IFMS.");
 
             if(jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
+                jitRespStatusForPI = jitResponse.getErrorMsg() != null ? JitRespStatusForPI.STATUS_LOG_PAG_ERROR : JitRespStatusForPI.STATUS_LOG_PAG_NO_RESPONSE;
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PAG, jitRespStatusForPI, requestInfo);
                 continue;
             }
             log.info("Processing PAG response for : " + paymentInstruction.getJitBillNo());
@@ -122,6 +130,9 @@ public class PAGService {
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 // Update PI indexer based on updated PI
                 piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PAG_SUCCESS;
+                // Create PI status log based on current existing PIS request
+                paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PAG, jitRespStatusForPI, requestInfo);
             }
             log.info("PAG status updated for PI : " + paymentInstruction.getJitBillNo());
 

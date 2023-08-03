@@ -112,8 +112,6 @@ public class VirtualAllotmentService {
             JITRequest vaRequest = vaEnrichment.constructVARequest(hoaNode, ssuNode, lastExecuted);
             JITResponse vaResponse = ifmsService.sendRequestToIFMS(vaRequest);
 
-            // TODO: Temp response for dev remove after dev completed
-//            JITResponse vaResponse = vaEnrichment.vaResponse();
             if (vaResponse.getErrorMsg() == null) {
                 List<Object> vaResponseList = vaResponse.getData();
                 List<Allotment> allotmentList = new ArrayList<>();
@@ -129,32 +127,21 @@ public class VirtualAllotmentService {
                     Map<String, List<SanctionDetail>> createUpdateSanctions = vaEnrichment.getCreateUpdateSanctionMap(existingSanctionDetailList, updatedSanctions);
                     List<SanctionDetail> createSanctions =  createUpdateSanctions.get("create");
                     List<SanctionDetail> updateSanctions =  createUpdateSanctions.get("update");
-                    if (createSanctions != null && !createSanctions.isEmpty()) {
-                        sanctionDetailsRepository.saveSanctionDetails(createSanctions);
-                        List<FundsSummary> fundsSummaries = vaEnrichment.getFundsSummariesFromSanctions(createSanctions);
-                        sanctionDetailsRepository.saveFundsSummary(fundsSummaries);
-                    }
-                    if (updateSanctions != null && !updateSanctions.isEmpty()) {
-                        List<FundsSummary> fundsSummaries = vaEnrichment.getFundsSummariesFromSanctions(updateSanctions);
-                        sanctionDetailsRepository.updateFundsSummary(fundsSummaries);
-                    }
                     // Get allotments to create and
                     List<Allotment> createAllotments =  vaEnrichment.getAllotmentsForCreate(updatedSanctions, allotmentList, tenantId, requestInfo);
-                    if (createAllotments != null && !createAllotments.isEmpty()) {
-                        sanctionDetailsRepository.saveAllotmentDetails(createAllotments);
-                    }
+                    sanctionDetailsRepository.createUpdateSanctionFunds(createSanctions, updateSanctions, createAllotments);
                     System.out.println(updatedSanctions);
+                }
+                // Update last executed for the va
+                if (executedVALog == null) {
+                    executedVALog = vaEnrichment.getExecutedVALogForCreate(tenantId, hoaNode, ssuNode, requestInfo);
+                    executedVALogsRepository.saveExecutedVALogs(Collections.singletonList(executedVALog));
+                } else {
+                    executedVALog = vaEnrichment.enrichExecutedVaLogForUpdate(executedVALog, requestInfo);
+                    executedVALogsRepository.updateExecutedVALogs(Collections.singletonList(executedVALog));
                 }
             } else {
                 log.info("Error on VA response  for hoa : "+ hoaNode.get("code").asText() +"["+vaResponse.getErrorMsg()+"]");
-            }
-            // Update last executed for the va
-            if (executedVALog == null) {
-                executedVALog = vaEnrichment.getExecutedVALogForCreate(tenantId, hoaNode, ssuNode, requestInfo);
-                executedVALogsRepository.saveExecutedVALogs(Collections.singletonList(executedVALog));
-            } else {
-                executedVALog = vaEnrichment.enrichExecutedVaLogForUpdate(executedVALog, requestInfo);
-                executedVALogsRepository.updateExecutedVALogs(Collections.singletonList(executedVALog));
             }
         } catch (Exception e) {
             log.info("Exception occurred while executing VirtualAllotmentService:processVAForHOA." + e);

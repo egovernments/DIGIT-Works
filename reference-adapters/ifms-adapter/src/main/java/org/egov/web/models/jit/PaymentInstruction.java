@@ -90,6 +90,10 @@ public class PaymentInstruction {
     @Exclude
     private List<PADetails> paDetails;
 
+    @JsonProperty("piStatusLogs")
+    @Exclude
+    private List<PIStatusLog> piStatusLogs;
+
     @JsonProperty("isActive")
     @Exclude
     private Boolean isActive = true;
