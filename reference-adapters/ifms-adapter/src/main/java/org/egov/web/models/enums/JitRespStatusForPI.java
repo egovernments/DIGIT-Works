@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
  * enum value for the api response results for payment instruction from jit
  */
 public enum JitRespStatusForPI {
+	STATUS_LOG_PI_NO_FUNDS("STATUS_LOG_PI_NO_FUNDS"),
 	STATUS_LOG_PI_NO_RESPONSE("STATUS_LOG_PI_NO_RESPONSE"),
 	STATUS_LOG_PI_ERROR("STATUS_LOG_PI_ERROR"),
 	STATUS_LOG_PI_SUCCESS("STATUS_LOG_PI_SUCCESS"),

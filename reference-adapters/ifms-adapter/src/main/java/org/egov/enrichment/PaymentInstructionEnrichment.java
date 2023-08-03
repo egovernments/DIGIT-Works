@@ -427,10 +427,15 @@ public class PaymentInstructionEnrichment {
             // Get bank account details by beneficiary ids
             CORBeneficiaryDetails corBeneficiaryDetails = CORBeneficiaryDetails.builder()
                     .benefId(beneficiary.getBeneficiaryNumber())
+                    // Latest failed transaction bill ref number
                     .jitCurBillRefNo(lastRevisedPi != null ? lastRevisedPi.getPaDetails().get(0).getPaBillRefNumber() : originalPi.getPaDetails().get(0).getPaBillRefNumber())
+                    // Original account number of first time failure.
                     .orgAccountNo(originalPiBankAccountNo)
+                    // Original IFSC of first time failure.
                     .orgIfsc(originalPiIFSC)
+                    // Recent corrected account number
                     .correctedAccountNo(beneficiary.getBenfAcctNo())
+                    // Recent corrected IFSC
                     .correctedIfsc(beneficiary.getBenfBankIfscCode())
                     .build();
 
@@ -438,10 +443,14 @@ public class PaymentInstructionEnrichment {
                 Map<String, String> lastPiBankDetails = auditLogUtils.getLastUpdatedBankAccountDetailsFromAuditLogFromTime(paymentRequest, bankAccountMap.get(beneficiary.getBeneficiaryId()), lastRevisedPi.getAuditDetails().getCreatedTime());
                 String lastPiBankAccountNo = lastPiBankDetails.get("bankAccountNumber");
                 String lastPiIFSC = lastPiBankDetails.get("bankIFSCCode");
+                // Latest failed transaction account number
                 corBeneficiaryDetails.setCurAccountNo(lastPiBankAccountNo);
+                // Latest failed transaction IFSC
                 corBeneficiaryDetails.setCurIfsc(lastPiIFSC);
             } else {
+                // Latest failed transaction account number
                 corBeneficiaryDetails.setCurAccountNo(originalPiBankAccountNo);
+                // Latest failed transaction IFSC
                 corBeneficiaryDetails.setCurIfsc(originalPiIFSC);
             }
             corBenfDetails.add(corBeneficiaryDetails);
@@ -449,11 +458,15 @@ public class PaymentInstructionEnrichment {
 
         CORRequest corRequest = CORRequest.builder()
                 .jitCorBillNo(paymentInstruction.getJitBillNo())
-                .jitCorBillDate(util.getFormattedTimeFromTimestamp(paymentInstruction.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
+                .jitCorBillDate(util.getFormattedTimeFromTimestamp(paymentInstruction.getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
+                // External department Application name for example ‘MUKTA’
                 .jitCorBillDeptCode(JIT_FD_EXT_APP_NAME)
+                // Original bill reference number while payment failed first time.
                 .jitOrgBillRefNo(originalPi.getPaDetails().get(0).getPaBillRefNumber())
+                // Payment Instruction bill no while payment failed first time.
                 .jitOrgBillNo(originalPi.getJitBillNo())
-                .jitOrgBillDate(util.getFormattedTimeFromTimestamp(originalPi.getAuditDetails().getCreatedTime(), JIT_BILL_DATE_FORMAT))
+                // Payment Instruction bill date while payment failed first time.
+                .jitOrgBillDate(util.getFormattedTimeFromTimestamp(originalPi.getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
                 .beneficiaryDtls(corBenfDetails)
                 .build();
         JITRequest jitPiRequest = JITRequest.builder()

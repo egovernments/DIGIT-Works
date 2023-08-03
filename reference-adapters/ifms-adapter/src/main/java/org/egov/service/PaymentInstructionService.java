@@ -191,8 +191,6 @@ public class PaymentInstructionService {
                 }
                 piRepository.save(Collections.singletonList(piRequest), selectedSanction.getFundsSummary(), paymentStatus);
                 piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
-                // Create PI status log based on current existing PI request status
-                createAndSavePIStatusLog(piRequest, JITServiceId.PI, jitApiRespStatus, paymentRequest.getRequestInfo());
             } else {
                 paymentStatus = PaymentStatus.FAILED;
                 referenceStatus = ReferenceStatus.PAYMENT_INSUFFICIENT_FUNDS;
@@ -204,7 +202,10 @@ public class PaymentInstructionService {
                 }
                 piRepository.save(Collections.singletonList(piRequest), null, paymentStatus);
                 piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
+                jitApiRespStatus = JitRespStatusForPI.STATUS_LOG_PI_NO_FUNDS;
             }
+            // Create PI status log based on current existing PI request status
+            createAndSavePIStatusLog(piRequest, JITServiceId.PI, jitApiRespStatus, paymentRequest.getRequestInfo());
         } catch (Exception e) {
             log.info("Exception " + e);
             paymentStatus = PaymentStatus.FAILED;

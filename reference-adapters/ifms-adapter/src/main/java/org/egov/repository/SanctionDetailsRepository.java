@@ -1,6 +1,7 @@
 package org.egov.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.enrichment.VirtualAllotmentEnrichment;
 import org.egov.repository.querybuilder.SanctionDetailQueryBuilder;
 import org.egov.repository.rowmapper.SanctionDetailRowMapper;
 import org.egov.utils.HelperUtil;
@@ -39,7 +40,40 @@ public class SanctionDetailsRepository {
     private NamedParameterJdbcTemplate namedJdbcTemplate;
 
     @Autowired
-    HelperUtil util;
+    private HelperUtil util;
+    @Autowired
+    private VirtualAllotmentEnrichment vaEnrichment;
+
+    @Transactional
+    public void createUpdateSanctionFunds(List<SanctionDetail> createSanctions, List<SanctionDetail> updateSanctions, List<Allotment> createAllotments) {
+        try {
+            // Create new sanctions with fund summaries
+            if (createSanctions != null && !createSanctions.isEmpty()) {
+                List<MapSqlParameterSource> sanctionDetailsSqlParameterSources = getSqlParameterListForSanctionDetails(createSanctions);
+                namedJdbcTemplate.batchUpdate(SANCTION_DETAILS_INSERT_QUERY, sanctionDetailsSqlParameterSources.toArray(new MapSqlParameterSource[0]));
+
+                List<FundsSummary> createFundsSummaries = vaEnrichment.getFundsSummariesFromSanctions(createSanctions);
+                if (createFundsSummaries != null && !createFundsSummaries.isEmpty()) {
+                    List<MapSqlParameterSource> sqlParameterSources = getSqlParameterListForFundsSummaries(createFundsSummaries);
+                    namedJdbcTemplate.batchUpdate(FUNDS_SUMMARY_INSERT_QUERY, sqlParameterSources.toArray(new MapSqlParameterSource[0]));
+                }
+            }
+
+            // Update existing sanction details
+            if (updateSanctions != null && !updateSanctions.isEmpty()) {
+                List<FundsSummary> updateFundsSummaries = vaEnrichment.getFundsSummariesFromSanctions(updateSanctions);
+                List<MapSqlParameterSource> sqlParameterSources = getSqlParameterListForFundsSummaryUpdate(updateFundsSummaries);
+                namedJdbcTemplate.batchUpdate(FUNDS_SUMMARY_UPDATE_QUERY, sqlParameterSources.toArray(new MapSqlParameterSource[0]));
+            }
+
+            if (createAllotments != null && !createAllotments.isEmpty()) {
+                List<MapSqlParameterSource> allotmentSqlParameterSources = getSqlParameterListForAllotments(createAllotments);
+                namedJdbcTemplate.batchUpdate(ALLOTMENT_DETAILS_INSERT_QUERY, allotmentSqlParameterSources.toArray(new MapSqlParameterSource[0]));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Exception in createUpdateSanctionFunds while creating/updating sanction details  "+ e);
+        }
+    }
     @Transactional
     public void saveSanctionDetails(List<SanctionDetail> sanctionDetails) {
         if (sanctionDetails != null && !sanctionDetails.isEmpty()) {
