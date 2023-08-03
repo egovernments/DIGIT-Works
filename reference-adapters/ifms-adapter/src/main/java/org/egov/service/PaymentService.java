@@ -46,7 +46,7 @@ public class PaymentService {
 
         for (Bill bill : bills) {
             String wfStatus = bill.getWfStatus();
-            if (wfStatus != null && wfStatus.equalsIgnoreCase(APPROVED_STATUS)) {
+            if (bill.getPaymentStatus() == null && wfStatus != null && wfStatus.equalsIgnoreCase(APPROVED_STATUS)) {
                 // Get payment request from bill
                 PaymentRequest paymentRequest = getPaymentRequest(requestInfo, bill);
                 // Payment create call
