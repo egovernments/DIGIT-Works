@@ -134,6 +134,9 @@ public class Configuration {
     @Value("${expense.payment.default.status}")
 	public String defaultPaymentStatus;
 
+	@Value("${expense.reference.default.status}")
+	public String defaultReferenceStatus;
+
 	//Organisation Service
 	@Value("${works.organisation.host}")
 	private String organisationServiceHost;
@@ -157,4 +160,11 @@ public class Configuration {
 
 	@Value("${works.contract.endpoint}")
 	private String contractServiceEndpoint;
+
+	//Individual Service
+	@Value("${works.individual.host}")
+	private String individualServiceHost;
+
+	@Value("${works.individual.endpoint}")
+	private String individualServiceEndpoint;
 }

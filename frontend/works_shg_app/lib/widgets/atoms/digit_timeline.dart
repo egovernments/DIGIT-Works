@@ -1,6 +1,13 @@
 import 'package:digit_components/theme/colors.dart';
+import 'package:digit_components/theme/digit_theme.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:timelines/timelines.dart';
+import 'package:works_shg_app/blocs/localization/app_localization.dart';
+import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
+    as i18;
+import 'package:works_shg_app/widgets/atoms/attachments.dart';
+
+import '../../models/file_store/file_store_model.dart';
 
 class DigitTimeline extends StatelessWidget {
   final double stepRadius;
@@ -135,6 +142,16 @@ class DigitTimeline extends StatelessWidget {
                                       color: const DigitColors().davyGray),
                                 )
                               : const SizedBox.shrink(),
+                          timelineOptions[index].documents != null &&
+                                  timelineOptions[index].documents!.isNotEmpty
+                              ? Attachments(
+                                  AppLocalizations.of(context)
+                                      .translate(i18.common.attachments),
+                                  timelineOptions[index].documents,
+                                  labelStyle: DigitTheme.instance.mobileTheme
+                                      .textTheme.headlineSmall,
+                                )
+                              : const SizedBox.shrink(),
                           const SizedBox(
                             height: 16.0,
                           )
@@ -155,6 +172,7 @@ class DigitTimelineOptions {
   final String? mobileNumber;
   final String? comments;
   final bool isCurrentState;
+  final List<FileStoreModel>? documents;
 
   const DigitTimelineOptions(
       {this.title = '',
@@ -162,5 +180,6 @@ class DigitTimelineOptions {
       this.mobileNumber,
       this.assignee,
       this.comments,
-      this.isCurrentState = false});
+      this.isCurrentState = false,
+      this.documents});
 }

@@ -79,6 +79,11 @@ public class BillQueryBuilder {
             query.append(" bill.status != ? ");
             preparedStmtList.add(criteria.getStatusNot());
         }
+        if (criteria.getIsPaymentStatusNull() != null && criteria.getIsPaymentStatusNull().equals(true)) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" bill.paymentstatus IS NULL");
+
+        }
 		return addPaginationWrapper(query, billSearchRequest.getPagination(), preparedStmtList);
     }
 
