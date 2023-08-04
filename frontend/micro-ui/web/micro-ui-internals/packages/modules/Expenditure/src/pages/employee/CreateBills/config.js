@@ -17,7 +17,7 @@ const getModalConfig = ({
     return {
         label: {
             heading: isModify?`EXP_UPDATE_AND_FORWARD`:`EXP_CREATE_AND_FORWARD`,
-            submit: `CORE_COMMON_SUBMIT`,
+            submit: `EXP_FORWARD`,
             cancel: "WORKS_CANCEL",
         },
         form: [
