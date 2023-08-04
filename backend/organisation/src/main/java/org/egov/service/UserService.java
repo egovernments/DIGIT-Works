@@ -133,8 +133,8 @@ public class UserService {
      */
     private Role getCitizenRole() {
         return Role.builder()
-                .code(OrganisationConstant.ORG_CITIZEN_ROLE_CODE)
-                .name(OrganisationConstant.ORG_CITIZEN_ROLE_NAME)
+                .code(OrganisationConstant.ORG_ADMIN_ROLE_CODE)
+                .name(OrganisationConstant.ORG_ADMIN_ROLE_NAME)
                 .build();
     }
 

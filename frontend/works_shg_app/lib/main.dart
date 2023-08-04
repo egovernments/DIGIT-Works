@@ -270,8 +270,12 @@ class _MainApplicationState extends State<MainApplication> {
                             )..add(LocalizationEvent.onLoadLocalization(
                                 module:
                                     'rainmaker-common,rainmaker-common-masters,rainmaker-${appInitState.stateInfoListModel?.code}',
-                                tenantId: appInitState.initMdmsModel!.tenant!
-                                    .tenantListModel!.first.code
+                                tenantId: appInitState
+                                    .initMdmsModel!
+                                    .commonMastersModel!
+                                    .stateInfoListModel!
+                                    .first
+                                    .code
                                     .toString(),
                                 locale: appInitState.digitRowCardItems!
                                     .firstWhere((e) => e.isSelected)

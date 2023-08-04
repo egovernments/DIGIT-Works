@@ -8,12 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Configuration;
 import org.egov.kafka.Producer;
+import org.egov.repository.OrganisationRepository;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.util.HRMSUtils;
 import org.egov.util.OrganisationConstant;
-import org.egov.web.models.OrgRequest;
-import org.egov.web.models.Organisation;
-import org.egov.web.models.UserDetailResponse;
+import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -43,8 +42,10 @@ public class NotificationService {
     @Autowired
     private Configuration config;
 
+//    @Autowired
+//    private HRMSUtils hrmsUtils;
     @Autowired
-    private HRMSUtils hrmsUtils;
+    private OrganisationRepository organisationRepository;
 
     /**
      * Sends notification by putting the sms content onto the core-sms topic
@@ -99,9 +100,6 @@ public class NotificationService {
     }
 
     private void pushNotificationForUpdate(OrgRequest request) {
-        List<Organisation> organisations = request.getOrganisations();
-        String modifiedByUuid=request.getOrganisations().get(0).getAuditDetails().getLastModifiedBy();
-
         log.info("get message template for update action");
         String message = getMessage(request, false);
 
@@ -110,16 +108,28 @@ public class NotificationService {
             return;
         }
 
-            //get orgName, ID, contactPerson, mobileNumber, cbo-url
-            log.info("get orgName, ID, contactPerson, mobileNumber, cbo-url");
-            Map<String, String> smsDetails = getSMSDetailsForUpdate(request);
+        for(Organisation organisation : request.getOrganisations()){
+            OrgSearchRequest orgSearchRequest = OrgSearchRequest.builder().requestInfo(request.getRequestInfo())
+                    .searchCriteria(OrgSearchCriteria.builder().orgNumber(organisation.getOrgNumber()).build()).build();
+            ContactDetails oldContactDetails = organisationRepository.getOrganisations(orgSearchRequest).get(0).getContactDetails().get(0);
 
+
+            Map<String, String> smsDetails = new HashMap<>();
+            smsDetails.put("orgNumber", organisation.getOrgNumber());
+            smsDetails.put("oldMobileNumber",oldContactDetails.getContactMobileNumber());
+            smsDetails.put("newMobileNumber", organisation.getContactDetails().get(0).getContactMobileNumber());
+            smsDetails.put("orgName",organisation.getName());
             log.info("build Message For update Action for " + smsDetails.get("orgName"));
             String customizedMessage = buildMessageForUpdateAction(smsDetails, message);
-            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
+            SMSRequest smsRequestForOldMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("oldMobileNumber")).message(customizedMessage).build();
 
             log.info("push message for update Action");
-            producer.push(config.getSmsNotifTopic(), smsRequest);
+            producer.push(config.getSmsNotifTopic(), smsRequestForOldMobileNumber);
+            if(!organisation.getContactDetails().get(0).getContactMobileNumber().equalsIgnoreCase(oldContactDetails.getContactMobileNumber())){
+                SMSRequest smsRequestForNewMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("newMobileNumber")).message(customizedMessage).build();
+                producer.push(config.getSmsNotifTopic(), smsRequestForNewMobileNumber);
+            }
+        }
     }
 
     private Map<String, List<String>> getDetailsForSMS(Organisation organisation) {

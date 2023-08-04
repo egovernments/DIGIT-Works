@@ -137,6 +137,9 @@ public class Configuration {
     @Value("${org.kafka.update.topic}")
     private String orgKafkaUpdateTopic;
 
+    @Value("${org.contact.details.update.topic}")
+    private String organisationContactDetailsUpdateTopic;
+
     //search config
     @Value("${org.search.max.limit}")
     private Integer maxLimit;

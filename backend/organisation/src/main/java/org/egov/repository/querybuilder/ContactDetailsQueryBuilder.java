@@ -14,7 +14,7 @@ public class ContactDetailsQueryBuilder {
 
     private static final String FETCH_CONTACT_DETAILS_QUERY = "SELECT c.id as contactDetail_Id, c.tenant_id as contactDetail_tenantId, " +
             "c.org_id as contactDetail_orgId, c.contact_name as contactDetail_contactName, c.contact_mobile_number as contactDetail_contactMobileNumber, " +
-            "c.contact_email as contactDetail_contactEmail " +
+            "c.contact_email as contactDetail_contactEmail, c.individual_id as contactDetail_contactIndividualId " +
             "FROM eg_org_contact_detail c ";
     public String getContactDetailsSearchQuery(Set<String> organisationIds, List<Object> preparedStmtList) {
         StringBuilder queryBuilder = null;

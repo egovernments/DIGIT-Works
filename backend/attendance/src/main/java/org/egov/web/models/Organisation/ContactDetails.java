@@ -1,4 +1,4 @@
-package org.egov.web.models;
+package org.egov.web.models.Organisation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
