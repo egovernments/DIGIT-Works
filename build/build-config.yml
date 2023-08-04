@@ -148,7 +148,6 @@ config:
       - work-dir: "utilities/ifms-cronjob"
         image-name: "ifms-cronjob-va"
         dockerfile: "utilities/ifms-cronjob/Dockerfile"
-
   - name: "builds/digit-works/utilities/ifms-cronjob-pis"
     build:
       - work-dir: "utilities/ifms-cronjob"

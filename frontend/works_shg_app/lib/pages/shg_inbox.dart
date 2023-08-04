@@ -24,6 +24,7 @@ import '../blocs/muster_rolls/muster_roll_estimate.dart';
 import '../blocs/muster_rolls/muster_roll_pdf.dart';
 import '../blocs/muster_rolls/search_individual_muster_roll.dart';
 import '../models/attendance/attendee_model.dart';
+import '../models/file_store/file_store_model.dart';
 import '../models/mdms/attendance_hours.dart';
 import '../models/muster_rolls/estimate_muster_roll_model.dart';
 import '../models/muster_rolls/muster_roll_model.dart';
@@ -225,7 +226,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                 'NA',
                                             i18.attendanceMgmt.musterRollPeriod:
                                             '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
-                                            i18.common.status: 'WF_MUSTOR_${e.musterRollStatus}',
+                                            i18.common.status: 'CBO_MUSTER_${e.musterRollStatus}',
                                             Constants.activeInboxStatus : e.musterRollStatus == sentBackToCBOCode
                                                 ? 'false'
                                                 : 'true'
@@ -309,12 +310,14 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                           if(musterWorkFlowModel?.processInstances != null && musterWorkFlowModel!.processInstances!.isNotEmpty){
                                                             timeLineAttributes = musterWorkFlowModel.processInstances!.mapIndexed((i, e) =>
                                                                 DigitTimelineOptions(
-                                                                  title: t.translate('WF_MUSTOR_${e.workflowState?.state}'),
+                                                                  title: t.translate('CBO_MUSTER_${e.workflowState?.state}'),
                                                                   subTitle: DateFormats.getTimeLineDate(e.auditDetails?.lastModifiedTime ?? 0),
                                                                   isCurrentState: i == 0,
                                                                   comments: e.comment,
+                                                                  documents: e.documents != null ? e.documents?.map((d) => FileStoreModel(
+                                                                      name: '' , fileStoreId: d.documentUid)).toList() : null,
                                                                   assignee: e.assignes?.first.name ,
-                                                                  mobileNumber: e.assignes != null ? '+91-${e.assignes?.first.mobileNumber}' : null
+                                                                  mobileNumber: e.assignes != null ? '+91-${e.assignes?.first.mobileNumber}' : null,
 
                                                             )).toList();
                                                         }
@@ -510,6 +513,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                           '',
                                                                                       aadhaar: e.musterIndividualAdditionalDetails?.aadharNumber ??
                                                                                           '',
+                                                                                      gender: e.musterIndividualAdditionalDetails?.gender ?? '',
                                                                                       individualId: e
                                                                                           .individualId,
                                                                                       skillCodeList: e.musterIndividualAdditionalDetails?.skillCode ?? [],
@@ -552,6 +556,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                   data.name = item1.name;
                                                                                   data.individualGaurdianName = item1.individualGaurdianName ?? '';
                                                                                   data.aadhaar = item1.aadhaar;
+                                                                                  data.gender = item1.gender;
                                                                                   data.individualId = item1.individualId ?? '';
                                                                                   data.id = item1.id ?? '';
                                                                                   data.skill = item1.skill;
@@ -588,6 +593,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                                                                                   TrackAttendanceTableData data = TrackAttendanceTableData();
                                                                                   data.name = item1.name;
                                                                                   data.aadhaar = item1.aadhaar;
+                                                                                  data.gender = item1.gender;
                                                                                   data.individualId = item1.individualId ?? '';
                                                                                   data.individualGaurdianName = item1.individualGaurdianName ?? '';
                                                                                   data.id = item1.id ?? '';

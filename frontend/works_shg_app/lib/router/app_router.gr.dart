@@ -183,6 +183,22 @@ class _$AppRouter extends RootStackRouter {
         child: const MyBillsPage(),
       );
     },
+    CreateTimeExtensionRequestRoute.name: (routeData) {
+      final queryParams = routeData.queryParams;
+      final args = routeData.argsAs<CreateTimeExtensionRequestRouteArgs>(
+          orElse: () => CreateTimeExtensionRequestRouteArgs(
+                  contractNumber: queryParams.optString(
+                'contractNumber',
+                'contractNumber',
+              )));
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: CreateTimeExtensionRequestPage(
+          key: args.key,
+          contractNumber: args.contractNumber,
+        ),
+      );
+    },
   };
 
   @override
@@ -284,6 +300,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               MyBillsRoute.name,
               path: 'my-bills',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              CreateTimeExtensionRequestRoute.name,
+              path: 'create-time-extension',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -732,4 +753,40 @@ class MyBillsRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'MyBillsRoute';
+}
+
+/// generated route for
+/// [CreateTimeExtensionRequestPage]
+class CreateTimeExtensionRequestRoute
+    extends PageRouteInfo<CreateTimeExtensionRequestRouteArgs> {
+  CreateTimeExtensionRequestRoute({
+    Key? key,
+    String? contractNumber = 'contractNumber',
+  }) : super(
+          CreateTimeExtensionRequestRoute.name,
+          path: 'create-time-extension',
+          args: CreateTimeExtensionRequestRouteArgs(
+            key: key,
+            contractNumber: contractNumber,
+          ),
+          rawQueryParams: {'contractNumber': contractNumber},
+        );
+
+  static const String name = 'CreateTimeExtensionRequestRoute';
+}
+
+class CreateTimeExtensionRequestRouteArgs {
+  const CreateTimeExtensionRequestRouteArgs({
+    this.key,
+    this.contractNumber = 'contractNumber',
+  });
+
+  final Key? key;
+
+  final String? contractNumber;
+
+  @override
+  String toString() {
+    return 'CreateTimeExtensionRequestRouteArgs{key: $key, contractNumber: $contractNumber}';
+  }
 }

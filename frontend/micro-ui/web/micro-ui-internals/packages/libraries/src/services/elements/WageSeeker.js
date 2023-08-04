@@ -3,7 +3,9 @@ import { Request } from "../atoms/Utils/Request";
 
 export const WageSeekerService = {
     search: (tenantId, data, searchParams) =>
-      Request({
+      {
+        if(!data) return []
+        return Request({
         url: Urls.wageseeker.search,
         useCache: false,
         method: "POST",
@@ -11,7 +13,8 @@ export const WageSeekerService = {
         userService: true,
         data: data,
         params: { tenantId, ...searchParams },
-      }),
+      })
+    },
 
     update: (data) => 
       Request({

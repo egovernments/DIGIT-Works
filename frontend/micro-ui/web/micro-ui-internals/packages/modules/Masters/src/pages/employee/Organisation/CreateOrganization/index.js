@@ -13,6 +13,8 @@ const CreateOrganisation = () => {
 
     const stateTenant = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
+    const { orgId } = Digit.Hooks.useQueryParams()
+    const isModify = orgId ? true : false;
     
     const { isLoading, data: configs } = Digit.Hooks.useCustomMDMS(
         stateTenant,
@@ -24,7 +26,7 @@ const CreateOrganisation = () => {
         ],
         {
             select: (data) => {
-                return data?.[Digit.Utils.getConfigModuleName()]?.CreateOrganizationConfig[0];
+                return  data?.[Digit.Utils.getConfigModuleName()]?.CreateOrganizationConfig[0];
             },
         }
     );
@@ -37,8 +39,6 @@ const CreateOrganisation = () => {
     let ULBOptions = []
     ULBOptions.push({code: tenantId, name: t(ULB),  i18nKey: ULB })
 
-    const { orgId } = Digit.Hooks.useQueryParams()
-    const isModify = orgId ? true : false;
 
     //Call Search Wage Seeker
     const payload = {
