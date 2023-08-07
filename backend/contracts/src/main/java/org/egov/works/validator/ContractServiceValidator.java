@@ -82,7 +82,7 @@ public class ContractServiceValidator {
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
 
-        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
             log.info("Validating time extension request");
             // Validate if at least one muster-roll is created and approved
             validateTimeExtensionRequest(contractRequest);
