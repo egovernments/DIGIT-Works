@@ -67,7 +67,7 @@ public class ContractEnrichment {
 
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
-        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
             // Enrich Supplement Number
             enrichSupplementNumber(contractRequest);
 
@@ -318,7 +318,7 @@ public class ContractEnrichment {
 
     private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
-        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
             contract.setOldUuid(contract.getId());
             Long versionNumber = contract.getVersionNumber();
             if (versionNumber == null) {
