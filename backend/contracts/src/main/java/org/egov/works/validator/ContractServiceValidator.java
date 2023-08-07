@@ -656,7 +656,7 @@ public class ContractServiceValidator {
                 .build();
         List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
         for (Contract contract : contractsFromDB) {
-            if (contract.getOrgId() != contractRequest.getContract().getOrgId()) {
+            if (contract.getOrgId().equalsIgnoreCase(contractRequest.getContract().getOrgId())) {
                 throw new CustomException("ORG_ID_MISMATCH", "Org id must be same for time extension request");
             }
         }
