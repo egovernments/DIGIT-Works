@@ -38,6 +38,17 @@ public class Contract {
     @Size(min = 1, max = 64)
     private String contractNumber = null;
 
+    @JsonProperty("supplementNumber")
+    private String supplementNumber = null;
+
+    @JsonIgnore
+    private Long versionNumber = null;
+    @JsonIgnore
+    private String oldUuid = null;
+
+    @JsonProperty("businessService")
+    private String businessService = null;
+
     @JsonProperty("tenantId")
     @NotNull
     @Size(min = 2, max = 64)

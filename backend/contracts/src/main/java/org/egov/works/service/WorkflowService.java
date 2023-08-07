@@ -59,7 +59,13 @@ public class WorkflowService {
         Workflow workflow = request.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setBusinessId(contract.getContractNumber());
+        if (request.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+            processInstance.setBusinessId(contract.getSupplementNumber());
+        }
+        else {
+            processInstance.setBusinessId(contract.getContractNumber());
+        }
+
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getContractWFModuleName());
         processInstance.setTenantId(contract.getTenantId());
@@ -109,7 +115,11 @@ public class WorkflowService {
      */
     public BusinessService getBusinessService(ContractRequest contractRequest) {
         String tenantId = contractRequest.getContract().getTenantId();
-        StringBuilder url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractWFBusinessService());
+        StringBuilder url;
+        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION"))
+            url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractRevisionWFBusinessService());
+        else
+            url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractWFBusinessService());
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;

@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
+import org.egov.works.kafka.Producer;
+import org.egov.works.repository.ContractRepository;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,12 +59,24 @@ public class ContractEnrichment {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private ContractRepository contractRepository;
+
+    @Autowired
+    private Producer producer;
+
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
-        // Enrich LineItems
-        enrichContractLineItems(contractRequest,mdmsForEnrichment);
-        // Enrich Contract Number
-        enrichContractNumber(contractRequest);
+        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+            // Enrich Supplement Number
+            enrichSupplementNumber(contractRequest);
+
+        } else {
+            // Enrich LineItems
+            enrichContractLineItems(contractRequest,mdmsForEnrichment);
+            // Enrich Contract Number
+            enrichContractNumber(contractRequest);
+        }
         // Enrich UUID and AuditDetails
         enrichIdsAgreementDateAndAuditDetailsOnCreate(contractRequest);
 
@@ -128,31 +142,51 @@ public class ContractEnrichment {
         Contract contract = contractRequest.getContract();
         if("REJECT".equalsIgnoreCase(workflow.getAction())){
             log.info("Enriching contract components as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
-            markContractAndDocumentsAsInactive(contractRequest);
-            markLineItemsAndAmountBreakupsAsInactive(contractRequest);
+            markContractAndDocumentsStatus(contractRequest, Status.INACTIVE);
+            markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INACTIVE);
             log.info("Contract components are marked as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
+        }
+        if (contractRequest.getContract().getSupplementNumber() != null && "APPROVE".equalsIgnoreCase(workflow.getAction())) {
+            List<Contract> contractsFromDB = contractRepository.getContracts(ContractCriteria.builder()
+                    .tenantId(contract.getTenantId())
+                    .contractNumber(contract.getContractNumber()).build());
+
+            for (Contract contractFromDB : contractsFromDB) {
+                if (contractFromDB.getStatus().equals(Status.ACTIVE) &&
+                        (contractFromDB.getSupplementNumber() == null ||
+                                contractFromDB.getSupplementNumber().equalsIgnoreCase(contract.getSupplementNumber()))) {
+                    ContractRequest contractRequestFromDB = ContractRequest.builder()
+                            .requestInfo(contractRequest.getRequestInfo())
+                            .contract(contractFromDB).build();
+                    markContractAndDocumentsStatus(contractRequestFromDB, Status.INACTIVE);
+                    markLineItemsAndAmountBreakupsStatus(contractRequestFromDB, Status.INACTIVE);
+                    producer.push(config.getUpdateContractTopic(), contractRequestFromDB);
+                }
+            }
+            markContractAndDocumentsStatus(contractRequest, Status.ACTIVE);
+            markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
         }
     }
 
-    private void markContractAndDocumentsAsInactive(ContractRequest contractRequest){
+    private void markContractAndDocumentsStatus(ContractRequest contractRequest, Status status){
         Contract contract=contractRequest.getContract();
         List<Document> documents=contractRequest.getContract().getDocuments();
-        contract.setStatus(Status.INACTIVE);
+        contract.setStatus(status);
         // Check if documents exists then only update the status
         if (documents != null && !documents.isEmpty()) {
             for(Document document:documents){
-                document.setStatus(Status.INACTIVE);
+                document.setStatus(status);
             }
         }
     }
 
-    private void markLineItemsAndAmountBreakupsAsInactive(ContractRequest contractRequest){
+    private void markLineItemsAndAmountBreakupsStatus(ContractRequest contractRequest, Status status){
         List<LineItems> lineItems=contractRequest.getContract().getLineItems();
         for(LineItems lineItem:lineItems){
-            lineItem.setStatus(Status.INACTIVE);
+            lineItem.setStatus(status);
             List<AmountBreakup> amountBreakups=lineItem.getAmountBreakups();
             for(AmountBreakup amountBreakup:amountBreakups){
-                amountBreakup.setStatus(Status.INACTIVE);
+                amountBreakup.setStatus(status);
             }
         }
     }
@@ -284,6 +318,16 @@ public class ContractEnrichment {
 
     private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
+        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+            contract.setOldUuid(contract.getId());
+            Long versionNumber = contract.getVersionNumber();
+            if (versionNumber == null) {
+                versionNumber = 1L;
+            }else {
+                versionNumber += 1;
+            }
+            contract.setVersionNumber(versionNumber);
+        }
         contract.setId(String.valueOf(UUID.randomUUID()));
         BigDecimal agreementDate = contract.getAgreementDate();
         if(agreementDate == null){
@@ -299,9 +343,11 @@ public class ContractEnrichment {
                 amountBreakup.setId(String.valueOf(UUID.randomUUID()));
             }
             List<Document> documents = contract.getDocuments();
-            for (Document document : documents) {
-                document.setId(String.valueOf(UUID.randomUUID()));
-                document.setContractId(contract.getId());
+            if (documents != null) {
+                for (Document document : documents) {
+                    document.setId(String.valueOf(UUID.randomUUID()));
+                    document.setContractId(contract.getId());
+                }
             }
         }
 
@@ -316,6 +362,14 @@ public class ContractEnrichment {
         String generatedContractNumber = idList.get(0);
         contract.setContractNumber(generatedContractNumber);
         log.info("Contract Number enrichment is done. Generated Contract Number["+generatedContractNumber+"]");
+    }
+    private void enrichSupplementNumber (ContractRequest contractRequest) {
+        String rootTenantId = contractRequest.getContract().getTenantId().split("\\.")[0];
+        List<String> idList = idgenUtil.getIdList(contractRequest.getRequestInfo(), rootTenantId, config.getIdgenSupplementNumberName(), "", 1);
+        String generatedSupplementNumber = idList.get(0);
+        contractRequest.getContract().setSupplementNumber(generatedSupplementNumber);
+        log.info("Supplement Number enrichment is done. Generated Contract Number ["+generatedSupplementNumber+"]");
+
     }
     public void enrichSearchContractRequest(ContractCriteria contractCriteria) {
 

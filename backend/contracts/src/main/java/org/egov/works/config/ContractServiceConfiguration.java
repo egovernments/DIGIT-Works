@@ -35,6 +35,12 @@ public class ContractServiceConfiguration {
     @Value("${works.contract.service.code}")
     private String serviceCode;
 
+    // Muster-roll config
+    @Value("${works.muster.roll.host}")
+    private String musterRollSearchHost;
+    @Value("${works.muster.roll.search.endpoint}")
+    private String musterRollSearchEndpoint;
+
     //Attendance Config
     @Value("${egov.attendance.host}")
     private String attendanceHost;
@@ -52,11 +58,16 @@ public class ContractServiceConfiguration {
     @Value("${egov.idgen.contract.number.name}")
     private String idgenContractNumberName;
 
+    @Value("${egov.idgen.supplement.number.name}")
+    private String idgenSupplementNumberName;
+
     //Workflow Config
     @Value("${contract.workflow.module.name}")
     private String contractWFModuleName;
     @Value("${contract.workflow.business.service}")
     private String contractWFBusinessService;
+    @Value("${contract.workflow.revision.business.service}")
+    private String contractRevisionWFBusinessService;
 
     @Value("${egov.workflow.host}")
     private String wfHost;

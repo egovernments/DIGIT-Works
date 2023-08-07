@@ -18,6 +18,10 @@ public class ContractQueryBuilder {
 
     private static final String CONTRACT_SELECT_QUERY = " SELECT contract.id AS id, " +
             "contract.contract_number AS contractNumber, " +
+            "contract.supplement_number AS supplementNumber, " +
+            "contract.version_number AS versionNumber, " +
+            "contract.old_uuid AS oldUuid, " +
+            "contract.business_service AS businessService, " +
             "contract.tenant_id AS tenantId, " +
             "contract.wf_status AS wfStatus, " +
             "contract.executing_authority AS executingAuthority, " +

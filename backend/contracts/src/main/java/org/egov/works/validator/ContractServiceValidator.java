@@ -1,12 +1,14 @@
 package org.egov.works.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.LineItemsRepository;
+import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.service.ContractService;
 import org.egov.works.util.*;
 import org.egov.works.repository.ContractRepository;
@@ -57,6 +59,9 @@ public class ContractServiceValidator {
     @Autowired
     private OrgUtils orgUtils;
 
+    @Autowired
+    private ServiceRequestRepository restRepo;
+
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
         log.info("Validate contract create request");
@@ -73,11 +78,19 @@ public class ContractServiceValidator {
         // Validate request fields against MDMS data
         validateRequestFieldsAgainstMDMS(contractRequest);
 
-        // Validate estimateIds against estimate service and DB
-        validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
 
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
+
+        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+            log.info("Validating time extension request");
+            // Validate if at least one muster-roll is created and approved
+            validateTimeExtensionRequest(contractRequest);
+        } else {
+            // Validate estimateIds against estimate service and DB
+            validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
+        }
+
 
         log.info("Contract create request validated");
     }
@@ -612,5 +625,71 @@ public class ContractServiceValidator {
             log.error("Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
+    }
+    public void validateTimeExtensionRequest (ContractRequest contractRequest) {
+
+        // Validate if contract number is present
+        validateContractNumber(contractRequest);
+        // Validate if org is same as previous contract
+        validateOrganisation(contractRequest);
+        // Validate if at least one muster-roll is created and approved
+        validateMusterRollForTimeExtension(contractRequest);
+
+    }
+    private void validateContractNumber (ContractRequest contractRequest) {
+        if (contractRequest.getContract().getContractNumber() == null || contractRequest.getContract().getContractNumber().isEmpty()) {
+            throw new CustomException("CONTRACT_NUMBER_NULL", "Contract number mandatory for revision contract");
+        }
+    }
+    private void validateOrganisation (ContractRequest contractRequest) {
+
+        Pagination pagination = Pagination.builder()
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
+        ContractCriteria contractCriteria = ContractCriteria.builder()
+                .contractNumber(contractRequest.getContract().getContractNumber())
+                .status("ACTIVE")
+                .tenantId(contractRequest.getContract().getTenantId())
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+        for (Contract contract : contractsFromDB) {
+            if (contract.getOrgId() != contractRequest.getContract().getOrgId()) {
+                throw new CustomException("ORG_ID_MISMATCH", "Org id must be same for time extension request");
+            }
+        }
+    }
+    private void validateMusterRollForTimeExtension (ContractRequest contractRequest) {
+        // Get all muster-rolls for given contractNumber
+        List<MusterRoll> musterRolls = getMusterRollsForContractNumber (contractRequest);
+        if (musterRolls == null || musterRolls.isEmpty()) {
+            throw new CustomException("MUSTER_ROLLS_NOT_PRESENT", "Muster rolls not present for given contract id");
+        }
+        for (MusterRoll musterRoll : musterRolls) {
+            if (musterRoll.getMusterRollStatus().equalsIgnoreCase("APPROVED"))
+                return;
+        }
+        throw new CustomException("MUSTER_ROLL_NOT_APPROVED", "At least one muster roll must be in approved state");
+    }
+
+    private List<MusterRoll> getMusterRollsForContractNumber (ContractRequest contractRequest) {
+        StringBuilder uri = new StringBuilder(config.getMusterRollSearchHost()).append(config.getMusterRollSearchEndpoint());
+        uri.append("?tenantId=").append(contractRequest.getContract().getTenantId())
+                .append("&referenceId=").append(contractRequest.getContract().getContractNumber());
+        ObjectNode requestInfoNode = mapper.createObjectNode();
+        requestInfoNode.putPOJO("RequestInfo", contractRequest.getRequestInfo());
+//        ObjectNode musterRollSearchCriteria = mapper.createObjectNode();
+//        musterRollSearchCriteria.put("referenceId", contractRequest.getContract().getContractNumber());
+
+        Object musterRollRes = restRepo.fetchResult(uri, requestInfoNode);
+        MusterRollResponse musterRollResponse = null;
+        try {
+            musterRollResponse = mapper.convertValue(musterRollRes, MusterRollResponse.class);
+        }catch (Exception e){
+            log.error("Unable to map muster roll response");
+        }
+        return musterRollResponse.getMusterRolls();
     }
 }
