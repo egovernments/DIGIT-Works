@@ -275,7 +275,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     }
 
     const onSubmit = (data) => {
-        
+        data = Digit.Utils.trimStringsInObject(data)
         const validationError = validateSelectedSkills(data)
         if(validationError) return
         const wageSeekerPayload = getWageSeekerUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify})

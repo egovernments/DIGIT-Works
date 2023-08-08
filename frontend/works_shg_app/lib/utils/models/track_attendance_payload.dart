@@ -3,6 +3,7 @@ import 'package:works_shg_app/models/muster_rolls/muster_roll_model.dart';
 class TrackAttendanceTableData {
   String? name;
   String? aadhaar;
+  String? gender;
   String? individualId;
   String? individualGaurdianName;
   String? id;
@@ -84,6 +85,7 @@ class IndividualSkills {
   String? individualId;
   String? skillCode;
   String? name;
+  String? gender;
   String? aadhaar;
   String? id;
   String? individualGaurdianName;
@@ -92,6 +94,7 @@ class IndividualSkills {
       this.skillCode,
       this.name,
       this.aadhaar,
+      this.gender,
       this.id,
       this.individualGaurdianName});
 }
@@ -126,7 +129,7 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
             "individualId": attendeeList.individualId,
             "time": exitTime,
             "type": "EXIT",
-            "status": "ACTIVE" ,
+            "status": "ACTIVE",
             "tenantId": tenantId,
             "documentIds": [],
             "auditDetails": auditDetails
@@ -150,7 +153,7 @@ List<Map<String, dynamic>> updateAttendanceLogPayload(
             "individualId": attendeeList.individualId,
             "time": exitTime,
             "type": "EXIT",
-            "status": "ACTIVE" ,
+            "status": "ACTIVE",
             "tenantId": tenantId,
             "documentIds": [],
             "auditDetails": auditDetails
@@ -163,7 +166,8 @@ List<Map<String, dynamic>> createAttendanceLogPayload(
     String registerId,
     int entryTime,
     int exitTime,
-    String tenantId, {bool isAbsent = false}) {
+    String tenantId,
+    {bool isAbsent = false}) {
   return [
     {
       "registerId": registerId,
@@ -179,7 +183,7 @@ List<Map<String, dynamic>> createAttendanceLogPayload(
       "individualId": attendeeList.individualId,
       "time": exitTime,
       "type": "EXIT",
-      "status":   "ACTIVE",
+      "status": "ACTIVE",
       "tenantId": tenantId,
       "documentIds": []
     }

@@ -401,6 +401,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                                         .identifierId ??
                                                     e.businessObject
                                                         ?.individualId,
+                                                "gender":
+                                                    e.businessObject?.gender,
                                                 "individualCode": e
                                                     .businessObject
                                                     ?.individualId,
@@ -428,6 +430,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                                       var userToAdd = {
                                         "name": user["name"],
                                         "aadhaar": user["aadhaar"],
+                                        "gender": user["gender"],
                                         "individualCode":
                                             user["individualCode"],
                                         "uuid": user["uuid"],
@@ -627,6 +630,7 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
         addToTableList.add({
           "name": user["name"],
           "aadhaar": user["aadhaar"],
+          "gender": user["gender"],
           "individualCode": user["individualCode"],
           "individualGaurdianName": user["individualGaurdianName"],
           "skill": user["skill"],
@@ -659,7 +663,8 @@ class _AttendanceRegisterTablePage extends State<AttendanceRegisterTablePage> {
                         "individualName": e["name"],
                         "individualID": e["individualCode"],
                         "individualGaurdianName": e["individualGaurdianName"],
-                        "identifierId": e["aadhaar"]
+                        "identifierId": e["aadhaar"],
+                        "gender": e["gender"]
                       }
                     })
                 .toList()

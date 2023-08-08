@@ -5,7 +5,7 @@
 backend/ @egovernments/works-dev-pr-reviewers
 
 ##Frontend
-frontend/ @sathishp-eGov @jagankumar-egov @subhashini-egov
+frontend/ @egovernments/works-dev-pr-reviewers
 
-##Frontend
-utilities/ @sathishp-eGov @jagankumar-egov @subhashini-egov
+##Utilities
+utilities/ @egovernments/works-dev-pr-reviewers

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:works_shg_app/pages/bills/my_bills.dart';
 import 'package:works_shg_app/pages/org_profile.dart';
+import 'package:works_shg_app/pages/time_extension_request/create_time_extension.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/register_individual.dart';
 
 import '../pages/attendance_register_table.dart';
@@ -60,7 +61,10 @@ part 'app_router.gr.dart';
         AutoRoute(page: RegisterIndividualPage, path: 'register-individual'),
         AutoRoute(page: ViewWorkDetailsPage, path: 'view-work-order'),
         AutoRoute(page: SuccessResponsePage, path: 'success'),
-        AutoRoute(page: MyBillsPage, path: 'my-bills')
+        AutoRoute(page: MyBillsPage, path: 'my-bills'),
+        AutoRoute(
+            page: CreateTimeExtensionRequestPage,
+            path: 'create-time-extension'),
       ],
     ),
   ],

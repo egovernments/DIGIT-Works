@@ -149,7 +149,7 @@ const Table = ({
     if(toast?.show) {
       setTimeout(()=>{
         handleToastClose();
-      },3000);
+      },10000);
     }
   },[toast?.show])
 
