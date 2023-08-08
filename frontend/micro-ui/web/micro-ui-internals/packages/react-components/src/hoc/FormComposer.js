@@ -440,7 +440,7 @@ export const FormComposer = (props) => {
             )}
             name={config.key}
             control={control}
-            rules={!disableFormValidation ? { required: isMandatory, ...populators.validation } : {}}
+            rules={!disableFormValidation ? { required: isMandatory, ...populators?.validation } : {}}
           />
         );
       case "documentUpload":
