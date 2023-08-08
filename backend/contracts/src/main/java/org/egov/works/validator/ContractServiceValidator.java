@@ -703,7 +703,7 @@ public class ContractServiceValidator {
                 .build();
         List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
 
-        if (contractsFromDB != null || !contractsFromDB.isEmpty()) {
+        if (!contractsFromDB.isEmpty()) {
             throw new CustomException("DUPLICATE_TIME_EXTENSION_REQUEST", "Duplicate time extension request");
         }
     }
