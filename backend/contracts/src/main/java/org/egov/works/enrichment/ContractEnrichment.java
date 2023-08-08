@@ -318,7 +318,7 @@ public class ContractEnrichment {
 
     private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
-        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+        if (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
             contract.setOldUuid(contract.getId());
             Long versionNumber = contract.getVersionNumber();
             if (versionNumber == null) {
