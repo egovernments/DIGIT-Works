@@ -41,9 +41,10 @@ public class Contract {
     @JsonProperty("supplementNumber")
     private String supplementNumber = null;
 
-    @JsonIgnore
+    @JsonProperty("versionNumber")
     private Long versionNumber = null;
-    @JsonIgnore
+
+    @JsonProperty("oldUuid")
     private String oldUuid = null;
 
     @JsonProperty("businessService")
