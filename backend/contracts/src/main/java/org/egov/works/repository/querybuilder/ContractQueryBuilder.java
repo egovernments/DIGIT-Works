@@ -76,6 +76,12 @@ public class ContractQueryBuilder {
             preparedStmtList.add(criteria.getContractNumber());
         }
 
+        if (StringUtils.isNotBlank(criteria.getSupplementNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.supplement_number=? ");
+            preparedStmtList.add(criteria.getSupplementNumber());
+        }
+
         if (StringUtils.isNotBlank(criteria.getStatus())) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.status=? ");

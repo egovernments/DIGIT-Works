@@ -41,6 +41,9 @@ public class ContractCriteria {
     @JsonProperty("contractNumber")
     private String contractNumber = null;
 
+    @JsonProperty("supplementNumber")
+    private String supplementNumber = null;
+
     @JsonProperty("ids")
     private List<String> ids = null;
 
