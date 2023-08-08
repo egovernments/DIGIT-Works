@@ -82,7 +82,8 @@ public class ContractServiceValidator {
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
 
-        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
+        if (contractRequest.getContract().getBusinessService() != null &&
+                contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
             log.info("Validating time extension request");
             // Validate if at least one muster-roll is created and approved
             validateTimeExtensionRequest(contractRequest);
@@ -630,18 +631,6 @@ public class ContractServiceValidator {
 
         // Validate if contract number is present
         validateContractNumber(contractRequest);
-        // Validate if org is same as previous contract
-        validateOrganisation(contractRequest);
-        // Validate if at least one muster-roll is created and approved
-        validateMusterRollForTimeExtension(contractRequest);
-
-    }
-    private void validateContractNumber (ContractRequest contractRequest) {
-        if (contractRequest.getContract().getContractNumber() == null || contractRequest.getContract().getContractNumber().isEmpty()) {
-            throw new CustomException("CONTRACT_NUMBER_NULL", "Contract number mandatory for revision contract");
-        }
-    }
-    private void validateOrganisation (ContractRequest contractRequest) {
 
         Pagination pagination = Pagination.builder()
                 .limit(config.getContractMaxLimit())
@@ -655,6 +644,33 @@ public class ContractServiceValidator {
                 .pagination(pagination)
                 .build();
         List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+
+        // Validate if contract is present in DB
+        validateContractNumber(contractsFromDB);
+        // Validate if org is same as previous contract
+        validateOrganisation(contractRequest, contractsFromDB);
+        // Validate if at least one muster-roll is created and approved
+        validateMusterRollForTimeExtension(contractRequest);
+        // Validate if previous time extension request is in workflow
+        validateDuplicateTimeExtensionRequest (contractRequest);
+        // Validate if extended end date is not before active contract end date
+        validateEndDateExtension(contractRequest, contractsFromDB);
+
+    }
+    private void validateContractNumber (ContractRequest contractRequest) {
+        if (contractRequest.getContract().getContractNumber() == null || contractRequest.getContract().getContractNumber().isEmpty()) {
+            throw new CustomException("CONTRACT_NUMBER_NOT_PRESENT_IN_REQUEST", "Contract number mandatory for revision contract");
+        }
+    }
+    private void validateContractNumber (List<Contract> contractsFromDB) {
+        if (contractsFromDB == null || contractsFromDB.isEmpty()) {
+            throw new CustomException("CONTRACT_NUMBER_NOT_PRESENT_IN_DB", "Given contract number is not present in database");
+        }
+    }
+    private void validateOrganisation (ContractRequest contractRequest, List<Contract> contractsFromDB) {
+        if (contractRequest.getContract().getOrgId() == null || contractRequest.getContract().getOrgId().isEmpty()) {
+            throw new CustomException("ORG_ID_MANDATORY", "Org id not present in extension request");
+        }
         for (Contract contract : contractsFromDB) {
             if (!contract.getOrgId().equalsIgnoreCase(contractRequest.getContract().getOrgId())) {
                 throw new CustomException("ORG_ID_MISMATCH", "Org id must be same for time extension request");
@@ -672,6 +688,32 @@ public class ContractServiceValidator {
                 return;
         }
         throw new CustomException("MUSTER_ROLL_NOT_APPROVED", "At least one muster roll must be in approved state");
+    }
+    private void validateDuplicateTimeExtensionRequest (ContractRequest contractRequest ) {
+        Pagination pagination = Pagination.builder()
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
+        ContractCriteria contractCriteria = ContractCriteria.builder()
+                .contractNumber(contractRequest.getContract().getContractNumber())
+                .status("INWORKFLOW")
+                .tenantId(contractRequest.getContract().getTenantId())
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+
+        if (contractsFromDB != null || !contractsFromDB.isEmpty()) {
+            throw new CustomException("DUPLICATE_TIME_EXTENSION_REQUEST", "Duplicate time extension request");
+        }
+    }
+    private void validateEndDateExtension (ContractRequest contractRequest, List<Contract> contractsFromDB) {
+        for (Contract contract : contractsFromDB) {
+            int comparisionResult = contractRequest.getContract().getEndDate().compareTo(contract.getEndDate());
+            if (comparisionResult < 0) {
+                throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
+            }
+        }
     }
 
     private List<MusterRoll> getMusterRollsForContractNumber (ContractRequest contractRequest) {
