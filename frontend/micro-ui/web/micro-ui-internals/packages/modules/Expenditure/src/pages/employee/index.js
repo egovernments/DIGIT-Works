@@ -5,6 +5,9 @@ import { Switch, useLocation } from "react-router-dom";
 import CreateBill from "./CreateBill";
 import ViewSupervisionbill from "./Bills/ViewSupervisionbill";
 import SearchBillWMS from "./Bills/SearchBillWMS";
+import SearchPaymentInstruction from "./Bills/SearchPaymentInstruction";
+import InboxPaymentInstruction from "./Bills/InboxPaymentInstruction";
+import CreatePA from "./Bills/CreatePA";
 const ExpenditureBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
@@ -47,9 +50,27 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         isBack: fromScreen && true,
       },
       {
-        path: `/${window.contextPath}/employee/expenditure/search-bill`,
+        // path: `/${window.contextPath}/employee/expenditure/search-bill`,
         content: fromScreen ? `${t(fromScreen)} / ${t("EXP_SEARCH_BILL")}` : t("EXP_SEARCH_BILL"),
         show: location.pathname.includes("/expenditure/search-bill") ? true : false,
+        isBack: fromScreen && true,
+      },
+      {
+        // path: `/${window.contextPath}/employee/expenditure/search-payment-instruction`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_SEARCH_PAYMENT_INS")}` : t("EXP_SEARCH_PAYMENT_INS"),
+        show: location.pathname.includes("/expenditure/search-payment-instruction") ? true : false,
+        isBack: fromScreen && true,
+      },
+      // {
+      //   // path: `/${window.contextPath}/employee/expenditure/search-payment-instruction`,
+      //   content: fromScreen ? `${t(fromScreen)} / ${t("EXP_VIEW_PI")}` : t("EXP_VIEW_PI"),
+      //   show: location.pathname.includes("/expenditure/view-payment-instruction") ? true : false,
+      //   isBack: fromScreen && true,
+      // },
+      {
+        // path: `/${window.contextPath}/employee/expenditure/search-payment-instruction`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_PAYMENT_DETAILS_BREAD")}` : t("EXP_PAYMENT_DETAILS_BREAD"),
+        show: location.pathname.includes("/expenditure/view-payment") ? true : false,
         isBack: fromScreen && true,
       },
       {
@@ -75,6 +96,12 @@ const ExpenditureBreadCrumbs = ({ location }) => {
         content: fromScreen ? `${t(fromScreen)} / ${t("ES_COMMON_DOWNLOADS")}` : t("ES_COMMON_DOWNLOADS"),
         show: location.pathname.includes("/expenditure/download-bill") ? true : false,
         isBack: fromScreen && true,
+      },
+      {
+        path: `/${window.contextPath}/employee/expenditure/create-pa`,
+        content: fromScreen ? `${t(fromScreen)} / ${t("EXP_CREATE_PA")}` : t("EXP_CREATE_PA"),
+        show: location.pathname.includes("/expenditure/create-pa") ? true : false,
+        isBack: fromScreen && true,
       }
     ];
     return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
@@ -92,7 +119,8 @@ const App = ({ path }) => {
     const PurchaseBillResponse = Digit?.ComponentRegistryService?.getComponent("CreatePurchaseBillResponse");
     const ViewWageBill = Digit?.ComponentRegistryService?.getComponent("ViewWageBill");
     const DownloadBill = Digit?.ComponentRegistryService?.getComponent("DownloadBill");
-
+    const ViewPaymentInstruction = Digit?.ComponentRegistryService?.getComponent("ViewPaymentInstruction");
+    const ViewPayment = Digit?.ComponentRegistryService?.getComponent("ViewPayment");
     const PurchaseBillSession = Digit.Hooks.useSessionStorage("PURCHASE_BILL_CREATE", {});
     const [sessionFormData, clearSessionFormData] = PurchaseBillSession;
   
@@ -113,11 +141,16 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/billinbox`} component={() => <BillInbox parentRoute={path} />} />
           <PrivateRoute path={`${path}/view-bills/bills`} component={ViewBillsComponent}></PrivateRoute>
           <PrivateRoute path={`${path}/view-bills/menu`} component={ViewBillsMenuComponent}></PrivateRoute>
+          <PrivateRoute path={`${path}/create-pa`} component={() => <CreatePA parentRoute={path} />} />
           <PrivateRoute path={`${path}/create-bill`} component={() => <CreateBill parentRoute={path} />} />
-
           <PrivateRoute path={`${path}/inbox`} component={() => <BillInbox parentRoute={path} />} />
           <PrivateRoute path={`${path}/search-bill`} component={() => <SearchBillWMS parentRoute={path} />} />
+          
           <PrivateRoute path={`${path}/search-bill-plain`} component={() => <SearchBill parentRoute={path} />} />
+          <PrivateRoute path={`${path}/search-payment-instruction`} component={() => <SearchPaymentInstruction parentRoute={path} />} />
+          <PrivateRoute path={`${path}/view-payment`} component={() => <ViewPayment parentRoute={path} />} />
+          <PrivateRoute path={`${path}/view-payment-instruction`} component={() => <ViewPaymentInstruction parentRoute={path} />} />
+          <PrivateRoute path={`${path}/inbox-payment-instruction`} component={() => <InboxPaymentInstruction parentRoute={path} />} />
           <PrivateRoute path={`${path}/wage-bill-details`} component={() => <ViewWageBill parentRoute={path} />} />
           <PrivateRoute path={`${path}/supervision-bill-details`} component={() => <ViewSupervisionbill parentRoute={path} />} />
           <PrivateRoute path={`${path}/purchase-bill-details`} component={() => <ViewPurchaseBillComponent parentRoute={path} />}/>

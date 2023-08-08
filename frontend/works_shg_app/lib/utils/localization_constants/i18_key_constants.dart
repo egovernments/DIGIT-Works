@@ -99,6 +99,7 @@ class Common {
   String get action => 'CS_COMMON_ACTION';
   String get next => 'CS_COMMON_NEXT';
   String get fileSize => 'FILE_SIZE';
+  String get invalidImageFile => 'CS_COMMON_INVALID_IMAGE_FILE';
   String get chooseFile => 'CHOOSE_FILE';
   String get noFileUploaded => 'NO_FILE_UPLOADED';
   String get camera => 'CAMERA';
@@ -144,6 +145,8 @@ class Common {
   String get validPhotoGraph => 'PHOTOGRAPH_VALID_SIZE';
   String get individualAlreadyAdded => 'IND_ALREADY_ADDED_TO_THE_TABLE';
   String get noValue => 'ES_COMMON_NA';
+  String get noOrgLinkedWithMob => 'ES_COMMON_NO_ORG_LINKED_WITH_MOBILE_NUMBER';
+  String get takeAction => 'ES_COMMON_TAKE_ACTION';
 }
 
 class Home {
@@ -185,6 +188,24 @@ class WorkOrder {
   String get relevantDocuments => 'WORK_RELEVANT_DOCUMENTS';
   String get workStartDate => 'WORKS_START_DATE';
   String get workEndDate => 'WORKS_END_DATE';
+  String get extensionReqInDays => 'WORKS_EXTENSION_REQ_IN_DAYS';
+  String get reasonForExtension => 'WORKS_REASON_FOR_EXTENSION';
+  String get extensionReqInDaysIsRequired => 'EXTENSION_DAYS_IS_REQUIRED';
+  String get reasonForExtensionIsRequired =>
+      'WORKS_REASON_FOR_EXTENSION_IS_REQUIRED';
+  String get extensionReqInDaysMinVal => 'WORKS_EXTENSION_DAYS_MIN_VALUE';
+  String get extensionReqInDaysMaxVal => 'WORKS_EXTENSION_DAYS_MAX_VALUE';
+  String get reasonForExtensionMinChar =>
+      'WORKS_REASON_FOR_EXTENSION_MIN_CHARS';
+  String get reasonForExtensionMaxChar =>
+      'WORKS_REASON_FOR_EXTENSION_MAX_CHARS';
+  String get timeExtensionRequestedSuccess =>
+      'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY';
+  String get requestID => 'WORKS_TIME_EXT_REQUEST_ID';
+  String get timeExtensionRequestedSuccessSubText =>
+      'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY_SUB_TEXT';
+  String get requestTimeExtension => 'ACTION_TEST_TIME_EXTENSION';
+  String get projectClosure => 'ACTION_TEST_PROJECT_CLOSURE';
 }
 
 class MyBills {

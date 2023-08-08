@@ -1,14 +1,14 @@
 package org.egov.digit.expense.util;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.util.GenderUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillRequest;
@@ -22,11 +22,14 @@ import org.egov.digit.expense.web.models.PaymentBillDetail;
 import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
+import org.egov.digit.expense.web.models.enums.ReferenceStatus;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import digit.models.coremodels.AuditDetails;
+
+import static org.egov.digit.expense.config.Constants.GENDER;
 
 @Component
 public class EnrichmentUtil {
@@ -36,6 +39,9 @@ public class EnrichmentUtil {
 
     @Autowired
     private IdgenUtil idgenUtil;
+
+    @Autowired
+    private GenderUtil genderUtil;
 
     public BillRequest encrichBillForCreate(BillRequest billRequest) {
 
@@ -66,7 +72,16 @@ public class EnrichmentUtil {
             billDetail.getPayee().setParentId(billDetail.getBillId());
             billDetail.getPayee().setAuditDetails(audit);
             billDetail.getPayee().setStatus(Status.ACTIVE);
-            
+
+            String gender = genderUtil.getGenderDetails(billRequest.getRequestInfo(),billDetail.getPayee().getTenantId(),billDetail.getPayee().getIdentifier());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> map = objectMapper.convertValue(billDetail.getPayee().getAdditionalDetails(), new TypeReference<Map<String, Object>>() {});
+            if(map == null){
+                map = new HashMap<>();
+            }
+            map.put(GENDER,gender);
+            billDetail.getPayee().setAdditionalDetails(objectMapper.convertValue(map,Object.class));
             for (LineItem lineItem : billDetail.getLineItems()) {
                 lineItem.setId(UUID.randomUUID().toString());
                 lineItem.setAuditDetails(audit);
@@ -202,7 +217,9 @@ public class EnrichmentUtil {
          * TODO needs to be removed when jit integration is implemented
          */
         PaymentStatus defaultStatus = PaymentStatus.fromValue(config.getDefaultPaymentStatus());
+        ReferenceStatus defaultReferenceStatus = ReferenceStatus.fromValue(config.getDefaultReferenceStatus());
         payment.setStatus(defaultStatus);
+        payment.setReferenceStatus(defaultReferenceStatus);
         
 		String paymentNumber = idgenUtil.getIdList(paymentRequest.getRequestInfo(),
 				payment.getTenantId().split("\\.")[0],
@@ -232,12 +249,55 @@ public class EnrichmentUtil {
         return paymentRequest;
     }
 
-    public PaymentRequest encrichUpdatePayment(PaymentRequest paymentRequest) {
+    public PaymentRequest encrichUpdatePayment(PaymentRequest paymentRequest, Payment searchPayment) {
 
         Payment payment = paymentRequest.getPayment();
         String createdBy = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        payment.setAuditDetails(getAuditDetails(createdBy, false));
-        
+        Long time = System.currentTimeMillis();
+//        payment.setAuditDetails(getAuditDetails(createdBy, false));
+
+        // Update each payment status based on request status
+        Map<String, PaymentBill> billMap = payment.getBills().stream()
+                .collect(Collectors.toMap(PaymentBill::getId, Function.identity()));
+
+        Map<String, PaymentBillDetail> billDetailMap = payment.getBills().stream()
+                .map(PaymentBill::getBillDetails)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(PaymentBillDetail::getId, Function.identity()));
+
+        Map<String, PaymentLineItem> payableLineItemMap = payment.getBills().stream()
+                .map(PaymentBill::getBillDetails)
+                .flatMap(Collection::stream)
+                .map(PaymentBillDetail::getPayableLineItems)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(PaymentLineItem::getId, Function.identity()));
+
+        searchPayment.setStatus(payment.getStatus());
+        searchPayment.getAuditDetails().setLastModifiedBy(createdBy);
+        searchPayment.getAuditDetails().setLastModifiedTime(time);
+
+        for (PaymentBill bill: searchPayment.getBills()) {
+            if (billMap.containsKey(bill.getId())) {
+                bill.setStatus(billMap.get(bill.getId()).getStatus());
+                bill.getAuditDetails().setLastModifiedBy(createdBy);
+                bill.getAuditDetails().setLastModifiedTime(time);
+            }
+            for (PaymentBillDetail billDetail: bill.getBillDetails()) {
+                if (billDetailMap.containsKey(billDetail.getId())) {
+                    billDetail.setStatus(billDetailMap.get(billDetail.getId()).getStatus());
+                    billDetail.getAuditDetails().setLastModifiedBy(createdBy);
+                    billDetail.getAuditDetails().setLastModifiedTime(time);
+                }
+                for (PaymentLineItem payableLineItem: billDetail.getPayableLineItems()) {
+                    if (payableLineItemMap.containsKey(payableLineItem.getId())) {
+                        payableLineItem.setStatus(payableLineItemMap.get(payableLineItem.getId()).getStatus());
+                        payableLineItem.getAuditDetails().setLastModifiedBy(createdBy);
+                        payableLineItem.getAuditDetails().setLastModifiedTime(time);
+                    }
+                }
+            }
+        }
+
         return paymentRequest;
     }
 

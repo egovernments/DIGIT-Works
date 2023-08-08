@@ -147,7 +147,7 @@ const CreatePurchaseBillForm = ({
 
 
     const onModalSubmit = async (_data) => {
-        
+        _data = Digit.Utils.trimStringsInObject(_data)
         //here make complete data in combination with _data and inputFormData and create payload accordingly
         //also test edit flow with this change
         
@@ -188,7 +188,7 @@ const CreatePurchaseBillForm = ({
     }
 
     const onFormSubmit = async(data) => {
-
+        data = Digit.Utils.trimStringsInObject(data)
         setInputFormData((prevState) => data)
 
         setShowModal(true);

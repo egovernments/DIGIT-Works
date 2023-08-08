@@ -2,10 +2,12 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:works_shg_app/blocs/auth/auth.dart';
 import 'package:works_shg_app/router/app_router.dart';
 import 'package:works_shg_app/utils/common_methods.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
     as i18;
+import 'package:works_shg_app/utils/notifiers.dart';
 import 'package:works_shg_app/widgets/ButtonLink.dart';
 import 'package:works_shg_app/widgets/atoms/app_bar_logo.dart';
 
@@ -70,23 +72,34 @@ class _HomePage extends State<HomePage> {
               listener: (context, orgState) {
             orgState.maybeWhen(
                 orElse: () => false,
+                error: (String? error) {
+                  Notifiers.getToastMessage(context,
+                      t.translate(i18.common.noOrgLinkedWithMob), 'ERROR');
+                  context.read<AuthBloc>().add(const AuthLogoutEvent());
+                },
                 loaded: (OrganisationListModel? organisationListModel) async {
-                  var currLoc = await GlobalVariables.selectedLocale();
-                  context.read<LocalizationBloc>().add(
-                        LocalizationEvent.onLoadLocalization(
-                            module: CommonMethods.getLocaleModules(),
-                            tenantId: GlobalVariables.globalConfigObject!
-                                .globalConfigs!.stateTenantId
-                                .toString(),
-                            locale: currLoc.toString()),
-                      );
-                  context.read<AppInitializationBloc>().add(
-                      AppInitializationSetupEvent(
-                          selectedLang: currLoc.toString()));
-                  await AppLocalizations(
-                    Locale(currLoc.toString().split('_').first,
-                        currLoc.toString().split('_').last),
-                  ).load();
+                  if ((organisationListModel?.organisations ?? []).isEmpty) {
+                    Notifiers.getToastMessage(context,
+                        t.translate(i18.common.noOrgLinkedWithMob), 'ERROR');
+                    context.read<AuthBloc>().add(const AuthLogoutEvent());
+                  } else {
+                    var currLoc = await GlobalVariables.selectedLocale();
+                    context.read<LocalizationBloc>().add(
+                          LocalizationEvent.onLoadLocalization(
+                              module: CommonMethods.getLocaleModules(),
+                              tenantId: GlobalVariables.globalConfigObject!
+                                  .globalConfigs!.stateTenantId
+                                  .toString(),
+                              locale: currLoc.toString()),
+                        );
+                    context.read<AppInitializationBloc>().add(
+                        AppInitializationSetupEvent(
+                            selectedLang: currLoc.toString()));
+                    await AppLocalizations(
+                      Locale(currLoc.toString().split('_').first,
+                          currLoc.toString().split('_').last),
+                    ).load();
+                  }
                 });
           }, child: BlocBuilder<ORGSearchBloc, ORGSearchState>(
                   builder: (context, state) {
