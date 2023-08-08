@@ -28,8 +28,7 @@ import java.util.stream.Collectors;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
 
-import static org.egov.works.util.ContractServiceConstants.JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION;
-import static org.egov.works.util.ContractServiceConstants.JSON_PATH_FOR_OVER_HEADS_VERIFICATION;
+import static org.egov.works.util.ContractServiceConstants.*;
 
 @Component
 @Slf4j
@@ -67,7 +66,7 @@ public class ContractEnrichment {
 
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
-        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
             // Enrich Supplement Number
             enrichSupplementNumber(contractRequest);
 
@@ -318,7 +317,7 @@ public class ContractEnrichment {
 
     private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
-        if (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase("WORKORDER-REVISION")) {
+        if (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
             contract.setOldUuid(contract.getId());
             Long versionNumber = contract.getVersionNumber();
             if (versionNumber == null) {
