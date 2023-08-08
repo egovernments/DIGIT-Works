@@ -327,6 +327,8 @@ public class ContractEnrichment {
                 versionNumber += 1;
             }
             contract.setVersionNumber(versionNumber);
+            contract.setStatus(Status.INWORKFLOW);
+            contract.setWfStatus("PENDING_FOR_VERIFICATION");
         }
         contract.setId(String.valueOf(UUID.randomUUID()));
         BigDecimal agreementDate = contract.getAgreementDate();
