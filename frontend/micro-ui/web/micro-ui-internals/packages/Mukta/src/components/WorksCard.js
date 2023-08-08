@@ -155,11 +155,11 @@ const WorksCard = () => {
       roles: ROLES.BILLS,
       count: isLoadingBilling ? "-" : dataBilling?.totalCount,
     },
-    {
-      label: t("ACTION_TEST_5PAYMENT"),
-      link: `/${window?.contextPath}/employee/expenditure/search-bill?status=APPROVED`,
-      roles: ROLES.PAYMENT,
-    },
+    // {
+    //   label: t("ACTION_TEST_5PAYMENT"),
+    //   link: `/${window?.contextPath}/employee/expenditure/search-bill?status=APPROVED`,
+    //   roles: ROLES.PAYMENT,
+    // },
     {
       label: t("ACTION_TEST_6DASHBOARD"),
       link: `/${window?.contextPath}/employee/dss/dashboard/mukta`,
