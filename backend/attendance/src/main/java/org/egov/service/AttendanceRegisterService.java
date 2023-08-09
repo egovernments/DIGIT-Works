@@ -324,4 +324,24 @@ public class AttendanceRegisterService {
         return registerIds;
     }
 
+    public void updateEndDateForTimeExtension (AttendanceTimeExtensionRequest attendanceTimeExtensionRequest) {
+        AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId(attendanceTimeExtensionRequest.getTenantId())
+                .referenceId(attendanceTimeExtensionRequest.getReferenceId())
+                .limit(attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit())
+                .offset(attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset()).build();
+
+        List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(attendanceRegisterSearchCriteria);
+
+        for (AttendanceRegister attendanceRegister : attendanceRegisters) {
+            attendanceRegister.setEndDate(attendanceTimeExtensionRequest.getEndDate());
+            AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
+                    .attendanceRegister(Collections.singletonList(attendanceRegister)).
+                    requestInfo(attendanceTimeExtensionRequest.getRequestInfo()).build();
+
+            updateAttendanceRegister(attendanceRegisterRequest);
+        }
+
+    }
+
 }
