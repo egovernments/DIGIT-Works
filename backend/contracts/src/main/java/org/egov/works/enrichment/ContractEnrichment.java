@@ -148,12 +148,14 @@ public class ContractEnrichment {
         if (contractRequest.getContract().getSupplementNumber() != null && "APPROVE".equalsIgnoreCase(workflow.getAction())) {
             List<Contract> contractsFromDB = contractRepository.getContracts(ContractCriteria.builder()
                     .tenantId(contract.getTenantId())
-                    .contractNumber(contract.getContractNumber()).build());
+                    .contractNumber(contract.getContractNumber())
+                    .pagination(Pagination.builder()
+                            .limit(config.getContractMaxLimit())
+                            .offSet(config.getContractDefaultOffset())
+                            .build()).build());
 
             for (Contract contractFromDB : contractsFromDB) {
-                if (contractFromDB.getStatus().equals(Status.ACTIVE) &&
-                        (contractFromDB.getSupplementNumber() == null ||
-                                contractFromDB.getSupplementNumber().equalsIgnoreCase(contract.getSupplementNumber()))) {
+                if (contractFromDB.getStatus().equals(Status.ACTIVE)) {
                     ContractRequest contractRequestFromDB = ContractRequest.builder()
                             .requestInfo(contractRequest.getRequestInfo())
                             .contract(contractFromDB).build();
@@ -164,6 +166,10 @@ public class ContractEnrichment {
             }
             markContractAndDocumentsStatus(contractRequest, Status.ACTIVE);
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
+            AttendanceTimeExtensionRequest attendanceTimeExtensionRequest = AttendanceTimeExtensionRequest.builder()
+                    .endDate(contract.getEndDate()).referenceId(contract.getContractNumber())
+                    .tenantId(contract.getTenantId()).build();
+            producer.push(config.getUpdateTimeExtensionTopic(), attendanceTimeExtensionRequest);
         }
     }
 
