@@ -86,7 +86,7 @@ public class ContractServiceValidator {
                 contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
             log.info("Validating time extension request");
             // Validate if at least one muster-roll is created and approved
-            validateTimeExtensionRequest(contractRequest);
+            validateTimeExtensionRequestForCreate(contractRequest);
         } else {
             // Validate estimateIds against estimate service and DB
             validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
@@ -114,11 +114,17 @@ public class ContractServiceValidator {
         // Validate provided contract for update should exist in DB
         validateContractAgainstDB(contractRequest);
 
-        // Validate estimateIds against estimate service and DB
-        validateUpdateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
-
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
+
+        if (contractRequest.getContract().getBusinessService() != null &&
+                contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
+            // Validate Time Extension Request for Update request
+            validateTimeExtensionForUpdate(contractRequest);
+        } else {
+            // Validate estimateIds against estimate service and DB
+            validateUpdateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
+        }
 
         log.info("Contract create request validated : contractId ["+contractRequest.getContract().getId()+"]");
     }
@@ -627,7 +633,7 @@ public class ContractServiceValidator {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
     }
-    public void validateTimeExtensionRequest (ContractRequest contractRequest) {
+    public void validateTimeExtensionRequestForCreate(ContractRequest contractRequest) {
 
         // Validate if contract number is present
         validateContractNumber(contractRequest);
@@ -656,6 +662,36 @@ public class ContractServiceValidator {
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
 
+    }
+
+    private void validateTimeExtensionForUpdate (ContractRequest contractRequest) {
+
+        // Validate if contract number is present
+        validateContractNumber(contractRequest);
+
+        Pagination pagination = Pagination.builder()
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
+        ContractCriteria contractCriteria = ContractCriteria.builder()
+                .contractNumber(contractRequest.getContract().getContractNumber())
+                .status("ACTIVE")
+                .tenantId(contractRequest.getContract().getTenantId())
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+
+        // Validate if contract is present in DB
+        validateContractNumber(contractsFromDB);
+        // Validate if org is same as previous contract
+        validateOrganisation(contractRequest, contractsFromDB);
+        // Validate if at least one muster-roll is created and approved
+        validateMusterRollForTimeExtension(contractRequest);
+        // Validate Supplement Number
+        validateSupplementNumber (contractRequest);
+        // Validate if extended end date is not before active contract end date
+        validateEndDateExtension(contractRequest, contractsFromDB);
     }
     private void validateContractNumber (ContractRequest contractRequest) {
         if (contractRequest.getContract().getContractNumber() == null || contractRequest.getContract().getContractNumber().isEmpty()) {
@@ -734,4 +770,26 @@ public class ContractServiceValidator {
         }
         return musterRollResponse.getMusterRolls();
     }
+    private void validateSupplementNumber (ContractRequest contractRequest) {
+        if (contractRequest.getContract().getSupplementNumber() == null || contractRequest.getContract().getSupplementNumber().isEmpty()) {
+            throw new CustomException("SUPPLEMENT_NUMBER_EMPTY", "Supplement number must not be empty");
+        }
+
+        Pagination pagination = Pagination.builder()
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
+        ContractCriteria contractCriteria = ContractCriteria.builder()
+                .supplementNumber(contractRequest.getContract().getSupplementNumber())
+                .status("ACTIVE")
+                .tenantId(contractRequest.getContract().getTenantId())
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+        if (contractsFromDB.isEmpty()) {
+            throw new CustomException("SUPPLEMENT_NUMBER_NOT_PRESENT", "Supplement Number not present in DB");
+        }
+    }
+
 }
