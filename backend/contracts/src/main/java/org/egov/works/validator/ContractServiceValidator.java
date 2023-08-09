@@ -781,7 +781,7 @@ public class ContractServiceValidator {
                 .build();
         ContractCriteria contractCriteria = ContractCriteria.builder()
                 .supplementNumber(contractRequest.getContract().getSupplementNumber())
-                .status("ACTIVE")
+                .status("INWORKFLOW")
                 .tenantId(contractRequest.getContract().getTenantId())
                 .requestInfo(contractRequest.getRequestInfo())
                 .pagination(pagination)
