@@ -35,6 +35,7 @@ import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
 import useGenderMDMS from "./useGenderMDMS";
 import useCustomAPIHook from "./useCustomAPIHook";
+import useCustomAPIMutationHook from "./useCustomAPIMutationHook";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
@@ -362,6 +363,7 @@ const Hooks = {
   useRouteSubscription,
   useCustomMDMS,
   useCustomAPIHook,
+  useCustomAPIMutationHook,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
   useGetDSSFAQsJSON,

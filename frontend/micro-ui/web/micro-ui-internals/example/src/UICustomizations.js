@@ -23,7 +23,8 @@ const businessServiceMap = {
   "muster roll": "MR",
   "works.wages":"EXPENSE.WAGES",
   "works.purchase":"EXPENSE.PURCHASE",
-  "works.supervision":"EXPENSE.SUPERVISION"
+  "works.supervision":"EXPENSE.SUPERVISION",
+  revisedWO:"CONTRACT-REVISION"
 };
 
 const inboxModuleNameMap = {

@@ -14,8 +14,9 @@ const combine = (docs, estimateDocs) => {
 }
 
 const transformViewDataToApplicationDetails = async (t, data, workflowDetails, tenantId) => {
-
-    const contract = data.contracts?.[0]
+    const isTimeExtAlreadyInWorkflow = data.contracts.some(element => element.businessService===
+        Digit?.Customizations?.["commonUiConfig"]?.businessServiceMap?.revisedWO && element.status==="INWORKFLOW")
+    const contract = data.contracts[data.contracts.length -1 ]
     const contractDetails = {
         title: " ",
         asSectionHeader: false,
@@ -28,6 +29,12 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
             { title: "COMMON_PROJECT_COMP_PERIOD_DAYS", value: contract?.completionPeriod || t("NA")},
             { title: "COMMON_WORK_ORDER_AMT_RS", value: `₹ ${Digit.Utils.dss.formatterWithoutRound(contract?.totalContractedAmount, 'number')}` || t("NA")},
         ]
+    }
+    if(contract.startDate){
+        contractDetails.values.push({ title: "WORKS_START_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.startDate)  || t("NA")})
+    }
+    if(contract.endDate){
+        contractDetails.values.push({ title: "WORKS_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate)  || t("NA")})
     }
     const allDocuments = combine(contract?.documents, contract?.additionalDetails?.estimateDocs);
     let documentDetails = {
@@ -79,7 +86,10 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
     applicationData: contract,
     processInstancesDetails: workflowDetails?.ProcessInstances,
     workflowDetails,
-    isNoDataFound : data?.contracts?.length === 0 ? true : false
+    isNoDataFound : data?.contracts?.length === 0 ? true : false,
+    additionalDetails:{
+        isTimeExtAlreadyInWorkflow
+    }
   }
 } 
 

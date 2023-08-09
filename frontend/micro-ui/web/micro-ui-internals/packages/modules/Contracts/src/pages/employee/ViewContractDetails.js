@@ -8,6 +8,7 @@ const ViewContractDetails = () => {
     const { t } = useTranslation();
     const history = useHistory();
     const [showActions, setShowActions] = useState(false);
+    const [showTimeExtension,setShowTimeExtension] = useState(false)
     const [showToast, setShowToast] = useState(null);
     const menuRef = useRef();
     const queryStrings = Digit.Hooks.useQueryParams();
@@ -45,6 +46,7 @@ const ViewContractDetails = () => {
         }
     ]
     const ContractDetails = Digit.ComponentRegistryService.getComponent("ContractDetails");
+    const CreateTimeExtension = Digit.ComponentRegistryService.getComponent("CreateTimeExtension");
     const TermsAndConditions = Digit.ComponentRegistryService.getComponent("TermsAndConditions");
     const {isLoading : isContractLoading, data, isError : isContractError, isSuccess, error} = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {}, {cacheTime : 0})
     //const {isLoading : isContractLoading, data } = Digit.Hooks.contracts.useViewContractDetails(payload?.tenantId, payload, {})
@@ -65,6 +67,8 @@ const ViewContractDetails = () => {
         }
     })
 
+
+    
     useEffect(() => {
         if (!window.location.href.includes("create-contract") && sessionFormData && Object.keys(sessionFormData) != 0) {
           clearSessionFormData();
@@ -82,6 +86,38 @@ const ViewContractDetails = () => {
             setToast({show : true, label : t("COMMON_PROJECT_NOT_FOUND"), error : true});
         }
     },[isProjectError]);
+
+    //fetching muster rolls 
+    const musterReqCriteria = {
+        url: "/muster-roll/v1/_search",
+        params: {tenantId,referenceId:contractId},
+        body: { },
+        config: {
+          enabled: data?.applicationData?.wfStatus === "ACCEPTED" ? true : false, 
+          select: (data) => {
+            //here query the data and check if atleast one muster is approved 
+            if(data?.musterRolls?.length === 0) return false
+            const result = data?.musterRolls?.some((row)=>row?.musterRollStatus==="APPROVED")
+            return result
+          },
+        },
+    };
+    const { isLoading: isMusterLoading, data: isTimeExtensionEnabled, isFetching: isMusterFetching } = Digit.Hooks.useCustomAPIHook(
+        musterReqCriteria
+      );
+
+      useEffect(() => {
+        //for time extension here make search of muster rolls if atleast one muster is approved then show an option to create a time extension
+        if(isTimeExtensionEnabled && !data.additionalDetails.isTimeExtAlreadyInWorkflow && data) {
+            
+            setActionsMenu((prevState => [...prevState,{
+                name:"CREATE_TIME_EXTENSION_REQUEST",
+                action:"TIME_EXTENSTION"
+            }]))
+        }
+
+    }, [isMusterLoading,isTimeExtensionEnabled,data])
+
 
     useEffect(() => {
         let isUserBillCreator = loggedInUserRoles?.includes("BILL_CREATOR");
@@ -101,6 +137,12 @@ const ViewContractDetails = () => {
         if (option?.name === "CREATE_PURCHASE_BILL") {
             history.push(`/${window.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&workOrderNumber=${contractId}`);
         }
+
+        if (option?.action === "TIME_EXTENSTION") {
+            setShowTimeExtension(true)
+           //goto create time extenstion screen (basically view WO screen with two extra fields for time extension)
+        }
+
     }
 
     const handleToastClose = () => {
@@ -130,7 +172,7 @@ const ViewContractDetails = () => {
       <React.Fragment>
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-            <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{t("WORKS_VIEW_WORK_ORDER")}</Header>
+            <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{showTimeExtension ? t("CREATE_TE") : t("WORKS_VIEW_WORK_ORDER")}</Header>
             {(data?.applicationData?.wfStatus === "APPROVED" || data?.applicationData?.wfStatus === "PENDING_FOR_ACCEPTANCE" || data?.applicationData?.wfStatus === "ACCEPTED") && 
                <MultiLink
                  onHeadClick={() => HandleDownloadPdf()}
@@ -144,7 +186,8 @@ const ViewContractDetails = () => {
             !data?.isNoDataFound && 
                 <>
                     <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
-                        {activeLink === "Work_Order" && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading}/>}
+                        {activeLink === "Work_Order" && !showTimeExtension && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading}/>}
+                        {activeLink === "Work_Order" && showTimeExtension && <CreateTimeExtension fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading}/>}
                         {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
                     </HorizontalNav>
                     <WorkflowActions
@@ -156,7 +199,7 @@ const ViewContractDetails = () => {
                         url={Digit.Utils.Urls.contracts.update}
                         moduleCode="Contract"
                     />
-                    {data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" && actionsMenu?.length>0 ?
+                    {data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" && actionsMenu?.length>0 && !showTimeExtension ?
                         <ActionBar>
 
                             {showActions ? <Menu
