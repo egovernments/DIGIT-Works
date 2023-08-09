@@ -333,13 +333,15 @@ public class AttendanceRegisterService {
 
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(attendanceRegisterSearchCriteria);
 
-        for (AttendanceRegister attendanceRegister : attendanceRegisters) {
-            attendanceRegister.setEndDate(attendanceTimeExtensionRequest.getEndDate());
-            AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
-                    .attendanceRegister(Collections.singletonList(attendanceRegister)).
-                    requestInfo(attendanceTimeExtensionRequest.getRequestInfo()).build();
+        if (attendanceRegisters != null && !attendanceRegisters.isEmpty()) {
+            for (AttendanceRegister attendanceRegister : attendanceRegisters) {
+                attendanceRegister.setEndDate(attendanceTimeExtensionRequest.getEndDate());
+                AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
+                        .attendanceRegister(Collections.singletonList(attendanceRegister)).
+                        requestInfo(attendanceTimeExtensionRequest.getRequestInfo()).build();
 
-            updateAttendanceRegister(attendanceRegisterRequest);
+                updateAttendanceRegister(attendanceRegisterRequest);
+            }
         }
 
     }
