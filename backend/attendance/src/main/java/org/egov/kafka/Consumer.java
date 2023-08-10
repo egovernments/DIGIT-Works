@@ -37,7 +37,7 @@ public class Consumer {
         }
     }
 
-    @KafkaListener(topics = "${contracts.time.extension.update.topic}")
+    @KafkaListener(topics = "${contracts.revision.topic}")
     public void updateEndDate(String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
             AttendanceTimeExtensionRequest attendanceTimeExtensionRequest = objectMapper.readValue(consumerRecord, AttendanceTimeExtensionRequest.class);
