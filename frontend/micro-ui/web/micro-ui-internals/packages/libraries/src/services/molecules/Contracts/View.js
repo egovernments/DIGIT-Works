@@ -13,10 +13,17 @@ const combine = (docs, estimateDocs) => {
     return allDocuments;
 }
 
-const transformViewDataToApplicationDetails = async (t, data, workflowDetails, tenantId) => {
+const transformViewDataToApplicationDetails = async (t, data, workflowDetails, revisedWONumber) => {
+    
+    //if revisedWONumber is defined then it's a time extension screen(use TE object here)
     const isTimeExtAlreadyInWorkflow = data.contracts.some(element => element.businessService===
         Digit?.Customizations?.["commonUiConfig"]?.businessServiceMap?.revisedWO && element.status==="INWORKFLOW")
-    const contract = data.contracts[data.contracts.length -1 ]
+    let contract = data.contracts[data.contracts.length -1 ]
+
+    if(revisedWONumber){
+        contract = data?.contracts?.filter(row => row?.supplementNumber===revisedWONumber)?.[0]
+    }
+
     const contractDetails = {
         title: " ",
         asSectionHeader: false,
@@ -36,6 +43,13 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
     if(contract.endDate){
         contractDetails.values.push({ title: "WORKS_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate)  || t("NA")})
     }
+    if(contract.additionalDetails.timeExt){
+        contractDetails.values.push({ title: "EXTENSION_REQ", value: contract?.additionalDetails?.timeExt  || t("NA")})
+    }
+    if(contract.additionalDetails.timeExtReason){
+        contractDetails.values.push({ title: "EXTENSION_REASON", value: contract?.additionalDetails?.timeExtReason  || t("NA")})
+    }
+
     const allDocuments = combine(contract?.documents, contract?.additionalDetails?.estimateDocs);
     let documentDetails = {
         title: "",
@@ -79,7 +93,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
         }
     });
 
-    const applicationDetails = { applicationDetails: [contractDetails, documentDetails] };    
+    const applicationDetails = revisedWONumber ? { applicationDetails: [contractDetails] } : { applicationDetails: [contractDetails, documentDetails] };    
 
   return {
     applicationDetails,
@@ -94,10 +108,10 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
 } 
 
 export const View = {
-    fetchContractDetails: async (t, tenantId, data, searchParams) => {
+    fetchContractDetails: async (t, tenantId, data, searchParams,revisedWONumber) => {
     try {
         const response = await ContractService.search(tenantId, data, searchParams);
-        return transformViewDataToApplicationDetails(t, response)
+        return transformViewDataToApplicationDetails(t, response,undefined,revisedWONumber)
         } catch (error) {
             throw new Error(error?.response?.data?.Errors[0].message);
         }  

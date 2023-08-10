@@ -62,7 +62,7 @@ export const UICustomizations = {
         workflow,
       };
     }
-    if (businessService === businessServiceMap.contract) {
+    if (businessService === businessServiceMap.contract || businessService === businessServiceMap.revisedWO ) {
       const workflow = {
         comment: data?.comments,
         documents: data?.documents?.map((document) => {
@@ -163,6 +163,10 @@ export const UICustomizations = {
     if(businessService === businessServiceMap?.["works.purchase"]){
       return action.action.includes("VERIFY_AND_FORWARD")
     }
+    if(businessService === businessServiceMap?.["revisedWO"]){
+      return action.action.includes("VERIFY_AND_FORWARD")
+    }
+
     return false;
   },
   getBusinessService: (moduleCode) => {
@@ -181,6 +185,9 @@ export const UICustomizations = {
     }
     else if (moduleCode?.includes("works.supervision")) {
       return businessServiceMap?.["works.supervision"];
+    }
+    else if (moduleCode?.includes("revisedWO")) {
+      return businessServiceMap?.["revisedWO"];
     }
     else {
       return businessServiceMap;

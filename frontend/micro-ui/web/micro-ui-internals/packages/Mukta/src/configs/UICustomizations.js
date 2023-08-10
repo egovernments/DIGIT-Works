@@ -9,6 +9,16 @@ import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 // these functions will act as middlewares
 var Digit = window.Digit || {};
 
+const businessServiceMap = {
+  estimate: "ESTIMATE",
+  contract: "CONTRACT",
+  "muster roll": "MR",
+  "works.wages":"EXPENSE.WAGES",
+  "works.purchase":"EXPENSE.PURCHASE",
+  "works.supervision":"EXPENSE.SUPERVISION",
+  revisedWO:"CONTRACT-REVISION"
+};
+
 const getBillType = (businessService) => {
   switch(businessService) {
     case "EXPENSE.WAGES":
@@ -929,7 +939,7 @@ export const UICustomizations = {
         case "WORKS_ORDER_NO": 
           return (
            <span className="link">
-            <Link to={`/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}`}>
+            <Link to={row?.ProcessInstance?.businessService === businessServiceMap.revisedWO ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}` :`/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}`}>
               {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
            </span>
@@ -1014,8 +1024,7 @@ export const UICustomizations = {
       case "WORKS_ORDER_ID": 
         return (
           <span className="link">
-            <Link
-              to={`/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.businessObject?.tenantId}&workOrderNumber=${value}`}>
+            <Link to={row?.ProcessInstance?.businessService === businessServiceMap.revisedWO ? `/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${row.businessObject.contractNumber}&revisedWONumber=${value}` :`/${window.contextPath}/employee/contracts/contract-details?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
           </span>

@@ -4,11 +4,21 @@ import { useTranslation } from "react-i18next";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
 import getModalConfig from "./modalConfig";
 import { useHistory } from "react-router-dom";
-const CreateTimeExtension = (props) => {
+const CreateTimeExtension = ({isEdit,revisedWONumber,...props}) => {
+  
   const history = useHistory()
   const { applicationData: contractObject, tenantId } = props.data;
+  
   //removing documents section
   delete props.data.applicationDetails.applicationDetails[1];
+  
+
+  useEffect(() => {
+    if(isEdit){
+      props.data.applicationDetails.applicationDetails[0].values = props?.data?.applicationDetails?.applicationDetails[0]?.values?.slice(0,-2) 
+    }
+  }, [])
+  
 
   const { t } = useTranslation();
   const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
@@ -17,8 +27,8 @@ const CreateTimeExtension = (props) => {
   const [approvers, setApprovers] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [extensionRequested, setExtensionRequested] = useState(null);
-  const [reasonForExtension, setReasonForExtension] = useState(null);
+  const [extensionRequested, setExtensionRequested] = useState(isEdit ? contractObject.additionalDetails.timeExt : null);
+  const [reasonForExtension, setReasonForExtension] = useState(isEdit ? contractObject.additionalDetails.timeExtReason : null);
   const [showToast, setShowToast] = useState(null);
 
   const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch(
@@ -48,7 +58,7 @@ const CreateTimeExtension = (props) => {
   }, [approvers]);
 
   const reqCriteriaUpdate = {
-    url: `/contract/v1/_create`,
+    url: isEdit ? `/contract/v1/_update` : `/contract/v1/_create`,
     params: {},
     body: {},
     config: {
@@ -60,7 +70,6 @@ const CreateTimeExtension = (props) => {
 
   const onModalSubmit = async (data) => {
     //create TE payload here and call the createMutation for TE and route to response page on onSuccess/onError
-    
     const onError = (resp) => {
       
       history.push(`/${window.contextPath}/employee/contracts/create-time-extension-response?isSuccess=${false}`,{message:"TE_CREATION_FAILED"})
@@ -68,7 +77,7 @@ const CreateTimeExtension = (props) => {
 
     const onSuccess = (resp) => {
       
-      history.push(`/${window.contextPath}/employee/contracts/create-time-extension-response?revisedWONumber=${resp.contracts[0].supplementNumber}&isSuccess=${true}`,{message:"TE_CREATION_SUCCESS",showID:true,label:"REVISED_WO_NUMBER"})
+      history.push(`/${window.contextPath}/employee/contracts/create-time-extension-response?revisedWONumber=${resp.contracts[0].supplementNumber}&isSuccess=${true}`,{message:isEdit ? "TE_EDIT_SUCCESS":"TE_CREATION_SUCCESS",showID:true,label:"REVISED_WO_NUMBER"})
     };
 
     mutation.mutate(
@@ -77,11 +86,11 @@ const CreateTimeExtension = (props) => {
         body: {
           contract: { ...contractObject,
             businessService : "CONTRACT-REVISION",
-            endDate:(extensionRequested * 86400000) + contractObject.endDate,
+            endDate:isEdit ? ((extensionRequested-contractObject.additionalDetails.timeExt) * 86400000) + contractObject.endDate : (extensionRequested * 86400000) + contractObject.endDate,
             additionalDetails:{...contractObject.additionalDetails,timeExtReason:reasonForExtension,timeExt:extensionRequested}
           },
           workflow: {
-            action: "CREATE",
+            action: isEdit ? "EDIT" : "CREATE",
             assignees: selectedApprover?.uuid ? [selectedApprover.uuid] : [],
             comment:data?.comments ? data.comments : null
           },
@@ -125,6 +134,7 @@ const CreateTimeExtension = (props) => {
             validation={{ type: "number" }}
             min={1}
             step={1}
+            defaultValue={isEdit ? contractObject?.additionalDetails?.timeExt : null}
           />
         </LabelFieldPair>
         <LabelFieldPair>
@@ -133,6 +143,7 @@ const CreateTimeExtension = (props) => {
             className={"field"}
             textInputStyle={{ width: "60%", marginLeft: "2%" }}
             onChange={(e) => setReasonForExtension(e.target.value)}
+            defaultValue={isEdit ? contractObject?.additionalDetails?.timeExtReason : null}
           />
         </LabelFieldPair>
       </>
