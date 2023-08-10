@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.kafka.Producer;
-import org.egov.works.repository.ContractRepository;
+import org.egov.works.service.ContractService;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class ContractEnrichment {
     private ObjectMapper mapper;
 
     @Autowired
-    private ContractRepository contractRepository;
+    private ContractService contractService;
 
     @Autowired
     private Producer producer;
@@ -148,7 +148,7 @@ public class ContractEnrichment {
             log.info("Contract components are marked as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
         }
         if (contractRequest.getContract().getSupplementNumber() != null && "APPROVE".equalsIgnoreCase(workflow.getAction())) {
-            List<Contract> contractsFromDB = contractRepository.getContracts(ContractCriteria.builder()
+            List<Contract> contractsFromDB = contractService.getContracts(ContractCriteria.builder()
                     .tenantId(contract.getTenantId())
                     .contractNumber(contract.getContractNumber())
                     .pagination(Pagination.builder()
