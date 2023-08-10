@@ -69,6 +69,8 @@ public class ContractEnrichment {
         if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
             // Enrich Supplement Number
             enrichSupplementNumber(contractRequest);
+            markContractAndDocumentsStatus(contractRequest, Status.INWORKFLOW);
+            markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INWORKFLOW);
 
         } else {
             // Enrich LineItems
@@ -332,8 +334,7 @@ public class ContractEnrichment {
                 versionNumber += 1;
             }
             contract.setVersionNumber(versionNumber);
-            contract.setStatus(Status.INWORKFLOW);
-            contract.setWfStatus("PENDING_FOR_VERIFICATION");
+            contract.setWfStatus(PENDING_FOR_VERIFICATION_STATUS);
         }
         contract.setId(String.valueOf(UUID.randomUUID()));
         BigDecimal agreementDate = contract.getAgreementDate();
