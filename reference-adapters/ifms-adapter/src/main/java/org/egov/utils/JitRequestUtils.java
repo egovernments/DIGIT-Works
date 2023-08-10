@@ -33,8 +33,6 @@ public class JitRequestUtils {
         SecretKey sekSecretKey = new SecretKeySpec(sekBytes, "AES");
         // Convert the JSON object to a string
         String requestBody = objectMapper.writeValueAsString(jitRequest);
-        // TODO: Remove this after testing
-        System.out.println("JIT Request : " + requestBody);
         byte[] plainBytes = requestBody.getBytes();
         //Encrypt the request body with the decrypted SEK
         String encReqBody = SymmetricEncryptionService.encrypt(plainBytes, sekSecretKey);

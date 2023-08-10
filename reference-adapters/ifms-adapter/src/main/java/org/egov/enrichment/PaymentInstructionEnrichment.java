@@ -49,10 +49,12 @@ public class PaymentInstructionEnrichment {
     private BankAccountUtils bankAccountUtils;
 
     public List<Beneficiary> getBeneficiariesFromBills(List<Bill> billList, PaymentRequest paymentRequest) {
+        log.info("Started generating beneficiaries lists for PI");
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         JSONArray headCodesList = billUtils.getHeadCode(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
 
         Map<String, JsonNode> headCodeMap = getHeadCodeHashMap(headCodesList);
+        log.info("Generating beneficiary list based on line item.");
         for (Bill bill: billList) {
             for (BillDetail billDetail: bill.getBillDetails()) {
                 for (LineItem lineItem: billDetail.getPayableLineItems()) {
@@ -61,12 +63,14 @@ public class PaymentInstructionEnrichment {
                 }
             }
         }
+        log.info("Beneficiary list generated, combine them based on bank account number.");
         // Combine beneficiary by beneficiaryId
         beneficiaryList = combineBeneficiaryById(beneficiaryList);
         return beneficiaryList;
     }
 
     private List<Beneficiary> combineBeneficiaryById(List<Beneficiary> beneficiaryList) {
+        log.info("Started executing combineBeneficiaryById");
         Map<String, Beneficiary> benfMap = new HashMap<>();
         for(Beneficiary beneficiary: beneficiaryList) {
             if (benfMap.containsKey(beneficiary.getBeneficiaryId())) {
@@ -77,10 +81,12 @@ public class PaymentInstructionEnrichment {
             }
         }
         List<Beneficiary> beneficiaries = new ArrayList<>(benfMap.values());
+        log.info("Beneficiary details are combined based on account details, sending back.");
         return beneficiaries;
     }
 
     private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId) {
+        log.info("Started executing getBeneficiariesFromLineItem");
         String beneficiaryId = payee.getIdentifier();
         String headCode = lineItem.getHeadCode();
         Beneficiary beneficiary = null;
@@ -100,6 +106,7 @@ public class PaymentInstructionEnrichment {
                     .beneficiaryId(beneficiaryId)
                     .benfLineItems(benefLineItemList).build();
         }
+        log.info("Beneficiary generated and sending back.");
         return beneficiary;
     }
     public PaymentInstruction getEnrichedPaymentRequest(PaymentRequest paymentRequest, List<Beneficiary> beneficiaries, Map<String, Object> hoaSsuMap) {
@@ -314,6 +321,7 @@ public class PaymentInstructionEnrichment {
     }
 
     public void enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations) {
+        log.info("Started executing enrichBankaccountOnBeneficiary");
         Map<String, BankAccount> bankAccountMap = new HashMap<>();
         if (bankAccounts != null && !bankAccounts.isEmpty()) {
             for(BankAccount bankAccount: bankAccounts) {
@@ -332,6 +340,7 @@ public class PaymentInstructionEnrichment {
                 organisationMap.put(organisation.getId(), organisation);
             }
         }
+        log.info("Created map of org, individual and bankaccount, started generating beneficiary.");
         for(Beneficiary piBeneficiary: beneficiaryList) {
             BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
             if (bankAccount != null) {
@@ -360,10 +369,12 @@ public class PaymentInstructionEnrichment {
             }
             piBeneficiary.setPurpose("Mukta Payment");
         }
+        log.info("Beneficiary details enriched and sending back.");
+
     }
 
     public JITRequest getJitPaymentInstructionRequestForIFMS(PaymentInstruction existingPI) {
-
+        log.info("Started executing getJitPaymentInstructionRequestForIFMS");
         List<Beneficiary> beneficiaryList = new ArrayList<>();
         for(Beneficiary beneficiary: existingPI.getBeneficiaryDetails()) {
             Beneficiary reqBeneficiary = Beneficiary.builder()
@@ -402,6 +413,7 @@ public class PaymentInstructionEnrichment {
                 .serviceId(JITServiceId.PI)
                 .params(piRequestForIFMS)
                 .build();
+        log.info("JIT PI request generated and sending back.");
         return jitPiRequest;
     }
 
