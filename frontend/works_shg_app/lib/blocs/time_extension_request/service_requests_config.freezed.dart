@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'search_individual_work.dart';
+part of 'service_requests_config.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,63 +15,56 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$SearchIndividualWorkEvent {
+mixin _$ServiceRequestsConfigBlocEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? contractNumber, Map<dynamic, dynamic>? body)
-        search,
-    required TResult Function() dispose,
+    required TResult Function() getSearchCriteria,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
-        search,
-    TResult? Function()? dispose,
+    TResult? Function()? getSearchCriteria,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
-        search,
-    TResult Function()? dispose,
+    TResult Function()? getSearchCriteria,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(IndividualWorkSearchEvent value) search,
-    required TResult Function(DisposeIndividualContract value) dispose,
+    required TResult Function(GetServiceRequestsConfigEvent value)
+        getSearchCriteria,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(IndividualWorkSearchEvent value)? search,
-    TResult? Function(DisposeIndividualContract value)? dispose,
+    TResult? Function(GetServiceRequestsConfigEvent value)? getSearchCriteria,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(IndividualWorkSearchEvent value)? search,
-    TResult Function(DisposeIndividualContract value)? dispose,
+    TResult Function(GetServiceRequestsConfigEvent value)? getSearchCriteria,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SearchIndividualWorkEventCopyWith<$Res> {
-  factory $SearchIndividualWorkEventCopyWith(SearchIndividualWorkEvent value,
-          $Res Function(SearchIndividualWorkEvent) then) =
-      _$SearchIndividualWorkEventCopyWithImpl<$Res, SearchIndividualWorkEvent>;
+abstract class $ServiceRequestsConfigBlocEventCopyWith<$Res> {
+  factory $ServiceRequestsConfigBlocEventCopyWith(
+          ServiceRequestsConfigBlocEvent value,
+          $Res Function(ServiceRequestsConfigBlocEvent) then) =
+      _$ServiceRequestsConfigBlocEventCopyWithImpl<$Res,
+          ServiceRequestsConfigBlocEvent>;
 }
 
 /// @nodoc
-class _$SearchIndividualWorkEventCopyWithImpl<$Res,
-        $Val extends SearchIndividualWorkEvent>
-    implements $SearchIndividualWorkEventCopyWith<$Res> {
-  _$SearchIndividualWorkEventCopyWithImpl(this._value, this._then);
+class _$ServiceRequestsConfigBlocEventCopyWithImpl<$Res,
+        $Val extends ServiceRequestsConfigBlocEvent>
+    implements $ServiceRequestsConfigBlocEventCopyWith<$Res> {
+  _$ServiceRequestsConfigBlocEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -80,221 +73,39 @@ class _$SearchIndividualWorkEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$IndividualWorkSearchEventCopyWith<$Res> {
-  factory _$$IndividualWorkSearchEventCopyWith(
-          _$IndividualWorkSearchEvent value,
-          $Res Function(_$IndividualWorkSearchEvent) then) =
-      __$$IndividualWorkSearchEventCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String? contractNumber, Map<dynamic, dynamic>? body});
+abstract class _$$GetServiceRequestsConfigEventCopyWith<$Res> {
+  factory _$$GetServiceRequestsConfigEventCopyWith(
+          _$GetServiceRequestsConfigEvent value,
+          $Res Function(_$GetServiceRequestsConfigEvent) then) =
+      __$$GetServiceRequestsConfigEventCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$IndividualWorkSearchEventCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkEventCopyWithImpl<$Res,
-        _$IndividualWorkSearchEvent>
-    implements _$$IndividualWorkSearchEventCopyWith<$Res> {
-  __$$IndividualWorkSearchEventCopyWithImpl(_$IndividualWorkSearchEvent _value,
-      $Res Function(_$IndividualWorkSearchEvent) _then)
+class __$$GetServiceRequestsConfigEventCopyWithImpl<$Res>
+    extends _$ServiceRequestsConfigBlocEventCopyWithImpl<$Res,
+        _$GetServiceRequestsConfigEvent>
+    implements _$$GetServiceRequestsConfigEventCopyWith<$Res> {
+  __$$GetServiceRequestsConfigEventCopyWithImpl(
+      _$GetServiceRequestsConfigEvent _value,
+      $Res Function(_$GetServiceRequestsConfigEvent) _then)
       : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? contractNumber = freezed,
-    Object? body = freezed,
-  }) {
-    return _then(_$IndividualWorkSearchEvent(
-      contractNumber: freezed == contractNumber
-          ? _value.contractNumber
-          : contractNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      body: freezed == body
-          ? _value._body
-          : body // ignore: cast_nullable_to_non_nullable
-              as Map<dynamic, dynamic>?,
-    ));
-  }
 }
 
 /// @nodoc
 
-class _$IndividualWorkSearchEvent
-    with DiagnosticableTreeMixin
-    implements IndividualWorkSearchEvent {
-  const _$IndividualWorkSearchEvent(
-      {this.contractNumber = '', final Map<dynamic, dynamic>? body})
-      : _body = body;
+class _$GetServiceRequestsConfigEvent implements GetServiceRequestsConfigEvent {
+  const _$GetServiceRequestsConfigEvent();
 
   @override
-  @JsonKey()
-  final String? contractNumber;
-  final Map<dynamic, dynamic>? _body;
-  @override
-  Map<dynamic, dynamic>? get body {
-    final value = _body;
-    if (value == null) return null;
-    if (_body is EqualUnmodifiableMapView) return _body;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
-  }
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkEvent.search(contractNumber: $contractNumber, body: $body)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'SearchIndividualWorkEvent.search'))
-      ..add(DiagnosticsProperty('contractNumber', contractNumber))
-      ..add(DiagnosticsProperty('body', body));
+  String toString() {
+    return 'ServiceRequestsConfigBlocEvent.getSearchCriteria()';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$IndividualWorkSearchEvent &&
-            (identical(other.contractNumber, contractNumber) ||
-                other.contractNumber == contractNumber) &&
-            const DeepCollectionEquality().equals(other._body, _body));
-  }
-
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, contractNumber, const DeepCollectionEquality().hash(_body));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$IndividualWorkSearchEventCopyWith<_$IndividualWorkSearchEvent>
-      get copyWith => __$$IndividualWorkSearchEventCopyWithImpl<
-          _$IndividualWorkSearchEvent>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? contractNumber, Map<dynamic, dynamic>? body)
-        search,
-    required TResult Function() dispose,
-  }) {
-    return search(contractNumber, body);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
-        search,
-    TResult? Function()? dispose,
-  }) {
-    return search?.call(contractNumber, body);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
-        search,
-    TResult Function()? dispose,
-    required TResult orElse(),
-  }) {
-    if (search != null) {
-      return search(contractNumber, body);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(IndividualWorkSearchEvent value) search,
-    required TResult Function(DisposeIndividualContract value) dispose,
-  }) {
-    return search(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(IndividualWorkSearchEvent value)? search,
-    TResult? Function(DisposeIndividualContract value)? dispose,
-  }) {
-    return search?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(IndividualWorkSearchEvent value)? search,
-    TResult Function(DisposeIndividualContract value)? dispose,
-    required TResult orElse(),
-  }) {
-    if (search != null) {
-      return search(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class IndividualWorkSearchEvent implements SearchIndividualWorkEvent {
-  const factory IndividualWorkSearchEvent(
-      {final String? contractNumber,
-      final Map<dynamic, dynamic>? body}) = _$IndividualWorkSearchEvent;
-
-  String? get contractNumber;
-  Map<dynamic, dynamic>? get body;
-  @JsonKey(ignore: true)
-  _$$IndividualWorkSearchEventCopyWith<_$IndividualWorkSearchEvent>
-      get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$DisposeIndividualContractCopyWith<$Res> {
-  factory _$$DisposeIndividualContractCopyWith(
-          _$DisposeIndividualContract value,
-          $Res Function(_$DisposeIndividualContract) then) =
-      __$$DisposeIndividualContractCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$DisposeIndividualContractCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkEventCopyWithImpl<$Res,
-        _$DisposeIndividualContract>
-    implements _$$DisposeIndividualContractCopyWith<$Res> {
-  __$$DisposeIndividualContractCopyWithImpl(_$DisposeIndividualContract _value,
-      $Res Function(_$DisposeIndividualContract) _then)
-      : super(_value, _then);
-}
-
-/// @nodoc
-
-class _$DisposeIndividualContract
-    with DiagnosticableTreeMixin
-    implements DisposeIndividualContract {
-  const _$DisposeIndividualContract();
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkEvent.dispose()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'SearchIndividualWorkEvent.dispose'));
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DisposeIndividualContract);
+            other is _$GetServiceRequestsConfigEvent);
   }
 
   @override
@@ -303,34 +114,27 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? contractNumber, Map<dynamic, dynamic>? body)
-        search,
-    required TResult Function() dispose,
+    required TResult Function() getSearchCriteria,
   }) {
-    return dispose();
+    return getSearchCriteria();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
-        search,
-    TResult? Function()? dispose,
+    TResult? Function()? getSearchCriteria,
   }) {
-    return dispose?.call();
+    return getSearchCriteria?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
-        search,
-    TResult Function()? dispose,
+    TResult Function()? getSearchCriteria,
     required TResult orElse(),
   }) {
-    if (dispose != null) {
-      return dispose();
+    if (getSearchCriteria != null) {
+      return getSearchCriteria();
     }
     return orElse();
   }
@@ -338,46 +142,48 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(IndividualWorkSearchEvent value) search,
-    required TResult Function(DisposeIndividualContract value) dispose,
+    required TResult Function(GetServiceRequestsConfigEvent value)
+        getSearchCriteria,
   }) {
-    return dispose(this);
+    return getSearchCriteria(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(IndividualWorkSearchEvent value)? search,
-    TResult? Function(DisposeIndividualContract value)? dispose,
+    TResult? Function(GetServiceRequestsConfigEvent value)? getSearchCriteria,
   }) {
-    return dispose?.call(this);
+    return getSearchCriteria?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(IndividualWorkSearchEvent value)? search,
-    TResult Function(DisposeIndividualContract value)? dispose,
+    TResult Function(GetServiceRequestsConfigEvent value)? getSearchCriteria,
     required TResult orElse(),
   }) {
-    if (dispose != null) {
-      return dispose(this);
+    if (getSearchCriteria != null) {
+      return getSearchCriteria(this);
     }
     return orElse();
   }
 }
 
-abstract class DisposeIndividualContract implements SearchIndividualWorkEvent {
-  const factory DisposeIndividualContract() = _$DisposeIndividualContract;
+abstract class GetServiceRequestsConfigEvent
+    implements ServiceRequestsConfigBlocEvent {
+  const factory GetServiceRequestsConfigEvent() =
+      _$GetServiceRequestsConfigEvent;
 }
 
 /// @nodoc
-mixin _$SearchIndividualWorkState {
+mixin _$ServiceRequestsConfigBlocState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(ContractsModel? contractsModel) loaded,
+    required TResult Function(
+            CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)
+        loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -385,7 +191,8 @@ mixin _$SearchIndividualWorkState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(ContractsModel? contractsModel)? loaded,
+    TResult? Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -393,7 +200,8 @@ mixin _$SearchIndividualWorkState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(ContractsModel? contractsModel)? loaded,
+    TResult Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -426,17 +234,19 @@ mixin _$SearchIndividualWorkState {
 }
 
 /// @nodoc
-abstract class $SearchIndividualWorkStateCopyWith<$Res> {
-  factory $SearchIndividualWorkStateCopyWith(SearchIndividualWorkState value,
-          $Res Function(SearchIndividualWorkState) then) =
-      _$SearchIndividualWorkStateCopyWithImpl<$Res, SearchIndividualWorkState>;
+abstract class $ServiceRequestsConfigBlocStateCopyWith<$Res> {
+  factory $ServiceRequestsConfigBlocStateCopyWith(
+          ServiceRequestsConfigBlocState value,
+          $Res Function(ServiceRequestsConfigBlocState) then) =
+      _$ServiceRequestsConfigBlocStateCopyWithImpl<$Res,
+          ServiceRequestsConfigBlocState>;
 }
 
 /// @nodoc
-class _$SearchIndividualWorkStateCopyWithImpl<$Res,
-        $Val extends SearchIndividualWorkState>
-    implements $SearchIndividualWorkStateCopyWith<$Res> {
-  _$SearchIndividualWorkStateCopyWithImpl(this._value, this._then);
+class _$ServiceRequestsConfigBlocStateCopyWithImpl<$Res,
+        $Val extends ServiceRequestsConfigBlocState>
+    implements $ServiceRequestsConfigBlocStateCopyWith<$Res> {
+  _$ServiceRequestsConfigBlocStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -453,7 +263,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Initial>
+    extends _$ServiceRequestsConfigBlocStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -461,19 +271,12 @@ class __$$_InitialCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Initial extends _Initial with DiagnosticableTreeMixin {
+class _$_Initial extends _Initial {
   const _$_Initial() : super._();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkState.initial()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'SearchIndividualWorkState.initial'));
+  String toString() {
+    return 'ServiceRequestsConfigBlocState.initial()';
   }
 
   @override
@@ -490,7 +293,9 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(ContractsModel? contractsModel) loaded,
+    required TResult Function(
+            CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -501,7 +306,8 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(ContractsModel? contractsModel)? loaded,
+    TResult? Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -512,7 +318,8 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(ContractsModel? contractsModel)? loaded,
+    TResult Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -560,7 +367,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Initial extends SearchIndividualWorkState {
+abstract class _Initial extends ServiceRequestsConfigBlocState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -574,7 +381,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Loading>
+    extends _$ServiceRequestsConfigBlocStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -582,19 +389,12 @@ class __$$_LoadingCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Loading extends _Loading with DiagnosticableTreeMixin {
+class _$_Loading extends _Loading {
   const _$_Loading() : super._();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkState.loading()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'SearchIndividualWorkState.loading'));
+  String toString() {
+    return 'ServiceRequestsConfigBlocState.loading()';
   }
 
   @override
@@ -611,7 +411,9 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(ContractsModel? contractsModel) loaded,
+    required TResult Function(
+            CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -622,7 +424,8 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(ContractsModel? contractsModel)? loaded,
+    TResult? Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -633,7 +436,8 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(ContractsModel? contractsModel)? loaded,
+    TResult Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -681,7 +485,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loading extends SearchIndividualWorkState {
+abstract class _Loading extends ServiceRequestsConfigBlocState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -691,12 +495,14 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({ContractsModel? contractsModel});
+  $Res call({CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig});
+
+  $CBOMyServiceRequestsConfigCopyWith<$Res>? get cboMyServiceRequestsConfig;
 }
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$ServiceRequestsConfigBlocStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -704,36 +510,41 @@ class __$$_LoadedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? contractsModel = freezed,
+    Object? cboMyServiceRequestsConfig = freezed,
   }) {
     return _then(_$_Loaded(
-      freezed == contractsModel
-          ? _value.contractsModel
-          : contractsModel // ignore: cast_nullable_to_non_nullable
-              as ContractsModel?,
+      freezed == cboMyServiceRequestsConfig
+          ? _value.cboMyServiceRequestsConfig
+          : cboMyServiceRequestsConfig // ignore: cast_nullable_to_non_nullable
+              as CBOMyServiceRequestsConfig?,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $CBOMyServiceRequestsConfigCopyWith<$Res>? get cboMyServiceRequestsConfig {
+    if (_value.cboMyServiceRequestsConfig == null) {
+      return null;
+    }
+
+    return $CBOMyServiceRequestsConfigCopyWith<$Res>(
+        _value.cboMyServiceRequestsConfig!, (value) {
+      return _then(_value.copyWith(cboMyServiceRequestsConfig: value));
+    });
   }
 }
 
 /// @nodoc
 
-class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.contractsModel) : super._();
+class _$_Loaded extends _Loaded {
+  const _$_Loaded(this.cboMyServiceRequestsConfig) : super._();
 
   @override
-  final ContractsModel? contractsModel;
+  final CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkState.loaded(contractsModel: $contractsModel)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'SearchIndividualWorkState.loaded'))
-      ..add(DiagnosticsProperty('contractsModel', contractsModel));
+  String toString() {
+    return 'ServiceRequestsConfigBlocState.loaded(cboMyServiceRequestsConfig: $cboMyServiceRequestsConfig)';
   }
 
   @override
@@ -741,12 +552,14 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
-            (identical(other.contractsModel, contractsModel) ||
-                other.contractsModel == contractsModel));
+            (identical(other.cboMyServiceRequestsConfig,
+                    cboMyServiceRequestsConfig) ||
+                other.cboMyServiceRequestsConfig ==
+                    cboMyServiceRequestsConfig));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, contractsModel);
+  int get hashCode => Object.hash(runtimeType, cboMyServiceRequestsConfig);
 
   @JsonKey(ignore: true)
   @override
@@ -759,10 +572,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(ContractsModel? contractsModel) loaded,
+    required TResult Function(
+            CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)
+        loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(contractsModel);
+    return loaded(cboMyServiceRequestsConfig);
   }
 
   @override
@@ -770,10 +585,11 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(ContractsModel? contractsModel)? loaded,
+    TResult? Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(contractsModel);
+    return loaded?.call(cboMyServiceRequestsConfig);
   }
 
   @override
@@ -781,12 +597,13 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(ContractsModel? contractsModel)? loaded,
+    TResult Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(contractsModel);
+      return loaded(cboMyServiceRequestsConfig);
     }
     return orElse();
   }
@@ -829,11 +646,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loaded extends SearchIndividualWorkState {
-  const factory _Loaded(final ContractsModel? contractsModel) = _$_Loaded;
+abstract class _Loaded extends ServiceRequestsConfigBlocState {
+  const factory _Loaded(
+      final CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig) = _$_Loaded;
   const _Loaded._() : super._();
 
-  ContractsModel? get contractsModel;
+  CBOMyServiceRequestsConfig? get cboMyServiceRequestsConfig;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -849,7 +667,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Error>
+    extends _$ServiceRequestsConfigBlocStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -870,23 +688,15 @@ class __$$_ErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Error extends _Error with DiagnosticableTreeMixin {
+class _$_Error extends _Error {
   const _$_Error(this.error) : super._();
 
   @override
   final String? error;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkState.error(error: $error)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'SearchIndividualWorkState.error'))
-      ..add(DiagnosticsProperty('error', error));
+  String toString() {
+    return 'ServiceRequestsConfigBlocState.error(error: $error)';
   }
 
   @override
@@ -911,7 +721,9 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(ContractsModel? contractsModel) loaded,
+    required TResult Function(
+            CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)
+        loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -922,7 +734,8 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(ContractsModel? contractsModel)? loaded,
+    TResult? Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -933,7 +746,8 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(ContractsModel? contractsModel)? loaded,
+    TResult Function(CBOMyServiceRequestsConfig? cboMyServiceRequestsConfig)?
+        loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -981,7 +795,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Error extends SearchIndividualWorkState {
+abstract class _Error extends ServiceRequestsConfigBlocState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 

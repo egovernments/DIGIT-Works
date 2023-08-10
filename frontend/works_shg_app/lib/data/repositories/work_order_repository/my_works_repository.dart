@@ -29,7 +29,7 @@ class MyWorksRepository {
     }
   }
 
-  Future<ContractsModel> acceptOrDeclineWorkOrder({
+  Future<ContractsModel> updateOrCreateContract({
     Map<String, String>? queryParameters,
     dynamic body,
     required Options options,

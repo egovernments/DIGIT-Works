@@ -187,16 +187,22 @@ class _$AppRouter extends RootStackRouter {
       final queryParams = routeData.queryParams;
       final args = routeData.argsAs<CreateTimeExtensionRequestRouteArgs>(
           orElse: () => CreateTimeExtensionRequestRouteArgs(
-                  contractNumber: queryParams.optString(
-                'contractNumber',
-                'contractNumber',
-              )));
+                contractNumber: queryParams.optString('contractNumber'),
+                isEdit: queryParams.optBool('isEdit'),
+              ));
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: CreateTimeExtensionRequestPage(
           key: args.key,
           contractNumber: args.contractNumber,
+          isEdit: args.isEdit,
         ),
+      );
+    },
+    MyServiceRequestsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const MyServiceRequestsPage(),
       );
     },
   };
@@ -305,6 +311,11 @@ class _$AppRouter extends RootStackRouter {
             RouteConfig(
               CreateTimeExtensionRequestRoute.name,
               path: 'create-time-extension',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              MyServiceRequestsRoute.name,
+              path: 'my-service-requests',
               parent: AuthenticatedRouteWrapper.name,
             ),
           ],
@@ -761,15 +772,20 @@ class CreateTimeExtensionRequestRoute
     extends PageRouteInfo<CreateTimeExtensionRequestRouteArgs> {
   CreateTimeExtensionRequestRoute({
     Key? key,
-    String? contractNumber = 'contractNumber',
+    String? contractNumber,
+    bool? isEdit,
   }) : super(
           CreateTimeExtensionRequestRoute.name,
           path: 'create-time-extension',
           args: CreateTimeExtensionRequestRouteArgs(
             key: key,
             contractNumber: contractNumber,
+            isEdit: isEdit,
           ),
-          rawQueryParams: {'contractNumber': contractNumber},
+          rawQueryParams: {
+            'contractNumber': contractNumber,
+            'isEdit': isEdit,
+          },
         );
 
   static const String name = 'CreateTimeExtensionRequestRoute';
@@ -778,15 +794,30 @@ class CreateTimeExtensionRequestRoute
 class CreateTimeExtensionRequestRouteArgs {
   const CreateTimeExtensionRequestRouteArgs({
     this.key,
-    this.contractNumber = 'contractNumber',
+    this.contractNumber,
+    this.isEdit,
   });
 
   final Key? key;
 
   final String? contractNumber;
 
+  final bool? isEdit;
+
   @override
   String toString() {
-    return 'CreateTimeExtensionRequestRouteArgs{key: $key, contractNumber: $contractNumber}';
+    return 'CreateTimeExtensionRequestRouteArgs{key: $key, contractNumber: $contractNumber, isEdit: $isEdit}';
   }
+}
+
+/// generated route for
+/// [MyServiceRequestsPage]
+class MyServiceRequestsRoute extends PageRouteInfo<void> {
+  const MyServiceRequestsRoute()
+      : super(
+          MyServiceRequestsRoute.name,
+          path: 'my-service-requests',
+        );
+
+  static const String name = 'MyServiceRequestsRoute';
 }

@@ -40,6 +40,7 @@ class HomeScreenBloc extends Bloc<HomeScreenBlocEvent, HomeScreenBlocState> {
                   "name": "CBOHomeScreenConfig",
                   "filter": "[?(@.active==true)]"
                 },
+                {"name": "CBOMyServiceRequests"},
               ],
             }
           ]);

@@ -36,3 +36,19 @@ Map<String, dynamic> _$$_CBOMyWorksSearchCriteriaModelToJson(
       'searchCriteria': instance.searchCriteria,
       'acceptCode': instance.acceptCode,
     };
+
+_$_CBOMyServiceRequestsConfig _$$_CBOMyServiceRequestsConfigFromJson(
+        Map<String, dynamic> json) =>
+    _$_CBOMyServiceRequestsConfig(
+      editTimeExtReqCode: json['editTimeExtReqCode'] as String?,
+      editActionCode: json['editActionCode'] as String?,
+      searchCriteria: json['searchCriteria'] as String?,
+    );
+
+Map<String, dynamic> _$$_CBOMyServiceRequestsConfigToJson(
+        _$_CBOMyServiceRequestsConfig instance) =>
+    <String, dynamic>{
+      'editTimeExtReqCode': instance.editTimeExtReqCode,
+      'editActionCode': instance.editActionCode,
+      'searchCriteria': instance.searchCriteria,
+    };

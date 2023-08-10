@@ -7,6 +7,7 @@ WorkOrder workOrder = const WorkOrder();
 WageSeeker wageSeeker = const WageSeeker();
 AttendanceMgmt attendanceMgmt = const AttendanceMgmt();
 MyBills myBills = const MyBills();
+MyServiceRequests myServiceRequests = const MyServiceRequests();
 
 class Login {
   const Login();
@@ -206,6 +207,10 @@ class WorkOrder {
       'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY_SUB_TEXT';
   String get requestTimeExtension => 'ACTION_TEST_TIME_EXTENSION';
   String get projectClosure => 'ACTION_TEST_PROJECT_CLOSURE';
+  String get errNoMusterRollExists => 'ERR_NO_MUSTER_EXISTS';
+  String get errTimeExtReqAlreadyRaised => 'ERR_TIME_EXT_REQ_ALREADY_RAISED';
+  String get closureRequests => 'WORKS_CLOSURE_REQUESTS';
+  String get timeExtRequests => 'WORKS_TIME_EXT_REQUESTS';
 }
 
 class MyBills {
@@ -321,4 +326,13 @@ class AttendanceMgmt {
   String get halfDay => 'ATM_HALF_DAY';
   String get absent => 'ATM_ABSENT';
   String get toMarkAttendance => 'ATM_INFO_TO_MARK_ATTENDANCE';
+}
+
+class MyServiceRequests {
+  const MyServiceRequests();
+
+  String get timeExtRequestId => 'WORKS_TIME_EXT_REQUEST_ID';
+  String get revisedEndDate => 'WORKS_REVISED_END_DATE';
+  String get editAction => 'WF_CONTRACT_ACTION_EDIT';
+  String get noServiceRequests => 'SR_NO_SERVICE_REQUEST_FOUND';
 }
