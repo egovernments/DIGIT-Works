@@ -335,13 +335,22 @@ public class AttendanceRegisterService {
 
         if (attendanceRegisters != null && !attendanceRegisters.isEmpty()) {
             for (AttendanceRegister attendanceRegister : attendanceRegisters) {
+
+                int comparisonResult = attendanceTimeExtensionRequest.getEndDate().compareTo(attendanceRegister.getEndDate());
+                if (comparisonResult < 0) {
+                    throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
+                }
+
                 attendanceRegister.setEndDate(attendanceTimeExtensionRequest.getEndDate());
                 AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
                         .attendanceRegister(Collections.singletonList(attendanceRegister)).
                         requestInfo(attendanceTimeExtensionRequest.getRequestInfo()).build();
 
-                updateAttendanceRegister(attendanceRegisterRequest);
+                registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, Collections.singletonList(attendanceRegister));
+                producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
             }
+        }else {
+            throw new CustomException("ATTENDANCE_REGISTER_EMPTY", "Attendance registers not found for the referenceId");
         }
 
     }
