@@ -169,6 +169,7 @@ public class ContractEnrichment {
             markContractAndDocumentsStatus(contractRequest, Status.ACTIVE);
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
             AttendanceTimeExtensionRequest attendanceTimeExtensionRequest = AttendanceTimeExtensionRequest.builder()
+                    .requestInfo(contractRequest.getRequestInfo())
                     .endDate(contract.getEndDate()).referenceId(contract.getContractNumber())
                     .tenantId(contract.getTenantId()).build();
             producer.push(config.getUpdateTimeExtensionTopic(), attendanceTimeExtensionRequest);
