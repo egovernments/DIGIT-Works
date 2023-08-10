@@ -22,6 +22,7 @@ const WorksCard = () => {
 
   const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate");
   const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
+  const bsRevisedWO = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("revisedWO");
   const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll");
   const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
   const bsWageBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.wages");
@@ -83,7 +84,7 @@ const WorksCard = () => {
       inbox: {
         tenantId,
         processSearchCriteria: {
-          businessService: [bsContract],
+          businessService: [bsContract,bsRevisedWO],
           moduleName: "contract-service",
         },
         moduleSearchCriteria: {

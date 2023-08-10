@@ -67,7 +67,8 @@ function ApplicationDetailsContent({
   tenantId,
   businessService,
   customClass,
-  setAttendanceError
+  setAttendanceError,
+  timeExtensionCreate=undefined
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
@@ -478,6 +479,7 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.skills  &&  <SkillDetails data={detail?.additionalDetails?.skills} />}
           {detail?.additionalDetails?.photo  &&  <Photos data={detail?.additionalDetails?.photo} OpenImage={OpenImage}/>}
+          {timeExtensionCreate && timeExtensionCreate.getTimeExtensionJSX()}
         </React.Fragment>
         </CollapseAndExpandGroups>
       ))}
