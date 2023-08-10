@@ -206,8 +206,8 @@ public class FailureDetailsService {
     }
 
     private void updatePaymentStatusForPartial(Payment payment, RequestInfo requestInfo) {
-        System.out.println("Payment "+ payment);
         try {
+            log.info("Updating payment status for partial.");
             boolean updatePaymentStatus = false;
             for (PaymentBill bill: payment.getBills()) {
                 boolean updateBillStatus = false;

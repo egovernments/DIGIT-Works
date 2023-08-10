@@ -46,7 +46,7 @@ public class PIRepository {
     @Transactional
     public void save(List<PaymentInstruction> piRequests, FundsSummary fundsSummary, PaymentStatus paymentStatus) {
 
-        log.debug("PIRepository save, the request object : " + piRequests);
+        log.info("PIRepository save");
         List<MapSqlParameterSource> piRequestSqlParameterSources = getSqlParameterListForPIRequest(piRequests);
         List<MapSqlParameterSource> paDetailsSqlParameterSources = getSqlParameterListForPADetails(piRequests);
         List<MapSqlParameterSource> transactionSqlParameterSources = getSqlParameterListForTransactionDetails(piRequests);
@@ -222,7 +222,7 @@ public class PIRepository {
     @Transactional
     public void update(List<PaymentInstruction> piRequests, FundsSummary fundsSummary) {
 
-        log.debug("PIRepository update, the request object : " + piRequests);
+        log.info("PIRepository update, the request object : " + piRequests);
         List<MapSqlParameterSource> piRequestSqlParameterSources = getSqlParameterListForPIUpdateRequest(piRequests);
         List<MapSqlParameterSource> paDetailsSqlParameterSources = getSqlParameterListForPAUpdateDetails(piRequests);
         List<MapSqlParameterSource> beneficiarySqlParameterSources = getSqlParameterListForBenefUpdateDetails(piRequests);

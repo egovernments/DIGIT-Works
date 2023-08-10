@@ -29,9 +29,6 @@ public class IfmsAdapterConfig {
     @Value("${ifms.jit.client.secret}")
     private String ifmsJitClientSecret;
 
-    @Value("${ifms.jit.public.key}")
-    private String ifmsJitPublic;
-
     @Value("${ifms.jit.public.key.filepath}")
     private String ifmsJitPublicKeyFilePath;
 
@@ -117,4 +114,24 @@ public class IfmsAdapterConfig {
 
     @Value("${egov.audit.log.search.endpoint}")
     private String auditLogSearchEndPoint;
+
+    // es log configurations
+    @Value("${egov.es.indexer.host}")
+    private String esIndexerHost;
+
+    @Value("${ifms.request.log.index}")
+    private String ifmsRequestLogIndex;
+
+    @Value("${ifms.error.log.index}")
+    private String ifmsErrorLogIndex;
+
+    @Value("${ifms.request.log.enabled}")
+    private Boolean ifmsRequestLogEnabled;
+
+    @Value("${ifms.error.log.enabled}")
+    private Boolean ifmsErrorLogEnabled;
+
+    @Value("${ifms.request.enc.secret}")
+    private String ifmsRequestEncSecret;
+
 }
