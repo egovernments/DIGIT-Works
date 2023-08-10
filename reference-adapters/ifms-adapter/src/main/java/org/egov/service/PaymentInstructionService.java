@@ -164,7 +164,10 @@ public class PaymentInstructionService {
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
                         referenceStatus = ReferenceStatus.PAYMENT_FAILED;
-                        piRequest.setPiErrorResp(jitResponse.getErrorMsg());
+                        if (jitResponse.getErrorMsgs() != null && jitResponse.getErrorMsgs().isEmpty())
+                            piRequest.setPiErrorResp(jitResponse.getErrorMsgs().toString());
+                        else
+                            piRequest.setPiErrorResp(jitResponse.getErrorMsg());
                         jitApiRespStatus = JitRespStatusForPI.STATUS_LOG_PI_ERROR;
                     }
                 } catch (Exception e) {
@@ -284,7 +287,7 @@ public class PaymentInstructionService {
                         Object piResponseNode = jitResponse.getErrorMsgs().get(0);
                         JsonNode node = objectMapper.valueToTree(piResponseNode);
                         String piErrorCode = node.get("errorCode").asText();
-                        String piErrorDescrp = node.get("errorMsg").asText();
+                        String piErrorDescrp = node.get("errorMsgs").toString();
                         paymentInstruction.setPiErrorResp(piErrorDescrp);
                     }catch (Exception e) {
                         log.info("Exception while parsing COR Error response " + e);
