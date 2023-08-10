@@ -104,7 +104,7 @@ public class ContractServiceConfiguration {
     @Value("${contract.kafka.update.topic}")
     private String updateContractTopic;
 
-    @Value("${contracts.time.extension.update.topic}")
+    @Value("${contracts.revision.topic}")
     private String updateTimeExtensionTopic;
 
     //attendance service register search config
