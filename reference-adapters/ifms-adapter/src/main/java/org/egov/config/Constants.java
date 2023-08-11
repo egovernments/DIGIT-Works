@@ -31,4 +31,7 @@ public class Constants {
 	public static final String BANK_ACCOUNT_DECRYPT_KEY = "BankAccountDecrypt";
 	public static final String APPROVED_STATUS = "APPROVED";
 
+	public static final String DOC_INSERT_PATH = "/_doc";
+
+
 }

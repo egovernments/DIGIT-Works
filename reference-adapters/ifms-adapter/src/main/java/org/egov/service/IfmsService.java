@@ -7,14 +7,19 @@ import org.egov.config.IfmsAdapterConfig;
 import org.egov.config.JITAuthValues;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.utils.AuthenticationUtils;
+import org.egov.utils.ESLogUtils;
 import org.egov.utils.JitRequestUtils;
 import org.egov.utils.MdmsUtils;
 import org.egov.web.models.jit.JITRequest;
+import org.egov.web.models.jit.JITRequestLog;
 import org.egov.web.models.jit.JITResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +59,9 @@ public class IfmsService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private ESLogUtils esLogUtils;
+
     public Map<String, String> getKeys() throws NoSuchAlgorithmException {
         Map<String, String> keyMap = new HashMap<>();
         String encryptedAppKey = authenticationUtils.genEncryptedAppKey();
@@ -70,33 +78,56 @@ public class IfmsService {
         if (jitAuthValues.getAuthToken() == null) {
             getAuthDetailsFromIFMS();
         }
-        Map<String, String> payload = null;
         JITResponse decryptedResponse = null;
         try {
-            payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
-            String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
-            decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
-        } catch (Exception e) {
+            decryptedResponse = callServiceAPI(jitRequest);
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             String message = e.toString();
             if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
                 try {
                     getAuthDetailsFromIFMS();
-                    payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
-                    String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
-                    decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
+                    decryptedResponse = callServiceAPI(jitRequest);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
             } else {
                 throw new RuntimeException(e);
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return decryptedResponse;
+    }
+
+    private JITResponse callServiceAPI(JITRequest jitRequest) {
+        JITResponse decryptedResponse = null;
+        Map<String, String> payload = new HashMap<>();
+        try {
+            // Call the specific service API
+            payload = (Map<String, String>) jitRequestUtils.getEncryptedRequestBody(jitAuthValues.getSekString(), jitRequest);
+            String response = ifmsJITRequest(String.valueOf(jitAuthValues.getAuthToken()), payload.get("encryptedPayload"), payload.get("encryptionRek"));
+            decryptedResponse = jitRequestUtils.decryptResponse(payload.get("decryptionRek"), response);
+            // Log request
+            esLogUtils.saveJitRequestLogsToES(jitRequest, response, payload.get("decryptionRek"));
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            int statusCode = e.getRawStatusCode();
+            //Log to ES
+            JITRequestLog jitRequestLog = esLogUtils.saveJitRequestLogsToES(jitRequest, null, null);
+            esLogUtils.saveErrorResponseLogsToES(jitRequestLog, jitRequest, payload, e, statusCode);
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            //Log to ES
+            JITRequestLog jitRequestLog = esLogUtils.saveJitRequestLogsToES(jitRequest, null, null);
+            esLogUtils.saveErrorResponseLogsToES(jitRequestLog, jitRequest, payload, e, null);
+            throw new RuntimeException(e);
         }
         return decryptedResponse;
     }
 
     private void getAuthDetailsFromIFMS() {
+        Map<String, String> appKeys = new HashMap<>();
         try {
-            Map<String, String> appKeys = getKeys();
+            appKeys = getKeys();
             Map<String, String> authResponse = (Map<String, String>) authenticate(appKeys.get("encodedAppKey"));
             appKeys.put("authToken", authResponse.get("authToken"));
             appKeys.put("sek", authResponse.get("sek"));
@@ -106,9 +137,18 @@ public class IfmsService {
             // Set authentication details to the request
             jitAuthValues.setAuthToken(authResponse.get("authToken"));
             jitAuthValues.setSekString(decryptedSek);
-        } catch (NoSuchAlgorithmException e) {
+            // save auth response to ES
+            esLogUtils.saveAuthenticateRequest(appKeys.toString(), authResponse.toString());
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            int statusCode = e.getRawStatusCode();
+            //Log to ES
+            JITRequestLog jitRequestLog = esLogUtils.saveAuthenticateRequest(appKeys.toString(), null);
+            esLogUtils.saveAuthenticateFailureRequest(appKeys.toString(), e, statusCode, jitRequestLog);
             throw new RuntimeException(e);
         } catch (Exception e) {
+            //Log to ES
+            JITRequestLog jitRequestLog = esLogUtils.saveAuthenticateRequest(appKeys.toString(), null);
+            esLogUtils.saveAuthenticateFailureRequest(appKeys.toString(), e, null, jitRequestLog);
             throw new RuntimeException(e);
         }
     }

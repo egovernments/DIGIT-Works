@@ -69,21 +69,6 @@ public class AuthenticationUtils {
         return appKey;
     }
 
-    public PublicKey getPublicKey() throws Exception {
-        String pk = config.getIfmsJitPublic();
-        String publicKeyPEM = pk
-                .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replaceAll("\\s", "");
-        byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyPEM);
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
-        return KeyFactory.getInstance("RSA").generatePublic(keySpec);
-//
-//        byte[] keyBytes = Base64.getDecoder().decode(config.getIfmsJitPublic());
-//        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-//        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//        return keyFactory.generatePublic(keySpec);
-    }
 
     public String genEncodedAppKey(String appKey) {
         byte[] plainBytes = Base64.getDecoder().decode(appKey);

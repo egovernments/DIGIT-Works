@@ -10,7 +10,7 @@ var musterRollRouter = require("./routes/musterRolls");
 var workOrderRouter = require("./routes/workOrder");
 var groupBills = require("./routes/groupBill");
 
-var {listenConsumer} = require("./consumer")
+// var {listenConsumer} = require("./consumer")
 
 
 
@@ -49,5 +49,6 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-listenConsumer();
+// Commenting consumer listener becuase excel bill gen is not required. IFMS adapter will process the payment.
+// listenConsumer();
 module.exports = app;
