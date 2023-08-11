@@ -324,6 +324,10 @@ public class AttendanceRegisterService {
         return registerIds;
     }
 
+    /**
+     * Validate and update the end date of Attendance register as per revised contract
+     * @param attendanceTimeExtensionRequest
+     */
     public void updateEndDateForTimeExtension (AttendanceTimeExtensionRequest attendanceTimeExtensionRequest) {
         AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
                 .tenantId(attendanceTimeExtensionRequest.getTenantId())
@@ -350,7 +354,7 @@ public class AttendanceRegisterService {
                 producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
             }
         }else {
-            throw new CustomException("ATTENDANCE_REGISTER_EMPTY", "Attendance registers not found for the referenceId");
+            throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "Attendance registers not found for the referenceId");
         }
 
     }

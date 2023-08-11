@@ -37,6 +37,11 @@ public class Consumer {
         }
     }
 
+    /**
+     * Update end date for approved time extension request
+     * @param consumerRecord
+     * @param topic
+     */
     @KafkaListener(topics = "${contracts.revision.topic}")
     public void updateEndDate(String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
