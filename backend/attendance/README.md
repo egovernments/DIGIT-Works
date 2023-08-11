@@ -5,10 +5,9 @@ IN and OUT timestamps are recorded per individual. Aggregating and calculating a
 is the function of the muster roll service.
 
 
-
-
 ### Service Dependencies
 
+- DIGIT backbone services
 - Individual
 - MDMS
 - ID-GEN
@@ -23,7 +22,7 @@ is the function of the muster roll service.
 
 ### API Specs
 
-https://raw.githubusercontent.com/egovernments/DIGIT-Works/master/backend/attendance/Attendance-Service-1.0.0.yaml
+https://raw.githubusercontent.com/egovernments/DIGIT-Specs/master/Domain%20Services/Works/Attendance-Service-v1.0.0.yaml
 
 ### Postman Collection
 
