@@ -94,12 +94,22 @@ public class IfmsService {
                 throw new RuntimeException(e);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            String message = e.toString();
+            if(message.contains(JIT_UNAUTHORIZED_REQUEST_EXCEPTION)) {
+                try {
+                    getAuthDetailsFromIFMS();
+                    decryptedResponse = callServiceAPI(jitRequest);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                throw new RuntimeException(e);
+            }
         }
         return decryptedResponse;
     }
 
-    private JITResponse callServiceAPI(JITRequest jitRequest) {
+    private JITResponse callServiceAPI(JITRequest jitRequest) throws Exception {
         JITResponse decryptedResponse = null;
         Map<String, String> payload = new HashMap<>();
         try {
@@ -114,12 +124,12 @@ public class IfmsService {
             //Log to ES
             JITRequestLog jitRequestLog = esLogUtils.saveJitRequestLogsToES(jitRequest, null, null);
             esLogUtils.saveErrorResponseLogsToES(jitRequestLog, jitRequest, payload, e, statusCode);
-            throw new RuntimeException(e);
+            throw e;
         } catch (Exception e) {
             //Log to ES
             JITRequestLog jitRequestLog = esLogUtils.saveJitRequestLogsToES(jitRequest, null, null);
             esLogUtils.saveErrorResponseLogsToES(jitRequestLog, jitRequest, payload, e, null);
-            throw new RuntimeException(e);
+            throw e;
         }
         return decryptedResponse;
     }
