@@ -7,6 +7,7 @@ The calculator calls into the expense service to create bills.
 ### Service Dependencies
 
 - DIGIT backbone services
+- Calculator Service
 - Persister
 - Indexer
 - IDGen
