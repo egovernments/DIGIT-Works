@@ -10,6 +10,7 @@ import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
 import '../../models/works/contracts_model.dart';
+import '../../utils/constants.dart';
 
 part 'search_individual_work.freezed.dart';
 
@@ -45,6 +46,7 @@ class SearchIndividualWorkBloc
                       .organisationListModel!.organisations!.first.tenantId,
                   "orgIds": [],
                   "contractNumber": event.contractNumber,
+                  "status": Constants.active,
                   "pagination": {
                     "limit": "100",
                     "offSet": "0",
