@@ -23,6 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(const AuthState.initial()) {
     on<AuthLoginEvent>(_onLogin);
     on<AuthLogoutEvent>(_onLogout);
+    on<AuthClearLoggedDetailsEvent>(_onClearLoggedInDetails);
   }
 
   FutureOr<void> _onLogin(AuthLoginEvent event, AuthEmitter emit) async {
@@ -107,6 +108,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthState.error());
     }
   }
+
+  FutureOr<void> _onClearLoggedInDetails(
+      AuthClearLoggedDetailsEvent event, AuthEmitter emit) async {
+    Client client = Client();
+
+    try {
+      List<DigitRowCardModel>? languages = await GlobalVariables.getLanguages();
+      languages?.forEach((e) async {
+        if (kIsWeb) {
+          html.window.sessionStorage.remove(e.value);
+        } else {
+          await storage.delete(key: e.value);
+        }
+      });
+      GlobalVariables.organisationListModel = null;
+      GlobalVariables.authToken = null;
+      emit(const AuthState.loaded(null, null));
+      emit(const AuthState.initial());
+    } on DioError catch (e) {
+      emit(const AuthState.error());
+    }
+  }
 }
 
 @freezed
@@ -117,6 +140,8 @@ class AuthEvent with _$AuthEvent {
   }) = AuthLoginEvent;
 
   const factory AuthEvent.logout() = AuthLogoutEvent;
+
+  const factory AuthEvent.clearLoggedInDetails() = AuthClearLoggedDetailsEvent;
 }
 
 @freezed

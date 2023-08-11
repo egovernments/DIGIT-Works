@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'search_individual_work.dart';
+part of 'create_time_extension_request.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,25 +15,27 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$SearchIndividualWorkEvent {
+mixin _$CreateTimeExtensionRequestEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? contractNumber, Map<dynamic, dynamic>? body)
+    required TResult Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)
         search,
     required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+    TResult? Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)?
         search,
     TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+    TResult Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)?
         search,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -41,37 +43,39 @@ mixin _$SearchIndividualWorkEvent {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(IndividualWorkSearchEvent value) search,
-    required TResult Function(DisposeIndividualContract value) dispose,
+    required TResult Function(TimeExtensionRequestEvent value) search,
+    required TResult Function(TimeExtensionRequestDisposeEvent value) dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(IndividualWorkSearchEvent value)? search,
-    TResult? Function(DisposeIndividualContract value)? dispose,
+    TResult? Function(TimeExtensionRequestEvent value)? search,
+    TResult? Function(TimeExtensionRequestDisposeEvent value)? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(IndividualWorkSearchEvent value)? search,
-    TResult Function(DisposeIndividualContract value)? dispose,
+    TResult Function(TimeExtensionRequestEvent value)? search,
+    TResult Function(TimeExtensionRequestDisposeEvent value)? dispose,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SearchIndividualWorkEventCopyWith<$Res> {
-  factory $SearchIndividualWorkEventCopyWith(SearchIndividualWorkEvent value,
-          $Res Function(SearchIndividualWorkEvent) then) =
-      _$SearchIndividualWorkEventCopyWithImpl<$Res, SearchIndividualWorkEvent>;
+abstract class $CreateTimeExtensionRequestEventCopyWith<$Res> {
+  factory $CreateTimeExtensionRequestEventCopyWith(
+          CreateTimeExtensionRequestEvent value,
+          $Res Function(CreateTimeExtensionRequestEvent) then) =
+      _$CreateTimeExtensionRequestEventCopyWithImpl<$Res,
+          CreateTimeExtensionRequestEvent>;
 }
 
 /// @nodoc
-class _$SearchIndividualWorkEventCopyWithImpl<$Res,
-        $Val extends SearchIndividualWorkEvent>
-    implements $SearchIndividualWorkEventCopyWith<$Res> {
-  _$SearchIndividualWorkEventCopyWithImpl(this._value, this._then);
+class _$CreateTimeExtensionRequestEventCopyWithImpl<$Res,
+        $Val extends CreateTimeExtensionRequestEvent>
+    implements $CreateTimeExtensionRequestEventCopyWith<$Res> {
+  _$CreateTimeExtensionRequestEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -80,131 +84,166 @@ class _$SearchIndividualWorkEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$IndividualWorkSearchEventCopyWith<$Res> {
-  factory _$$IndividualWorkSearchEventCopyWith(
-          _$IndividualWorkSearchEvent value,
-          $Res Function(_$IndividualWorkSearchEvent) then) =
-      __$$IndividualWorkSearchEventCopyWithImpl<$Res>;
+abstract class _$$TimeExtensionRequestEventCopyWith<$Res> {
+  factory _$$TimeExtensionRequestEventCopyWith(
+          _$TimeExtensionRequestEvent value,
+          $Res Function(_$TimeExtensionRequestEvent) then) =
+      __$$TimeExtensionRequestEventCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? contractNumber, Map<dynamic, dynamic>? body});
+  $Res call(
+      {Contracts? contractsModel,
+      String extensionDays,
+      int extensionDate,
+      String action,
+      String reason});
 }
 
 /// @nodoc
-class __$$IndividualWorkSearchEventCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkEventCopyWithImpl<$Res,
-        _$IndividualWorkSearchEvent>
-    implements _$$IndividualWorkSearchEventCopyWith<$Res> {
-  __$$IndividualWorkSearchEventCopyWithImpl(_$IndividualWorkSearchEvent _value,
-      $Res Function(_$IndividualWorkSearchEvent) _then)
+class __$$TimeExtensionRequestEventCopyWithImpl<$Res>
+    extends _$CreateTimeExtensionRequestEventCopyWithImpl<$Res,
+        _$TimeExtensionRequestEvent>
+    implements _$$TimeExtensionRequestEventCopyWith<$Res> {
+  __$$TimeExtensionRequestEventCopyWithImpl(_$TimeExtensionRequestEvent _value,
+      $Res Function(_$TimeExtensionRequestEvent) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? contractNumber = freezed,
-    Object? body = freezed,
+    Object? contractsModel = freezed,
+    Object? extensionDays = null,
+    Object? extensionDate = null,
+    Object? action = null,
+    Object? reason = null,
   }) {
-    return _then(_$IndividualWorkSearchEvent(
-      contractNumber: freezed == contractNumber
-          ? _value.contractNumber
-          : contractNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      body: freezed == body
-          ? _value._body
-          : body // ignore: cast_nullable_to_non_nullable
-              as Map<dynamic, dynamic>?,
+    return _then(_$TimeExtensionRequestEvent(
+      contractsModel: freezed == contractsModel
+          ? _value.contractsModel
+          : contractsModel // ignore: cast_nullable_to_non_nullable
+              as Contracts?,
+      extensionDays: null == extensionDays
+          ? _value.extensionDays
+          : extensionDays // ignore: cast_nullable_to_non_nullable
+              as String,
+      extensionDate: null == extensionDate
+          ? _value.extensionDate
+          : extensionDate // ignore: cast_nullable_to_non_nullable
+              as int,
+      action: null == action
+          ? _value.action
+          : action // ignore: cast_nullable_to_non_nullable
+              as String,
+      reason: null == reason
+          ? _value.reason
+          : reason // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
 
-class _$IndividualWorkSearchEvent
+class _$TimeExtensionRequestEvent
     with DiagnosticableTreeMixin
-    implements IndividualWorkSearchEvent {
-  const _$IndividualWorkSearchEvent(
-      {this.contractNumber = '', final Map<dynamic, dynamic>? body})
-      : _body = body;
+    implements TimeExtensionRequestEvent {
+  const _$TimeExtensionRequestEvent(
+      {required this.contractsModel,
+      required this.extensionDays,
+      required this.extensionDate,
+      required this.action,
+      this.reason = ''});
 
   @override
-  @JsonKey()
-  final String? contractNumber;
-  final Map<dynamic, dynamic>? _body;
+  final Contracts? contractsModel;
   @override
-  Map<dynamic, dynamic>? get body {
-    final value = _body;
-    if (value == null) return null;
-    if (_body is EqualUnmodifiableMapView) return _body;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
-  }
+  final String extensionDays;
+  @override
+  final int extensionDate;
+  @override
+  final String action;
+  @override
+  @JsonKey()
+  final String reason;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkEvent.search(contractNumber: $contractNumber, body: $body)';
+    return 'CreateTimeExtensionRequestEvent.search(contractsModel: $contractsModel, extensionDays: $extensionDays, extensionDate: $extensionDate, action: $action, reason: $reason)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'SearchIndividualWorkEvent.search'))
-      ..add(DiagnosticsProperty('contractNumber', contractNumber))
-      ..add(DiagnosticsProperty('body', body));
+      ..add(
+          DiagnosticsProperty('type', 'CreateTimeExtensionRequestEvent.search'))
+      ..add(DiagnosticsProperty('contractsModel', contractsModel))
+      ..add(DiagnosticsProperty('extensionDays', extensionDays))
+      ..add(DiagnosticsProperty('extensionDate', extensionDate))
+      ..add(DiagnosticsProperty('action', action))
+      ..add(DiagnosticsProperty('reason', reason));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$IndividualWorkSearchEvent &&
-            (identical(other.contractNumber, contractNumber) ||
-                other.contractNumber == contractNumber) &&
-            const DeepCollectionEquality().equals(other._body, _body));
+            other is _$TimeExtensionRequestEvent &&
+            (identical(other.contractsModel, contractsModel) ||
+                other.contractsModel == contractsModel) &&
+            (identical(other.extensionDays, extensionDays) ||
+                other.extensionDays == extensionDays) &&
+            (identical(other.extensionDate, extensionDate) ||
+                other.extensionDate == extensionDate) &&
+            (identical(other.action, action) || other.action == action) &&
+            (identical(other.reason, reason) || other.reason == reason));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, contractNumber, const DeepCollectionEquality().hash(_body));
+  int get hashCode => Object.hash(runtimeType, contractsModel, extensionDays,
+      extensionDate, action, reason);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$IndividualWorkSearchEventCopyWith<_$IndividualWorkSearchEvent>
-      get copyWith => __$$IndividualWorkSearchEventCopyWithImpl<
-          _$IndividualWorkSearchEvent>(this, _$identity);
+  _$$TimeExtensionRequestEventCopyWith<_$TimeExtensionRequestEvent>
+      get copyWith => __$$TimeExtensionRequestEventCopyWithImpl<
+          _$TimeExtensionRequestEvent>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? contractNumber, Map<dynamic, dynamic>? body)
+    required TResult Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)
         search,
     required TResult Function() dispose,
   }) {
-    return search(contractNumber, body);
+    return search(contractsModel, extensionDays, extensionDate, action, reason);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+    TResult? Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)?
         search,
     TResult? Function()? dispose,
   }) {
-    return search?.call(contractNumber, body);
+    return search?.call(
+        contractsModel, extensionDays, extensionDate, action, reason);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+    TResult Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)?
         search,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
-      return search(contractNumber, body);
+      return search(
+          contractsModel, extensionDays, extensionDate, action, reason);
     }
     return orElse();
   }
@@ -212,8 +251,8 @@ class _$IndividualWorkSearchEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(IndividualWorkSearchEvent value) search,
-    required TResult Function(DisposeIndividualContract value) dispose,
+    required TResult Function(TimeExtensionRequestEvent value) search,
+    required TResult Function(TimeExtensionRequestDisposeEvent value) dispose,
   }) {
     return search(this);
   }
@@ -221,8 +260,8 @@ class _$IndividualWorkSearchEvent
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(IndividualWorkSearchEvent value)? search,
-    TResult? Function(DisposeIndividualContract value)? dispose,
+    TResult? Function(TimeExtensionRequestEvent value)? search,
+    TResult? Function(TimeExtensionRequestDisposeEvent value)? dispose,
   }) {
     return search?.call(this);
   }
@@ -230,8 +269,8 @@ class _$IndividualWorkSearchEvent
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(IndividualWorkSearchEvent value)? search,
-    TResult Function(DisposeIndividualContract value)? dispose,
+    TResult Function(TimeExtensionRequestEvent value)? search,
+    TResult Function(TimeExtensionRequestDisposeEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -241,60 +280,68 @@ class _$IndividualWorkSearchEvent
   }
 }
 
-abstract class IndividualWorkSearchEvent implements SearchIndividualWorkEvent {
-  const factory IndividualWorkSearchEvent(
-      {final String? contractNumber,
-      final Map<dynamic, dynamic>? body}) = _$IndividualWorkSearchEvent;
+abstract class TimeExtensionRequestEvent
+    implements CreateTimeExtensionRequestEvent {
+  const factory TimeExtensionRequestEvent(
+      {required final Contracts? contractsModel,
+      required final String extensionDays,
+      required final int extensionDate,
+      required final String action,
+      final String reason}) = _$TimeExtensionRequestEvent;
 
-  String? get contractNumber;
-  Map<dynamic, dynamic>? get body;
+  Contracts? get contractsModel;
+  String get extensionDays;
+  int get extensionDate;
+  String get action;
+  String get reason;
   @JsonKey(ignore: true)
-  _$$IndividualWorkSearchEventCopyWith<_$IndividualWorkSearchEvent>
+  _$$TimeExtensionRequestEventCopyWith<_$TimeExtensionRequestEvent>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DisposeIndividualContractCopyWith<$Res> {
-  factory _$$DisposeIndividualContractCopyWith(
-          _$DisposeIndividualContract value,
-          $Res Function(_$DisposeIndividualContract) then) =
-      __$$DisposeIndividualContractCopyWithImpl<$Res>;
+abstract class _$$TimeExtensionRequestDisposeEventCopyWith<$Res> {
+  factory _$$TimeExtensionRequestDisposeEventCopyWith(
+          _$TimeExtensionRequestDisposeEvent value,
+          $Res Function(_$TimeExtensionRequestDisposeEvent) then) =
+      __$$TimeExtensionRequestDisposeEventCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$DisposeIndividualContractCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkEventCopyWithImpl<$Res,
-        _$DisposeIndividualContract>
-    implements _$$DisposeIndividualContractCopyWith<$Res> {
-  __$$DisposeIndividualContractCopyWithImpl(_$DisposeIndividualContract _value,
-      $Res Function(_$DisposeIndividualContract) _then)
+class __$$TimeExtensionRequestDisposeEventCopyWithImpl<$Res>
+    extends _$CreateTimeExtensionRequestEventCopyWithImpl<$Res,
+        _$TimeExtensionRequestDisposeEvent>
+    implements _$$TimeExtensionRequestDisposeEventCopyWith<$Res> {
+  __$$TimeExtensionRequestDisposeEventCopyWithImpl(
+      _$TimeExtensionRequestDisposeEvent _value,
+      $Res Function(_$TimeExtensionRequestDisposeEvent) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$DisposeIndividualContract
+class _$TimeExtensionRequestDisposeEvent
     with DiagnosticableTreeMixin
-    implements DisposeIndividualContract {
-  const _$DisposeIndividualContract();
+    implements TimeExtensionRequestDisposeEvent {
+  const _$TimeExtensionRequestDisposeEvent();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkEvent.dispose()';
+    return 'CreateTimeExtensionRequestEvent.dispose()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'SearchIndividualWorkEvent.dispose'));
+    properties.add(
+        DiagnosticsProperty('type', 'CreateTimeExtensionRequestEvent.dispose'));
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DisposeIndividualContract);
+            other is _$TimeExtensionRequestDisposeEvent);
   }
 
   @override
@@ -303,8 +350,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(
-            String? contractNumber, Map<dynamic, dynamic>? body)
+    required TResult Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)
         search,
     required TResult Function() dispose,
   }) {
@@ -314,7 +361,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+    TResult? Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)?
         search,
     TResult? Function()? dispose,
   }) {
@@ -324,7 +372,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+    TResult Function(Contracts? contractsModel, String extensionDays,
+            int extensionDate, String action, String reason)?
         search,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -338,8 +387,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(IndividualWorkSearchEvent value) search,
-    required TResult Function(DisposeIndividualContract value) dispose,
+    required TResult Function(TimeExtensionRequestEvent value) search,
+    required TResult Function(TimeExtensionRequestDisposeEvent value) dispose,
   }) {
     return dispose(this);
   }
@@ -347,8 +396,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(IndividualWorkSearchEvent value)? search,
-    TResult? Function(DisposeIndividualContract value)? dispose,
+    TResult? Function(TimeExtensionRequestEvent value)? search,
+    TResult? Function(TimeExtensionRequestDisposeEvent value)? dispose,
   }) {
     return dispose?.call(this);
   }
@@ -356,8 +405,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(IndividualWorkSearchEvent value)? search,
-    TResult Function(DisposeIndividualContract value)? dispose,
+    TResult Function(TimeExtensionRequestEvent value)? search,
+    TResult Function(TimeExtensionRequestDisposeEvent value)? dispose,
     required TResult orElse(),
   }) {
     if (dispose != null) {
@@ -367,12 +416,14 @@ class _$DisposeIndividualContract
   }
 }
 
-abstract class DisposeIndividualContract implements SearchIndividualWorkEvent {
-  const factory DisposeIndividualContract() = _$DisposeIndividualContract;
+abstract class TimeExtensionRequestDisposeEvent
+    implements CreateTimeExtensionRequestEvent {
+  const factory TimeExtensionRequestDisposeEvent() =
+      _$TimeExtensionRequestDisposeEvent;
 }
 
 /// @nodoc
-mixin _$SearchIndividualWorkState {
+mixin _$CreateTimeExtensionRequestState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
@@ -426,17 +477,19 @@ mixin _$SearchIndividualWorkState {
 }
 
 /// @nodoc
-abstract class $SearchIndividualWorkStateCopyWith<$Res> {
-  factory $SearchIndividualWorkStateCopyWith(SearchIndividualWorkState value,
-          $Res Function(SearchIndividualWorkState) then) =
-      _$SearchIndividualWorkStateCopyWithImpl<$Res, SearchIndividualWorkState>;
+abstract class $CreateTimeExtensionRequestStateCopyWith<$Res> {
+  factory $CreateTimeExtensionRequestStateCopyWith(
+          CreateTimeExtensionRequestState value,
+          $Res Function(CreateTimeExtensionRequestState) then) =
+      _$CreateTimeExtensionRequestStateCopyWithImpl<$Res,
+          CreateTimeExtensionRequestState>;
 }
 
 /// @nodoc
-class _$SearchIndividualWorkStateCopyWithImpl<$Res,
-        $Val extends SearchIndividualWorkState>
-    implements $SearchIndividualWorkStateCopyWith<$Res> {
-  _$SearchIndividualWorkStateCopyWithImpl(this._value, this._then);
+class _$CreateTimeExtensionRequestStateCopyWithImpl<$Res,
+        $Val extends CreateTimeExtensionRequestState>
+    implements $CreateTimeExtensionRequestStateCopyWith<$Res> {
+  _$CreateTimeExtensionRequestStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -453,7 +506,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Initial>
+    extends _$CreateTimeExtensionRequestStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -466,14 +519,14 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkState.initial()';
+    return 'CreateTimeExtensionRequestState.initial()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'SearchIndividualWorkState.initial'));
+    properties.add(
+        DiagnosticsProperty('type', 'CreateTimeExtensionRequestState.initial'));
   }
 
   @override
@@ -560,7 +613,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Initial extends SearchIndividualWorkState {
+abstract class _Initial extends CreateTimeExtensionRequestState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -574,7 +627,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Loading>
+    extends _$CreateTimeExtensionRequestStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -587,14 +640,14 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkState.loading()';
+    return 'CreateTimeExtensionRequestState.loading()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty('type', 'SearchIndividualWorkState.loading'));
+    properties.add(
+        DiagnosticsProperty('type', 'CreateTimeExtensionRequestState.loading'));
   }
 
   @override
@@ -681,7 +734,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loading extends SearchIndividualWorkState {
+abstract class _Loading extends CreateTimeExtensionRequestState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -696,7 +749,7 @@ abstract class _$$_LoadedCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$CreateTimeExtensionRequestStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -725,14 +778,15 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkState.loaded(contractsModel: $contractsModel)';
+    return 'CreateTimeExtensionRequestState.loaded(contractsModel: $contractsModel)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'SearchIndividualWorkState.loaded'))
+      ..add(
+          DiagnosticsProperty('type', 'CreateTimeExtensionRequestState.loaded'))
       ..add(DiagnosticsProperty('contractsModel', contractsModel));
   }
 
@@ -829,7 +883,7 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loaded extends SearchIndividualWorkState {
+abstract class _Loaded extends CreateTimeExtensionRequestState {
   const factory _Loaded(final ContractsModel? contractsModel) = _$_Loaded;
   const _Loaded._() : super._();
 
@@ -849,7 +903,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$SearchIndividualWorkStateCopyWithImpl<$Res, _$_Error>
+    extends _$CreateTimeExtensionRequestStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -878,14 +932,15 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkState.error(error: $error)';
+    return 'CreateTimeExtensionRequestState.error(error: $error)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'SearchIndividualWorkState.error'))
+      ..add(
+          DiagnosticsProperty('type', 'CreateTimeExtensionRequestState.error'))
       ..add(DiagnosticsProperty('error', error));
   }
 
@@ -981,7 +1036,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Error extends SearchIndividualWorkState {
+abstract class _Error extends CreateTimeExtensionRequestState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 
