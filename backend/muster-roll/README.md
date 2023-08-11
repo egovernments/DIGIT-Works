@@ -12,7 +12,7 @@ This is a calculator service dependent on the Attendance service. Attendance log
 - User
 - Attendance
 
-### Service Details
+## Service Details
 - Estimate wages of a wage seeker based on his/her attendance logs
 - Create a muster roll with a list of wage seekers
 - Update a muster roll with modified aggregate attendance
