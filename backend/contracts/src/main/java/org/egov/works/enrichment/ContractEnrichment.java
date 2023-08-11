@@ -66,6 +66,7 @@ public class ContractEnrichment {
 
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
+        // Enrich Supplement number and mark contracts and document status as in-workflow
         if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
             // Enrich Supplement Number
             enrichSupplementNumber(contractRequest);
@@ -147,7 +148,8 @@ public class ContractEnrichment {
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INACTIVE);
             log.info("Contract components are marked as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
         }
-        if (contractRequest.getContract().getSupplementNumber() != null && "APPROVE".equalsIgnoreCase(workflow.getAction())) {
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)
+                && contractRequest.getContract().getSupplementNumber() != null && "APPROVE".equalsIgnoreCase(workflow.getAction())) {
             List<Contract> contractsFromDB = contractService.getContracts(ContractCriteria.builder()
                     .tenantId(contract.getTenantId())
                     .contractNumber(contract.getContractNumber())
@@ -168,6 +170,8 @@ public class ContractEnrichment {
             }
             markContractAndDocumentsStatus(contractRequest, Status.ACTIVE);
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
+
+            // Push updated end date to kafka topic to update attendance register end date
             AttendanceTimeExtensionRequest attendanceTimeExtensionRequest = AttendanceTimeExtensionRequest.builder()
                     .requestInfo(contractRequest.getRequestInfo())
                     .endDate(contract.getEndDate()).referenceId(contract.getContractNumber())

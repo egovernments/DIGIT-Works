@@ -85,7 +85,7 @@ public class ContractServiceValidator {
         if (contractRequest.getContract().getBusinessService() != null &&
                 contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
             log.info("Validating time extension request");
-            // Validate if at least one muster-roll is created and approved
+            // Validate if Time Extension Request
             validateTimeExtensionRequestForCreate(contractRequest);
         } else {
             // Validate estimateIds against estimate service and DB
@@ -633,6 +633,11 @@ public class ContractServiceValidator {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
     }
+
+    /**
+     * Validating Time Extension Create Request
+     * @param contractRequest
+     */
     public void validateTimeExtensionRequestForCreate(ContractRequest contractRequest) {
 
         // Validate if contract number is present
@@ -664,6 +669,10 @@ public class ContractServiceValidator {
 
     }
 
+    /**
+     * Validate Time Extension Update Request
+     * @param contractRequest
+     */
     private void validateTimeExtensionForUpdate (ContractRequest contractRequest) {
 
         // Validate if contract number is present
@@ -758,8 +767,6 @@ public class ContractServiceValidator {
                 .append("&referenceId=").append(contractRequest.getContract().getContractNumber());
         ObjectNode requestInfoNode = mapper.createObjectNode();
         requestInfoNode.putPOJO("RequestInfo", contractRequest.getRequestInfo());
-//        ObjectNode musterRollSearchCriteria = mapper.createObjectNode();
-//        musterRollSearchCriteria.put("referenceId", contractRequest.getContract().getContractNumber());
 
         Object musterRollRes = restRepo.fetchResult(uri, requestInfoNode);
         MusterRollResponse musterRollResponse = null;
