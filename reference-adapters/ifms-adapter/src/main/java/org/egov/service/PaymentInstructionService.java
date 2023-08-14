@@ -331,7 +331,7 @@ public class PaymentInstructionService {
         if (paymentStatus.equals(PaymentStatus.INITIATED)) {
             piEnrichment.addTransactionDetailsInPiRequest(pi, paymentRequest, sanctionDetail);
             // update fund summary amount
-            sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().subtract(pi.getNetAmount()));
+            sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().subtract(pi.getGrossAmount()));
             sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedTime(pi.getAuditDetails().getLastModifiedTime());
             sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(pi.getAuditDetails().getLastModifiedBy());
             pi.setIsActive(true);

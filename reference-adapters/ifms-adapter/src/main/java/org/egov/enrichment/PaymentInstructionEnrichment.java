@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.egov.config.Constants.*;
@@ -129,6 +130,12 @@ public class PaymentInstructionEnrichment {
             return null;
         }
 
+        // Get the deduction amount from beneficiary lineitems and compute grossAmount
+        BigDecimal deductionAmount = getDeductionAmountFromBeneficiary(beneficiaries, paymentRequest);
+        BigDecimal grossAmount = new BigDecimal(totalAmount.toString());
+        if (deductionAmount != null)
+            grossAmount = totalAmount.subtract(deductionAmount);
+
         String ssuIaId = ssuNode.get("ssuId").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
         String granteeAgCode = ssuNode.get("granteeAgCode").asText();
@@ -152,13 +159,13 @@ public class PaymentInstructionEnrichment {
                 .ssuAllotmentId(selectedSanction.getAllotmentDetails().get(0).getSsuAllotmentId())
                 .allotmentTxnSlNo(String.valueOf(selectedSanction.getAllotmentDetails().get(0).getAllotmentSerialNo()))
                 .purpose(JIT_FD_EXT_APP_NAME)
-                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billGrossAmount(grossAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .beneficiaryDetails(beneficiaries)
                 .numBeneficiaries(beneficiaries.size())
                 .billNumberOfBenf(String.valueOf(beneficiaries.size()))
                 .tenantId(paymentRequest.getPayment().getTenantId())
-                .grossAmount(totalAmount)
+                .grossAmount(grossAmount)
                 .netAmount(totalAmount)
                 .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
                 .piStatus(piStatus)
@@ -571,6 +578,11 @@ public class PaymentInstructionEnrichment {
                 totalAmount = totalAmount.add(piBeneficiary.getAmount());
             }
         }
+        // Get the deduction amount from beneficiary line items and compute grossAmount
+        BigDecimal deductionAmount = getDeductionAmountFromBeneficiary(beneficiaries, paymentRequest);
+        BigDecimal grossAmount = new BigDecimal(totalAmount.toString());
+        if (deductionAmount != null)
+            grossAmount = totalAmount.subtract(deductionAmount);
 
         String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         Long time = System.currentTimeMillis();
@@ -588,7 +600,7 @@ public class PaymentInstructionEnrichment {
                 .parentPiNumber(existingPi.getJitBillNo())
                 .muktaReferenceId(muktaReferenceId)
                 .numBeneficiaries(beneficiaries.size())
-                .grossAmount(totalAmount)
+                .grossAmount(grossAmount)
                 .netAmount(totalAmount)
                 .piStatus(PIStatus.INITIATED)
                 .auditDetails(auditDetails)
@@ -657,8 +669,11 @@ public class PaymentInstructionEnrichment {
                 totalAmount = totalAmount.add(piBeneficiary.getAmount());
             }
         }
-        SanctionDetail selectedSanction = null;
-        Boolean hasFunds = true;
+        // Get the deduction amount from beneficiary lineitems and compute grossAmount
+        BigDecimal deductionAmount = getDeductionAmountFromBeneficiary(beneficiaries, paymentRequest);
+        BigDecimal grossAmount = new BigDecimal(totalAmount.toString());
+        if (deductionAmount != null)
+            grossAmount = totalAmount.subtract(deductionAmount);
 
         // Sort the list in descending order based on the value
         PIStatus piStatus = PIStatus.FAILED;
@@ -667,13 +682,13 @@ public class PaymentInstructionEnrichment {
                 .id(UUID.randomUUID().toString())
                 .jitBillNo(jitBillNo)
                 .purpose(JIT_FD_EXT_APP_NAME)
-                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billGrossAmount(grossAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .beneficiaryDetails(beneficiaries)
                 .numBeneficiaries(beneficiaries.size())
                 .billNumberOfBenf(String.valueOf(beneficiaries.size()))
                 .tenantId(paymentRequest.getPayment().getTenantId())
-                .grossAmount(totalAmount)
+                .grossAmount(grossAmount)
                 .netAmount(totalAmount)
                 .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
                 .piStatus(piStatus)
@@ -683,6 +698,40 @@ public class PaymentInstructionEnrichment {
         // update piRequest for payment search indexer
         updateBillFieldsForIndexer(piRequest, paymentRequest);
         return piRequest;
+    }
+
+    private BigDecimal getDeductionAmountFromBeneficiary(List<Beneficiary> beneficiaries, PaymentRequest paymentRequest) {
+        log.info("Started executing getDeductionAmountFromBeneficiary");
+        BigDecimal deductionAmount = new BigDecimal("0");
+        try {
+            List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
+            JSONArray headCodesList = billUtils.getHeadCode(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
+
+            Map<String, JsonNode> headCodeMap = getHeadCodeHashMap(headCodesList);
+            Map<String, LineItem> billPayableLineItemMap = billList.stream()
+                    .map(Bill::getBillDetails)
+                    .flatMap(Collection::stream)
+                    .map(BillDetail::getPayableLineItems)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toMap(LineItem::getId, Function.identity()));
+            for (Beneficiary beneficiary: beneficiaries) {
+                for (BenfLineItems lineItems: beneficiary.getBenfLineItems()) {
+                    LineItem lineItem = billPayableLineItemMap.get(lineItems.getLineItemId());
+                    if (lineItem == null) continue;
+
+                    JsonNode headCodeNode = headCodeMap.get(lineItem.getHeadCode());
+                    if (headCodeNode != null) {
+                        String headCodeCategory = headCodeNode.get(Constants.HEAD_CODE_CATEGORY_KEY).asText();
+                        if (headCodeCategory != null && headCodeCategory.equalsIgnoreCase(Constants.HEAD_CODE_DEDUCTION_CATEGORY)) {
+                            deductionAmount = deductionAmount.add(lineItem.getAmount());
+                        }
+                    }
+                }
+            }
+        }catch (Exception e) {
+            log.info("Exception in PaymentInstructionEnrichment:getDeductionAmountFromBeneficiary : " + e);
+        }
+        return deductionAmount;
     }
 
 }
