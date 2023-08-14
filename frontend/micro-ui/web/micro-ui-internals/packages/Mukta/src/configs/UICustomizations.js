@@ -1520,7 +1520,7 @@ export const UICustomizations = {
       }
 
       if(key === "CORE_COMMON_STATUS") {
-        return value ? t(`BILL_STATUS_PAYMENT_INITIATED`) : t("ES_COMMON_NA")
+        return value ? t(Digit.Utils.locale.getTransformedLocale(`BILL_STATUS_PAYMENT_${value}`)) : t("ES_COMMON_NA")
       }
       if(key === "ES_COMMON_LOCATION") {
         const location = {
