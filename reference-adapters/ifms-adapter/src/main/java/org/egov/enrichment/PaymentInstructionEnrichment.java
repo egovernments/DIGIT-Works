@@ -130,11 +130,11 @@ public class PaymentInstructionEnrichment {
             return null;
         }
 
-        // Get the deduction amount from beneficiary lineitems and compute grossAmount
+        // Get the deduction amount from beneficiary lineitems and compute netAmount
         BigDecimal deductionAmount = getDeductionAmountFromBeneficiary(beneficiaries, paymentRequest);
-        BigDecimal grossAmount = new BigDecimal(totalAmount.toString());
+        BigDecimal netAmount = new BigDecimal(totalAmount.toString());
         if (deductionAmount != null)
-            grossAmount = totalAmount.subtract(deductionAmount);
+            netAmount = totalAmount.subtract(deductionAmount);
 
         String ssuIaId = ssuNode.get("ssuId").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
@@ -159,14 +159,14 @@ public class PaymentInstructionEnrichment {
                 .ssuAllotmentId(selectedSanction.getAllotmentDetails().get(0).getSsuAllotmentId())
                 .allotmentTxnSlNo(String.valueOf(selectedSanction.getAllotmentDetails().get(0).getAllotmentSerialNo()))
                 .purpose(JIT_FD_EXT_APP_NAME)
-                .billGrossAmount(grossAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
-                .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billNetAmount(netAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .beneficiaryDetails(beneficiaries)
                 .numBeneficiaries(beneficiaries.size())
                 .billNumberOfBenf(String.valueOf(beneficiaries.size()))
                 .tenantId(paymentRequest.getPayment().getTenantId())
-                .grossAmount(grossAmount)
-                .netAmount(totalAmount)
+                .grossAmount(totalAmount)
+                .netAmount(netAmount)
                 .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
                 .piStatus(piStatus)
                 .build();
@@ -578,11 +578,11 @@ public class PaymentInstructionEnrichment {
                 totalAmount = totalAmount.add(piBeneficiary.getAmount());
             }
         }
-        // Get the deduction amount from beneficiary line items and compute grossAmount
+        // Get the deduction amount from beneficiary line items and compute netAmount
         BigDecimal deductionAmount = getDeductionAmountFromBeneficiary(beneficiaries, paymentRequest);
-        BigDecimal grossAmount = new BigDecimal(totalAmount.toString());
+        BigDecimal netAmount = new BigDecimal(totalAmount.toString());
         if (deductionAmount != null)
-            grossAmount = totalAmount.subtract(deductionAmount);
+            netAmount = totalAmount.subtract(deductionAmount);
 
         String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
         Long time = System.currentTimeMillis();
@@ -600,8 +600,8 @@ public class PaymentInstructionEnrichment {
                 .parentPiNumber(existingPi.getJitBillNo())
                 .muktaReferenceId(muktaReferenceId)
                 .numBeneficiaries(beneficiaries.size())
-                .grossAmount(grossAmount)
-                .netAmount(totalAmount)
+                .grossAmount(totalAmount)
+                .netAmount(netAmount)
                 .piStatus(PIStatus.INITIATED)
                 .auditDetails(auditDetails)
                 .additionalDetails(emptyObject)
@@ -669,11 +669,11 @@ public class PaymentInstructionEnrichment {
                 totalAmount = totalAmount.add(piBeneficiary.getAmount());
             }
         }
-        // Get the deduction amount from beneficiary lineitems and compute grossAmount
+        // Get the deduction amount from beneficiary lineitems and compute netAmount
         BigDecimal deductionAmount = getDeductionAmountFromBeneficiary(beneficiaries, paymentRequest);
-        BigDecimal grossAmount = new BigDecimal(totalAmount.toString());
+        BigDecimal netAmount = new BigDecimal(totalAmount.toString());
         if (deductionAmount != null)
-            grossAmount = totalAmount.subtract(deductionAmount);
+            netAmount = totalAmount.subtract(deductionAmount);
 
         // Sort the list in descending order based on the value
         PIStatus piStatus = PIStatus.FAILED;
@@ -682,14 +682,14 @@ public class PaymentInstructionEnrichment {
                 .id(UUID.randomUUID().toString())
                 .jitBillNo(jitBillNo)
                 .purpose(JIT_FD_EXT_APP_NAME)
-                .billGrossAmount(grossAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
-                .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billNetAmount(netAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
                 .beneficiaryDetails(beneficiaries)
                 .numBeneficiaries(beneficiaries.size())
                 .billNumberOfBenf(String.valueOf(beneficiaries.size()))
                 .tenantId(paymentRequest.getPayment().getTenantId())
-                .grossAmount(grossAmount)
-                .netAmount(totalAmount)
+                .grossAmount(totalAmount)
+                .netAmount(netAmount)
                 .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
                 .piStatus(piStatus)
                 .isActive(false)
