@@ -487,10 +487,10 @@ class _CreateTimeExtensionRequestPage
 
   FormGroup buildForm(SearchIndividualWorkState contractState) {
     final extensionDays = contractState.mapOrNull(loaded: (value) {
-      return value.contractsModel?.contracts?.first.additionalDetails?.timeExt;
+      return widget.isEdit == true ? value.contractsModel?.contracts?.first.additionalDetails?.timeExt : '';
     });
     final extensionReason = contractState.mapOrNull(loaded: (value) {
-      return value.contractsModel?.contracts?.first.additionalDetails?.timeExtReason;
+      return widget.isEdit == true ? value.contractsModel?.contracts?.first.additionalDetails?.timeExtReason : '';
     });
     return fb.group(<String, Object>{
       extensionDaysKey: FormControl<String>(value: extensionDays ?? '', validators: [
