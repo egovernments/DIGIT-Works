@@ -89,5 +89,4 @@ public class ContractServiceConstants {
     // Workflow constants
 
     public static final String CONTRACT_REVISION_BUSINESS_SERVICE = "CONTRACT-REVISION";
-    public static final String PENDING_FOR_VERIFICATION_STATUS = "PENDING_FOR_VERIFICATION";
 }

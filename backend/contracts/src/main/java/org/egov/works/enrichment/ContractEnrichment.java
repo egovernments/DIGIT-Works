@@ -173,10 +173,13 @@ public class ContractEnrichment {
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
 
             // Push updated end date to kafka topic to update attendance register end date
-            AttendanceTimeExtensionRequest attendanceTimeExtensionRequest = AttendanceTimeExtensionRequest.builder()
-                    .requestInfo(contractRequest.getRequestInfo())
-                    .endDate(contract.getEndDate()).referenceId(contract.getContractNumber())
-                    .tenantId(contract.getTenantId()).build();
+            JsonNode requestInfo = mapper.convertValue(contractRequest.getRequestInfo(), JsonNode.class);
+            JsonNode attendanceTimeExtensionRequest = mapper.createObjectNode()
+                    .putPOJO("RequestInfo", requestInfo)
+                    .put("tenantId", contract.getTenantId())
+                    .put("referenceId", contract.getContractNumber())
+                    .put("endDate", contract.getEndDate());
+
             producer.push(config.getUpdateTimeExtensionTopic(), attendanceTimeExtensionRequest);
         }
     }
