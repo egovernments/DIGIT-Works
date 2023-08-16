@@ -19,6 +19,7 @@ import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -326,29 +327,32 @@ public class AttendanceRegisterService {
 
     /**
      * Validate and update the end date of Attendance register as per revised contract
-     * @param attendanceTimeExtensionRequest
+     * @param requestInfo
+     * @param tenantId
+     * @param referenceId
+     * @param endDate
      */
-    public void updateEndDateForTimeExtension (AttendanceTimeExtensionRequest attendanceTimeExtensionRequest) {
+    public void updateEndDateForRevisedContract(RequestInfo requestInfo, String tenantId, String referenceId, BigDecimal endDate) {
         AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
-                .tenantId(attendanceTimeExtensionRequest.getTenantId())
-                .referenceId(attendanceTimeExtensionRequest.getReferenceId())
+                .tenantId(tenantId)
+                .referenceId(referenceId)
                 .limit(attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit())
                 .offset(attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset()).build();
+
 
         List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(attendanceRegisterSearchCriteria);
 
         if (attendanceRegisters != null && !attendanceRegisters.isEmpty()) {
             for (AttendanceRegister attendanceRegister : attendanceRegisters) {
-
-                int comparisonResult = attendanceTimeExtensionRequest.getEndDate().compareTo(attendanceRegister.getEndDate());
+                int comparisonResult = endDate.compareTo(attendanceRegister.getEndDate());
                 if (comparisonResult < 0) {
                     throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
                 }
 
-                attendanceRegister.setEndDate(attendanceTimeExtensionRequest.getEndDate());
+                attendanceRegister.setEndDate(endDate);
                 AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
                         .attendanceRegister(Collections.singletonList(attendanceRegister)).
-                        requestInfo(attendanceTimeExtensionRequest.getRequestInfo()).build();
+                        requestInfo(requestInfo).build();
 
                 registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, Collections.singletonList(attendanceRegister));
                 producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
