@@ -86,6 +86,22 @@ public class EstimateServiceValidator {
 
         if (projects == null || projects.isEmpty())
             throw new CustomException("PROJECT_ID", "The project id : " + estimateRequest.getEstimate().getProjectId() + " is invalid");
+
+         validateCreateRequestedProjectIdAgainstDB(estimateRequest);
+    }
+
+     private void validateCreateRequestedProjectIdAgainstDB(EstimateRequest estimateRequest) {
+        Estimate estimate=estimateRequest.getEstimate();
+
+        List<String> estimateIds=new ArrayList<>();
+        estimateIds.add(estimate.getId());
+
+        EstimateSearchCriteria searchCriteria = EstimateSearchCriteria.builder().ids(estimateIds).tenantId(estimate.getTenantId()).build();
+        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
+        if (!CollectionUtils.isEmpty(estimateList)) {
+            log.error("Create :: Estimate is already created for this project");
+            throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
+        }
     }
 
     private void validateWorkFlow(Workflow workflow, Map<String, String> errorMap) {
