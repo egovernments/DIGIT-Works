@@ -76,12 +76,12 @@ const ApiDropdown = ({ populators, formData, props, inputRef, errors }) => {
           option={options}
           key={populators.name}
           optionKey={populators?.optionsKey}
-          value={props.value?.[0]}
+          value={props.value?.[0] || props?.value}
           select={(e) => {
             props.onChange([e], populators.name);
           }}
-          selected={props.value?.[0] || populators.defaultValue}
-          defaultValue={props.value?.[0] || populators.defaultValue}
+          selected={props.value?.[0] || props?.value || populators.defaultValue}
+          defaultValue={props.value?.[0] || props?.value || populators.defaultValue}
           t={t}
           errorStyle={errors?.[populators.name]}
           optionCardStyles={populators?.optionsCustomStyle}
