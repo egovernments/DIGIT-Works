@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 @Component
@@ -69,6 +67,26 @@ public class HelperUtil {
             }
         } catch (Exception e) {
             log.error("Exception occurred in getFormattedTimeFromTimestamp from Helper util: ", e);
+        }
+        return formattedDateTime;
+    }
+
+    public String getFormattedTimeFromTimestampToIST(Long timestamp, String dateFormat) {
+        String formattedDateTime = null;
+        try {
+            if (timestamp != null && dateFormat != null) {
+                Instant instant = Instant.ofEpochMilli(timestamp);
+                ZoneId istZone = ZoneId.of("Asia/Kolkata");
+
+                // Convert timestamp to LocalDateTime
+                LocalDateTime dateTime = instant.atZone(ZoneOffset.UTC).withZoneSameInstant(istZone).toLocalDateTime();
+                // Create a formatter for the desired format
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+                // Format the LocalDateTime to the desired format
+                formattedDateTime = dateTime.format(formatter);
+            }
+        } catch (Exception e) {
+            log.error("Exception occurred in getFormattedTimeFromTimestampToIST from Helper util: ", e);
         }
         return formattedDateTime;
     }
