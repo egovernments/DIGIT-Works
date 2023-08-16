@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.kafka.Producer;
+import org.egov.works.repository.ContractRepository;
 import org.egov.works.service.ContractService;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;
@@ -67,7 +68,7 @@ public class ContractEnrichment {
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
         // Enrich Supplement number and mark contracts and document status as in-workflow
-        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
             // Enrich Supplement Number
             enrichSupplementNumber(contractRequest);
             markContractAndDocumentsStatus(contractRequest, Status.INWORKFLOW);
@@ -148,7 +149,7 @@ public class ContractEnrichment {
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INACTIVE);
             log.info("Contract components are marked as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
         }
-        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)
                 && contractRequest.getContract().getSupplementNumber() != null && "APPROVE".equalsIgnoreCase(workflow.getAction())) {
             List<Contract> contractsFromDB = contractService.getContracts(ContractCriteria.builder()
                     .tenantId(contract.getTenantId())
@@ -181,6 +182,7 @@ public class ContractEnrichment {
     }
 
     private void markContractAndDocumentsStatus(ContractRequest contractRequest, Status status){
+        log.info("Setting contract and document status");
         Contract contract=contractRequest.getContract();
         List<Document> documents=contractRequest.getContract().getDocuments();
         contract.setStatus(status);
@@ -193,6 +195,7 @@ public class ContractEnrichment {
     }
 
     private void markLineItemsAndAmountBreakupsStatus(ContractRequest contractRequest, Status status){
+        log.info("Setting line items and amount breakup status");
         List<LineItems> lineItems=contractRequest.getContract().getLineItems();
         for(LineItems lineItem:lineItems){
             lineItem.setStatus(status);
@@ -330,16 +333,27 @@ public class ContractEnrichment {
 
     private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
-        if (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
-            contract.setOldUuid(contract.getId());
-            Long versionNumber = contract.getVersionNumber();
+        if (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+            Pagination pagination = Pagination.builder()
+                    .limit(config.getContractMaxLimit())
+                    .offSet(config.getContractDefaultOffset())
+                    .build();
+            ContractCriteria contractCriteria = ContractCriteria.builder()
+                    .contractNumber(contractRequest.getContract().getContractNumber())
+                    .status("ACTIVE")
+                    .tenantId(contractRequest.getContract().getTenantId())
+                    .requestInfo(contractRequest.getRequestInfo())
+                    .pagination(pagination)
+                    .build();
+            List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
+            contract.setOldUuid(contractsFromDB.get(0).getId());
+            Long versionNumber = contractsFromDB.get(0).getVersionNumber();
             if (versionNumber == null) {
                 versionNumber = 1L;
             }else {
                 versionNumber += 1;
             }
             contract.setVersionNumber(versionNumber);
-            contract.setWfStatus(PENDING_FOR_VERIFICATION_STATUS);
         }
         contract.setId(String.valueOf(UUID.randomUUID()));
         BigDecimal agreementDate = contract.getAgreementDate();
@@ -377,12 +391,12 @@ public class ContractEnrichment {
         log.info("Contract Number enrichment is done. Generated Contract Number["+generatedContractNumber+"]");
     }
     private void enrichSupplementNumber (ContractRequest contractRequest) {
-        String rootTenantId = contractRequest.getContract().getTenantId().split("\\.")[0];
-        List<String> idList = idgenUtil.getIdList(contractRequest.getRequestInfo(), rootTenantId, config.getIdgenSupplementNumberName(), "", 1);
+        log.info("Generating supplement number");
+        List<String> idList = idgenUtil.getIdList(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
+                config.getIdgenSupplementNumberName(), "", 1);
         String generatedSupplementNumber = idList.get(0);
         contractRequest.getContract().setSupplementNumber(generatedSupplementNumber);
-        log.info("Supplement Number enrichment is done. Generated Contract Number ["+generatedSupplementNumber+"]");
-
+        log.info("Supplement Number enrichment is done. Generated Supplement Number ["+generatedSupplementNumber+"]");
     }
     public void enrichSearchContractRequest(ContractCriteria contractCriteria) {
 

@@ -83,10 +83,10 @@ public class ContractServiceValidator {
         validateOrganizationIdAgainstOrgService(contractRequest);
 
         if (contractRequest.getContract().getBusinessService() != null &&
-                contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
+                contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
             log.info("Validating time extension request");
             // Validate if Time Extension Request
-            validateTimeExtensionRequestForCreate(contractRequest);
+            validateContractRevisionRequestForCreate(contractRequest);
         } else {
             // Validate estimateIds against estimate service and DB
             validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
@@ -118,9 +118,9 @@ public class ContractServiceValidator {
         validateOrganizationIdAgainstOrgService(contractRequest);
 
         if (contractRequest.getContract().getBusinessService() != null &&
-                contractRequest.getContract().getBusinessService().equalsIgnoreCase(WORKFLOW_BUSINESS_SERVICE)) {
+                contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
             // Validate Time Extension Request for Update request
-            validateTimeExtensionForUpdate(contractRequest);
+            validateContractRevisionRequestForUpdate(contractRequest);
         } else {
             // Validate estimateIds against estimate service and DB
             validateUpdateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
@@ -638,8 +638,8 @@ public class ContractServiceValidator {
      * Validating Time Extension Create Request
      * @param contractRequest
      */
-    public void validateTimeExtensionRequestForCreate(ContractRequest contractRequest) {
-
+    public void validateContractRevisionRequestForCreate(ContractRequest contractRequest) {
+        log.info("Validating revise contract create request");
         // Validate if contract number is present
         validateContractNumber(contractRequest);
 
@@ -673,8 +673,8 @@ public class ContractServiceValidator {
      * Validate Time Extension Update Request
      * @param contractRequest
      */
-    private void validateTimeExtensionForUpdate (ContractRequest contractRequest) {
-
+    private void validateContractRevisionRequestForUpdate(ContractRequest contractRequest) {
+        log.info("Validating revise contract update request");
         // Validate if contract number is present
         validateContractNumber(contractRequest);
 
