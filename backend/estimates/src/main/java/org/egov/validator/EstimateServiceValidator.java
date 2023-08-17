@@ -64,6 +64,7 @@ public class EstimateServiceValidator {
 
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
+        validateCreateRequestedProjectIdAgainstDB(request);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -87,10 +88,11 @@ public class EstimateServiceValidator {
         if (projects == null || projects.isEmpty())
             throw new CustomException("PROJECT_ID", "The project id : " + estimateRequest.getEstimate().getProjectId() + " is invalid");
 
-         validateCreateRequestedProjectIdAgainstDB(estimateRequest);
+
     }
 
      private void validateCreateRequestedProjectIdAgainstDB(EstimateRequest estimateRequest) {
+         log.info("EstimateServiceValidator::validateCreateRequestedProjectIdAgainstDB");
         Estimate estimate=estimateRequest.getEstimate();
 
         List<String> estimateIds=new ArrayList<>();
