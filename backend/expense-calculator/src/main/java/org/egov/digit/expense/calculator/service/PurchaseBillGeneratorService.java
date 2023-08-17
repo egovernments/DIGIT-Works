@@ -167,10 +167,12 @@ public class PurchaseBillGeneratorService {
     private void calculateAndSetNetLineItemAmount(BillDetail billDetail) {
         List<LineItem> payableLineItems = billDetail.getPayableLineItems();
         BigDecimal netLineItemAmount = BigDecimal.ZERO;
-        for(LineItem lineItem : payableLineItems) {
-            // Add netLineItemAmount only if status is not INACTIVE
-            if (!LINEITEM_STATUS_INACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
-                netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
+        if (payableLineItems != null && !payableLineItems.isEmpty()) {
+            for(LineItem lineItem : payableLineItems) {
+                // Add netLineItemAmount only if status is not INACTIVE
+                if (!LINEITEM_STATUS_INACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
+                    netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
+                }
             }
         }
         billDetail.setNetLineItemAmount(netLineItemAmount);
@@ -219,9 +221,16 @@ public class PurchaseBillGeneratorService {
                     log.error("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
                     throw new CustomException("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
                 }
+                if (tempDeduction.compareTo(BigDecimal.ZERO) <= 0)
+                    continue;
                 deduction = deduction.add(tempDeduction);
                 billDetail.addPayableLineItems(buildPayableLineItem(tempDeduction,tenantId,headCode));
             }
+        }
+        // If bill amount is less then equal to zero then do not generate bill
+        if (expense.subtract(deduction).compareTo(BigDecimal.ZERO) <= 0) {
+            log.error("INVALID_PURCHASE_BILL_AMOUNT", "Purchase bill amount is not grater then ZERO.");
+            throw new CustomException("INVALID_PURCHASE_BILL_AMOUNT", "Purchase bill amount is not grater then ZERO.");
         }
         billDetail.addPayableLineItems(buildPayableLineItem(expense.subtract(deduction),tenantId,"PURCHASE"));
     }
