@@ -434,7 +434,7 @@ public class EstimateServiceValidator {
 
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
-        validateProjectId(request, errorMap);
+        validateProjectIdAndCheckEstimateIsPresentOrNot(request, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
