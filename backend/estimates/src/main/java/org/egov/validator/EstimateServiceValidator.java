@@ -97,6 +97,10 @@ public class EstimateServiceValidator {
                     if (obj instanceof Project) {
                         Project project = (Project) obj;
                         projectList.add(project);
+                        if(!projectList.isEmpty()){
+                            log.error("Create :: Estimate is already created for this project");
+                            throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
+                        }
                     }
                 }
             }catch(Exception e){
@@ -106,14 +110,9 @@ public class EstimateServiceValidator {
         }
 
 
-            if(!projectList.isEmpty()){
-                log.error("Create :: Estimate is already created for this project");
-                throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
-            }
+
 
     }
-
-
 
     private void validateWorkFlow(Workflow workflow, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateWorkFlow");
