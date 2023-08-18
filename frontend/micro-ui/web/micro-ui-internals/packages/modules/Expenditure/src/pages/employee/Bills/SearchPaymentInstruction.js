@@ -66,8 +66,7 @@ const SearchPaymentInstruction = () => {
       <div className="jk-header-btn-wrapper">
         <Header className="works-header-search">{t(configs?.label)}</Header>
 
-        {/* We are hiding this button beacuse of latest requirement i.e PFM-4316 */}
-        {!window.location.href.includes("/expenditure/search-payment-instruction") && Digit.Utils.didEmployeeHasRole(configs?.actionRole) && (
+        {Digit.Utils.didEmployeeHasRole(configs?.actionRole) && (
             <Button
               label={t(configs?.actionLabel)}
               variation="secondary"
