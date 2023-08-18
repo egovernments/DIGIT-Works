@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -120,7 +121,7 @@ public class PaymentService {
             for (LineItem lineItem : billDetail.getPayableLineItems()) {
                 if (lineItem.getStatus().equals(Status.ACTIVE)) {
                     PaymentLineItem payableLineItem = PaymentLineItem.builder().lineItemId(lineItem.getId())
-                            .paidAmount(lineItem.getAmount()).tenantId(lineItem.getTenantId()).build();
+                            .paidAmount(BigDecimal.ZERO).tenantId(lineItem.getTenantId()).build();
                     payableLineItems.add(payableLineItem);
                 }
             }
@@ -130,7 +131,7 @@ public class PaymentService {
                     .billDetailId(billDetail.getId())
                     .payableLineItems(payableLineItems)
                     .totalAmount(billDetail.getTotalAmount())
-                    .totalPaidAmount(billDetail.getTotalAmount()).build();
+                    .totalPaidAmount(BigDecimal.ZERO).build();
             paymentBillDetails.add(paymentBillDetail);
         }
         // Create Payment bill from the above items
@@ -141,13 +142,13 @@ public class PaymentService {
                 .billDetails(paymentBillDetails)
                 .tenantId(bill.getTenantId())
                 .totalAmount(bill.getTotalAmount())
-                .totalPaidAmount(bill.getTotalAmount()).build();
+                .totalPaidAmount(BigDecimal.ZERO).build();
         paymentBills.add(paymentBill);
 
         // Create payment from the above items
         Payment payment = Payment.builder()
                 .bills(paymentBills)
-                .netPaidAmount(bill.getTotalAmount())
+                .netPaidAmount(BigDecimal.ZERO)
                 .netPayableAmount(bill.getTotalAmount())
                 .tenantId(bill.getTenantId()).build();
 

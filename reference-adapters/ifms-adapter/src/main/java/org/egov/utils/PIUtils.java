@@ -24,7 +24,7 @@ public class PIUtils {
     IfmsAdapterConfig adapterConfig;
     @Autowired
     ObjectMapper objectMapper;
-    public void updatePiForIndexer(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
+    public void updatePIIndex(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         log.info("Executing PIUtils:updatePiForIndexer");
         try {
             PaymentInstruction pi = (PaymentInstruction) paymentInstruction;
