@@ -145,7 +145,7 @@ public class PDService {
                 // Update PI DB based on updated PI
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 // Update PI indexer based on updated PI
-                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                piUtils.updatePIIndex(requestInfo, paymentInstruction);
 
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
                         Collections.singleton(paymentInstruction.getMuktaReferenceId()),
@@ -156,7 +156,7 @@ public class PDService {
                     PaymentRequest paymentRequest = PaymentRequest.builder()
                             .requestInfo(requestInfo).payment(payment).build();
 
-                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
+                    billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.SUCCESSFUL, ReferenceStatus.PAYMENT_SUCCESS);
                 }
                 // Set pi status response
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PD_SUCCESS;

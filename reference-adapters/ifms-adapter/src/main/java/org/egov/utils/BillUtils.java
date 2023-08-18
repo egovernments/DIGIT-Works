@@ -36,7 +36,7 @@ public class BillUtils {
     @Autowired
     private IfmsAdapterConfig config;
 	@Autowired
-	MdmsUtils mdmsUtils;
+	private MdmsUtils mdmsUtils;
 
 	public @Valid List<Bill> fetchBillsFromPayment(PaymentRequest paymentRequest) {
 		log.info("Started executing fetchBillsFromPayment");

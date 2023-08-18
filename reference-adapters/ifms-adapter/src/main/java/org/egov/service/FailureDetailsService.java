@@ -2,8 +2,6 @@ package org.egov.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.AuditDetails;
-import io.swagger.util.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.Constants;
@@ -174,6 +172,8 @@ public class FailureDetailsService {
                     beneficiary.getAuditDetails().setLastModifiedTime(currentTime);
                 }
             }
+            /*
+            // Commenting because will not subtract the amount if payment failed.
             // Generate new transaction details
             SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
                     .ids(Collections.singletonList(pi.getTransactionDetails().get(0).getSanctionId()))
@@ -195,10 +195,11 @@ public class FailureDetailsService {
                     .auditDetails(auditDetails)
                     .build();
             pi.getTransactionDetails().add(transactionDetails);
-            piRepository.update(Collections.singletonList(pi), sanctionDetail.getFundsSummary());
+             */
+            piRepository.update(Collections.singletonList(pi), null);
             updatePaymentStatusForPartial(payment, requestInfo);
             // Update PI indexer based on updated PI
-            piUtils.updatePiForIndexer(requestInfo, pi);
+            piUtils.updatePIIndex(requestInfo, pi);
 
         } catch (Exception e) {
             log.error("Failed in FailureDetailsService:addReversalTransactionAndUpdatePIPa " + e);
@@ -232,7 +233,7 @@ public class FailureDetailsService {
                 payment.setStatus(PaymentStatus.PARTIAL);
                 payment.setReferenceStatus(ReferenceStatus.PAYMENT_PARTIAL);
                 PaymentRequest paymentRequest = PaymentRequest.builder().requestInfo(requestInfo).payment(payment).build();
-                billUtils.updatePaymentsData(paymentRequest);
+                billUtils.callPaymentUpdate(paymentRequest);
             }
         }catch (Exception e) {
             log.error("Exception while updating the payment status FailureDetailsService:updatePaymentStatusForPartial : " + e);
@@ -243,14 +244,15 @@ public class FailureDetailsService {
     public void updateFTPSStatus(RequestInfo requestInfo) {
         log.info("Start executing FTPS update service.");
 
+        // GET revised Payment instructions for FTPS where status is INITIATED
         PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder().piType(PIType.REVISED).piStatus(PIStatus.INITIATED).build();
         List<PaymentInstruction> revisedPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(revisedPiSearchCriteria).build());
 
+        // Process all revised Payment instructions
         for (PaymentInstruction pi : revisedPI) {
             JitRespStatusForPI jitRespStatusForPI = null;
             PISearchCriteria originalPiSearchCriteria = PISearchCriteria.builder().jitBillNo(pi.getParentPiNumber()).build();
             PaymentInstruction originalPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(originalPiSearchCriteria).build()).get(0);
-
 
             FTPSRequest ftpsRequest = FTPSRequest.builder()
                     .jitCorBillNo(pi.getJitBillNo())
@@ -269,17 +271,20 @@ public class FailureDetailsService {
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_ERROR;
             }
 
+            // IF FTPS api is not available it will be null
             if (jitResponse == null) {
                 // Create PI status log based on current existing PIS request
-                paymentInstructionService.createAndSavePIStatusLog(pi, JITServiceId.PAG, jitRespStatusForPI, requestInfo);
+                paymentInstructionService.createAndSavePIStatusLog(pi, JITServiceId.FTPS, jitRespStatusForPI, requestInfo);
                 continue;
             }
 
+            // If We got an error or no response from FTPS API then set the error message according to that and create log
             if (jitResponse.getErrorMsg() != null || jitResponse.getData().isEmpty()) {
                 jitRespStatusForPI = jitResponse.getErrorMsg() != null ? JitRespStatusForPI.STATUS_LOG_FTPS_ERROR : JitRespStatusForPI.STATUS_LOG_FTPS_NO_RESPONSE;
                 paymentInstructionService.createAndSavePIStatusLog(pi, JITServiceId.FTPS, jitRespStatusForPI, requestInfo);
                 continue;
             }
+            // If FTPS api has response then process the response
             for (Object data : jitResponse.getData()) {
                 processFTPSResponse(data, pi, requestInfo);
             }
@@ -341,7 +346,7 @@ public class FailureDetailsService {
                 paymentInstruction.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 paymentInstruction.setPiStatus(PIStatus.SUCCESSFUL);
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
-                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                piUtils.updatePIIndex(requestInfo, paymentInstruction);
                 List<Payment> payments = billUtils.fetchPaymentDetails(requestInfo,
                         Collections.singleton(paymentInstruction.getMuktaReferenceId()),
                         paymentInstruction.getTenantId());
@@ -350,7 +355,7 @@ public class FailureDetailsService {
                     PaymentRequest paymentRequest = PaymentRequest.builder()
                             .requestInfo(requestInfo).payment(payment).build();
 
-                    billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.SUCCESSFUL,ReferenceStatus.PAYMENT_SUCCESS);
+                    billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.SUCCESSFUL,ReferenceStatus.PAYMENT_SUCCESS);
                 }
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_FTPS_SUCCESS;
             } else {

@@ -30,11 +30,11 @@ import org.springframework.stereotype.Component;
 public class AuthenticationUtils {
 
     @Autowired
-    IfmsAdapterConfig config;
+    private IfmsAdapterConfig config;
     @Autowired
-    ResourceLoader resourceLoader;
+    private ResourceLoader resourceLoader;
 
-    PublicKey publicKey;
+    private PublicKey publicKey;
 
     AuthenticationUtils(){}
 

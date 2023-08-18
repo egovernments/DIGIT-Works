@@ -129,7 +129,7 @@ public class PAGService {
                 // Update PI DB based on updated PI
                 piRepository.update(Collections.singletonList(paymentInstruction),null);
                 // Update PI indexer based on updated PI
-                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                piUtils.updatePIIndex(requestInfo, paymentInstruction);
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PAG_SUCCESS;
                 // Create PI status log based on current existing PIS request
                 paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PAG, jitRespStatusForPI, requestInfo);

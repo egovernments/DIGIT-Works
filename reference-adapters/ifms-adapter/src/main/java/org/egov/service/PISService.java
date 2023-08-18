@@ -95,7 +95,7 @@ public class PISService {
                 // Add the previously deducted amount in funds summary for failure case
                 updateFundsSummary(requestInfo, paymentInstruction);
                 // Update PI indexer based on updated PI
-                piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                piUtils.updatePIIndex(requestInfo, paymentInstruction);
                 log.info("PI updated to failed. " + paymentInstruction.getJitBillNo());
                 jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_REJECTED;
                 // Create PI status log based on current existing PIS request
@@ -126,7 +126,7 @@ public class PISService {
                     // Update PI DB based on updated PI
                     piRepository.update(Collections.singletonList(paymentInstruction),null);
                     // Update PI indexer based on updated PI
-                    piUtils.updatePiForIndexer(requestInfo, paymentInstruction);
+                    piUtils.updatePIIndex(requestInfo, paymentInstruction);
                     jitRespStatusForPI = JitRespStatusForPI.STATUS_LOG_PIS_SUCCESS;
                     // Create PI status log based on current existing PIS request
                     paymentInstructionService.createAndSavePIStatusLog(paymentInstruction, JITServiceId.PIS, jitRespStatusForPI, requestInfo);
@@ -169,7 +169,7 @@ public class PISService {
             PaymentRequest paymentRequest = PaymentRequest.builder()
                     .requestInfo(requestInfo).payment(payment).build();
 
-            billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_DECLINED);
+            billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_DECLINED);
         }
     }
 
