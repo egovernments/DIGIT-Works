@@ -15,6 +15,7 @@ import LocationDropdownWrapper from './LocationDropdownWrapper';
 import WorkflowStatusFilter from './WorkflowStatusFilter';
 import ApiDropdown from './ApiDropdown';
 const RenderFormFields = ({data,...props}) => {
+  
     const { t } = useTranslation();
     const { fields, control, formData, errors, register, setValue, getValues, setError, clearErrors, apiDetails} = props
     
@@ -322,6 +323,7 @@ const RenderFormFields = ({data,...props}) => {
     return (
       <React.Fragment>
         {fields?.map((item, index) => {
+          // if(item.hideInForm) return null
           return (
             <LabelFieldPair key={index} style={item.hideInForm ? {"display":"none"}:{}}>
                 { item.label && (

@@ -273,11 +273,10 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             setShowCBOToVendorError(false)
         }, 10000);
     }
-    
 
 
     const onSubmit = async (data) => {
-        data = Digit.Utils.trimStringsInObject(data)
+
         //here call org search with mobile number and see if number is already there with some other org , do an early return
         
         const contactNumber = data?.contactDetails_mobile
@@ -317,12 +316,12 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
                 setShowCBOToVendorError(true);
             }
             else{
-            const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
+                const bankAccountPayload = getBankAccountUpdatePayload({formData: data, apiData: orgDataFromAPI, tenantId, isModify, referenceId: '', isWageSeeker: false});
             handleResponseForUpdate(orgPayload, bankAccountPayload);
-            }
+        }
         }else {
             const userData = await Digit.UserService.userSearch(stateTenant, { mobileNumber: data?.contactDetails_mobile }, {})
-            if(userData?.user?.length > 0 && userData?.user?.[0]?.roles.some(role => role.code === "ORG_ADMIN")) {
+            if(userData?.user?.length > 0) {
                 setShowDuplicateUserError(true)
                 return
             }

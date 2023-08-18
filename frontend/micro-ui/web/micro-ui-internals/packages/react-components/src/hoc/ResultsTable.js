@@ -11,7 +11,7 @@ import { Loader } from '../atoms/Loader';
 import NoResultsFound from '../atoms/NoResultsFound';
 import { InfoIcon } from "../atoms/svgindex";
 
-const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate,type,activeLink }) => {
+const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fullConfig,revalidate,type }) => {
     
     const {apiDetails} = fullConfig
     const { t } = useTranslation();
@@ -45,7 +45,7 @@ const ResultsTable = ({ tableContainerClass, config,data,isLoading,isFetching,fu
     
     //here I am just checking state.searchForm has all empty keys or not(when clicked on clear search)
     useEffect(() => {
-        if(apiDetails?.minParametersForSearchForm !== 0 && Object.keys(state.searchForm).length > 0 && !Object.keys(state.searchForm).some(key => state.searchForm[key]!=="") && type==="search" && activeLink?.minParametersForSearchForm !== 0){
+        if(Object.keys(state.searchForm).length > 0 && !Object.keys(state.searchForm).some(key => state.searchForm[key]!=="") && type==="search"){
             setShowResultsTable(false)
         }
         // else{

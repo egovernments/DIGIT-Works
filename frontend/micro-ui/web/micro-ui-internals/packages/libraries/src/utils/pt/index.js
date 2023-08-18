@@ -76,6 +76,3 @@ export const convertEpochToDate = (dateEpoch) => {
   day = (day > 9 ? "" : "0") + day;
   return `${day}/${month}/${year}`;
 };
-
-
-

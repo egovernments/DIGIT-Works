@@ -1,2 +1,0 @@
-# IFMS Adapter
-

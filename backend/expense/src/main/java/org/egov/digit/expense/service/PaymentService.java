@@ -84,7 +84,7 @@ public class PaymentService {
         log.info("PaymentService::update");
         Payment payment = paymentRequest.getPayment();
         List<Payment> paymentsFromSearch = validator.validateUpdateRequest(paymentRequest);
-        enrichmentUtil.encrichUpdatePayment(paymentRequest, paymentsFromSearch.get(0));
+        enrichmentUtil.encrichUpdatePayment(paymentRequest);
         paymentRequest.setPayment(paymentsFromSearch.get(0));
         backUpdateBillForPayment(paymentRequest);
 
@@ -146,10 +146,8 @@ public class PaymentService {
 		for (PaymentBill paymentBill : payment.getBills()) {
 
 			Bill billFromSearch = billMap.get(paymentBill.getBillId());
-            // TODO: Change the logic of paid amount update, updating the current amount
-//			billFromSearch.setTotalPaidAmount(
-//					getResultantAmount(billFromSearch.getTotalPaidAmount(),paymentBill.getTotalPaidAmount(), isPaymentCancelled));
-            billFromSearch.setTotalPaidAmount(paymentBill.getTotalPaidAmount());
+			billFromSearch.setTotalPaidAmount(
+					getResultantAmount(billFromSearch.getTotalPaidAmount(),paymentBill.getTotalPaidAmount(), isPaymentCancelled));
 			billFromSearch.setPaymentStatus(payment.getStatus());
 			billFromSearch.setAuditDetails(auditDetails);
 
@@ -157,20 +155,16 @@ public class PaymentService {
 
 				BillDetail billDetailFromSearch = billDetailMap.get(paymentBillDetail.getBillDetailId());
 				billDetailFromSearch.setPaymentStatus(paymentBillDetail.getStatus());
-//				billDetailFromSearch.setTotalPaidAmount(
-//						getResultantAmount(billDetailFromSearch.getTotalPaidAmount(), paymentBillDetail.getTotalPaidAmount(), isPaymentCancelled));
-                // TODO: Change the logic of paid amount update, updating the current amount
-                billDetailFromSearch.setTotalPaidAmount(paymentBillDetail.getTotalPaidAmount());
+				billDetailFromSearch.setTotalPaidAmount(
+						getResultantAmount(billDetailFromSearch.getTotalPaidAmount(), paymentBillDetail.getTotalPaidAmount(), isPaymentCancelled));
 				billDetailFromSearch.setAuditDetails(auditDetails);
 
 				for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
 
 					LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemId());
 					lineItemFromSearch.setPaymentStatus(payableLineItem.getStatus());
-//					lineItemFromSearch.setPaidAmount(
-//							getResultantAmount(lineItemFromSearch.getPaidAmount(), payableLineItem.getPaidAmount(), isPaymentCancelled));
-                    // TODO: Change the logic of paid amount update, updating the current amount
-                    lineItemFromSearch.setPaidAmount(payableLineItem.getPaidAmount());
+					lineItemFromSearch.setPaidAmount(
+							getResultantAmount(lineItemFromSearch.getPaidAmount(), payableLineItem.getPaidAmount(), isPaymentCancelled));
 					lineItemFromSearch.setAuditDetails(auditDetails);
 				}
 			}

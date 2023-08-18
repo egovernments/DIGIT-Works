@@ -1,1 +1,0 @@
-ALTER TABLE jit_beneficiary_details ALTER COLUMN voucherDate TYPE bigint USING extract(epoch from voucherDate);

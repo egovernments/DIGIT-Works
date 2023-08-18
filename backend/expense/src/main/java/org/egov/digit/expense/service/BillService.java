@@ -150,7 +150,7 @@ public class BillService {
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
 		
-		if (isWfEncrichRequired && bills != null && !bills.isEmpty())
+		if (isWfEncrichRequired)
 			enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
 		
 		BillResponse response = BillResponse.builder()

@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.digit.expense.web.models.enums.ReferenceStatus;
 
 /**
  * Payment
@@ -53,9 +52,6 @@ public class Payment {
 
 	@JsonProperty("status")
 	private PaymentStatus status;
-
-	@JsonProperty("referenceStatus")
-	private ReferenceStatus referenceStatus;
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;

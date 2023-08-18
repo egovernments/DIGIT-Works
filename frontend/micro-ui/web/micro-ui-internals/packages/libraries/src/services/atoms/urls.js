@@ -88,17 +88,13 @@ const Urls = {
     obps_Reciept_Search: "/collection-services/payments/_search",
     billAmendmentSearch: "/billing-service/amendment/_search",
     getBulkPdfRecordsDetails: "/pdf-service/v1/_getBulkPdfRecordsDetails",
-    createPayment: "/expense/payment/v1/_create",
-    ifms_funds_search : "/ifms/funds/v1/_search"
+    createPayment: "/expense/payment/v1/_create"
   },
 expense:{
   createPayment: "/expense/payment/v1/_create",
-  searchPayment: "/ifms/pi/v1/_search",
+  searchPayment: "/expense/payment/v1/_search",
   updatePayment: "/expense/payment/v1/_update",
-  regenerate : '/egov-pdf/bill/_generate',
-  searchPaymentWMS:"/wms/ifms-pi/_search",
-  updatePI:"/ifms/pi/v1/_create",
-  searchPA:"/expense/payment/v1/_search"
+  regenerate : '/egov-pdf/bill/_generate'
 
 },
   pt: {

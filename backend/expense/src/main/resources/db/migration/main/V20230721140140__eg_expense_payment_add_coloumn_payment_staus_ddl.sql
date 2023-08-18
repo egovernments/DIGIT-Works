@@ -1,1 +1,0 @@
-ALTER TABLE eg_expense_payment ADD COLUMN referencestatus character varying(64);

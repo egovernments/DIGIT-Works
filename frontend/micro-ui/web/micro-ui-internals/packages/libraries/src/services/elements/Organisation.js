@@ -3,9 +3,7 @@ import { Request } from "../atoms/Utils/Request";
 
 export const OrganisationService = {
     search: ( data ) =>
-       { 
-        if(!data) return []
-        return Request({
+        Request({
             url: Urls?.organisation?.search,
             data: data,
             useCache: false,
@@ -14,8 +12,7 @@ export const OrganisationService = {
             method: "POST",
             params: {},
             auth: true,
-        })
-      },
+        }),
 
     create: (data) => 
         Request({

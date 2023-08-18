@@ -208,8 +208,7 @@ public class BillValidator {
         if (StringUtils.isEmpty(billCriteria.getBusinessService())
                 && CollectionUtils.isEmpty(billCriteria.getReferenceIds())
                 && CollectionUtils.isEmpty(billCriteria.getIds())
-                && CollectionUtils.isEmpty(billCriteria.getBillNumbers())
-				&& billCriteria.getIsPaymentStatusNull() == null )
+                && CollectionUtils.isEmpty(billCriteria.getBillNumbers()))
             throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
                     "One of ids OR (referenceIds & businessService) OR (billNumbers & businessService) should be provided for a bill search");
         boolean isRefIdOrBillNoProvided = (!CollectionUtils.isEmpty(billCriteria.getReferenceIds())

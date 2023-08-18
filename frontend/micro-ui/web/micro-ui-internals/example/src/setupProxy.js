@@ -78,7 +78,6 @@ module.exports = function (app) {
     "/expensebilling",
     "/bankaccount-service",
     "/wms",
-    "/ifms",
     "/wms/estimate/_search",
     "/expense-calculator/v1/_estimate",
     "/expense/bill",
