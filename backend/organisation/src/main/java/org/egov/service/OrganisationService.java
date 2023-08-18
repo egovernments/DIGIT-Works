@@ -74,12 +74,12 @@ public class OrganisationService {
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         //userService.updateUser(orgRequest);
         individualService.updateIndividual(orgRequest);
-        producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
         try {
             notificationService.sendNotification(orgRequest,false);
         }catch (Exception e){
             log.error("Exception while sending notification: " + e);
         }
+        producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
         return orgRequest;
     }
 

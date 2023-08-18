@@ -159,6 +159,9 @@ import useCreatePurchaseBill from "./bills/useCreatePurchaseBill";
 import useUpdatePurchaseBill from "./bills/useUpdatePurchaseBill";
 import useSearchBill from "./bills/useSearchBill";
 
+import useViewPaymentInstruction from "./payments/useViewPaymentInstruction";
+import useViewPayment from "./payments/useViewPayment";
+import useUpdatePI from "./expenditure/useUpdatePI";
 const works = {
   useViewEstimateDetails,
   useViewProjectDetails,
@@ -306,6 +309,12 @@ const bankAccount = {
   useCreateBankAccount
 }
 
+const paymentInstruction = {
+  useViewPaymentInstruction,
+  useUpdatePI,
+  useViewPayment
+}
+
 const Hooks = {
   useSessionStorage,
   useQueryParams,
@@ -370,7 +379,8 @@ const Hooks = {
   project,
   wageSeeker,
   organisation,
-  bankAccount
+  bankAccount,
+  paymentInstruction
 };
 
 export default Hooks;

@@ -124,7 +124,7 @@ class _ViewMusterRollsPage extends State<ViewMusterRollsPage> {
                                           i18.attendanceMgmt.musterRollPeriod:
                                               '${DateFormats.timeStampToDate(e.startDate, format: "dd/MM/yyyy")} - ${DateFormats.timeStampToDate(e.endDate, format: "dd/MM/yyyy")}',
                                           i18.common.status:
-                                              'WF_MUSTOR_${e.musterRollStatus}',
+                                              'CBO_MUSTER_${e.musterRollStatus}',
                                           Constants.activeInboxStatus:
                                               e.musterRollStatus ==
                                                       sentBackToCBOCode
