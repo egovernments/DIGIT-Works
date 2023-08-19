@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -184,6 +185,7 @@ public class PurchaseBillGeneratorService {
         String tenantId = billDetail.getTenantId();
         BigDecimal expense = BigDecimal.ZERO;
         BigDecimal deduction = BigDecimal.ZERO;
+        List<LineItem> lineItemWithZeroAmount=new ArrayList<LineItem>();
         // Calculate total expense
         for(LineItem lineItem :lineItems) {
 
@@ -194,7 +196,20 @@ public class PurchaseBillGeneratorService {
             if(category != null && category.equalsIgnoreCase(EXPENSE_CONSTANT) && lineItem.getStatus().equals(LINEITEM_STATUS_ACTIVE)) {
                 expense = expense.add(amount);
             }
+             if(amount.compareTo(BigDecimal.ZERO)<=0){
+                lineItemWithZeroAmount.add(lineItem);
+            }
+
         }
+
+        //Removing the line items which have amount as 0
+
+         if(!lineItemWithZeroAmount.isEmpty()){
+            lineItems.removeAll(lineItemWithZeroAmount);
+        }
+
+
+
         // If PayableLineItems is available in bill details then set each lineitem INACTIVE
         if (billDetail.getPayableLineItems() != null && !billDetail.getPayableLineItems().isEmpty()) {
             List<LineItem> payableLineItems = billDetail.getPayableLineItems();
