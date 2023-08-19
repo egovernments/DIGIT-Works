@@ -181,7 +181,7 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
         {
           label: beneficiary?.orgDetails?.orgNumber || t("ES_COMMON_NA"),
           type: "link",
-          path: `/${window?.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgNumber=${beneficiary?.orgDetails?.orgNumber}`,
+          path: `/${window?.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgId=${beneficiary?.orgDetails?.orgNumber}`,
         },
         beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
         beneficiary?.orgDetails?.name,
