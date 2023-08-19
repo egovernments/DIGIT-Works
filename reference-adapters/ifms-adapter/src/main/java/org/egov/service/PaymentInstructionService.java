@@ -289,10 +289,7 @@ public class PaymentInstructionService {
                         if (jitResponse.getErrorMsg() != null) {
                             piErrorDescrp = jitResponse.getErrorMsg();
                         } else if (jitResponse.getErrorMsgs() != null && !jitResponse.getErrorMsgs().isEmpty()) {
-                            Object piResponseNode = jitResponse.getErrorMsgs().get(0);
-                            JsonNode node = objectMapper.valueToTree(piResponseNode);
-                            String piErrorCode = node.get("errorCode").asText();
-                            piErrorDescrp = node.get("errorMsgs").toString();
+                            piErrorDescrp = jitResponse.getErrorMsgs().toString();
                         }
                         paymentInstruction.setPiErrorResp(piErrorDescrp);
                     }catch (Exception e) {
@@ -327,18 +324,28 @@ public class PaymentInstructionService {
 
     private void savePIData(PaymentRequest paymentRequest, PaymentInstruction pi, PaymentInstruction originalPI, PaymentInstruction lastPI, PaymentStatus paymentStatus) {
         log.info("Started executing savePIData");
-        if (paymentStatus.equals(PaymentStatus.INITIATED)) {
-            pi.setIsActive(true);
-        } else if (paymentStatus.equals(PaymentStatus.PARTIAL)) {
+        if (paymentStatus.equals(PaymentStatus.PARTIAL)) {
             // Set beneficiary and pi status to failed if payment is failed
             pi.setPiStatus(PIStatus.FAILED);
             pi.setIsActive(false);
+            // Forward beneficiary error messages to new failed PI
+            // TODO: Enhancement required of beneficiary messages
+            PaymentInstruction lastPiForUpdate = lastPI == null ? originalPI : lastPI;
+            Map<String, Beneficiary> beneficiaryMap = new HashMap<>();
+            if (lastPiForUpdate != null && lastPiForUpdate.getBeneficiaryDetails() != null && !lastPiForUpdate.getBeneficiaryDetails().isEmpty()) {
+                beneficiaryMap = lastPiForUpdate.getBeneficiaryDetails().stream()
+                        .collect(Collectors.toMap(Beneficiary::getBeneficiaryNumber, Function.identity()));
+            }
             for(Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
                 beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+                if (beneficiaryMap.containsKey(beneficiary.getBeneficiaryNumber())) {
+                    beneficiary.setPaymentStatusMessage(beneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getPaymentStatusMessage());
+                }
             }
         }
         // If PI posted then update the existing PI status
         if (paymentStatus.equals(PaymentStatus.INITIATED)) {
+            pi.setIsActive(true);
             PaymentInstruction lastPiForUpdate = lastPI == null ? originalPI : lastPI;
             // Update last revised PI status to COMPLETED
             lastPiForUpdate.setPiStatus(PIStatus.COMPLETED);

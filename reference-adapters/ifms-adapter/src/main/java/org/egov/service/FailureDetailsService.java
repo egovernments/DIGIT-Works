@@ -172,30 +172,6 @@ public class FailureDetailsService {
                     beneficiary.getAuditDetails().setLastModifiedTime(currentTime);
                 }
             }
-            /*
-            // Commenting because will not subtract the amount if payment failed.
-            // Generate new transaction details
-            SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
-                    .ids(Collections.singletonList(pi.getTransactionDetails().get(0).getSanctionId()))
-                    .build();
-            List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
-            SanctionDetail sanctionDetail = sanctionDetails.get(0);
-            sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().add(amount));
-            sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedTime(currentTime);
-            sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(userId);
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(currentTime).lastModifiedBy(userId).lastModifiedTime(currentTime).build();
-            TransactionDetails transactionDetails = TransactionDetails.builder()
-                    .tenantId(pi.getTenantId())
-                    .sanctionId(sanctionDetail.getId())
-                    .paymentInstId(pi.getId())
-                    .transactionAmount(amount)
-                    .transactionDate(currentTime)
-                    .transactionType(TransactionType.REVERSAL)
-                    .additionalDetails(objectMapper.createObjectNode())
-                    .auditDetails(auditDetails)
-                    .build();
-            pi.getTransactionDetails().add(transactionDetails);
-             */
             piRepository.update(Collections.singletonList(pi), null);
             updatePaymentStatusForPartial(payment, requestInfo);
             // Update PI indexer based on updated PI
