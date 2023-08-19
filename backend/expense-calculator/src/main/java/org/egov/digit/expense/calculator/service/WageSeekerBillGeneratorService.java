@@ -132,7 +132,9 @@ public class WageSeekerBillGeneratorService {
 				// Calculate net amount to pay to wage seeker
 				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges);
 				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount));
-
+				// BUGFIX PFM-4214 - If actual amount to pay is 0 then do not generate the payment for that individual
+				if (actualAmountToPay.compareTo(BigDecimal.ZERO) <= 0)
+					continue;
 				// Fix for PFM3454. Adding labor cess to the wage amount and subtracting it as a
 				// deduction.
 				String jsonFilter = String.format("$[?(@.code==\"%s\"&&@.service==\"%s\")].value",
@@ -153,10 +155,17 @@ public class WageSeekerBillGeneratorService {
 				// Build lineItem
 				List<LineItem> lineItems = new ArrayList<LineItem>();
 				LineItem wageLineItem = buildLineItem(tenantId, actualAmountToPay, configs.getWageHeadCode(), LineItem.TypeEnum.PAYABLE);
-				lineItems.add(wageLineItem);
+				// If wageLineItem amount is less equal zero then do not add that
+				if (wageLineItem.getAmount().compareTo(BigDecimal.ZERO) > 0)
+					lineItems.add(wageLineItem);
 				LineItem laborCessLineItem = buildLineItem(tenantId, labourCess, ExpenseCalculatorServiceConstants.HEAD_CODE_LABOR_CESS, LineItem.TypeEnum.DEDUCTION);
-				lineItems.add(laborCessLineItem);
+				// If laborCessLineItem amount is zero then do not add that
+				if (laborCessLineItem.getAmount().compareTo(BigDecimal.ZERO) > 0)
+					lineItems.add(laborCessLineItem);
 
+				// If line items are empty then do not generate bill details
+				if (lineItems.isEmpty())
+					continue;
 				//Compute payable line items based on the line items.
 				List<LineItem> payables = calculateAndSetPayableLineItems(tenantId, lineItems, headCodes,
 						applicableCharges);
@@ -183,6 +192,13 @@ public class WageSeekerBillGeneratorService {
 			// Fetch Contract additional details and pass onto Bill for the indexer
 			Object additionalDetails = expenseCalculatorUtil.getContractAdditionalDetails(requestInfo, tenantId,
 					musterRoll.getReferenceId());
+
+			if (billDetails.isEmpty()) {
+				log.error("MUSTER_ROLL_ZERO_AMOUNT",
+						"Bill can not generated because amount is ZERO for muster roll [" + musterRollNumber + "]");
+				throw new CustomException("MUSTER_ROLL_ZERO_AMOUNT",
+						"Bill can not generated because Amount is ZERO for muster roll [" + musterRollNumber + "]");
+			}
 
 			// Build Bill
 			Bill bill = Bill.builder().tenantId(tenantId).billDate(Instant.now().toEpochMilli())
