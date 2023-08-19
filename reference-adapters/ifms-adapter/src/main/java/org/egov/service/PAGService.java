@@ -144,9 +144,8 @@ public class PAGService {
      * @return
      */
     public List<PaymentInstruction> getApprovedPaymentInstructions() {
-        PISearchRequest piSearchRequest = PISearchRequest.builder().requestInfo(RequestInfo.builder().build())
-                .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.APPROVED).build()).build();
-        List<PaymentInstruction> paymentInstructions = paymentInstructionService.searchPi(piSearchRequest);
+        PISearchCriteria piSearchCriteria = PISearchCriteria.builder().piStatus(PIStatus.APPROVED).build();
+        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
         return paymentInstructions;
 
     }

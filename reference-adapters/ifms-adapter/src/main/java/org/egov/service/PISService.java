@@ -144,9 +144,8 @@ public class PISService {
      */
     public List<PaymentInstruction> getInitiatedPaymentInstructions(){
         log.info("Executing PISService:getInitiatedPaymentInstructions");
-        PISearchRequest piSearchRequest = PISearchRequest.builder().requestInfo(RequestInfo.builder().build())
-                .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.INITIATED).piType(PIType.ORIGINAL).build()).build();
-        List<PaymentInstruction> paymentInstructions = paymentInstructionService.searchPi(piSearchRequest);
+        PISearchCriteria piSearchCriteria = PISearchCriteria.builder().piStatus(PIStatus.INITIATED).piType(PIType.ORIGINAL).build();
+        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
         return paymentInstructions;
     }
 

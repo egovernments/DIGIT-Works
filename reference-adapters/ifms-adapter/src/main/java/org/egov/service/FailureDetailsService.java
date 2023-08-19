@@ -112,9 +112,8 @@ public class FailureDetailsService {
     }
 
     private PaymentInstruction getCompletedPaymentInstructionByBill(String billNo){
-        PISearchRequest piSearchRequest = PISearchRequest.builder().requestInfo(RequestInfo.builder().build())
-                .searchCriteria(PISearchCriteria.builder().jitBillNo(billNo).piStatus(PIStatus.SUCCESSFUL).build()).build();
-        List<PaymentInstruction> paymentInstructions = paymentInstructionService.searchPi(piSearchRequest);
+        PISearchCriteria piSearchCriteria = PISearchCriteria.builder().jitBillNo(billNo).piStatus(PIStatus.SUCCESSFUL).build();
+        List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchCriteria);
         if (!paymentInstructions.isEmpty()) {
             return paymentInstructions.get(0);
         } else {
@@ -222,13 +221,13 @@ public class FailureDetailsService {
 
         // GET revised Payment instructions for FTPS where status is INITIATED
         PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder().piType(PIType.REVISED).piStatus(PIStatus.INITIATED).build();
-        List<PaymentInstruction> revisedPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(revisedPiSearchCriteria).build());
+        List<PaymentInstruction> revisedPI =  piRepository.searchPi(revisedPiSearchCriteria);
 
         // Process all revised Payment instructions
         for (PaymentInstruction pi : revisedPI) {
             JitRespStatusForPI jitRespStatusForPI = null;
             PISearchCriteria originalPiSearchCriteria = PISearchCriteria.builder().jitBillNo(pi.getParentPiNumber()).build();
-            PaymentInstruction originalPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(originalPiSearchCriteria).build()).get(0);
+            PaymentInstruction originalPI =  piRepository.searchPi(originalPiSearchCriteria).get(0);
 
             FTPSRequest ftpsRequest = FTPSRequest.builder()
                     .jitCorBillNo(pi.getJitBillNo())
@@ -348,12 +347,12 @@ public class FailureDetailsService {
     public void updateFTFPSStatus(RequestInfo requestInfo) {
         log.info("Start executing FTFPS update service.");
         PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder().piType(PIType.REVISED).piStatus(PIStatus.SUCCESSFUL).build();
-        List<PaymentInstruction> revisedPIs =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(revisedPiSearchCriteria).build());
+        List<PaymentInstruction> revisedPIs =  piRepository.searchPi(revisedPiSearchCriteria);
 
         for (PaymentInstruction pi : revisedPIs) {
             JitRespStatusForPI jitRespStatusForPI = null;
             PISearchCriteria originalPiSearchCriteria = PISearchCriteria.builder().jitBillNo(pi.getParentPiNumber()).build();
-            PaymentInstruction originalPI =  paymentInstructionService.searchPi(PISearchRequest.builder().requestInfo(requestInfo).searchCriteria(originalPiSearchCriteria).build()).get(0);
+            PaymentInstruction originalPI =  piRepository.searchPi(originalPiSearchCriteria).get(0);
             FTFPSRequest ftfpsRequest = FTFPSRequest.builder()
                     .jitCorBillNo(pi.getJitBillNo())
                     .jitCorBillDate(helperUtil.getFormattedTimeFromTimestamp(pi.getAuditDetails().getCreatedTime(), Constants.VA_REQUEST_TIME_FORMAT))

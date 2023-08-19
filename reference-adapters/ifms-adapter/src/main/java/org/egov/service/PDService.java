@@ -50,9 +50,7 @@ public class PDService {
     public void updatePDStatus(RequestInfo requestInfo) {
         log.info("Start executing PD update service.");
         // get in-process payment instructions
-        List<PaymentInstruction> inProcessPaymentInstructions =  paymentInstructionService.searchPi(PISearchRequest.builder()
-                .requestInfo(RequestInfo.builder().build())
-                .searchCriteria(PISearchCriteria.builder().piStatus(PIStatus.IN_PROCESS).build()).build());
+        List<PaymentInstruction> inProcessPaymentInstructions =  piRepository.searchPi(PISearchCriteria.builder().piStatus(PIStatus.IN_PROCESS).build());
 
         // Create JIT requests for in-process PI
         for (PaymentInstruction paymentInstruction : inProcessPaymentInstructions) {
