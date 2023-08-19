@@ -164,7 +164,8 @@ public class PaymentInstructionService {
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
                         referenceStatus = ReferenceStatus.PAYMENT_FAILED;
-                        if (jitResponse.getErrorMsgs() != null && jitResponse.getErrorMsgs().isEmpty())
+                        // TODO: Process the error messages for each beneficiaries if it has valid response
+                        if (jitResponse.getErrorMsgs() != null && !jitResponse.getErrorMsgs().isEmpty())
                             piRequest.setPiErrorResp(jitResponse.getErrorMsgs().toString());
                         else
                             piRequest.setPiErrorResp(jitResponse.getErrorMsg());

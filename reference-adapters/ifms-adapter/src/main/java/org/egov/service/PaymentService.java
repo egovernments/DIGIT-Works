@@ -15,10 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.egov.config.Constants.APPROVED_STATUS;
 
@@ -121,7 +118,7 @@ public class PaymentService {
             for (LineItem lineItem : billDetail.getPayableLineItems()) {
                 if (lineItem.getStatus().equals(Status.ACTIVE)) {
                     PaymentLineItem payableLineItem = PaymentLineItem.builder().lineItemId(lineItem.getId())
-                            .paidAmount(BigDecimal.ZERO).tenantId(lineItem.getTenantId()).build();
+                            .paidAmount(lineItem.getAmount()).tenantId(lineItem.getTenantId()).build();
                     payableLineItems.add(payableLineItem);
                 }
             }
@@ -131,7 +128,7 @@ public class PaymentService {
                     .billDetailId(billDetail.getId())
                     .payableLineItems(payableLineItems)
                     .totalAmount(billDetail.getTotalAmount())
-                    .totalPaidAmount(BigDecimal.ZERO).build();
+                    .totalPaidAmount(billDetail.getTotalAmount()).build();
             paymentBillDetails.add(paymentBillDetail);
         }
         // Create Payment bill from the above items
@@ -142,13 +139,13 @@ public class PaymentService {
                 .billDetails(paymentBillDetails)
                 .tenantId(bill.getTenantId())
                 .totalAmount(bill.getTotalAmount())
-                .totalPaidAmount(BigDecimal.ZERO).build();
+                .totalPaidAmount(bill.getTotalAmount()).build();
         paymentBills.add(paymentBill);
 
         // Create payment from the above items
         Payment payment = Payment.builder()
                 .bills(paymentBills)
-                .netPaidAmount(BigDecimal.ZERO)
+                .netPaidAmount(bill.getTotalAmount())
                 .netPayableAmount(bill.getTotalAmount())
                 .tenantId(bill.getTenantId()).build();
 
