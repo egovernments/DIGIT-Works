@@ -191,6 +191,9 @@ const CreatePurchaseBillForm = ({
         data = Digit.Utils.trimStringsInObject(data)
         setInputFormData((prevState) => data)
 
+        if(data?.totalBillAmount <= 0)
+        setToast({show : true, label : t("EXPENDITURE_VALUE_CANNOT_BE_ZERO"), error : true})
+        else
         setShowModal(true);
         //transform formdata to Payload
         
