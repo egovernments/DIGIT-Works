@@ -37,7 +37,6 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
                   GlobalVariables.organisationListModel?.organisations?.first.id
                 ],
                 "wfStatus": event.searchCriteria,
-                "status": Constants.active,
                 "pagination": {
                   "limit": "100",
                   "offSet": "0",

@@ -1070,6 +1070,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                 // }
                 // else {
                   skillsPayLoad.add({
+                    "id": tableDataModel.id,
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {
                       "code": val
@@ -1088,6 +1089,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                 // else {
                   skillsPayLoad.add({
                     "individualId": tableDataModel.individualId,
+                    "id": tableDataModel.id,
                     "additionalDetails": {
                       "code": val
                     }
