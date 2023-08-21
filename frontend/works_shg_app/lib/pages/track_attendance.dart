@@ -1391,6 +1391,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                 //   });
                 // } else {
                   skillsPayLoad.add({
+                    "id": tableDataModel.id,
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {"code": val}
                   });
@@ -1404,6 +1405,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                 //   });
                 // } else {
                   skillsPayLoad.add({
+                    "id": tableDataModel.id,
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {"code": val}
                   });

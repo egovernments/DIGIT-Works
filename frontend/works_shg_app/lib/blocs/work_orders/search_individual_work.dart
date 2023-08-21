@@ -44,12 +44,12 @@ class SearchIndividualWorkBloc
                       .organisationListModel!.organisations!.first.tenantId,
                   "orgIds": [],
                   "contractNumber": event.contractNumber,
-                  // "pagination": {
-                  //   "limit": "100",
-                  //   "offSet": "0",
-                  //   "sortBy": "lastModifiedTime",
-                  //   "order": "desc"
-                  // }
+                  "pagination": {
+                    "limit": "100",
+                    "offSet": "0",
+                    "sortBy": "lastModifiedTime",
+                    "order": "desc"
+                  }
                 },
                 options: Options(extra: {
                   "userInfo": GlobalVariables.userRequestModel,
@@ -58,7 +58,10 @@ class SearchIndividualWorkBloc
                   "msgId": "search with from and to values"
                 }));
         await Future.delayed(const Duration(seconds: 1));
-        emit(SearchIndividualWorkState.loaded(contractsModel));
+        emit(SearchIndividualWorkState.loaded(ContractsModel(
+            contracts: contractsModel.contracts
+                ?.where((e) => e.status != Constants.inActive)
+                .toList())));
       }
     } on DioError catch (e) {
       emit(SearchIndividualWorkState.error(
