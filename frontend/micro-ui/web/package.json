@@ -23,7 +23,7 @@
     "@egovernments/digit-ui-module-core": "1.5.39",
     "@egovernments/digit-ui-module-dss": "1.5.40",
     "@egovernments/digit-ui-module-estimate": "0.2.1",
-    "@egovernments/digit-ui-module-expenditure": "0.2.19",
+    "@egovernments/digit-ui-module-expenditure": "0.2.20",
     "@egovernments/digit-ui-module-hrms": "1.5.26",
     "@egovernments/digit-ui-module-masters": "0.2.21",
     "@egovernments/digit-ui-module-project": "0.2.9",
