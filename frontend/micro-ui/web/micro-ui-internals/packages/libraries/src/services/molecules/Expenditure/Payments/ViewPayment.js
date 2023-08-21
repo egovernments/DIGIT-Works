@@ -302,7 +302,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
     }
   })
   
-  const beneficiaryTableHeaders = [t("EXP_BENE_ID"), t("EXP_PAYMENT_ID"), t("COMMON_NAME"), t("EXP_AC_NO"), t("EXP_IFSC"), t("CORE_COMMON_STATUS"), t("EXP_PAYMENT_AMT")]
+  const beneficiaryTableHeaders = [t("EXP_BENE_ID"), t("EXP_BENFICIARY_PAYMENT_ID"), t("COMMON_NAME"), t("EXP_AC_NO"), t("EXP_IFSC"), t("CORE_COMMON_STATUS"), t("EXP_PAYMENT_AMT")]
 
   const beneficiaryTable = {
     title: "EXP_BENEFICIARY_DETAILS",
