@@ -26,7 +26,10 @@ public class BillConsumer {
             log.info("Payment data received on.");
             PaymentRequest paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
             log.info("Payment data is " + paymentRequest);
-            PaymentInstruction paymentInstruction = piService.processPaymentRequestForNewPI(paymentRequest);
+            // Check PI is already created or not
+            boolean createNewPi = piService.isPaymentValidForCreateNewPI(paymentRequest.getPayment());
+            if (createNewPi)
+                piService.processPaymentRequestForNewPI(paymentRequest);
         } catch (Exception e) {
             log.error("Error occurred while processing the consumed save estimate record from topic : " + topic, e);
             throw new RuntimeException(e);

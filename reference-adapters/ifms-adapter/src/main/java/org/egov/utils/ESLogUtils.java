@@ -78,6 +78,7 @@ public class ESLogUtils {
                         .jitEncRequest(request)
                         .errorMsg(ex.toString())
                         .statusCode(statusCode)
+                        .createdtime(System.currentTimeMillis())
                         .build();
                 String endPoint = Constants.DOC_INSERT_PATH + "/" + jitErrorRequestLog.getId();
                 StringBuilder uri = getURI(config.getIfmsErrorLogIndex(), endPoint);

@@ -216,7 +216,7 @@ public class IfmsService {
     public JSONArray getHeadOfAccounts(RequestInfo requestInfo) {
         List<String> ifmsMasters = new ArrayList<>();
         ifmsMasters.add(MDMS_HEAD_OF_ACCOUNT_MASTER);
-        Map<String, Map<String, JSONArray>> ifmsHOAResponse = mdmsUtils.fetchMdmsData(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_IFMS_MODULE_NAME, ifmsMasters);
+        Map<String, Map<String, JSONArray>> ifmsHOAResponse = mdmsUtils.fetchMdmsDataWithActiveFilter(requestInfo, ifmsAdapterConfig.getStateLevelTenantId(), MDMS_IFMS_MODULE_NAME, ifmsMasters);
         return ifmsHOAResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_HEAD_OF_ACCOUNT_MASTER);
     }
 
@@ -229,7 +229,7 @@ public class IfmsService {
     public JSONArray getSSUDetails(RequestInfo requestInfo, String tenantId) {
         List<String> ssuMasters = new ArrayList<>();
         ssuMasters.add(MDMS_SSU_DETAILS_MASTER);
-        Map<String, Map<String, JSONArray>> ssuDetailsResponse = mdmsUtils.fetchMdmsData(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, ssuMasters);
+        Map<String, Map<String, JSONArray>> ssuDetailsResponse = mdmsUtils.fetchMdmsDataWithActiveFilter(requestInfo, tenantId, MDMS_IFMS_MODULE_NAME, ssuMasters);
         JSONArray ssuDetailsList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
         return ssuDetailsList;
     }
