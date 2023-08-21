@@ -93,7 +93,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       styles:paymentStatus==="SUCCESSFUL"?{color:"green"}:(paymentStatus==="FAILED"?{color:"red"}:{}),
       hoverIcon: paymentStatus==="FAILED"?"infoIcon":"",
       iconHoverTooltipText: paymentStatus==="FAILED" ? pi?.piErrorResp ? pi?.piErrorResp :  (pi?.piStatusLogs?.[0] ? t(pi?.piStatusLogs?.[0]?.status) :  t("ES_COMMON_NA")):"",
-      toolTipStyles:{maxWidth:"30ch"}
+      toolTipStyles:{maxWidth:"30ch", maxHeight:"unset"}
     }
   }
 
@@ -267,7 +267,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
           type: "link",
           path: `/${window?.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgId=${beneficiary?.orgDetails?.orgNumber}`,
         },
-        beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
+        beneficiary?.beneficiaryNumber || t("ES_COMMON_NA"),
         beneficiary?.orgDetails?.name,
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.bankBranchIdentifier?.code || t("ES_COMMON_NA"),
@@ -281,7 +281,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
           type: "link",
           path: `/${window?.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&individualId=${beneficiary?.indDetails?.individualId}`,
         },
-        beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
+        beneficiary?.beneficiaryNumber || t("ES_COMMON_NA"),
         beneficiary?.indDetails?.name?.givenName || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.bankBranchIdentifier?.code || t("ES_COMMON_NA"),
@@ -292,7 +292,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       return [
         // beneficiary?.beneficiaryId || t("ES_COMMON_NA"),
         t(beneficiary?.bankDetails?.referenceId) || t("ES_COMMON_NA"),
-        beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
+        beneficiary?.beneficiaryNumber || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountHolderName || t("ES_COMMON_NA"),
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.accountNumber,
         beneficiary?.bankDetails?.bankAccountDetails?.[0]?.bankBranchIdentifier?.code || t("ES_COMMON_NA"),
