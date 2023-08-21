@@ -184,7 +184,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     const sendDataToResponsePage = (individualId, isSuccess, message, showId) => {
         history.push({
-            pathname: `/${window?.contextPath}/employee/masters/response`,
+            pathname: `/${window?.contextPath}/employee/masters/response-wage-seeker`,
             search: individualId ? `?tenantId=${tenantId}&individualId=${individualId}` : '',
             state : {
                 message,
