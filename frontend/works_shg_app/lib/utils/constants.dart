@@ -5,6 +5,7 @@ class Constants {
   static final navKey = GlobalKey<NavigatorState>();
   static const userMobileNumberKey = 'mobileNumber';
   static const String active = 'ACTIVE';
+  static const String inActive = 'INACTIVE';
   static const String pendingForAcceptance = 'PENDING_FOR_ACCEPTANCE';
   static const String pendingForCorrection = 'PENDINGFORCORRECTION';
   static const String activeInboxStatus = 'ACTIVE_INBOX_CARD_STATUS';
