@@ -52,7 +52,7 @@ const ViewPayment = () => {
       onError: async (error, variables) => {
           setShowToast({
             error:true,
-            label:`${t("EXP_RETRY_PI_ERR_MESSAGE")} : ${error?.response.data.Errors[0].description}`
+            label:`${t("EXP_RETRY_PI_ERR_MESSAGE")} : ${error?.response.data.Errors[0].message}`
           })
           closeToast()
           setTimeout(() => {
