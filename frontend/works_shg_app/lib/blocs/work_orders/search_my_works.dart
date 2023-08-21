@@ -52,7 +52,10 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
                 "msgId": "search with from and to values"
               }));
       await Future.delayed(const Duration(seconds: 1));
-      emit(SearchMyWorksState.loaded(contractsModel));
+      emit(SearchMyWorksState.loaded(ContractsModel(
+          contracts: contractsModel.contracts
+              ?.where((e) => e.status != Constants.inActive)
+              .toList())));
     } on DioError catch (e) {
       emit(SearchMyWorksState.error(e.response?.data['Errors'][0]['code']));
     }

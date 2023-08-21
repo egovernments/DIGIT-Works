@@ -105,7 +105,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthState.loaded(null, null));
       emit(const AuthState.initial());
     } on DioError catch (e) {
-      emit(const AuthState.error());
+      emit(const AuthState.loaded(null, null));
     }
   }
 
