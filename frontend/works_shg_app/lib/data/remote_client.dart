@@ -54,18 +54,11 @@ class ApiInterceptors extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     // ignore: no-empty-block
-    if (err.type == DioErrorType.response &&
-        (err.response?.statusCode == 403)) {
-      scaffoldMessengerKey.currentContext!
-          .read<AuthBloc>()
-          .add(const AuthLogoutEvent());
-    }
-    else if(err.type == DioErrorType.response && err.response?.statusCode == 500){
+    if (err.response?.statusCode == 500) {
       scaffoldMessengerKey.currentContext!
           .read<AuthBloc>()
           .add(const AuthClearLoggedDetailsEvent());
-    }
-    else {
+    } else {
       handler.next(err);
     }
   }
