@@ -319,6 +319,23 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
     mainDivStyles:{ lineHeight: "19px", minWidth: "280px" }
 
   }
+
+  const ifAnyFailedPayments = status==="FAILED" || status==="PARTIAL"
+
+  let bannerForFailedPayments = {}
+
+  if(ifAnyFailedPayments){
+    bannerForFailedPayments = {
+      isInfoLabel:true,
+      infoHeader:"Info",
+      infoText:t("BANNER_TEXT_FAILED_PAYMENT"),
+      // infoIconFill:"red",
+      style:{
+        // "backgroundColor":"#EFC7C1",
+        "width":"80%"
+      }
+    }
+  }
   
  
   return [
@@ -330,7 +347,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       latestPaymentInstruction
     },
     {
-      applicationDetails: { applicationDetails: [piTable,beneficiaryTable] },
+      applicationDetails: { applicationDetails: [piTable,beneficiaryTable,bannerForFailedPayments] },
       applicationData: {},
       processInstancesDetails: {},
       workflowDetails: {},
