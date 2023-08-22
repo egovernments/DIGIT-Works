@@ -331,6 +331,7 @@ class AttendanceMgmt {
 class MyServiceRequests {
   const MyServiceRequests();
 
+  String get serviceRequestsLabel => 'WORKS_SERVICE_REQUESTS';
   String get timeExtRequestId => 'WORKS_TIME_EXT_REQUEST_ID';
   String get revisedEndDate => 'WORKS_REVISED_END_DATE';
   String get editAction => 'WF_CONTRACT_ACTION_EDIT';
