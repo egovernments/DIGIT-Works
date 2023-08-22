@@ -1060,39 +1060,41 @@ class _SHGInboxPage extends State<SHGInboxPage> {
                   .isNotEmpty) {
                 skillsPayLoad.removeWhere((elem) =>
                     elem["individualId"] == tableDataModel.individualId);
-                // if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
-                //   skillsPayLoad.add({
-                //     "id": tableDataModel.id,
-                //     "additionalDetails": {
-                //       "code": val
-                //     }
-                //   });
-                // }
-                // else {
+                  if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
                   skillsPayLoad.add({
+                    "id": tableDataModel.id,
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {
                       "code": val
                     }
                   });
-                // }
+                  }
+                  else {
+                    skillsPayLoad.add({
+                      "individualId": tableDataModel.individualId,
+                      "additionalDetails": {
+                        "code": val
+                      }
+                    });
+                  }
               } else {
-                // if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
-                //   skillsPayLoad.add({
-                //     "id": tableDataModel.id,
-                //     "additionalDetails": {
-                //       "code": val
-                //     }
-                //   });
-                // }
-                // else {
+                if(tableDataModel.id != null && tableDataModel.id!.trim().isNotEmpty) {
+                skillsPayLoad.add({
+                "id": tableDataModel.id,
+                "individualId": tableDataModel.individualId,
+                "additionalDetails": {
+                "code": val
+                }
+                });
+                }
+                else {
                   skillsPayLoad.add({
                     "individualId": tableDataModel.individualId,
                     "additionalDetails": {
                       "code": val
                     }
                   });
-                // }
+                }
               }
             },
           )),
