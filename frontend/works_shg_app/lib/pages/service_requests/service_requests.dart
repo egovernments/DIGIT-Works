@@ -75,7 +75,7 @@ class _MyServiceRequestsPage extends State<MyServiceRequestsPage> {
                 orElse: () => Container(),
                 loading: () => shg_loader.Loaders.circularLoader(context),
                 loaded: (ContractsModel? contractsModel) {
-                  return (contractsModel?.contracts ?? []).isEmpty || (contractsModel?.contracts ?? []).length == 1
+                  return (contractsModel?.contracts ?? []).isEmpty
                       ? const SizedBox(
                           height: 30,
                           child: Align(
@@ -155,7 +155,7 @@ class _MyServiceRequestsPage extends State<MyServiceRequestsPage> {
                                                           const EdgeInsets.all(
                                                               16.0),
                                                       child: Text(
-                                                        '${AppLocalizations.of(context).translate(i18.home.myWorks)} (${contractsModel?.contracts?.length})',
+                                                        '${AppLocalizations.of(context).translate(i18.myServiceRequests.serviceRequestsLabel)} (${contractsModel?.contracts?.length})',
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .displayMedium,
@@ -347,7 +347,7 @@ class _MyServiceRequestsPage extends State<MyServiceRequestsPage> {
                                                                               .noValue),
                                                                       descColor: contract.wfStatus == cboMyServiceRequestsConfig?.editTimeExtReqCode ? DigitTheme.instance.colorScheme.error : null // Replace with actual data
                                                                     ),
-                                                                    contract.businessService == cboMyServiceRequestsConfig?.searchCriteria && contract.status != Constants.inWorkFlowKey ? Padding(
+                                                                    contract.businessService == cboMyServiceRequestsConfig?.searchCriteria && contract.status != Constants.inWorkFlowKey && contract.wfStatus == cboMyServiceRequestsConfig?.editTimeExtReqCode ? Padding(
                                                                       padding: const EdgeInsets.all(4.0),
                                                                       child: DigitElevatedButton(
                                                                         onPressed: () {
@@ -355,7 +355,7 @@ class _MyServiceRequestsPage extends State<MyServiceRequestsPage> {
                                                                         },
                                                                         child: Center(
                                                                           child: Text(
-                                                                              contract.businessService == cboMyServiceRequestsConfig?.searchCriteria
+                                                                              contract.wfStatus == cboMyServiceRequestsConfig?.editTimeExtReqCode
                                                                                   ? t.translate(i18.myServiceRequests.editAction)
                                                                                   : t.translate(i18.common.viewDetails),
                                                                               style: DigitTheme.instance.mobileTypography.textTheme.labelSmall?.
@@ -380,8 +380,7 @@ class _MyServiceRequestsPage extends State<MyServiceRequestsPage> {
                                                     const SizedBox(
                                                       height: 16.0,
                                                     ),
-                                                    (contractsModel?.contracts ?? []).isNotEmpty &&
-                                                        (contractsModel?.contracts ?? []).length > 1
+                                                    (contractsModel?.contracts ?? []).isNotEmpty
                                                         ? const Align(
                                                             alignment: Alignment
                                                                 .bottomCenter,
