@@ -46,7 +46,6 @@ class SearchIndividualWorkBloc
                       .organisationListModel!.organisations!.first.tenantId,
                   "orgIds": [],
                   "contractNumber": event.contractNumber,
-                  "status": Constants.active,
                   "pagination": {
                     "limit": "100",
                     "offSet": "0",
@@ -61,7 +60,10 @@ class SearchIndividualWorkBloc
                   "msgId": "search with from and to values"
                 }));
         await Future.delayed(const Duration(seconds: 1));
-        emit(SearchIndividualWorkState.loaded(contractsModel));
+        emit(SearchIndividualWorkState.loaded(ContractsModel(
+            contracts: contractsModel.contracts
+                ?.where((e) => e.status != Constants.inActive)
+                .toList())));
       }
     } on DioError catch (e) {
       emit(SearchIndividualWorkState.error(
