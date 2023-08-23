@@ -253,7 +253,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 			throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
 		}
 
-		if(additionalDetails.isEmpty())
+		if(additionalDetails != null && additionalDetails.isEmpty())
 			additionalDetails = null;
 		
 		return additionalDetails;
