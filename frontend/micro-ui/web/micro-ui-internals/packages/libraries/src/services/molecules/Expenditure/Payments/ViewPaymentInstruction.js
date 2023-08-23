@@ -51,7 +51,7 @@ const transformViewDataToApplicationDetails = async (t, paymentInstruction, tena
   const bannerForStatusError = {
     isInfoLabel:true,
     infoHeader:t("COMMON_ERR"),
-    infoText:`${t("BANNER_TEXT_STATUS_ERROR")} : ${paymentInstruction?.piErrorResp}`,
+    infoText:`${t("BANNER_TEXT_STATUS_ERROR")} : ${t(paymentInstruction?.piErrorResp)}`,
     infoIconFill:"red",
     style:{
       "backgroundColor":"#EFC7C1",
