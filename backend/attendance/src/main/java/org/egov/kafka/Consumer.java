@@ -50,8 +50,8 @@ public class Consumer {
         try {
             JsonNode attendanceContractRevisionRequest = objectMapper.readValue(consumerRecord, JsonNode.class);
             RequestInfo requestInfo = objectMapper.convertValue(attendanceContractRevisionRequest.get("RequestInfo"), RequestInfo.class);
-            String tenantId = String.valueOf(attendanceContractRevisionRequest.get("tenantId"));
-            String referenceId = String.valueOf(attendanceContractRevisionRequest.get("referenceId"));
+            String tenantId = attendanceContractRevisionRequest.get("tenantId").asText();
+            String referenceId = attendanceContractRevisionRequest.get("referenceId").asText();
             BigDecimal endDate =  attendanceContractRevisionRequest.get("endDate").decimalValue();
             attendanceRegisterService.updateEndDateForRevisedContract(requestInfo, tenantId, referenceId, endDate);
         }catch (Exception e) {
