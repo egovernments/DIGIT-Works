@@ -92,7 +92,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       type:"paymentStatus",
       styles:paymentStatus==="SUCCESSFUL"?{color:"green"}:(paymentStatus==="FAILED"?{color:"red"}:{}),
       hoverIcon: paymentStatus==="FAILED"?"infoIcon":"",
-      iconHoverTooltipText: paymentStatus==="FAILED" ? pi?.piErrorResp ? pi?.piErrorResp :  (pi?.piStatusLogs?.[0] ? t(pi?.piStatusLogs?.[0]?.status) :  t("ES_COMMON_NA")):"",
+      iconHoverTooltipText: paymentStatus==="FAILED" ? pi?.piErrorResp ? t(pi?.piErrorResp) :  (pi?.piStatusLogs?.[0] ? t(pi?.piStatusLogs?.[0]?.status) :  t("ES_COMMON_NA")):"",
       toolTipStyles:{maxWidth:"30ch", maxHeight:"unset"}
     }
   }
