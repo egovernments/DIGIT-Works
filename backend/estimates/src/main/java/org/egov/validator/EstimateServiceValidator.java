@@ -91,41 +91,17 @@ public class EstimateServiceValidator {
 
     private void validateEstimateAlreadyExistsForProjectOrNot(EstimateRequest estimateRequest, Map<String, String> errorMap){
         log.info("EstimateServiceValidator::validateEstimateAlreadyExistsForProjectOrNot");
-        List<Project> projectList = new ArrayList<>();
-        final String projectJsonPath = "$.Project.*";
-        List<Object> projects = null;
+        EstimateSearchCriteria searchCriteria = EstimateSearchCriteria.builder().tenantId(estimateRequest.getEstimate().getTenantId())
+                .projectId(estimateRequest.getEstimate().getProjectId()).build();
 
-        Object projectRes = projectUtil.getProjectDetails(estimateRequest);
+        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
 
-        if (ObjectUtils.isNotEmpty(projectRes)) {
-            try {
-                projects = JsonPath.read(projectRes, projectJsonPath);
-            } catch (Exception e) {
-                throw new CustomException("JSONPATH_ERROR", "Failed to parse project search response");
-            }
-        }
-
-        if (null!=projects || !projects.isEmpty()){
-            try {
-                for (Object obj : projects) {
-                    if (obj instanceof Project) {
-                        Project project = (Project) obj;
-                        projectList.add(project);
-                        if(!projectList.isEmpty()){
-                            log.info("Create :: Estimate is already created for this project");
-                            throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
-                        }
-                        log.info("Project Is Not Associated to any Estimate");
-                    }
-                }
-            }catch(Exception e){
-                throw new CustomException("OBJECT_PARSING_ERROR", "Failed to parse object into Project object");
-
-            }
+        if(!estimateList.isEmpty()){
+            log.info("Create :: Estimate  already exists for this project");
+            throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
         }else{
-            throw new CustomException("PROJECT_ID", "The project id : " + estimateRequest.getEstimate().getProjectId() + " is invalid");
+            log.info("Project Is Not Associated to any Estimate");
         }
-
 
     }
 
