@@ -64,6 +64,7 @@ public class EstimateServiceValidator {
 
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
+        validateEstimateAlreadyExistsForProjectOrNot(request, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -86,6 +87,46 @@ public class EstimateServiceValidator {
 
         if (projects == null || projects.isEmpty())
             throw new CustomException("PROJECT_ID", "The project id : " + estimateRequest.getEstimate().getProjectId() + " is invalid");
+    }
+
+    private void validateEstimateAlreadyExistsForProjectOrNot(EstimateRequest estimateRequest, Map<String, String> errorMap){
+        log.info("EstimateServiceValidator::validateEstimateAlreadyExistsForProjectOrNot");
+        List<Project> projectList = new ArrayList<>();
+        final String projectJsonPath = "$.Project.*";
+        List<Object> projects = null;
+
+        Object projectRes = projectUtil.getProjectDetails(estimateRequest);
+
+        if (ObjectUtils.isNotEmpty(projectRes)) {
+            try {
+                projects = JsonPath.read(projectRes, projectJsonPath);
+            } catch (Exception e) {
+                throw new CustomException("JSONPATH_ERROR", "Failed to parse project search response");
+            }
+        }
+
+        if (null!=projects || !projects.isEmpty()){
+            try {
+                for (Object obj : projects) {
+                    if (obj instanceof Project) {
+                        Project project = (Project) obj;
+                        projectList.add(project);
+                        if(!projectList.isEmpty()){
+                            log.info("Create :: Estimate is already created for this project");
+                            throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
+                        }
+                        log.info("Project Is Not Associated to any Estimate");
+                    }
+                }
+            }catch(Exception e){
+                throw new CustomException("OBJECT_PARSING_ERROR", "Failed to parse object into Project object");
+
+            }
+        }else{
+            throw new CustomException("PROJECT_ID", "The project id : " + estimateRequest.getEstimate().getProjectId() + " is invalid");
+        }
+
+
     }
 
     private void validateWorkFlow(Workflow workflow, Map<String, String> errorMap) {
