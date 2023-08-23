@@ -223,7 +223,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     }
     const sendDataToResponsePage = (orgId, isSuccess, message, showId, otherMessage = "") => {
         history.push({
-            pathname: `/${window?.contextPath}/employee/masters/response`,
+            pathname: `/${window?.contextPath}/employee/masters/response-org`,
             search: orgId ? `?tenantId=${tenantId}&orgId=${orgId}` : '',
             state : {
                 message,

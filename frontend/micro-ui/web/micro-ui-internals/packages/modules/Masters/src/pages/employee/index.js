@@ -14,9 +14,15 @@ const MastersBreadCrumb = ({ location }) => {
         show: true,
     },
     {
-      path: `/${window.contextPath}/employee/masters/response`,
+      path: `/${window.contextPath}/employee/masters/response-wage-seeker`,
       content: fromScreen ? `${t(fromScreen)} / ${t("ES_WAGE_SEEKER")}` : t("ES_WAGE_SEEKER"),
-      show: location.pathname.includes("/masters/response") ? true : false,
+      show: location.pathname.includes("masters/response-wage-seeker") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/masters/response-org`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MASTERS_ORG_1")}` : t("MASTERS_ORG_1"),
+      show: location.pathname.includes("/masters/response-org") ? true : false,
       isBack: fromScreen && true,
     },
     {
@@ -117,8 +123,8 @@ const App = ({ path }) => {
         <PrivateRoute path={`${path}/create-wageseeker`} component={() => <RegisterWageSeeker parentRoute={path}/>} />
         <PrivateRoute path={`${path}/view-wageseeker`} component={()=> <ViewWageSeeker parentRoute={path}/>} />
         <PrivateRoute path={`${path}/modify-wageseeker`} component={()=> <ModifyWageSeeker parentRoute={path}/>} />
-
-        <PrivateRoute path={`${path}/response`} component={() => <MastersResponse parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/response-org`} component={() => <MastersResponse parentRoute={path}/>} />
+        <PrivateRoute path={`${path}/response-wage-seeker`} component={() => <MastersResponse parentRoute={path}/>} />
       </AppContainer>
     </Switch>
   );
