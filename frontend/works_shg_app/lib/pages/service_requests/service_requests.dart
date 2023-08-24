@@ -155,7 +155,7 @@ class _MyServiceRequestsPage extends State<MyServiceRequestsPage> {
                                                           const EdgeInsets.all(
                                                               16.0),
                                                       child: Text(
-                                                        '${AppLocalizations.of(context).translate(i18.myServiceRequests.serviceRequestsLabel)} (${contractsModel?.contracts?.length})',
+                                                        '${t.translate(i18.myServiceRequests.serviceRequestsLabel)} (${contractsModel?.contracts?.length})',
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .displayMedium,
