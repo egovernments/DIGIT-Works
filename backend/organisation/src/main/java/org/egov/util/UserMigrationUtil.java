@@ -115,11 +115,15 @@ public class UserMigrationUtil {
 
             List<Role> roles = Collections.singletonList(role);
             PGobject roleJson = getPGObject(roles);
+            String createdBy = requestInfo.getUserInfo().getUuid();
+            String lastModifiedBy = requestInfo.getUserInfo().getUuid();
+            Long createdTime = System.currentTimeMillis();
+            Long lastModifiedTime = System.currentTimeMillis();
             String individualInsertQuery = null;
             if (decryptedEmailId == null){
-                individualInsertQuery = "INSERT INTO individual(id, userId, userUuid, tenantId, givenName, mobileNumber, email, rowVersion, isDeleted, individualId, isSystemUser, isSystemUserActive, username, type, roles) VALUES ('"+individualUuid+"',"+userId+",'"+userUuid+"','"+tenantId+"','"+decryptedName+"',"+decryptedMobileNumber+","+decryptedEmailId+",1,false,'"+individualId+"',true,"+isSystemUserActive+","+decryptedUsername+",'"+type+"','"+roleJson+"');";
+                individualInsertQuery = "INSERT INTO individual(id, userId, userUuid, tenantId, givenName, mobileNumber, email, rowVersion, isDeleted, individualId, isSystemUser, isSystemUserActive, username, type, roles, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('"+individualUuid+"',"+userId+",'"+userUuid+"','"+tenantId+"','"+decryptedName+"','"+mobileNumber+"',"+decryptedEmailId+",1,false,'"+individualId+"',true,"+isSystemUserActive+","+decryptedUsername+",'"+type+"','"+roleJson+"','"+createdBy+"','"+lastModifiedBy+"',"+createdTime+","+lastModifiedTime+");";
             }else {
-                individualInsertQuery = "INSERT INTO individual(id, userId, userUuid, tenantId, givenName, mobileNumber, email, rowVersion, isDeleted, individualId, isSystemUser, isSystemUserActive, username, type, roles) VALUES ('"+individualUuid + "'," + userId + ",'" + userUuid + "','" + tenantId + "','" + decryptedName + "'," + decryptedMobileNumber + ",'" + decryptedEmailId + "',1,false,'" + individualId + "',true," + isSystemUserActive + "," + decryptedUsername + ",'" + type + "','" + roleJson + "');";
+                individualInsertQuery = "INSERT INTO individual(id, userId, userUuid, tenantId, givenName, mobileNumber, email, rowVersion, isDeleted, individualId, isSystemUser, isSystemUserActive, username, type, roles, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES ('"+individualUuid + "'," + userId + ",'" + userUuid + "','" + tenantId + "','" + decryptedName + "','" + mobileNumber + "','" + decryptedEmailId + "',1,false,'" + individualId + "',true," + isSystemUserActive + "," + decryptedUsername + ",'" + type + "','" + roleJson +"','"+createdBy+"','"+lastModifiedBy+"',"+createdTime+","+lastModifiedTime+");";
             }
             log.info("Creating individual :: " + individualId);
             jdbcTemplate.update(individualInsertQuery);

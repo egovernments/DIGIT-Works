@@ -1,6 +1,7 @@
 package org.egov.web.controllers;
 
 
+import digit.models.coremodels.RequestInfoWrapper;
 import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -29,10 +30,10 @@ public class MigrationController {
     @RequestMapping(value = "/_migrate", method = RequestMethod.POST)
     public ResponseEntity<ResponseInfo> orgServicesOrganisationV1CreatePOST(
             @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType,
-            @ApiParam(value = "") @Valid @RequestBody RequestInfo requestInfo) {
+            @ApiParam(value = "") @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
 
-        userMigrationUtil.migrate(requestInfo);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
+        userMigrationUtil.migrate(requestInfoWrapper.getRequestInfo());
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         return new ResponseEntity<ResponseInfo>(responseInfo, HttpStatus.OK);
 
     }
