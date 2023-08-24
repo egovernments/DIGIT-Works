@@ -75,6 +75,10 @@ public class UserMigrationUtil {
 
             List<Map<String,Object>> userDetails = jdbcTemplate.queryForList(userDetailsQuery);
             log.info("Fetched user details");
+            if (userDetails == null || userDetails.isEmpty()) {
+                log.info("Userdetails not found for encrypted number :: "+encryptedMobileNumber);
+                continue;
+            }
             Map<String, Object> userDetail = userDetails.get(0);
 
             Map<String, String> decrypt = new HashMap<>();
