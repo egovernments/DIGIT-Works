@@ -41,7 +41,6 @@ class _CreateTimeExtensionRequestPage
     extends State<CreateTimeExtensionRequestPage> {
   bool hasLoaded = true;
   bool inProgress = true;
-  List<Map<String, dynamic>> workOrderList = [];
   String extensionDaysKey = 'extensionDays';
   String reasonForExtensionKey = 'reasonForExtension';
 
@@ -52,7 +51,6 @@ class _CreateTimeExtensionRequestPage
   }
 
   afterViewBuild() async {
-    workOrderList = [];
     context.read<SearchIndividualWorkBloc>().add(
       IndividualWorkSearchEvent(contractNumber: widget.contractNumber, body: widget.isEdit == true
           ? {
@@ -158,53 +156,7 @@ class _CreateTimeExtensionRequestPage
                                   listener: (context, state) {
                                     state.maybeWhen(
                                         orElse: () => false,
-                                        initial: () => false,
-                                        loading: () =>
-                                            shg_loader.Loaders.circularLoader(context),
-                                        error: (String? error) =>
-                                            Notifiers.getToastMessage(
-                                                context, error.toString(), 'ERROR'),
-                                        loaded: (ContractsModel? contracts) {
-                                          if (contracts?.contracts != null) {
-                                            workOrderList = contracts!.contracts!
-                                                .map((e) =>
-                                            {
-                                              'cardDetails': {
-                                                i18.workOrder.workOrderNo:
-                                                e.contractNumber ?? 'NA',
-                                                i18.attendanceMgmt.projectId:
-                                                e.additionalDetails?.projectId ??
-                                                    'NA',
-                                                i18.attendanceMgmt.projectDesc:
-                                                e.additionalDetails?.projectDesc ??
-                                                    'NA',
-                                                i18.workOrder.completionPeriod:
-                                                '${e.completionPeriod} ${t.translate(
-                                                    i18.common.days)}',
-                                                i18.workOrder.workStartDate: e
-                                                    .startDate != null &&
-                                                    e.startDate != 0
-                                                    ? DateFormats.getFilteredDate(
-                                                    DateTime
-                                                        .fromMillisecondsSinceEpoch(
-                                                        e.startDate ?? 0)
-                                                        .toString())
-                                                    : 'NA',
-                                                i18.workOrder.workEndDate: e.endDate !=
-                                                    null &&
-                                                    e.endDate != 0
-                                                    ? DateFormats.getFilteredDate(
-                                                    DateTime
-                                                        .fromMillisecondsSinceEpoch(
-                                                        e.endDate ?? 0)
-                                                        .toString())
-                                                    : 'NA',
-                                              },
-                                              'payload': e.toMap()
-                                            })
-                                                .toList();
-                                          }
-                                        });
+                                        );
                                   },
                                   builder: (context, searchState) {
                                     return searchState.maybeWhen(
@@ -268,31 +220,31 @@ class _CreateTimeExtensionRequestPage
                                                               CommonWidgets
                                                                   .getItemWidget(
                                                                   context,
-                                                                  title: i18.workOrder
-                                                                      .workOrderNo,
+                                                                  title: t.translate(i18.workOrder
+                                                                      .workOrderNo),
                                                                   description: contracts
                                                                       .first
                                                                       .contractNumber ??
-                                                                      i18.common
-                                                                          .noValue),
+                                                                      t.translate(i18.common
+                                                                          .noValue)),
                                                               CommonWidgets
                                                                   .getItemWidget(
                                                                   context,
-                                                                  title: i18
+                                                                  title: t.translate(i18
                                                                       .attendanceMgmt
-                                                                      .projectId,
+                                                                      .projectId),
                                                                   description: contracts
                                                                       .first
                                                                       .additionalDetails
                                                                       ?.projectId ??
-                                                                      i18.common
-                                                                          .noValue),
+                                                                      t.translate(i18.common
+                                                                          .noValue)),
                                                               CommonWidgets
                                                                   .getItemWidget(
                                                                   context,
-                                                                  title: i18
+                                                                  title: t.translate(i18
                                                                       .attendanceMgmt
-                                                                      .projectDesc,
+                                                                      .projectDesc),
                                                                   description: contracts
                                                                       .first
                                                                       .additionalDetails
@@ -303,8 +255,8 @@ class _CreateTimeExtensionRequestPage
                                                               CommonWidgets
                                                                   .getItemWidget(
                                                                   context,
-                                                                  title: i18.workOrder
-                                                                      .completionPeriod,
+                                                                  title: t.translate(i18.workOrder
+                                                                      .completionPeriod),
                                                                   description: '${contracts
                                                                       .first
                                                                       .completionPeriod} ${t
@@ -314,8 +266,8 @@ class _CreateTimeExtensionRequestPage
                                                               CommonWidgets
                                                                   .getItemWidget(
                                                                   context,
-                                                                  title: i18.workOrder
-                                                                      .workStartDate,
+                                                                  title: t.translate(i18.workOrder
+                                                                      .workStartDate),
                                                                   description: contracts
                                                                       .first
                                                                       .startDate !=
@@ -338,8 +290,8 @@ class _CreateTimeExtensionRequestPage
                                                               CommonWidgets
                                                                   .getItemWidget(
                                                                   context,
-                                                                  title: i18.workOrder
-                                                                      .workEndDate,
+                                                                  title: t.translate(i18.workOrder
+                                                                      .workEndDate),
                                                                   description: contracts
                                                                       .first.endDate !=
                                                                       null &&
@@ -368,8 +320,8 @@ class _CreateTimeExtensionRequestPage
                                                           Column(
                                                             children: [
                                                               DigitTextFormField(
-                                                                label: i18.workOrder
-                                                                    .extensionReqInDays,
+                                                                label: t.translate(i18.workOrder
+                                                                    .extensionReqInDays),
                                                                 formControlName:
                                                                 extensionDaysKey,
                                                                 isRequired: true,
@@ -394,8 +346,8 @@ class _CreateTimeExtensionRequestPage
                                                                 },
                                                               ),
                                                               DigitTextFormField(
-                                                                label: i18.workOrder
-                                                                    .reasonForExtension,
+                                                                label: t.translate(i18.workOrder
+                                                                    .reasonForExtension),
                                                                 formControlName:
                                                                 reasonForExtensionKey,
                                                                 isRequired: true,
