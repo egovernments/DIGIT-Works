@@ -97,7 +97,7 @@ public class NotificationService {
         smsDetailsMap.put("projectNumber", orgDetails.get("projectNumber").get(0));
         smsDetailsMap.put("supplementNumber", request.getContract().getSupplementNumber());
 
-        Boolean isSendBack = request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK_TO_ORIGINATOR");
+        Boolean isSendBack = (request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK") || request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK_TO_ORIGINATOR"));
         message = buildMessageForRevisedContract(smsDetailsMap, message, isSendBack);
 
         SMSRequest smsRequestCBO = SMSRequest.builder().mobileNumber(cboMobileNumber).message(message).build();
