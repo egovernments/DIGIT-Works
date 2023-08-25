@@ -339,7 +339,7 @@ public class NotificationService {
         Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
 
         Map<String,List<String>> orgDetails=organisationServiceUtil.getOrganisationInfo(request);
-        orgDetails.put("projectName", Collections.singletonList(projectDetails.get("projectName")));
+        orgDetails.put("projectNumber", Collections.singletonList(projectDetails.get("projectNumber")));
 
         return orgDetails;
     }
