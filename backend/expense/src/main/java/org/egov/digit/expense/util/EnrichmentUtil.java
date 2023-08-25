@@ -74,13 +74,14 @@ public class EnrichmentUtil {
             billDetail.getPayee().setStatus(Status.ACTIVE);
 
             String gender = genderUtil.getGenderDetails(billRequest.getRequestInfo(),billDetail.getPayee().getTenantId(),billDetail.getPayee().getIdentifier());
-
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, Object> map = objectMapper.convertValue(billDetail.getPayee().getAdditionalDetails(), new TypeReference<Map<String, Object>>() {});
             if(map == null){
                 map = new HashMap<>();
             }
-            map.put(GENDER,gender);
+            if(!gender.isEmpty()){
+                map.put(GENDER,gender);
+            }
             billDetail.getPayee().setAdditionalDetails(objectMapper.convertValue(map,Object.class));
             for (LineItem lineItem : billDetail.getLineItems()) {
                 lineItem.setId(UUID.randomUUID().toString());
