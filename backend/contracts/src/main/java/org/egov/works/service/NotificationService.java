@@ -339,6 +339,7 @@ public class NotificationService {
         Map<String, String> projectDetails = projectServiceUtil.getProjectDetails(requestInfo, estimates.get(0));
 
         Map<String,List<String>> orgDetails=organisationServiceUtil.getOrganisationInfo(request);
+        orgDetails.put("projectName", Collections.singletonList(projectDetails.get("projectName")));
         orgDetails.put("projectNumber", Collections.singletonList(projectDetails.get("projectNumber")));
 
         return orgDetails;
@@ -396,9 +397,9 @@ public class NotificationService {
     }
     private String buildMessageForRevisedContract(Map<String, String> userDetailsForSMS, String message, Boolean isSendBack) {
         if (!isSendBack) {
-            message.replace("{projectid}", userDetailsForSMS.get("projectNumber"));
+            message = message.replace("{projectid}", userDetailsForSMS.get("projectNumber"));
         }
-        message.replace("{timeextensionrequestid}", userDetailsForSMS.get("supplementNumber"));
+        message = message.replace("{timeextensionrequestid}", userDetailsForSMS.get("supplementNumber"));
         return message;
     }
 
