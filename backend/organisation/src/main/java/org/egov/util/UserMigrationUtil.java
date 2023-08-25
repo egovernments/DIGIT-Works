@@ -95,7 +95,7 @@ public class UserMigrationUtil {
             log.info("Generating user roles");
             Role role = populateRole(userDetail);
             log.info("Generated user roles");
-            String individualUuid = UUID.randomUUID().toString();
+            String individualUuid = (String) userDetail.get("uuid");
             List<String> indIdList = getIdList(requestInfo,
                     tenantId, "individual.id",
                     null);
