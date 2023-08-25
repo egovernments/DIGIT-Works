@@ -21,7 +21,7 @@
     "@egovernments/digit-ui-module-attendencemgmt": "0.2.4",
     "@egovernments/digit-ui-module-contracts": "0.2.2",
     "@egovernments/digit-ui-module-core": "1.5.39",
-    "@egovernments/digit-ui-module-dss": "1.5.43",
+    "@egovernments/digit-ui-module-dss": "1.5.44",
     "@egovernments/digit-ui-module-estimate": "0.2.1",
     "@egovernments/digit-ui-module-expenditure": "0.2.22",
     "@egovernments/digit-ui-module-hrms": "1.5.26",
