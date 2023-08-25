@@ -2,15 +2,11 @@ package org.egov.web.models;
 
 import java.util.List;
 
+import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * OrgRequest
@@ -22,6 +18,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class OrgRequest {
 
 	@JsonProperty("RequestInfo")
