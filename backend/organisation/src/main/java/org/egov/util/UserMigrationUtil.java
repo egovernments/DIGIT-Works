@@ -56,6 +56,8 @@ public class UserMigrationUtil {
 
             String contact_mobile_number = (String) orgContactDetail.get("contact_mobile_number");
             String tenant_id = (String) orgContactDetail.get("tenant_id");
+            if (tenant_id.contains("."))
+                tenant_id = tenant_id.split("\\.")[0];
             Map<String, String> encryptRequestMap = new HashMap<>();
             encryptRequestMap.put("contact_mobile_number", contact_mobile_number);
             encryptRequestMap.put("tenant_id", tenant_id);
@@ -69,7 +71,7 @@ public class UserMigrationUtil {
                     ".lastmodifieddate,  userdata.createdby, userdata.lastmodifiedby, userdata.active, userdata.name, userdata.gender, userdata.pan, userdata.aadhaarnumber, userdata" +
                     ".type,  userdata.version, userdata.guardian, userdata.guardianrelation, userdata.signature, userdata.accountlocked, userdata.accountlockeddate, userdata" +
                     ".bloodgroup, userdata.photo, userdata.identificationmark,  userdata.tenantid, userdata.id, userdata.uuid, userdata.alternatemobilenumber, ur.role_code as role_code, ur.role_tenantid as role_tenantid \n" +
-                    "\tFROM eg_user userdata LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid WHERE userdata.mobilenumber = '"+encryptedMobileNumber+"';";
+                    "\tFROM eg_user userdata LEFT OUTER JOIN eg_userrole_v1 ur ON userdata.id = ur.user_id AND userdata.tenantid = ur.user_tenantid WHERE userdata.mobilenumber = '"+encryptedMobileNumber+"' AND userdata.type = 'CITIZEN';";
 
             log.info("Fetching user details");
 
