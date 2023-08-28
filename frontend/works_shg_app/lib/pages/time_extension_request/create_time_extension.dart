@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:works_shg_app/blocs/work_orders/work_order_pdf.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
 as i18;
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
@@ -171,40 +170,20 @@ class _CreateTimeExtensionRequestPage
                                                 crossAxisAlignment: CrossAxisAlignment
                                                     .start,
                                                 children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Back(
-                                                        backLabel: AppLocalizations.of(
-                                                            context)
-                                                            .translate(i18.common.back),
-                                                        callback: () {
-                                                          if(context.router.currentUrl.contains('isEdit')){
-                                                            context.router.popUntilRouteWithPath('home');
-                                                            context.router.push(const MyServiceRequestsRoute());
-                                                          }
-                                                          else {
-                                                            context.router.popUntilRouteWithPath('home');
-                                                            context.router.push(const WorkOrderRoute());
-                                                          }
-                                                        },
-                                                      ),
-                                                      CommonWidgets.downloadButton(
-                                                          AppLocalizations.of(context)
-                                                              .translate(
-                                                              i18.common.download),
-                                                              () {
-                                                            context.read<
-                                                                WorkOrderPDFBloc>().add(
-                                                                PDFEventWorkOrder(
-                                                                    contractId: widget
-                                                                        .contractNumber,
-                                                                    tenantId:
-                                                                    contracts.first
-                                                                        .tenantId));
-                                                          })
-                                                    ],
+                                                  Back(
+                                                    backLabel: AppLocalizations.of(
+                                                        context)
+                                                        .translate(i18.common.back),
+                                                    callback: () {
+                                                      if(context.router.currentUrl.contains('isEdit')){
+                                                        context.router.popUntilRouteWithPath('home');
+                                                        context.router.push(const MyServiceRequestsRoute());
+                                                      }
+                                                      else {
+                                                        context.router.popUntilRouteWithPath('home');
+                                                        context.router.push(const WorkOrderRoute());
+                                                      }
+                                                    },
                                                   ),
                                                   DigitCard(
                                                     padding: const EdgeInsets.all(8.0),
