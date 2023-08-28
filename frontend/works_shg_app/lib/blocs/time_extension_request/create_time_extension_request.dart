@@ -42,7 +42,9 @@ class CreateTimeExtensionRequestBloc extends Bloc<
 
       ContractsModel timeExtensions =
           await MyWorksRepository(client.init()).updateOrCreateContract(
-              url: Urls.workServices.createWorkOrder,
+              url: event.isEdit
+                  ? Urls.workServices.updateWorkOrder
+                  : Urls.workServices.createWorkOrder,
               body: {
                 "contract": contract,
                 "workflow": {"action": event.action, "assignees": []}
