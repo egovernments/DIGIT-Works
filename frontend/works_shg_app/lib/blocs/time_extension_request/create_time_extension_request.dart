@@ -75,6 +75,7 @@ class CreateTimeExtensionRequestEvent with _$CreateTimeExtensionRequestEvent {
       required String extensionDays,
       required int extensionDate,
       required String action,
+      required bool isEdit,
       @Default('') String reason}) = TimeExtensionRequestEvent;
   const factory CreateTimeExtensionRequestEvent.dispose() =
       TimeExtensionRequestDisposeEvent;
