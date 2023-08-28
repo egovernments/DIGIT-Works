@@ -19,7 +19,7 @@ mixin _$CreateTimeExtensionRequestEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)
+            int extensionDate, String action, bool isEdit, String reason)
         search,
     required TResult Function() dispose,
   }) =>
@@ -27,7 +27,7 @@ mixin _$CreateTimeExtensionRequestEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)?
+            int extensionDate, String action, bool isEdit, String reason)?
         search,
     TResult? Function()? dispose,
   }) =>
@@ -35,7 +35,7 @@ mixin _$CreateTimeExtensionRequestEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)?
+            int extensionDate, String action, bool isEdit, String reason)?
         search,
     TResult Function()? dispose,
     required TResult orElse(),
@@ -95,6 +95,7 @@ abstract class _$$TimeExtensionRequestEventCopyWith<$Res> {
       String extensionDays,
       int extensionDate,
       String action,
+      bool isEdit,
       String reason});
 }
 
@@ -114,6 +115,7 @@ class __$$TimeExtensionRequestEventCopyWithImpl<$Res>
     Object? extensionDays = null,
     Object? extensionDate = null,
     Object? action = null,
+    Object? isEdit = null,
     Object? reason = null,
   }) {
     return _then(_$TimeExtensionRequestEvent(
@@ -133,6 +135,10 @@ class __$$TimeExtensionRequestEventCopyWithImpl<$Res>
           ? _value.action
           : action // ignore: cast_nullable_to_non_nullable
               as String,
+      isEdit: null == isEdit
+          ? _value.isEdit
+          : isEdit // ignore: cast_nullable_to_non_nullable
+              as bool,
       reason: null == reason
           ? _value.reason
           : reason // ignore: cast_nullable_to_non_nullable
@@ -151,6 +157,7 @@ class _$TimeExtensionRequestEvent
       required this.extensionDays,
       required this.extensionDate,
       required this.action,
+      required this.isEdit,
       this.reason = ''});
 
   @override
@@ -162,12 +169,14 @@ class _$TimeExtensionRequestEvent
   @override
   final String action;
   @override
+  final bool isEdit;
+  @override
   @JsonKey()
   final String reason;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'CreateTimeExtensionRequestEvent.search(contractsModel: $contractsModel, extensionDays: $extensionDays, extensionDate: $extensionDate, action: $action, reason: $reason)';
+    return 'CreateTimeExtensionRequestEvent.search(contractsModel: $contractsModel, extensionDays: $extensionDays, extensionDate: $extensionDate, action: $action, isEdit: $isEdit, reason: $reason)';
   }
 
   @override
@@ -180,6 +189,7 @@ class _$TimeExtensionRequestEvent
       ..add(DiagnosticsProperty('extensionDays', extensionDays))
       ..add(DiagnosticsProperty('extensionDate', extensionDate))
       ..add(DiagnosticsProperty('action', action))
+      ..add(DiagnosticsProperty('isEdit', isEdit))
       ..add(DiagnosticsProperty('reason', reason));
   }
 
@@ -195,12 +205,13 @@ class _$TimeExtensionRequestEvent
             (identical(other.extensionDate, extensionDate) ||
                 other.extensionDate == extensionDate) &&
             (identical(other.action, action) || other.action == action) &&
+            (identical(other.isEdit, isEdit) || other.isEdit == isEdit) &&
             (identical(other.reason, reason) || other.reason == reason));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, contractsModel, extensionDays,
-      extensionDate, action, reason);
+      extensionDate, action, isEdit, reason);
 
   @JsonKey(ignore: true)
   @override
@@ -213,37 +224,38 @@ class _$TimeExtensionRequestEvent
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)
+            int extensionDate, String action, bool isEdit, String reason)
         search,
     required TResult Function() dispose,
   }) {
-    return search(contractsModel, extensionDays, extensionDate, action, reason);
+    return search(
+        contractsModel, extensionDays, extensionDate, action, isEdit, reason);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)?
+            int extensionDate, String action, bool isEdit, String reason)?
         search,
     TResult? Function()? dispose,
   }) {
     return search?.call(
-        contractsModel, extensionDays, extensionDate, action, reason);
+        contractsModel, extensionDays, extensionDate, action, isEdit, reason);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)?
+            int extensionDate, String action, bool isEdit, String reason)?
         search,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
       return search(
-          contractsModel, extensionDays, extensionDate, action, reason);
+          contractsModel, extensionDays, extensionDate, action, isEdit, reason);
     }
     return orElse();
   }
@@ -287,12 +299,14 @@ abstract class TimeExtensionRequestEvent
       required final String extensionDays,
       required final int extensionDate,
       required final String action,
+      required final bool isEdit,
       final String reason}) = _$TimeExtensionRequestEvent;
 
   Contracts? get contractsModel;
   String get extensionDays;
   int get extensionDate;
   String get action;
+  bool get isEdit;
   String get reason;
   @JsonKey(ignore: true)
   _$$TimeExtensionRequestEventCopyWith<_$TimeExtensionRequestEvent>
@@ -351,7 +365,7 @@ class _$TimeExtensionRequestDisposeEvent
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)
+            int extensionDate, String action, bool isEdit, String reason)
         search,
     required TResult Function() dispose,
   }) {
@@ -362,7 +376,7 @@ class _$TimeExtensionRequestDisposeEvent
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)?
+            int extensionDate, String action, bool isEdit, String reason)?
         search,
     TResult? Function()? dispose,
   }) {
@@ -373,7 +387,7 @@ class _$TimeExtensionRequestDisposeEvent
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Contracts? contractsModel, String extensionDays,
-            int extensionDate, String action, String reason)?
+            int extensionDate, String action, bool isEdit, String reason)?
         search,
     TResult Function()? dispose,
     required TResult orElse(),
