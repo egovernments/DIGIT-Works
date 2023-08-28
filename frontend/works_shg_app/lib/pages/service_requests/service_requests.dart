@@ -14,7 +14,6 @@ import '../../blocs/time_extension_request/service_requests_config.dart';
 import '../../models/works/contracts_model.dart';
 import '../../models/works/my_works_search_criteria.dart';
 import '../../utils/common_methods.dart';
-import '../../utils/constants.dart';
 import '../../utils/date_formats.dart';
 import '../../utils/notifiers.dart';
 import '../../widgets/Back.dart';
@@ -347,7 +346,7 @@ class _MyServiceRequestsPage extends State<MyServiceRequestsPage> {
                                                                               .noValue),
                                                                       descColor: contract.wfStatus == cboMyServiceRequestsConfig?.editTimeExtReqCode ? DigitTheme.instance.colorScheme.error : null // Replace with actual data
                                                                     ),
-                                                                    contract.businessService == cboMyServiceRequestsConfig?.searchCriteria && contract.status != Constants.inWorkFlowKey && contract.wfStatus == cboMyServiceRequestsConfig?.editTimeExtReqCode ? Padding(
+                                                                    contract.businessService == cboMyServiceRequestsConfig?.searchCriteria  && contract.wfStatus == cboMyServiceRequestsConfig?.editTimeExtReqCode ? Padding(
                                                                       padding: const EdgeInsets.all(4.0),
                                                                       child: DigitElevatedButton(
                                                                         onPressed: () {
