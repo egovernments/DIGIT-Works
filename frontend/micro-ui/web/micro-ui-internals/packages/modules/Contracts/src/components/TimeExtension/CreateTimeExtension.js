@@ -124,28 +124,32 @@ const CreateTimeExtension = ({isEdit,revisedWONumber,...props}) => {
   const getTimeExtensionJSX = () => {
     return (
       <>
-        <LabelFieldPair style={{ marginTop: "1rem" }}>
-          <CardLabel style={{ fontSize: "16px", fontWeight: "500", lineHeight: "24px" }}>{`${t(`EXTENSION_REQ`)}*`}</CardLabel>
-          <TextInput
-            className={"field"}
-            textInputStyle={{ width: "60%", marginLeft: "2%" }}
-            onChange={(e) => setExtensionRequested(e.target.value)}
-            ValidationRequired={true}
-            validation={{ type: "number" }}
-            min={1}
-            step={1}
-            defaultValue={isEdit ? contractObject?.additionalDetails?.timeExt : null}
-          />
-        </LabelFieldPair>
-        <LabelFieldPair>
-          <CardLabel style={{ fontSize: "16px", fontWeight: "500", lineHeight: "24px" }}>{`${t(`EXTENSION_REASON`)}*`}</CardLabel>
-          <TextInput
-            className={"field"}
-            textInputStyle={{ width: "60%", marginLeft: "2%" }}
-            onChange={(e) => setReasonForExtension(e.target.value)}
-            defaultValue={isEdit ? contractObject?.additionalDetails?.timeExtReason : null}
-          />
-        </LabelFieldPair>
+        <div style={{ lineHeight: "19px", maxWidth: "950px", minWidth: "280px",marginTop:"1rem" }}>
+          <div className={"employee-data-table"} >
+            <div className={"row border-none"} style={{alignItems:"center"}}>
+              <CardLabel style={{ fontSize: "16px", fontWeight: "500", lineHeight: "24px" }}>{`${t(`EXTENSION_REQ`)}*`}</CardLabel>
+              <TextInput
+                className={"value"}
+                textInputStyle={{ width: "60%", marginLeft: "2%" }}
+                onChange={(e) => setExtensionRequested(e.target.value)}
+                ValidationRequired={true}
+                validation={{ type: "number" }}
+                min={1}
+                step={1}
+                defaultValue={isEdit ? contractObject?.additionalDetails?.timeExt : null}
+              />
+            </div>
+            <div className={"row border-none"} style={{alignItems:"center"}}>
+              <CardLabel style={{ fontSize: "16px", fontWeight: "500", lineHeight: "24px" }}>{`${t(`EXTENSION_REASON`)}*`}</CardLabel>
+              <TextInput
+                className={"field"}
+                textInputStyle={{ width: "60%", marginLeft: "2%" }}
+                onChange={(e) => setReasonForExtension(e.target.value)}
+                defaultValue={isEdit ? contractObject?.additionalDetails?.timeExtReason : null}
+              />
+            </div>
+          </div>
+        </div>
       </>
     );
   };
