@@ -130,7 +130,7 @@ public class UserMigrationUtil {
             log.info("Creating individual :: " + individualId);
             jdbcTemplate.update(individualInsertQuery);
 
-            String organisationInsertQuery = "UPDATE eg_org_contact_detail set individual_id='"+individualUuid+"' where contact_mobile_number='"+decryptedMobileNumber+"';";
+            String organisationInsertQuery = "UPDATE eg_org_contact_detail set individual_id='"+individualUuid+"' where contact_mobile_number='"+contact_mobile_number+"';";
             log.info("Updating individual id in org contact detail :: " + individualId);
             jdbcTemplate.update(organisationInsertQuery);
             log.info("Ending creation of individual :: " + individualId);
