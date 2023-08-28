@@ -41,7 +41,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
 
   const paymentDetails = {
     title: " ",
-    asSectionHeader: true,
+    asSectionHeader: false,
     values: [
       { title: "WORKS_BILL_NUMBER", value: billNumber || t("ES_COMMON_NA"), isLink: true, to: billUrl },
       { title: "EXP_PAYMENT_ID", value: paymentNumber || t("ES_COMMON_NA") },
@@ -145,7 +145,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
 
   const piTable = {
     title: "EXP_PIS",
-    asSectionHeader: true,
+    asSectionHeader: false,
     isTable: true,
     headers: piTableHeaders,
     tableRows: piTableRows,
@@ -153,7 +153,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
     tableStyles:{
         rowStyle:{},
         cellStyle: [{}, {}, {}, {},{},{},{"textAlign":"right"}],
-        tableStyle:{backgroundColor:"#FAFAFA"}
+        tableStyle:{backgroundColor:"#FAFAFA",marginTop:"0rem"}
     },
     mainDivStyles:{ lineHeight: "19px", minWidth: "280px" }
   }
@@ -306,7 +306,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
 
   const beneficiaryTable = {
     title: "EXP_BENEFICIARY_DETAILS",
-    asSectionHeader: true,
+    asSectionHeader: false,
     isTable: true,
     headers: beneficiaryTableHeaders,
     tableRows: beneficiaryTableRows,
@@ -314,7 +314,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
     tableStyles:{
         rowStyle:{},
         cellStyle: [{}, {}, {}, {},{},{},{"textAlign":"right"}],
-        tableStyle:{backgroundColor:"#FAFAFA"}
+        tableStyle:{backgroundColor:"#FAFAFA",marginTop:"0rem"}
     },
     mainDivStyles:{ lineHeight: "19px", minWidth: "280px" }
 
