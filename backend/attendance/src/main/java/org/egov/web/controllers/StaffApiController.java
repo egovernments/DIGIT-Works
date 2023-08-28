@@ -38,7 +38,7 @@ public class StaffApiController {
 
     @RequestMapping(value = "/_create", method = RequestMethod.POST)
     public ResponseEntity<StaffPermissionResponse> createStaff(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody StaffPermissionRequest staffPermissionRequest) {
-        StaffPermissionRequest enrichedRequest = staffService.createAttendanceStaff(staffPermissionRequest);
+        StaffPermissionRequest enrichedRequest = staffService.createAttendanceStaff(staffPermissionRequest, false);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
         StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo)
                 .staff(enrichedRequest.getStaff()).build();

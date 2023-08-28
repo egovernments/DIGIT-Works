@@ -58,7 +58,7 @@ public class StaffService {
      * @param staffPermissionRequest
      * @return
      */
-    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest) {
+    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest, boolean cboMigrationReq) {
         //incoming createRequest validation
         log.info("Validating incoming staff request");
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
@@ -79,7 +79,7 @@ public class StaffService {
 
         //validator call by passing staff request and the data from db call
         log.info("staffServiceValidator called to validate Create StaffPermission request");
-        // staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB);
+        staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionListFromDB, attendanceRegisterListFromDB, cboMigrationReq);
 
         //enrichment call by passing staff request and data from db call
         log.info("staffEnrichmentService called to enrich Create StaffPermission request");

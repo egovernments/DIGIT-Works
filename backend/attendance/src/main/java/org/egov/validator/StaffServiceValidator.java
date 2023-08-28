@@ -143,18 +143,21 @@ public class StaffServiceValidator {
     }
 
     public void validateStaffPermissionOnCreate(StaffPermissionRequest request, List<StaffPermission> staffPermissionListFromDB,
-                                                List<AttendanceRegister> attendanceRegisterListFromDB) {
+                                                List<AttendanceRegister> attendanceRegisterListFromDB, boolean cboMigration) {
 
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 
         // staff cannot be added to register if register's end date has passed
         log.info("checking that staff cannot be added to register if register's end date has passed");
-        BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
-        for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
-            int dateComparisonResult = attendanceRegister.getEndDate().compareTo(enrollmentDate);
-            if (dateComparisonResult < 0) {
-                log.error("Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
-                throw new CustomException("END_DATE", "Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
+        // When changing the CBO skip this validation
+        if (!cboMigration) {
+            BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
+            for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
+                int dateComparisonResult = attendanceRegister.getEndDate().compareTo(enrollmentDate);
+                if (dateComparisonResult < 0) {
+                    log.error("Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
+                    throw new CustomException("END_DATE", "Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
+                }
             }
         }
 
