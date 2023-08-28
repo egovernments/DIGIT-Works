@@ -4,7 +4,7 @@
     <artifactId>expense</artifactId>
     <packaging>jar</packaging>
     <name>expense</name>
-    <version>0.1.2</version>
+    <version>0.2.0</version>
     <properties>
     <java.version>1.8</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>

@@ -1,8 +1,10 @@
 package org.egov.digit.expense.calculator.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -167,10 +169,12 @@ public class PurchaseBillGeneratorService {
     private void calculateAndSetNetLineItemAmount(BillDetail billDetail) {
         List<LineItem> payableLineItems = billDetail.getPayableLineItems();
         BigDecimal netLineItemAmount = BigDecimal.ZERO;
-        for(LineItem lineItem : payableLineItems) {
-            // Add netLineItemAmount only if status is not INACTIVE
-            if (!LINEITEM_STATUS_INACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
-                netLineItemAmount = netLineItemAmount.add(lineItem.getAmount());
+        if (payableLineItems != null && !payableLineItems.isEmpty()) {
+            for(LineItem lineItem : payableLineItems) {
+                // Add netLineItemAmount only if status is not INACTIVE
+                if (!LINEITEM_STATUS_INACTIVE.equalsIgnoreCase(lineItem.getStatus())) {
+                    netLineItemAmount = netLineItemAmount.add(lineItem.getAmount().setScale(0, RoundingMode.HALF_UP));
+                }
             }
         }
         billDetail.setNetLineItemAmount(netLineItemAmount);
@@ -181,15 +185,26 @@ public class PurchaseBillGeneratorService {
         String tenantId = billDetail.getTenantId();
         BigDecimal expense = BigDecimal.ZERO;
         BigDecimal deduction = BigDecimal.ZERO;
+        List<LineItem> lineItemWithZeroAmount=new ArrayList<LineItem>();
         // Calculate total expense
         for(LineItem lineItem :lineItems) {
             String headCode = lineItem.getHeadCode();
-            BigDecimal amount = lineItem.getAmount();
+            BigDecimal amount = lineItem.getAmount().setScale(0, RoundingMode.HALF_UP);
+            lineItem.setAmount(amount);
             String category = getHeadCodeCategory(headCode,headCodes);
             if(category != null && category.equalsIgnoreCase(EXPENSE_CONSTANT) && lineItem.getStatus().equals(LINEITEM_STATUS_ACTIVE)) {
                 expense = expense.add(amount);
             }
+            if(amount.compareTo(BigDecimal.ZERO)<=0){
+                lineItemWithZeroAmount.add(lineItem);
+            }
         }
+
+        //Removing the line items which have amount as 0
+        if(!lineItemWithZeroAmount.isEmpty()){
+            lineItems.removeAll(lineItemWithZeroAmount);
+        }
+
         // If PayableLineItems is available in bill details then set each lineitem INACTIVE
         if (billDetail.getPayableLineItems() != null && !billDetail.getPayableLineItems().isEmpty()) {
             List<LineItem> payableLineItems = billDetail.getPayableLineItems();
@@ -210,18 +225,25 @@ public class PurchaseBillGeneratorService {
                     log.error("INVALID_CALCULATION_TYPE_VALUE", "For calculationType [" + calculationType +"] value is null");
                     throw new CustomException("INVALID_CALCULATION_TYPE_VALUE", "For calculationType [" + calculationType +"] field value is null");
                 } else if (PERCENTAGE_CONSTANT.equalsIgnoreCase(calculationType) && value != null && !"null".equalsIgnoreCase(value) ) {
-                    tempDeduction = expense.multiply(new BigDecimal(value)).divide(new BigDecimal(100)) ;
+                    tempDeduction = expense.multiply(new BigDecimal(value)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP) ;
                 } else if (LUMPSUM_CONSTANT.equalsIgnoreCase(calculationType) && (value == null || "null".equalsIgnoreCase(value)))  {
-                    tempDeduction = lineItem.getAmount();
+                    tempDeduction = lineItem.getAmount().setScale(0, RoundingMode.HALF_UP);
                 } else if (LUMPSUM_CONSTANT.equalsIgnoreCase(calculationType) && value != null && !"null".equalsIgnoreCase(value) ) {
-                    tempDeduction = new BigDecimal(value);
+                    tempDeduction = new BigDecimal(value).setScale(0, RoundingMode.HALF_UP);
                 } else {
                     log.error("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
                     throw new CustomException("INVALID_HEADCODE_CALCULATION_TYPE", "Head Code calculation type [" + calculationType +"] is not supported");
                 }
+                if (tempDeduction.compareTo(BigDecimal.ZERO) <= 0)
+                    continue;
                 deduction = deduction.add(tempDeduction);
                 billDetail.addPayableLineItems(buildPayableLineItem(tempDeduction,tenantId,headCode));
             }
+        }
+        // If bill amount is less then equal to zero then do not generate bill
+        if (expense.subtract(deduction).compareTo(BigDecimal.ZERO) <= 0) {
+            log.error("INVALID_PURCHASE_BILL_AMOUNT", "Purchase bill amount is not grater then ZERO.");
+            throw new CustomException("INVALID_PURCHASE_BILL_AMOUNT", "Purchase bill amount is not grater then ZERO.");
         }
         billDetail.addPayableLineItems(buildPayableLineItem(expense.subtract(deduction),tenantId,"PURCHASE"));
     }

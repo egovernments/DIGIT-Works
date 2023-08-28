@@ -1,464 +1,709 @@
-import 'package:digit_components/digit_components.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:works_shg_app/router/app_router.dart';
-import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
-    as i18;
-import 'package:works_shg_app/widgets/ButtonLink.dart';
-import 'package:works_shg_app/widgets/atoms/button_group.dart';
+package org.egov.enrichment;
 
-import '../blocs/localization/app_localization.dart';
-import '../blocs/localization/localization.dart';
-import '../blocs/time_extension_request/muster_search_for_time_extension.dart';
-import '../blocs/work_orders/accept_work_order.dart';
-import '../blocs/work_orders/decline_work_order.dart';
-import '../models/attendance/attendance_registry_model.dart';
-import '../models/muster_rolls/muster_roll_model.dart';
-import '../models/works/contracts_model.dart';
-import '../utils/constants.dart';
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import digit.models.coremodels.AuditDetails;
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
+import org.egov.common.models.individual.Individual;
+import org.egov.config.Constants;
+import org.egov.config.IfmsAdapterConfig;
+import org.egov.repository.SanctionDetailsRepository;
+import org.egov.service.IfmsService;
+import org.egov.utils.*;
+import org.egov.web.models.bankaccount.BankAccount;
+import org.egov.web.models.bill.*;
+import org.egov.web.models.enums.*;
+import org.egov.web.models.jit.*;
+import org.egov.web.models.organisation.Organisation;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-class WorkDetailsCard extends StatelessWidget {
-  final List<Map<String, dynamic>> detailsList;
-  final String outlinedButtonLabel;
-  final String elevatedButtonLabel;
-  final bool isAttendanceInbox;
-  final bool isManageAttendance;
-  final bool isWorkOrderInbox;
-  final bool viewWorkOrder;
-  final bool orgProfile;
-  final bool isSHGInbox;
-  final String? cardTitle;
-  final bool isTrackAttendance;
-  final List<AttendanceRegister>? attendanceRegistersModel;
-  final List<MusterRoll>? musterRollsModel;
-  final ContractsModel? contractModel;
-  final bool? showButtonLink;
-  final String? linkLabel;
-  final void Function()? onLinkPressed;
-  final String? acceptWorkOrderCode;
-  final String? musterBackToCBOCode;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
-  const WorkDetailsCard(this.detailsList,
-      {this.isAttendanceInbox = false,
-      this.isManageAttendance = false,
-      this.isWorkOrderInbox = false,
-      this.isTrackAttendance = false,
-      this.isSHGInbox = false,
-      this.viewWorkOrder = false,
-      this.showButtonLink = false,
-      this.linkLabel = '',
-      this.onLinkPressed,
-      this.elevatedButtonLabel = '',
-      this.outlinedButtonLabel = '',
-      this.cardTitle,
-      this.attendanceRegistersModel,
-      this.musterRollsModel,
-      this.contractModel,
-      this.orgProfile = false,
-      this.acceptWorkOrderCode,
-      this.musterBackToCBOCode,
-      super.key});
+import static org.egov.config.Constants.*;
 
-  @override
-  Widget build(BuildContext context) {
-    var list = <Widget>[];
-    if (isManageAttendance || isTrackAttendance) {
-      for (int i = 0; i < detailsList.length; i++) {
-        list.add(GestureDetector(
-          child: DigitCard(
-              padding: const EdgeInsets.all(8.0),
-              child: getCardDetails(context, detailsList[i],
-                  attendanceRegisterId: attendanceRegistersModel![i].id,
-                  attendanceRegister: attendanceRegistersModel![i])),
-        ));
-      }
-    } else if (isWorkOrderInbox || viewWorkOrder) {
-      for (int i = 0; i < detailsList.length; i++) {
-        list.add(GestureDetector(
-          child: DigitCard(
-              padding: const EdgeInsets.all(8.0),
-              child: getCardDetails(context, detailsList[i]['cardDetails'],
-                  payload: detailsList[i]['payload'],
-                  isAccept: acceptWorkOrderCode != null &&
-                          detailsList[i]['cardDetails']
-                                  [Constants.activeInboxStatus] ==
-                              'true'
-                      ? false
-                      : true,
-                  contractNumber: detailsList[i]['cardDetails']
-                      [i18.workOrder.workOrderNo])),
-        ));
-      }
-    } else if (isSHGInbox) {
-      for (int i = 0; i < detailsList.length; i++) {
-        list.add(GestureDetector(
-          child: DigitCard(
-              padding: const EdgeInsets.all(8.0),
-              child: getCardDetails(context, detailsList[i],
-                  musterRoll: musterRollsModel![i])),
-        ));
-      }
-    } else {
-      for (int i = 0; i < detailsList.length; i++) {
-        list.add(GestureDetector(
-          child: DigitCard(
-              padding: const EdgeInsets.all(8.0),
-              child: getCardDetails(context, detailsList[i])),
-        ));
-      }
-    }
-    return BlocBuilder<LocalizationBloc, LocalizationState>(
-        builder: (context, localState) {
-      return Column(
-        children: list,
-      );
-    });
-  }
+@Service
+@Slf4j
+public class PaymentInstructionEnrichment {
+    @Autowired
+    private BillUtils billUtils;
+    @Autowired
+    private IfmsService ifmsService;
+    @Autowired
+    private HelperUtil util;
+    @Autowired
+    private SanctionDetailsRepository sanctionDetailsRepository;
+    @Autowired
+    private IdgenUtil idgenUtil;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private IfmsAdapterConfig config;
+    @Autowired
+    private AuditLogUtils auditLogUtils;
+    @Autowired
+    private BankAccountUtils bankAccountUtils;
 
-  Widget getCardDetails(BuildContext context, Map<String, dynamic> cardDetails,
-      {List<String>? userList,
-      AttendanceRegister? attendanceRegister,
-      String? attendanceRegisterId,
-      Map<String, dynamic>? payload,
-      bool? isAccept,
-      MusterRoll? musterRoll,
-      String? contractNumber,
-      String? registerNumber}) {
-    var labelList = <Widget>[];
-    if (isWorkOrderInbox && !isAccept!) {
-      labelList.add(Padding(
-        padding: const EdgeInsets.only(left: 4.0, bottom: 16.0, top: 8.0),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: SvgPicture.asset('assets/svg/new_tag.svg'),
-        ),
-      ));
-    }
-    if ((viewWorkOrder || orgProfile) && cardTitle != null) {
-      labelList.add(Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 4.0, bottom: 16.0, top: 8.0),
-          child: Text(
-            cardTitle ?? '',
-            style: DigitTheme.instance.mobileTheme.textTheme.headlineLarge
-                ?.apply(color: const DigitColors().black),
-            textAlign: TextAlign.left,
-          ),
-        ),
-      ));
-    }
-    for (int j = 0; j < cardDetails.length; j++) {
-      labelList.add(getItemWidget(
-        context,
-        title: AppLocalizations.of(context)
-            .translate(cardDetails.keys.elementAt(j).toString()),
-        description: AppLocalizations.of(context)
-            .translate(cardDetails.values.elementAt(j).toString()),
-        isActiveStatus: (isWorkOrderInbox || viewWorkOrder) &&
-                cardDetails.keys.elementAt(j).toString() == i18.common.status &&
-                cardDetails.length == j + 2
-            ? true
-            : !(isWorkOrderInbox || viewWorkOrder) &&
-                cardDetails.keys.elementAt(j).toString() == i18.common.status &&
-                cardDetails.length == j + 2 &&
-                ((cardDetails.values.elementAt(j + 1) == 'true') ||
-                    (cardDetails.values.elementAt(j) == Constants.active)),
-        isRejectStatus: (isWorkOrderInbox || viewWorkOrder) &&
-                cardDetails.keys.elementAt(j).toString() == i18.common.status
-            ? false
-            : !(isWorkOrderInbox || viewWorkOrder) &&
-                cardDetails.keys.elementAt(j).toString() == i18.common.status &&
-                cardDetails.length == j + 2 &&
-                (cardDetails.values.elementAt(j + 1) == 'false'),
-      ));
-    }
-    if (isWorkOrderInbox && !isAccept!) {
-      labelList.add(Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: ButtonLink(
-              AppLocalizations.of(context).translate(i18.common.viewDetails),
-              () => context.router.push(ViewWorkDetailsRoute(
-                  contractNumber: contractNumber.toString())),
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  color: DigitTheme.instance.colorScheme.primary),
-            ),
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.all(4.0),
-            child: ButtonGroup(
-              outlinedButtonLabel,
-              elevatedButtonLabel,
-              outLinedCallBack: () => DigitDialog.show(context,
-                  options: DigitDialogOptions(
-                      titleIcon: const Icon(
-                        Icons.warning,
-                        color: Colors.red,
-                      ),
-                      titleText: AppLocalizations.of(context)
-                          .translate(i18.common.warning),
-                      contentText: AppLocalizations.of(context)
-                          .translate(i18.workOrder.warningMsg),
-                      primaryAction: DigitDialogActions(
-                        label: AppLocalizations.of(context)
-                            .translate(i18.common.confirm),
-                        action: (BuildContext context) {
-                          context.read<DeclineWorkOrderBloc>().add(
-                                WorkOrderDeclineEvent(
-                                    contractsModel: payload,
-                                    action: 'DECLINE',
-                                    comments:
-                                        'Work Order has been declined by CBO'),
-                              );
-                          Navigator.of(context, rootNavigator: true).pop();
-                        },
-                      ),
-                      secondaryAction: DigitDialogActions(
-                        label: AppLocalizations.of(context)
-                            .translate(i18.common.back),
-                        action: (BuildContext context) =>
-                            Navigator.of(context, rootNavigator: true).pop(),
-                      ))),
-              elevatedCallBack: () {
-                context.read<AcceptWorkOrderBloc>().add(
-                      WorkOrderAcceptEvent(
-                          contractsModel: payload,
-                          action: 'ACCEPT',
-                          comments: 'Work Order has been accepted by CBO'),
-                    );
-              },
-            ),
-          ),
-        ],
-      ));
-    } else if (isWorkOrderInbox && isAccept!) {
-      labelList.add(Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: ButtonLink(
-              AppLocalizations.of(context).translate(i18.common.viewDetails),
-              () => context.router.push(ViewWorkDetailsRoute(
-                  contractNumber: contractNumber.toString())),
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  color: DigitTheme.instance.colorScheme.primary),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: DigitElevatedButton(
-              onPressed: () => DigitActionDialog.show(context,
-                  widget: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: DigitOutlineIconButton(
-                            buttonStyle: OutlinedButton.styleFrom(
-                                minimumSize: Size(
-                                    MediaQuery.of(context).size.width / 2.8,
-                                    50),
-                                shape: const RoundedRectangleBorder(),
-                                side: BorderSide(
-                                    color: const DigitColors().burningOrange,
-                                    width: 1)),
-                            onPressed: () {
-                              context.router.push(AttendanceRegisterTableRoute(
-                                  registerId: payload!['additionalDetails']
-                                          ['attendanceRegisterNumber']
-                                      .toString(),
-                                  tenantId: payload['tenantId'].toString()));
-                              Navigator.of(context, rootNavigator: true).pop();
-                            },
-                            label: AppLocalizations.of(context)
-                                .translate(i18.home.manageWageSeekers),
-                            icon: Icons.fingerprint,
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.w700, fontSize: 18),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: DigitOutlineIconButton(
-                            label: AppLocalizations.of(context)
-                                .translate(i18.workOrder.projectClosure),
-                            icon: Icons.cancel_outlined,
-                            buttonStyle: OutlinedButton.styleFrom(
-                                minimumSize: Size(
-                                    MediaQuery.of(context).size.width / 2.8,
-                                    50),
-                                shape: const RoundedRectangleBorder(),
-                                side: BorderSide(
-                                    color: const DigitColors().burningOrange,
-                                    width: 1)),
-                            onPressed: () =>
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop(),
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.w700, fontSize: 18),
-                          ),
-                        ),
-                        DigitOutlineIconButton(
-                          label: AppLocalizations.of(context)
-                              .translate(i18.workOrder.requestTimeExtension),
-                          icon: Icons.calendar_today_rounded,
-                          buttonStyle: OutlinedButton.styleFrom(
-                              minimumSize: Size(
-                                  MediaQuery.of(context).size.width / 2.8, 50),
-                              shape: const RoundedRectangleBorder(),
-                              side: BorderSide(
-                                  color: const DigitColors().burningOrange,
-                                  width: 1)),
-                          onPressed: () {
-                            Navigator.of(context, rootNavigator: true).pop();
-                            context.read<ValidMusterRollsSearchBloc>().add(
-                                SearchValidMusterRollsEvent(
-                                    contract:
-                                        ContractsMapper.fromMap(payload ?? {}),
-                                    contractNo: contractNumber.toString(),
-                                    tenantId: payload!['tenantId'].toString(),
-                                    status: 'APPROVED'));
-                          },
-                          textStyle: const TextStyle(
-                              fontWeight: FontWeight.w700, fontSize: 18),
-                        )
-                      ],
-                    ),
-                  )),
-              child: Center(
-                child: Text(
-                    AppLocalizations.of(context)
-                        .translate(i18.common.takeAction),
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .apply(color: Colors.white)),
-              ),
-            ),
-          ),
-        ],
-      ));
-    } else if (isManageAttendance || isTrackAttendance) {
-      labelList.add(Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: DigitElevatedButton(
-          onPressed: () {
-            if (isManageAttendance) {
-              context.router.push(AttendanceRegisterTableRoute(
-                  registerId: attendanceRegisterId.toString(),
-                  tenantId: attendanceRegister!.tenantId.toString()));
-            } else {
-              context.router.push(TrackAttendanceRoute(
-                id: attendanceRegisterId.toString(),
-                tenantId: attendanceRegister!.tenantId.toString(),
-              ));
+    public List<Beneficiary> getBeneficiariesFromBills(List<Bill> billList, PaymentRequest paymentRequest) {
+        log.info("Started generating beneficiaries lists for PI");
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        JSONArray headCodesList = billUtils.getHeadCode(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
+
+        Map<String, JsonNode> headCodeMap = getHeadCodeHashMap(headCodesList);
+        log.info("Generating beneficiary list based on line item.");
+        for (Bill bill: billList) {
+            for (BillDetail billDetail: bill.getBillDetails()) {
+                for (LineItem lineItem: billDetail.getPayableLineItems()) {
+                    Beneficiary beneficiary =  getBeneficiariesFromLineItem(lineItem, billDetail.getPayee(), headCodeMap, paymentRequest.getPayment().getTenantId());
+                    beneficiaryList.add(beneficiary);
+                }
             }
-          },
-          child: Center(
-            child: Text(elevatedButtonLabel,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .apply(color: Colors.white)),
-          ),
-        ),
-      ));
-    } else if (isSHGInbox) {
-      labelList.add(Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: DigitElevatedButton(
-          onPressed: () {
-            context.router.push(SHGInboxRoute(
-                tenantId: musterRoll.tenantId.toString(),
-                musterRollNo: musterRoll.musterRollNumber.toString(),
-                sentBackCode: musterBackToCBOCode ?? Constants.sentBack));
-          },
-          child: Center(
-            child: Text(
-                musterRoll!.musterRollStatus == musterBackToCBOCode
-                    ? AppLocalizations.of(context)
-                        .translate(i18.attendanceMgmt.editMusterRoll)
-                    : elevatedButtonLabel,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .apply(color: Colors.white)),
-          ),
-        ),
-      ));
+        }
+        log.info("Beneficiary list generated, combine them based on bank account number.");
+        // Combine beneficiary by beneficiaryId
+        beneficiaryList = combineBeneficiaryById(beneficiaryList);
+        return beneficiaryList;
     }
-    if (showButtonLink! && linkLabel!.isNotEmpty) {
-      labelList.add(Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: ButtonLink(linkLabel ?? '', onLinkPressed),
-      ));
-    }
-    return Column(
-      children: labelList,
-    );
-  }
 
-  static getItemWidget(BuildContext context,
-      {String title = '',
-      String description = '',
-      String subtitle = '',
-      bool isActiveStatus = false,
-      bool isRejectStatus = false}) {
-    return title != Constants.activeInboxStatus
-        ? Container(
-            padding: const EdgeInsets.all(4.0),
-            child: (Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title.trim(),
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w700),
-                            textAlign: TextAlign.start,
-                          ),
-                          subtitle.trim.toString() != ''
-                              ? Text(
-                                  subtitle.trim(),
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color:
-                                          Theme.of(context).primaryColorLight),
-                                )
-                              : const Text('')
-                        ])),
-                SizedBox(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: Text(
-                      description.trim(),
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: isActiveStatus && !isRejectStatus
-                              ? DigitTheme.instance.colorScheme.onSurfaceVariant
-                              : isRejectStatus && !isActiveStatus
-                                  ? DigitTheme.instance.colorScheme.error
-                                  : DigitTheme.instance.colorScheme.onSurface),
-                      textAlign: TextAlign.left,
-                    ))
-              ],
-            )))
-        : const SizedBox.shrink();
-  }
+    private List<Beneficiary> combineBeneficiaryById(List<Beneficiary> beneficiaryList) {
+        log.info("Started executing combineBeneficiaryById");
+        Map<String, Beneficiary> benfMap = new HashMap<>();
+        for(Beneficiary beneficiary: beneficiaryList) {
+            if (benfMap.containsKey(beneficiary.getBeneficiaryId())) {
+                benfMap.get(beneficiary.getBeneficiaryId()).getBenfLineItems().addAll(beneficiary.getBenfLineItems());
+                benfMap.get(beneficiary.getBeneficiaryId()).setAmount(benfMap.get(beneficiary.getBeneficiaryId()).getAmount().add(beneficiary.getAmount()));
+            } else {
+                benfMap.put(beneficiary.getBeneficiaryId(), beneficiary);
+            }
+        }
+        List<Beneficiary> beneficiaries = new ArrayList<>(benfMap.values());
+        log.info("Beneficiary details are combined based on account details, sending back.");
+        return beneficiaries;
+    }
+
+    private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId) {
+        log.info("Started executing getBeneficiariesFromLineItem");
+        String beneficiaryId = payee.getIdentifier();
+        String headCode = lineItem.getHeadCode();
+        Beneficiary beneficiary = null;
+        if (beneficiaryId != null && headCode != null) {
+            JsonNode headCodeNode = headCodeMap.get(headCode);
+            if (headCodeNode != null) {
+                String headCodeCategory = headCodeNode.get(Constants.HEAD_CODE_CATEGORY_KEY).asText();
+                if (headCodeCategory != null && headCodeCategory.equalsIgnoreCase(Constants.HEAD_CODE_DEDUCTION_CATEGORY)) {
+                    beneficiaryId = Constants.DEDUCTION_BENEFICIARY_BY_HEADCODE.replace("{tanentId}", tenantId).replace("{headcode}", headCode);
+                }
+            }
+            List<BenfLineItems> benefLineItemList = new ArrayList<>();
+            BenfLineItems benfLineItems = BenfLineItems.builder().lineItemId(lineItem.getId()).build();
+            benefLineItemList.add(benfLineItems);
+            beneficiary = Beneficiary.builder()
+                    .amount(lineItem.getAmount())
+                    .beneficiaryId(beneficiaryId)
+                    .benfLineItems(benefLineItemList).build();
+        }
+        log.info("Beneficiary generated and sending back.");
+        return beneficiary;
+    }
+    public PaymentInstruction getEnrichedPaymentRequest(PaymentRequest paymentRequest, List<Beneficiary> beneficiaries, Map<String, Object> hoaSsuMap) {
+        // Get the beneficiaries
+        BigDecimal totalAmount = new BigDecimal(0);
+        if (beneficiaries != null && !beneficiaries.isEmpty()) {
+            for (Beneficiary piBeneficiary: beneficiaries) {
+                totalAmount = totalAmount.add(piBeneficiary.getAmount());
+            }
+        }
+        JsonNode ssuNode = null, hoaNode = null;
+        SanctionDetail selectedSanction = null;
+        Boolean hasFunds = true;
+        ssuNode = objectMapper.valueToTree(hoaSsuMap.get("ssu"));
+        hoaNode = objectMapper.valueToTree(hoaSsuMap.get("hoa"));
+        selectedSanction = (SanctionDetail) hoaSsuMap.get("sanction");
+        hasFunds = Boolean.parseBoolean(hoaSsuMap.get("hasFunds").toString());
+        if (ssuNode == null || hoaNode == null || selectedSanction == null) {
+            log.info("Value not find to generate pi request. ssuNode, hoaNode or selectedSanction is null");
+            return null;
+        }
+
+        String ssuIaId = ssuNode.get("ssuId").asText();
+        String ddoCode = ssuNode.get("ddoCode").asText();
+        String granteeAgCode = ssuNode.get("granteeAgCode").asText();
+        String hoaCode = hoaNode.get("code").asText();
+        String schemeCode = hoaNode.get("schemeCode").asText();
+        // Sort the list in descending order based on the value
+        Collections.sort(selectedSanction.getAllotmentDetails(), Comparator.comparingInt(o -> ((Allotment) o).getAllotmentSerialNo()).reversed());
+        String mstAllotmentDistId = selectedSanction.getAllotmentDetails().get(0).getMstAllotmentDistId();
+        PIStatus piStatus = hasFunds ? PIStatus.INITIATED : PIStatus.FAILED;
+        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        PaymentInstruction piRequest = PaymentInstruction.builder()
+                .id(UUID.randomUUID().toString())
+                .jitBillNo(jitBillNo)
+//                .jitBillDate(util.getFormattedTimeFromTimestamp(paymentRequest.getPayment().getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
+                .jitBillDdoCode(ddoCode)
+                .granteeAgCode(granteeAgCode)
+                .schemeCode(schemeCode)
+                .hoa(hoaCode)
+                .ssuIaId(ssuIaId)
+                .mstAllotmentDistId(selectedSanction.getMasterAllotmentId())
+                .ssuAllotmentId(selectedSanction.getAllotmentDetails().get(0).getSsuAllotmentId())
+                .allotmentTxnSlNo(String.valueOf(selectedSanction.getAllotmentDetails().get(0).getAllotmentSerialNo()))
+                .purpose(JIT_FD_EXT_APP_NAME)
+                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .beneficiaryDetails(beneficiaries)
+                .numBeneficiaries(beneficiaries.size())
+                .billNumberOfBenf(String.valueOf(beneficiaries.size()))
+                .tenantId(paymentRequest.getPayment().getTenantId())
+                .grossAmount(totalAmount)
+                .netAmount(totalAmount)
+                .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
+                .piStatus(piStatus)
+                .build();
+        enrichPiRequestForInsert(piRequest, paymentRequest, hasFunds);
+        // update piRequest for payment search indexer
+        updateBillFieldsForIndexer(piRequest, paymentRequest);
+        return piRequest;
+    }
+
+    private void enrichPiRequestForInsert(PaymentInstruction piRequest, PaymentRequest paymentRequest, Boolean hasFunds) {
+        String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
+        Long time = System.currentTimeMillis();
+        String tenantId = paymentRequest.getPayment().getTenantId();
+        String muktaReferenceId = paymentRequest.getPayment().getPaymentNumber();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
+        BeneficiaryPaymentStatus beneficiaryPaymentStatus = hasFunds ? BeneficiaryPaymentStatus.INITIATED : BeneficiaryPaymentStatus.PENDING;
+        JsonNode emptyObject = objectMapper.createObjectNode();
+        if (piRequest.getId() == null)
+            piRequest.setId(UUID.randomUUID().toString());
+        piRequest.setAdditionalDetails(emptyObject);
+        piRequest.setAuditDetails(auditDetails);
+        piRequest.setJitBillDate(util.getFormattedTimeFromTimestamp(auditDetails.getCreatedTime(), VA_REQUEST_TIME_FORMAT));
+
+        // Update payment advice details
+        PADetails paDetails = PADetails.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
+                .piId(piRequest.getId())
+                .muktaReferenceId(muktaReferenceId)
+                .additionalDetails(emptyObject)
+                .auditDetails(auditDetails)
+                .build();
+        piRequest.setPaDetails(Collections.singletonList(paDetails));
+
+        // GET IDGEN id for beneficiary
+        List<String> benefIdList = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPiBenefInstructionNumberFormat(), null, piRequest.getBeneficiaryDetails().size());
+
+        int idx = 0;
+        // Update beneficiary details
+        for (Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
+            beneficiary.setId(UUID.randomUUID().toString());
+            beneficiary.setBeneficiaryNumber(benefIdList.get(idx));
+            beneficiary.setTenantId(tenantId);
+            beneficiary.setMuktaReferenceId(muktaReferenceId);
+            beneficiary.setPiId(piRequest.getId());
+            beneficiary.setPaymentStatus(beneficiaryPaymentStatus);
+            beneficiary.setAdditionalDetails(emptyObject);
+            beneficiary.setAuditDetails(auditDetails);
+            for (BenfLineItems lineItem: beneficiary.getBenfLineItems()) {
+                lineItem.setId(UUID.randomUUID().toString());
+                lineItem.setBeneficiaryId(beneficiary.getId());
+                lineItem.setAuditDetails(auditDetails);
+            }
+            // Increase idx
+            idx = idx + 1;
+        }
+    }
+
+    public void addTransactionDetailsInPiRequest(PaymentInstruction piRequest, PaymentRequest paymentRequest, SanctionDetail sanctionDetail) {
+        // Create transaction details and push into piRequest
+        String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
+        String tenantId = paymentRequest.getPayment().getTenantId();
+        JsonNode emptyObject = objectMapper.createObjectNode();
+        Long time = System.currentTimeMillis();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
+        TransactionDetails transactionDetails = TransactionDetails.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
+                .sanctionId(sanctionDetail.getId())
+                .paymentInstId(piRequest.getId())
+                .transactionAmount(piRequest.getNetAmount())
+                .additionalDetails(emptyObject)
+                .transactionType(TransactionType.DEBIT)
+                .auditDetails(auditDetails)
+                .build();
+        piRequest.setTransactionDetails(Collections.singletonList(transactionDetails));
+
+    }
+
+    public Map<String, Object> getSanctionSsuAndHOA(PaymentRequest paymentRequest, BigDecimal amount) {
+        // GET ssu details
+        JSONArray ssuDetailList = ifmsService.getSSUDetails(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
+        JSONArray hoaList = ifmsService.getHeadOfAccounts(paymentRequest.getRequestInfo());
+
+        hoaList = sortHoaList(hoaList);
+
+        JsonNode ssuNode = null, hoaNode = null;
+        SanctionDetail selectedSanction = null;
+        Boolean hasFunds = true;
+        if (ssuDetailList!= null && !ssuDetailList.isEmpty() && hoaList != null && !hoaList.isEmpty()) {
+            for(Object ssu:ssuDetailList) {
+                for(Object hoa: hoaList) {
+                    if (selectedSanction == null) {
+                        ssuNode = objectMapper.valueToTree(ssu);
+                        hoaNode = objectMapper.valueToTree(hoa);
+                        String ddoCode = ssuNode.get("ddoCode").asText();;
+                        String hoaCode = hoaNode.get("code").asText();
+                        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
+                                .tenantId(paymentRequest.getPayment().getTenantId())
+                                .ddoCode(ddoCode)
+                                .hoaCode(hoaCode)
+                                .build();
+                        List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
+                        for (SanctionDetail sanctionDetail: sanctionDetails) {
+                            if (sanctionDetail.getFundsSummary().getAvailableAmount().compareTo(amount) >= 0) {
+                                selectedSanction = sanctionDetail;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+            if (selectedSanction == null) {
+                hasFunds = false;
+                ssuNode = objectMapper.valueToTree(ssuDetailList.get(0));
+                hoaNode = objectMapper.valueToTree(hoaList.get(0));
+                String ddoCode = ssuNode.get("ddoCode").asText();;
+                String hoaCode = hoaNode.get("code").asText();
+                SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
+                        .tenantId(paymentRequest.getPayment().getTenantId())
+                        .ddoCode(ddoCode)
+                        .hoaCode(hoaCode)
+                        .build();
+                List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
+                if (!sanctionDetails.isEmpty()) {
+                    selectedSanction = sanctionDetails.get(0);
+                }
+            }
+        }
+
+        if (selectedSanction != null) {
+            // Filter TRANSACTION TYPE WITHDRAWAL from selected sanction allotment
+            List<Allotment> allotments = selectedSanction.getAllotmentDetails().stream()
+                    .filter(allotment -> !allotment.getAllotmentTxnType().equalsIgnoreCase(VA_TRANSACTION_TYPE_WITHDRAWAL))
+                    .collect(Collectors.toList());
+            selectedSanction.setAllotmentDetails(allotments);
+        }
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("ssu", ssuNode);
+        objectMap.put("hoa", hoaNode);
+        objectMap.put("sanction", selectedSanction);
+        objectMap.put("hasFunds", hasFunds);
+        return objectMap;
+    }
+
+    private JSONArray sortHoaList(JSONArray hoaList) {
+        try {
+            if (hoaList != null && !hoaList.isEmpty()) {
+                hoaList.sort((o1, o2) -> {
+                    JsonNode node1 = objectMapper.valueToTree(o1);
+                    JsonNode node2 = objectMapper.valueToTree(o2);
+
+                    int key1 = node1.get("sequence").asInt();
+                    int key2 = node2.get("sequence").asInt();
+                    return Integer.compare(key1, key2);
+                });
+            }
+        }catch (Exception e) {
+            log.error("Exception in PaymentInstructionEnrichment:sortHoaList : " + e);
+        }
+        return hoaList;
+    }
+
+    private List<Beneficiary> getBeneficiaryListFromBill(Bill bill) {
+        List<Beneficiary>  piBeneficiaryList = new ArrayList<>();
+        for (BillDetail billDetail: bill.getBillDetails()) {
+            for (LineItem lineItem: billDetail.getPayableLineItems()) {
+                if (lineItem.getStatus().equals(Status.ACTIVE)) {
+                    Beneficiary piBeneficiary = Beneficiary.builder()
+                            .benefId(billDetail.getPayee().getIdentifier())
+                            .benfAmount(lineItem.getAmount().toString())
+                            .build();
+                    piBeneficiaryList.add(piBeneficiary);
+                }
+            }
+        }
+        return piBeneficiaryList;
+    }
+
+    public void enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations) {
+        log.info("Started executing enrichBankaccountOnBeneficiary");
+        Map<String, BankAccount> bankAccountMap = new HashMap<>();
+        if (bankAccounts != null && !bankAccounts.isEmpty()) {
+            for(BankAccount bankAccount: bankAccounts) {
+                bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);
+            }
+        }
+        Map<String, Individual> individualMap = new HashMap<>();
+        if (individuals != null && !individuals.isEmpty()) {
+            for(Individual individual: individuals) {
+                individualMap.put(individual.getId(), individual);
+            }
+        }
+        Map<String, Organisation> organisationMap = new HashMap<>();
+        if (organisations != null && !organisations.isEmpty()) {
+            for(Organisation organisation: organisations) {
+                organisationMap.put(organisation.getId(), organisation);
+            }
+        }
+        log.info("Created map of org, individual and bankaccount, started generating beneficiary.");
+        for(Beneficiary piBeneficiary: beneficiaryList) {
+            BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
+            if (bankAccount != null) {
+                piBeneficiary.setBenefName(bankAccount.getBankAccountDetails().get(0).getAccountHolderName());
+                piBeneficiary.setBenfAcctNo(bankAccount.getBankAccountDetails().get(0).getAccountNumber());
+                piBeneficiary.setBenfBankIfscCode(bankAccount.getBankAccountDetails().get(0).getBankBranchIdentifier().getCode());
+                piBeneficiary.setBenfAccountType(bankAccount.getBankAccountDetails().get(0).getAccountType());
+                piBeneficiary.setBankAccountId(bankAccount.getBankAccountDetails().get(0).getId());
+            }
+
+            Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
+            Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
+
+            if (individual != null) {
+                piBeneficiary.setBeneficiaryType(BeneficiaryType.IND);
+                piBeneficiary.setBenfMobileNo(individual.getMobileNumber());
+                piBeneficiary.setBenfAddress(individual.getAddress().get(0).getWard().getCode() + " " +individual.getAddress().get(0).getLocality().getCode());
+            } else if (organisation != null) {
+                piBeneficiary.setBeneficiaryType(BeneficiaryType.ORG);
+                piBeneficiary.setBenfMobileNo(organisation.getContactDetails().get(0).getContactMobileNumber());
+                piBeneficiary.setBenfAddress(organisation.getOrgAddress().get(0).getBoundaryCode() + " " +organisation.getOrgAddress().get(0).getCity());
+            } else {
+                piBeneficiary.setBeneficiaryType(BeneficiaryType.DEPT);
+                piBeneficiary.setBenfMobileNo("9999999999");
+                piBeneficiary.setBenfAddress("Temp address");
+            }
+            piBeneficiary.setPurpose("Mukta Payment");
+        }
+        log.info("Beneficiary details enriched and sending back.");
+
+    }
+
+    public JITRequest getJitPaymentInstructionRequestForIFMS(PaymentInstruction existingPI) {
+        log.info("Started executing getJitPaymentInstructionRequestForIFMS");
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        for(Beneficiary beneficiary: existingPI.getBeneficiaryDetails()) {
+            Beneficiary reqBeneficiary = Beneficiary.builder()
+                    .benefId(beneficiary.getBeneficiaryNumber())
+                    .benefName(beneficiary.getBenefName())
+                    .benfAcctNo(beneficiary.getBenfAcctNo())
+                    .benfBankIfscCode(beneficiary.getBenfBankIfscCode())
+                    .benfMobileNo(beneficiary.getBenfMobileNo())
+                    .benfEmailId("")
+                    .benfAddress(beneficiary.getBenfAddress())
+                    .benfAccountType(beneficiary.getBenfAccountType())
+                    .benfAmount(beneficiary.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                    .purpose("Mukta Payment")
+                    .build();
+            beneficiaryList.add(reqBeneficiary);
+        }
+        PaymentInstruction piRequestForIFMS = PaymentInstruction.builder()
+                .jitBillNo(existingPI.getJitBillNo())
+                .jitBillDate(existingPI.getJitBillDate())
+                .jitBillDdoCode(existingPI.getJitBillDdoCode())
+                .granteeAgCode(existingPI.getGranteeAgCode())
+                .schemeCode(existingPI.getSchemeCode())
+                .hoa(existingPI.getHoa())
+                .ssuIaId(existingPI.getSsuIaId())
+                .mstAllotmentDistId(existingPI.getMstAllotmentDistId())
+                .ssuAllotmentId(existingPI.getSsuAllotmentId())
+                .allotmentTxnSlNo(existingPI.getAllotmentTxnSlNo())
+                .billGrossAmount(existingPI.getBillGrossAmount())
+                .billNetAmount(existingPI.getBillNetAmount())
+                .billNumberOfBenf(String.valueOf(beneficiaryList.size()))
+                .purpose(existingPI.getPurpose())
+                .beneficiaryDetails(beneficiaryList)
+                .build();
+
+        JITRequest jitPiRequest = JITRequest.builder()
+                .serviceId(JITServiceId.PI)
+                .params(piRequestForIFMS)
+                .build();
+        log.info("JIT PI request generated and sending back.");
+        return jitPiRequest;
+    }
+
+    public JITRequest getCorRequest(PaymentRequest paymentRequest, PaymentInstruction paymentInstruction, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) throws Exception {
+        List<CORBeneficiaryDetails> corBenfDetails = new ArrayList<>();
+        List<String> beneficiaryIds = paymentInstruction.getBeneficiaryDetails().stream()
+                .map(Beneficiary::getBeneficiaryId)
+                .distinct()
+                .collect(Collectors.toList());
+        List<BankAccount> bankAccounts = bankAccountUtils.getBankAccountsByIdentifier(paymentRequest.getRequestInfo(), beneficiaryIds, paymentRequest.getPayment().getTenantId());
+        Map<String, BankAccount> bankAccountMap = new HashMap<>();
+        if (bankAccounts != null && !bankAccounts.isEmpty()) {
+            for(BankAccount bankAccount: bankAccounts) {
+                bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);
+            }
+        }
+
+        for (Beneficiary beneficiary: paymentInstruction.getBeneficiaryDetails()) {
+            Map<String, String> originalPiBankDetails = auditLogUtils.getLastUpdatedBankAccountDetailsFromAuditLogFromTime(paymentRequest, bankAccountMap.get(beneficiary.getBeneficiaryId()), originalPi.getAuditDetails().getCreatedTime());
+            String originalPiBankAccountNo = originalPiBankDetails.get("bankAccountNumber");
+            String originalPiIFSC = originalPiBankDetails.get("bankIFSCCode");
+
+            // Get bank account details by beneficiary ids
+            CORBeneficiaryDetails corBeneficiaryDetails = CORBeneficiaryDetails.builder()
+                    .benefId(beneficiary.getBeneficiaryNumber())
+                    // Latest failed transaction bill ref number
+                    .jitCurBillRefNo(lastRevisedPi != null ? lastRevisedPi.getPaDetails().get(0).getPaBillRefNumber() : originalPi.getPaDetails().get(0).getPaBillRefNumber())
+                    // Original account number of first time failure.
+                    .orgAccountNo(originalPiBankAccountNo)
+                    // Original IFSC of first time failure.
+                    .orgIfsc(originalPiIFSC)
+                    // Recent corrected account number
+                    .correctedAccountNo(beneficiary.getBenfAcctNo())
+                    // Recent corrected IFSC
+                    .correctedIfsc(beneficiary.getBenfBankIfscCode())
+                    .build();
+
+            if (lastRevisedPi != null) {
+                Map<String, String> lastPiBankDetails = auditLogUtils.getLastUpdatedBankAccountDetailsFromAuditLogFromTime(paymentRequest, bankAccountMap.get(beneficiary.getBeneficiaryId()), lastRevisedPi.getAuditDetails().getCreatedTime());
+                String lastPiBankAccountNo = lastPiBankDetails.get("bankAccountNumber");
+                String lastPiIFSC = lastPiBankDetails.get("bankIFSCCode");
+                // Latest failed transaction account number
+                corBeneficiaryDetails.setCurAccountNo(lastPiBankAccountNo);
+                // Latest failed transaction IFSC
+                corBeneficiaryDetails.setCurIfsc(lastPiIFSC);
+            } else {
+                // Latest failed transaction account number
+                corBeneficiaryDetails.setCurAccountNo(originalPiBankAccountNo);
+                // Latest failed transaction IFSC
+                corBeneficiaryDetails.setCurIfsc(originalPiIFSC);
+            }
+            corBenfDetails.add(corBeneficiaryDetails);
+        }
+
+        CORRequest corRequest = CORRequest.builder()
+                .jitCorBillNo(paymentInstruction.getJitBillNo())
+                .jitCorBillDate(util.getFormattedTimeFromTimestamp(paymentInstruction.getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
+                // External department Application name for example ‘MUKTA’
+                .jitCorBillDeptCode(JIT_FD_EXT_APP_NAME)
+                // Original bill reference number while payment failed first time.
+                .jitOrgBillRefNo(originalPi.getPaDetails().get(0).getPaBillRefNumber())
+                // Payment Instruction bill no while payment failed first time.
+                .jitOrgBillNo(originalPi.getJitBillNo())
+                // Payment Instruction bill date while payment failed first time.
+                .jitOrgBillDate(util.getFormattedTimeFromTimestamp(originalPi.getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
+                .beneficiaryDtls(corBenfDetails)
+                .build();
+        JITRequest jitPiRequest = JITRequest.builder()
+                .serviceId(JITServiceId.COR)
+                .params(corRequest)
+                .build();
+
+        return jitPiRequest;
+    }
+
+
+    private Map<String, JsonNode> getHeadCodeHashMap(JSONArray headCodesList) {
+        Map<String, JsonNode> headCodeMap = new HashMap<>();
+        for (Object headcode: headCodesList) {
+            JsonNode node = objectMapper.valueToTree(headcode);
+            headCodeMap.put(node.get("code").asText(), node);
+        }
+        return headCodeMap;
+    }
+
+    private void updateBillFieldsForIndexer(PaymentInstruction paymentInstruction, PaymentRequest paymentRequest) {
+        try {
+            // Get the list of bills based on payment request
+            List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
+            Map<String, Object>  additionalDetails = new HashMap<>();
+            List<String> billNumber = new ArrayList<>();
+            List<String> referenceId = new ArrayList<>();
+            if (billList != null && !billList.isEmpty()) {
+                for (Bill bill: billList) {
+                    billNumber.add(bill.getBillNumber());
+                }
+            }
+            billNumber = billNumber.stream().distinct().collect(Collectors.toList());
+            Object billCalculatorResponse =  billUtils.fetchBillFromCalculator(paymentRequest, billNumber);
+            JsonNode node = objectMapper.valueToTree(billCalculatorResponse);
+            JsonNode billsNode= node.get("bills");
+            if (billsNode.isArray()) {
+                for (JsonNode bill : billsNode) {
+                    referenceId.add(bill.get("contractNumber").asText());
+                }
+            }
+            // Convert the array to a Set to get distinct elements
+            referenceId = referenceId.stream().distinct().collect(Collectors.toList());
+            additionalDetails.put("billNumber", billNumber);
+            additionalDetails.put("referenceId", referenceId);
+            paymentInstruction.setAdditionalDetails(additionalDetails);
+        } catch (Exception e) {
+            log.error("Exception in PaymentInstructionEnrichment:updateBillFieldsForIndexer : " + e);
+        }
+    }
+
+    /**
+     * Get failed beneficiary list from existing PI with line items
+     * @param existingPI
+     * @return list of beneficiaries
+     */
+    public List<Beneficiary> getFailedBeneficiariesFromExistingPI(PaymentInstruction existingPI) {
+        List<Beneficiary> beneficiaryList = new ArrayList<>();
+        if (existingPI != null && !existingPI.getBeneficiaryDetails().isEmpty()) {
+            for (Beneficiary beneficiary: existingPI.getBeneficiaryDetails()) {
+                if (beneficiary.getPaymentStatus().equals(BeneficiaryPaymentStatus.FAILED)) {
+                    List<BenfLineItems> benfLineItems = new ArrayList<>();
+                    for (BenfLineItems lineItems: beneficiary.getBenfLineItems()) {
+                        BenfLineItems benfLineItem = BenfLineItems.builder()
+                                .lineItemId(lineItems.getLineItemId())
+                                .build();
+                        benfLineItems.add(benfLineItem);
+                    }
+                    Beneficiary newBenef = Beneficiary.builder()
+                            .tenantId(beneficiary.getTenantId())
+                            .muktaReferenceId(beneficiary.getMuktaReferenceId())
+                            .beneficiaryId(beneficiary.getBeneficiaryId())
+                            .beneficiaryNumber(beneficiary.getBeneficiaryNumber())
+                            .beneficiaryType(beneficiary.getBeneficiaryType())
+                            .amount(beneficiary.getAmount())
+                            .benfLineItems(benfLineItems)
+                            .build();
+                    beneficiaryList.add(newBenef);
+                }
+            }
+        }
+        return beneficiaryList;
+    }
+
+    public PaymentInstruction getRevisedEnrichedPaymentRequest(PaymentRequest paymentRequest, PaymentInstruction existingPi, List<Beneficiary> beneficiaries) {
+
+        BigDecimal totalAmount = new BigDecimal(0);
+        if (beneficiaries != null && !beneficiaries.isEmpty()) {
+            for (Beneficiary piBeneficiary: beneficiaries) {
+                totalAmount = totalAmount.add(piBeneficiary.getAmount());
+            }
+        }
+
+        String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
+        Long time = System.currentTimeMillis();
+        String tenantId = existingPi.getTenantId();
+        String muktaReferenceId = existingPi.getMuktaReferenceId();
+        JsonNode emptyObject = objectMapper.createObjectNode();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
+
+        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), tenantId, config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        PaymentInstruction paymentInstruction = PaymentInstruction.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
+                .jitBillNo(jitBillNo)
+                .jitBillDate(util.getFormattedTimeFromTimestamp(time, JIT_BILL_DATE_FORMAT))
+                .parentPiNumber(existingPi.getJitBillNo())
+                .muktaReferenceId(muktaReferenceId)
+                .numBeneficiaries(beneficiaries.size())
+                .grossAmount(totalAmount)
+                .netAmount(totalAmount)
+                .piStatus(PIStatus.INITIATED)
+                .auditDetails(auditDetails)
+                .additionalDetails(emptyObject)
+                .build();
+
+        // Add payment advise details
+        List<PADetails> paDetails = new ArrayList<>();
+        PADetails paDetail = PADetails.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
+                .muktaReferenceId(muktaReferenceId)
+                .piId(paymentInstruction.getId())
+                .additionalDetails(emptyObject)
+                .auditDetails(auditDetails)
+                .build();
+        paDetails.add(paDetail);
+        paymentInstruction.setPaDetails(paDetails);
+
+        // GET IDGEN id for beneficiary
+        // List<String> benefIdList = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPiBenefInstructionNumberFormat(), null, beneficiaries.size());
+        int idx = 0;
+        for (Beneficiary beneficiary: beneficiaries) {
+            beneficiary.setId(UUID.randomUUID().toString());
+            beneficiary.setBeneficiaryNumber(beneficiary.getBeneficiaryNumber());
+            beneficiary.setTenantId(tenantId);
+            beneficiary.setMuktaReferenceId(muktaReferenceId);
+            beneficiary.setPiId(paymentInstruction.getId());
+            beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.INITIATED);
+            beneficiary.setAdditionalDetails(emptyObject);
+            beneficiary.setAuditDetails(auditDetails);
+            for (BenfLineItems lineItem: beneficiary.getBenfLineItems()) {
+                lineItem.setId(UUID.randomUUID().toString());
+                lineItem.setBeneficiaryId(beneficiary.getId());
+                lineItem.setAuditDetails(auditDetails);
+            }
+            // Increase idx
+            idx = idx + 1;
+        }
+        paymentInstruction.setBeneficiaryDetails(beneficiaries);
+        // update piRequest for payment search indexer
+        updateBillFieldsForIndexer(paymentInstruction, paymentRequest);
+        return paymentInstruction;
+    }
+
+    public List<Beneficiary> groupBeneficiariesByAccountNumberIfsc(List<Beneficiary> beneficiaries) {
+        Map<String, Beneficiary> newBeneficiaryMap = new HashMap<>();
+        for (Beneficiary beneficiary: beneficiaries) {
+            String key = beneficiary.getBenfAcctNo() + "_" + beneficiary.getBenfBankIfscCode();
+            if (newBeneficiaryMap.containsKey(key)){
+                newBeneficiaryMap.get(key).getBenfLineItems().addAll(beneficiary.getBenfLineItems());
+                newBeneficiaryMap.get(key).setAmount(newBeneficiaryMap.get(key).getAmount().add(beneficiary.getAmount()));
+            } else {
+                newBeneficiaryMap.put(key, beneficiary);
+            }
+        }
+        List<Beneficiary> newBeneficiaryList = new ArrayList<>(newBeneficiaryMap.values());
+        return newBeneficiaryList;
+    }
+
+    public PaymentInstruction getEnrichedPaymentInstructionForNoFunds(PaymentRequest paymentRequest, List<Beneficiary> beneficiaries) {
+        // Get the beneficiaries
+        BigDecimal totalAmount = new BigDecimal(0);
+        if (beneficiaries != null && !beneficiaries.isEmpty()) {
+            for (Beneficiary piBeneficiary: beneficiaries) {
+                totalAmount = totalAmount.add(piBeneficiary.getAmount());
+            }
+        }
+        SanctionDetail selectedSanction = null;
+        Boolean hasFunds = true;
+
+        // Sort the list in descending order based on the value
+        PIStatus piStatus = PIStatus.FAILED;
+        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
+        PaymentInstruction piRequest = PaymentInstruction.builder()
+                .id(UUID.randomUUID().toString())
+                .jitBillNo(jitBillNo)
+                .purpose(JIT_FD_EXT_APP_NAME)
+                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
+                .beneficiaryDetails(beneficiaries)
+                .numBeneficiaries(beneficiaries.size())
+                .billNumberOfBenf(String.valueOf(beneficiaries.size()))
+                .tenantId(paymentRequest.getPayment().getTenantId())
+                .grossAmount(totalAmount)
+                .netAmount(totalAmount)
+                .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
+                .piStatus(piStatus)
+                .isActive(false)
+                .build();
+        enrichPiRequestForInsert(piRequest, paymentRequest, false);
+        // update piRequest for payment search indexer
+        updateBillFieldsForIndexer(piRequest, paymentRequest);
+        return piRequest;
+    }
+
 }

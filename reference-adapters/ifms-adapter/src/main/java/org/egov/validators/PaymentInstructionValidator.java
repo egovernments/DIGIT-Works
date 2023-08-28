@@ -15,7 +15,6 @@ import org.egov.web.models.enums.ReferenceStatus;
 import org.egov.web.models.jit.Beneficiary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,7 +66,7 @@ public class PaymentInstructionValidator {
                     String ssuId = ssuNode.get("ssuId").asText();
                     if (ddoCode == null || ddoCode.isEmpty() || ssuId == null || ssuId.isEmpty() || hoaCode == null || hoaCode.isEmpty()) {
                         log.error("Unable to create payment because DDO code and SSU ID is missing");
-                        billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
+                        billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
                         throw new CustomException("EG_IFMS_DDO_SSU_HOA_DETAILS_EMPTY", "DDO and SSUID or HOA configuration is missing");
                     }
                     // removing this as in case of insufficient funds we have to create a PI and it is already handled.
@@ -89,7 +88,7 @@ public class PaymentInstructionValidator {
             }
         }
         else {
-            billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED,ReferenceStatus.PAYMENT_FAILED);
+            billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.FAILED,ReferenceStatus.PAYMENT_FAILED);
             throw new CustomException("EG_IFMS_DDO_SSU_HOA_DETAILS_EMPTY", "DDO and SSUID or HOA configuration is missing");
         }
     }
@@ -99,7 +98,7 @@ public class PaymentInstructionValidator {
 
         List<Beneficiary> beneficiaryList = paymentInstructionEnrichment.getBeneficiariesFromBills(billList, paymentRequest);
         if (beneficiaryList == null || beneficiaryList.isEmpty()) {
-            billUtils.updatePaymentForStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
+            billUtils.updatePaymentStatus(paymentRequest, PaymentStatus.FAILED, ReferenceStatus.PAYMENT_FAILED);
             throw new CustomException("EG_IFMS_BENF_DETAILS_EMPTY", "Beneficiary detail is missing");
         }
     }

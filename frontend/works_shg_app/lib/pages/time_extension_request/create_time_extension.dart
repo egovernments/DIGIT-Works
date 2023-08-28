@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:works_shg_app/blocs/work_orders/work_order_pdf.dart';
 import 'package:works_shg_app/utils/localization_constants/i18_key_constants.dart'
-as i18;
+    as i18;
 import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/localization/localization.dart';
-import '../../blocs/time_extension_request/create_time_extension_request.dart';
 import '../../blocs/work_orders/search_individual_work.dart';
 import '../../models/works/contracts_model.dart';
 import '../../router/app_router.dart';
@@ -25,11 +25,8 @@ import '../../widgets/loaders.dart' as shg_loader;
 
 class CreateTimeExtensionRequestPage extends StatefulWidget {
   final String? contractNumber;
-  final bool? isEdit;
-
   const CreateTimeExtensionRequestPage(
-      {super.key, @queryParam this.contractNumber,@queryParam this.isEdit,});
-
+      {super.key, @queryParam this.contractNumber = 'contractNumber'});
   @override
   State<StatefulWidget> createState() {
     return _CreateTimeExtensionRequestPage();
@@ -40,6 +37,7 @@ class _CreateTimeExtensionRequestPage
     extends State<CreateTimeExtensionRequestPage> {
   bool hasLoaded = true;
   bool inProgress = true;
+  List<Map<String, dynamic>> workOrderList = [];
   String extensionDaysKey = 'extensionDays';
   String reasonForExtensionKey = 'reasonForExtension';
 
@@ -50,20 +48,18 @@ class _CreateTimeExtensionRequestPage
   }
 
   afterViewBuild() async {
+    workOrderList = [];
     context.read<SearchIndividualWorkBloc>().add(
-      IndividualWorkSearchEvent(contractNumber: widget.contractNumber, body: widget.isEdit == true
-          ? {
-        "businessService": "CONTRACT-REVISION"
-      } : null),
-    );
+          IndividualWorkSearchEvent(contractNumber: widget.contractNumber),
+        );
     await Future.delayed(const Duration(seconds: 1));
   }
 
   @override
   void deactivate() {
     context.read<SearchIndividualWorkBloc>().add(
-      const DisposeIndividualContract(),
-    );
+          const DisposeIndividualContract(),
+        );
     super.deactivate();
   }
 
@@ -72,14 +68,8 @@ class _CreateTimeExtensionRequestPage
     var t = AppLocalizations.of(context);
     return WillPopScope(
       onWillPop: () async {
-        if(context.router.currentUrl.contains('isEdit')){
-          context.router.popUntilRouteWithPath('home');
-          context.router.push(const MyServiceRequestsRoute());
-        }
-        else {
-          context.router.popUntilRouteWithPath('home');
-          context.router.push(const WorkOrderRoute());
-        }
+        context.router.popUntilRouteWithPath('home');
+        context.router.push(const WorkOrderRoute());
         return false;
       },
       child: Scaffold(
@@ -96,344 +86,273 @@ class _CreateTimeExtensionRequestPage
             child: PoweredByDigit(),
           ),
         ),
-        body: BlocBuilder<SearchIndividualWorkBloc,
-            SearchIndividualWorkState>(
-            builder: (context, contractState) {
-              return contractState.maybeWhen(orElse: () => const SizedBox.shrink(),
-                  loading: () => shg_loader.Loaders.circularLoader(context),
-                  loaded: (ContractsModel? contracts) {
-                return ReactiveFormBuilder(form: () => buildForm(contractState),
-                    builder: (context, form, child) {
-                      return ScrollableContent(
-                        footer: SizedBox(
-                                    height: 100,
-                                    child: Center(
-                                      child: DigitCard(
-                                        child: DigitElevatedButton(
-                                          onPressed: () {
-                                            form.markAllAsTouched(
-                                                updateParent:
-                                                false);
-                                            if (!form.valid) {
-                                              return;
-                                            } else {
-                                              DateTime endDate = DateTime
+        body: ScrollableContent(
+          children: [
+            BlocBuilder<LocalizationBloc, LocalizationState>(
+                builder: (context, localState) {
+              return BlocConsumer<SearchIndividualWorkBloc,
+                  SearchIndividualWorkState>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                      orElse: () => false,
+                      initial: () => false,
+                      loading: () => shg_loader.Loaders.circularLoader(context),
+                      error: (String? error) => Notifiers.getToastMessage(
+                          context, error.toString(), 'ERROR'),
+                      loaded: (ContractsModel? contracts) {
+                        if (contracts?.contracts != null) {
+                          workOrderList = contracts!.contracts!
+                              .map((e) => {
+                                    'cardDetails': {
+                                      i18.workOrder.workOrderNo:
+                                          e.contractNumber ?? 'NA',
+                                      i18.attendanceMgmt.projectId:
+                                          e.additionalDetails?.projectId ??
+                                              'NA',
+                                      i18.attendanceMgmt.projectDesc:
+                                          e.additionalDetails?.projectDesc ??
+                                              'NA',
+                                      i18.workOrder.completionPeriod:
+                                          '${e.completionPeriod} ${t.translate(i18.common.days)}',
+                                      i18.workOrder.workStartDate: e.startDate != null &&
+                                              e.startDate != 0
+                                          ? DateFormats.getFilteredDate(DateTime
                                                   .fromMillisecondsSinceEpoch(
-                                                  contracts?.contracts?.first.endDate ?? 0);
-                                              int extensionDate = endDate
-                                                  .add(Duration(days: int.parse(form
-                                                  .value[extensionDaysKey].toString())))
-                                                  .millisecondsSinceEpoch;
-                                              context.read<
-                                                  CreateTimeExtensionRequestBloc>().add(
-                                                  TimeExtensionRequestEvent(
-                                                      contractsModel: contracts?.contracts?.first,
-                                                      action: widget.isEdit == true ? 'EDIT' : 'CREATE',
-                                                      extensionDate: extensionDate,
-                                                      isEdit: widget.isEdit ?? false,
-                                                      reason: form
-                                                          .value[reasonForExtensionKey]
-                                                          .toString(),
-                                                      extensionDays: form
-                                                          .value[extensionDaysKey]
-                                                          .toString()
-                                                  ));
-                                            }
-                                          },
-                                          child: Center(
-                                              child: Text(
-                                                  t.translate(
-                                                      i18.common.submit))),
-                                        ),
-                                      ),
+                                                      e.startDate ?? 0)
+                                              .toString())
+                                          : 'NA',
+                                      i18.workOrder.workEndDate: e.endDate !=
+                                                  null &&
+                                              e.endDate != 0
+                                          ? DateFormats.getFilteredDate(DateTime
+                                                  .fromMillisecondsSinceEpoch(
+                                                      e.endDate ?? 0)
+                                              .toString())
+                                          : 'NA',
+                                    },
+                                    'payload': e.toMap()
+                                  })
+                              .toList();
+                        }
+                      });
+                },
+                builder: (context, searchState) {
+                  return searchState.maybeWhen(
+                      orElse: () => Container(),
+                      loading: () => shg_loader.Loaders.circularLoader(context),
+                      initial: () => Container(),
+                      loaded: (ContractsModel? contractsModel) {
+                        final contracts = contractsModel?.contracts;
+                        if (contracts != null) {
+                          return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Back(
+                                      backLabel: AppLocalizations.of(context)
+                                          .translate(i18.common.back),
+                                      callback: () {
+                                        context.router
+                                            .popUntilRouteWithPath('home');
+                                        context.router
+                                            .push(const WorkOrderRoute());
+                                      },
                                     ),
-                                  ),
-                        children: [
-                          BlocBuilder<LocalizationBloc, LocalizationState>(
-                              builder: (context, localState) {
-                                return BlocConsumer<SearchIndividualWorkBloc,
-                                    SearchIndividualWorkState>(
-                                  listener: (context, state) {
-                                    state.maybeWhen(
-                                        orElse: () => false,
-                                        );
-                                  },
-                                  builder: (context, searchState) {
-                                    return searchState.maybeWhen(
-                                        orElse: () => Container(),
-                                        loading: () =>
-                                            shg_loader.Loaders.circularLoader(context),
-                                        initial: () => Container(),
-                                        loaded: (ContractsModel? contractsModel) {
-                                          final contracts = contractsModel?.contracts;
-                                          if (contracts != null) {
-                                            return Column(
-                                                crossAxisAlignment: CrossAxisAlignment
-                                                    .start,
+                                    CommonWidgets.downloadButton(
+                                        AppLocalizations.of(context)
+                                            .translate(i18.common.download),
+                                        () {
+                                      context.read<WorkOrderPDFBloc>().add(
+                                          PDFEventWorkOrder(
+                                              contractId: widget.contractNumber,
+                                              tenantId:
+                                                  contracts.first.tenantId));
+                                    })
+                                  ],
+                                ),
+                                DigitCard(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        contracts.isNotEmpty
+                                            ? Column(
                                                 children: [
-                                                  Back(
-                                                    backLabel: AppLocalizations.of(
-                                                        context)
-                                                        .translate(i18.common.back),
-                                                    callback: () {
-                                                      if(context.router.currentUrl.contains('isEdit')){
-                                                        context.router.popUntilRouteWithPath('home');
-                                                        context.router.push(const MyServiceRequestsRoute());
-                                                      }
-                                                      else {
-                                                        context.router.popUntilRouteWithPath('home');
-                                                        context.router.push(const WorkOrderRoute());
-                                                      }
+                                                  CommonWidgets.getItemWidget(context,
+                                                      title:  t.translate(i18.workOrder.workOrderNo),
+                                                  description: contracts.first.contractNumber ?? t.translate(i18.common.noValue)),
+                                                  CommonWidgets.getItemWidget(context,
+                                                      title:  t.translate(i18.attendanceMgmt.projectId),
+                                                      description: contracts.first.additionalDetails?.projectId ?? t.translate(i18.common.noValue)),
+                                                  CommonWidgets.getItemWidget(context,
+                                                      title:  t.translate(i18.attendanceMgmt.projectDesc),
+                                                      description: contracts.first.additionalDetails?.projectDesc ?? t.translate(i18.common.noValue)),
+                                                  CommonWidgets.getItemWidget(context,
+                                                      title:  t.translate(i18.workOrder.completionPeriod),
+                                                      description: '${contracts.first.completionPeriod} ${t.translate(i18.common.days)}' ?? t.translate(i18.common.noValue)),
+                                                  CommonWidgets.getItemWidget(context,
+                                                      title:  t.translate(i18.workOrder.workStartDate),
+                                                      description: contracts.first.startDate != null &&
+                                                          contracts.first.startDate != 0
+                                                          ? DateFormats.getFilteredDate(DateTime
+                                                          .fromMillisecondsSinceEpoch(
+                                                          contracts.first.startDate ?? 0)
+                                                          .toString()) : t.translate(i18.common.noValue)),
+                                                  CommonWidgets.getItemWidget(context,
+                                                      title:  t.translate(i18.workOrder.workEndDate),
+                                                      description: contracts.first.endDate != null &&
+                                                          contracts.first.endDate != 0
+                                                          ? DateFormats.getFilteredDate(DateTime
+                                                          .fromMillisecondsSinceEpoch(
+                                                          contracts.first.endDate ?? 0)
+                                                          .toString()) : t.translate(i18.common.noValue)),
+                                                ],
+                                              )
+                                            : EmptyImage(
+                                                label: t.translate(i18.workOrder
+                                                    .noWorkOrderAssigned),
+                                                align: Alignment.center,
+                                              ),
+                                        ReactiveFormBuilder(
+                                            form: buildForm,
+                                            builder: (context, form, child) {
+                                              return Column(
+                                                children: [
+                                                  DigitTextFormField(
+                                                    label: i18.workOrder
+                                                        .extensionReqInDays,
+                                                    formControlName:
+                                                        extensionDaysKey,
+                                                    isRequired: true,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    inputFormatter: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(
+                                                              RegExp("[0-9]"))
+                                                    ],
+                                                    validationMessages: {
+                                                      'required': (_) =>
+                                                          t.translate(
+                                                            i18.workOrder
+                                                                .extensionReqInDaysIsRequired,
+                                                          ),
+                                                      'min': (_) => t.translate(
+                                                            i18.workOrder
+                                                                .extensionReqInDaysMinVal,
+                                                          ),
                                                     },
                                                   ),
-                                                  DigitCard(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment
-                                                            .start,
-                                                        crossAxisAlignment: CrossAxisAlignment
-                                                            .start,
-                                                        children: [
-                                                          contracts.isNotEmpty
-                                                              ? Column(
-                                                            children: [
-                                                              CommonWidgets
-                                                                  .getItemWidget(
-                                                                  context,
-                                                                  title: t.translate(i18.workOrder
-                                                                      .workOrderNo),
-                                                                  description: contracts
-                                                                      .first
-                                                                      .contractNumber ??
-                                                                      t.translate(i18.common
-                                                                          .noValue)),
-                                                              CommonWidgets
-                                                                  .getItemWidget(
-                                                                  context,
-                                                                  title: t.translate(i18
-                                                                      .attendanceMgmt
-                                                                      .projectId),
-                                                                  description: contracts
-                                                                      .first
-                                                                      .additionalDetails
-                                                                      ?.projectId ??
-                                                                      t.translate(i18.common
-                                                                          .noValue)),
-                                                              CommonWidgets
-                                                                  .getItemWidget(
-                                                                  context,
-                                                                  title: t.translate(i18
-                                                                      .attendanceMgmt
-                                                                      .projectDesc),
-                                                                  description: contracts
-                                                                      .first
-                                                                      .additionalDetails
-                                                                      ?.projectDesc ??
-                                                                      t.translate(
-                                                                          i18.common
-                                                                              .noValue)),
-                                                              CommonWidgets
-                                                                  .getItemWidget(
-                                                                  context,
-                                                                  title: t.translate(i18.workOrder
-                                                                      .completionPeriod),
-                                                                  description: '${contracts
-                                                                      .first
-                                                                      .completionPeriod} ${t
-                                                                      .translate(
-                                                                      i18.common
-                                                                          .days)}'),
-                                                              CommonWidgets
-                                                                  .getItemWidget(
-                                                                  context,
-                                                                  title: t.translate(i18.workOrder
-                                                                      .workStartDate),
-                                                                  description: contracts
-                                                                      .first
-                                                                      .startDate !=
-                                                                      null &&
-                                                                      contracts.first
-                                                                          .startDate !=
-                                                                          0
-                                                                      ? DateFormats
-                                                                      .getFilteredDate(
-                                                                      DateTime
-                                                                          .fromMillisecondsSinceEpoch(
-                                                                          contracts
-                                                                              .first
-                                                                              .startDate ??
-                                                                              0)
-                                                                          .toString())
-                                                                      : t.translate(
-                                                                      i18.common
-                                                                          .noValue)),
-                                                              CommonWidgets
-                                                                  .getItemWidget(
-                                                                  context,
-                                                                  title: t.translate(i18.workOrder
-                                                                      .workEndDate),
-                                                                  description: contracts
-                                                                      .first.endDate !=
-                                                                      null &&
-                                                                      contracts.first
-                                                                          .endDate != 0
-                                                                      ? DateFormats
-                                                                      .getFilteredDate(
-                                                                      DateTime
-                                                                          .fromMillisecondsSinceEpoch(
-                                                                          contracts
-                                                                              .first
-                                                                              .endDate ??
-                                                                              0)
-                                                                          .toString())
-                                                                      : t.translate(
-                                                                      i18.common
-                                                                          .noValue)),
-                                                            ],
-                                                          )
-                                                              : EmptyImage(
-                                                            label: t.translate(
-                                                                i18.workOrder
-                                                                    .noWorkOrderAssigned),
-                                                            align: Alignment.center,
+                                                  DigitTextFormField(
+                                                    label: i18.workOrder
+                                                        .reasonForExtension,
+                                                    formControlName:
+                                                        reasonForExtensionKey,
+                                                    isRequired: true,
+                                                    keyboardType:
+                                                        TextInputType.text,
+                                                    inputFormatter: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(RegExp(
+                                                              "[a-zA-Z0-9 .,\\/\\-_@#\\']"))
+                                                    ],
+                                                    validationMessages: {
+                                                      'required': (_) =>
+                                                          t.translate(
+                                                            i18.workOrder
+                                                                .reasonForExtensionIsRequired,
                                                           ),
-                                                          Column(
-                                                            children: [
-                                                              DigitTextFormField(
-                                                                label: t.translate(i18.workOrder
-                                                                    .extensionReqInDays),
-                                                                formControlName:
-                                                                extensionDaysKey,
-                                                                isRequired: true,
-                                                                keyboardType:
-                                                                TextInputType.number,
-                                                                inputFormatter: [
-                                                                  FilteringTextInputFormatter
-                                                                      .allow(
-                                                                      RegExp("[0-9]"))
-                                                                ],
-                                                                validationMessages: {
-                                                                  'required': (_) =>
-                                                                      t.translate(
-                                                                        i18.workOrder
-                                                                            .extensionReqInDaysIsRequired,
-                                                                      ),
-                                                                  'min': (_) =>
-                                                                      t.translate(
-                                                                        i18.workOrder
-                                                                            .extensionReqInDaysMinVal,
-                                                                      ),
-                                                                },
-                                                              ),
-                                                              DigitTextFormField(
-                                                                label: t.translate(i18.workOrder
-                                                                    .reasonForExtension),
-                                                                formControlName:
-                                                                reasonForExtensionKey,
-                                                                isRequired: true,
-                                                                keyboardType:
-                                                                TextInputType.text,
-                                                                inputFormatter: [
-                                                                  FilteringTextInputFormatter
-                                                                      .allow(RegExp(
-                                                                      "[a-zA-Z0-9 .,\\/\\-_@#\\']"))
-                                                                ],
-                                                                validationMessages: {
-                                                                  'required': (_) =>
-                                                                      t.translate(
-                                                                        i18.workOrder
-                                                                            .reasonForExtensionIsRequired,
-                                                                      ),
-                                                                  'minLength': (_) =>
-                                                                      t.translate(
-                                                                        i18.workOrder
-                                                                            .reasonForExtensionMinChar,
-                                                                      ),
-                                                                  'maxLength': (_) =>
-                                                                      t.translate(
-                                                                        i18.workOrder
-                                                                            .reasonForExtensionMaxChar,
-                                                                      ),
-                                                                },
-                                                              ),
-                                                            ],
+                                                      'minLength': (_) =>
+                                                          t.translate(
+                                                            i18.workOrder
+                                                                .reasonForExtensionMinChar,
                                                           ),
-                                                          const SizedBox(
-                                                            height: 16.0,
+                                                      'maxLength': (_) =>
+                                                          t.translate(
+                                                            i18.workOrder
+                                                                .reasonForExtensionMaxChar,
                                                           ),
-                                                        ]),
+                                                    },
                                                   ),
-                                                ]);
-                                          } else {
-                                            return Container();
-                                          }
-                                        });
-                                  },
-                                );
-                              }),
-                          BlocListener<CreateTimeExtensionRequestBloc,
-                              CreateTimeExtensionRequestState>(
-                            listener: (context, timeExtensionState) {
-                              timeExtensionState.maybeWhen(orElse: () => false,
-                                  loading: () => Loaders.circularLoader(context),
-                                  error: (String? error) => Notifiers.getToastMessage(context, error.toString(), 'ERROR'),
-                                  loaded: (ContractsModel? contractsModel) =>
-                                      context.router
-                                          .popAndPush(
-                                          SuccessResponseRoute(
-                                              header: t.translate(i18.workOrder
-                                                  .timeExtensionRequestedSuccess),
-                                              subHeader: t.translate(
-                                                  i18.workOrder.requestID),
-                                              subText:
-                                              contractsModel?.contracts?.first
-                                                  .supplementNumber,
-                                              subTitle: t
-                                                  .translate(
-                                                  i18.workOrder
-                                                      .timeExtensionRequestedSuccessSubText),
-                                              backButton:
-                                              true,
-                                              callBack: () =>
-                                                  context.router.push(
-                                                      const HomeRoute()),
-                                              buttonLabel: t
-                                                  .translate(
-                                                i18
-                                                    .common
-                                                    .backToHome,
-                                              ))));
-                            },
-                            child: const SizedBox.shrink(),)
-                        ],
-                      );
-                    }
-                );
-                  }
+                                                  Center(
+                                                    child: DigitElevatedButton(
+                                                      onPressed: () {
+                                                        form.markAllAsTouched(
+                                                            updateParent:
+                                                                false);
+                                                        if (!form.valid)
+                                                          return;
+                                                        else {
+                                                          context.router.popAndPush(
+                                                              SuccessResponseRoute(
+                                                                  header: t.translate(i18
+                                                                      .workOrder
+                                                                      .timeExtensionRequestedSuccess),
+                                                                  subHeader: t.translate(i18
+                                                                      .workOrder
+                                                                      .requestID),
+                                                                  subText:
+                                                                      'RW/2023-24/000102',
+                                                                  subTitle: t.translate(i18
+                                                                      .workOrder
+                                                                      .timeExtensionRequestedSuccessSubText),
+                                                                  backButton:
+                                                                      true,
+                                                                  callBack: () =>
+                                                                      context
+                                                                          .router
+                                                                          .push(
+                                                                              const HomeRoute()),
+                                                                  buttonLabel: t
+                                                                      .translate(
+                                                                    i18.common
+                                                                        .backToHome,
+                                                                  )));
+                                                        }
+                                                      },
+                                                      child: Center(
+                                                          child: Text(
+                                                              t.translate(i18
+                                                                  .common
+                                                                  .submit))),
+                                                    ),
+                                                  )
+                                                ],
+                                              );
+                                            }),
+                                        const SizedBox(
+                                          height: 16.0,
+                                        ),
+                                      ]),
+                                ),
+                              ]);
+                        } else {
+                          return Container();
+                        }
+                      });
+                },
               );
-          }
+            }),
+          ],
         ),
       ),
     );
   }
 
-  FormGroup buildForm(SearchIndividualWorkState contractState) {
-    final extensionDays = contractState.mapOrNull(loaded: (value) {
-      return widget.isEdit == true ? value.contractsModel?.contracts?.first.additionalDetails?.timeExt : '';
-    });
-    final extensionReason = contractState.mapOrNull(loaded: (value) {
-      return widget.isEdit == true ? value.contractsModel?.contracts?.first.additionalDetails?.timeExtReason : '';
-    });
-    return fb.group(<String, Object>{
-      extensionDaysKey: FormControl<String>(value: extensionDays ?? '', validators: [
-        Validators.required,
-        Validators.min('1'),
-      ]),
-      reasonForExtensionKey: FormControl<String>(value: extensionReason ?? '', validators: [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(128)
-      ]),
-    });
-  }
+  FormGroup buildForm() => fb.group(<String, Object>{
+        extensionDaysKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.min('1'),
+        ]),
+        reasonForExtensionKey: FormControl<String>(value: '', validators: [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(128)
+        ]),
+      });
 }
