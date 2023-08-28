@@ -130,6 +130,7 @@ class _CreateTimeExtensionRequestPage
                                                       contractsModel: contracts?.contracts?.first,
                                                       action: widget.isEdit == true ? 'EDIT' : 'CREATE',
                                                       extensionDate: extensionDate,
+                                                      isEdit: widget.isEdit ?? false,
                                                       reason: form
                                                           .value[reasonForExtensionKey]
                                                           .toString(),
