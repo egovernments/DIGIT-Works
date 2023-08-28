@@ -142,7 +142,7 @@ config:
       - work-dir: "utilities/expense-cronjob"
         image-name: "expense-cronjob"
         dockerfile: "utilities/expense-cronjob/Dockerfile"
-   - name: "builds/mukta_impl/utilities/ifms-cronjob-va"
+  - name: "builds/mukta_impl/utilities/ifms-cronjob-va"
     build:
       - work-dir: "utilities/ifms-cronjob"
         image-name: "ifms-cronjob-va"
