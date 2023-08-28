@@ -58,7 +58,7 @@ public class StaffService {
      * @param staffPermissionRequest
      * @return
      */
-    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest, boolean cboMigrationReq) {
+    public StaffPermissionRequest createAttendanceStaff(StaffPermissionRequest staffPermissionRequest, Boolean cboMigrationReq) {
         //incoming createRequest validation
         log.info("Validating incoming staff request");
         staffServiceValidator.validateStaffPermissionRequestParameters(staffPermissionRequest);
