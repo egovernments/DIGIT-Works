@@ -1,709 +1,823 @@
-package org.egov.enrichment;
+// **************************************************************************
+// AutoRouteGenerator
+// **************************************************************************
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import digit.models.coremodels.AuditDetails;
-import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
-import org.egov.common.models.individual.Individual;
-import org.egov.config.Constants;
-import org.egov.config.IfmsAdapterConfig;
-import org.egov.repository.SanctionDetailsRepository;
-import org.egov.service.IfmsService;
-import org.egov.utils.*;
-import org.egov.web.models.bankaccount.BankAccount;
-import org.egov.web.models.bill.*;
-import org.egov.web.models.enums.*;
-import org.egov.web.models.jit.*;
-import org.egov.web.models.organisation.Organisation;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+// **************************************************************************
+// AutoRouteGenerator
+// **************************************************************************
+//
+// ignore_for_file: type=lint
 
-import static org.egov.config.Constants.*;
+part of 'app_router.dart';
 
-@Service
-@Slf4j
-public class PaymentInstructionEnrichment {
-    @Autowired
-    private BillUtils billUtils;
-    @Autowired
-    private IfmsService ifmsService;
-    @Autowired
-    private HelperUtil util;
-    @Autowired
-    private SanctionDetailsRepository sanctionDetailsRepository;
-    @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private IfmsAdapterConfig config;
-    @Autowired
-    private AuditLogUtils auditLogUtils;
-    @Autowired
-    private BankAccountUtils bankAccountUtils;
+class _$AppRouter extends RootStackRouter {
+  _$AppRouter([GlobalKey<NavigatorState>? navigatorKey]) : super(navigatorKey);
 
-    public List<Beneficiary> getBeneficiariesFromBills(List<Bill> billList, PaymentRequest paymentRequest) {
-        log.info("Started generating beneficiaries lists for PI");
-        List<Beneficiary> beneficiaryList = new ArrayList<>();
-        JSONArray headCodesList = billUtils.getHeadCode(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
+  @override
+  final Map<String, PageFactory> pagesMap = {
+    UnauthenticatedRouteWrapper.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const UnauthenticatedPageWrapper(),
+      );
+    },
+    AuthenticatedRouteWrapper.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const AuthenticatedPageWrapper(),
+      );
+    },
+    LanguageSelectionRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const LanguageSelectionPage(),
+      );
+    },
+    LoginRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const LoginPage(),
+      );
+    },
+    OTPVerificationRoute.name: (routeData) {
+      final args = routeData.argsAs<OTPVerificationRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: OTPVerificationPage(
+          key: args.key,
+          mobileNumber: args.mobileNumber,
+        ),
+      );
+    },
+    HomeRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const HomePage(),
+      );
+    },
+    ORGProfileRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ORGProfilePage(),
+      );
+    },
+    AttendanceRegisterTableRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<AttendanceRegisterTableRouteArgs>(
+          orElse: () => AttendanceRegisterTableRouteArgs(
+                registerId: pathParams.getString('registerId'),
+                tenantId: pathParams.getString('tenantId'),
+              ));
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: AttendanceRegisterTablePage(
+          args.registerId,
+          args.tenantId,
+          key: args.key,
+        ),
+      );
+    },
+    WorkOrderRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const WorkOrderPage(),
+      );
+    },
+    ViewMusterRollsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const ViewMusterRollsPage(),
+      );
+    },
+    SHGInboxRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<SHGInboxRouteArgs>(
+          orElse: () => SHGInboxRouteArgs(
+                tenantId: pathParams.getString('tenantId'),
+                musterRollNo: pathParams.getString('musterRollNo'),
+                sentBackCode: pathParams.getString('sentBackCode'),
+              ));
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: SHGInboxPage(
+          args.tenantId,
+          args.musterRollNo,
+          args.sentBackCode,
+          key: args.key,
+        ),
+      );
+    },
+    TrackAttendanceInboxRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const TrackAttendanceInboxPage(),
+      );
+    },
+    TrackAttendanceRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<TrackAttendanceRouteArgs>(
+          orElse: () => TrackAttendanceRouteArgs(
+                id: pathParams.getString('id'),
+                tenantId: pathParams.getString('tenantId'),
+              ));
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: TrackAttendancePage(
+          args.id,
+          args.tenantId,
+          key: args.key,
+        ),
+      );
+    },
+    RegisterIndividualRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const RegisterIndividualPage(),
+      );
+    },
+    ViewWorkDetailsRoute.name: (routeData) {
+      final queryParams = routeData.queryParams;
+      final args = routeData.argsAs<ViewWorkDetailsRouteArgs>(
+          orElse: () => ViewWorkDetailsRouteArgs(
+                  contractNumber: queryParams.optString(
+                'contractNumber',
+                'contractNumber',
+              )));
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: ViewWorkDetailsPage(
+          key: args.key,
+          contractNumber: args.contractNumber,
+        ),
+      );
+    },
+    SuccessResponseRoute.name: (routeData) {
+      final args = routeData.argsAs<SuccessResponseRouteArgs>();
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: SuccessResponsePage(
+          key: args.key,
+          header: args.header,
+          subHeader: args.subHeader,
+          subText: args.subText,
+          subTitle: args.subTitle,
+          callBack: args.callBack,
+          callBackWhatsapp: args.callBackWhatsapp,
+          callBackDownload: args.callBackDownload,
+          callBackPrint: args.callBackPrint,
+          backButton: args.backButton,
+          buttonLabel: args.buttonLabel,
+          isWithoutLogin: args.isWithoutLogin,
+          downloadLabel: args.downloadLabel,
+          printLabel: args.printLabel,
+          whatsAppLabel: args.whatsAppLabel,
+          backButtonLabel: args.backButtonLabel,
+        ),
+      );
+    },
+    MyBillsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const MyBillsPage(),
+      );
+    },
+    CreateTimeExtensionRequestRoute.name: (routeData) {
+      final queryParams = routeData.queryParams;
+      final args = routeData.argsAs<CreateTimeExtensionRequestRouteArgs>(
+          orElse: () => CreateTimeExtensionRequestRouteArgs(
+                contractNumber: queryParams.optString('contractNumber'),
+                isEdit: queryParams.optBool('isEdit'),
+              ));
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: CreateTimeExtensionRequestPage(
+          key: args.key,
+          contractNumber: args.contractNumber,
+          isEdit: args.isEdit,
+        ),
+      );
+    },
+    MyServiceRequestsRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const MyServiceRequestsPage(),
+      );
+    },
+  };
 
-        Map<String, JsonNode> headCodeMap = getHeadCodeHashMap(headCodesList);
-        log.info("Generating beneficiary list based on line item.");
-        for (Bill bill: billList) {
-            for (BillDetail billDetail: bill.getBillDetails()) {
-                for (LineItem lineItem: billDetail.getPayableLineItems()) {
-                    Beneficiary beneficiary =  getBeneficiariesFromLineItem(lineItem, billDetail.getPayee(), headCodeMap, paymentRequest.getPayment().getTenantId());
-                    beneficiaryList.add(beneficiary);
-                }
-            }
-        }
-        log.info("Beneficiary list generated, combine them based on bank account number.");
-        // Combine beneficiary by beneficiaryId
-        beneficiaryList = combineBeneficiaryById(beneficiaryList);
-        return beneficiaryList;
-    }
+  @override
+  List<RouteConfig> get routes => [
+        RouteConfig(
+          UnauthenticatedRouteWrapper.name,
+          path: '/',
+          children: [
+            RouteConfig(
+              '#redirect',
+              path: '',
+              parent: UnauthenticatedRouteWrapper.name,
+              redirectTo: 'language_selection',
+              fullMatch: true,
+            ),
+            RouteConfig(
+              LanguageSelectionRoute.name,
+              path: 'language_selection',
+              parent: UnauthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              LoginRoute.name,
+              path: 'login',
+              parent: UnauthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              OTPVerificationRoute.name,
+              path: 'otp',
+              parent: UnauthenticatedRouteWrapper.name,
+            ),
+          ],
+        ),
+        RouteConfig(
+          AuthenticatedRouteWrapper.name,
+          path: '/',
+          children: [
+            RouteConfig(
+              '#redirect',
+              path: '',
+              parent: AuthenticatedRouteWrapper.name,
+              redirectTo: 'home',
+              fullMatch: true,
+            ),
+            RouteConfig(
+              HomeRoute.name,
+              path: 'home',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ORGProfileRoute.name,
+              path: 'orgProfile',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              AttendanceRegisterTableRoute.name,
+              path: 'manageAttendanceTable/:registerId/:tenantId',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              WorkOrderRoute.name,
+              path: 'work-orders',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ViewMusterRollsRoute.name,
+              path: 'muster-rolls',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              SHGInboxRoute.name,
+              path: 'shg-inbox/:tenantId/:musterRollNo/:sentBackCode',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              TrackAttendanceInboxRoute.name,
+              path: 'track-attendance-inbox',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              TrackAttendanceRoute.name,
+              path: 'track-attendance/:id/:tenantId',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              RegisterIndividualRoute.name,
+              path: 'register-individual',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              ViewWorkDetailsRoute.name,
+              path: 'view-work-order',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              SuccessResponseRoute.name,
+              path: 'success',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              MyBillsRoute.name,
+              path: 'my-bills',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              CreateTimeExtensionRequestRoute.name,
+              path: 'create-time-extension',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+            RouteConfig(
+              MyServiceRequestsRoute.name,
+              path: 'my-service-requests',
+              parent: AuthenticatedRouteWrapper.name,
+            ),
+          ],
+        ),
+      ];
+}
 
-    private List<Beneficiary> combineBeneficiaryById(List<Beneficiary> beneficiaryList) {
-        log.info("Started executing combineBeneficiaryById");
-        Map<String, Beneficiary> benfMap = new HashMap<>();
-        for(Beneficiary beneficiary: beneficiaryList) {
-            if (benfMap.containsKey(beneficiary.getBeneficiaryId())) {
-                benfMap.get(beneficiary.getBeneficiaryId()).getBenfLineItems().addAll(beneficiary.getBenfLineItems());
-                benfMap.get(beneficiary.getBeneficiaryId()).setAmount(benfMap.get(beneficiary.getBeneficiaryId()).getAmount().add(beneficiary.getAmount()));
-            } else {
-                benfMap.put(beneficiary.getBeneficiaryId(), beneficiary);
-            }
-        }
-        List<Beneficiary> beneficiaries = new ArrayList<>(benfMap.values());
-        log.info("Beneficiary details are combined based on account details, sending back.");
-        return beneficiaries;
-    }
+/// generated route for
+/// [UnauthenticatedPageWrapper]
+class UnauthenticatedRouteWrapper extends PageRouteInfo<void> {
+  const UnauthenticatedRouteWrapper({List<PageRouteInfo>? children})
+      : super(
+          UnauthenticatedRouteWrapper.name,
+          path: '/',
+          initialChildren: children,
+        );
 
-    private Beneficiary getBeneficiariesFromLineItem(LineItem lineItem, Party payee, Map<String, JsonNode> headCodeMap, String tenantId) {
-        log.info("Started executing getBeneficiariesFromLineItem");
-        String beneficiaryId = payee.getIdentifier();
-        String headCode = lineItem.getHeadCode();
-        Beneficiary beneficiary = null;
-        if (beneficiaryId != null && headCode != null) {
-            JsonNode headCodeNode = headCodeMap.get(headCode);
-            if (headCodeNode != null) {
-                String headCodeCategory = headCodeNode.get(Constants.HEAD_CODE_CATEGORY_KEY).asText();
-                if (headCodeCategory != null && headCodeCategory.equalsIgnoreCase(Constants.HEAD_CODE_DEDUCTION_CATEGORY)) {
-                    beneficiaryId = Constants.DEDUCTION_BENEFICIARY_BY_HEADCODE.replace("{tanentId}", tenantId).replace("{headcode}", headCode);
-                }
-            }
-            List<BenfLineItems> benefLineItemList = new ArrayList<>();
-            BenfLineItems benfLineItems = BenfLineItems.builder().lineItemId(lineItem.getId()).build();
-            benefLineItemList.add(benfLineItems);
-            beneficiary = Beneficiary.builder()
-                    .amount(lineItem.getAmount())
-                    .beneficiaryId(beneficiaryId)
-                    .benfLineItems(benefLineItemList).build();
-        }
-        log.info("Beneficiary generated and sending back.");
-        return beneficiary;
-    }
-    public PaymentInstruction getEnrichedPaymentRequest(PaymentRequest paymentRequest, List<Beneficiary> beneficiaries, Map<String, Object> hoaSsuMap) {
-        // Get the beneficiaries
-        BigDecimal totalAmount = new BigDecimal(0);
-        if (beneficiaries != null && !beneficiaries.isEmpty()) {
-            for (Beneficiary piBeneficiary: beneficiaries) {
-                totalAmount = totalAmount.add(piBeneficiary.getAmount());
-            }
-        }
-        JsonNode ssuNode = null, hoaNode = null;
-        SanctionDetail selectedSanction = null;
-        Boolean hasFunds = true;
-        ssuNode = objectMapper.valueToTree(hoaSsuMap.get("ssu"));
-        hoaNode = objectMapper.valueToTree(hoaSsuMap.get("hoa"));
-        selectedSanction = (SanctionDetail) hoaSsuMap.get("sanction");
-        hasFunds = Boolean.parseBoolean(hoaSsuMap.get("hasFunds").toString());
-        if (ssuNode == null || hoaNode == null || selectedSanction == null) {
-            log.info("Value not find to generate pi request. ssuNode, hoaNode or selectedSanction is null");
-            return null;
-        }
+  static const String name = 'UnauthenticatedRouteWrapper';
+}
 
-        String ssuIaId = ssuNode.get("ssuId").asText();
-        String ddoCode = ssuNode.get("ddoCode").asText();
-        String granteeAgCode = ssuNode.get("granteeAgCode").asText();
-        String hoaCode = hoaNode.get("code").asText();
-        String schemeCode = hoaNode.get("schemeCode").asText();
-        // Sort the list in descending order based on the value
-        Collections.sort(selectedSanction.getAllotmentDetails(), Comparator.comparingInt(o -> ((Allotment) o).getAllotmentSerialNo()).reversed());
-        String mstAllotmentDistId = selectedSanction.getAllotmentDetails().get(0).getMstAllotmentDistId();
-        PIStatus piStatus = hasFunds ? PIStatus.INITIATED : PIStatus.FAILED;
-        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
-        PaymentInstruction piRequest = PaymentInstruction.builder()
-                .id(UUID.randomUUID().toString())
-                .jitBillNo(jitBillNo)
-//                .jitBillDate(util.getFormattedTimeFromTimestamp(paymentRequest.getPayment().getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
-                .jitBillDdoCode(ddoCode)
-                .granteeAgCode(granteeAgCode)
-                .schemeCode(schemeCode)
-                .hoa(hoaCode)
-                .ssuIaId(ssuIaId)
-                .mstAllotmentDistId(selectedSanction.getMasterAllotmentId())
-                .ssuAllotmentId(selectedSanction.getAllotmentDetails().get(0).getSsuAllotmentId())
-                .allotmentTxnSlNo(String.valueOf(selectedSanction.getAllotmentDetails().get(0).getAllotmentSerialNo()))
-                .purpose(JIT_FD_EXT_APP_NAME)
-                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
-                .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
-                .beneficiaryDetails(beneficiaries)
-                .numBeneficiaries(beneficiaries.size())
-                .billNumberOfBenf(String.valueOf(beneficiaries.size()))
-                .tenantId(paymentRequest.getPayment().getTenantId())
-                .grossAmount(totalAmount)
-                .netAmount(totalAmount)
-                .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
-                .piStatus(piStatus)
-                .build();
-        enrichPiRequestForInsert(piRequest, paymentRequest, hasFunds);
-        // update piRequest for payment search indexer
-        updateBillFieldsForIndexer(piRequest, paymentRequest);
-        return piRequest;
-    }
+/// generated route for
+/// [AuthenticatedPageWrapper]
+class AuthenticatedRouteWrapper extends PageRouteInfo<void> {
+  const AuthenticatedRouteWrapper({List<PageRouteInfo>? children})
+      : super(
+          AuthenticatedRouteWrapper.name,
+          path: '/',
+          initialChildren: children,
+        );
 
-    private void enrichPiRequestForInsert(PaymentInstruction piRequest, PaymentRequest paymentRequest, Boolean hasFunds) {
-        String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        Long time = System.currentTimeMillis();
-        String tenantId = paymentRequest.getPayment().getTenantId();
-        String muktaReferenceId = paymentRequest.getPayment().getPaymentNumber();
-        AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
-        BeneficiaryPaymentStatus beneficiaryPaymentStatus = hasFunds ? BeneficiaryPaymentStatus.INITIATED : BeneficiaryPaymentStatus.PENDING;
-        JsonNode emptyObject = objectMapper.createObjectNode();
-        if (piRequest.getId() == null)
-            piRequest.setId(UUID.randomUUID().toString());
-        piRequest.setAdditionalDetails(emptyObject);
-        piRequest.setAuditDetails(auditDetails);
-        piRequest.setJitBillDate(util.getFormattedTimeFromTimestamp(auditDetails.getCreatedTime(), VA_REQUEST_TIME_FORMAT));
+  static const String name = 'AuthenticatedRouteWrapper';
+}
 
-        // Update payment advice details
-        PADetails paDetails = PADetails.builder()
-                .id(UUID.randomUUID().toString())
-                .tenantId(tenantId)
-                .piId(piRequest.getId())
-                .muktaReferenceId(muktaReferenceId)
-                .additionalDetails(emptyObject)
-                .auditDetails(auditDetails)
-                .build();
-        piRequest.setPaDetails(Collections.singletonList(paDetails));
+/// generated route for
+/// [LanguageSelectionPage]
+class LanguageSelectionRoute extends PageRouteInfo<void> {
+  const LanguageSelectionRoute()
+      : super(
+          LanguageSelectionRoute.name,
+          path: 'language_selection',
+        );
 
-        // GET IDGEN id for beneficiary
-        List<String> benefIdList = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPiBenefInstructionNumberFormat(), null, piRequest.getBeneficiaryDetails().size());
+  static const String name = 'LanguageSelectionRoute';
+}
 
-        int idx = 0;
-        // Update beneficiary details
-        for (Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
-            beneficiary.setId(UUID.randomUUID().toString());
-            beneficiary.setBeneficiaryNumber(benefIdList.get(idx));
-            beneficiary.setTenantId(tenantId);
-            beneficiary.setMuktaReferenceId(muktaReferenceId);
-            beneficiary.setPiId(piRequest.getId());
-            beneficiary.setPaymentStatus(beneficiaryPaymentStatus);
-            beneficiary.setAdditionalDetails(emptyObject);
-            beneficiary.setAuditDetails(auditDetails);
-            for (BenfLineItems lineItem: beneficiary.getBenfLineItems()) {
-                lineItem.setId(UUID.randomUUID().toString());
-                lineItem.setBeneficiaryId(beneficiary.getId());
-                lineItem.setAuditDetails(auditDetails);
-            }
-            // Increase idx
-            idx = idx + 1;
-        }
-    }
+/// generated route for
+/// [LoginPage]
+class LoginRoute extends PageRouteInfo<void> {
+  const LoginRoute()
+      : super(
+          LoginRoute.name,
+          path: 'login',
+        );
 
-    public void addTransactionDetailsInPiRequest(PaymentInstruction piRequest, PaymentRequest paymentRequest, SanctionDetail sanctionDetail) {
-        // Create transaction details and push into piRequest
-        String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        String tenantId = paymentRequest.getPayment().getTenantId();
-        JsonNode emptyObject = objectMapper.createObjectNode();
-        Long time = System.currentTimeMillis();
-        AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
-        TransactionDetails transactionDetails = TransactionDetails.builder()
-                .id(UUID.randomUUID().toString())
-                .tenantId(tenantId)
-                .sanctionId(sanctionDetail.getId())
-                .paymentInstId(piRequest.getId())
-                .transactionAmount(piRequest.getNetAmount())
-                .additionalDetails(emptyObject)
-                .transactionType(TransactionType.DEBIT)
-                .auditDetails(auditDetails)
-                .build();
-        piRequest.setTransactionDetails(Collections.singletonList(transactionDetails));
+  static const String name = 'LoginRoute';
+}
 
-    }
+/// generated route for
+/// [OTPVerificationPage]
+class OTPVerificationRoute extends PageRouteInfo<OTPVerificationRouteArgs> {
+  OTPVerificationRoute({
+    Key? key,
+    required String mobileNumber,
+  }) : super(
+          OTPVerificationRoute.name,
+          path: 'otp',
+          args: OTPVerificationRouteArgs(
+            key: key,
+            mobileNumber: mobileNumber,
+          ),
+        );
 
-    public Map<String, Object> getSanctionSsuAndHOA(PaymentRequest paymentRequest, BigDecimal amount) {
-        // GET ssu details
-        JSONArray ssuDetailList = ifmsService.getSSUDetails(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
-        JSONArray hoaList = ifmsService.getHeadOfAccounts(paymentRequest.getRequestInfo());
+  static const String name = 'OTPVerificationRoute';
+}
 
-        hoaList = sortHoaList(hoaList);
+class OTPVerificationRouteArgs {
+  const OTPVerificationRouteArgs({
+    this.key,
+    required this.mobileNumber,
+  });
 
-        JsonNode ssuNode = null, hoaNode = null;
-        SanctionDetail selectedSanction = null;
-        Boolean hasFunds = true;
-        if (ssuDetailList!= null && !ssuDetailList.isEmpty() && hoaList != null && !hoaList.isEmpty()) {
-            for(Object ssu:ssuDetailList) {
-                for(Object hoa: hoaList) {
-                    if (selectedSanction == null) {
-                        ssuNode = objectMapper.valueToTree(ssu);
-                        hoaNode = objectMapper.valueToTree(hoa);
-                        String ddoCode = ssuNode.get("ddoCode").asText();;
-                        String hoaCode = hoaNode.get("code").asText();
-                        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
-                                .tenantId(paymentRequest.getPayment().getTenantId())
-                                .ddoCode(ddoCode)
-                                .hoaCode(hoaCode)
-                                .build();
-                        List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
-                        for (SanctionDetail sanctionDetail: sanctionDetails) {
-                            if (sanctionDetail.getFundsSummary().getAvailableAmount().compareTo(amount) >= 0) {
-                                selectedSanction = sanctionDetail;
-                                break;
-                            }
-                        }
-                    }
+  final Key? key;
 
-                }
-            }
-            if (selectedSanction == null) {
-                hasFunds = false;
-                ssuNode = objectMapper.valueToTree(ssuDetailList.get(0));
-                hoaNode = objectMapper.valueToTree(hoaList.get(0));
-                String ddoCode = ssuNode.get("ddoCode").asText();;
-                String hoaCode = hoaNode.get("code").asText();
-                SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
-                        .tenantId(paymentRequest.getPayment().getTenantId())
-                        .ddoCode(ddoCode)
-                        .hoaCode(hoaCode)
-                        .build();
-                List<SanctionDetail> sanctionDetails = sanctionDetailsRepository.getSanctionDetails(searchCriteria);
-                if (!sanctionDetails.isEmpty()) {
-                    selectedSanction = sanctionDetails.get(0);
-                }
-            }
-        }
+  final String mobileNumber;
 
-        if (selectedSanction != null) {
-            // Filter TRANSACTION TYPE WITHDRAWAL from selected sanction allotment
-            List<Allotment> allotments = selectedSanction.getAllotmentDetails().stream()
-                    .filter(allotment -> !allotment.getAllotmentTxnType().equalsIgnoreCase(VA_TRANSACTION_TYPE_WITHDRAWAL))
-                    .collect(Collectors.toList());
-            selectedSanction.setAllotmentDetails(allotments);
-        }
-        Map<String, Object> objectMap = new HashMap<>();
-        objectMap.put("ssu", ssuNode);
-        objectMap.put("hoa", hoaNode);
-        objectMap.put("sanction", selectedSanction);
-        objectMap.put("hasFunds", hasFunds);
-        return objectMap;
-    }
+  @override
+  String toString() {
+    return 'OTPVerificationRouteArgs{key: $key, mobileNumber: $mobileNumber}';
+  }
+}
 
-    private JSONArray sortHoaList(JSONArray hoaList) {
-        try {
-            if (hoaList != null && !hoaList.isEmpty()) {
-                hoaList.sort((o1, o2) -> {
-                    JsonNode node1 = objectMapper.valueToTree(o1);
-                    JsonNode node2 = objectMapper.valueToTree(o2);
+/// generated route for
+/// [HomePage]
+class HomeRoute extends PageRouteInfo<void> {
+  const HomeRoute()
+      : super(
+          HomeRoute.name,
+          path: 'home',
+        );
 
-                    int key1 = node1.get("sequence").asInt();
-                    int key2 = node2.get("sequence").asInt();
-                    return Integer.compare(key1, key2);
-                });
-            }
-        }catch (Exception e) {
-            log.error("Exception in PaymentInstructionEnrichment:sortHoaList : " + e);
-        }
-        return hoaList;
-    }
+  static const String name = 'HomeRoute';
+}
 
-    private List<Beneficiary> getBeneficiaryListFromBill(Bill bill) {
-        List<Beneficiary>  piBeneficiaryList = new ArrayList<>();
-        for (BillDetail billDetail: bill.getBillDetails()) {
-            for (LineItem lineItem: billDetail.getPayableLineItems()) {
-                if (lineItem.getStatus().equals(Status.ACTIVE)) {
-                    Beneficiary piBeneficiary = Beneficiary.builder()
-                            .benefId(billDetail.getPayee().getIdentifier())
-                            .benfAmount(lineItem.getAmount().toString())
-                            .build();
-                    piBeneficiaryList.add(piBeneficiary);
-                }
-            }
-        }
-        return piBeneficiaryList;
-    }
+/// generated route for
+/// [ORGProfilePage]
+class ORGProfileRoute extends PageRouteInfo<void> {
+  const ORGProfileRoute()
+      : super(
+          ORGProfileRoute.name,
+          path: 'orgProfile',
+        );
 
-    public void enrichBankaccountOnBeneficiary(List<Beneficiary> beneficiaryList, List<BankAccount> bankAccounts, List<Individual> individuals, List<Organisation> organisations) {
-        log.info("Started executing enrichBankaccountOnBeneficiary");
-        Map<String, BankAccount> bankAccountMap = new HashMap<>();
-        if (bankAccounts != null && !bankAccounts.isEmpty()) {
-            for(BankAccount bankAccount: bankAccounts) {
-                bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);
-            }
-        }
-        Map<String, Individual> individualMap = new HashMap<>();
-        if (individuals != null && !individuals.isEmpty()) {
-            for(Individual individual: individuals) {
-                individualMap.put(individual.getId(), individual);
-            }
-        }
-        Map<String, Organisation> organisationMap = new HashMap<>();
-        if (organisations != null && !organisations.isEmpty()) {
-            for(Organisation organisation: organisations) {
-                organisationMap.put(organisation.getId(), organisation);
-            }
-        }
-        log.info("Created map of org, individual and bankaccount, started generating beneficiary.");
-        for(Beneficiary piBeneficiary: beneficiaryList) {
-            BankAccount bankAccount = bankAccountMap.get(piBeneficiary.getBeneficiaryId());
-            if (bankAccount != null) {
-                piBeneficiary.setBenefName(bankAccount.getBankAccountDetails().get(0).getAccountHolderName());
-                piBeneficiary.setBenfAcctNo(bankAccount.getBankAccountDetails().get(0).getAccountNumber());
-                piBeneficiary.setBenfBankIfscCode(bankAccount.getBankAccountDetails().get(0).getBankBranchIdentifier().getCode());
-                piBeneficiary.setBenfAccountType(bankAccount.getBankAccountDetails().get(0).getAccountType());
-                piBeneficiary.setBankAccountId(bankAccount.getBankAccountDetails().get(0).getId());
-            }
+  static const String name = 'ORGProfileRoute';
+}
 
-            Individual individual = individualMap.get(piBeneficiary.getBeneficiaryId());
-            Organisation organisation = organisationMap.get(piBeneficiary.getBeneficiaryId());
+/// generated route for
+/// [AttendanceRegisterTablePage]
+class AttendanceRegisterTableRoute
+    extends PageRouteInfo<AttendanceRegisterTableRouteArgs> {
+  AttendanceRegisterTableRoute({
+    required String registerId,
+    required String tenantId,
+    Key? key,
+  }) : super(
+          AttendanceRegisterTableRoute.name,
+          path: 'manageAttendanceTable/:registerId/:tenantId',
+          args: AttendanceRegisterTableRouteArgs(
+            registerId: registerId,
+            tenantId: tenantId,
+            key: key,
+          ),
+          rawPathParams: {
+            'registerId': registerId,
+            'tenantId': tenantId,
+          },
+        );
 
-            if (individual != null) {
-                piBeneficiary.setBeneficiaryType(BeneficiaryType.IND);
-                piBeneficiary.setBenfMobileNo(individual.getMobileNumber());
-                piBeneficiary.setBenfAddress(individual.getAddress().get(0).getWard().getCode() + " " +individual.getAddress().get(0).getLocality().getCode());
-            } else if (organisation != null) {
-                piBeneficiary.setBeneficiaryType(BeneficiaryType.ORG);
-                piBeneficiary.setBenfMobileNo(organisation.getContactDetails().get(0).getContactMobileNumber());
-                piBeneficiary.setBenfAddress(organisation.getOrgAddress().get(0).getBoundaryCode() + " " +organisation.getOrgAddress().get(0).getCity());
-            } else {
-                piBeneficiary.setBeneficiaryType(BeneficiaryType.DEPT);
-                piBeneficiary.setBenfMobileNo("9999999999");
-                piBeneficiary.setBenfAddress("Temp address");
-            }
-            piBeneficiary.setPurpose("Mukta Payment");
-        }
-        log.info("Beneficiary details enriched and sending back.");
+  static const String name = 'AttendanceRegisterTableRoute';
+}
 
-    }
+class AttendanceRegisterTableRouteArgs {
+  const AttendanceRegisterTableRouteArgs({
+    required this.registerId,
+    required this.tenantId,
+    this.key,
+  });
 
-    public JITRequest getJitPaymentInstructionRequestForIFMS(PaymentInstruction existingPI) {
-        log.info("Started executing getJitPaymentInstructionRequestForIFMS");
-        List<Beneficiary> beneficiaryList = new ArrayList<>();
-        for(Beneficiary beneficiary: existingPI.getBeneficiaryDetails()) {
-            Beneficiary reqBeneficiary = Beneficiary.builder()
-                    .benefId(beneficiary.getBeneficiaryNumber())
-                    .benefName(beneficiary.getBenefName())
-                    .benfAcctNo(beneficiary.getBenfAcctNo())
-                    .benfBankIfscCode(beneficiary.getBenfBankIfscCode())
-                    .benfMobileNo(beneficiary.getBenfMobileNo())
-                    .benfEmailId("")
-                    .benfAddress(beneficiary.getBenfAddress())
-                    .benfAccountType(beneficiary.getBenfAccountType())
-                    .benfAmount(beneficiary.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString())
-                    .purpose("Mukta Payment")
-                    .build();
-            beneficiaryList.add(reqBeneficiary);
-        }
-        PaymentInstruction piRequestForIFMS = PaymentInstruction.builder()
-                .jitBillNo(existingPI.getJitBillNo())
-                .jitBillDate(existingPI.getJitBillDate())
-                .jitBillDdoCode(existingPI.getJitBillDdoCode())
-                .granteeAgCode(existingPI.getGranteeAgCode())
-                .schemeCode(existingPI.getSchemeCode())
-                .hoa(existingPI.getHoa())
-                .ssuIaId(existingPI.getSsuIaId())
-                .mstAllotmentDistId(existingPI.getMstAllotmentDistId())
-                .ssuAllotmentId(existingPI.getSsuAllotmentId())
-                .allotmentTxnSlNo(existingPI.getAllotmentTxnSlNo())
-                .billGrossAmount(existingPI.getBillGrossAmount())
-                .billNetAmount(existingPI.getBillNetAmount())
-                .billNumberOfBenf(String.valueOf(beneficiaryList.size()))
-                .purpose(existingPI.getPurpose())
-                .beneficiaryDetails(beneficiaryList)
-                .build();
+  final String registerId;
 
-        JITRequest jitPiRequest = JITRequest.builder()
-                .serviceId(JITServiceId.PI)
-                .params(piRequestForIFMS)
-                .build();
-        log.info("JIT PI request generated and sending back.");
-        return jitPiRequest;
-    }
+  final String tenantId;
 
-    public JITRequest getCorRequest(PaymentRequest paymentRequest, PaymentInstruction paymentInstruction, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) throws Exception {
-        List<CORBeneficiaryDetails> corBenfDetails = new ArrayList<>();
-        List<String> beneficiaryIds = paymentInstruction.getBeneficiaryDetails().stream()
-                .map(Beneficiary::getBeneficiaryId)
-                .distinct()
-                .collect(Collectors.toList());
-        List<BankAccount> bankAccounts = bankAccountUtils.getBankAccountsByIdentifier(paymentRequest.getRequestInfo(), beneficiaryIds, paymentRequest.getPayment().getTenantId());
-        Map<String, BankAccount> bankAccountMap = new HashMap<>();
-        if (bankAccounts != null && !bankAccounts.isEmpty()) {
-            for(BankAccount bankAccount: bankAccounts) {
-                bankAccountMap.put(bankAccount.getReferenceId(), bankAccount);
-            }
-        }
+  final Key? key;
 
-        for (Beneficiary beneficiary: paymentInstruction.getBeneficiaryDetails()) {
-            Map<String, String> originalPiBankDetails = auditLogUtils.getLastUpdatedBankAccountDetailsFromAuditLogFromTime(paymentRequest, bankAccountMap.get(beneficiary.getBeneficiaryId()), originalPi.getAuditDetails().getCreatedTime());
-            String originalPiBankAccountNo = originalPiBankDetails.get("bankAccountNumber");
-            String originalPiIFSC = originalPiBankDetails.get("bankIFSCCode");
+  @override
+  String toString() {
+    return 'AttendanceRegisterTableRouteArgs{registerId: $registerId, tenantId: $tenantId, key: $key}';
+  }
+}
 
-            // Get bank account details by beneficiary ids
-            CORBeneficiaryDetails corBeneficiaryDetails = CORBeneficiaryDetails.builder()
-                    .benefId(beneficiary.getBeneficiaryNumber())
-                    // Latest failed transaction bill ref number
-                    .jitCurBillRefNo(lastRevisedPi != null ? lastRevisedPi.getPaDetails().get(0).getPaBillRefNumber() : originalPi.getPaDetails().get(0).getPaBillRefNumber())
-                    // Original account number of first time failure.
-                    .orgAccountNo(originalPiBankAccountNo)
-                    // Original IFSC of first time failure.
-                    .orgIfsc(originalPiIFSC)
-                    // Recent corrected account number
-                    .correctedAccountNo(beneficiary.getBenfAcctNo())
-                    // Recent corrected IFSC
-                    .correctedIfsc(beneficiary.getBenfBankIfscCode())
-                    .build();
+/// generated route for
+/// [WorkOrderPage]
+class WorkOrderRoute extends PageRouteInfo<void> {
+  const WorkOrderRoute()
+      : super(
+          WorkOrderRoute.name,
+          path: 'work-orders',
+        );
 
-            if (lastRevisedPi != null) {
-                Map<String, String> lastPiBankDetails = auditLogUtils.getLastUpdatedBankAccountDetailsFromAuditLogFromTime(paymentRequest, bankAccountMap.get(beneficiary.getBeneficiaryId()), lastRevisedPi.getAuditDetails().getCreatedTime());
-                String lastPiBankAccountNo = lastPiBankDetails.get("bankAccountNumber");
-                String lastPiIFSC = lastPiBankDetails.get("bankIFSCCode");
-                // Latest failed transaction account number
-                corBeneficiaryDetails.setCurAccountNo(lastPiBankAccountNo);
-                // Latest failed transaction IFSC
-                corBeneficiaryDetails.setCurIfsc(lastPiIFSC);
-            } else {
-                // Latest failed transaction account number
-                corBeneficiaryDetails.setCurAccountNo(originalPiBankAccountNo);
-                // Latest failed transaction IFSC
-                corBeneficiaryDetails.setCurIfsc(originalPiIFSC);
-            }
-            corBenfDetails.add(corBeneficiaryDetails);
-        }
+  static const String name = 'WorkOrderRoute';
+}
 
-        CORRequest corRequest = CORRequest.builder()
-                .jitCorBillNo(paymentInstruction.getJitBillNo())
-                .jitCorBillDate(util.getFormattedTimeFromTimestamp(paymentInstruction.getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
-                // External department Application name for example ‘MUKTA’
-                .jitCorBillDeptCode(JIT_FD_EXT_APP_NAME)
-                // Original bill reference number while payment failed first time.
-                .jitOrgBillRefNo(originalPi.getPaDetails().get(0).getPaBillRefNumber())
-                // Payment Instruction bill no while payment failed first time.
-                .jitOrgBillNo(originalPi.getJitBillNo())
-                // Payment Instruction bill date while payment failed first time.
-                .jitOrgBillDate(util.getFormattedTimeFromTimestamp(originalPi.getAuditDetails().getCreatedTime(), VA_REQUEST_TIME_FORMAT))
-                .beneficiaryDtls(corBenfDetails)
-                .build();
-        JITRequest jitPiRequest = JITRequest.builder()
-                .serviceId(JITServiceId.COR)
-                .params(corRequest)
-                .build();
+/// generated route for
+/// [ViewMusterRollsPage]
+class ViewMusterRollsRoute extends PageRouteInfo<void> {
+  const ViewMusterRollsRoute()
+      : super(
+          ViewMusterRollsRoute.name,
+          path: 'muster-rolls',
+        );
 
-        return jitPiRequest;
-    }
+  static const String name = 'ViewMusterRollsRoute';
+}
 
+/// generated route for
+/// [SHGInboxPage]
+class SHGInboxRoute extends PageRouteInfo<SHGInboxRouteArgs> {
+  SHGInboxRoute({
+    required String tenantId,
+    required String musterRollNo,
+    required String sentBackCode,
+    Key? key,
+  }) : super(
+          SHGInboxRoute.name,
+          path: 'shg-inbox/:tenantId/:musterRollNo/:sentBackCode',
+          args: SHGInboxRouteArgs(
+            tenantId: tenantId,
+            musterRollNo: musterRollNo,
+            sentBackCode: sentBackCode,
+            key: key,
+          ),
+          rawPathParams: {
+            'tenantId': tenantId,
+            'musterRollNo': musterRollNo,
+            'sentBackCode': sentBackCode,
+          },
+        );
 
-    private Map<String, JsonNode> getHeadCodeHashMap(JSONArray headCodesList) {
-        Map<String, JsonNode> headCodeMap = new HashMap<>();
-        for (Object headcode: headCodesList) {
-            JsonNode node = objectMapper.valueToTree(headcode);
-            headCodeMap.put(node.get("code").asText(), node);
-        }
-        return headCodeMap;
-    }
+  static const String name = 'SHGInboxRoute';
+}
 
-    private void updateBillFieldsForIndexer(PaymentInstruction paymentInstruction, PaymentRequest paymentRequest) {
-        try {
-            // Get the list of bills based on payment request
-            List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
-            Map<String, Object>  additionalDetails = new HashMap<>();
-            List<String> billNumber = new ArrayList<>();
-            List<String> referenceId = new ArrayList<>();
-            if (billList != null && !billList.isEmpty()) {
-                for (Bill bill: billList) {
-                    billNumber.add(bill.getBillNumber());
-                }
-            }
-            billNumber = billNumber.stream().distinct().collect(Collectors.toList());
-            Object billCalculatorResponse =  billUtils.fetchBillFromCalculator(paymentRequest, billNumber);
-            JsonNode node = objectMapper.valueToTree(billCalculatorResponse);
-            JsonNode billsNode= node.get("bills");
-            if (billsNode.isArray()) {
-                for (JsonNode bill : billsNode) {
-                    referenceId.add(bill.get("contractNumber").asText());
-                }
-            }
-            // Convert the array to a Set to get distinct elements
-            referenceId = referenceId.stream().distinct().collect(Collectors.toList());
-            additionalDetails.put("billNumber", billNumber);
-            additionalDetails.put("referenceId", referenceId);
-            paymentInstruction.setAdditionalDetails(additionalDetails);
-        } catch (Exception e) {
-            log.error("Exception in PaymentInstructionEnrichment:updateBillFieldsForIndexer : " + e);
-        }
-    }
+class SHGInboxRouteArgs {
+  const SHGInboxRouteArgs({
+    required this.tenantId,
+    required this.musterRollNo,
+    required this.sentBackCode,
+    this.key,
+  });
 
-    /**
-     * Get failed beneficiary list from existing PI with line items
-     * @param existingPI
-     * @return list of beneficiaries
-     */
-    public List<Beneficiary> getFailedBeneficiariesFromExistingPI(PaymentInstruction existingPI) {
-        List<Beneficiary> beneficiaryList = new ArrayList<>();
-        if (existingPI != null && !existingPI.getBeneficiaryDetails().isEmpty()) {
-            for (Beneficiary beneficiary: existingPI.getBeneficiaryDetails()) {
-                if (beneficiary.getPaymentStatus().equals(BeneficiaryPaymentStatus.FAILED)) {
-                    List<BenfLineItems> benfLineItems = new ArrayList<>();
-                    for (BenfLineItems lineItems: beneficiary.getBenfLineItems()) {
-                        BenfLineItems benfLineItem = BenfLineItems.builder()
-                                .lineItemId(lineItems.getLineItemId())
-                                .build();
-                        benfLineItems.add(benfLineItem);
-                    }
-                    Beneficiary newBenef = Beneficiary.builder()
-                            .tenantId(beneficiary.getTenantId())
-                            .muktaReferenceId(beneficiary.getMuktaReferenceId())
-                            .beneficiaryId(beneficiary.getBeneficiaryId())
-                            .beneficiaryNumber(beneficiary.getBeneficiaryNumber())
-                            .beneficiaryType(beneficiary.getBeneficiaryType())
-                            .amount(beneficiary.getAmount())
-                            .benfLineItems(benfLineItems)
-                            .build();
-                    beneficiaryList.add(newBenef);
-                }
-            }
-        }
-        return beneficiaryList;
-    }
+  final String tenantId;
 
-    public PaymentInstruction getRevisedEnrichedPaymentRequest(PaymentRequest paymentRequest, PaymentInstruction existingPi, List<Beneficiary> beneficiaries) {
+  final String musterRollNo;
 
-        BigDecimal totalAmount = new BigDecimal(0);
-        if (beneficiaries != null && !beneficiaries.isEmpty()) {
-            for (Beneficiary piBeneficiary: beneficiaries) {
-                totalAmount = totalAmount.add(piBeneficiary.getAmount());
-            }
-        }
+  final String sentBackCode;
 
-        String userId = paymentRequest.getRequestInfo().getUserInfo().getUuid();
-        Long time = System.currentTimeMillis();
-        String tenantId = existingPi.getTenantId();
-        String muktaReferenceId = existingPi.getMuktaReferenceId();
-        JsonNode emptyObject = objectMapper.createObjectNode();
-        AuditDetails auditDetails = AuditDetails.builder().createdBy(userId).createdTime(time).lastModifiedBy(userId).lastModifiedTime(time).build();
+  final Key? key;
 
-        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), tenantId, config.getPaymentInstructionNumberFormat(), null, 1).get(0);
-        PaymentInstruction paymentInstruction = PaymentInstruction.builder()
-                .id(UUID.randomUUID().toString())
-                .tenantId(tenantId)
-                .jitBillNo(jitBillNo)
-                .jitBillDate(util.getFormattedTimeFromTimestamp(time, JIT_BILL_DATE_FORMAT))
-                .parentPiNumber(existingPi.getJitBillNo())
-                .muktaReferenceId(muktaReferenceId)
-                .numBeneficiaries(beneficiaries.size())
-                .grossAmount(totalAmount)
-                .netAmount(totalAmount)
-                .piStatus(PIStatus.INITIATED)
-                .auditDetails(auditDetails)
-                .additionalDetails(emptyObject)
-                .build();
+  @override
+  String toString() {
+    return 'SHGInboxRouteArgs{tenantId: $tenantId, musterRollNo: $musterRollNo, sentBackCode: $sentBackCode, key: $key}';
+  }
+}
 
-        // Add payment advise details
-        List<PADetails> paDetails = new ArrayList<>();
-        PADetails paDetail = PADetails.builder()
-                .id(UUID.randomUUID().toString())
-                .tenantId(tenantId)
-                .muktaReferenceId(muktaReferenceId)
-                .piId(paymentInstruction.getId())
-                .additionalDetails(emptyObject)
-                .auditDetails(auditDetails)
-                .build();
-        paDetails.add(paDetail);
-        paymentInstruction.setPaDetails(paDetails);
+/// generated route for
+/// [TrackAttendanceInboxPage]
+class TrackAttendanceInboxRoute extends PageRouteInfo<void> {
+  const TrackAttendanceInboxRoute()
+      : super(
+          TrackAttendanceInboxRoute.name,
+          path: 'track-attendance-inbox',
+        );
 
-        // GET IDGEN id for beneficiary
-        // List<String> benefIdList = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPiBenefInstructionNumberFormat(), null, beneficiaries.size());
-        int idx = 0;
-        for (Beneficiary beneficiary: beneficiaries) {
-            beneficiary.setId(UUID.randomUUID().toString());
-            beneficiary.setBeneficiaryNumber(beneficiary.getBeneficiaryNumber());
-            beneficiary.setTenantId(tenantId);
-            beneficiary.setMuktaReferenceId(muktaReferenceId);
-            beneficiary.setPiId(paymentInstruction.getId());
-            beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.INITIATED);
-            beneficiary.setAdditionalDetails(emptyObject);
-            beneficiary.setAuditDetails(auditDetails);
-            for (BenfLineItems lineItem: beneficiary.getBenfLineItems()) {
-                lineItem.setId(UUID.randomUUID().toString());
-                lineItem.setBeneficiaryId(beneficiary.getId());
-                lineItem.setAuditDetails(auditDetails);
-            }
-            // Increase idx
-            idx = idx + 1;
-        }
-        paymentInstruction.setBeneficiaryDetails(beneficiaries);
-        // update piRequest for payment search indexer
-        updateBillFieldsForIndexer(paymentInstruction, paymentRequest);
-        return paymentInstruction;
-    }
+  static const String name = 'TrackAttendanceInboxRoute';
+}
 
-    public List<Beneficiary> groupBeneficiariesByAccountNumberIfsc(List<Beneficiary> beneficiaries) {
-        Map<String, Beneficiary> newBeneficiaryMap = new HashMap<>();
-        for (Beneficiary beneficiary: beneficiaries) {
-            String key = beneficiary.getBenfAcctNo() + "_" + beneficiary.getBenfBankIfscCode();
-            if (newBeneficiaryMap.containsKey(key)){
-                newBeneficiaryMap.get(key).getBenfLineItems().addAll(beneficiary.getBenfLineItems());
-                newBeneficiaryMap.get(key).setAmount(newBeneficiaryMap.get(key).getAmount().add(beneficiary.getAmount()));
-            } else {
-                newBeneficiaryMap.put(key, beneficiary);
-            }
-        }
-        List<Beneficiary> newBeneficiaryList = new ArrayList<>(newBeneficiaryMap.values());
-        return newBeneficiaryList;
-    }
+/// generated route for
+/// [TrackAttendancePage]
+class TrackAttendanceRoute extends PageRouteInfo<TrackAttendanceRouteArgs> {
+  TrackAttendanceRoute({
+    required String id,
+    required String tenantId,
+    Key? key,
+  }) : super(
+          TrackAttendanceRoute.name,
+          path: 'track-attendance/:id/:tenantId',
+          args: TrackAttendanceRouteArgs(
+            id: id,
+            tenantId: tenantId,
+            key: key,
+          ),
+          rawPathParams: {
+            'id': id,
+            'tenantId': tenantId,
+          },
+        );
 
-    public PaymentInstruction getEnrichedPaymentInstructionForNoFunds(PaymentRequest paymentRequest, List<Beneficiary> beneficiaries) {
-        // Get the beneficiaries
-        BigDecimal totalAmount = new BigDecimal(0);
-        if (beneficiaries != null && !beneficiaries.isEmpty()) {
-            for (Beneficiary piBeneficiary: beneficiaries) {
-                totalAmount = totalAmount.add(piBeneficiary.getAmount());
-            }
-        }
-        SanctionDetail selectedSanction = null;
-        Boolean hasFunds = true;
+  static const String name = 'TrackAttendanceRoute';
+}
 
-        // Sort the list in descending order based on the value
-        PIStatus piStatus = PIStatus.FAILED;
-        String jitBillNo = idgenUtil.getIdList(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId(), config.getPaymentInstructionNumberFormat(), null, 1).get(0);
-        PaymentInstruction piRequest = PaymentInstruction.builder()
-                .id(UUID.randomUUID().toString())
-                .jitBillNo(jitBillNo)
-                .purpose(JIT_FD_EXT_APP_NAME)
-                .billGrossAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
-                .billNetAmount(totalAmount.setScale(2, BigDecimal.ROUND_HALF_UP).toString())
-                .beneficiaryDetails(beneficiaries)
-                .numBeneficiaries(beneficiaries.size())
-                .billNumberOfBenf(String.valueOf(beneficiaries.size()))
-                .tenantId(paymentRequest.getPayment().getTenantId())
-                .grossAmount(totalAmount)
-                .netAmount(totalAmount)
-                .muktaReferenceId(paymentRequest.getPayment().getPaymentNumber())
-                .piStatus(piStatus)
-                .isActive(false)
-                .build();
-        enrichPiRequestForInsert(piRequest, paymentRequest, false);
-        // update piRequest for payment search indexer
-        updateBillFieldsForIndexer(piRequest, paymentRequest);
-        return piRequest;
-    }
+class TrackAttendanceRouteArgs {
+  const TrackAttendanceRouteArgs({
+    required this.id,
+    required this.tenantId,
+    this.key,
+  });
 
+  final String id;
+
+  final String tenantId;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'TrackAttendanceRouteArgs{id: $id, tenantId: $tenantId, key: $key}';
+  }
+}
+
+/// generated route for
+/// [RegisterIndividualPage]
+class RegisterIndividualRoute extends PageRouteInfo<void> {
+  const RegisterIndividualRoute()
+      : super(
+          RegisterIndividualRoute.name,
+          path: 'register-individual',
+        );
+
+  static const String name = 'RegisterIndividualRoute';
+}
+
+/// generated route for
+/// [ViewWorkDetailsPage]
+class ViewWorkDetailsRoute extends PageRouteInfo<ViewWorkDetailsRouteArgs> {
+  ViewWorkDetailsRoute({
+    Key? key,
+    String? contractNumber = 'contractNumber',
+  }) : super(
+          ViewWorkDetailsRoute.name,
+          path: 'view-work-order',
+          args: ViewWorkDetailsRouteArgs(
+            key: key,
+            contractNumber: contractNumber,
+          ),
+          rawQueryParams: {'contractNumber': contractNumber},
+        );
+
+  static const String name = 'ViewWorkDetailsRoute';
+}
+
+class ViewWorkDetailsRouteArgs {
+  const ViewWorkDetailsRouteArgs({
+    this.key,
+    this.contractNumber = 'contractNumber',
+  });
+
+  final Key? key;
+
+  final String? contractNumber;
+
+  @override
+  String toString() {
+    return 'ViewWorkDetailsRouteArgs{key: $key, contractNumber: $contractNumber}';
+  }
+}
+
+/// generated route for
+/// [SuccessResponsePage]
+class SuccessResponseRoute extends PageRouteInfo<SuccessResponseRouteArgs> {
+  SuccessResponseRoute({
+    Key? key,
+    required String header,
+    String? subHeader,
+    String? subText,
+    String? subTitle,
+    void Function()? callBack,
+    void Function()? callBackWhatsapp,
+    void Function()? callBackDownload,
+    void Function()? callBackPrint,
+    bool? backButton,
+    String? buttonLabel,
+    bool isWithoutLogin = false,
+    String? downloadLabel,
+    String? printLabel,
+    String? whatsAppLabel,
+    String? backButtonLabel,
+  }) : super(
+          SuccessResponseRoute.name,
+          path: 'success',
+          args: SuccessResponseRouteArgs(
+            key: key,
+            header: header,
+            subHeader: subHeader,
+            subText: subText,
+            subTitle: subTitle,
+            callBack: callBack,
+            callBackWhatsapp: callBackWhatsapp,
+            callBackDownload: callBackDownload,
+            callBackPrint: callBackPrint,
+            backButton: backButton,
+            buttonLabel: buttonLabel,
+            isWithoutLogin: isWithoutLogin,
+            downloadLabel: downloadLabel,
+            printLabel: printLabel,
+            whatsAppLabel: whatsAppLabel,
+            backButtonLabel: backButtonLabel,
+          ),
+        );
+
+  static const String name = 'SuccessResponseRoute';
+}
+
+class SuccessResponseRouteArgs {
+  const SuccessResponseRouteArgs({
+    this.key,
+    required this.header,
+    this.subHeader,
+    this.subText,
+    this.subTitle,
+    this.callBack,
+    this.callBackWhatsapp,
+    this.callBackDownload,
+    this.callBackPrint,
+    this.backButton,
+    this.buttonLabel,
+    this.isWithoutLogin = false,
+    this.downloadLabel,
+    this.printLabel,
+    this.whatsAppLabel,
+    this.backButtonLabel,
+  });
+
+  final Key? key;
+
+  final String header;
+
+  final String? subHeader;
+
+  final String? subText;
+
+  final String? subTitle;
+
+  final void Function()? callBack;
+
+  final void Function()? callBackWhatsapp;
+
+  final void Function()? callBackDownload;
+
+  final void Function()? callBackPrint;
+
+  final bool? backButton;
+
+  final String? buttonLabel;
+
+  final bool isWithoutLogin;
+
+  final String? downloadLabel;
+
+  final String? printLabel;
+
+  final String? whatsAppLabel;
+
+  final String? backButtonLabel;
+
+  @override
+  String toString() {
+    return 'SuccessResponseRouteArgs{key: $key, header: $header, subHeader: $subHeader, subText: $subText, subTitle: $subTitle, callBack: $callBack, callBackWhatsapp: $callBackWhatsapp, callBackDownload: $callBackDownload, callBackPrint: $callBackPrint, backButton: $backButton, buttonLabel: $buttonLabel, isWithoutLogin: $isWithoutLogin, downloadLabel: $downloadLabel, printLabel: $printLabel, whatsAppLabel: $whatsAppLabel, backButtonLabel: $backButtonLabel}';
+  }
+}
+
+/// generated route for
+/// [MyBillsPage]
+class MyBillsRoute extends PageRouteInfo<void> {
+  const MyBillsRoute()
+      : super(
+          MyBillsRoute.name,
+          path: 'my-bills',
+        );
+
+  static const String name = 'MyBillsRoute';
+}
+
+/// generated route for
+/// [CreateTimeExtensionRequestPage]
+class CreateTimeExtensionRequestRoute
+    extends PageRouteInfo<CreateTimeExtensionRequestRouteArgs> {
+  CreateTimeExtensionRequestRoute({
+    Key? key,
+    String? contractNumber,
+    bool? isEdit,
+  }) : super(
+          CreateTimeExtensionRequestRoute.name,
+          path: 'create-time-extension',
+          args: CreateTimeExtensionRequestRouteArgs(
+            key: key,
+            contractNumber: contractNumber,
+            isEdit: isEdit,
+          ),
+          rawQueryParams: {
+            'contractNumber': contractNumber,
+            'isEdit': isEdit,
+          },
+        );
+
+  static const String name = 'CreateTimeExtensionRequestRoute';
+}
+
+class CreateTimeExtensionRequestRouteArgs {
+  const CreateTimeExtensionRequestRouteArgs({
+    this.key,
+    this.contractNumber,
+    this.isEdit,
+  });
+
+  final Key? key;
+
+  final String? contractNumber;
+
+  final bool? isEdit;
+
+  @override
+  String toString() {
+    return 'CreateTimeExtensionRequestRouteArgs{key: $key, contractNumber: $contractNumber, isEdit: $isEdit}';
+  }
+}
+
+/// generated route for
+/// [MyServiceRequestsPage]
+class MyServiceRequestsRoute extends PageRouteInfo<void> {
+  const MyServiceRequestsRoute()
+      : super(
+          MyServiceRequestsRoute.name,
+          path: 'my-service-requests',
+        );
+
+  static const String name = 'MyServiceRequestsRoute';
 }
