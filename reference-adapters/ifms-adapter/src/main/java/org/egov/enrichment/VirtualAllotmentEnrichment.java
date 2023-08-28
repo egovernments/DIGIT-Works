@@ -38,7 +38,7 @@ public class VirtualAllotmentEnrichment {
         String hoaCode = hoaNode.get("code").asText();
         String ddoCode = ssuNode.get("ddoCode").asText();
         String granteeCode = ssuNode.get("granteeAgCode").asText();
-        String fromDate = util.getFormattedTimeFromTimestamp(lastExecuted, VA_REQUEST_TIME_FORMAT);
+        String fromDate = util.getFormattedTimeFromTimestampToIST(lastExecuted, VA_REQUEST_TIME_FORMAT);
 
         VARequest vaRequest = VARequest.builder()
                 .hoa(hoaCode)

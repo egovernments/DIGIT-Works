@@ -82,6 +82,7 @@ public class EnrichmentUtil {
             if(!gender.isEmpty()){
                 map.put(GENDER,gender);
             }
+            map.put(GENDER,gender);
             billDetail.getPayee().setAdditionalDetails(objectMapper.convertValue(map,Object.class));
             for (LineItem lineItem : billDetail.getLineItems()) {
                 lineItem.setId(UUID.randomUUID().toString());

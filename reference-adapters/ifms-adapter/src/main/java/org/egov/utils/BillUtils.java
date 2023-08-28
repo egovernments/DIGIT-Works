@@ -1,6 +1,5 @@
 package org.egov.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -36,9 +35,10 @@ public class BillUtils {
     @Autowired
     private IfmsAdapterConfig config;
 	@Autowired
-	MdmsUtils mdmsUtils;
+	private MdmsUtils mdmsUtils;
 
 	public @Valid List<Bill> fetchBillsFromPayment(PaymentRequest paymentRequest) {
+		log.info("Started executing fetchBillsFromPayment");
 		RequestInfo requestInfo = paymentRequest.getRequestInfo();
 		List<String> billIds = new ArrayList<>();
 		if (requestInfo != null && paymentRequest.getPayment().getBills() != null && !paymentRequest.getPayment().getBills().isEmpty()) {
@@ -59,6 +59,7 @@ public class BillUtils {
 	}
 
 	public @Valid List<Bill> fetchBillsData(Object billRequest) {
+		log.info("Started executing fetchBillsData");
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getBillHost()).append(config.getBillSearchEndPoint());
 		Object response = new HashMap<>();
@@ -70,11 +71,11 @@ public class BillUtils {
 		} catch (Exception e) {
 			log.error("Exception occurred while fetching bill lists from bill service: ", e);
 		}
-
+		log.info("Bill fetched and sending back.");
 		return billResponse.getBills();
 	}
 
-	public @Valid List<Payment> updatePaymentsData(Object paymentRequest) {
+	public @Valid List<Payment> callPaymentUpdate(Object paymentRequest) {
 		log.info("Updating payment using bill service");
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getBillHost()).append(config.getPaymentUpdateEndPoint());
@@ -124,6 +125,7 @@ public class BillUtils {
 
 
 	public @Valid List<Payment> fetchPaymentDetails(RequestInfo requestInfo, Set<String> paymentNumbers, String tenantId) {
+		log.info("Started executing fetchPaymentDetails");
 		Map<String, Object> searchCriteria = new HashMap<>();
 		searchCriteria.put("tenantId", tenantId);
 		searchCriteria.put("paymentNumbers", paymentNumbers);
@@ -142,10 +144,12 @@ public class BillUtils {
 		} catch (Exception e) {
 			log.error("Exception occurred while fetching payment details from bill service: ", e);
 		}
+		log.info("Payment fetched, sending back.");
 		return paymentResponse.getPayments();
 	}
 
-	public void updatePaymentForStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus, ReferenceStatus referenceStatus) {
+	public void updatePaymentStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus, ReferenceStatus referenceStatus) {
+		log.info("Started executing updatePaymentForStatus");
 		paymentRequest.getPayment().setStatus(paymentStatus);
 		paymentRequest.getPayment().setReferenceStatus(referenceStatus);
 		for (PaymentBill bill: paymentRequest.getPayment().getBills()) {
@@ -157,16 +161,18 @@ public class BillUtils {
 				}
 			}
 		}
-		updatePaymentsData(paymentRequest);
+		callPaymentUpdate(paymentRequest);
 	}
 
 	public JSONArray getHeadCode(RequestInfo requestInfo, String tenantId) {
+		log.info("Getting HOA list from mdms");
 		String rootTenantId = tenantId.split("\\.")[0];
 		List<String> headCodeMasters = new ArrayList<>();
 		headCodeMasters.add(MDMS_HEAD_CODES_MASTER);
 		Map<String, Map<String, JSONArray>> headCodeResponse = mdmsUtils.fetchMdmsData(requestInfo, rootTenantId, MDMS_EXPENSE_MODULE_NAME, headCodeMasters);
-		JSONArray ssuDetailsList = headCodeResponse.get(MDMS_EXPENSE_MODULE_NAME).get(MDMS_HEAD_CODES_MASTER);
-		return ssuDetailsList;
+		JSONArray headCodeList = headCodeResponse.get(MDMS_EXPENSE_MODULE_NAME).get(MDMS_HEAD_CODES_MASTER);
+		log.info("Fetched HOA list from mdms");
+		return headCodeList;
 	}
 
 }

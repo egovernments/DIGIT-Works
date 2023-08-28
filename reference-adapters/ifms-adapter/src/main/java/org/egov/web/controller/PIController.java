@@ -62,7 +62,7 @@ public class PIController {
             ResponseEntity<Object> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
             return responseEntity;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 

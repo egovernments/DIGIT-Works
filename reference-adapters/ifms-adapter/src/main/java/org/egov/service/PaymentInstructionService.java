@@ -61,23 +61,28 @@ public class PaymentInstructionService {
     private PIStatusLogsRepository piStatusLogsRepository;
 
     public PaymentInstruction processPaymentRequest(PaymentRequest paymentRequest) {
+        log.info("Started executing processPaymentRequest");
         PaymentInstruction paymentInstruction = null;
         if (paymentRequest.getReferenceId() != null && !paymentRequest.getReferenceId().isEmpty() && paymentRequest.getTenantId() != null && !paymentRequest.getTenantId().isEmpty()) {
+            log.info("Creating new Payment instruction.");
             // GET payment details
             List<Payment> payments = billUtils.fetchPaymentDetails(paymentRequest.getRequestInfo(),
                     Collections.singleton(paymentRequest.getReferenceId()),
                     paymentRequest.getTenantId());
             if (!payments.isEmpty()) {
+                log.info("Payment exists, validating for new pi creation.");
                 boolean createNewPi = isPaymentValidForCreateNewPI(payments.get(0));
                 if (createNewPi) {
+                    log.info("Creating new payment instruction.");
                     // paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
                     paymentRequest.setPayment(payments.get(0));
                     paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
                 } else {
-                    throw new RuntimeException("PI is already created for Payment Advice "+ paymentRequest.getReferenceId());
+                    throw new CustomException("PI_DUPLICATE_ERROR", "PI is already created for Payment Advice "+ paymentRequest.getReferenceId());
                 }
             } else {
-                throw new RuntimeException("No Payment Advice exists of payment number : "+ paymentRequest.getReferenceId() + " for tenantId : " + paymentRequest.getTenantId());
+                log.info("Payment did not find.");
+                throw new CustomException("PAYMENT_NOT_FIND_ERROR", "No Payment Advice exists of payment number : "+ paymentRequest.getReferenceId() + " for tenantId : " + paymentRequest.getTenantId());
             }
         } else if (paymentRequest.getParentPI() != null) {
             Map<String, Object>  createRevisedPiMap = canCreateRevisedPi(paymentRequest);
@@ -94,16 +99,16 @@ public class PaymentInstructionService {
                     paymentRequest.setPayment(payments.get(0));
                     paymentInstruction = processPaymentRequestForRevisedPI(paymentRequest, originalPi, lastRevisedPi);
                 } else {
-                    throw new RuntimeException("Failed to fetch payment details for PI : "+ paymentRequest.getParentPI());
+                    throw new CustomException("PAYMENT_NOT_FIND_ERROR", "Failed to fetch payment details for PI : "+ paymentRequest.getParentPI());
                 }
             } else {
-                throw new RuntimeException("Revised PI can not be generated for PI : "+ paymentRequest.getParentPI());
+                throw new CustomException("REVISED_PI_GEN_ERROR", "Revised PI can not be generated for PI : "+ paymentRequest.getParentPI());
             }
         } else if (paymentRequest.getPayment() != null) {
             // paymentInstructionValidator.validatePaymentInstructionRequest(paymentRequest);
             paymentInstruction = processPaymentRequestForNewPI(paymentRequest);
         } else {
-            throw new RuntimeException("Enter valid parameters : referenceId, tenantId, parentPI");
+            throw new CustomException("PI_REQUEST_INVALID_PARAMS", "Enter valid parameters : referenceId, tenantId, parentPI");
         }
         return paymentInstruction;
     }
@@ -114,11 +119,13 @@ public class PaymentInstructionService {
      * @return
      */
     public PaymentInstruction processPaymentRequestForNewPI(PaymentRequest paymentRequest) {
+        log.info("Started executing processPaymentRequestForNewPI");
         PaymentInstruction piRequest = null;
         PaymentStatus paymentStatus = null;
         ReferenceStatus referenceStatus = null;
         JitRespStatusForPI jitApiRespStatus = null;
         try {
+            log.info("Getting beneficiary list for payment request.");
             // Get the beneficiaries
             List<Beneficiary> beneficiaries = getBeneficiariesFromPayment(paymentRequest);
             beneficiaries = piEnrichment.groupBeneficiariesByAccountNumberIfsc(beneficiaries);
@@ -135,12 +142,15 @@ public class PaymentInstructionService {
             hasFunds = Boolean.parseBoolean(hoaSsuMap.get("hasFunds").toString());
 
             if (hasFunds) {
+                log.info("Fund available processing payment instruction.");
                 // Get enriched PI request to store on DB
                 piRequest = piEnrichment.getEnrichedPaymentRequest(paymentRequest, beneficiaries, hoaSsuMap);
-
+                log.info("Payment instruction data is populated, creating jit request based on PI.");
                 JITRequest jitPiRequest = piEnrichment.getJitPaymentInstructionRequestForIFMS(piRequest);
                 try {
+                    log.info("Payment instruction data is populated, creating jit request based on PI.");
                     JITResponse jitResponse = ifmsService.sendRequestToIFMS(jitPiRequest);
+                    log.info("Jit response for create PI : " + jitResponse);
                     if (jitResponse.getErrorMsg() == null && !jitResponse.getData().isEmpty()) {
                         paymentStatus = PaymentStatus.INITIATED;
                         referenceStatus = ReferenceStatus.PAYMENT_INITIATED;
@@ -154,10 +164,15 @@ public class PaymentInstructionService {
                     } else {
                         paymentStatus = PaymentStatus.FAILED;
                         referenceStatus = ReferenceStatus.PAYMENT_FAILED;
-                        piRequest.setPiErrorResp(jitResponse.getErrorMsg());
+                        // TODO: Process the error messages for each beneficiaries if it has valid response
+                        if (jitResponse.getErrorMsgs() != null && !jitResponse.getErrorMsgs().isEmpty())
+                            piRequest.setPiErrorResp(jitResponse.getErrorMsgs().toString());
+                        else
+                            piRequest.setPiErrorResp(jitResponse.getErrorMsg());
                         jitApiRespStatus = JitRespStatusForPI.STATUS_LOG_PI_ERROR;
                     }
                 } catch (Exception e) {
+                    log.info("Exception while creating a pi, setting payment status to FAILED.");
                     paymentStatus = PaymentStatus.FAILED;
                     referenceStatus = ReferenceStatus.PAYMENT_SERVER_UNREACHABLE;
                     String errorMessage = e.toString();
@@ -174,6 +189,7 @@ public class PaymentInstructionService {
                 }
                 // Set beneficiary and pi status to failed if payment is failed
                 if (paymentStatus.equals(PaymentStatus.FAILED)) {
+                    log.info("Payment status is FAILED, changing all beneficiary status to FAILED.");
                     piRequest.setPiStatus(PIStatus.FAILED);
                     piRequest.setIsActive(false);
                     for(Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
@@ -182,6 +198,7 @@ public class PaymentInstructionService {
                 }
                 // IF pi is initiated then add transaction records
                 if (paymentStatus.equals(PaymentStatus.INITIATED)) {
+                    log.info("Payment INITIATED, adding a transaction in PI, and deducting amount from fund summary");
                     piEnrichment.addTransactionDetailsInPiRequest(piRequest, paymentRequest, selectedSanction);
                     // update fund summary amount
                     selectedSanction.getFundsSummary().setAvailableAmount(selectedSanction.getFundsSummary().getAvailableAmount().subtract(totalAmount));
@@ -189,9 +206,11 @@ public class PaymentInstructionService {
                     selectedSanction.getFundsSummary().getAuditDetails().setLastModifiedBy(piRequest.getAuditDetails().getLastModifiedBy());
                     piRequest.setIsActive(true);
                 }
+                log.info("Saving PI data.");
                 piRepository.save(Collections.singletonList(piRequest), selectedSanction.getFundsSummary(), paymentStatus);
-                piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
+                piUtils.updatePIIndex(paymentRequest.getRequestInfo(), piRequest);
             } else {
+                log.info("Fund not available processing payment instruction for FAILED.");
                 paymentStatus = PaymentStatus.FAILED;
                 referenceStatus = ReferenceStatus.PAYMENT_INSUFFICIENT_FUNDS;
                 // Get enriched PI request to store on DB
@@ -200,19 +219,21 @@ public class PaymentInstructionService {
                 for(Beneficiary beneficiary: piRequest.getBeneficiaryDetails()) {
                     beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
                 }
+                log.info("Saving PI for failure, no funds available.");
                 piRepository.save(Collections.singletonList(piRequest), null, paymentStatus);
-                piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), piRequest);
+                piUtils.updatePIIndex(paymentRequest.getRequestInfo(), piRequest);
                 jitApiRespStatus = JitRespStatusForPI.STATUS_LOG_PI_NO_FUNDS;
             }
             // Create PI status log based on current existing PI request status
             createAndSavePIStatusLog(piRequest, JITServiceId.PI, jitApiRespStatus, paymentRequest.getRequestInfo());
         } catch (Exception e) {
-            log.info("Exception " + e);
+            log.info("Exception in processPaymentRequestForNewPI : " + e);
             paymentStatus = PaymentStatus.FAILED;
             referenceStatus = ReferenceStatus.PAYMENT_FAILED;
             piRequest.setPiErrorResp(referenceStatus.toString());
         }
-        billUtils.updatePaymentForStatus(paymentRequest, paymentStatus, referenceStatus);
+        log.info("PI is processed, updating the payment status.");
+        billUtils.updatePaymentStatus(paymentRequest, paymentStatus, referenceStatus);
 
         return piRequest;
     }
@@ -226,6 +247,7 @@ public class PaymentInstructionService {
      * @return
      */
     public PaymentInstruction processPaymentRequestForRevisedPI(PaymentRequest paymentRequest, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) {
+        log.info("Started executing processPaymentRequestForRevisedPI");
         PaymentInstruction paymentInstruction = null;
         PaymentStatus paymentStatus = null;
         ReferenceStatus referenceStatus = null;
@@ -263,10 +285,13 @@ public class PaymentInstructionService {
                     paymentStatus = PaymentStatus.PARTIAL;
                     jitApiRespStatus = JitRespStatusForPI.STATUS_LOG_COR_ERROR;
                     try {
-                        Object piResponseNode = jitResponse.getErrorMsgs().get(0);
-                        JsonNode node = objectMapper.valueToTree(piResponseNode);
-                        String piErrorCode = node.get("errorCode").asText();
-                        String piErrorDescrp = node.get("errorMsg").asText();
+                        String piErrorDescrp = null;
+                        // Set error response to PI
+                        if (jitResponse.getErrorMsg() != null) {
+                            piErrorDescrp = jitResponse.getErrorMsg();
+                        } else if (jitResponse.getErrorMsgs() != null && !jitResponse.getErrorMsgs().isEmpty()) {
+                            piErrorDescrp = jitResponse.getErrorMsgs().toString();
+                        }
                         paymentInstruction.setPiErrorResp(piErrorDescrp);
                     }catch (Exception e) {
                         log.info("Exception while parsing COR Error response " + e);
@@ -299,45 +324,45 @@ public class PaymentInstructionService {
     }
 
     private void savePIData(PaymentRequest paymentRequest, PaymentInstruction pi, PaymentInstruction originalPI, PaymentInstruction lastPI, PaymentStatus paymentStatus) {
-        // IF pi is initiated then add transaction records
-        SanctionDetailsSearchCriteria searchCriteria = SanctionDetailsSearchCriteria.builder()
-                .ids(Collections.singletonList(originalPI.getTransactionDetails().get(0).getSanctionId()))
-                .build();
-        SanctionDetail sanctionDetail = sanctionDetailsRepository.getSanctionDetails(searchCriteria).get(0);
-
-        if (paymentStatus.equals(PaymentStatus.INITIATED)) {
-            piEnrichment.addTransactionDetailsInPiRequest(pi, paymentRequest, sanctionDetail);
-            // update fund summary amount
-            sanctionDetail.getFundsSummary().setAvailableAmount(sanctionDetail.getFundsSummary().getAvailableAmount().subtract(pi.getNetAmount()));
-            sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedTime(pi.getAuditDetails().getLastModifiedTime());
-            sanctionDetail.getFundsSummary().getAuditDetails().setLastModifiedBy(pi.getAuditDetails().getLastModifiedBy());
-            pi.setIsActive(true);
-        } else if (paymentStatus.equals(PaymentStatus.PARTIAL)) {
+        log.info("Started executing savePIData");
+        if (paymentStatus.equals(PaymentStatus.PARTIAL)) {
             // Set beneficiary and pi status to failed if payment is failed
             pi.setPiStatus(PIStatus.FAILED);
             pi.setIsActive(false);
+            // Forward beneficiary error messages to new failed PI
+            // TODO: Enhancement required of beneficiary messages
+            PaymentInstruction lastPiForUpdate = lastPI == null ? originalPI : lastPI;
+            Map<String, Beneficiary> beneficiaryMap = new HashMap<>();
+            if (lastPiForUpdate != null && lastPiForUpdate.getBeneficiaryDetails() != null && !lastPiForUpdate.getBeneficiaryDetails().isEmpty()) {
+                beneficiaryMap = lastPiForUpdate.getBeneficiaryDetails().stream()
+                        .collect(Collectors.toMap(Beneficiary::getBeneficiaryNumber, Function.identity()));
+            }
             for(Beneficiary beneficiary: pi.getBeneficiaryDetails()) {
                 beneficiary.setPaymentStatus(BeneficiaryPaymentStatus.FAILED);
+                if (beneficiaryMap.containsKey(beneficiary.getBeneficiaryNumber())) {
+                    beneficiary.setPaymentStatusMessage(beneficiaryMap.get(beneficiary.getBeneficiaryNumber()).getPaymentStatusMessage());
+                }
             }
         }
         // If PI posted then update the existing PI status
         if (paymentStatus.equals(PaymentStatus.INITIATED)) {
+            pi.setIsActive(true);
             PaymentInstruction lastPiForUpdate = lastPI == null ? originalPI : lastPI;
             // Update last revised PI status to COMPLETED
             lastPiForUpdate.setPiStatus(PIStatus.COMPLETED);
             lastPiForUpdate.getAuditDetails().setLastModifiedTime(pi.getAuditDetails().getLastModifiedTime());
             lastPiForUpdate.getAuditDetails().setLastModifiedBy(pi.getAuditDetails().getLastModifiedBy());
             piRepository.update(Collections.singletonList(lastPiForUpdate), null);
-            piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), lastPiForUpdate);
+            piUtils.updatePIIndex(paymentRequest.getRequestInfo(), lastPiForUpdate);
             paymentRequest.getPayment().setStatus(PaymentStatus.INITIATED);
             updateLineItemsPaymentStatus(paymentRequest, PaymentStatus.FAILED, paymentStatus);
         }
-        piRepository.save(Collections.singletonList(pi), sanctionDetail.getFundsSummary(), paymentStatus);
-        piUtils.updatePiForIndexer(paymentRequest.getRequestInfo(), pi);
+        piRepository.save(Collections.singletonList(pi), null, paymentStatus);
+        piUtils.updatePIIndex(paymentRequest.getRequestInfo(), pi);
     }
 
     private List<Beneficiary> getBeneficiariesFromPayment(PaymentRequest paymentRequest) throws Exception {
-
+        log.info("Started executing getBeneficiariesFromPayment");
         // Get the list of bills based on payment request
         List<Bill> billList =  billUtils.fetchBillsFromPayment(paymentRequest);
 
@@ -362,6 +387,7 @@ public class PaymentInstructionService {
     }
 
     private List<Beneficiary> getBeneficiariesForRevisedPayment(PaymentRequest paymentRequest, PaymentInstruction originalPi, PaymentInstruction lastRevisedPi) throws Exception {
+        log.info("Started executing getBeneficiariesForRevisedPayment");
         PaymentInstruction selectedPi = lastRevisedPi != null ? lastRevisedPi : originalPi;
         List<Beneficiary> beneficiaryList = piEnrichment.getFailedBeneficiariesFromExistingPI(selectedPi);
 
@@ -379,6 +405,7 @@ public class PaymentInstructionService {
     }
 
     private List<Beneficiary> getBeneficiariesEnrichedData(PaymentRequest paymentRequest, List<Beneficiary> beneficiaryList, List<String> orgIds, List<String> individualIds) throws Exception {
+        log.info("Started executing getBeneficiariesEnrichedData");
         List<String> beneficiaryIds = new ArrayList<>();
         for (Beneficiary beneficiary :beneficiaryList) {
             beneficiaryIds.add(beneficiary.getBeneficiaryId());
@@ -398,11 +425,13 @@ public class PaymentInstructionService {
         }
         // Enrich PI request with beneficiary bankaccount details
         piEnrichment.enrichBankaccountOnBeneficiary(beneficiaryList, bankAccounts, individuals, organizations);
+        log.info("Beneficiaries are enriched, sending back beneficiaryList");
         return beneficiaryList;
     }
 
 
     public List<Bill> filterBillsPayableLineItemByPayments(Payment payment, List<Bill> billList) {
+        log.info("Started executing filterBillsPayableLineItemByPayments");
         Map<String, Bill> billMap = billList.stream()
                 .collect(Collectors.toMap(Bill::getId, Function.identity()));
 
@@ -427,6 +456,7 @@ public class PaymentInstructionService {
                 billDetailMap.get(paymentBillDetail.getBillDetailId()).setPayableLineItems(lineItems);
             }
         }
+        log.info("Bills are filtered based on line item status, and sending back.");
         return billList;
     }
 
@@ -445,10 +475,11 @@ public class PaymentInstructionService {
                 .requestInfo(paymentRequest.getRequestInfo())
                 .payment(paymentRequest.getPayment())
                 .build();
-        billUtils.updatePaymentsData(request);
+        billUtils.callPaymentUpdate(request);
     }
 
     public List<PaymentInstruction> searchPi(PISearchRequest piSearchRequest){
+        log.info("Started executing searchPi");
         searchValidator(piSearchRequest.getSearchCriteria());
         List<PaymentInstruction> paymentInstructions = piRepository.searchPi(piSearchRequest.getSearchCriteria());
         // Add status logs into payment instructions
@@ -470,7 +501,7 @@ public class PaymentInstructionService {
      * @param payment - Payment advice object
      * @return boolean
      */
-    private boolean isPaymentValidForCreateNewPI(Payment payment) {
+    public boolean isPaymentValidForCreateNewPI(Payment payment) {
         boolean createPI = true;
         PISearchCriteria searchCriteria = PISearchCriteria.builder()
                 .muktaReferenceId(payment.getPaymentNumber())
@@ -490,6 +521,7 @@ public class PaymentInstructionService {
     }
 
     private Map<String, Object> canCreateRevisedPi(PaymentRequest paymentRequest) {
+        log.info("Started executing canCreateRevisedPi");
         boolean createRevisedPi = true;
         PaymentInstruction originalPi = null;
         PaymentInstruction lastRevisedPi = null;
@@ -508,6 +540,7 @@ public class PaymentInstructionService {
                 createRevisedPi = false;
             }
             originalPi = paymentInstructions.get(0);
+            log.info("Fetching revised pi, that exists or not.");
             PISearchCriteria revisedPiSearchCriteria = PISearchCriteria.builder()
                     .parentPiNumber(paymentRequest.getParentPI())
                     .tenantId(paymentRequest.getTenantId())
@@ -534,6 +567,7 @@ public class PaymentInstructionService {
         revisedPIInitialData.put("originalPi", originalPi);
         // Revised PI
         revisedPIInitialData.put("lastRevisedPi", lastRevisedPi);
+        log.info("Executed canCreateRevisedPi and sending back. Status : " + createRevisedPi);
         return revisedPIInitialData;
     }
 
