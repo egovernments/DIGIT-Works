@@ -24,6 +24,7 @@ public class PIUtils {
     IfmsAdapterConfig adapterConfig;
     @Autowired
     ObjectMapper objectMapper;
+
     public void updatePIIndex(RequestInfo requestInfo, PaymentInstruction paymentInstruction) {
         log.info("Executing PIUtils:updatePiForIndexer");
         try {

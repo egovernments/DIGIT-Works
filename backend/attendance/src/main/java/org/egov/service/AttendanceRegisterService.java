@@ -19,6 +19,7 @@ import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -322,6 +323,44 @@ public class AttendanceRegisterService {
             registerIds.add(String.valueOf(attendanceRegister.getId()));
         }
         return registerIds;
+    }
+
+    /**
+     * Validate and update the end date of Attendance register as per revised contract
+     * @param requestInfo
+     * @param tenantId
+     * @param referenceId
+     * @param endDate
+     */
+    public void updateEndDateForRevisedContract(RequestInfo requestInfo, String tenantId, String referenceId, BigDecimal endDate) {
+        AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId(tenantId)
+                .referenceId(referenceId)
+                .limit(attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit())
+                .offset(attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset()).build();
+
+
+        List<AttendanceRegister> attendanceRegisters = registerRepository.getRegister(attendanceRegisterSearchCriteria);
+
+        if (attendanceRegisters != null && !attendanceRegisters.isEmpty()) {
+            for (AttendanceRegister attendanceRegister : attendanceRegisters) {
+                int comparisonResult = endDate.compareTo(attendanceRegister.getEndDate());
+                if (comparisonResult < 0) {
+                    throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
+                }
+
+                attendanceRegister.setEndDate(endDate);
+                AttendanceRegisterRequest attendanceRegisterRequest = AttendanceRegisterRequest.builder()
+                        .attendanceRegister(Collections.singletonList(attendanceRegister)).
+                        requestInfo(requestInfo).build();
+
+                registerEnrichment.enrichRegisterOnUpdate(attendanceRegisterRequest, Collections.singletonList(attendanceRegister));
+                producer.push(attendanceServiceConfiguration.getUpdateAttendanceRegisterTopic(), attendanceRegisterRequest);
+            }
+        }else {
+            throw new CustomException("ATTENDANCE_REGISTER_NOT_FOUND", "Attendance registers not found for the referenceId");
+        }
+
     }
 
 }

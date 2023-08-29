@@ -36,5 +36,4 @@ public class SymmetricEncryptionService {
         byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
-
 }

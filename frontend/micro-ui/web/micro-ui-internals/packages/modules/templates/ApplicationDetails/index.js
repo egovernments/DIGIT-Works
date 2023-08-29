@@ -331,6 +331,7 @@ const ApplicationDetails = (props) => {
             businessService={businessService}
             customClass={customClass}
             setAttendanceError={setAttendanceError}
+            timeExtensionCreate={props?.timeExtensionCreate}
           />
           {showModal ? (
             <ActionModal

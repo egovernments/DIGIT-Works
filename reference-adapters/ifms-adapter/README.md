@@ -19,4 +19,5 @@ Integration with Odisha IFMS is via the Just-in-Time (JIT) APIs provided by the 
 - Posts the bills to JIT System and updates the bill details according to response.
 
 ### API Specs
+
 reference-adapters/ifms-adapter/ifms-adapter-v1.0.0.yaml

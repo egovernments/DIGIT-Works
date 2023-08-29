@@ -26,6 +26,7 @@ public class BillConsumer {
             log.info("Payment data received on.");
             PaymentRequest paymentRequest = objectMapper.readValue(record, PaymentRequest.class);
             log.info("Payment data is " + paymentRequest);
+
             // Check PI is already created or not
             boolean createNewPi = piService.isPaymentValidForCreateNewPI(paymentRequest.getPayment());
             if (createNewPi)

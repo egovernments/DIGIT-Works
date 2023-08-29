@@ -41,7 +41,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
 
   const paymentDetails = {
     title: " ",
-    asSectionHeader: true,
+    asSectionHeader: false,
     values: [
       { title: "WORKS_BILL_NUMBER", value: billNumber || t("ES_COMMON_NA"), isLink: true, to: billUrl },
       { title: "EXP_PAYMENT_ID", value: paymentNumber || t("ES_COMMON_NA") },
@@ -92,8 +92,8 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       type:"paymentStatus",
       styles:paymentStatus==="SUCCESSFUL"?{color:"green"}:(paymentStatus==="FAILED"?{color:"red"}:{}),
       hoverIcon: paymentStatus==="FAILED"?"infoIcon":"",
-      iconHoverTooltipText: paymentStatus==="FAILED" ? pi?.piErrorResp ? pi?.piErrorResp :  (pi?.piStatusLogs?.[0] ? t(pi?.piStatusLogs?.[0]?.status) :  t("ES_COMMON_NA")):"",
-      toolTipStyles:{}
+      iconHoverTooltipText: paymentStatus==="FAILED" ? (pi?.piStatusLogs?.[0] ? t(pi?.piStatusLogs?.[0]?.status) :  t("ES_COMMON_NA")):"",
+      toolTipStyles:{maxWidth:"36ch"}
     }
   }
 
@@ -145,7 +145,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
 
   const piTable = {
     title: "EXP_PIS",
-    asSectionHeader: true,
+    asSectionHeader: false,
     isTable: true,
     headers: piTableHeaders,
     tableRows: piTableRows,
@@ -153,7 +153,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
     tableStyles:{
         rowStyle:{},
         cellStyle: [{}, {}, {}, {},{},{},{"textAlign":"right"}],
-        tableStyle:{backgroundColor:"#FAFAFA"}
+        tableStyle:{backgroundColor:"#FAFAFA",marginTop:"0rem"}
     },
     mainDivStyles:{ lineHeight: "19px", minWidth: "280px" }
   }
@@ -265,7 +265,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
         {
           label: beneficiary?.orgDetails?.orgNumber || t("ES_COMMON_NA"),
           type: "link",
-          path: `/${window?.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgNumber=${beneficiary?.orgDetails?.orgNumber}`,
+          path: `/${window?.contextPath}/employee/masters/view-organization?tenantId=${tenantId}&orgId=${beneficiary?.orgDetails?.orgNumber}`,
         },
         beneficiary?.muktaReferenceId || t("ES_COMMON_NA"),
         beneficiary?.orgDetails?.name,
@@ -306,7 +306,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
 
   const beneficiaryTable = {
     title: "EXP_BENEFICIARY_DETAILS",
-    asSectionHeader: true,
+    asSectionHeader: false,
     isTable: true,
     headers: beneficiaryTableHeaders,
     tableRows: beneficiaryTableRows,
@@ -314,13 +314,30 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
     tableStyles:{
         rowStyle:{},
         cellStyle: [{}, {}, {}, {},{},{},{"textAlign":"right"}],
-        tableStyle:{backgroundColor:"#FAFAFA"}
+        tableStyle:{backgroundColor:"#FAFAFA",marginTop:"0rem"}
     },
     mainDivStyles:{ lineHeight: "19px", minWidth: "280px" }
 
   }
   
  
+  const ifAnyFailedPayments = status==="FAILED" || status==="PARTIAL"
+
+  let bannerForFailedPayments = {}
+
+  if(ifAnyFailedPayments){
+    bannerForFailedPayments = {
+      isInfoLabel:true,
+      infoHeader:"Info",
+      infoText:t("BANNER_TEXT_FAILED_PAYMENT"),
+      // infoIconFill:"red",
+      style:{
+        // "backgroundColor":"#EFC7C1",
+        "width":"80%"
+      }
+    }
+  }
+
   return [
     {
       applicationDetails: { applicationDetails: [paymentDetails] },
@@ -330,7 +347,7 @@ const transformViewDataToApplicationDetails = async (t, payment, tenantId) => {
       latestPaymentInstruction
     },
     {
-      applicationDetails: { applicationDetails: [piTable,beneficiaryTable] },
+      applicationDetails: { applicationDetails: [piTable,beneficiaryTable,bannerForFailedPayments] },
       applicationData: {},
       processInstancesDetails: {},
       workflowDetails: {},

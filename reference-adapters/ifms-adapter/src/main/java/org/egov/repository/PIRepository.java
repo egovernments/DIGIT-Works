@@ -60,6 +60,7 @@ public class PIRepository {
         if (!transactionSqlParameterSources.isEmpty()) {
             namedJdbcTemplate.batchUpdate(PIQueryBuilder.TRANSACTION_DETAILS_INSERT_QUERY, transactionSqlParameterSources.toArray(new MapSqlParameterSource[0]));
         }
+        
         if (paymentStatus.equals(PaymentStatus.INITIATED) && fundsSummary != null) {
             sanctionDetailsRepository.updateFundsSummary(Collections.singletonList(fundsSummary));
         }
