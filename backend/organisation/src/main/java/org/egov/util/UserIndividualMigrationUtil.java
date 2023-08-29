@@ -130,6 +130,9 @@ public class UserIndividualMigrationUtil {
                 individualInsertQuery = "UPDATE individual SET userId="+userId+", userUuid='"+userUuid+"', isSystemUserActive="+isSystemUserActive+", username='"+decryptedUsername+"', type='"+type+"', roles='"+roleJson+"', lastmodifiedby='"+lastModifiedBy+"', lastmodifiedtime="+lastModifiedTime+" WHERE id='"+individualUuid+"';";
             jdbcTemplate.update(individualInsertQuery);
 
+            String attendanceRegisterQuery = "UPDATE eg_wms_attendance_staff set individual_id='"+individualUuid+"' where individual_id='"+userUuid+"';";
+            jdbcTemplate.update(attendanceRegisterQuery);
+
             String organisationInsertQuery = "UPDATE eg_org_contact_detail set individual_id='"+individualUuid+"' where contact_mobile_number='"+contact_mobile_number+"';";
             jdbcTemplate.update(organisationInsertQuery);
         }
