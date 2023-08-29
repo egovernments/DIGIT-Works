@@ -661,7 +661,7 @@ public class ContractServiceValidator {
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
         // Validate if at least one muster-roll is created and approved
-        validateMusterRollForTimeExtension(contractRequest);
+        //validateMusterRollForTimeExtension(contractRequest);
         // Validate if previous time extension request is in workflow
         validateDuplicateTimeExtensionRequest (contractRequest);
         // Validate if extended end date is not before active contract end date
@@ -696,7 +696,7 @@ public class ContractServiceValidator {
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
         // Validate if at least one muster-roll is created and approved
-        validateMusterRollForTimeExtension(contractRequest);
+        //validateMusterRollForTimeExtension(contractRequest);
         // Validate Supplement Number
         validateSupplementNumber (contractRequest);
         // Validate if extended end date is not before active contract end date
