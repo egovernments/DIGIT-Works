@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.util.ResponseInfoFactory;
+import org.egov.util.UserIndividualMigrationUtil;
 import org.egov.util.UserMigrationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +26,14 @@ public class MigrationController {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
     @Autowired
-    private UserMigrationUtil userMigrationUtil;
+    private UserIndividualMigrationUtil userIndividualMigrationUtil;
 
     @RequestMapping(value = "/_migrate", method = RequestMethod.POST)
     public ResponseEntity<ResponseInfo> orgServicesOrganisationV1CreatePOST(
             @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType,
             @ApiParam(value = "") @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
 
-        userMigrationUtil.migrate(requestInfoWrapper.getRequestInfo());
+        userIndividualMigrationUtil.migrate(requestInfoWrapper.getRequestInfo());
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         return new ResponseEntity<ResponseInfo>(responseInfo, HttpStatus.OK);
 

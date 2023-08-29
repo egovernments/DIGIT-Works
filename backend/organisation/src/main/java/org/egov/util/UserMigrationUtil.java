@@ -44,7 +44,7 @@ public class UserMigrationUtil {
     private RestTemplate restTemplate;
 
     @Transactional
-    public void migrate(RequestInfo requestInfo) {
+    public void migrateOld(RequestInfo requestInfo) {
         log.info("Starting migration");
 
         String contactDetailsQuery = "SELECT id, tenant_id, org_id, contact_name, contact_mobile_number, contact_email, individual_id FROM eg_org_contact_detail WHERE individual_id IS NULL;";
