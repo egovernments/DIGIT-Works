@@ -127,7 +127,7 @@ public class UserIndividualMigrationUtil {
 
             Long lastModifiedTime = System.currentTimeMillis();
             String individualInsertQuery = null;
-                individualInsertQuery = "UPDATE individual SET(userId, userUuid, isSystemUserActive, username, type, roles, lastmodifiedby, lastmodifiedtime) VALUES ("+userId+",'"+userUuid+"',"+isSystemUserActive+",'"+decryptedUsername+"','"+type+"','"+roleJson+"','"+lastModifiedBy+"',"+lastModifiedTime+") WHERE id='"+individualUuid+"';";
+                individualInsertQuery = "UPDATE individual SET userId="+userId+", userUuid='"+userUuid+"', isSystemUserActive="+isSystemUserActive+", username='"+decryptedUsername+"', type='"+type+"', roles='"+roleJson+"', lastmodifiedby='"+lastModifiedBy+"', lastmodifiedtime="+lastModifiedTime+" WHERE id='"+individualUuid+"';";
             jdbcTemplate.update(individualInsertQuery);
 
             String organisationInsertQuery = "UPDATE eg_org_contact_detail set individual_id='"+individualUuid+"' where contact_mobile_number='"+contact_mobile_number+"';";
