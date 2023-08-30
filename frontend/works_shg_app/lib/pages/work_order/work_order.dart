@@ -11,12 +11,11 @@ import 'package:works_shg_app/widgets/loaders.dart' as shg_loader;
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/localization/localization.dart';
-import '../../blocs/time_extension_request/muster_search_for_time_extension.dart';
+import '../../blocs/time_extension_request/valid_time_extension.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
 import '../../blocs/work_orders/decline_work_order.dart';
 import '../../blocs/work_orders/my_works_search_criteria.dart';
 import '../../blocs/work_orders/search_my_works.dart';
-import '../../models/muster_rolls/muster_roll_model.dart';
 import '../../models/works/contracts_model.dart';
 import '../../utils/common_methods.dart';
 import '../../utils/constants.dart';
@@ -130,9 +129,9 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                               workOrderList = contracts!.contracts!
                                   .map((e) => {
                                         'cardDetails': {
-                                          i18.workOrder.workOrderNo: e
-                                                  .contractNumber ??
-                                              i18.common.noValue,
+                                          i18.workOrder.workOrderNo:
+                                              e.contractNumber ??
+                                                  i18.common.noValue,
                                           i18.attendanceMgmt.projectName: e
                                                   .additionalDetails
                                                   ?.projectName ??
@@ -148,13 +147,12 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                                   ?.officerInChargeName
                                                   ?.name ??
                                               t.translate(i18.common.noValue),
-                                          i18.workOrder.contractIssueDate: e
-                                                      .issueDate !=
-                                                  null
-                                              ? DateFormats.timeStampToDate(
-                                                  e.issueDate,
-                                                  format: "dd/MM/yyyy")
-                                              : i18.common.noValue,
+                                          i18.workOrder.contractIssueDate:
+                                              e.issueDate != null
+                                                  ? DateFormats.timeStampToDate(
+                                                      e.issueDate,
+                                                      format: "dd/MM/yyyy")
+                                                  : i18.common.noValue,
                                           i18.workOrder.dueDate: e.issueDate !=
                                                   null
                                               ? DateFormats.getFilteredDate(DateTime
@@ -383,17 +381,25 @@ class _WorkOrderPage extends State<WorkOrderPage> {
                                             },
                                             child: Container(),
                                           ),
-                                          BlocListener<ValidMusterRollsSearchBloc, ValidMusterRollsSearchState>(
-                                            listener: (context, validContractState) {
+                                          BlocListener<
+                                              ValidTimeExtCreationsSearchBloc,
+                                              ValidTimeExtCreationsSearchState>(
+                                            listener:
+                                                (context, validContractState) {
                                               validContractState.maybeWhen(
                                                   orElse: () => false,
-                                                  loaded: (MusterRollsModel? musterRollsModel) => context.router
-                                                      .push(CreateTimeExtensionRequestRoute(
-                                                      contractNumber:
-                                                      musterRollsModel?.musterRoll?.first.referenceId,
+                                                  loaded: (Contracts?
+                                                          contracts) =>
+                                                      context.router.push(
+                                                          CreateTimeExtensionRequestRoute(
+                                                        contractNumber: contracts
+                                                            ?.contractNumber,
                                                       )),
-                                                  error: (String? error) => Notifiers.getToastMessage(
-                                                      context, error ?? 'ERR!', 'ERROR'));
+                                                  error: (String? error) =>
+                                                      Notifiers.getToastMessage(
+                                                          context,
+                                                          error ?? 'ERR!',
+                                                          'ERROR'));
                                             },
                                             child: const SizedBox.shrink(),
                                           ),
