@@ -94,7 +94,7 @@ const ViewContractDetails = () => {
     },[isProjectError]);
 
       useEffect(() => {
-        if(!data.additionalDetails.isTimeExtAlreadyInWorkflow && data) {
+        if(!data?.additionalDetails?.isTimeExtAlreadyInWorkflow && data) {
             
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_TIME_EXTENSION_REQUEST",
