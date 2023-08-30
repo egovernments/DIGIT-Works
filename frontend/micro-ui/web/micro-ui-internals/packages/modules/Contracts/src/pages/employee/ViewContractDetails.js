@@ -93,28 +93,8 @@ const ViewContractDetails = () => {
         }
     },[isProjectError]);
 
-    //fetching muster rolls 
-    const musterReqCriteria = {
-        url: "/muster-roll/v1/_search",
-        params: {tenantId,referenceId:contractId},
-        body: { },
-        config: {
-          enabled: data?.applicationData?.wfStatus === "ACCEPTED" ? true : false, 
-          select: (data) => {
-            //here query the data and check if atleast one muster is approved 
-            if(data?.musterRolls?.length === 0) return false
-            const result = data?.musterRolls?.some((row)=>row?.musterRollStatus==="APPROVED")
-            return result
-          },
-        },
-    };
-    const { isLoading: isMusterLoading, data: isTimeExtensionEnabled, isFetching: isMusterFetching } = Digit.Hooks.useCustomAPIHook(
-        musterReqCriteria
-      );
-
       useEffect(() => {
-        //for time extension here make search of muster rolls if atleast one muster is approved then show an option to create a time extension
-        if(isTimeExtensionEnabled && !data.additionalDetails.isTimeExtAlreadyInWorkflow && data) {
+        if(!data.additionalDetails.isTimeExtAlreadyInWorkflow && data) {
             
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_TIME_EXTENSION_REQUEST",
@@ -122,7 +102,7 @@ const ViewContractDetails = () => {
             }]))
         }
 
-    }, [isMusterLoading,isTimeExtensionEnabled,data])
+    }, [data])
 
 
     useEffect(() => {
