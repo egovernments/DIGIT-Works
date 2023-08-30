@@ -11,13 +11,12 @@ import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/localization/localization.dart';
-import '../../blocs/time_extension_request/muster_search_for_time_extension.dart';
+import '../../blocs/time_extension_request/valid_time_extension.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
 import '../../blocs/work_orders/decline_work_order.dart';
 import '../../blocs/work_orders/my_works_search_criteria.dart';
 import '../../blocs/work_orders/search_individual_work.dart';
 import '../../models/file_store/file_store_model.dart';
-import '../../models/muster_rolls/muster_roll_model.dart';
 import '../../models/works/contracts_model.dart';
 import '../../router/app_router.dart';
 import '../../utils/common_methods.dart';
@@ -249,7 +248,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                           fontWeight: FontWeight.w700, fontSize: 18),
                                                     ),
                                                   ),
-                                                  Padding(
+                                                  /*Padding(
                                                     padding: const EdgeInsets.only(bottom: 8.0),
                                                     child: DigitOutlineIconButton(
                                                       label: AppLocalizations.of(context)
@@ -269,7 +268,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                       textStyle: const TextStyle(
                                                           fontWeight: FontWeight.w700, fontSize: 18),
                                                     ),
-                                                  ),
+                                                  )*/
                                                   DigitOutlineIconButton(
                                                     label: AppLocalizations.of(context)
                                                         .translate(i18.workOrder.requestTimeExtension),
@@ -283,8 +282,8 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                             width: 1)),
                                                     onPressed: () {
                                                       Navigator.of(context, rootNavigator: true).pop();
-                                                      context.read<ValidMusterRollsSearchBloc>().add(
-                                                          SearchValidMusterRollsEvent(
+                                                      context.read<ValidTimeExtCreationsSearchBloc>().add(
+                                                          SearchValidTimeExtCreationsEvent(
                                                               contract: contracts?.contracts?.first,
                                                               contractNo: (contracts?.contracts ?? []).first.contractNumber.toString(),
                                                               tenantId: (contracts?.contracts ?? []).first.tenantId.toString(),
@@ -610,14 +609,14 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                           align: Alignment.centerLeft,
                                                         ),
                                                       ),
-                                                      BlocListener<ValidMusterRollsSearchBloc, ValidMusterRollsSearchState>(
+                                                      BlocListener<ValidTimeExtCreationsSearchBloc, ValidTimeExtCreationsSearchState>(
                                                         listener: (context, validContractState) {
                                                           validContractState.maybeWhen(
                                                               orElse: () => false,
-                                                              loaded: (MusterRollsModel? musterRollsModel) => context.router
+                                                              loaded: (Contracts? contracts) => context.router
                                                                   .push(CreateTimeExtensionRequestRoute(
                                                                 contractNumber:
-                                                                musterRollsModel?.musterRoll?.first.referenceId,
+                                                                contracts?.contractNumber,
                                                               )),
                                                               error: (String? error) => Notifiers.getToastMessage(
                                                                   context, error ?? 'ERR!', 'ERROR'));
