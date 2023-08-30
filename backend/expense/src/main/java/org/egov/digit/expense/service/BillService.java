@@ -75,8 +75,12 @@ public class BillService {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-			if(billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.SUPERVISION"))
-				notificationService.sendNotificationForSupervisionBill(billRequest);
+			try {
+				if (billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.SUPERVISION"))
+					notificationService.sendNotificationForSupervisionBill(billRequest);
+			}catch (Exception e){
+				log.error("Exception while sending notification: " + e);
+			}
 		} else {
 			bill.setStatus(Status.ACTIVE);
 		}
@@ -109,8 +113,12 @@ public class BillService {
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest));
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 		}
-		if(billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.PURCHASE"))
-			notificationService.sendNotificationForPurchaseBill(billRequest);
+		try {
+			if (billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.PURCHASE"))
+				notificationService.sendNotificationForPurchaseBill(billRequest);
+		}catch (Exception e){
+			log.error("Exception while sending notification: " + e);
+		}
 		
 		producer.push(config.getBillUpdateTopic(), billRequest);
 		response = BillResponse.builder()
@@ -142,7 +150,7 @@ public class BillService {
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
 		
-		if (isWfEncrichRequired)
+		if (isWfEncrichRequired && bills != null && !bills.isEmpty())
 			enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
 		
 		BillResponse response = BillResponse.builder()

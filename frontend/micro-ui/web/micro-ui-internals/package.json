@@ -7,7 +7,6 @@
     "example",
     "packages/css",
     "packages/react-components",
-    "packages/modules/Contracts",
     "packages/modules/Estimate",
     "packages/modules/Expenditure",
     "packages/Mukta"
@@ -41,7 +40,7 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "buildD:attendencemgmt": "cd packages/modules/AttendenceMgmt && yarn build",
-    "build:contracts": "cd packages/modules/Contracts && yarn build",
+    "buildD:contracts": "cd packages/modules/Contracts && yarn build",
     "buildD:masters": "cd packages/modules/Masters && yarn build",
     "build:estimate": "cd packages/modules/Estimate && yarn build",
     "build:mukta": "cd packages/Mukta && yarn build",
@@ -63,6 +62,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
+    "react-google-recaptcha": "^3.1.0",
     "lodash": "4.17.21",
     "microbundle-crl": "0.13.11",
     "react": "17.0.2",

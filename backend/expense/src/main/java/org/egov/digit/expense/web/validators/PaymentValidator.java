@@ -51,6 +51,10 @@ public class PaymentValidator {
 		if(null == paymentRequest.getPayment().getStatus()) {
 			throw new CustomException("EG_PAYMENT_UPDATE_STATUS_NOTNULL"," Payment status is mandatory in update request");
 		}
+		// Commenting because reference status will non-mandatory field, it's used for UI
+//		if (null == paymentRequest.getPayment().getReferenceStatus()) {
+//			throw new CustomException("EG_PAYMENT_UPDATE_REFERENCE_STATUS_NOTNULL","Payment reference status is mandatory in update request");
+//		}
 		
 		PaymentSearchRequest searchRequest = getPaymentSearchRequest(paymentRequest);
 		List<Payment> payments = paymentService.search(searchRequest).getPayments();
@@ -111,6 +115,15 @@ public class PaymentValidator {
 		if (payment.getBills().size() != billIds.size())
 			throw new CustomException("EG_PAYMENT_DUPLICATE_BILLS_ERROR",
 					"The same bills cannot be repeated in the payment request");
+
+		// While creating new payment it will check, is payment is already created for that bill, if yes then don't create payment
+		if (isCreate) {
+			PaymentSearchRequest paymentSearchRequest = preparePaymentCriteriaFromPaymentRequest(paymentRequest, billIds);
+			List<Payment> payments = paymentService.search(paymentSearchRequest).getPayments();
+			if (payments.size() != 0)
+				throw new CustomException("EG_PAYMENT_DUPLICATE_PAYMENT_ERROR",
+						"Payment can not be generated for the same bills");
+		}
 
 		BillSearchRequest billSearchRequest = prepareBillCriteriaFromPaymentRequest(paymentRequest, billIds);
 		List<Bill> billsFromSearch = billService.search(billSearchRequest, false).getBills();
@@ -272,6 +285,26 @@ public class PaymentValidator {
 				.requestInfo(paymentRequest.getRequestInfo())
 				.build();
 		return billSearchRequest;
+	}
+
+	public PaymentSearchRequest preparePaymentCriteriaFromPaymentRequest (PaymentRequest paymentRequest, Set<String> billIds) {
+
+		Payment payment = paymentRequest.getPayment();
+		PaymentCriteria paymentCriteria = PaymentCriteria.builder()
+				.tenantId(payment.getTenantId())
+				.billIds(billIds)
+				.build();
+		Pagination pagination = Pagination.builder()
+				.offSet(0)
+				.limit(billIds.size())
+				.build();
+
+		PaymentSearchRequest paymentSearchRequest = PaymentSearchRequest.builder()
+				.paymentCriteria(paymentCriteria)
+				.pagination(pagination)
+				.requestInfo(paymentRequest.getRequestInfo())
+				.build();
+		return paymentSearchRequest;
 	}
 	
 	public PaymentSearchRequest getPaymentSearchRequest (PaymentRequest paymentRequest) {

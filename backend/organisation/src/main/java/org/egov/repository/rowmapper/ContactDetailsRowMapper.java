@@ -28,6 +28,7 @@ public class ContactDetailsRowMapper implements ResultSetExtractor<List<ContactD
             String contactDetail_contactName = rs.getString("contactDetail_contactName");
             String contactDetail_contactMobileNumber = rs.getString("contactDetail_contactMobileNumber");
             String contactDetail_contactEmail = rs.getString("contactDetail_contactEmail");
+            String contactDetail_individualId = rs.getString("contactDetail_contactIndividualId");
 
             ContactDetails contactDetails = ContactDetails.builder()
                     .id(contactDetail_Id)
@@ -36,6 +37,7 @@ public class ContactDetailsRowMapper implements ResultSetExtractor<List<ContactD
                     .contactName(contactDetail_contactName)
                     .contactMobileNumber(contactDetail_contactMobileNumber)
                     .contactEmail(contactDetail_contactEmail)
+                    .individualId(contactDetail_individualId)
                     .build();
 
             if (!contactDetailsMap.containsKey(contactDetail_Id)) {

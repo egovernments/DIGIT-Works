@@ -189,6 +189,11 @@ public class SupervisionBillGeneratorService {
 			// Transfer calculation details onto bill details
 			List<BillDetail> billDetails = new ArrayList<>();
 			for (CalcDetail calc : calcEstimate.getCalcDetails()) {
+				// if payable line item of a bill is not greater than zero, do not generate supervision bill for that bill
+				if (calc.getPayableLineItem().get(0).getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+					log.info("Supervision bill amount is not grater then ZERO, so supervision bill can not be generated for bill [" + calc.getReferenceId() + "]");
+					continue;
+				}
 				BillDetail billDetail = null;
 				// Build BillDetail
 				billDetail = BillDetail.builder().billId(null).referenceId(calc.getReferenceId())// wage billId or
@@ -200,6 +205,12 @@ public class SupervisionBillGeneratorService {
 						.lineItems(calc.getLineItems()).payableLineItems(calc.getPayableLineItem()).build();
 				billDetails.add(billDetail);
 
+			}
+			if (billDetails.isEmpty()) {
+				log.error("SUPERVISION_BILL_ZERO_AMOUNT",
+						"Supervision bill can not be generated, because amount is not grater then ZERO for contract " + calcEstimate.getReferenceId());
+				throw new CustomException("SUPERVISION_BILL_ZERO_AMOUNT",
+						"Supervision bill can not be generated, because amount is not grater then ZERO for contract " + calcEstimate.getReferenceId());
 			}
 
 			Party payer = this.buildParty(requestInfo, config.getPayerType(), criteria.getTenantId());

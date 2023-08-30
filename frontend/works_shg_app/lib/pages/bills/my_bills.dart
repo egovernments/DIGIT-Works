@@ -106,6 +106,24 @@ class _MyBillsPage extends State<MyBillsPage> {
                                         .bill!.auditDetails!.lastModifiedTime!
                                         .toInt()));
                                 billList = bills.map((e) {
+                                  num deduction = 0;
+
+                                  for (var billDetail
+                                      in e.bill?.billDetails ?? []) {
+                                    List<PayableLineItems>? payableLineItems =
+                                        billDetail.payableLineItems;
+                                    if (payableLineItems != null &&
+                                        payableLineItems.isNotEmpty) {
+                                      for (var payableLineItem
+                                          in payableLineItems) {
+                                        if (payableLineItem.headCode == 'LC') {
+                                          num amount =
+                                              payableLineItem.amount ?? 0;
+                                          deduction += amount;
+                                        }
+                                      }
+                                    }
+                                  }
                                   if (e.bill?.businessService ==
                                       Constants.myBillsWageType) {
                                     num deduction = 0;
@@ -211,8 +229,8 @@ class _MyBillsPage extends State<MyBillsPage> {
                                                   ?.invoiceDate ??
                                               0)
                                           : i18.common.noValue,
-                                      i18.myBills.payeeName:
-                                          e.bill?.payer?.identifier,
+                                      // i18.myBills.payeeName:
+                                      //     e.bill?.payer?.identifier,
                                       i18.myBills.netPayable:
                                           '₹ ${((e.bill?.totalAmount ?? 0) - deduction).ceil()}',
                                       i18.common.status:
@@ -226,7 +244,6 @@ class _MyBillsPage extends State<MyBillsPage> {
                                     };
                                   } else {
                                     num deduction = 0;
-
                                     for (var billDetail
                                         in e.bill?.billDetails ?? []) {
                                       List<PayableLineItems>? payableLineItems =
@@ -260,8 +277,8 @@ class _MyBillsPage extends State<MyBillsPage> {
                                               ?.additionalDetails
                                               ?.projectDesc ??
                                           i18.common.noValue,
-                                      i18.myBills.payeeName:
-                                          e.bill?.payer?.identifier,
+                                      // i18.myBills.payeeName:
+                                      //     e.bill?.payer?.identifier,
                                       i18.myBills.netPayable:
                                           '₹ ${((e.bill?.totalAmount ?? 0) - deduction).ceil()}',
                                       i18.common.status:

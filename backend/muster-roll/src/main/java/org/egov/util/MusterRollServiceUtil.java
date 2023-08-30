@@ -100,6 +100,7 @@ public class MusterRollServiceUtil {
 		additionalDetails.put("userName", matchedIndividual.getName().getGivenName());
 		additionalDetails.put("fatherName", matchedIndividual.getFatherName());
 		additionalDetails.put("mobileNo", matchedIndividual.getMobileNumber());
+		additionalDetails.put("gender",matchedIndividual.getGender());
 		Identifier aadhaar = matchedIndividual.getIdentifiers().stream()
 				.filter(identifier -> identifier.getIdentifierType().contains("AADHAAR")).findFirst().orElse(null);
 		if (aadhaar != null) {

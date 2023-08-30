@@ -155,14 +155,15 @@ const WorksCard = () => {
       roles: ROLES.BILLS,
       count: isLoadingBilling ? "-" : dataBilling?.totalCount,
     },
-    {
-      label: t("ACTION_TEST_5PAYMENT"),
-      link: `/${window?.contextPath}/employee/expenditure/search-bill?status=APPROVED`,
-      roles: ROLES.PAYMENT,
-    },
+    // We are hiding this button beacuse of latest requirement i.e PFM-4316
+    // {
+    //   label: t("ACTION_TEST_5PAYMENT"),
+    //   link: `/${window?.contextPath}/employee/expenditure/search-bill?status=APPROVED`,
+    //   roles: ROLES.PAYMENT,
+    // },
     {
       label: t("ACTION_TEST_6DASHBOARD"),
-      link: `/${window?.contextPath}/employee/dss/dashboard/works`,
+      link: `/${window?.contextPath}/employee/dss/dashboard/mukta`,
       roles: ROLES.DSS,
     },
     {
@@ -174,6 +175,11 @@ const WorksCard = () => {
       label: t("ACTION_TEST_8WAGESEEKER"),
       link: `/${window?.contextPath}/employee/masters/search-wageseeker`,
       roles: ROLES.MASTERS,
+    },
+    {
+      label: t("EXP_PAYMENT_INS"),
+      link: `/${window?.contextPath}/employee/expenditure/search-payment-instruction`,
+      roles: ROLES.PAYMENT,
     }
   ];
 

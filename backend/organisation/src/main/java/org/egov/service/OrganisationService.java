@@ -2,7 +2,7 @@ package org.egov.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
+
 import org.egov.repository.OrganisationRepository;
 import org.egov.config.Configuration;
 import org.egov.kafka.Producer;
@@ -73,9 +73,13 @@ public class OrganisationService {
         organisationServiceValidator.validateUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         organisationEnrichmentService.enrichUpdateOrgRegistryWithoutWorkFlow(orgRequest);
         //userService.updateUser(orgRequest);
-        //individualService.updateIndividual(orgRequest);
+        individualService.updateIndividual(orgRequest);
+        try {
+            notificationService.sendNotification(orgRequest,false);
+        }catch (Exception e){
+            log.error("Exception while sending notification: " + e);
+        }
         producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
-        notificationService.sendNotification(orgRequest,false);
         return orgRequest;
     }
 

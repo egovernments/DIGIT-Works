@@ -188,6 +188,7 @@ mixin _$ProcessInstances {
   String? get action => throw _privateConstructorUsedError;
   AuditDetails? get auditDetails => throw _privateConstructorUsedError;
   List<Assignees>? get assignes => throw _privateConstructorUsedError;
+  List<WorkflowDocument>? get documents => throw _privateConstructorUsedError;
   String? get comment => throw _privateConstructorUsedError;
   List<NextActions>? get nextActions => throw _privateConstructorUsedError;
   @JsonKey(name: 'state')
@@ -213,6 +214,7 @@ abstract class $ProcessInstancesCopyWith<$Res> {
       String? action,
       AuditDetails? auditDetails,
       List<Assignees>? assignes,
+      List<WorkflowDocument>? documents,
       String? comment,
       List<NextActions>? nextActions,
       @JsonKey(name: 'state') WorkflowState? workflowState});
@@ -241,6 +243,7 @@ class _$ProcessInstancesCopyWithImpl<$Res, $Val extends ProcessInstances>
     Object? action = freezed,
     Object? auditDetails = freezed,
     Object? assignes = freezed,
+    Object? documents = freezed,
     Object? comment = freezed,
     Object? nextActions = freezed,
     Object? workflowState = freezed,
@@ -274,6 +277,10 @@ class _$ProcessInstancesCopyWithImpl<$Res, $Val extends ProcessInstances>
           ? _value.assignes
           : assignes // ignore: cast_nullable_to_non_nullable
               as List<Assignees>?,
+      documents: freezed == documents
+          ? _value.documents
+          : documents // ignore: cast_nullable_to_non_nullable
+              as List<WorkflowDocument>?,
       comment: freezed == comment
           ? _value.comment
           : comment // ignore: cast_nullable_to_non_nullable
@@ -330,6 +337,7 @@ abstract class _$$_ProcessInstancesCopyWith<$Res>
       String? action,
       AuditDetails? auditDetails,
       List<Assignees>? assignes,
+      List<WorkflowDocument>? documents,
       String? comment,
       List<NextActions>? nextActions,
       @JsonKey(name: 'state') WorkflowState? workflowState});
@@ -358,6 +366,7 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
     Object? action = freezed,
     Object? auditDetails = freezed,
     Object? assignes = freezed,
+    Object? documents = freezed,
     Object? comment = freezed,
     Object? nextActions = freezed,
     Object? workflowState = freezed,
@@ -391,6 +400,10 @@ class __$$_ProcessInstancesCopyWithImpl<$Res>
           ? _value._assignes
           : assignes // ignore: cast_nullable_to_non_nullable
               as List<Assignees>?,
+      documents: freezed == documents
+          ? _value._documents
+          : documents // ignore: cast_nullable_to_non_nullable
+              as List<WorkflowDocument>?,
       comment: freezed == comment
           ? _value.comment
           : comment // ignore: cast_nullable_to_non_nullable
@@ -418,10 +431,12 @@ class _$_ProcessInstances implements _ProcessInstances {
       this.action,
       this.auditDetails,
       final List<Assignees>? assignes,
+      final List<WorkflowDocument>? documents,
       this.comment,
       final List<NextActions>? nextActions,
       @JsonKey(name: 'state') this.workflowState})
       : _assignes = assignes,
+        _documents = documents,
         _nextActions = nextActions;
 
   factory _$_ProcessInstances.fromJson(Map<String, dynamic> json) =>
@@ -449,6 +464,16 @@ class _$_ProcessInstances implements _ProcessInstances {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<WorkflowDocument>? _documents;
+  @override
+  List<WorkflowDocument>? get documents {
+    final value = _documents;
+    if (value == null) return null;
+    if (_documents is EqualUnmodifiableListView) return _documents;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final String? comment;
   final List<NextActions>? _nextActions;
@@ -467,7 +492,7 @@ class _$_ProcessInstances implements _ProcessInstances {
 
   @override
   String toString() {
-    return 'ProcessInstances(tenantId: $tenantId, businessService: $businessService, id: $id, businessId: $businessId, action: $action, auditDetails: $auditDetails, assignes: $assignes, comment: $comment, nextActions: $nextActions, workflowState: $workflowState)';
+    return 'ProcessInstances(tenantId: $tenantId, businessService: $businessService, id: $id, businessId: $businessId, action: $action, auditDetails: $auditDetails, assignes: $assignes, documents: $documents, comment: $comment, nextActions: $nextActions, workflowState: $workflowState)';
   }
 
   @override
@@ -486,6 +511,8 @@ class _$_ProcessInstances implements _ProcessInstances {
             (identical(other.auditDetails, auditDetails) ||
                 other.auditDetails == auditDetails) &&
             const DeepCollectionEquality().equals(other._assignes, _assignes) &&
+            const DeepCollectionEquality()
+                .equals(other._documents, _documents) &&
             (identical(other.comment, comment) || other.comment == comment) &&
             const DeepCollectionEquality()
                 .equals(other._nextActions, _nextActions) &&
@@ -504,6 +531,7 @@ class _$_ProcessInstances implements _ProcessInstances {
       action,
       auditDetails,
       const DeepCollectionEquality().hash(_assignes),
+      const DeepCollectionEquality().hash(_documents),
       comment,
       const DeepCollectionEquality().hash(_nextActions),
       workflowState);
@@ -531,6 +559,7 @@ abstract class _ProcessInstances implements ProcessInstances {
           final String? action,
           final AuditDetails? auditDetails,
           final List<Assignees>? assignes,
+          final List<WorkflowDocument>? documents,
           final String? comment,
           final List<NextActions>? nextActions,
           @JsonKey(name: 'state') final WorkflowState? workflowState}) =
@@ -553,6 +582,8 @@ abstract class _ProcessInstances implements ProcessInstances {
   AuditDetails? get auditDetails;
   @override
   List<Assignees>? get assignes;
+  @override
+  List<WorkflowDocument>? get documents;
   @override
   String? get comment;
   @override
@@ -699,6 +730,231 @@ abstract class _NextActions implements NextActions {
   @override
   @JsonKey(ignore: true)
   _$$_NextActionsCopyWith<_$_NextActions> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+WorkflowDocument _$WorkflowDocumentFromJson(Map<String, dynamic> json) {
+  return _WorkflowDocument.fromJson(json);
+}
+
+/// @nodoc
+mixin _$WorkflowDocument {
+  String? get documentType => throw _privateConstructorUsedError;
+  String? get documentUid => throw _privateConstructorUsedError;
+  String? get fileStoreId => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+  String? get tenantId => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $WorkflowDocumentCopyWith<WorkflowDocument> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $WorkflowDocumentCopyWith<$Res> {
+  factory $WorkflowDocumentCopyWith(
+          WorkflowDocument value, $Res Function(WorkflowDocument) then) =
+      _$WorkflowDocumentCopyWithImpl<$Res, WorkflowDocument>;
+  @useResult
+  $Res call(
+      {String? documentType,
+      String? documentUid,
+      String? fileStoreId,
+      String? id,
+      String? tenantId});
+}
+
+/// @nodoc
+class _$WorkflowDocumentCopyWithImpl<$Res, $Val extends WorkflowDocument>
+    implements $WorkflowDocumentCopyWith<$Res> {
+  _$WorkflowDocumentCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? documentType = freezed,
+    Object? documentUid = freezed,
+    Object? fileStoreId = freezed,
+    Object? id = freezed,
+    Object? tenantId = freezed,
+  }) {
+    return _then(_value.copyWith(
+      documentType: freezed == documentType
+          ? _value.documentType
+          : documentType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      documentUid: freezed == documentUid
+          ? _value.documentUid
+          : documentUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fileStoreId: freezed == fileStoreId
+          ? _value.fileStoreId
+          : fileStoreId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tenantId: freezed == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_WorkflowDocumentCopyWith<$Res>
+    implements $WorkflowDocumentCopyWith<$Res> {
+  factory _$$_WorkflowDocumentCopyWith(
+          _$_WorkflowDocument value, $Res Function(_$_WorkflowDocument) then) =
+      __$$_WorkflowDocumentCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? documentType,
+      String? documentUid,
+      String? fileStoreId,
+      String? id,
+      String? tenantId});
+}
+
+/// @nodoc
+class __$$_WorkflowDocumentCopyWithImpl<$Res>
+    extends _$WorkflowDocumentCopyWithImpl<$Res, _$_WorkflowDocument>
+    implements _$$_WorkflowDocumentCopyWith<$Res> {
+  __$$_WorkflowDocumentCopyWithImpl(
+      _$_WorkflowDocument _value, $Res Function(_$_WorkflowDocument) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? documentType = freezed,
+    Object? documentUid = freezed,
+    Object? fileStoreId = freezed,
+    Object? id = freezed,
+    Object? tenantId = freezed,
+  }) {
+    return _then(_$_WorkflowDocument(
+      documentType: freezed == documentType
+          ? _value.documentType
+          : documentType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      documentUid: freezed == documentUid
+          ? _value.documentUid
+          : documentUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fileStoreId: freezed == fileStoreId
+          ? _value.fileStoreId
+          : fileStoreId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      tenantId: freezed == tenantId
+          ? _value.tenantId
+          : tenantId // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$_WorkflowDocument implements _WorkflowDocument {
+  const _$_WorkflowDocument(
+      {this.documentType,
+      this.documentUid,
+      this.fileStoreId,
+      this.id,
+      this.tenantId});
+
+  factory _$_WorkflowDocument.fromJson(Map<String, dynamic> json) =>
+      _$$_WorkflowDocumentFromJson(json);
+
+  @override
+  final String? documentType;
+  @override
+  final String? documentUid;
+  @override
+  final String? fileStoreId;
+  @override
+  final String? id;
+  @override
+  final String? tenantId;
+
+  @override
+  String toString() {
+    return 'WorkflowDocument(documentType: $documentType, documentUid: $documentUid, fileStoreId: $fileStoreId, id: $id, tenantId: $tenantId)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_WorkflowDocument &&
+            (identical(other.documentType, documentType) ||
+                other.documentType == documentType) &&
+            (identical(other.documentUid, documentUid) ||
+                other.documentUid == documentUid) &&
+            (identical(other.fileStoreId, fileStoreId) ||
+                other.fileStoreId == fileStoreId) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, documentType, documentUid, fileStoreId, id, tenantId);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_WorkflowDocumentCopyWith<_$_WorkflowDocument> get copyWith =>
+      __$$_WorkflowDocumentCopyWithImpl<_$_WorkflowDocument>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_WorkflowDocumentToJson(
+      this,
+    );
+  }
+}
+
+abstract class _WorkflowDocument implements WorkflowDocument {
+  const factory _WorkflowDocument(
+      {final String? documentType,
+      final String? documentUid,
+      final String? fileStoreId,
+      final String? id,
+      final String? tenantId}) = _$_WorkflowDocument;
+
+  factory _WorkflowDocument.fromJson(Map<String, dynamic> json) =
+      _$_WorkflowDocument.fromJson;
+
+  @override
+  String? get documentType;
+  @override
+  String? get documentUid;
+  @override
+  String? get fileStoreId;
+  @override
+  String? get id;
+  @override
+  String? get tenantId;
+  @override
+  @JsonKey(ignore: true)
+  _$$_WorkflowDocumentCopyWith<_$_WorkflowDocument> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

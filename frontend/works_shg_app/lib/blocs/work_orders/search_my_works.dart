@@ -10,6 +10,7 @@ import 'package:works_shg_app/utils/global_variables.dart';
 
 import '../../data/remote_client.dart';
 import '../../models/works/contracts_model.dart';
+import '../../utils/constants.dart';
 
 part 'search_my_works.freezed.dart';
 
@@ -50,7 +51,10 @@ class SearchMyWorksBloc extends Bloc<SearchMyWorksEvent, SearchMyWorksState> {
                 "msgId": "search with from and to values"
               }));
       await Future.delayed(const Duration(seconds: 1));
-      emit(SearchMyWorksState.loaded(contractsModel));
+      emit(SearchMyWorksState.loaded(ContractsModel(
+          contracts: contractsModel.contracts
+              ?.where((e) => e.status != Constants.inActive)
+              .toList())));
     } on DioError catch (e) {
       emit(SearchMyWorksState.error(e.response?.data['Errors'][0]['code']));
     }

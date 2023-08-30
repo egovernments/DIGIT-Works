@@ -342,7 +342,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
         geoLocation: {}
     }]
     organisation.additionalDetails = {
-        locality: formData?.locDetails_locality?.code,
+        locality: formData?.locDetails_locality?.code || formData?.locDetails_locality?.[0]?.code,
         registeredByDept: formData?.basicDetails_regDept,
         deptRegistrationNum: formData?.basicDetails_regDeptNo
     }
@@ -396,7 +396,7 @@ export const getOrgPayload = ({formData, orgDataFromAPI, tenantId, isModify}) =>
             tenantId: tenantId,
             contactName: formData?.contactDetails_name, 
             contactMobileNumber: formData?.contactDetails_mobile,
-            contactEmail: formData?.contactDetails_email
+            contactEmail: formData?.contactDetails_email !== "" ? formData?.contactDetails_email : null
         }]
 
         organisation.identifiers = getOrgIdentifiersToUpdate(formData, orgDataFromAPI).filter(item=> item)

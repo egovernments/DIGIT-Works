@@ -10,11 +10,31 @@ const ApiDropdown = ({ populators, formData, props, inputRef, errors }) => {
   // for singleSelect render <Dropdown/>
 
   const [options, setOptions] = useState([]);
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
+  let selectFunction;
+  
 
   const { t } = useTranslation();
+  let reqCriteria = {};
 
+  if(populators?.masterName && populators?.moduleName && populators?.customfn)
+      reqCriteria = Digit?.Customizations?.[populators?.masterName]?.[populators?.moduleName]?.[populators?.customfn]()
+  else if (populators?.url){
+    if(populators?.selectFun)  selectFunction = new Function("data","headerLocale", populators?.selectFun) 
+      reqCriteria = {
+                url: populators?.url,
+                params: {...populators?.params, tenantId},
+                body: populators?.body,
+                config: {
+                  enabled: true,
+                  select: (data) => {
+                    return selectFunction(data,headerLocale);
+                  },
+                },
+              };
+            }
 
-  const reqCriteria = Digit?.Customizations?.[populators?.masterName]?.[populators?.moduleName]?.[populators?.customfn]()
 
   const { isLoading: isApiLoading, data: apiData, revalidate, isFetching: isApiFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
 
@@ -56,12 +76,12 @@ const ApiDropdown = ({ populators, formData, props, inputRef, errors }) => {
           option={options}
           key={populators.name}
           optionKey={populators?.optionsKey}
-          value={props.value?.[0]}
+          value={props.value?.[0] || props?.value}
           select={(e) => {
             props.onChange([e], populators.name);
           }}
-          selected={props.value?.[0] || populators.defaultValue}
-          defaultValue={props.value?.[0] || populators.defaultValue}
+          selected={props.value?.[0] || props?.value || populators.defaultValue}
+          defaultValue={props.value?.[0] || props?.value || populators.defaultValue}
           t={t}
           errorStyle={errors?.[populators.name]}
           optionCardStyles={populators?.optionsCustomStyle}

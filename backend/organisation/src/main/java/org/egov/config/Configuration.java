@@ -105,6 +105,7 @@ public class Configuration {
     @Value("${egov.workflow.processinstance.search.path}")
     private String wfProcessInstanceSearchPath;
 
+
     // MDMS
     @Value("${egov.mdms.host}")
     private String mdmsHost;
@@ -130,12 +131,18 @@ public class Configuration {
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
 
+    @Value("${kafka.topics.works.notification.sms.name}")
+    private String muktaNotificationTopic;
+
     //topic config
     @Value("${org.kafka.create.topic}")
     private String orgKafkaCreateTopic;
 
     @Value("${org.kafka.update.topic}")
     private String orgKafkaUpdateTopic;
+
+    @Value("${org.contact.details.update.topic}")
+    private String organisationContactDetailsUpdateTopic;
 
     //search config
     @Value("${org.search.max.limit}")
@@ -185,5 +192,7 @@ public class Configuration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
+    @Value("${sms.isAdditonalFieldRequired}")
+    private boolean isAdditonalFieldRequired;
 
 }
