@@ -95,10 +95,15 @@ public class EstimateServiceValidator {
                 .projectId(estimateRequest.getEstimate().getProjectId()).build();
 
         List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
-
         if(!estimateList.isEmpty()){
-            log.info("Create :: Estimate  already exists for this project");
-            throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
+        for(Estimate estimate:estimateList){
+            if(!estimate.getWfStatus().equals("REJECTED")&& !estimate.getStatus().equals(Estimate.StatusEnum.INACTIVE)){
+                log.info("Create :: Estimate  already exists for this project");
+                throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
+            }else{
+                log.info("Project Is Not Associated to any Estimate");
+            }
+        }          
         }else{
             log.info("Project Is Not Associated to any Estimate");
         }
