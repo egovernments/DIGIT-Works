@@ -92,9 +92,10 @@ const ViewContractDetails = () => {
             setToast({show : true, label : t("COMMON_PROJECT_NOT_FOUND"), error : true});
         }
     },[isProjectError]);
+    debugger;
 
       useEffect(() => {
-        if(!data.additionalDetails.isTimeExtAlreadyInWorkflow && data) {
+        if(!data?.additionalDetails?.isTimeExtAlreadyInWorkflow && data) {
             
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_TIME_EXTENSION_REQUEST",
