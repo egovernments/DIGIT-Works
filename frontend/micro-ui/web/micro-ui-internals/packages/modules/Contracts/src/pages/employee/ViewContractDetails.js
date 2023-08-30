@@ -92,6 +92,7 @@ const ViewContractDetails = () => {
             setToast({show : true, label : t("COMMON_PROJECT_NOT_FOUND"), error : true});
         }
     },[isProjectError]);
+    debugger;
 
     //fetching muster rolls 
     const musterReqCriteria = {
@@ -113,8 +114,7 @@ const ViewContractDetails = () => {
       );
 
       useEffect(() => {
-        //for time extension here make search of muster rolls if atleast one muster is approved then show an option to create a time extension
-        if(isTimeExtensionEnabled && !data.additionalDetails.isTimeExtAlreadyInWorkflow && data) {
+        if(!data?.additionalDetails?.isTimeExtAlreadyInWorkflow && data) {
             
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_TIME_EXTENSION_REQUEST",
