@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'muster_search_for_time_extension.dart';
+part of 'valid_time_extension.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,7 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$ValidMusterRollsSearchEvent {
+mixin _$ValidTimeExtCreationsSearchEvent {
   String get contractNo => throw _privateConstructorUsedError;
   String get tenantId => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
@@ -44,34 +44,34 @@ mixin _$ValidMusterRollsSearchEvent {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(SearchValidMusterRollsEvent value)
+    required TResult Function(SearchValidTimeExtCreationsEvent value)
         individualSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SearchValidMusterRollsEvent value)? individualSearch,
+    TResult? Function(SearchValidTimeExtCreationsEvent value)? individualSearch,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(SearchValidMusterRollsEvent value)? individualSearch,
+    TResult Function(SearchValidTimeExtCreationsEvent value)? individualSearch,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $ValidMusterRollsSearchEventCopyWith<ValidMusterRollsSearchEvent>
+  $ValidTimeExtCreationsSearchEventCopyWith<ValidTimeExtCreationsSearchEvent>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ValidMusterRollsSearchEventCopyWith<$Res> {
-  factory $ValidMusterRollsSearchEventCopyWith(
-          ValidMusterRollsSearchEvent value,
-          $Res Function(ValidMusterRollsSearchEvent) then) =
-      _$ValidMusterRollsSearchEventCopyWithImpl<$Res,
-          ValidMusterRollsSearchEvent>;
+abstract class $ValidTimeExtCreationsSearchEventCopyWith<$Res> {
+  factory $ValidTimeExtCreationsSearchEventCopyWith(
+          ValidTimeExtCreationsSearchEvent value,
+          $Res Function(ValidTimeExtCreationsSearchEvent) then) =
+      _$ValidTimeExtCreationsSearchEventCopyWithImpl<$Res,
+          ValidTimeExtCreationsSearchEvent>;
   @useResult
   $Res call(
       {String contractNo,
@@ -81,10 +81,10 @@ abstract class $ValidMusterRollsSearchEventCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ValidMusterRollsSearchEventCopyWithImpl<$Res,
-        $Val extends ValidMusterRollsSearchEvent>
-    implements $ValidMusterRollsSearchEventCopyWith<$Res> {
-  _$ValidMusterRollsSearchEventCopyWithImpl(this._value, this._then);
+class _$ValidTimeExtCreationsSearchEventCopyWithImpl<$Res,
+        $Val extends ValidTimeExtCreationsSearchEvent>
+    implements $ValidTimeExtCreationsSearchEventCopyWith<$Res> {
+  _$ValidTimeExtCreationsSearchEventCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -121,12 +121,12 @@ class _$ValidMusterRollsSearchEventCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$SearchValidMusterRollsEventCopyWith<$Res>
-    implements $ValidMusterRollsSearchEventCopyWith<$Res> {
-  factory _$$SearchValidMusterRollsEventCopyWith(
-          _$SearchValidMusterRollsEvent value,
-          $Res Function(_$SearchValidMusterRollsEvent) then) =
-      __$$SearchValidMusterRollsEventCopyWithImpl<$Res>;
+abstract class _$$SearchValidTimeExtCreationsEventCopyWith<$Res>
+    implements $ValidTimeExtCreationsSearchEventCopyWith<$Res> {
+  factory _$$SearchValidTimeExtCreationsEventCopyWith(
+          _$SearchValidTimeExtCreationsEvent value,
+          $Res Function(_$SearchValidTimeExtCreationsEvent) then) =
+      __$$SearchValidTimeExtCreationsEventCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -137,13 +137,13 @@ abstract class _$$SearchValidMusterRollsEventCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$SearchValidMusterRollsEventCopyWithImpl<$Res>
-    extends _$ValidMusterRollsSearchEventCopyWithImpl<$Res,
-        _$SearchValidMusterRollsEvent>
-    implements _$$SearchValidMusterRollsEventCopyWith<$Res> {
-  __$$SearchValidMusterRollsEventCopyWithImpl(
-      _$SearchValidMusterRollsEvent _value,
-      $Res Function(_$SearchValidMusterRollsEvent) _then)
+class __$$SearchValidTimeExtCreationsEventCopyWithImpl<$Res>
+    extends _$ValidTimeExtCreationsSearchEventCopyWithImpl<$Res,
+        _$SearchValidTimeExtCreationsEvent>
+    implements _$$SearchValidTimeExtCreationsEventCopyWith<$Res> {
+  __$$SearchValidTimeExtCreationsEventCopyWithImpl(
+      _$SearchValidTimeExtCreationsEvent _value,
+      $Res Function(_$SearchValidTimeExtCreationsEvent) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -154,7 +154,7 @@ class __$$SearchValidMusterRollsEventCopyWithImpl<$Res>
     Object? status = freezed,
     Object? contract = freezed,
   }) {
-    return _then(_$SearchValidMusterRollsEvent(
+    return _then(_$SearchValidTimeExtCreationsEvent(
       contractNo: null == contractNo
           ? _value.contractNo
           : contractNo // ignore: cast_nullable_to_non_nullable
@@ -177,10 +177,10 @@ class __$$SearchValidMusterRollsEventCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SearchValidMusterRollsEvent
+class _$SearchValidTimeExtCreationsEvent
     with DiagnosticableTreeMixin
-    implements SearchValidMusterRollsEvent {
-  const _$SearchValidMusterRollsEvent(
+    implements SearchValidTimeExtCreationsEvent {
+  const _$SearchValidTimeExtCreationsEvent(
       {this.contractNo = '', this.tenantId = '', this.status, this.contract});
 
   @override
@@ -196,7 +196,7 @@ class _$SearchValidMusterRollsEvent
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ValidMusterRollsSearchEvent.individualSearch(contractNo: $contractNo, tenantId: $tenantId, status: $status, contract: $contract)';
+    return 'ValidTimeExtCreationsSearchEvent.individualSearch(contractNo: $contractNo, tenantId: $tenantId, status: $status, contract: $contract)';
   }
 
   @override
@@ -204,7 +204,7 @@ class _$SearchValidMusterRollsEvent
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty(
-          'type', 'ValidMusterRollsSearchEvent.individualSearch'))
+          'type', 'ValidTimeExtCreationsSearchEvent.individualSearch'))
       ..add(DiagnosticsProperty('contractNo', contractNo))
       ..add(DiagnosticsProperty('tenantId', tenantId))
       ..add(DiagnosticsProperty('status', status))
@@ -215,7 +215,7 @@ class _$SearchValidMusterRollsEvent
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SearchValidMusterRollsEvent &&
+            other is _$SearchValidTimeExtCreationsEvent &&
             (identical(other.contractNo, contractNo) ||
                 other.contractNo == contractNo) &&
             (identical(other.tenantId, tenantId) ||
@@ -232,9 +232,10 @@ class _$SearchValidMusterRollsEvent
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$SearchValidMusterRollsEventCopyWith<_$SearchValidMusterRollsEvent>
-      get copyWith => __$$SearchValidMusterRollsEventCopyWithImpl<
-          _$SearchValidMusterRollsEvent>(this, _$identity);
+  _$$SearchValidTimeExtCreationsEventCopyWith<
+          _$SearchValidTimeExtCreationsEvent>
+      get copyWith => __$$SearchValidTimeExtCreationsEventCopyWithImpl<
+          _$SearchValidTimeExtCreationsEvent>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -273,7 +274,7 @@ class _$SearchValidMusterRollsEvent
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(SearchValidMusterRollsEvent value)
+    required TResult Function(SearchValidTimeExtCreationsEvent value)
         individualSearch,
   }) {
     return individualSearch(this);
@@ -282,7 +283,7 @@ class _$SearchValidMusterRollsEvent
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(SearchValidMusterRollsEvent value)? individualSearch,
+    TResult? Function(SearchValidTimeExtCreationsEvent value)? individualSearch,
   }) {
     return individualSearch?.call(this);
   }
@@ -290,7 +291,7 @@ class _$SearchValidMusterRollsEvent
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(SearchValidMusterRollsEvent value)? individualSearch,
+    TResult Function(SearchValidTimeExtCreationsEvent value)? individualSearch,
     required TResult orElse(),
   }) {
     if (individualSearch != null) {
@@ -300,13 +301,13 @@ class _$SearchValidMusterRollsEvent
   }
 }
 
-abstract class SearchValidMusterRollsEvent
-    implements ValidMusterRollsSearchEvent {
-  const factory SearchValidMusterRollsEvent(
+abstract class SearchValidTimeExtCreationsEvent
+    implements ValidTimeExtCreationsSearchEvent {
+  const factory SearchValidTimeExtCreationsEvent(
       {final String contractNo,
       final String tenantId,
       final String? status,
-      final Contracts? contract}) = _$SearchValidMusterRollsEvent;
+      final Contracts? contract}) = _$SearchValidTimeExtCreationsEvent;
 
   @override
   String get contractNo;
@@ -318,17 +319,18 @@ abstract class SearchValidMusterRollsEvent
   Contracts? get contract;
   @override
   @JsonKey(ignore: true)
-  _$$SearchValidMusterRollsEventCopyWith<_$SearchValidMusterRollsEvent>
+  _$$SearchValidTimeExtCreationsEventCopyWith<
+          _$SearchValidTimeExtCreationsEvent>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-mixin _$ValidMusterRollsSearchState {
+mixin _$ValidTimeExtCreationsSearchState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(Contracts? contracts) loaded,
     required TResult Function(String? error) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -336,7 +338,7 @@ mixin _$ValidMusterRollsSearchState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(Contracts? contracts)? loaded,
     TResult? Function(String? error)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -344,7 +346,7 @@ mixin _$ValidMusterRollsSearchState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(Contracts? contracts)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) =>
@@ -377,19 +379,19 @@ mixin _$ValidMusterRollsSearchState {
 }
 
 /// @nodoc
-abstract class $ValidMusterRollsSearchStateCopyWith<$Res> {
-  factory $ValidMusterRollsSearchStateCopyWith(
-          ValidMusterRollsSearchState value,
-          $Res Function(ValidMusterRollsSearchState) then) =
-      _$ValidMusterRollsSearchStateCopyWithImpl<$Res,
-          ValidMusterRollsSearchState>;
+abstract class $ValidTimeExtCreationsSearchStateCopyWith<$Res> {
+  factory $ValidTimeExtCreationsSearchStateCopyWith(
+          ValidTimeExtCreationsSearchState value,
+          $Res Function(ValidTimeExtCreationsSearchState) then) =
+      _$ValidTimeExtCreationsSearchStateCopyWithImpl<$Res,
+          ValidTimeExtCreationsSearchState>;
 }
 
 /// @nodoc
-class _$ValidMusterRollsSearchStateCopyWithImpl<$Res,
-        $Val extends ValidMusterRollsSearchState>
-    implements $ValidMusterRollsSearchStateCopyWith<$Res> {
-  _$ValidMusterRollsSearchStateCopyWithImpl(this._value, this._then);
+class _$ValidTimeExtCreationsSearchStateCopyWithImpl<$Res,
+        $Val extends ValidTimeExtCreationsSearchState>
+    implements $ValidTimeExtCreationsSearchStateCopyWith<$Res> {
+  _$ValidTimeExtCreationsSearchStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -406,7 +408,7 @@ abstract class _$$_InitialCopyWith<$Res> {
 
 /// @nodoc
 class __$$_InitialCopyWithImpl<$Res>
-    extends _$ValidMusterRollsSearchStateCopyWithImpl<$Res, _$_Initial>
+    extends _$ValidTimeExtCreationsSearchStateCopyWithImpl<$Res, _$_Initial>
     implements _$$_InitialCopyWith<$Res> {
   __$$_InitialCopyWithImpl(_$_Initial _value, $Res Function(_$_Initial) _then)
       : super(_value, _then);
@@ -419,14 +421,14 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ValidMusterRollsSearchState.initial()';
+    return 'ValidTimeExtCreationsSearchState.initial()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-        DiagnosticsProperty('type', 'ValidMusterRollsSearchState.initial'));
+    properties.add(DiagnosticsProperty(
+        'type', 'ValidTimeExtCreationsSearchState.initial'));
   }
 
   @override
@@ -443,7 +445,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(Contracts? contracts) loaded,
     required TResult Function(String? error) error,
   }) {
     return initial();
@@ -454,7 +456,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(Contracts? contracts)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return initial?.call();
@@ -465,7 +467,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(Contracts? contracts)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -513,7 +515,7 @@ class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Initial extends ValidMusterRollsSearchState {
+abstract class _Initial extends ValidTimeExtCreationsSearchState {
   const factory _Initial() = _$_Initial;
   const _Initial._() : super._();
 }
@@ -527,7 +529,7 @@ abstract class _$$_LoadingCopyWith<$Res> {
 
 /// @nodoc
 class __$$_LoadingCopyWithImpl<$Res>
-    extends _$ValidMusterRollsSearchStateCopyWithImpl<$Res, _$_Loading>
+    extends _$ValidTimeExtCreationsSearchStateCopyWithImpl<$Res, _$_Loading>
     implements _$$_LoadingCopyWith<$Res> {
   __$$_LoadingCopyWithImpl(_$_Loading _value, $Res Function(_$_Loading) _then)
       : super(_value, _then);
@@ -540,14 +542,14 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ValidMusterRollsSearchState.loading()';
+    return 'ValidTimeExtCreationsSearchState.loading()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-        DiagnosticsProperty('type', 'ValidMusterRollsSearchState.loading'));
+    properties.add(DiagnosticsProperty(
+        'type', 'ValidTimeExtCreationsSearchState.loading'));
   }
 
   @override
@@ -564,7 +566,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(Contracts? contracts) loaded,
     required TResult Function(String? error) error,
   }) {
     return loading();
@@ -575,7 +577,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(Contracts? contracts)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return loading?.call();
@@ -586,7 +588,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(Contracts? contracts)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -634,7 +636,7 @@ class _$_Loading extends _Loading with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loading extends ValidMusterRollsSearchState {
+abstract class _Loading extends ValidTimeExtCreationsSearchState {
   const factory _Loading() = _$_Loading;
   const _Loading._() : super._();
 }
@@ -644,14 +646,12 @@ abstract class _$$_LoadedCopyWith<$Res> {
   factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
       __$$_LoadedCopyWithImpl<$Res>;
   @useResult
-  $Res call({MusterRollsModel? musterRollsModel});
-
-  $MusterRollsModelCopyWith<$Res>? get musterRollsModel;
+  $Res call({Contracts? contracts});
 }
 
 /// @nodoc
 class __$$_LoadedCopyWithImpl<$Res>
-    extends _$ValidMusterRollsSearchStateCopyWithImpl<$Res, _$_Loaded>
+    extends _$ValidTimeExtCreationsSearchStateCopyWithImpl<$Res, _$_Loaded>
     implements _$$_LoadedCopyWith<$Res> {
   __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
       : super(_value, _then);
@@ -659,48 +659,37 @@ class __$$_LoadedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? musterRollsModel = freezed,
+    Object? contracts = freezed,
   }) {
     return _then(_$_Loaded(
-      freezed == musterRollsModel
-          ? _value.musterRollsModel
-          : musterRollsModel // ignore: cast_nullable_to_non_nullable
-              as MusterRollsModel?,
+      freezed == contracts
+          ? _value.contracts
+          : contracts // ignore: cast_nullable_to_non_nullable
+              as Contracts?,
     ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $MusterRollsModelCopyWith<$Res>? get musterRollsModel {
-    if (_value.musterRollsModel == null) {
-      return null;
-    }
-
-    return $MusterRollsModelCopyWith<$Res>(_value.musterRollsModel!, (value) {
-      return _then(_value.copyWith(musterRollsModel: value));
-    });
   }
 }
 
 /// @nodoc
 
 class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
-  const _$_Loaded(this.musterRollsModel) : super._();
+  const _$_Loaded(this.contracts) : super._();
 
   @override
-  final MusterRollsModel? musterRollsModel;
+  final Contracts? contracts;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ValidMusterRollsSearchState.loaded(musterRollsModel: $musterRollsModel)';
+    return 'ValidTimeExtCreationsSearchState.loaded(contracts: $contracts)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'ValidMusterRollsSearchState.loaded'))
-      ..add(DiagnosticsProperty('musterRollsModel', musterRollsModel));
+      ..add(DiagnosticsProperty(
+          'type', 'ValidTimeExtCreationsSearchState.loaded'))
+      ..add(DiagnosticsProperty('contracts', contracts));
   }
 
   @override
@@ -708,12 +697,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Loaded &&
-            (identical(other.musterRollsModel, musterRollsModel) ||
-                other.musterRollsModel == musterRollsModel));
+            (identical(other.contracts, contracts) ||
+                other.contracts == contracts));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, musterRollsModel);
+  int get hashCode => Object.hash(runtimeType, contracts);
 
   @JsonKey(ignore: true)
   @override
@@ -726,10 +715,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(Contracts? contracts) loaded,
     required TResult Function(String? error) error,
   }) {
-    return loaded(musterRollsModel);
+    return loaded(contracts);
   }
 
   @override
@@ -737,10 +726,10 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(Contracts? contracts)? loaded,
     TResult? Function(String? error)? error,
   }) {
-    return loaded?.call(musterRollsModel);
+    return loaded?.call(contracts);
   }
 
   @override
@@ -748,12 +737,12 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(Contracts? contracts)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(musterRollsModel);
+      return loaded(contracts);
     }
     return orElse();
   }
@@ -796,11 +785,11 @@ class _$_Loaded extends _Loaded with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Loaded extends ValidMusterRollsSearchState {
-  const factory _Loaded(final MusterRollsModel? musterRollsModel) = _$_Loaded;
+abstract class _Loaded extends ValidTimeExtCreationsSearchState {
+  const factory _Loaded(final Contracts? contracts) = _$_Loaded;
   const _Loaded._() : super._();
 
-  MusterRollsModel? get musterRollsModel;
+  Contracts? get contracts;
   @JsonKey(ignore: true)
   _$$_LoadedCopyWith<_$_Loaded> get copyWith =>
       throw _privateConstructorUsedError;
@@ -816,7 +805,7 @@ abstract class _$$_ErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$_ErrorCopyWithImpl<$Res>
-    extends _$ValidMusterRollsSearchStateCopyWithImpl<$Res, _$_Error>
+    extends _$ValidTimeExtCreationsSearchStateCopyWithImpl<$Res, _$_Error>
     implements _$$_ErrorCopyWith<$Res> {
   __$$_ErrorCopyWithImpl(_$_Error _value, $Res Function(_$_Error) _then)
       : super(_value, _then);
@@ -845,14 +834,15 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ValidMusterRollsSearchState.error(error: $error)';
+    return 'ValidTimeExtCreationsSearchState.error(error: $error)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'ValidMusterRollsSearchState.error'))
+      ..add(
+          DiagnosticsProperty('type', 'ValidTimeExtCreationsSearchState.error'))
       ..add(DiagnosticsProperty('error', error));
   }
 
@@ -878,7 +868,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(MusterRollsModel? musterRollsModel) loaded,
+    required TResult Function(Contracts? contracts) loaded,
     required TResult Function(String? error) error,
   }) {
     return error(this.error);
@@ -889,7 +879,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult? Function(Contracts? contracts)? loaded,
     TResult? Function(String? error)? error,
   }) {
     return error?.call(this.error);
@@ -900,7 +890,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(MusterRollsModel? musterRollsModel)? loaded,
+    TResult Function(Contracts? contracts)? loaded,
     TResult Function(String? error)? error,
     required TResult orElse(),
   }) {
@@ -948,7 +938,7 @@ class _$_Error extends _Error with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _Error extends ValidMusterRollsSearchState {
+abstract class _Error extends ValidTimeExtCreationsSearchState {
   const factory _Error(final String? error) = _$_Error;
   const _Error._() : super._();
 

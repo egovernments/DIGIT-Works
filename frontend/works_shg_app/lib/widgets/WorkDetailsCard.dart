@@ -10,7 +10,7 @@ import 'package:works_shg_app/widgets/atoms/button_group.dart';
 
 import '../blocs/localization/app_localization.dart';
 import '../blocs/localization/localization.dart';
-import '../blocs/time_extension_request/muster_search_for_time_extension.dart';
+import '../blocs/time_extension_request/valid_time_extension.dart';
 import '../blocs/work_orders/accept_work_order.dart';
 import '../blocs/work_orders/decline_work_order.dart';
 import '../models/attendance/attendance_registry_model.dart';
@@ -320,8 +320,8 @@ class WorkDetailsCard extends StatelessWidget {
                                   width: 1)),
                           onPressed: () {
                             Navigator.of(context, rootNavigator: true).pop();
-                            context.read<ValidMusterRollsSearchBloc>().add(
-                                SearchValidMusterRollsEvent(
+                            context.read<ValidTimeExtCreationsSearchBloc>().add(
+                                SearchValidTimeExtCreationsEvent(
                                     contract:
                                         ContractsMapper.fromMap(payload ?? {}),
                                     contractNo: contractNumber.toString(),
