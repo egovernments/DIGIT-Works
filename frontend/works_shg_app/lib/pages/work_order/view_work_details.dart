@@ -248,7 +248,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                           fontWeight: FontWeight.w700, fontSize: 18),
                                                     ),
                                                   ),
-                                                  Padding(
+                                                  /*Padding(
                                                     padding: const EdgeInsets.only(bottom: 8.0),
                                                     child: DigitOutlineIconButton(
                                                       label: AppLocalizations.of(context)
@@ -268,7 +268,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                       textStyle: const TextStyle(
                                                           fontWeight: FontWeight.w700, fontSize: 18),
                                                     ),
-                                                  ),
+                                                  )*/
                                                   DigitOutlineIconButton(
                                                     label: AppLocalizations.of(context)
                                                         .translate(i18.workOrder.requestTimeExtension),
