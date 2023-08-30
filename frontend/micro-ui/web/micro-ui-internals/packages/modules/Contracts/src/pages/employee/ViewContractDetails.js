@@ -92,7 +92,6 @@ const ViewContractDetails = () => {
             setToast({show : true, label : t("COMMON_PROJECT_NOT_FOUND"), error : true});
         }
     },[isProjectError]);
-    debugger;
 
       useEffect(() => {
         if(!data?.additionalDetails?.isTimeExtAlreadyInWorkflow && data) {
