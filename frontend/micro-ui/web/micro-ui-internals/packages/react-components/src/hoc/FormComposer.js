@@ -183,7 +183,7 @@ export const FormComposer = (props) => {
                 name={`${populators.name}`}
                 control={control}
                 defaultValue={formData?.[populators.name]}
-                rules={{ required: populators?.isMandatory, ...populators.validation }}
+                rules={{ required: isMandatory, ...populators.validation }}
                 render={(props) => {
                   return (
                     <div style={{ display: "grid", gridAutoFlow: "row" }}>
