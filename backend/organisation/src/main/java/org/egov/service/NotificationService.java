@@ -42,8 +42,8 @@ public class NotificationService {
     @Autowired
     private Configuration config;
 
-//    @Autowired
-//    private HRMSUtils hrmsUtils;
+    @Autowired
+    private HRMSUtils hrmsUtils;
     @Autowired
     private OrganisationRepository organisationRepository;
 
@@ -77,6 +77,10 @@ public class NotificationService {
             //get orgName, ID, contactPerson, mobileNumber, cbo-url
             log.info("get orgName, ID, contactPerson, mobileNumber, cbo-url");
             Map<String, List<String>> orgDetails = getDetailsForSMS(organisation);
+            Map<String, Object> additionalField=new HashMap<>();
+            if(config.isAdditonalFieldRequired()){
+                setAdditionalFields(request,ORGANISATION_CREATE_LOCALIZATION_CODE,additionalField);
+            }
 
             for (int i = 0; i < orgDetails.get("personNames").size(); i++) {
 
@@ -85,16 +89,13 @@ public class NotificationService {
                 smsDetails.put("orgName", orgDetails.get("orgNames").get(0));
                 smsDetails.put("personName", orgDetails.get("personNames").get(i));
                 smsDetails.put("mobileNumber", orgDetails.get("mobileNumbers").get(i));
-//                smsDetails.put("CBOUrl", orgDetails.get("CBOUrl").get(0));
                 smsDetails.put("orgId", organisation.getOrgNumber());
 
 
                 log.info("build Message For create Action for " + smsDetails.get("orgName"));
                 String customizedMessage = buildMessageForCreateAction(smsDetails, message);
-                SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
-
                 log.info("push message for create Action");
-                producer.push(config.getSmsNotifTopic(), smsRequest);
+                checkAdditionalFieldAndPushONSmsTopic(customizedMessage,additionalField,smsDetails.get("mobileNumber"));
             }
         }
     }
@@ -106,6 +107,11 @@ public class NotificationService {
         if (StringUtils.isEmpty(message)) {
             log.info("SMS content has not been configured for this case");
             return;
+        }
+
+        Map<String, Object> additionalField=new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ORGANISATION_UPDATE_LOCALIZATION_CODE,additionalField);
         }
 
         for(Organisation organisation : request.getOrganisations()){
@@ -121,14 +127,38 @@ public class NotificationService {
             smsDetails.put("orgName",organisation.getName());
             log.info("build Message For update Action for " + smsDetails.get("orgName"));
             String customizedMessage = buildMessageForUpdateAction(smsDetails, message);
-            SMSRequest smsRequestForOldMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("oldMobileNumber")).message(customizedMessage).build();
 
             log.info("push message for update Action");
-            producer.push(config.getSmsNotifTopic(), smsRequestForOldMobileNumber);
+            log.info("push message for update Action for Old Number");
+
+            checkAdditionalFieldAndPushONSmsTopic(customizedMessage,additionalField,smsDetails.get("oldMobileNumber"));
             if(!organisation.getContactDetails().get(0).getContactMobileNumber().equalsIgnoreCase(oldContactDetails.getContactMobileNumber())){
-                SMSRequest smsRequestForNewMobileNumber = SMSRequest.builder().mobileNumber(smsDetails.get("newMobileNumber")).message(customizedMessage).build();
-                producer.push(config.getSmsNotifTopic(), smsRequestForNewMobileNumber);
+                log.info("push message for update Action for New Number");
+                checkAdditionalFieldAndPushONSmsTopic(customizedMessage,additionalField,smsDetails.get("newMobileNumber"));
             }
+        }
+    }
+	
+	
+	 private void setAdditionalFields(OrgRequest request, String localizationCode,Map<String, Object> additionalField){
+            additionalField.put("templateCode",localizationCode);
+            additionalField.put("requestInfo",request.getRequestInfo());
+            additionalField.put("tenantId",request.getOrganisations().get(0).getTenantId());
+    }
+
+    private void checkAdditionalFieldAndPushONSmsTopic( String customizedMessage , Map<String, Object> additionalField,String mobileNumber){
+
+
+        if(!additionalField.isEmpty()){
+            WorksSmsRequest smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
+                    .mobileNumber(mobileNumber).build();
+            log.info("SMS message:::::" + smsRequest.toString());
+            producer.push(config.getMuktaNotificationTopic(), smsRequest);
+
+        }else{
+            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(mobileNumber).message(customizedMessage).build();
+            log.info("SMS message without additional fields:::::" + smsRequest.toString());
+            producer.push(config.getSmsNotifTopic(), smsRequest);
         }
     }
 

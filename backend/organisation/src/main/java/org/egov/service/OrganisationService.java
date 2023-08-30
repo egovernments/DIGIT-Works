@@ -2,7 +2,7 @@ package org.egov.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
+
 import org.egov.repository.OrganisationRepository;
 import org.egov.config.Configuration;
 import org.egov.kafka.Producer;
