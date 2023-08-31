@@ -141,6 +141,7 @@ export const getWageSeekerUpdatePayload = ({formData, wageSeekerDataFromAPI, ten
     }
 
     if(isModify) {
+        Individual.auditDetails = wageSeekerDataFromAPI?.individual?.auditDetails
         Individual.id = wageSeekerDataFromAPI?.individual?.id
         Individual.individualId = formData?.basicDetails_wageSeekerId
         Individual.address = [{
