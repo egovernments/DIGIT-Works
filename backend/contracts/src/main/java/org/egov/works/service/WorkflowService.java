@@ -163,7 +163,7 @@ public class WorkflowService {
     public ProcessInstance getProcessInstance(ContractRequest contractRequest) {
         String tenantId = contractRequest.getContract().getTenantId();
         String businessId = null;
-        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+        if (contractRequest.getContract().getBusinessService()!=null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
             businessId = contractRequest.getContract().getSupplementNumber();
         }else {
             businessId = contractRequest.getContract().getContractNumber();
