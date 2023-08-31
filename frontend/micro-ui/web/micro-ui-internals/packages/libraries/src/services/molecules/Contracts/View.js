@@ -14,13 +14,20 @@ const combine = (docs, estimateDocs) => {
 }
 
 const transformViewDataToApplicationDetails = async (t, data, workflowDetails, revisedWONumber) => {
-    
     //if revisedWONumber is defined then it's a time extension screen(use TE object here)
     const isTimeExtAlreadyInWorkflow = data.contracts.some(element => element.businessService===
         Digit?.Customizations?.["commonUiConfig"]?.businessServiceMap?.revisedWO && element.status==="INWORKFLOW")
-    let contract = data.contracts.filter(element => element.supplementNumber== null)?.[0]
+    
+    let contract
+    
+    // let contract = data.contracts.filter(element => element.supplementNumber=== null)?.[0]
+    if(data.contracts.length === 1) contract = data.contracts[0]
+    else {
+        contract = data.contracts.filter(element => element.supplementNumber && (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]
 
-
+        contract = {...contract, wfStatus:"ACCEPTED"}
+    }
+    
     if(revisedWONumber){
         contract = data?.contracts?.filter(row => row?.supplementNumber===revisedWONumber)?.[0]
     }
@@ -44,10 +51,10 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     if(contract.endDate){
         contractDetails.values.push({ title: "WORKS_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate)  || t("NA")})
     }
-    if(contract.additionalDetails.timeExt){
+    if(contract.additionalDetails.timeExt && revisedWONumber){
         contractDetails.values.push({ title: "EXTENSION_REQ", value: contract?.additionalDetails?.timeExt  || t("NA")})
     }
-    if(contract.additionalDetails.timeExtReason){
+    if(contract.additionalDetails.timeExtReason && revisedWONumber){
         contractDetails.values.push({ title: "EXTENSION_REASON", value: contract?.additionalDetails?.timeExtReason  || t("NA")})
     }
 

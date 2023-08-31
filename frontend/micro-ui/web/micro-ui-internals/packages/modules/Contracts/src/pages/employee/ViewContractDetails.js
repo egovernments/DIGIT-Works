@@ -107,7 +107,7 @@ const ViewContractDetails = () => {
 
     useEffect(() => {
         let isUserBillCreator = loggedInUserRoles?.includes("BILL_CREATOR");
-        if (data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" && isUserBillCreator){
+        if (data?.applicationData?.wfStatus === "ACCEPTED" && isUserBillCreator){
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_PURCHASE_BILL"
             }]))
