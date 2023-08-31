@@ -162,7 +162,12 @@ public class WorkflowService {
      */
     public ProcessInstance getProcessInstance(ContractRequest contractRequest) {
         String tenantId = contractRequest.getContract().getTenantId();
-        String businessId = contractRequest.getContract().getContractNumber();
+        String businessId = null;
+        if (contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+            businessId = contractRequest.getContract().getSupplementNumber();
+        }else {
+            businessId = contractRequest.getContract().getContractNumber();
+        }
         StringBuilder url = getProcessSearchURLWithParams(tenantId, businessId);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(contractRequest.getRequestInfo()).build();
         Object result = repository.fetchResult(url, requestInfoWrapper);
