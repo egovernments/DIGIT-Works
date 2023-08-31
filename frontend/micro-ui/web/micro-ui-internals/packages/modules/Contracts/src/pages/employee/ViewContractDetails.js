@@ -113,7 +113,7 @@ const ViewContractDetails = () => {
       );
 
       useEffect(() => {
-        if(!data?.additionalDetails?.isTimeExtAlreadyInWorkflow && data) {
+        if(!(data?.additionalDetails?.isTimeExtAlreadyInWorkflow) && data) {
             
             setActionsMenu((prevState => [...prevState,{
                 name:"CREATE_TIME_EXTENSION_REQUEST",
@@ -222,7 +222,7 @@ const ViewContractDetails = () => {
                         moduleCode="Contract"
                         editCallback = {handleEditTimeExtension}
                     />}
-                    {data?.applicationData?.wfStatus === "ACCEPTED" && data?.applicationData?.status === "ACTIVE" && actionsMenu?.length>0 && !showTimeExtension ?
+                    {data?.applicationData?.wfStatus === "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension ?
                         <ActionBar>
 
                             {showActions ? <Menu
