@@ -101,12 +101,6 @@ public class UserIndividualMigrationUtil {
             log.info("Generating user roles");
             Role role = populateRole(userDetail);
             log.info("Generated user roles");
-//            String individualUuid = (String) userDetail.get("uuid");
-//            List<String> indIdList = getIdList(requestInfo,
-//                    tenantId, "individual.id",
-//                    null);
-//            String individualId = indIdList.get(0);
-//            log.info("ID generated : " + individualId);
             decrypt.put("username", userName);
             decrypt.put("mobilenumber", mobileNumber);
             decrypt.put("emailid", emailId);
@@ -114,11 +108,6 @@ public class UserIndividualMigrationUtil {
             log.info("Calling for decryption");
             Map<String, String> decryptedValues = encryptionDecryptionUtil(decrypt, false);
 
-//            String decryptedName = decryptedValues.get("name");
-//            String decryptedMobileNumber = decryptedValues.get("mobilenumber");
-//            String decryptedEmailId = decryptedValues.get("emailid");
-//            String createdBy = requestInfo.getUserInfo().getUuid();
-//            Long createdTime = System.currentTimeMillis();
             String decryptedUsername = decryptedValues.get("username");
 
             List<Role> roles = Collections.singletonList(role);
@@ -127,12 +116,15 @@ public class UserIndividualMigrationUtil {
 
             Long lastModifiedTime = System.currentTimeMillis();
             String individualInsertQuery = null;
-                individualInsertQuery = "UPDATE individual SET userId="+userId+", userUuid='"+userUuid+"', isSystemUserActive="+isSystemUserActive+", username='"+decryptedUsername+"', type='"+type+"', roles='"+roleJson+"', lastmodifiedby='"+lastModifiedBy+"', lastmodifiedtime="+lastModifiedTime+" WHERE id='"+individualUuid+"';";
+            log.info("Updating individual details for individualUuid :: "+individualUuid);
+            individualInsertQuery = "UPDATE individual SET userId="+userId+", userUuid='"+userUuid+"', isSystemUserActive="+isSystemUserActive+", username='"+decryptedUsername+"', type='"+type+"', roles='"+roleJson+"', lastmodifiedby='"+lastModifiedBy+"', lastmodifiedtime="+lastModifiedTime+" WHERE id='"+individualUuid+"';";
             jdbcTemplate.update(individualInsertQuery);
 
+            log.info("Updating staff details for individualUuid :: "+individualUuid+" from userUuid :: "+userUuid);
             String attendanceRegisterQuery = "UPDATE eg_wms_attendance_staff set individual_id='"+individualUuid+"' where individual_id='"+userUuid+"';";
             jdbcTemplate.update(attendanceRegisterQuery);
 
+            log.info("Setting individualUuid in org_contact_details table :: "+individualUuid);
             String organisationInsertQuery = "UPDATE eg_org_contact_detail set individual_id='"+individualUuid+"' where contact_mobile_number='"+contact_mobile_number+"';";
             jdbcTemplate.update(organisationInsertQuery);
         }
@@ -149,24 +141,6 @@ public class UserIndividualMigrationUtil {
                 .code(code)
                 .build();
     }
-//    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName,
-//                                  String idFormat)  {
-//        log.info("getIdList  :: " + tenantId + " " + idName);
-//
-//        IdRequest idRequest = IdRequest.builder().idName(idName).format(idFormat).tenantId(tenantId).build();
-//
-//        IdGenerationRequest request = IdGenerationRequest.builder().idRequests(Collections.singletonList(idRequest)).requestInfo(requestInfo).build();
-//        StringBuilder uri = new StringBuilder(config.getIdGenHost()).append(config.getIdGenPath());
-//        Object response = restRepo.fetchResult(uri, request);
-//        IdGenerationResponse idGenerationResponse = mapper.convertValue(response, IdGenerationResponse.class);
-//
-//        List<IdResponse> idResponses = idGenerationResponse.getIdResponses();
-//
-//        if (CollectionUtils.isEmpty(idResponses))
-//            throw new CustomException("IDGEN_ERROR", "No ids returned from idgen Service");
-//
-//        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
-//    }
     private Map<String, String> encryptionDecryptionUtil(Map<String, String> encryptionDecryptionMap, Boolean isEncryption) {
         JsonNode request = null;
         StringBuilder uri = new StringBuilder();
