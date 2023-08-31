@@ -18,7 +18,8 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     //if revisedWONumber is defined then it's a time extension screen(use TE object here)
     const isTimeExtAlreadyInWorkflow = data.contracts.some(element => element.businessService===
         Digit?.Customizations?.["commonUiConfig"]?.businessServiceMap?.revisedWO && element.status==="INWORKFLOW")
-    let contract = data.contracts[data.contracts.length -1 ]
+    let contract = data.contracts.filter(element => element.supplementNumber== null)?.[0]
+
 
     if(revisedWONumber){
         contract = data?.contracts?.filter(row => row?.supplementNumber===revisedWONumber)?.[0]
