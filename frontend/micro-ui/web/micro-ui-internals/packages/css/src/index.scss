@@ -1,6 +1,4 @@
-/*@import 'normalize.css';*/
 
-/*@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap");*/
 
 @import "tailwindcss/base";
 
@@ -17,6 +15,7 @@
 @import "./components/filters.scss";
 @import "./components/button.scss";
 @import "./components/attendencetable.scss";
+@import "./components/dssTest.scss";
 
 @import "./pages/employee/index.scss";
 @import "./components/uploadcomponents.scss";
@@ -24,7 +23,7 @@
 @import "./pages/works/InboxLinks.scss";
 @import "./pages/works/inboxSearch.scss";
 @import "./pages/works/horizontalNav.scss";
-@import "./pages//works/searchComponentTable.scss"
+@import "./pages//works/searchComponentTable.scss";
 
 
 
