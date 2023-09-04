@@ -1,0 +1,194 @@
+ServiceMaps:
+  serviceName: muster-event indexer
+  version: 1.0.0
+  mappings:
+   - topic: save-musterroll
+     configKey: INDEX
+     indexes:
+       - name: muster-inbox
+         type: general
+         id: $.id,$.tenantId
+         jsonPath: $.musterRoll
+         timeStampField: $.auditDetails.createdTime
+         isBulk: false
+         customJsonMapping:
+           indexMapping: { "Data":{"id":"","tenantId":"","musterRollNumber":"","registerId":"","status":"","musterRollStatus":"","startDate":"","endDate":"","individualEntries":[],"referenceId":"","serviceCode":"","@timestamp":"timestamp","auditDetails":{},"additionalDetails":{},"currentProcessInstance":{},"history":{}}}
+           fieldMapping:
+           - inJsonPath: $.id
+             outJsonPath: $.Data.id
+           - inJsonPath: $.tenantId
+             outJsonPath: $.Data.tenantId
+           - inJsonPath: $.musterRollNumber
+             outJsonPath: $.Data.musterRollNumber
+           - inJsonPath: $.registerId
+             outJsonPath: $.Data.registerId
+           - inJsonPath: $.status
+             outJsonPath: $.Data.status
+           - inJsonPath: $.musterRollStatus
+             outJsonPath: $.Data.musterRollStatus
+           - inJsonPath: $.startDate
+             outJsonPath: $.Data.startDate
+           - inJsonPath: $.endDate
+             outJsonPath: $.Data.endDate
+           - inJsonPath: $.individualEntries
+             outJsonPath: $.Data.individualEntries
+           - inJsonPath: $.referenceId
+             outJsonPath: $.Data.referenceId
+           - inJsonPath: $.serviceCode
+             outJsonPath: $.Data.serviceCode
+           - inJsonPath: $.auditDetails
+             outJsonPath: $.Data.auditDetails
+           - inJsonPath: $.additionalDetails
+             outJsonPath: $.Data.additionalDetails
+           - inJsonPath: $.processInstance
+             outJsonPath: $.Data.currentProcessInstance
+           externalUriMapping:
+           - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+             queryParam: businessIds=$.musterRollNumber,history=true,tenantId=$.tenantId
+             apiRequest: { "RequestInfo": { "apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pb.jalandhar","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pb.jalandhar" } ] } } }
+             uriResponseMapping:
+             - inJsonPath: $.ProcessInstances
+               outJsonPath: $.Data.history
+
+
+   - topic: update-musterroll
+     configKey: INDEX
+     indexes:
+       - name: muster-inbox
+         type: general
+         id: $.id,$.tenantId
+         jsonPath: $.musterRoll
+         timeStampField: $.auditDetails.createdTime
+         customJsonMapping:
+           indexMapping: { "Data": { "id": "","tenantId": "","musterRollNumber": "","registerId": "","status": "","musterRollStatus": "","startDate": "","endDate": "","individualEntries": [ ],"@timestamp": "timestamp","auditDetails": { },"additionalDetails": { },"currentProcessInstance": { },"history": { } } }
+           fieldMapping:
+           - inJsonPath: $.id
+             outJsonPath: $.Data.id
+           - inJsonPath: $.tenantId
+             outJsonPath: $.Data.tenantId
+           - inJsonPath: $.musterRollNumber
+             outJsonPath: $.Data.musterRollNumber
+           - inJsonPath: $.registerId
+             outJsonPath: $.Data.registerId
+           - inJsonPath: $.status
+             outJsonPath: $.Data.status
+           - inJsonPath: $.musterRollStatus
+             outJsonPath: $.Data.musterRollStatus
+           - inJsonPath: $.startDate
+             outJsonPath: $.Data.startDate
+           - inJsonPath: $.endDate
+             outJsonPath: $.Data.endDate
+           - inJsonPath: $.individualEntries
+             outJsonPath: $.Data.individualEntries
+           - inJsonPath: $.referenceId
+             outJsonPath: $.Data.referenceId
+           - inJsonPath: $.serviceCode
+             outJsonPath: $.Data.serviceCode
+           - inJsonPath: $.auditDetails
+             outJsonPath: $.Data.auditDetails
+           - inJsonPath: $.additionalDetails
+             outJsonPath: $.Data.additionalDetails
+           - inJsonPath: $.processInstance
+             outJsonPath: $.Data.currentProcessInstance
+           externalUriMapping:
+           - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+             queryParam: businessIds=$.musterRollNumber,history=true,tenantId=$.tenantId
+             apiRequest: { "RequestInfo": { "apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pb.jalandhar","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pb.jalandhar" } ] } } }
+             uriResponseMapping:
+             - inJsonPath: $.ProcessInstances
+               outJsonPath: $.Data.history
+
+   - topic: muster-legacyIndex
+     configKey: LEGACYINDEX
+     indexes:
+       - name: muster-inbox-legacyindex
+         type: general
+         id: $.id,$.tenantId
+         isBulk: true
+         jsonPath: $.musterRolls.*
+         timeStampField: $.auditDetails.createdTime
+         customJsonMapping:
+           indexMapping: { "Data": { "id": "","tenantId": "","musterRollNumber": "","registerId": "","status": "","musterRollStatus": "","startDate": "","endDate": "","individualEntries": [ ],"@timestamp": "timestamp","auditDetails": { },"additionalDetails": { },"currentProcessInstance": { },"history": { } } }
+           fieldMapping:
+           - inJsonPath: $.id
+             outJsonPath: $.Data.id
+           - inJsonPath: $.tenantId
+             outJsonPath: $.Data.tenantId
+           - inJsonPath: $.musterRollNumber
+             outJsonPath: $.Data.musterRollNumber
+           - inJsonPath: $.registerId
+             outJsonPath: $.Data.registerId
+           - inJsonPath: $.status
+             outJsonPath: $.Data.status
+           - inJsonPath: $.musterRollStatus
+             outJsonPath: $.Data.musterRollStatus
+           - inJsonPath: $.startDate
+             outJsonPath: $.Data.startDate
+           - inJsonPath: $.endDate
+             outJsonPath: $.Data.endDate
+           - inJsonPath: $.individualEntries
+             outJsonPath: $.Data.individualEntries
+           - inJsonPath: $.referenceId
+             outJsonPath: $.Data.referenceId
+           - inJsonPath: $.serviceCode
+             outJsonPath: $.Data.serviceCode
+           - inJsonPath: $.auditDetails
+             outJsonPath: $.Data.auditDetails
+           - inJsonPath: $.additionalDetails
+             outJsonPath: $.Data.additionalDetails
+           - inJsonPath: $.processInstance
+             outJsonPath: $.Data.currentProcessInstance
+           externalUriMapping:
+           - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+             queryParam: businessIds=$.musterRollNumber,history=true,tenantId=$.tenantId
+             apiRequest: { "RequestInfo": { "apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pb.jalandhar","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pb.jalandhar" } ] } } }
+             uriResponseMapping:
+               - inJsonPath: $.ProcessInstances
+                 outJsonPath: $.Data.history
+   - topic: migrate-musterroll
+     configKey: INDEX
+     indexes:
+       - name: muster-inbox-migrate
+         type: general
+         id: $.id,$.tenantId
+         jsonPath: $.musterRoll
+         timeStampField: $.auditDetails.createdTime
+         isBulk: false
+         customJsonMapping:
+           indexMapping: { "Data":{"id":"","tenantId":"","musterRollNumber":"","registerId":"","status":"","musterRollStatus":"","startDate":"","endDate":"","individualEntries":[],"referenceId":"","serviceCode":"","@timestamp":"timestamp","auditDetails":{},"additionalDetails":{},"currentProcessInstance":{},"history":{}}}
+           fieldMapping:
+           - inJsonPath: $.id
+             outJsonPath: $.Data.id
+           - inJsonPath: $.tenantId
+             outJsonPath: $.Data.tenantId
+           - inJsonPath: $.musterRollNumber
+             outJsonPath: $.Data.musterRollNumber
+           - inJsonPath: $.registerId
+             outJsonPath: $.Data.registerId
+           - inJsonPath: $.status
+             outJsonPath: $.Data.status
+           - inJsonPath: $.musterRollStatus
+             outJsonPath: $.Data.musterRollStatus
+           - inJsonPath: $.startDate
+             outJsonPath: $.Data.startDate
+           - inJsonPath: $.endDate
+             outJsonPath: $.Data.endDate
+           - inJsonPath: $.individualEntries
+             outJsonPath: $.Data.individualEntries
+           - inJsonPath: $.referenceId
+             outJsonPath: $.Data.referenceId
+           - inJsonPath: $.serviceCode
+             outJsonPath: $.Data.serviceCode
+           - inJsonPath: $.auditDetails
+             outJsonPath: $.Data.auditDetails
+           - inJsonPath: $.additionalDetails
+             outJsonPath: $.Data.additionalDetails
+           externalUriMapping:
+           - path: https://mukta-uat.digit.org/egov-workflow-v2/egov-wf/process/_search
+             queryParam: businessIds=$.musterRollNumber,history=true,tenantId=$.tenantId
+             apiRequest: { "RequestInfo": { "apiId": "org.egov.pt","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "2152d873-0c66-4f00-96e2-95cf91487073","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pb.jalandhar","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pb.jalandhar" } ] } } }
+             uriResponseMapping:
+             - inJsonPath: $.ProcessInstances
+               outJsonPath: $.Data.history
+             - inJsonPath: $.ProcessInstances[0]
+               outJsonPath: $.Data.currentProcessInstance
