@@ -85,4 +85,11 @@ public class ContractServiceConstants {
     public static final String ORGANISATION_MOBILE_NUMBER_CODE ="$.organisations.*.contactDetails.*.contactMobileNumber";
 
     public static final String ORG_ORGANISATIONS_VALIDATION_PATH = "$.organisations.*";
+
+    // Workflow constants
+
+    public static final String CONTRACT_REVISION_BUSINESS_SERVICE = "CONTRACT-REVISION";
+    public static final String CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE = "TIME_EXTENSION_APPROVE";
+    public static final String CONTRACT_REVISION_REJECT_LOCALIZATION_CODE = "TIME_EXTENSION_REJECT";
+    public static final String CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE = "TIME_EXTENSION_SEND_BACK_TO_CBO";
 }
