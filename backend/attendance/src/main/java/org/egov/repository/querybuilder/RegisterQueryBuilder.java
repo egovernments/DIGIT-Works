@@ -39,6 +39,11 @@ public class RegisterQueryBuilder {
             "reg.servicecode " +
             "FROM eg_wms_attendance_register reg ";
 
+    private final String joinStaff = " JOIN eg_wms_attendance_staff staff ";
+    private final String joinStaffCondition = " reg.id = staff.register_id ";
+
+    private final String joinAttendee = " JOIN eg_wms_attendance_attendee attendee ";
+    private final String joinAttendeeCondition = " reg.id = attendee.register_id ";
 
     private final String paginationWrapper = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY lastmodifiedtime DESC , id) offset_ FROM " +
@@ -51,6 +56,14 @@ public class RegisterQueryBuilder {
 
         log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
+
+        if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
+            query.append(joinStaff);
+        }
+
+        if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
+            query.append(joinAttendee);
+        }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
@@ -117,6 +130,24 @@ public class RegisterQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" reg.status = ? ");
             preparedStmtList.add(status.toString());
+        }
+
+        if(!ObjectUtils.isEmpty(searchCriteria.getStaffId())) {
+            String staffId = searchCriteria.getStaffId();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" staff.individual_id = ? ");
+            preparedStmtList.add(staffId);
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(joinStaffCondition);
+        }
+
+        if(!ObjectUtils.isEmpty(searchCriteria.getAttendeeId())) {
+            String attendeeId = searchCriteria.getAttendeeId();
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" attendee.individual_id = ? ");
+            preparedStmtList.add(attendeeId);
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(joinAttendeeCondition);
         }
 
         addOrderByClause(query, searchCriteria);
