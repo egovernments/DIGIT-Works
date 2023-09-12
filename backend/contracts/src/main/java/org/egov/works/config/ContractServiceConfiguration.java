@@ -64,6 +64,7 @@ public class ContractServiceConfiguration {
     //Workflow Config
     @Value("${contract.workflow.module.name}")
     private String contractWFModuleName;
+
     @Value("${contract.workflow.business.service}")
     private String contractWFBusinessService;
 

@@ -100,7 +100,6 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       }
     }
   }
-
  
   const calcDeductions = wageBill?.billDetails
     ?.map((item) => {

@@ -11,6 +11,7 @@ import '../pages/home.dart';
 import '../pages/language_selection_page.dart';
 import '../pages/login.dart';
 import '../pages/otp_verification.dart';
+import '../pages/service_requests/service_requests.dart';
 import '../pages/shg_inbox.dart';
 import '../pages/trackAttendance/track-attendance_inbox.dart';
 import '../pages/track_attendance.dart';
@@ -65,6 +66,7 @@ part 'app_router.gr.dart';
         AutoRoute(
             page: CreateTimeExtensionRequestPage,
             path: 'create-time-extension'),
+        AutoRoute(page: MyServiceRequestsPage, path: 'my-service-requests'),
       ],
     ),
   ],
