@@ -117,7 +117,6 @@ class ContractsMapper extends MapperBase<Contracts> {
       ContractProcessInstanceMapper.container,
       ContractAdditionalDetailsMapper.container,
       ContractAuditDetailsMapper.container,
-      ORGAdditionalDetailsMapper.container,
     });
 
   @override
@@ -161,7 +160,8 @@ class ContractsMapperElement extends MapperElementBase<Contracts> {
       processInstance: container.$getOpt(map, 'processInstance'),
       additionalDetails: container.$getOpt(map, 'additionalDetails'),
       auditDetails: container.$getOpt(map, 'auditDetails'),
-      orgAdditionalDetails: container.$getOpt(map, 'orgAdditionalDetails'));
+      businessService: container.$getOpt(map, 'businessService'),
+      supplementNumber: container.$getOpt(map, 'supplementNumber'));
 
   @override
   Function get encoder => encode;
@@ -193,17 +193,19 @@ class ContractsMapperElement extends MapperElementBase<Contracts> {
         'additionalDetails':
             container.$enc(c.additionalDetails, 'additionalDetails'),
         'auditDetails': container.$enc(c.auditDetails, 'auditDetails'),
-        'orgAdditionalDetails':
-            container.$enc(c.orgAdditionalDetails, 'orgAdditionalDetails')
+        'businessService': container.$enc(c.businessService, 'businessService'),
+        'supplementNumber':
+            container.$enc(c.supplementNumber, 'supplementNumber')
       };
 
   @override
   String stringify(Contracts self) =>
-      'Contracts(id: ${container.asString(self.id)}, contractNumber: ${container.asString(self.contractNumber)}, tenantId: ${container.asString(self.tenantId)}, wfStatus: ${container.asString(self.wfStatus)}, executingAuthority: ${container.asString(self.executingAuthority)}, contractType: ${container.asString(self.contractType)}, totalContractedAmount: ${container.asString(self.totalContractedAmount)}, securityDeposit: ${container.asString(self.securityDeposit)}, agreementDate: ${container.asString(self.agreementDate)}, issueDate: ${container.asString(self.issueDate)}, defectLiabilityPeriod: ${container.asString(self.defectLiabilityPeriod)}, orgId: ${container.asString(self.orgId)}, startDate: ${container.asString(self.startDate)}, endDate: ${container.asString(self.endDate)}, completionPeriod: ${container.asString(self.completionPeriod)}, status: ${container.asString(self.status)}, lineItems: ${container.asString(self.lineItems)}, documents: ${container.asString(self.documents)}, auditDetails: ${container.asString(self.auditDetails)}, additionalDetails: ${container.asString(self.additionalDetails)}, processInstance: ${container.asString(self.processInstance)}, orgAdditionalDetails: ${container.asString(self.orgAdditionalDetails)})';
+      'Contracts(id: ${container.asString(self.id)}, contractNumber: ${container.asString(self.contractNumber)}, businessService: ${container.asString(self.businessService)}, tenantId: ${container.asString(self.tenantId)}, wfStatus: ${container.asString(self.wfStatus)}, executingAuthority: ${container.asString(self.executingAuthority)}, contractType: ${container.asString(self.contractType)}, totalContractedAmount: ${container.asString(self.totalContractedAmount)}, securityDeposit: ${container.asString(self.securityDeposit)}, agreementDate: ${container.asString(self.agreementDate)}, issueDate: ${container.asString(self.issueDate)}, defectLiabilityPeriod: ${container.asString(self.defectLiabilityPeriod)}, orgId: ${container.asString(self.orgId)}, startDate: ${container.asString(self.startDate)}, endDate: ${container.asString(self.endDate)}, completionPeriod: ${container.asString(self.completionPeriod)}, status: ${container.asString(self.status)}, lineItems: ${container.asString(self.lineItems)}, supplementNumber: ${container.asString(self.supplementNumber)}, documents: ${container.asString(self.documents)}, auditDetails: ${container.asString(self.auditDetails)}, additionalDetails: ${container.asString(self.additionalDetails)}, processInstance: ${container.asString(self.processInstance)})';
   @override
   int hash(Contracts self) =>
       container.hash(self.id) ^
       container.hash(self.contractNumber) ^
+      container.hash(self.businessService) ^
       container.hash(self.tenantId) ^
       container.hash(self.wfStatus) ^
       container.hash(self.executingAuthority) ^
@@ -219,15 +221,16 @@ class ContractsMapperElement extends MapperElementBase<Contracts> {
       container.hash(self.completionPeriod) ^
       container.hash(self.status) ^
       container.hash(self.lineItems) ^
+      container.hash(self.supplementNumber) ^
       container.hash(self.documents) ^
       container.hash(self.auditDetails) ^
       container.hash(self.additionalDetails) ^
-      container.hash(self.processInstance) ^
-      container.hash(self.orgAdditionalDetails);
+      container.hash(self.processInstance);
   @override
   bool equals(Contracts self, Contracts other) =>
       container.isEqual(self.id, other.id) &&
       container.isEqual(self.contractNumber, other.contractNumber) &&
+      container.isEqual(self.businessService, other.businessService) &&
       container.isEqual(self.tenantId, other.tenantId) &&
       container.isEqual(self.wfStatus, other.wfStatus) &&
       container.isEqual(self.executingAuthority, other.executingAuthority) &&
@@ -245,11 +248,11 @@ class ContractsMapperElement extends MapperElementBase<Contracts> {
       container.isEqual(self.completionPeriod, other.completionPeriod) &&
       container.isEqual(self.status, other.status) &&
       container.isEqual(self.lineItems, other.lineItems) &&
+      container.isEqual(self.supplementNumber, other.supplementNumber) &&
       container.isEqual(self.documents, other.documents) &&
       container.isEqual(self.auditDetails, other.auditDetails) &&
       container.isEqual(self.additionalDetails, other.additionalDetails) &&
-      container.isEqual(self.processInstance, other.processInstance) &&
-      container.isEqual(self.orgAdditionalDetails, other.orgAdditionalDetails);
+      container.isEqual(self.processInstance, other.processInstance);
 }
 
 mixin ContractsMappable {
@@ -291,8 +294,6 @@ abstract class ContractsCopyWith<$R, $In extends Contracts,
       ContractAdditionalDetails>? get additionalDetails;
   ContractAuditDetailsCopyWith<$R, ContractAuditDetails, ContractAuditDetails>?
       get auditDetails;
-  ORGAdditionalDetailsCopyWith<$R, ORGAdditionalDetails, ORGAdditionalDetails>?
-      get orgAdditionalDetails;
   $R call(
       {String? id,
       String? contractNumber,
@@ -315,7 +316,8 @@ abstract class ContractsCopyWith<$R, $In extends Contracts,
       ContractProcessInstance? processInstance,
       ContractAdditionalDetails? additionalDetails,
       ContractAuditDetails? auditDetails,
-      ORGAdditionalDetails? orgAdditionalDetails});
+      String? businessService,
+      String? supplementNumber});
 }
 
 class _ContractsCopyWithImpl<$R, $Out extends Contracts>
@@ -358,10 +360,6 @@ class _ContractsCopyWithImpl<$R, $Out extends Contracts>
       get auditDetails => $value.auditDetails?.copyWith
           .chain($identity, (v) => call(auditDetails: v));
   @override
-  ORGAdditionalDetailsCopyWith<$R, ORGAdditionalDetails, ORGAdditionalDetails>?
-      get orgAdditionalDetails => $value.orgAdditionalDetails?.copyWith
-          .chain($identity, (v) => call(orgAdditionalDetails: v));
-  @override
   $R call(
           {Object? id = $none,
           Object? contractNumber = $none,
@@ -384,7 +382,8 @@ class _ContractsCopyWithImpl<$R, $Out extends Contracts>
           Object? processInstance = $none,
           Object? additionalDetails = $none,
           Object? auditDetails = $none,
-          Object? orgAdditionalDetails = $none}) =>
+          Object? businessService = $none,
+          Object? supplementNumber = $none}) =>
       $then(Contracts(
           id: or(id, $value.id),
           contractNumber: or(contractNumber, $value.contractNumber),
@@ -409,8 +408,8 @@ class _ContractsCopyWithImpl<$R, $Out extends Contracts>
           processInstance: or(processInstance, $value.processInstance),
           additionalDetails: or(additionalDetails, $value.additionalDetails),
           auditDetails: or(auditDetails, $value.auditDetails),
-          orgAdditionalDetails:
-              or(orgAdditionalDetails, $value.orgAdditionalDetails)));
+          businessService: or(businessService, $value.businessService),
+          supplementNumber: or(supplementNumber, $value.supplementNumber)));
 }
 
 class ORGAdditionalDetailsMapper extends MapperBase<ORGAdditionalDetails> {
@@ -916,7 +915,9 @@ class ContractAdditionalDetailsMapperElement
           termsAndConditions: container.$getOpt(map, 'termsAndConditions'),
           projectDesc: container.$getOpt(map, 'projectDesc'),
           officerInChargeName: container.$getOpt(map, 'officerInChargeName'),
-          officerInChargeDesgn: container.$getOpt(map, 'officerInChargeDesgn'));
+          officerInChargeDesgn: container.$getOpt(map, 'officerInChargeDesgn'),
+          timeExtReason: container.$getOpt(map, 'timeExtReason'),
+          timeExt: container.$getOpt(map, 'timeExt'));
 
   @override
   Function get encoder => encode;
@@ -947,12 +948,14 @@ class ContractAdditionalDetailsMapperElement
         'officerInChargeName':
             container.$enc(c.officerInChargeName, 'officerInChargeName'),
         'officerInChargeDesgn':
-            container.$enc(c.officerInChargeDesgn, 'officerInChargeDesgn')
+            container.$enc(c.officerInChargeDesgn, 'officerInChargeDesgn'),
+        'timeExtReason': container.$enc(c.timeExtReason, 'timeExtReason'),
+        'timeExt': container.$enc(c.timeExt, 'timeExt')
       };
 
   @override
   String stringify(ContractAdditionalDetails self) =>
-      'ContractAdditionalDetails(officerInChargeId: ${container.asString(self.officerInChargeId)}, attendanceRegisterNumber: ${container.asString(self.attendanceRegisterNumber)}, orgName: ${container.asString(self.orgName)}, cboOrgNumber: ${container.asString(self.cboOrgNumber)}, projectId: ${container.asString(self.projectId)}, projectName: ${container.asString(self.projectName)}, projectDesc: ${container.asString(self.projectDesc)}, projectType: ${container.asString(self.projectType)}, ward: ${container.asString(self.ward)}, cboName: ${container.asString(self.cboName)}, officerInChargeName: ${container.asString(self.officerInChargeName)}, officerInChargeDesgn: ${container.asString(self.officerInChargeDesgn)}, cboCode: ${container.asString(self.cboCode)}, estimateNumber: ${container.asString(self.estimateNumber)}, locality: ${container.asString(self.locality)}, totalEstimatedAmount: ${container.asString(self.totalEstimatedAmount)}, estimateDocs: ${container.asString(self.estimateDocs)}, termsAndConditions: ${container.asString(self.termsAndConditions)}, completionPeriod: ${container.asString(self.completionPeriod)})';
+      'ContractAdditionalDetails(officerInChargeId: ${container.asString(self.officerInChargeId)}, attendanceRegisterNumber: ${container.asString(self.attendanceRegisterNumber)}, orgName: ${container.asString(self.orgName)}, cboOrgNumber: ${container.asString(self.cboOrgNumber)}, projectId: ${container.asString(self.projectId)}, projectName: ${container.asString(self.projectName)}, projectDesc: ${container.asString(self.projectDesc)}, projectType: ${container.asString(self.projectType)}, ward: ${container.asString(self.ward)}, cboName: ${container.asString(self.cboName)}, officerInChargeName: ${container.asString(self.officerInChargeName)}, officerInChargeDesgn: ${container.asString(self.officerInChargeDesgn)}, cboCode: ${container.asString(self.cboCode)}, estimateNumber: ${container.asString(self.estimateNumber)}, locality: ${container.asString(self.locality)}, totalEstimatedAmount: ${container.asString(self.totalEstimatedAmount)}, estimateDocs: ${container.asString(self.estimateDocs)}, termsAndConditions: ${container.asString(self.termsAndConditions)}, completionPeriod: ${container.asString(self.completionPeriod)}, timeExtReason: ${container.asString(self.timeExtReason)}, timeExt: ${container.asString(self.timeExt)})';
   @override
   int hash(ContractAdditionalDetails self) =>
       container.hash(self.officerInChargeId) ^
@@ -973,7 +976,9 @@ class ContractAdditionalDetailsMapperElement
       container.hash(self.totalEstimatedAmount) ^
       container.hash(self.estimateDocs) ^
       container.hash(self.termsAndConditions) ^
-      container.hash(self.completionPeriod);
+      container.hash(self.completionPeriod) ^
+      container.hash(self.timeExtReason) ^
+      container.hash(self.timeExt);
   @override
   bool equals(
           ContractAdditionalDetails self, ContractAdditionalDetails other) =>
@@ -998,7 +1003,9 @@ class ContractAdditionalDetailsMapperElement
           self.totalEstimatedAmount, other.totalEstimatedAmount) &&
       container.isEqual(self.estimateDocs, other.estimateDocs) &&
       container.isEqual(self.termsAndConditions, other.termsAndConditions) &&
-      container.isEqual(self.completionPeriod, other.completionPeriod);
+      container.isEqual(self.completionPeriod, other.completionPeriod) &&
+      container.isEqual(self.timeExtReason, other.timeExtReason) &&
+      container.isEqual(self.timeExt, other.timeExt);
 }
 
 mixin ContractAdditionalDetailsMappable {
@@ -1065,7 +1072,9 @@ abstract class ContractAdditionalDetailsCopyWith<
       List<Description?>? termsAndConditions,
       String? projectDesc,
       OfficerInCharge? officerInChargeName,
-      String? officerInChargeDesgn});
+      String? officerInChargeDesgn,
+      String? timeExtReason,
+      String? timeExt});
 }
 
 class _ContractAdditionalDetailsCopyWithImpl<$R,
@@ -1122,7 +1131,9 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
           Object? termsAndConditions = $none,
           Object? projectDesc = $none,
           Object? officerInChargeName = $none,
-          Object? officerInChargeDesgn = $none}) =>
+          Object? officerInChargeDesgn = $none,
+          Object? timeExtReason = $none,
+          Object? timeExt = $none}) =>
       $then(ContractAdditionalDetails(
           officerInChargeId: or(officerInChargeId, $value.officerInChargeId),
           attendanceRegisterNumber:
@@ -1146,7 +1157,9 @@ class _ContractAdditionalDetailsCopyWithImpl<$R,
           officerInChargeName:
               or(officerInChargeName, $value.officerInChargeName),
           officerInChargeDesgn:
-              or(officerInChargeDesgn, $value.officerInChargeDesgn)));
+              or(officerInChargeDesgn, $value.officerInChargeDesgn),
+          timeExtReason: or(timeExtReason, $value.timeExtReason),
+          timeExt: or(timeExt, $value.timeExt)));
 }
 
 class OfficerInChargeMapper extends MapperBase<OfficerInCharge> {

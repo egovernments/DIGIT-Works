@@ -1,12 +1,14 @@
 package org.egov.works.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.repository.LineItemsRepository;
+import org.egov.works.repository.ServiceRequestRepository;
 import org.egov.works.service.ContractService;
 import org.egov.works.util.*;
 import org.egov.works.repository.ContractRepository;
@@ -57,6 +59,9 @@ public class ContractServiceValidator {
     @Autowired
     private OrgUtils orgUtils;
 
+    @Autowired
+    private ServiceRequestRepository restRepo;
+
 
     public void validateCreateContractRequest(ContractRequest contractRequest) {
         log.info("Validate contract create request");
@@ -73,11 +78,20 @@ public class ContractServiceValidator {
         // Validate request fields against MDMS data
         validateRequestFieldsAgainstMDMS(contractRequest);
 
-        // Validate estimateIds against estimate service and DB
-        validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
 
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
+
+        if (contractRequest.getContract().getBusinessService() != null &&
+                contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+            log.info("Validating time extension request");
+            // Validate if Time Extension Request
+            validateContractRevisionRequestForCreate(contractRequest);
+        } else {
+            // Validate estimateIds against estimate service and DB
+            validateCreateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
+        }
+
 
         log.info("Contract create request validated");
     }
@@ -100,11 +114,17 @@ public class ContractServiceValidator {
         // Validate provided contract for update should exist in DB
         validateContractAgainstDB(contractRequest);
 
-        // Validate estimateIds against estimate service and DB
-        validateUpdateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
-
         // Validate orgId against Organization service data
         validateOrganizationIdAgainstOrgService(contractRequest);
+
+        if (contractRequest.getContract().getBusinessService() != null &&
+                contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+            // Validate Time Extension Request for Update request
+            validateContractRevisionRequestForUpdate(contractRequest);
+        } else {
+            // Validate estimateIds against estimate service and DB
+            validateUpdateRequestedEstimateIdsAgainstEstimateServiceAndDB(contractRequest);
+        }
 
         log.info("Contract create request validated : contractId ["+contractRequest.getContract().getId()+"]");
     }
@@ -613,4 +633,170 @@ public class ContractServiceValidator {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
     }
+
+    /**
+     * Validating Time Extension Create Request
+     * @param contractRequest
+     */
+    public void validateContractRevisionRequestForCreate(ContractRequest contractRequest) {
+        log.info("Validating revise contract create request");
+        // Validate if contract number is present
+        validateContractNumber(contractRequest);
+
+        Pagination pagination = Pagination.builder()
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
+        ContractCriteria contractCriteria = ContractCriteria.builder()
+                .contractNumber(contractRequest.getContract().getContractNumber())
+                .status("ACTIVE")
+                .tenantId(contractRequest.getContract().getTenantId())
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+
+        // Validate if contract is present in DB
+        validateContractNumber(contractsFromDB);
+        // Validate if org is same as previous contract
+        validateOrganisation(contractRequest, contractsFromDB);
+        // Validate if at least one muster-roll is created and approved
+        //validateMusterRollForTimeExtension(contractRequest);
+        // Validate if previous time extension request is in workflow
+        validateDuplicateTimeExtensionRequest (contractRequest);
+        // Validate if extended end date is not before active contract end date
+        validateEndDateExtension(contractRequest, contractsFromDB);
+
+    }
+
+    /**
+     * Validate Time Extension Update Request
+     * @param contractRequest
+     */
+    private void validateContractRevisionRequestForUpdate(ContractRequest contractRequest) {
+        log.info("Validating revise contract update request");
+        // Validate if contract number is present
+        validateContractNumber(contractRequest);
+
+        Pagination pagination = Pagination.builder()
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
+        ContractCriteria contractCriteria = ContractCriteria.builder()
+                .contractNumber(contractRequest.getContract().getContractNumber())
+                .status("ACTIVE")
+                .tenantId(contractRequest.getContract().getTenantId())
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+
+        // Validate if contract is present in DB
+        validateContractNumber(contractsFromDB);
+        // Validate if org is same as previous contract
+        validateOrganisation(contractRequest, contractsFromDB);
+        // Validate if at least one muster-roll is created and approved
+        //validateMusterRollForTimeExtension(contractRequest);
+        // Validate Supplement Number
+        validateSupplementNumber (contractRequest);
+        // Validate if extended end date is not before active contract end date
+        validateEndDateExtension(contractRequest, contractsFromDB);
+    }
+    private void validateContractNumber (ContractRequest contractRequest) {
+        if (contractRequest.getContract().getContractNumber() == null || contractRequest.getContract().getContractNumber().isEmpty()) {
+            throw new CustomException("CONTRACT_NUMBER_NOT_PRESENT_IN_REQUEST", "Contract number mandatory for revision contract");
+        }
+    }
+    private void validateContractNumber (List<Contract> contractsFromDB) {
+        if (contractsFromDB == null || contractsFromDB.isEmpty()) {
+            throw new CustomException("CONTRACT_NUMBER_NOT_PRESENT_IN_DB", "Given contract number is not present in database");
+        }
+    }
+    private void validateOrganisation (ContractRequest contractRequest, List<Contract> contractsFromDB) {
+        if (contractRequest.getContract().getOrgId() == null || contractRequest.getContract().getOrgId().isEmpty()) {
+            throw new CustomException("ORG_ID_MANDATORY", "Org id not present in extension request");
+        }
+        for (Contract contract : contractsFromDB) {
+            if (!contract.getOrgId().equalsIgnoreCase(contractRequest.getContract().getOrgId())) {
+                throw new CustomException("ORG_ID_MISMATCH", "Org id must be same for time extension request");
+            }
+        }
+    }
+    private void validateMusterRollForTimeExtension (ContractRequest contractRequest) {
+        // Get all muster-rolls for given contractNumber
+        List<MusterRoll> musterRolls = getMusterRollsForContractNumber (contractRequest);
+        if (musterRolls == null || musterRolls.isEmpty()) {
+            throw new CustomException("MUSTER_ROLLS_NOT_PRESENT", "Muster rolls not present for given contract id");
+        }
+        for (MusterRoll musterRoll : musterRolls) {
+            if (musterRoll.getMusterRollStatus().equalsIgnoreCase("APPROVED"))
+                return;
+        }
+        throw new CustomException("MUSTER_ROLL_NOT_APPROVED", "At least one muster roll must be in approved state");
+    }
+    private void validateDuplicateTimeExtensionRequest (ContractRequest contractRequest ) {
+        Pagination pagination = Pagination.builder()
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
+        ContractCriteria contractCriteria = ContractCriteria.builder()
+                .contractNumber(contractRequest.getContract().getContractNumber())
+                .status("INWORKFLOW")
+                .tenantId(contractRequest.getContract().getTenantId())
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+
+        if (!contractsFromDB.isEmpty()) {
+            throw new CustomException("DUPLICATE_TIME_EXTENSION_REQUEST", "Duplicate time extension request");
+        }
+    }
+    private void validateEndDateExtension (ContractRequest contractRequest, List<Contract> contractsFromDB) {
+        for (Contract contract : contractsFromDB) {
+            int comparisionResult = contractRequest.getContract().getEndDate().compareTo(contract.getEndDate());
+            if (comparisionResult < 0) {
+                throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
+            }
+        }
+    }
+
+    private List<MusterRoll> getMusterRollsForContractNumber (ContractRequest contractRequest) {
+        StringBuilder uri = new StringBuilder(config.getMusterRollSearchHost()).append(config.getMusterRollSearchEndpoint());
+        uri.append("?tenantId=").append(contractRequest.getContract().getTenantId())
+                .append("&referenceId=").append(contractRequest.getContract().getContractNumber());
+        ObjectNode requestInfoNode = mapper.createObjectNode();
+        requestInfoNode.putPOJO("RequestInfo", contractRequest.getRequestInfo());
+
+        Object musterRollRes = restRepo.fetchResult(uri, requestInfoNode);
+        MusterRollResponse musterRollResponse = null;
+        try {
+            musterRollResponse = mapper.convertValue(musterRollRes, MusterRollResponse.class);
+        }catch (Exception e){
+            log.error("Unable to map muster roll response");
+        }
+        return musterRollResponse.getMusterRolls();
+    }
+    private void validateSupplementNumber (ContractRequest contractRequest) {
+        if (contractRequest.getContract().getSupplementNumber() == null || contractRequest.getContract().getSupplementNumber().isEmpty()) {
+            throw new CustomException("SUPPLEMENT_NUMBER_EMPTY", "Supplement number must not be empty");
+        }
+
+        Pagination pagination = Pagination.builder()
+                .limit(config.getContractMaxLimit())
+                .offSet(config.getContractDefaultOffset())
+                .build();
+        ContractCriteria contractCriteria = ContractCriteria.builder()
+                .supplementNumber(contractRequest.getContract().getSupplementNumber())
+                .status("INWORKFLOW")
+                .tenantId(contractRequest.getContract().getTenantId())
+                .requestInfo(contractRequest.getRequestInfo())
+                .pagination(pagination)
+                .build();
+        List<Contract> contractsFromDB = contractRepository.getContracts(contractCriteria);
+        if (contractsFromDB.isEmpty()) {
+            throw new CustomException("SUPPLEMENT_NUMBER_NOT_PRESENT", "Supplement Number not present in DB");
+        }
+    }
+
 }

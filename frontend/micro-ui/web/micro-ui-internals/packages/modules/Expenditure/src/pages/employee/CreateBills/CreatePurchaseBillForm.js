@@ -88,7 +88,7 @@ const CreatePurchaseBillForm = ({
 
             if(difference?.billDetails_billAmt){
                 let billAmount = parseFloat(Digit.Utils.dss.convertFormatterToNumber(formData?.billDetails_billAmt));
-                formData?.deductionDetails?.forEach((data, index)=>{
+                formData?.deductionDetails && formData?.deductionDetails?.forEach((data, index)=>{
                   if(data?.name?.calculationType === "percentage") {
                     const amount = billAmount ? (billAmount * (parseFloat(data?.name?.value)/100)).toFixed(1) : 0
                     setValue(`deductionDetails.${index}.amount`, amount);
@@ -191,6 +191,9 @@ const CreatePurchaseBillForm = ({
         data = Digit.Utils.trimStringsInObject(data)
         setInputFormData((prevState) => data)
 
+        if(data?.totalBillAmount <= 0)
+        setToast({show : true, label : t("EXPENDITURE_VALUE_CANNOT_BE_ZERO"), error : true})
+        else
         setShowModal(true);
         //transform formdata to Payload
         

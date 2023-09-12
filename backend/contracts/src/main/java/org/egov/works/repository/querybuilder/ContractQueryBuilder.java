@@ -18,6 +18,10 @@ public class ContractQueryBuilder {
 
     private static final String CONTRACT_SELECT_QUERY = " SELECT contract.id AS id, " +
             "contract.contract_number AS contractNumber, " +
+            "contract.supplement_number AS supplementNumber, " +
+            "contract.version_number AS versionNumber, " +
+            "contract.old_uuid AS oldUuid, " +
+            "contract.business_service AS businessService, " +
             "contract.tenant_id AS tenantId, " +
             "contract.wf_status AS wfStatus, " +
             "contract.executing_authority AS executingAuthority, " +
@@ -70,6 +74,18 @@ public class ContractQueryBuilder {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" contract.contract_number=? ");
             preparedStmtList.add(criteria.getContractNumber());
+        }
+
+        if (StringUtils.isNotBlank(criteria.getSupplementNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.supplement_number=? ");
+            preparedStmtList.add(criteria.getSupplementNumber());
+        }
+
+        if (StringUtils.isNotBlank(criteria.getBusinessService())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" contract.business_service=? ");
+            preparedStmtList.add(criteria.getBusinessService());
         }
 
         if (StringUtils.isNotBlank(criteria.getStatus())) {

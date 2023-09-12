@@ -34,7 +34,7 @@ class DeclineWorkOrderBloc
       emit(const DeclineWorkOrderState.loading());
 
       ContractsModel contractsModel =
-          await MyWorksRepository(client.init()).acceptOrDeclineWorkOrder(
+          await MyWorksRepository(client.init()).updateOrCreateContract(
               url: Urls.workServices.updateWorkOrder,
               body: {
                 "contract": event.contractsModel,

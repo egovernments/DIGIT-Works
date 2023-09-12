@@ -17,6 +17,7 @@ import org.egov.web.models.bill.*;
 import org.egov.web.models.enums.*;
 import org.egov.web.models.jit.*;
 import org.egov.web.models.organisation.Organisation;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -243,7 +244,9 @@ public class PaymentInstructionEnrichment {
         // GET ssu details
         JSONArray ssuDetailList = ifmsService.getSSUDetails(paymentRequest.getRequestInfo(), paymentRequest.getPayment().getTenantId());
         JSONArray hoaList = ifmsService.getHeadOfAccounts(paymentRequest.getRequestInfo());
-        // TODO: Sort hoa list based on sequence
+
+        hoaList = sortHoaList(hoaList);
+
         JsonNode ssuNode = null, hoaNode = null;
         SanctionDetail selectedSanction = null;
         Boolean hasFunds = true;
@@ -302,6 +305,24 @@ public class PaymentInstructionEnrichment {
         objectMap.put("sanction", selectedSanction);
         objectMap.put("hasFunds", hasFunds);
         return objectMap;
+    }
+
+    private JSONArray sortHoaList(JSONArray hoaList) {
+        try {
+            if (hoaList != null && !hoaList.isEmpty()) {
+                hoaList.sort((o1, o2) -> {
+                    JsonNode node1 = objectMapper.valueToTree(o1);
+                    JsonNode node2 = objectMapper.valueToTree(o2);
+
+                    int key1 = node1.get("sequence").asInt();
+                    int key2 = node2.get("sequence").asInt();
+                    return Integer.compare(key1, key2);
+                });
+            }
+        }catch (Exception e) {
+            log.error("Exception in PaymentInstructionEnrichment:sortHoaList : " + e);
+        }
+        return hoaList;
     }
 
     private List<Beneficiary> getBeneficiaryListFromBill(Bill bill) {

@@ -218,7 +218,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                                     form.value[accountNoKey].toString(),
                                 reAccountNumber:
                                     form.value[reAccountNoKey].toString(),
-                                ifscCode: form.value[ifscCodeKey].toString().toUpperCase(),
+                                ifscCode: form.value[ifscCodeKey]
+                                    .toString()
+                                    .toUpperCase(),
                                 accountType:
                                     form.value[accountTypeKey].toString(),
                                 bankName: hintText);

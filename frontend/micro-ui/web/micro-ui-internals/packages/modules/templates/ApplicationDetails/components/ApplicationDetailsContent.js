@@ -67,7 +67,8 @@ function ApplicationDetailsContent({
   tenantId,
   businessService,
   customClass,
-  setAttendanceError
+  setAttendanceError,
+  timeExtensionCreate=undefined
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
@@ -273,7 +274,7 @@ function ApplicationDetailsContent({
           
           <div style={detail.mainDivStyles ? detail.mainDivStyles : getMainDivStyles()} className={customClass}>
             {index === 0 && !detail.asSectionHeader ? (
-              <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
+              <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail?.title)}</CardSubHeader>
             ) : (
               <React.Fragment>
                 <CardSectionHeader
@@ -478,6 +479,7 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.skills  &&  <SkillDetails data={detail?.additionalDetails?.skills} />}
           {detail?.additionalDetails?.photo  &&  <Photos data={detail?.additionalDetails?.photo} OpenImage={OpenImage}/>}
+          {timeExtensionCreate && timeExtensionCreate.getTimeExtensionJSX()}
         </React.Fragment>
         </CollapseAndExpandGroups>
       ))}

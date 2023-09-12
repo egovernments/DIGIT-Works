@@ -196,19 +196,15 @@ public class PurchaseBillGeneratorService {
             if(category != null && category.equalsIgnoreCase(EXPENSE_CONSTANT) && lineItem.getStatus().equals(LINEITEM_STATUS_ACTIVE)) {
                 expense = expense.add(amount);
             }
-             if(amount.compareTo(BigDecimal.ZERO)<=0){
+            if(amount.compareTo(BigDecimal.ZERO)<=0){
                 lineItemWithZeroAmount.add(lineItem);
             }
-
         }
 
         //Removing the line items which have amount as 0
-
-         if(!lineItemWithZeroAmount.isEmpty()){
+        if(!lineItemWithZeroAmount.isEmpty()){
             lineItems.removeAll(lineItemWithZeroAmount);
         }
-
-
 
         // If PayableLineItems is available in bill details then set each lineitem INACTIVE
         if (billDetail.getPayableLineItems() != null && !billDetail.getPayableLineItems().isEmpty()) {

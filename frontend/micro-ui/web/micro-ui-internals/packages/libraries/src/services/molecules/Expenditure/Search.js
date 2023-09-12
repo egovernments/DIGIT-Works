@@ -292,7 +292,8 @@ export const BillsSearch = {
       }
      })
 
-    deductionsTableData?.push(["",totalDeductions <= 0? t("EXPENDITURE_NO_DEDUCTION"):"","",t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalDeductions, 'number')]);
+     deductionsTableData?.push(["",totalDeductions <= 0? t("EXPENDITURE_NO_DEDUCTION"):"","",t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalDeductions, 'number')]);
+
 
     const deductionsTable = {
         title: "EXP_DEDUCTIONS",

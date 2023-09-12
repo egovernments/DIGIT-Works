@@ -133,5 +133,4 @@ public class IfmsAdapterConfig {
 
     @Value("${ifms.request.enc.secret}")
     private String ifmsRequestEncSecret;
-
 }

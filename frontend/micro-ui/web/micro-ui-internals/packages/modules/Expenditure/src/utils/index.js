@@ -55,7 +55,7 @@ const setDeductionTableData = (bill,charges,t) => {
   })
   
   if(deductions.length>0) return [null,...deductions]
-  else return [null]
+  else return undefined;
 }
 
 export const updateDefaultValues = ({t, tenantId, configs, findCurrentDate, isModify, sessionFormData, setSessionFormData, contract,  docConfigData, billData, setIsFormReady,charges,org}) => {

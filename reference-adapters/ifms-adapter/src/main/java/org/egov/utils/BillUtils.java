@@ -1,6 +1,5 @@
 package org.egov.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -36,7 +35,7 @@ public class BillUtils {
     @Autowired
     private IfmsAdapterConfig config;
 	@Autowired
-	MdmsUtils mdmsUtils;
+	private MdmsUtils mdmsUtils;
 
 	public @Valid List<Bill> fetchBillsFromPayment(PaymentRequest paymentRequest) {
 		log.info("Started executing fetchBillsFromPayment");
@@ -76,7 +75,7 @@ public class BillUtils {
 		return billResponse.getBills();
 	}
 
-	public @Valid List<Payment> updatePaymentsData(Object paymentRequest) {
+	public @Valid List<Payment> callPaymentUpdate(Object paymentRequest) {
 		log.info("Updating payment using bill service");
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getBillHost()).append(config.getPaymentUpdateEndPoint());
@@ -149,7 +148,7 @@ public class BillUtils {
 		return paymentResponse.getPayments();
 	}
 
-	public void updatePaymentForStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus, ReferenceStatus referenceStatus) {
+	public void updatePaymentStatus(PaymentRequest paymentRequest, PaymentStatus paymentStatus, ReferenceStatus referenceStatus) {
 		log.info("Started executing updatePaymentForStatus");
 		paymentRequest.getPayment().setStatus(paymentStatus);
 		paymentRequest.getPayment().setReferenceStatus(referenceStatus);
@@ -162,7 +161,7 @@ public class BillUtils {
 				}
 			}
 		}
-		updatePaymentsData(paymentRequest);
+		callPaymentUpdate(paymentRequest);
 	}
 
 	public JSONArray getHeadCode(RequestInfo requestInfo, String tenantId) {
