@@ -123,7 +123,6 @@ export const Request = async ({
       }
     }
   }
-  }
 
   const headers1 = {
     "Content-Type": "application/json",
