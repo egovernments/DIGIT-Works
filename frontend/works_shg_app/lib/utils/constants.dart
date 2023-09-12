@@ -29,9 +29,13 @@ class Constants {
   static const homeMusterRolls = 'HOME_MUSTER_ROLLS';
   static const homeMyBills = 'HOME_MY_BILLS';
   static const homeRegisterWageSeeker = 'HOME_REGISTER_WAGE_SEEKER';
+  static const homeMyServiceRequests = 'HOME_SERVICE_REQUESTS';
   static const myBillsWageType = 'EXPENSE.WAGES';
   static const myBillsPurchaseType = 'EXPENSE.PURCHASE';
   static const myBillsSupervisionType = 'EXPENSE.WAGES';
+  static const approvedKey = 'APPROVED';
+  static const tenantIdKey = 'tenantId';
+  static const inWorkFlowKey = 'INWORKFLOW';
 }
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();

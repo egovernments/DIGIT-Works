@@ -18,19 +18,23 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$SearchIndividualWorkEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? contractNumber) search,
+    required TResult Function(
+            String? contractNumber, Map<dynamic, dynamic>? body)
+        search,
     required TResult Function() dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber)? search,
+    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult? Function()? dispose,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber)? search,
+    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult Function()? dispose,
     required TResult orElse(),
   }) =>
@@ -82,7 +86,7 @@ abstract class _$$IndividualWorkSearchEventCopyWith<$Res> {
           $Res Function(_$IndividualWorkSearchEvent) then) =
       __$$IndividualWorkSearchEventCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? contractNumber});
+  $Res call({String? contractNumber, Map<dynamic, dynamic>? body});
 }
 
 /// @nodoc
@@ -98,12 +102,17 @@ class __$$IndividualWorkSearchEventCopyWithImpl<$Res>
   @override
   $Res call({
     Object? contractNumber = freezed,
+    Object? body = freezed,
   }) {
     return _then(_$IndividualWorkSearchEvent(
       contractNumber: freezed == contractNumber
           ? _value.contractNumber
           : contractNumber // ignore: cast_nullable_to_non_nullable
               as String?,
+      body: freezed == body
+          ? _value._body
+          : body // ignore: cast_nullable_to_non_nullable
+              as Map<dynamic, dynamic>?,
     ));
   }
 }
@@ -113,15 +122,26 @@ class __$$IndividualWorkSearchEventCopyWithImpl<$Res>
 class _$IndividualWorkSearchEvent
     with DiagnosticableTreeMixin
     implements IndividualWorkSearchEvent {
-  const _$IndividualWorkSearchEvent({this.contractNumber = ''});
+  const _$IndividualWorkSearchEvent(
+      {this.contractNumber = '', final Map<dynamic, dynamic>? body})
+      : _body = body;
 
   @override
   @JsonKey()
   final String? contractNumber;
+  final Map<dynamic, dynamic>? _body;
+  @override
+  Map<dynamic, dynamic>? get body {
+    final value = _body;
+    if (value == null) return null;
+    if (_body is EqualUnmodifiableMapView) return _body;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SearchIndividualWorkEvent.search(contractNumber: $contractNumber)';
+    return 'SearchIndividualWorkEvent.search(contractNumber: $contractNumber, body: $body)';
   }
 
   @override
@@ -129,7 +149,8 @@ class _$IndividualWorkSearchEvent
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'SearchIndividualWorkEvent.search'))
-      ..add(DiagnosticsProperty('contractNumber', contractNumber));
+      ..add(DiagnosticsProperty('contractNumber', contractNumber))
+      ..add(DiagnosticsProperty('body', body));
   }
 
   @override
@@ -138,11 +159,13 @@ class _$IndividualWorkSearchEvent
         (other.runtimeType == runtimeType &&
             other is _$IndividualWorkSearchEvent &&
             (identical(other.contractNumber, contractNumber) ||
-                other.contractNumber == contractNumber));
+                other.contractNumber == contractNumber) &&
+            const DeepCollectionEquality().equals(other._body, _body));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, contractNumber);
+  int get hashCode => Object.hash(
+      runtimeType, contractNumber, const DeepCollectionEquality().hash(_body));
 
   @JsonKey(ignore: true)
   @override
@@ -154,30 +177,34 @@ class _$IndividualWorkSearchEvent
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? contractNumber) search,
+    required TResult Function(
+            String? contractNumber, Map<dynamic, dynamic>? body)
+        search,
     required TResult Function() dispose,
   }) {
-    return search(contractNumber);
+    return search(contractNumber, body);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber)? search,
+    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult? Function()? dispose,
   }) {
-    return search?.call(contractNumber);
+    return search?.call(contractNumber, body);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber)? search,
+    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {
     if (search != null) {
-      return search(contractNumber);
+      return search(contractNumber, body);
     }
     return orElse();
   }
@@ -215,10 +242,12 @@ class _$IndividualWorkSearchEvent
 }
 
 abstract class IndividualWorkSearchEvent implements SearchIndividualWorkEvent {
-  const factory IndividualWorkSearchEvent({final String? contractNumber}) =
-      _$IndividualWorkSearchEvent;
+  const factory IndividualWorkSearchEvent(
+      {final String? contractNumber,
+      final Map<dynamic, dynamic>? body}) = _$IndividualWorkSearchEvent;
 
   String? get contractNumber;
+  Map<dynamic, dynamic>? get body;
   @JsonKey(ignore: true)
   _$$IndividualWorkSearchEventCopyWith<_$IndividualWorkSearchEvent>
       get copyWith => throw _privateConstructorUsedError;
@@ -274,7 +303,9 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String? contractNumber) search,
+    required TResult Function(
+            String? contractNumber, Map<dynamic, dynamic>? body)
+        search,
     required TResult Function() dispose,
   }) {
     return dispose();
@@ -283,7 +314,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String? contractNumber)? search,
+    TResult? Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult? Function()? dispose,
   }) {
     return dispose?.call();
@@ -292,7 +324,8 @@ class _$DisposeIndividualContract
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String? contractNumber)? search,
+    TResult Function(String? contractNumber, Map<dynamic, dynamic>? body)?
+        search,
     TResult Function()? dispose,
     required TResult orElse(),
   }) {

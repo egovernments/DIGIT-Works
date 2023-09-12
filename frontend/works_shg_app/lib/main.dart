@@ -57,6 +57,10 @@ import 'blocs/muster_rolls/search_individual_muster_roll.dart';
 import 'blocs/my_bills/search_my_bills.dart';
 import 'blocs/organisation/org_financial_bloc.dart';
 import 'blocs/organisation/org_search_bloc.dart';
+import 'blocs/time_extension_request/create_time_extension_request.dart';
+import 'blocs/time_extension_request/my_service_requests_bloc.dart';
+import 'blocs/time_extension_request/service_requests_config.dart';
+import 'blocs/time_extension_request/valid_time_extension.dart';
 import 'blocs/user/user_search.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_bank_create.dart';
 import 'blocs/wage_seeker_registration/wage_seeker_create_bloc.dart';
@@ -229,6 +233,10 @@ class _MainApplicationState extends State<MainApplication> {
         BlocProvider(create: (context) => ORGFinanceBloc()),
         BlocProvider(create: (context) => MusterRollPDFBloc()),
         BlocProvider(create: (context) => WorkOrderPDFBloc()),
+        BlocProvider(create: (context) => ValidTimeExtCreationsSearchBloc()),
+        BlocProvider(create: (context) => CreateTimeExtensionRequestBloc()),
+        BlocProvider(create: (context) => ServiceRequestsConfigBloc()),
+        BlocProvider(create: (context) => SearchMyServiceRequestsBloc()),
         BlocProvider(
             create: (context) => WageSeekerMDMSBloc(
                 const WageSeekerMDMSState.initial(),

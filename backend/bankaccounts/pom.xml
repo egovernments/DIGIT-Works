@@ -5,7 +5,7 @@
     <artifactId>bankaccounts</artifactId>
     <packaging>jar</packaging>
     <name>bankaccounts</name>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>

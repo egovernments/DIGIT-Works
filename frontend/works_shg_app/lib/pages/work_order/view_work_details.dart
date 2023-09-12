@@ -11,6 +11,7 @@ import 'package:works_shg_app/widgets/atoms/empty_image.dart';
 
 import '../../blocs/localization/app_localization.dart';
 import '../../blocs/localization/localization.dart';
+import '../../blocs/time_extension_request/valid_time_extension.dart';
 import '../../blocs/work_orders/accept_work_order.dart';
 import '../../blocs/work_orders/decline_work_order.dart';
 import '../../blocs/work_orders/my_works_search_criteria.dart';
@@ -212,34 +213,100 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                             : workOrderList.isNotEmpty &&
                                     workOrderList.first['payload']['wfStatus'] != acceptCode
                                 ? SizedBox(
-                                    height: 60,
-                                    child: DigitCard(
-                                      padding: const EdgeInsets.all(8.0),
-                                      margin: const EdgeInsets.all(0.0),
-                                      child: DigitElevatedButton(
-                                        onPressed: () {
-                                          context.router.push(
-                                              AttendanceRegisterTableRoute(
-                                                  registerId: workOrderList
-                                                      .first['payload']
-                                                          ['additionalDetails']
-                                                          ['attendanceRegisterNumber']
-                                                      .toString(),
-                                                  tenantId: workOrderList.first['payload']
-                                                          ['tenantId']
-                                                      .toString()));
-                                        },
-                                        child: Center(
-                                          child: Text(
-                                              t.translate(i18.home.manageWageSeekers),
+                          height: 60,
+                                  child: DigitCard(
+                                    padding: const EdgeInsets.all(8.0),
+                                    margin: const EdgeInsets.all(0),
+                                    child: DigitElevatedButton(
+                                      onPressed: () => DigitActionDialog.show(context,
+                                            widget: Center(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                                    child: DigitOutlineIconButton(
+                                                      buttonStyle: OutlinedButton.styleFrom(
+                                                          minimumSize: Size(
+                                                              MediaQuery.of(context).size.width / 2.8,
+                                                              50),
+                                                          shape: const RoundedRectangleBorder(),
+                                                          side: BorderSide(
+                                                              color: const DigitColors().burningOrange,
+                                                              width: 1)),
+                                                      onPressed: () {
+                                                        context.router.push(AttendanceRegisterTableRoute(
+                                                            registerId: (contracts?.contracts ?? []).first.additionalDetails?.attendanceRegisterNumber.toString() ?? ''
+                                                                .toString(),
+                                                            tenantId: (contracts?.contracts ?? []).first.tenantId.toString()));
+                                                        Navigator.of(context, rootNavigator: true).pop();
+                                                      },
+                                                      label: AppLocalizations.of(context)
+                                                          .translate(i18.home.manageWageSeekers),
+                                                      icon: Icons.fingerprint,
+                                                      textStyle: const TextStyle(
+                                                          fontWeight: FontWeight.w700, fontSize: 18),
+                                                    ),
+                                                  ),
+                                                  /*Padding(
+                                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                                    child: DigitOutlineIconButton(
+                                                      label: AppLocalizations.of(context)
+                                                          .translate(i18.workOrder.projectClosure),
+                                                      icon: Icons.cancel_outlined,
+                                                      buttonStyle: OutlinedButton.styleFrom(
+                                                          minimumSize: Size(
+                                                              MediaQuery.of(context).size.width / 2.8,
+                                                              50),
+                                                          shape: const RoundedRectangleBorder(),
+                                                          side: BorderSide(
+                                                              color: const DigitColors().burningOrange,
+                                                              width: 1)),
+                                                      onPressed: () =>
+                                                          Navigator.of(context, rootNavigator: true)
+                                                              .pop(),
+                                                      textStyle: const TextStyle(
+                                                          fontWeight: FontWeight.w700, fontSize: 18),
+                                                    ),
+                                                  )*/
+                                                  DigitOutlineIconButton(
+                                                    label: AppLocalizations.of(context)
+                                                        .translate(i18.workOrder.requestTimeExtension),
+                                                    icon: Icons.calendar_today_rounded,
+                                                    buttonStyle: OutlinedButton.styleFrom(
+                                                        minimumSize: Size(
+                                                            MediaQuery.of(context).size.width / 2.8, 50),
+                                                        shape: const RoundedRectangleBorder(),
+                                                        side: BorderSide(
+                                                            color: const DigitColors().burningOrange,
+                                                            width: 1)),
+                                                    onPressed: () {
+                                                      Navigator.of(context, rootNavigator: true).pop();
+                                                      context.read<ValidTimeExtCreationsSearchBloc>().add(
+                                                          SearchValidTimeExtCreationsEvent(
+                                                              contract: contracts?.contracts?.first,
+                                                              contractNo: (contracts?.contracts ?? []).first.contractNumber.toString(),
+                                                              tenantId: (contracts?.contracts ?? []).first.tenantId.toString(),
+                                                              status: 'APPROVED'));
+                                                    },
+                                                    textStyle: const TextStyle(
+                                                        fontWeight: FontWeight.w700, fontSize: 18),
+                                                  )
+                                                ],
+                                              ),
+                                            )),
+                                      child: Center(
+                                        child: Text(
+                                              AppLocalizations.of(context)
+                                                  .translate(i18.common.takeAction),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleMedium!
                                                   .apply(color: Colors.white)),
-                                        ),
                                       ),
                                     ),
-                                  )
+                                  ),
+                                )
                                 : Container();
                       });
             }));
@@ -541,6 +608,20 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                                                                   isScrollable: true)),
                                                           align: Alignment.centerLeft,
                                                         ),
+                                                      ),
+                                                      BlocListener<ValidTimeExtCreationsSearchBloc, ValidTimeExtCreationsSearchState>(
+                                                        listener: (context, validContractState) {
+                                                          validContractState.maybeWhen(
+                                                              orElse: () => false,
+                                                              loaded: (Contracts? contracts) => context.router
+                                                                  .push(CreateTimeExtensionRequestRoute(
+                                                                contractNumber:
+                                                                contracts?.contractNumber,
+                                                              )),
+                                                              error: (String? error) => Notifiers.getToastMessage(
+                                                                  context, error ?? 'ERR!', 'ERROR'));
+                                                        },
+                                                        child: const SizedBox.shrink(),
                                                       ),
                                                     ],
                                                   )
