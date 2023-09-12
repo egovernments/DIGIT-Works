@@ -101,9 +101,14 @@ public class NotificationService {
         Boolean isSendBack = (request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK") || request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK_TO_ORIGINATOR"));
         message = buildMessageForRevisedContract(smsDetailsMap, message, isSendBack);
 
-        SMSRequest smsRequestCBO = SMSRequest.builder().mobileNumber(cboMobileNumber).message(message).build();
+        smsDetailsMap.put("mobileNumber",cboMobileNumber);
+
+        Map<String, Object> additionalField=new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ContractServiceConstants.CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE,additionalField);
+        }
         log.info("Sending message to CBO");
-        producer.push(config.getSmsNotifTopic(), smsRequestCBO);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetailsMap);
 
         if (!isSendBack) {
             pushNotificationToOriginator(request, message);
@@ -130,10 +135,27 @@ public class NotificationService {
         String officerInChargeUuid = originalContractFromDB.getAuditDetails().getCreatedBy();
         Map<String,String> officerInChargeMobileNumberMap =hrmsUtils.getEmployeeDetailsByUuid(request.getRequestInfo(), request.getContract().getTenantId(),officerInChargeUuid);
         String officerInChargeMobileNumber = officerInChargeMobileNumberMap.get("mobileNumber");
+        Map<String, String> smsDetailsMap = new HashMap<>();
 
-        SMSRequest smsRequestOfficerInCharge = SMSRequest.builder().mobileNumber(officerInChargeMobileNumber).message(message).build();
+        smsDetailsMap.put("mobileNumber",officerInChargeMobileNumber);
+
+        Workflow workflow = request.getWorkflow();
+        String message1 = null;
+
+
+
+        Map<String, Object> additionalField=new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            if ("REJECT".equalsIgnoreCase(workflow.getAction())){
+                setAdditionalFields(request,ContractServiceConstants.CONTRACT_REVISION_REJECT_LOCALIZATION_CODE,additionalField);
+            }
+            else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
+                setAdditionalFields(request,ContractServiceConstants.CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE,additionalField);
+            }
+
+        }
         log.info("Sending message to Officer In charge");
-        producer.push(config.getSmsNotifTopic(), smsRequestOfficerInCharge);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetailsMap);
 
     }
 
