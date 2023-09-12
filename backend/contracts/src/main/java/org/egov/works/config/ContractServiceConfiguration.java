@@ -189,6 +189,12 @@ public class ContractServiceConfiguration {
     @Value("${contract.duedate.period}")
     private String contractDueDatePeriod;
 
+    @Value("${kafka.topics.works.notification.sms.name}")
+    private String muktaNotificationTopic;
+
+    @Value("${sms.isAdditonalFieldRequired}")
+    private boolean isAdditonalFieldRequired;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));

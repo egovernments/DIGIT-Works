@@ -64,7 +64,8 @@ public class NotificationService {
 
         if (request.getContract().getBusinessService() != null
                 && !request.getContract().getBusinessService().isEmpty()
-                && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+                && request.getContract().getBusinessService().equalsIgnoreCase(ContractServiceConstants.CONTRACT_REVISION_BUSINESS_SERVICE)) {
+
             pushNotificationForRevisedContract (request);
 
         }else {
@@ -123,7 +124,8 @@ public class NotificationService {
                 .build();
 
         List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
-        Contract originalContractFromDB = contractsFromDB.stream().filter(contract -> (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE))).collect(Collectors.toList()).get(0);
+        Contract originalContractFromDB = contractsFromDB.stream().filter(contract -> (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(ContractServiceConstants.CONTRACT_REVISION_BUSINESS_SERVICE))).collect(Collectors.toList()).get(0);
+
         log.info("Getting officer-in-charge for contract :: " + originalContractFromDB.getContractNumber());
         String officerInChargeUuid = originalContractFromDB.getAuditDetails().getCreatedBy();
         Map<String,String> officerInChargeMobileNumberMap =hrmsUtils.getEmployeeDetailsByUuid(request.getRequestInfo(), request.getContract().getTenantId(),officerInChargeUuid);
@@ -150,13 +152,17 @@ public class NotificationService {
         //get project number, location, userDetails
         log.info("get project number, location, userDetails");
         Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
+        Map<String, Object> additionalField=new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ContractServiceConstants.CONTRACTS_REJECT_LOCALIZATION_CODE,additionalField);
+        }
+
 
         log.info("build Message For Reject Action");
         message = buildMessageForRejectAction(contract, smsDetails, message);
-        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
-
         log.info("push message for REJECT Action");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetails);
+
     }
 
     private void pushNotificationToCreatorForApproveAction(ContractRequest request) {
@@ -174,13 +180,16 @@ public class NotificationService {
         //get project number, location, userDetails
         log.info("get project number, location, userDetails");
         Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
-
+        Map<String, Object> additionalField = new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ContractServiceConstants.CONTRACTS_APPROVE_CREATOR_LOCALIZATION_CODE,additionalField);
+        }
         log.info("build Message For Approve Action for WO Creator");
         message = buildMessageForApproveAction_WOCreator(contract, smsDetails, message);
-        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
 
         log.info("push Message For Approve Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetails);
+
     }
 
     private void pushNotificationToCreatorForDeclineAction(ContractRequest request) {
@@ -198,13 +207,16 @@ public class NotificationService {
         //get project number, location, userDetails
         log.info("get project number, location, userDetails");
         Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
-
+        Map<String, Object> additionalField = new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ContractServiceConstants.CONTRACTS_DECLINE_CREATOR_LOCALIZATION_CODE,additionalField);
+        }
         log.info("build Message For decline Action for WO Creator");
         message = buildMessageForDeclineAction_WOCreator(contract, smsDetails, message);
-        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
-
         log.info("push Message For decline Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetails);
+
+
     }
 
     private void pushNotificationToCreatorForAcceptAction(ContractRequest request) {
@@ -222,13 +234,14 @@ public class NotificationService {
         //get project number, location, userDetails
         log.info("get project number, location, userDetails");
         Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
-
+        Map<String, Object> additionalField = new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ContractServiceConstants.CONTRACTS_ACCEPT_CREATOR_LOCALIZATION_CODE,additionalField);
+        }
         log.info("build Message For Accept Action for WO Creator");
         message = buildMessageForAcceptAction_WOCreator(contract, smsDetails, message);
-        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
-
         log.info("push Message For Accept Action for WO Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetails);
     }
 
     private void pushNotificationToCBOForApproveAction(ContractRequest request) {
@@ -243,22 +256,21 @@ public class NotificationService {
         //get org-details: orgName, contactPersonNames, mobileNumbers
 //        Map<String, List<String>> orgDetails = getOrgDetailsForCBOAdmin(request);
 
-        Map<String, List<String>> projDetails = getProjectName(request);
-
+        Map<String, List<String>> projDetails = getProjectNumber(request);
+        Map<String, Object> additionalField = new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ContractServiceConstants.CONTRACTS_APPROVE_CBO_LOCALIZATION_CODE,additionalField);
+        }
         for (int i = 0; i < projDetails.get("mobileNumbers").size(); i++) {
             Map<String,String> smsDetails=new HashMap<>();
-
-            smsDetails.put("projectId",projDetails.get("projectNumber").get(0));
-//            smsDetails.put("projectName",orgDetails.get("projectName").get(0));
-//            smsDetails.put("personName",orgDetails.get("contactPersonNames").get(i));
+            smsDetails.put("projectId",projDetails.get("projectId").get(0));
             smsDetails.put("mobileNumber",projDetails.get("mobileNumbers").get(i));
-
-
             String customizedMessage = buildMessageForApproveAction_WO_CBO(contract, smsDetails, message);
-            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
-            producer.push(config.getSmsNotifTopic(), smsRequest);
+            checkAdditionalFieldAndPushONSmsTopic(customizedMessage,additionalField,smsDetails);
+
         }
     }
+
 
     private Map<String, String> getDetailsForSMS(ContractRequest request, String uuid) {
         RequestInfo requestInfo = request.getRequestInfo();
@@ -300,7 +312,7 @@ public class NotificationService {
 
         return smsDetails;
     }
-    private Map<String, List<String>> getProjectName(ContractRequest request) {
+    private Map<String, List<String>> getProjectNumber(ContractRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
         Contract contract = request.getContract();
@@ -353,7 +365,8 @@ public class NotificationService {
 
         if (request.getContract().getBusinessService() != null
                 && !request.getContract().getBusinessService().isEmpty()
-                && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+                && request.getContract().getBusinessService().equalsIgnoreCase(ContractServiceConstants.CONTRACT_REVISION_BUSINESS_SERVICE)) {
+
             if ("REJECT".equalsIgnoreCase(workflow.getAction())) {
                 message = getMessage(request, ContractServiceConstants.CONTRACT_REVISION_REJECT_LOCALIZATION_CODE);
             } else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
@@ -517,5 +530,29 @@ public class NotificationService {
         }
         else return res;
     }
+
+    private void setAdditionalFields(ContractRequest request, String localizationCode,Map<String, Object> additionalField ){
+        additionalField.put("templateCode",localizationCode);
+        additionalField.put("requestInfo",request.getRequestInfo());
+        additionalField.put("tenantId",request.getContract().getTenantId());
+
+    }
+
+    private void checkAdditionalFieldAndPushONSmsTopic( String customizedMessage , Map<String, Object> additionalField,Map<String,String> smsDetails){
+
+
+        if(!additionalField.isEmpty()){
+            WorksSmsRequest smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
+                    .mobileNumber(smsDetails.get("mobileNumber")).build();
+            log.info("SMS message with additonal fields:::::" + smsRequest.toString());
+            producer.push(config.getMuktaNotificationTopic(), smsRequest);
+
+        }else{
+            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
+            log.info("SMS message without Additonal Fields:::::" + smsRequest.toString());
+            producer.push(config.getSmsNotifTopic(), smsRequest);
+        }
+    }
+
 
 }
