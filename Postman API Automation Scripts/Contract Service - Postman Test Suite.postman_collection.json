@@ -931,7 +931,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"contract\": {\r\n        \"id\": \"{{ContractId}}\",\r\n        \"contractNumber\": \"{{ContractNumber}}\",\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"status\": \"INWORKFLOW\",\r\n        \"endDate\": 0,\r\n        \"startDate\": 1694111400000,\r\n        \"agreementDate\": 0,\r\n        \"completionPeriod\": 30,\r\n        \"contractType\": \"{{contractType}}\",\r\n        \"defectLiabilityPeriod\": 0,\r\n        \"executingAuthority\": \"IA\",\r\n        \"issueDate\": 1694179071576,\r\n        \"orgId\": null,\r\n        \"securityDeposit\": 0,\r\n        \"wfStatus\": \"{{wfStatus}}\",\r\n        \"totalContractedAmount\": {{totalEstimatedAmount}},\r\n        \"lineItems\": [\r\n            {\r\n                \"id\": \"{{lineitem1}}\",\r\n                \"status\": \"ACTIVE\",\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"name\": null,\r\n                \"auditDetails\": {\r\n                    \"createdTime\": {{dateOfProposal}},\r\n                    \"lastModifiedTime\": {{dateOfProposal}},\r\n                    \"createdBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\",\r\n                    \"lastModifiedBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\"\r\n                },\r\n                \"amountBreakups\": [\r\n                    {\r\n                        \"id\": \"{{lineamount1}}\",\r\n                        \"status\": \"ACTIVE\",\r\n                        \"additionalDetails\": null,\r\n                        \"amount\": \"10012\",\r\n                        \"estimateAmountBreakupId\": \"{{estLineamount1}}\"\r\n                    }\r\n                ],\r\n                \"category\": null,\r\n                \"estimateId\": \"{{estId-WO}}\",\r\n                \"estimateLineItemId\": \"{{estLineitem1}}\",\r\n                \"noOfunit\": 13,\r\n                \"unitRate\": 250.28\r\n            },\r\n            {\r\n                \"id\": \"{{lineitem2}}\",\r\n                \"status\": \"ACTIVE\",\r\n                \"tenantId\": \"pg.citya\",\r\n                \"name\": null,\r\n                \"auditDetails\": {\r\n                    \"createdTime\": {{dateOfProposal}},\r\n                    \"lastModifiedTime\": {{dateOfProposal}},\r\n                    \"createdBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\",\r\n                    \"lastModifiedBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\"\r\n                },\r\n                \"amountBreakups\": [\r\n                    {\r\n                        \"id\": \"{{lineamount2}}\",\r\n                        \"status\": \"ACTIVE\",\r\n                        \"additionalDetails\": null,\r\n                        \"amount\": \"585.6\",\r\n                        \"estimateAmountBreakupId\": \"{{estLineamount2}}\"\r\n                    }\r\n                ],\r\n                \"category\": null,\r\n                \"estimateId\": \"{{estId-WO}}\",\r\n                \"estimateLineItemId\": \"{{estLineitem2}}\",\r\n                \"noOfunit\": 0,\r\n                \"unitRate\": 0\r\n            }\r\n        ],\r\n        \"documents\": null,\r\n        \"processInstance\": null,\r\n        \"additionalDetails\": {\r\n            \"officerInChargeId\": \"SMS QA testing\",\r\n            \"attendanceRegisterNumber\": null,\r\n            \"cboOrgNumber\": \"{{cboOrgNumber}}\",\r\n            \"projectId\": \"{{PJId-est}}\",\r\n            \"projectType\": \"{{projectType}}\",\r\n            \"orgName\": {{orgName}},\r\n            \"projectName\": \"{{randomWord}}\",\r\n            \"ward\": \"{{ward}}\",\r\n            \"locality\": \"{{locality}}\",\r\n            \"cboCode\": \"{{orgId}}\",\r\n            \"cboName\": null,\r\n            \"estimateDocs\": [\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"documentUid\": \"{{estfileStoreId}}\",\r\n                    \"fileStoreId\": \"{{estfileStoreId}}\",\r\n                    \"fileName\": \"{{estfileName}}\",\r\n                    \"fileType\": \"{{estfileType}}\"\r\n                },\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"documentUid\": \"{{estfileStoreId}}\",\r\n                    \"fileStoreId\": \"{{estfileStoreId}}\",\r\n                    \"fileName\": \"{{estfileName}}\",\r\n                    \"fileType\": \"{{estfileType}}\"\r\n                },\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"documentUid\": \"{{estfileStoreId}}\",\r\n                    \"fileStoreId\": \"{{estfileStoreId}}\",\r\n                    \"fileName\": \"{{estfileName}}\",\r\n                    \"fileType\": \"{{estfileType}}\"\r\n                },\r\n                {\r\n                    \"tenantId\": null,\r\n                    \"documentUid\": null,\r\n                    \"fileStoreId\": null,\r\n                    \"fileName\": null,\r\n                    \"fileType\": \"ESTIMATE_DOC_DESIGN_DOCUMENT\"\r\n                },\r\n                {\r\n                    \"tenantId\": null,\r\n                    \"documentUid\": null,\r\n                    \"fileStoreId\": null,\r\n                    \"fileName\": \"\",\r\n                    \"fileType\": \"Others\"\r\n                }\r\n            ],\r\n            \"estimateNumber\": \"{{estNo-WO}}\",\r\n            \"totalEstimatedAmount\": {{totalEstimatedAmount}},\r\n            \"completionPeriod\": null,\r\n            \"termsAndConditions\": [\r\n                {\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"projectDesc\": \"{{randomWord}}\",\r\n            \"officerInChargeName\": {\r\n                \"code\": \"SMS QA testing\",\r\n                \"name\": \"SMS QA testing\"\r\n            },\r\n            \"officerInChargeDesgn\": \"Executive Engineer\",\r\n            \"timeExtReason\": null,\r\n            \"timeExt\": null\r\n        },\r\n        \"auditDetails\": {\r\n            \"createdTime\": {{dateOfProposal}},\r\n            \"lastModifiedTime\": {{dateOfProposal}},\r\n            \"createdBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\",\r\n            \"lastModifiedBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\"\r\n        },\r\n        \"businessService\": null,\r\n        \"supplementNumber\": null\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"ACCEPT\",\r\n        \"comment\": \"Work Order has been accepted by CBO\",\r\n        \"assignees\": []\r\n    },\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1694179902678|en_IN\",\r\n        \"authToken\": \"f8ce651e-397f-4306-9c48-b53c8081bae7\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 531,\r\n            \"emailId\": \"cbo@gmail.com\",\r\n            \"mobileNumber\": \"9900000001\",\r\n            \"name\": \"Automation CBO\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9900000001\",\r\n            \"uuid\": \"40e3faae-3314-4e4a-96e9-63e40a27abb5\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+					"raw": "{\r\n    \"contract\": {\r\n        \"id\": \"{{ContractId}}\",\r\n        \"contractNumber\": \"{{ContractNumber}}\",\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"status\": \"INWORKFLOW\",\r\n        \"endDate\": 0,\r\n        \"startDate\": 1694111400000,\r\n        \"agreementDate\": 0,\r\n        \"completionPeriod\": 30,\r\n        \"contractType\": \"{{contractType}}\",\r\n        \"defectLiabilityPeriod\": 0,\r\n        \"executingAuthority\": \"IA\",\r\n        \"issueDate\": 1694179071576,\r\n        \"orgId\": \"{{orgId}}\",\r\n        \"securityDeposit\": 0,\r\n        \"wfStatus\": \"{{wfStatus}}\",\r\n        \"totalContractedAmount\": \"{{totalEstimatedAmount}}\",\r\n        \"lineItems\": [\r\n            {\r\n                \"id\": \"{{lineitem1}}\",\r\n                \"status\": \"ACTIVE\",\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"name\": null,\r\n                \"auditDetails\": {\r\n                    \"createdTime\": \"{{dateOfProposal}}\",\r\n                    \"lastModifiedTime\": \"{{dateOfProposal}}\",\r\n                    \"createdBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\",\r\n                    \"lastModifiedBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\"\r\n                },\r\n                \"amountBreakups\": [\r\n                    {\r\n                        \"id\": \"{{lineamount1}}\",\r\n                        \"status\": \"ACTIVE\",\r\n                        \"additionalDetails\": null,\r\n                        \"amount\": \"10012\",\r\n                        \"estimateAmountBreakupId\": \"{{estLineamount1}}\"\r\n                    }\r\n                ],\r\n                \"category\": null,\r\n                \"estimateId\": \"{{estId-WO}}\",\r\n                \"estimateLineItemId\": \"{{estLineitem1}}\",\r\n                \"noOfunit\": 13,\r\n                \"unitRate\": 250.28\r\n            },\r\n            {\r\n                \"id\": \"{{lineitem2}}\",\r\n                \"status\": \"ACTIVE\",\r\n                \"tenantId\": \"pg.citya\",\r\n                \"name\": null,\r\n                \"auditDetails\": {\r\n                    \"createdTime\": \"{{dateOfProposal}}\",\r\n                    \"lastModifiedTime\": \"{{dateOfProposal}}\",\r\n                    \"createdBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\",\r\n                    \"lastModifiedBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\"\r\n                },\r\n                \"amountBreakups\": [\r\n                    {\r\n                        \"id\": \"{{lineamount2}}\",\r\n                        \"status\": \"ACTIVE\",\r\n                        \"additionalDetails\": null,\r\n                        \"amount\": \"585.6\",\r\n                        \"estimateAmountBreakupId\": \"{{estLineamount2}}\"\r\n                    }\r\n                ],\r\n                \"category\": null,\r\n                \"estimateId\": \"{{estId-WO}}\",\r\n                \"estimateLineItemId\": \"{{estLineitem2}}\",\r\n                \"noOfunit\": 0,\r\n                \"unitRate\": 0\r\n            }\r\n        ],\r\n        \"documents\": null,\r\n        \"processInstance\": null,\r\n        \"additionalDetails\": {\r\n            \"officerInChargeId\": \"SMS QA testing\",\r\n            \"attendanceRegisterNumber\": null,\r\n            \"cboOrgNumber\": \"{{cboOrgNumber}}\",\r\n            \"projectId\": \"{{PJId-est}}\",\r\n            \"projectType\": \"{{projectType}}\",\r\n            \"orgName\": \"{{orgName}}\",\r\n            \"projectName\": \"{{randomWord}}\",\r\n            \"ward\": \"{{ward}}\",\r\n            \"locality\": \"{{locality}}\",\r\n            \"cboCode\": \"{{orgId}}\",\r\n            \"cboName\": null,\r\n            \"estimateDocs\": [\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"documentUid\": \"{{estfileStoreId}}\",\r\n                    \"fileStoreId\": \"{{estfileStoreId}}\",\r\n                    \"fileName\": \"{{estfileName}}\",\r\n                    \"fileType\": \"{{estfileType}}\"\r\n                },\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"documentUid\": \"{{estfileStoreId}}\",\r\n                    \"fileStoreId\": \"{{estfileStoreId}}\",\r\n                    \"fileName\": \"{{estfileName}}\",\r\n                    \"fileType\": \"{{estfileType}}\"\r\n                },\r\n                {\r\n                    \"tenantId\": \"{{tenantId}}\",\r\n                    \"documentUid\": \"{{estfileStoreId}}\",\r\n                    \"fileStoreId\": \"{{estfileStoreId}}\",\r\n                    \"fileName\": \"{{estfileName}}\",\r\n                    \"fileType\": \"{{estfileType}}\"\r\n                },\r\n                {\r\n                    \"tenantId\": null,\r\n                    \"documentUid\": null,\r\n                    \"fileStoreId\": null,\r\n                    \"fileName\": null,\r\n                    \"fileType\": \"ESTIMATE_DOC_DESIGN_DOCUMENT\"\r\n                },\r\n                {\r\n                    \"tenantId\": null,\r\n                    \"documentUid\": null,\r\n                    \"fileStoreId\": null,\r\n                    \"fileName\": \"\",\r\n                    \"fileType\": \"Others\"\r\n                }\r\n            ],\r\n            \"estimateNumber\": \"{{estNo-WO}}\",\r\n            \"totalEstimatedAmount\": \"{{totalEstimatedAmount}}\",\r\n            \"completionPeriod\": null,\r\n            \"termsAndConditions\": [\r\n                {\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"projectDesc\": \"{{randomWord}}\",\r\n            \"officerInChargeName\": {\r\n                \"code\": \"SMS QA testing\",\r\n                \"name\": \"SMS QA testing\"\r\n            },\r\n            \"officerInChargeDesgn\": \"Executive Engineer\",\r\n            \"timeExtReason\": null,\r\n            \"timeExt\": null\r\n        },\r\n        \"auditDetails\": {\r\n            \"createdTime\": \"{{dateOfProposal}}\",\r\n            \"lastModifiedTime\": \"{{dateOfProposal}}\",\r\n            \"createdBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\",\r\n            \"lastModifiedBy\": \"bff9c3f6-6a25-45c4-b7ae-dddc016598fd\"\r\n        },\r\n        \"businessService\": null,\r\n        \"supplementNumber\": null\r\n    },\r\n    \"workflow\": {\r\n        \"action\": \"ACCEPT\",\r\n        \"comment\": \"Work Order has been accepted by CBO\",\r\n        \"assignees\": []\r\n    },\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1694179902678|en_IN\",\r\n        \"authToken\": \"f8ce651e-397f-4306-9c48-b53c8081bae7\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 531,\r\n            \"emailId\": \"cbo@gmail.com\",\r\n            \"mobileNumber\": \"9900000001\",\r\n            \"name\": \"Automation CBO\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9900000001\",\r\n            \"uuid\": \"40e3faae-3314-4e4a-96e9-63e40a27abb5\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1049,6 +1049,385 @@
 						"contract",
 						"v1",
 						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Contract - Success - Search by WO Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () =>\r",
+							"   pm.expect(pm.response.to.have.status(200))\r",
+							");\r",
+							"\r",
+							"pm.test(\"Search response is received\", function () {\r",
+							"    var res = pm.response.json();\r",
+							"    var ContractId = res.contracts[0].id;\r",
+							"    pm.expect(ContractId).to.eql(pm.collectionVariables.get(\"ContractId\"));\r",
+							"    }\r",
+							");\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n        \"{{ContractId}}\"\r\n    ],\r\n    \"estimateIds\": [],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"\",\r\n    \"fromDate\": null,\r\n    \"toDate\": null,\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/contract/v1/_search?tenantId={{tenantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"contract",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Contract - Success - Search by estimateId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () =>\r",
+							"   pm.expect(pm.response.to.have.status(200))\r",
+							");\r",
+							"\r",
+							"pm.test(\"Search response is received\", function () {\r",
+							"    var res = pm.response.json();\r",
+							"    var estimateId = res.contracts[0].estimateId;\r",
+							"    pm.expect(estimateId).to.eql(pm.collectionVariables.get(\"estimateId\"));\r",
+							"    }\r",
+							");\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n        \r\n    ],\r\n    \"estimateIds\": [\"{{estId-WO}}\"],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"\",\r\n    \"fromDate\": null,\r\n    \"toDate\": null,\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/contract/v1/_search?tenantId={{tenantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"contract",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Contract - Success - Search by Contract Type",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () =>\r",
+							"   pm.expect(pm.response.to.have.status(200))\r",
+							");\r",
+							"\r",
+							"pm.test(\"Search response is received\", function () {\r",
+							"    var res = pm.response.json();\r",
+							"    var contractType = res.contracts[0].contractType;\r",
+							"    pm.expect(contractType).to.eql(pm.collectionVariables.get(\"contractType\"));\r",
+							"    }\r",
+							");\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n      \r\n    ],\r\n    \"estimateIds\": [],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"{{contractType}}\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"\",\r\n    \"fromDate\": null,\r\n    \"toDate\": null,\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/contract/v1/_search?tenantId={{tenantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"contract",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Contract - Success - Search by Contract Number",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () =>\r",
+							"   pm.expect(pm.response.to.have.status(200))\r",
+							");\r",
+							"\r",
+							"pm.test(\"Search response is received\", function () {\r",
+							"    var res = pm.response.json();\r",
+							"    var contractNumber = res.contracts[0].contractNumber;\r",
+							"    pm.expect(contractNumber).to.eql(pm.collectionVariables.get(\"ContractNumber\"));\r",
+							"    }\r",
+							");\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n    ],\r\n    \"estimateIds\": [],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"{{ContractNumber}}\",\r\n    \"fromDate\": null,\r\n    \"toDate\": null,\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/contract/v1/_search?tenantId={{tenantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"contract",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Contract - Success - Search by From and To date",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () =>\r",
+							"   pm.expect(pm.response.to.have.status(200))\r",
+							");\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n    ],\r\n    \"estimateIds\": [],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"\",\r\n    \"fromDate\": {{createdTime}},\r\n    \"toDate\": {{dateOfProposal}},\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/contract/v1/_search?tenantId={{tenantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"contract",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Contract - Validation Error - createdFrom greater than createdTo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => \r",
+							"   pm.expect(pm.response.to.have.status(400)));\r",
+							"\r",
+							"pm.test(\"Correct Error with message and code is received\", function () {\r",
+							"    var res = pm.response.json();\r",
+							"    var code = res.Errors[0].code;\r",
+							"    var message = res.Errors[0].message;\r",
+							"    pm.expect(code).to.eql(\"FROM_GREATER_THAN_TO_DATE\");\r",
+							"    pm.expect(message).to.eql(\"From date is greater than to date\");\r",
+							"    }\r",
+							");\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n    ],\r\n    \"estimateIds\": [],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"\",\r\n    \"fromDate\": 5000,\r\n    \"toDate\": 2000,\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/contract/v1/_search?tenantId={{tenantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"contract",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Contract - Validation Error - createdTo without createdFrom param",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is successful\", () => \r",
+							"   pm.expect(pm.response.to.have.status(400)));\r",
+							"\r",
+							"pm.test(\"Correct Error with message and code is received\", function () {\r",
+							"    var res = pm.response.json();\r",
+							"    var code = res.Errors[0].code;\r",
+							"    var message = res.Errors[0].message;\r",
+							"    pm.expect(code).to.eql(\"INVALID_SEARCH_PARAM\");\r",
+							"    pm.expect(message).to.eql(\"Cannot specify toDate without a fromDate\");\r",
+							"    }\r",
+							");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"mukta-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"Search Contract\",\r\n        \"authToken\": \"{{auth}}\"\r\n    },\r\n    \"tenantId\": \"{{tenantId}}\",\r\n    \"ids\": [\r\n    ],\r\n    \"estimateIds\": [],\r\n    \"estimateLineItemIds\": [],\r\n    \"contractType\": \"\",\r\n    \"orgIds\": [],\r\n    \"contractNumber\": \"\",\r\n    \"toDate\": {{lastModifiedTime}},\r\n    \"pagination\": {\r\n        \"limit\": \"10\",\r\n        \"offSet\": \"\",\r\n        \"sortBy\": \"\",\r\n        \"order\": \"desc\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/contract/v1/_search?tenantId={{tenantId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"contract",
+						"v1",
+						"_search"
+					],
+					"query": [
+						{
+							"key": "tenantId",
+							"value": "{{tenantId}}"
+						}
 					]
 				}
 			},

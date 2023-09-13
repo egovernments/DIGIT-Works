@@ -118,6 +118,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							"// pm.environment.create('QA');",
 							"pm.collectionVariables.set(\"tenantId\", \"pg.citya\");",
 							"pm.collectionVariables.set(\"natureOfWork\", \"\");",
 							"pm.collectionVariables.set(\"department\", \"\");",
