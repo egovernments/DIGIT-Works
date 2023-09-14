@@ -20,6 +20,7 @@
     "@egovernments/digit-ui-libraries": "1.5.0",
     "@egovernments/digit-ui-module-attendencemgmt": "0.2.4",
     "@egovernments/digit-ui-module-contracts": "0.2.10-test",
+    "@egovernments/digit-ui-module-measurement":"1.0.0",
     "@egovernments/digit-ui-module-core": "1.5.39",
     "@egovernments/digit-ui-module-dss": "1.5.52",
     "@egovernments/digit-ui-module-estimate": "0.2.1",
