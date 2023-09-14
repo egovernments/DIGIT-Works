@@ -15,16 +15,16 @@ import { initContractsComponents } from "@egovernments/digit-ui-module-contracts
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
-import { initProjectComponents } from  "@egovernments/digit-ui-module-project";
+import { initProjectComponents } from "@egovernments/digit-ui-module-project";
 import "@egovernments/digit-ui-works-css/example/index.css";
 import { initMeasurementComponents } from "@egovernments/digit-ui-module-measurement";
-import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
+import { initMuktaCustomisations } from "@egovernments/digit-ui-customisation-mukta";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
 
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";
 
-import { pgrCustomizations  } from "./pgr";
+import { pgrCustomizations } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
 var Digit = window.Digit || {};
 
@@ -40,8 +40,10 @@ const enabledModules = [
   "Mukta",
   "DSS",
   "Sample",
+
   "Measurement"
-  // "Engagement"
+
+ 
 ];
 
 const initTokens = (stateCode) => {
@@ -99,14 +101,17 @@ const initDigitUI = () => {
       customiseRenewalCreateFormData: (formData, licenceObject) => licenceObject,
       customiseSendbackFormData: (formData, licenceObject) => licenceObject,
     },
-    commonUiConfig: UICustomizations
+    commonUiConfig: UICustomizations,
   };
   const registry = window?.Digit.ComponentRegistryService.getRegistry();
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
   initMuktaCustomisations();
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding="employee" />, document.getElementById("root"));
+  ReactDOM.render(
+    <DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding="employee" />,
+    document.getElementById("root")
+  );
 };
 
 initLibraries().then(() => {
