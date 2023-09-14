@@ -12,6 +12,7 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/Estimate",
     "micro-ui-internals/packages/modules/Expenditure",
+    "micro-ui-internals/packages/modules/Measurement",
     "micro-ui-internals/packages/Mukta"
   ],
   "homepage": "/works-ui",
