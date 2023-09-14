@@ -10,7 +10,7 @@ const InboxMeasurement = () => {
   const location = useLocation()
   const configs = InboxMeasurementConfig();
 
-  // if (isLoading) return <Loader />;
+
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">

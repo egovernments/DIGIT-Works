@@ -9,13 +9,14 @@ const SearchMeasurement = () => {
   const history = useHistory()
   const location = useLocation()
   const configs = SearchMeasurementConfig();
+  
 
-  if (isLoading) return <Loader />;
+  // if (isLoading) return <Loader />;
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">
         <Header className="works-header-search">{t(configs?.label)}</Header>
-        {Digit.Utils.didEmployeeHasRole(configs?.actionRole) && (
+        {/* {Digit.Utils.didEmployeeHasRole(configs?.actionRole) && (
           <Button
             label={t(configs?.actionLabel)}
             variation="secondary"
@@ -25,7 +26,7 @@ const SearchMeasurement = () => {
             }}
             type="button"
           />
-        )}
+        )} */}
       </div>
       <div className="inbox-search-wrapper">
         <InboxSearchComposer configs={configs}></InboxSearchComposer>

@@ -29,10 +29,12 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
 rementModule,
   MeasurementCard,
+
   MeasurementModule,
   MeasureCard,
   MeasureTable,
   MeasureRow,
+
 };
 
 export const initMeasurementComponents = () => {
