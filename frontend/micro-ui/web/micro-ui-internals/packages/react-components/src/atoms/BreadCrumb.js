@@ -4,7 +4,9 @@ import { Link } from "react-router-dom";
 
 const Breadcrumb = (props) => {
   function isLast(index) {
-    return index === props.crumbs.length - 1;
+    //to check if the crumb is the last object in the valid crumb array so it will be non clickable
+    let validcrumb = props.crumbs?.filter((ob) => ob?.show == true)
+    return validcrumb?.findIndex((ob) => ob?.path === props?.crumbs?.[index]?.path) === validcrumb?.length - 1;
   }
   return (
     <ol className="bread-crumb">
