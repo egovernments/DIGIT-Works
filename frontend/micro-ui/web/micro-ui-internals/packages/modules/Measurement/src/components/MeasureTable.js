@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 
 
-const MeasurementTable = () => {
+const MeasureTable = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -17,4 +17,4 @@ const MeasurementTable = () => {
   );
 };
 
-export default MeasurementTable;
+export default MeasureTable;
