@@ -11,7 +11,19 @@ export const CreateConfig = [
         disable: false,
         populators: { name: "salutation", error: "Required", validation: { pattern: /^[A-Za-z]+$/i, maxlength: 5 } },
       },
-
+      {
+        type: "component",
+        component: "MeasureTable",
+        withoutLabel: true,
+        key: "SOR",
+      },
+      {
+        type: "component",
+        component: "MeasureTable",
+        withoutLabel: true,
+        key: "SOR",
+      },
     ],
   },
 ];
+

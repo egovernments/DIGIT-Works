@@ -39,7 +39,8 @@ const enabledModules = [
   "Project",
   "Mukta",
   "DSS",
-  "Measurement"
+  "Sample",
+  "Measurement",
   // "Engagement"
 ];
 
@@ -98,14 +99,17 @@ const initDigitUI = () => {
       customiseRenewalCreateFormData: (formData, licenceObject) => licenceObject,
       customiseSendbackFormData: (formData, licenceObject) => licenceObject,
     },
-    commonUiConfig: UICustomizations
+    commonUiConfig: UICustomizations,
   };
   const registry = window?.Digit.ComponentRegistryService.getRegistry();
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
   initMuktaCustomisations();
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding="employee" />, document.getElementById("root"));
+  ReactDOM.render(
+    <DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding="employee" />,
+    document.getElementById("root")
+  );
 };
 
 initLibraries().then(() => {
