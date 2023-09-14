@@ -1,11 +1,11 @@
 import { EmployeeModuleCard, CaseIcon } from "@egovernments/digit-ui-react-components";
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const MeasurementCard = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
- 
+
 
   const propsForModuleCard = {
     Icon: <CaseIcon />,
@@ -21,7 +21,7 @@ const MeasurementCard = () => {
     links: [
       {
         label: t("ACTION_TEST_CREATE_MEASUREMENT"),
-        link: `/${window?.contextPath}/employee/measurement/create-measurement`,
+        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000783`,
         roles: ["EMPLOYEE"],
       }
     ],

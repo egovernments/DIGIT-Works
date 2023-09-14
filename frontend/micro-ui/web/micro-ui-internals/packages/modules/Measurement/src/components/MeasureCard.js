@@ -12,7 +12,7 @@ const MeasureCard = () => {
 
   return (
     <Card>
-        View
+      View
     </Card>
   );
 };

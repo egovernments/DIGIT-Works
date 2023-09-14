@@ -29,12 +29,12 @@ const App = ({ path }) => {
   return (
     <Switch>
       <React.Fragment>
-            <MeasurementBreadCrumbs location={location} />
-          <PrivateRoute path={`${path}/create`} component={() => <CreateMeasurement {...{ path }} />} />
-          <PrivateRoute path={`${path}/search`} component={() => <InboxMeasurement {...{ path }} />} />
+        <MeasurementBreadCrumbs location={location} />
+        <PrivateRoute path={`${path}/create`} component={() => <CreateMeasurement {...{ path }} />} />
+        <PrivateRoute path={`${path}/search`} component={() => <InboxMeasurement {...{ path }} />} />
 
-          <PrivateRoute path={`${path}/inbox`} component={() => <SearchMeasurement {...{ path }} />} />
-          <PrivateRoute path={`${path}/view`} component={() => <ViewMeasurement {...{ path }} />} />
+        <PrivateRoute path={`${path}/inbox`} component={() => <SearchMeasurement {...{ path }} />} />
+        <PrivateRoute path={`${path}/view`} component={() => <ViewMeasurement {...{ path }} />} />
       </React.Fragment>
     </Switch>
   );
