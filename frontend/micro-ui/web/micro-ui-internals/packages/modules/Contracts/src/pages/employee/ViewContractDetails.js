@@ -210,7 +210,7 @@ const ViewContractDetails = () => {
                         editCallback = {handleEditTimeExtension}
                     />}
                     {/* //added temp logic to enable measurement option */}
-                    {data?.applicationData?.wfStatus !== "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension ?
+                    {actionsMenu?.length>0 ?
                         <ActionBar>
 
                             {showActions ? <Menu

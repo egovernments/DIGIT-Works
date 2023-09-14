@@ -9,6 +9,7 @@
     "packages/react-components",
     "packages/modules/Estimate",
     "packages/modules/Measurement",
+    "packages/modules/Contracts",
     "packages/Mukta"
   ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
@@ -41,7 +42,7 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "buildD:attendencemgmt": "cd packages/modules/AttendenceMgmt && yarn build",
-    "buildD:contracts": "cd packages/modules/Contracts && yarn build",
+    "build:contracts": "cd packages/modules/Contracts && yarn build",
     "buildD:masters": "cd packages/modules/Masters && yarn build",
     "build:estimate": "cd packages/modules/Estimate && yarn build",
     "build:measurement": "cd packages/modules/Measurement && yarn build",
