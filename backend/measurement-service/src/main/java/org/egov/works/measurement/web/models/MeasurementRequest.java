@@ -2,13 +2,16 @@ package org.egov.works.measurement.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -24,23 +27,24 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MeasurementRequest   {
-        @JsonProperty("requestInfo")
+public class MeasurementRequest {
 
-          @Valid
-                private RequestInfo requestInfo = null;
+    @JsonProperty("requestInfo")
+    @Valid
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("measurements")
-          @Valid
-        @Size(min=1)         private List<Measurement> measurements = null;
+    @JsonProperty("measurements")
+    @Valid
+    @Size(min = 1)
+    private List<Measurement> measurements = null;
 
 
-        public MeasurementRequest addMeasurementsItem(Measurement measurementsItem) {
-            if (this.measurements == null) {
+    public MeasurementRequest addMeasurementsItem(Measurement measurementsItem) {
+        if (this.measurements == null) {
             this.measurements = new ArrayList<>();
-            }
+        }
         this.measurements.add(measurementsItem);
         return this;
-        }
+    }
 
 }

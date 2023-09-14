@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.egov.works.measurement.TestConfiguration;
 
-    import java.util.ArrayList;
-    import java.util.HashMap;
-    import java.util.List;
-    import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -26,8 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
-* API tests for MeasurementApiController
-*/
+ * API tests for MeasurementApiController
+ */
 @Ignore
 @RunWith(SpringRunner.class)
 @WebMvcTest(MeasurementApiController.class)
@@ -40,29 +40,29 @@ public class MeasurementApiControllerTest {
     @Test
     public void measurementV1CreatePostSuccess() throws Exception {
         mockMvc.perform(post("/measurement/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
+                        .APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void measurementV1CreatePostFailure() throws Exception {
         mockMvc.perform(post("/measurement/v1/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
+                        .APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void measurementV1UpdatePostSuccess() throws Exception {
         mockMvc.perform(post("/measurement/v1/_update").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
+                        .APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void measurementV1UpdatePostFailure() throws Exception {
         mockMvc.perform(post("/measurement/v1/_update").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
-        .andExpect(status().isBadRequest());
+                        .APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
     }
 
 }

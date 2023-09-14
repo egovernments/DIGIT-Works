@@ -1,14 +1,19 @@
 package org.egov.works.measurement.web.models;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -24,32 +29,29 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Error   {
-        @JsonProperty("code")
-          @NotNull
+public class Error {
 
-                private String code = null;
+    @JsonProperty("code")
+    @NotNull
+    private String code = null;
 
-        @JsonProperty("message")
-          @NotNull
+    @JsonProperty("message")
+    @NotNull
+    private String message = null;
 
-                private String message = null;
+    @JsonProperty("description")
+    private String description = null;
 
-        @JsonProperty("description")
-
-                private String description = null;
-
-        @JsonProperty("params")
-
-                private List<String> params = null;
+    @JsonProperty("params")
+    private List<String> params = null;
 
 
-        public Error addParamsItem(String paramsItem) {
-            if (this.params == null) {
+    public Error addParamsItem(String paramsItem) {
+        if (this.params == null) {
             this.params = new ArrayList<>();
-            }
+        }
         this.params.add(paramsItem);
         return this;
-        }
+    }
 
 }

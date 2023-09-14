@@ -3,6 +3,7 @@ package org.egov.works.measurement.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 
 import lombok.AllArgsConstructor;
@@ -19,21 +20,19 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MeasurementSearchRequest   {
-        @JsonProperty("requestInfo")
+public class MeasurementSearchRequest {
 
-          @Valid
-                private RequestInfo requestInfo = null;
+    @JsonProperty("requestInfo")
+    @Valid
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("criteria")
+    @JsonProperty("criteria")
+    @Valid
+    private MeasurementCriteria criteria = null;
 
-          @Valid
-                private MeasurementCriteria criteria = null;
-
-        @JsonProperty("pagination")
-
-          @Valid
-                private Pagination pagination = null;
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination = null;
 
 
 }

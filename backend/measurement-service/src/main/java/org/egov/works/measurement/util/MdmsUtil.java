@@ -32,10 +32,8 @@ public class MdmsUtil {
     private Configuration configs;
 
 
-
-
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
-                                                                                List<String> masterNameList) {
+                                                             List<String> masterNameList) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId, moduleName, masterNameList);
@@ -45,8 +43,8 @@ public class MdmsUtil {
         try {
             response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
             mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
-        }catch(Exception e) {
-            log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
+        } catch (Exception e) {
+            log.error(ERROR_WHILE_FETCHING_FROM_MDMS, e);
         }
 
         return mdmsResponse.getMdmsRes();
@@ -56,7 +54,7 @@ public class MdmsUtil {
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,
                                            String moduleName, List<String> masterNameList) {
         List<MasterDetail> masterDetailList = new ArrayList<>();
-        for(String masterName: masterNameList) {
+        for (String masterName : masterNameList) {
             MasterDetail masterDetail = new MasterDetail();
             masterDetail.setName(masterName);
             masterDetailList.add(masterDetail);
