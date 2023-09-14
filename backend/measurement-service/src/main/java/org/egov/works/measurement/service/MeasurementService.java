@@ -88,6 +88,8 @@ public class MeasurementService {
             System.out.println(idList.get(0));
             measurement1.setMeasurementNumber(idList.get(0)); // enrich IdGen
             measurement1.setId(UUID.randomUUID());            // enrich UUID
+            measurement1.setTenantId(tenantId);
+//            AuditDetails auditDetails = new AuditDetails().setCreatedBy(request.getRequestInfo());
             measurementList.add(measurement1);
         });
         response.setMeasurements(measurementList);
