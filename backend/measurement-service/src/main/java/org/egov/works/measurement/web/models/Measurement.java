@@ -39,6 +39,11 @@ public class Measurement {
     @Valid
     private UUID id = null;
 
+    @JsonProperty("tenantId")
+    @NotNull
+    @Size(min = 2, max = 64)
+    private String tenantId = null;
+
     @JsonProperty("measurementNumber")
     @Size(min = 2, max = 64)
     private String measurementNumber = null;
