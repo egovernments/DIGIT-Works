@@ -123,11 +123,10 @@ const ViewContractDetails = () => {
     }
 
     const handleActionBar = (option) => {
-        
         if (option?.name === "CREATE_PURCHASE_BILL") {
             history.push(`/${window.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&workOrderNumber=${contractId}`);
         }
-        if (option?.name === "CREATE_MEASUREMENT") {
+        if (option?.action === "CREATE_MEASUREMENT") {
             history.push(`/${window.contextPath}/employee/measurement/create?tenantId=${tenantId}&workOrderNumber=${contractId}`);
         }
         if (option?.action === "TIME_EXTENSTION") {
