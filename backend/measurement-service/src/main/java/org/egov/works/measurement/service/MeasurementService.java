@@ -1,6 +1,7 @@
 package org.egov.works.measurement.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.MdmsUtil;
@@ -21,11 +22,15 @@ public class MeasurementService {
     private final MdmsUtil mdmsUtil;
     private final IdgenUtil idgenUtil;
     private final Producer producer;
+
+    private final Configuration configuration;
+
     @Autowired
-    public MeasurementService(MdmsUtil mdmsUtil, IdgenUtil idgenUtil, Producer producer) {
+    public MeasurementService(MdmsUtil mdmsUtil, IdgenUtil idgenUtil, Producer producer, Configuration configuration) {
         this.mdmsUtil = mdmsUtil;
         this.idgenUtil = idgenUtil;
         this.producer = producer;
+        this.configuration = configuration;
     }
 
     /**
@@ -87,7 +92,7 @@ public class MeasurementService {
         });
         response.setMeasurements(measurementList);
         // FIXME: add audit details
-        producer.push("save-measurement-details",response);  // FIXME: shift this to constants
+        producer.push(configuration.getCreateMeasurementTopic(),response);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
