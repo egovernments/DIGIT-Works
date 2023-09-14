@@ -1,13 +1,16 @@
 package org.egov.works.measurement.web.models;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -23,55 +26,53 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Pagination   {
-        @JsonProperty("limit")
+public class Pagination {
 
-         @DecimalMax("100")         private Double limit = 10d;
+    @JsonProperty("limit")
+    @DecimalMax("100")
+    private Double limit = 10d;
 
-        @JsonProperty("offSet")
+    @JsonProperty("offSet")
+    private Double offSet = 0d;
 
-                private Double offSet = 0d;
+    @JsonProperty("totalCount")
+    private Double totalCount = null;
 
-        @JsonProperty("totalCount")
+    @JsonProperty("sortBy")
+    private String sortBy = null;
 
-                private Double totalCount = null;
+    @JsonProperty("order")
+    private OrderEnum order = null;
 
-        @JsonProperty("sortBy")
+    /**
+     * Sorting order
+     */
+    public enum OrderEnum {
+        ASC("asc"),
 
-                private String sortBy = null;
+        DESC("desc");
 
-        @JsonProperty("order")
-        private OrderEnum order = null;
+        private String value;
 
-        /**
-         * Sorting order
-         */
-        public enum OrderEnum {
-                ASC("asc"),
-
-                DESC("desc");
-
-                private String value;
-
-                OrderEnum(String value) {
-                        this.value = value;
-                }
-
-                @JsonCreator
-                public static OrderEnum fromValue(String text) {
-                        for (OrderEnum b : OrderEnum.values()) {
-                                if (String.valueOf(b.value).equals(text)) {
-                                        return b;
-                                }
-                        }
-                        return null;
-                }
-
-                @Override
-                @JsonValue
-                public String toString() {
-                        return String.valueOf(value);
-                }
+        OrderEnum(String value) {
+            this.value = value;
         }
+
+        @JsonCreator
+        public static OrderEnum fromValue(String text) {
+            for (OrderEnum b : OrderEnum.values()) {
+                if (String.valueOf(b.value).equals(text)) {
+                    return b;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
 
 }

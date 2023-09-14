@@ -3,6 +3,7 @@ package org.egov.works.measurement.web.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import digit.models.coremodels.Workflow;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
 
 import lombok.AllArgsConstructor;
@@ -19,16 +20,15 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MeasurementService   {
-        @JsonProperty("allOf")
+public class MeasurementService {
 
-          @Valid
-                private Measurement allOf = null;
+    @JsonProperty("allOf")
+    @Valid
+    private Measurement allOf = null;
 
-        @JsonProperty("workflow")
-
-          @Valid
-                private Workflow workflow = null;
+    @JsonProperty("workflow")
+    @Valid
+    private Workflow workflow = null;
 
 
 }
