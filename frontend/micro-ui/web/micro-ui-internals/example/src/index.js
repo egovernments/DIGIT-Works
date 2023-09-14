@@ -39,6 +39,7 @@ const enabledModules = [
   "Project",
   "Mukta",
   "DSS",
+  "Sample",
   "Measurement"
   // "Engagement"
 ];
