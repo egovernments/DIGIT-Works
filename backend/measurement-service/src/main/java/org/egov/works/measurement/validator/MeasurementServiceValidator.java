@@ -25,14 +25,6 @@ public class MeasurementServiceValidator {
         return measurement;
     }
 
-
-
-    // Step 2: Make an API request to retrieve file store IDs
-
-
-
-
-    // Step 3: Parse the API response and check if all document IDs were found
     public boolean checkDocumentIdsMatch(List<String> documentIds, String responseJson) {
         ObjectMapper objectMapper = new ObjectMapper();
 

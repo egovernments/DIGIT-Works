@@ -140,6 +140,4 @@ public class MeasurementService {
         return httpGet;
     }
 
-    // Step 1: Extract document IDs from the measurement request
-
 }
