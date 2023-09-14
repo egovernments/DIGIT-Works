@@ -63,7 +63,7 @@ router.post(
             try {
                 let workflowRequest = {};
                 workflowRequest["RequestInfo"] = requestinfo["RequestInfo"];
-                resWorkFlow = await search_workflow(contractId, tenantId, workflowRequest);
+                resWorkFlow = await search_workflow(contractId, tenantId, workflowRequest,true);
             }
             catch (ex) {
                 if (ex.response && ex.response.data) console.log(ex.response.data);
@@ -127,6 +127,16 @@ router.post(
                 contract.contracts[0].orgWard = organisation.organisations[0].orgAddress[0].boundaryCode
                 contract.contracts[0].orgLocality = organisation.organisations[0].additionalDetails.locality
                 contract.contracts[0].orgDistrict = organisation.organisations[0].orgAddress[0].district
+                var approversName;
+
+                for(var workflow in worflow.ProcessInstances){
+                    var obj = worflow.ProcessInstances[workflow];
+                    if(obj.action=="APPROVE"){
+                        approversName=obj.assigner.name;
+                        break;
+                    }
+                }
+                contract.contracts[0].approverName=approversName;
 
                 let address = [];
                 let tenantIdForTnC = '';

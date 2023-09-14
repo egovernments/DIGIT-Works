@@ -169,10 +169,11 @@ async function search_user(uuid, tenantId, requestinfo) {
 }
 
 
-async function search_workflow(applicationNumber, tenantId, requestinfo) {
+async function search_workflow(applicationNumber, tenantId, requestinfo,history) {
   var params = {
     tenantId: tenantId,
     businessIds: applicationNumber,
+    history: history,
   };
   return await axios({
     method: "post",
