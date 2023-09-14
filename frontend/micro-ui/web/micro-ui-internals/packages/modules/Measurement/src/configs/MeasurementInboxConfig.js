@@ -1,4 +1,4 @@
-const SearchMeasurementConfig = () => {
+const InboxMeasurementConfig = () => {
     return {
       label: "WORKS_SEARCH_WAGESEEKERS",
       type: "search",
@@ -187,4 +187,4 @@ const SearchMeasurementConfig = () => {
     };
   };
   
-  export default SearchMeasurementConfig;
+  export default InboxMeasurementConfig;
