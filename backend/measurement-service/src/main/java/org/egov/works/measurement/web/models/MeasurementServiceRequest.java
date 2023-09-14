@@ -1,6 +1,7 @@
 package org.egov.works.measurement.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import digit.models.coremodels.Workflow;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
@@ -34,10 +35,13 @@ public class MeasurementServiceRequest {
 
     @JsonProperty("measurements")
     @Valid
-    private List<MeasurementService> measurements = null;
+    private List<Measurement> measurements = null;
 
+    @JsonProperty("workflow")
+    @Valid
+    private Workflow workflow = null;
 
-    public MeasurementServiceRequest addMeasurementsItem(MeasurementService measurementsItem) {
+    public MeasurementServiceRequest addMeasurementsItem(Measurement measurementsItem) {
         if (this.measurements == null) {
             this.measurements = new ArrayList<>();
         }

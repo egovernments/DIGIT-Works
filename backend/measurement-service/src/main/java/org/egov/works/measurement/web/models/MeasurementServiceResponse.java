@@ -34,10 +34,10 @@ public class MeasurementServiceResponse {
 
     @JsonProperty("measurements")
     @Valid
-    private List<MeasurementService> measurements = null;
+    private List<Measurement> measurements = null;
 
 
-    public MeasurementServiceResponse addMeasurementsItem(MeasurementService measurementsItem) {
+    public MeasurementServiceResponse addMeasurementsItem(Measurement measurementsItem) {
         if (this.measurements == null) {
             this.measurements = new ArrayList<>();
         }
