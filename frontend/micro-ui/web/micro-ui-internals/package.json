@@ -29,6 +29,7 @@
     "dev:contracts": "cd packages/modules/Contracts && yarn start",
     "dev:attendencemgmt": "cd packages/modules/AttendenceMgmt && yarn start",
     "dev:masters": "cd packages/modules/Masters && yarn start",
+    "dev:measurement": "cd packages/modules/Measurement && yarn start",
     "dev:project": "cd packages/modules/Project && yarn start",
     "dev:estimate": "cd packages/modules/Estimate && yarn start",
     "dev:mukta": "cd packages/Mukta && yarn start",
