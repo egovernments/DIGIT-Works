@@ -1,32 +1,37 @@
 package org.egov.works.measurement.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.MdmsUtil;
-import org.egov.works.measurement.web.models.Measure;
-import org.egov.works.measurement.web.models.MeasurementRequest;
-import org.egov.works.measurement.web.models.MeasurementResponse;
+import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.Error;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
 public class MeasurementService {
     private final MdmsUtil mdmsUtil;
     private final IdgenUtil idgenUtil;
+    private final Producer producer;
     @Autowired
-    public MeasurementService(MdmsUtil mdmsUtil, IdgenUtil idgenUtil) {
+    public MeasurementService(MdmsUtil mdmsUtil, IdgenUtil idgenUtil, Producer producer) {
         this.mdmsUtil = mdmsUtil;
         this.idgenUtil = idgenUtil;
+        this.producer = producer;
     }
 
     /**
      * create one or more measurements entries
      */
-    public void createMeasurement(MeasurementRequest request){
+    public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
         System.out.println("Create Measurement service is called");
 
         String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
@@ -47,38 +52,43 @@ public class MeasurementService {
         // req & validate for mdms data
         //---------------------------------
         MeasurementResponse response = new MeasurementResponse();
-        response.getResponseInfo().setApiId(request.getRequestInfo().getApiId());
-        response.getResponseInfo().setMsgId(request.getRequestInfo().getMsgId());
-//        response.getResponseInfo().setStatus(request.getRequestInfo());
-//        response.getResponseInfo().setTs(request.get);
-//        response.getResponseInfo().setVer();
-        request.getMeasurements().forEach(measurement -> {
+        List<Measurement> measurementList = new ArrayList<>();
 
+        request.getMeasurements().forEach(measurement -> {
+            Measurement measurement1 = new Measurement();
             for (Measure measure : measurement.getMeasures()) {
 
-                measure.getDocuments().forEach(document -> {
+                // check all the docs;
+                int isValidDocs = 1;
+                for (Document document : measure.getDocuments()) {
                     System.out.println(document.getDocumentUid());
-                    if(!isValidDocuments(document.getDocumentUid())){
+                    if (!isValidDocuments(document.getDocumentUid())) {
+                        isValidDocs = 0;
                         throw new Error("No Documents found with the given Ids");
-                    }
-                    else{
+                    } else {
                         // enrich the req
                         // fetch the ids
-                        System.out.println(tenantId);
-                        List<String> idList =  idgenUtil.getIdList(request.getRequestInfo(),tenantId,idName,idFormat,1);
-
-                        System.out.println(idList);
-                        response.getMeasurements();
+//                        System.out.println(tenantId);
+//                        List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
+//                        System.out.println(idList);
+//                        measure.setReferenceId(idList.get(0));
                     }
-                });
+                }
+                if(isValidDocs == 1){
+                    measure.setId(UUID.randomUUID());
+                }
             }
-
-
+            measurement1.setMeasures(measurement.getMeasures());
+            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
+            System.out.println(idList.get(0));
+            measurement1.setMeasurementNumber(idList.get(0)); // enrich IdGen
+            measurement1.setId(UUID.randomUUID());            // enrich UUID
+            measurementList.add(measurement1);
         });
-        // req & validate documents
-        // enrich ( IdGen)
-        // enrich UUID, audit details
-        // push to kafka
+        response.setMeasurements(measurementList);
+        // FIXME: add audit details
+        producer.push("save-measurement-details",response);  // FIXME: shift this to constants
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
     public boolean isValidDocuments(String documentId){
