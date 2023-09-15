@@ -146,7 +146,7 @@ public class MeasurementService {
         response.setMeasurements(measurementList);
 
         // push to kafka topic
-        producer.push(configuration.getCreateMeasurementTopic(),response);
+        producer.push(configuration.getCreateMeasurementTopic(),request);  // save  MeasurementResponse or request ?
 
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }

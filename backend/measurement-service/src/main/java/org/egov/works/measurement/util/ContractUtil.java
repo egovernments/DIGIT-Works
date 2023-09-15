@@ -77,6 +77,8 @@ public class ContractUtil {
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
                     System.out.println(lineItems.getStatus().toString());
+                    String estimateId = lineItems.getEstimateId();
+                    String estimateLineItemId = lineItems.getEstimateLineItemId();
                     if(lineItems.getStatus().toString().equals("ACTIVE")){
                         System.out.println(lineItems.getId());
                         lineItemsIdList.add(lineItems.getId());
@@ -85,4 +87,5 @@ public class ContractUtil {
         );
         return  lineItemsIdList;
     }
+
 }
