@@ -63,7 +63,7 @@ public class MeasurementApiController {
 
 
     @RequestMapping(value = "/measurement/v1/_update", method = RequestMethod.POST)
-    public ResponseEntity<MeasurementResponse> measurementV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) throws MeasurementService.InvalidDocumentIdException {
+    public ResponseEntity<MeasurementResponse> measurementV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
         return service.updateMeasurement(body);
     }
 

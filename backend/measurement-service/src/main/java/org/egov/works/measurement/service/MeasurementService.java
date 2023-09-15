@@ -11,6 +11,7 @@ import org.apache.http.util.EntityUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.kafka.Producer;
+import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.util.MdmsUtil;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.web.models.Document;
@@ -20,6 +21,7 @@ import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -67,6 +69,8 @@ public class MeasurementService {
 
     @Autowired
     private MeasurementServiceValidator validator;
+    @Autowired
+    private MeasurementRowMapper rowMapper;
 
     @Autowired
     private MeasurementEnrichment enrichmentUtil;
@@ -156,7 +160,7 @@ public class MeasurementService {
         return new ArrayList<>();
     }
 
-    public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) throws InvalidDocumentIdException {
+    public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
         // Extract document IDs from the measurement request
         List<String> documentIds = extractDocumentIds(measurementRegistrationRequest);
 
@@ -165,39 +169,35 @@ public class MeasurementService {
 
         // Parse the API response and check if all document IDs were found
         boolean allIdsMatched = validator.checkDocumentIdsMatch(documentIds, responseJson);
+        if(!allIdsMatched){
+            throw new RuntimeException("Files are invalid");
+        }
 
-        // Perform the measurement update (if needed)
         List<String> idsToCheck=getAllIds(measurementRegistrationRequest);
-        List<String> measurementExistingIds = validateMeasurementRequest(idsToCheck);
+        List<Measurement> measurementExisting = validateMeasurementRequest(idsToCheck);
         MeasurementResponse response=new MeasurementResponse();
         response.setResponseInfo(ResponseInfo.builder().apiId(measurementRegistrationRequest.getRequestInfo().getApiId()).msgId(measurementRegistrationRequest.getRequestInfo().getMsgId()).ts(measurementRegistrationRequest.getRequestInfo().getTs()).build());
 
-        // FIXME: validate the documents ids by allIdsMatched
-        if (allIdsMatched) {
-            if(measurementExistingIds.size()==measurementRegistrationRequest.getMeasurements().size()){
-                response.setMeasurements(measurementRegistrationRequest.getMeasurements());
-                AuditDetails auditDetails = AuditDetails.builder().createdBy(measurementRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(measurementRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-                for(Measurement measurement:measurementRegistrationRequest.getMeasurements()){
-                    measurement.setAuditDetails(auditDetails);
-                    for(Measure measure:measurement.getMeasures()){
-                        measure.setAuditDetails(auditDetails);
-                    }
-                }
-                producer.push(updateTopic,response);
-            }
-            else{
-                throw new RuntimeException("Table data does not exist");
-            }
-
-        } else {
-            // Handle the case where not all document IDs were found
-            throw new RuntimeException("Files are invalid");
-
+        // Perform the measurement update (if filestore validate successfully)
+        if(measurementExisting.size()!=measurementRegistrationRequest.getMeasurements().size()){
+            throw new RuntimeException("Table data does not exist");
         }
 
+        response.setMeasurements(measurementRegistrationRequest.getMeasurements());
+        setAuditDetails(measurementExisting,measurementRegistrationRequest);
+        producer.push(updateTopic,response);
         // Return the success response
-
         return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
+    }
+
+    public void setAuditDetails(List<Measurement> measurementExisting,MeasurementRequest measurementRequest){
+        List<Measurement> measurements=measurementRequest.getMeasurements();
+        for(int i=0;i<measurements.size();i++){
+            measurements.get(i).setAuditDetails(measurementExisting.get(0).getAuditDetails());
+            measurements.get(i).getAuditDetails().setLastModifiedBy(measurementRequest.getRequestInfo().getUserInfo().getUuid());
+            measurements.get(i).getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+        }
+        measurementRequest.setMeasurements(measurements);
     }
 
     public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest){
@@ -231,48 +231,60 @@ public class MeasurementService {
         return ids;
     }
 
-    public List<String> validateMeasurementRequest(List<String> idsToCheck) {
+    public List<Measurement> validateMeasurementRequest(List<String> idsToCheck) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        List<String> measurementExistingIds = new ArrayList<>();
+        List<Measurement> existingMeasurements = new ArrayList<>();
 
         for (String idToCheck : idsToCheck) {
-            // Validate if a record with the specified ID exists in 'eg_mb_measurements' table
-            String measurementExistingId = checkMeasurementExistsById(namedParameterJdbcTemplate, idToCheck);
+            // Fetch the Measurement object with the specified ID from the database
+            Measurement existingMeasurement = getMeasurementById(namedParameterJdbcTemplate, idToCheck);
 
-            // If a record exists, add its ID to the list
-            if (measurementExistingId != null) {
-                measurementExistingIds.add(measurementExistingId);
+            // If a Measurement object exists, add it to the list
+            if (existingMeasurement != null) {
+                existingMeasurements.add(existingMeasurement);
             }
         }
 
-        return measurementExistingIds;
+        return existingMeasurements;
     }
 
+    public Measurement getMeasurementById(NamedParameterJdbcTemplate jdbcTemplate, String id) {
+        String sql = "SELECT * FROM eg_mb_measurements WHERE id = :id";
 
-    private String checkMeasurementExistsById(NamedParameterJdbcTemplate namedParameterJdbcTemplate, String idToCheck) {
-        // Define SQL query with named parameters
-        String sql = "SELECT id FROM eg_mb_measurements WHERE id = :idToCheck";
-
-        // Create parameter source with named parameter
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("idToCheck", idToCheck);
+        params.addValue("id", id.toString());
 
-        // Execute the query and return the ID if retrieved, or null if not found.
-        List<String> ids = namedParameterJdbcTemplate.queryForList(sql, params, String.class);
+        return jdbcTemplate.queryForObject(sql, params, (rs, rowNum) -> {
+            Measurement measurement = new Measurement();
+            measurement.setId(UUID.fromString(rs.getString("id")));
+            measurement.setTenantId(rs.getString("tenantId"));
+            measurement.setMeasurementNumber(rs.getString("mbNumber"));
+            measurement.setPhysicalRefNumber(rs.getString("phyRefNumber"));
+            measurement.setReferenceId(rs.getString("referenceId"));
+            measurement.setEntryDate(rs.getBigDecimal("entryDate"));
+            measurement.setIsActive(rs.getBoolean("isActive"));
 
-        if (!ids.isEmpty()) {
-            return ids.get(0); // Return the first retrieved ID
-        } else {
-            return null; // No matching record found
-        }
+            // Set AuditDetails
+            AuditDetails auditDetails = new AuditDetails();
+            auditDetails.setCreatedBy(rs.getString("createdby"));
+            auditDetails.setCreatedTime(rs.getLong("createdtime"));
+            auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
+            auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
+            measurement.setAuditDetails(auditDetails);
+
+            measurement.setAdditionalDetails(rs.getObject("additionalDetails")); // Assuming additionalDetails is a JSONB field
+            // Map other fields as needed
+            return measurement;
+        });
     }
 
 
-    public class InvalidDocumentIdException extends Exception {
-        public InvalidDocumentIdException(String message) {
-            super(message);
-        }
-    }
+
+
+    // Define a RowMapper for the Measurement class to map database rows to objects
+
+
+
 
 
     private String makeApiRequest(List<String> documentIds) {

@@ -19,7 +19,6 @@ CREATE TABLE eg_mb_measurement_details (
   id VARCHAR(128) PRIMARY KEY,
   referenceId VARCHAR(128) NOT NULL,
   targetId VARCHAR(128) NOT NULL,
-  mbNumber VARCHAR(128) NOT NULL,
   isActive BOOLEAN,
   description VARCHAR(256),
   additionalDetails JSONB,
@@ -43,8 +42,4 @@ CREATE TABLE eg_mb_measurement_measures (
   lastmodifiedtime BIGINT,
   lastmodifiedby VARCHAR(128),
   FOREIGN KEY (id) REFERENCES eg_mb_measurement_details (id)
-<<<<<<< HEAD
 );
-=======
-);
->>>>>>> ac6d5055477881b6fa78a7f46af81dc8212a3527
