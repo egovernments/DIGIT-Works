@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.util.MdmsUtil;
@@ -18,14 +19,37 @@ import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
+import org.egov.works.measurement.kafka.Producer;
+import org.egov.works.measurement.util.IdgenUtil;
+import org.egov.works.measurement.util.MdmsUtil;
+import org.egov.works.measurement.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.lang.Error;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
 public class MeasurementService {
+    @Autowired
+    private MdmsUtil mdmsUtil;
+    @Autowired
+    private IdgenUtil idgenUtil;
+    @Autowired
+    private Producer producer;
 
     @Autowired
     private MeasurementServiceValidator validator;
@@ -34,10 +58,7 @@ public class MeasurementService {
     private MeasurementEnrichment enrichmentUtil;
 
     @Autowired
-    private MdmsUtil mdmsUtil;
-
-    @Autowired
-    private Producer producer;
+    private JdbcTemplate jdbcTemplate;
 
     @Value("${egov.filestore.host}")
     private String baseFilestoreUrl;
@@ -45,7 +66,10 @@ public class MeasurementService {
     @Value("${egov.filestore.endpoint}")
     private String baseFilestoreEndpoint;
 
-    public Measurement updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
+    @Value("${measurement.kafka.update.topic}")
+    private String updateTopic;
+
+    public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) throws InvalidDocumentIdException {
         // Extract document IDs from the measurement request
         List<String> documentIds = extractDocumentIds(measurementRegistrationRequest);
 
@@ -56,16 +80,89 @@ public class MeasurementService {
         boolean allIdsMatched = validator.checkDocumentIdsMatch(documentIds, responseJson);
 
         // Perform the measurement update (if needed)
-        if (allIdsMatched) {
-            System.out.println("Files are Valid");
+        List<String> idsToCheck=getAllIds(measurementRegistrationRequest);
+        List<String> measurementExistingIds = validateMeasurementRequest(idsToCheck);
+        MeasurementResponse response=new MeasurementResponse();
+        response.setResponseInfo(ResponseInfo.builder().apiId(measurementRegistrationRequest.getRequestInfo().getApiId()).msgId(measurementRegistrationRequest.getRequestInfo().getMsgId()).ts(measurementRegistrationRequest.getRequestInfo().getTs()).build());
+
+        // validate the documents ids by allIdsMatched
+        if (true) {
+            if(measurementExistingIds.size()==measurementRegistrationRequest.getMeasurements().size()){
+                response.setMeasurements(measurementRegistrationRequest.getMeasurements());
+                AuditDetails auditDetails = AuditDetails.builder().createdBy(measurementRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(measurementRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+                for(Measurement measurement:measurementRegistrationRequest.getMeasurements()){
+                    measurement.setAuditDetails(auditDetails);
+                    for(Measure measure:measurement.getMeasures()){
+                        measure.setAuditDetails(auditDetails);
+                    }
+                }
+                producer.push(updateTopic,response);
+            }
+            else{
+                throw new RuntimeException("Table data does not exist");
+            }
 
         } else {
             // Handle the case where not all document IDs were found
+            throw new InvalidDocumentIdException("Document IDs are invalid");
         }
 
-        // Step 5: Return the updated measurement (or null, or any other response as needed)
-        return measurementRegistrationRequest.getMeasurements().get(0);
+        // Return the success response
+
+        return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
     }
+
+    public List<String> getAllIds(MeasurementRequest measurementRequest){
+        List<String> ids=new ArrayList<>();
+        for (Measurement measurement : measurementRequest.getMeasurements()) {
+            String idAsString = measurement.getId().toString(); // Convert UUID to string
+            ids.add(idAsString);
+        }
+        return ids;
+    }
+
+    public List<String> validateMeasurementRequest(List<String> idsToCheck) {
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        List<String> measurementExistingIds = new ArrayList<>();
+
+        for (String idToCheck : idsToCheck) {
+            // Validate if a record with the specified ID exists in 'eg_mb_measurements' table
+            String measurementExistingId = checkMeasurementExistsById(namedParameterJdbcTemplate, idToCheck);
+
+            // If a record exists, add its ID to the list
+            if (measurementExistingId != null) {
+                measurementExistingIds.add(measurementExistingId);
+            }
+        }
+
+        return measurementExistingIds;
+    }
+
+    private String checkMeasurementExistsById(NamedParameterJdbcTemplate namedParameterJdbcTemplate, String idToCheck) {
+        // Define SQL query with named parameters
+        String sql = "SELECT id FROM eg_mb_measurements WHERE id = :idToCheck";
+
+        // Create parameter source with named parameter
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("idToCheck", idToCheck);
+
+        // Execute the query and return the ID if retrieved, or null if not found.
+        List<String> ids = namedParameterJdbcTemplate.queryForList(sql, params, String.class);
+
+        if (!ids.isEmpty()) {
+            return ids.get(0); // Return the first retrieved ID
+        } else {
+            return null; // No matching record found
+        }
+    }
+
+
+    public class InvalidDocumentIdException extends Exception {
+        public InvalidDocumentIdException(String message) {
+            super(message);
+        }
+    }
+
 
     private String makeApiRequest(List<String> documentIds) {
         // API URL with query parameters
