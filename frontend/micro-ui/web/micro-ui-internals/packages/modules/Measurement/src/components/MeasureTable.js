@@ -103,7 +103,7 @@ const MeasureTable = ({ columns }) => {
             <td>{row.approvedQty}</td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => {}} />
+                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} />
                 <button
                   onClick={() => {
                     setShowMeasureCard(!showMeasureCard);

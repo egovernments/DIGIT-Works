@@ -1,5 +1,5 @@
 
-import { EmployeeModuleCard, CaseIcon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, CaseIcon, MuktaHomeIcon } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 
 import { useTranslation } from "react-i18next";
@@ -35,8 +35,9 @@ const MeasurementCard = () => {
         label: t("Inbox"),
         link: `/${window?.contextPath}/employee/measurement/inbox`,
       },
-         label: t("ACTION_TEST_CREATE_MEASUREMENT"),
-        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000783`,
+      {
+        label: t("ACTION_TEST_CREATE_MEASUREMENT"),
+        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784`,
         roles: ["EMPLOYEE"],
       },
       {

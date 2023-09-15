@@ -19,26 +19,24 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
     });
 
 
-  if (isLoading) {
-    return <Loader />;
-  }
+    if (isLoading) {
+        return <Loader />;
+    }
 
-  return <EmployeeApp path={path} stateCode={stateCode} />;
+    return <EmployeeApp path={path} stateCode={stateCode} />;
 };
 
 const componentsToRegister = {
-rementModule,
-  MeasurementCard,
-
-  MeasurementModule,
-  MeasureCard,
-  MeasureTable,
-  MeasureRow,
+    MeasurementCard,
+    MeasurementModule,
+    MeasureCard,
+    MeasureTable,
+    MeasureRow,
 
 };
 
 export const initMeasurementComponents = () => {
-  Object.entries(componentsToRegister).forEach(([key, value]) => {
-    Digit.ComponentRegistryService.setComponent(key, value);
-  });
+    Object.entries(componentsToRegister).forEach(([key, value]) => {
+        Digit.ComponentRegistryService.setComponent(key, value);
+    });
 };
