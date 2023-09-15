@@ -4,18 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
-const MeasureCard = ({ columns, values, consumedQty, setConsumedQty }) => {
+const MeasureCard = ({ columns, values, consumedQty, setConsumedQty,setShowMeasureCard, initialState, setInitialState }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
-  values = [
-    { id: 1, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
-    { id: 2, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
-    { id: 3, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
-  ];
-  const initialState = {
-    tableState: values,
-  };
+  
+  
   const reducer = (state, action) => {
     switch (action.type) {
       case "ADD_ROW":
@@ -31,6 +25,7 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty }) => {
         if (type === "length") tableState[findIndex].length = value;
         if (type === "width") tableState[findIndex].width = value;
         if (type === "depth") tableState[findIndex].depth = value;
+        if(type === "quantity") tableState[findIndex].quantity = value;
         return { ...state, tableState };
 
       case "CLEAR_STATE":
@@ -90,16 +85,24 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty }) => {
   };
 
   const renderBody = () => {
-    return values?.map((value, index) => {
+    return state?.tableState?.map((value, index) => {
       return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} />;
     });
   };
 
   const calculate = () => {
     let total = 0;
-    state.tableState.forEach((element) => {
-      total += element.number * element.length * element.width * element.depth;
+    state.tableState.forEach((element,index) => {
+      var calculatedValue = element.number * element.length * element.width * element.depth;
+      total += calculatedValue;
+      dispatch({
+              type: "UPDATE_ROW",
+              state: { id: index + 1, value: calculatedValue, row: calculatedValue, type: "quantity" },
+      });
     });
+
+    console.log("total", state);
+    
     return total;
   };
   return (
@@ -114,7 +117,8 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty }) => {
             <button
               onClick={() => {
                 setConsumedQty(calculate());
-                dispatch({ type: "CLEAR_STATE" });
+                setShowMeasureCard(false);
+                setInitialState(state);
               }}
             >
               Done

@@ -10,7 +10,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
 
   return (
     <tr key={index}>
-      <td>{value.no}</td>
+      <td>{value.id}</td>
       <td>{value.type}</td>
       <td>{value.desc}</td>
       <td>
@@ -57,7 +57,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
           }}
         />
       </td>
-      <td>{value.quantity}</td>
+      <td>{state.tableState[index].quantity}</td>
     </tr>
   );
 };

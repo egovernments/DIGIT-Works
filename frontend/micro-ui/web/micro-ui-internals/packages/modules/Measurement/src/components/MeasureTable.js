@@ -8,7 +8,7 @@ const MeasureTable = ({ columns }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
-  const [consumedQty, setConsumedQty] = useState(0);
+  
 
   const getStyles = (index) => {
     let obj = {};
@@ -91,8 +91,14 @@ const MeasureTable = ({ columns }) => {
 
   const renderBody = () => {
     return data?.map((row, index) => {
+      const [consumedQty, setConsumedQty] = useState(0);
       const [showMeasureCard, setShowMeasureCard] = useState(false);
-
+      values = [
+    { id: 1, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
+    { id: 2, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
+    { id: 3, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
+  ];
+      const [initialState, setInitialState] = useState({tableState: values});
       return (
         <>
           <tr key={index}>
@@ -118,7 +124,7 @@ const MeasureTable = ({ columns }) => {
           </tr>
           {showMeasureCard && (
             <tr>
-              <MeasureCard columns={[]} values={[]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} />
+              <MeasureCard columns={[]} values={[]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} setShowMeasureCard={setShowMeasureCard} initialState={initialState} setInitialState={setInitialState} />
             </tr>
           )}
         </>
