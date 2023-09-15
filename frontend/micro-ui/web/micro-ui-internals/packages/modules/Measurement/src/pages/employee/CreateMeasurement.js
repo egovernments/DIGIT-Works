@@ -1,5 +1,5 @@
 import { Loader, FormComposerV2 } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CreateConfig } from "../../configs/MeasurementCreateConfig";
@@ -11,6 +11,9 @@ const CreateMeasurement = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
+
+  // State to hold estimate data
+  const [isEstimateEnabled, setIsEstimateEnabled] = useState(false);
 
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
@@ -27,7 +30,24 @@ const CreateMeasurement = () => {
     }
   })
 
-  console.log("Contract Data:", contract);
+  // When contract data is available, enable estimate search
+  useEffect(() => {
+    if (!isContractLoading) {
+      setIsEstimateEnabled(true);
+    }
+  }, [isContractLoading]);
+
+
+
+  //fetching estimate data
+  const { isLoading: isEstimateLoading, data: estimate, isError: isEstimateError } = Digit.Hooks.estimates.useEstimateSearch({
+    tenantId,
+    filters: { ids: contract?.lineItems[0].estimateId },
+    config: {
+      enabled: isEstimateEnabled,
+    }
+  })
+
 
   // Define the request criteria for creating a measurement
   const reqCriteriaCreate = {
@@ -52,24 +72,39 @@ const CreateMeasurement = () => {
   };
 
 
-  /* use newConfig instead of commonFields for local development in case needed */
 
-  const configs = CreateConfig
-if(isContractLoading) return <Loader />;
+
+  if (isContractLoading || isEstimateLoading) {
+    return <Loader />
+  }
+
+  const estimateDetails = estimate?.estimateDetails || [];
+  // console.log(estimateDetails, "eeeeeeeeeeee")
+  const sorCategoryArray = [];
+  const nonSorCategoryArray = [];
+
+  estimateDetails.reduce((_, currentItem) => {
+    if (currentItem.category === 'SOR') {
+      sorCategoryArray.push(currentItem);
+    } else if (currentItem.category === 'NONSOR') {
+      nonSorCategoryArray.push(currentItem);
+    }
+  }, null);
+
 
   return (
     <FormComposerV2
-      heading={t("Application Heading")}
+      heading={t("Measurement Book")}
       label={t("Submit Bar")}
       description={"Description"}
       text={"Sample Text if required"}
-      config={configs.map((config) => {
+      config={CreateConfig({ defaultValues: contract }).CreateConfig[0]?.form?.map((config) => {
         return {
           ...config,
           body: config.body.filter((a) => !a.hideInEmployee),
         };
       })}
-      defaultValues={{SOR:contract,NONSOR:contract}}
+      defaultValues={{ SOR: sorCategoryArray, NONSOR: nonSorCategoryArray }}
       onSubmit={onSubmit}
       fieldStyle={{ marginRight: 0 }}
     />

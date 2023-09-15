@@ -8,7 +8,6 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
-  console.log("value:", value);
 
   return (
     <tr key={index}>
@@ -17,7 +16,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       <td>{state.tableState[index].description}</td>
       <td>
         <TextInput
-          value={state.tableState[index].numItems} // Replace field1 with the appropriate field name.
+          value={state.tableState[index].currentNumber} 
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -28,7 +27,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].length} // Replace field1 with the appropriate field name.
+          value={state.tableState[index].currentLength} 
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -39,7 +38,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].width} // Replace field1 with the appropriate field name.
+          value={state.tableState[index].currentWidth} 
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -50,7 +49,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].height} // Replace field1 with the appropriate field name.
+          value={state.tableState[index].currentHeight} 
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
