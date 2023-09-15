@@ -19,6 +19,11 @@ const MeasurementBreadCrumbs = ({ location }) => {
       content: t("WORKS_MUKTA"),
       show: true,
     },
+    {
+      path: `/${window?.contextPath}/employee`,
+      content: t(location.pathname.split("/").pop()),
+      show: true,
+    },
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };
@@ -30,7 +35,7 @@ const App = ({ path }) => {
     <Switch>
       <React.Fragment>
         <MeasurementBreadCrumbs location={location} />
-        <PrivateRoute path={`${path}/create-measurement`} component={() => <CreateMeasurement {...{ path }} />} />
+        <PrivateRoute path={`${path}/create`} component={() => <CreateMeasurement {...{ path }} />} />
         <PrivateRoute path={`${path}/search`} component={() => <InboxMeasurement {...{ path }} />} />
 
         <PrivateRoute path={`${path}/inbox`} component={() => <SearchMeasurement {...{ path }} />} />

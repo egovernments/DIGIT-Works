@@ -4,13 +4,14 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
-const MeasureCard = ({ columns, values, consumedQty, setConsumedQty,setShowMeasureCard, initialState, setInitialState }) => {
+const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, initialState={}, setInitialState }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
   
   
   const reducer = (state, action) => {
+
     switch (action.type) {
       case "ADD_ROW":
         const { state: newRow } = action;
@@ -20,16 +21,19 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty,setShowMeasu
           state: { id, value, row, type },
         } = action;
         const { tableState } = state;
-        let findIndex = tableState.findIndex((row) => row.id === id);
-        if (type === "number") tableState[findIndex].number = value;
+        let findIndex = tableState.findIndex((row,index) => {
+          return index + 1 === id;
+        });
+        debugger;
+        if (type === "number") tableState[findIndex].numItems = value;
         if (type === "length") tableState[findIndex].length = value;
         if (type === "width") tableState[findIndex].width = value;
-        if (type === "depth") tableState[findIndex].depth = value;
-        if(type === "quantity") tableState[findIndex].quantity = value;
+        if (type === "height") tableState[findIndex].height = value;
+        if(type === "quantity") tableState[findIndex].totalValue = value;
         return { ...state, tableState };
 
       case "CLEAR_STATE":
-        return { ...state, tableState: values };
+        return { ...state, tableState: initialState.tableState };
 
       default:
         return state;
@@ -65,13 +69,13 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty,setShowMeasu
 
   columns = [
     t("WORKS_SNO"),
-    t("Description"),
-    t("Unit"),
-    t("Rate"),
-    t("Approved Quantity"),
-    t("Consumed Quantity"),
-    t("Current MB Entry"),
-    t("Amount for current entry"),
+    t("Is Deduction?"),
+    t("Description "),
+    t("Number"),
+    t("Length"),
+    t("Width"),
+    t("Depth/Height"),
+    t("Quantity"),
   ];
   const renderHeader = () => {
     return columns?.map((key, index) => {
@@ -93,7 +97,7 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty,setShowMeasu
   const calculate = () => {
     let total = 0;
     state.tableState.forEach((element,index) => {
-      var calculatedValue = element.number * element.length * element.width * element.depth;
+      var calculatedValue = element.numItems * element.length * element.width * element.height;
       total += calculatedValue;
       dispatch({
               type: "UPDATE_ROW",
@@ -114,15 +118,16 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty,setShowMeasu
         <tbody>
           {renderBody()}
           <tr>
-            <button
-              onClick={() => {
+          <div style={{display: "flex", flexDirection: "row"}}>
+            <Button label={"Clear"} onButtonClick={() => {
+                dispatch({ type: "CLEAR_STATE" });
+              }}/>
+            <Button label={"Done"} onButtonClick={() => {
+                setInitialState(state);
                 setConsumedQty(calculate());
                 setShowMeasureCard(false);
-                setInitialState(state);
-              }}
-            >
-              Done
-            </button>
+              }}/>
+          </div>
           </tr>
         </tbody>
       </table>
