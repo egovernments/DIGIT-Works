@@ -11,17 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.*;
 import org.egov.works.measurement.web.models.AuditDetails;
 import org.egov.works.measurement.web.models.Document;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * Entity captures dimensions for a work item measurement
@@ -33,6 +29,8 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Measure {
 
     @JsonProperty("id")
