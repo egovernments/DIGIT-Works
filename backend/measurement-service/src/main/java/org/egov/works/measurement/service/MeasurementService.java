@@ -166,7 +166,7 @@ public class MeasurementService {
         response.setResponseInfo(ResponseInfo.builder().apiId(measurementRegistrationRequest.getRequestInfo().getApiId()).msgId(measurementRegistrationRequest.getRequestInfo().getMsgId()).ts(measurementRegistrationRequest.getRequestInfo().getTs()).build());
 
         // FIXME: validate the documents ids by allIdsMatched
-        if (true) {
+        if (allIdsMatched) {
             if(measurementExistingIds.size()==measurementRegistrationRequest.getMeasurements().size()){
                 response.setMeasurements(measurementRegistrationRequest.getMeasurements());
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(measurementRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(measurementRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
@@ -184,7 +184,8 @@ public class MeasurementService {
 
         } else {
             // Handle the case where not all document IDs were found
-            throw new InvalidDocumentIdException("Document IDs are invalid");
+            throw new RuntimeException("Files are invalid");
+
         }
 
         // Return the success response
@@ -193,14 +194,30 @@ public class MeasurementService {
     }
 
     public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest){
-
         MeasurementServiceResponse response=new MeasurementServiceResponse();
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(measurementServiceRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(measurementServiceRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+        for(Measurement measurement:measurementServiceRequest.getMeasurements()){
+            measurement.setAuditDetails(auditDetails);
+            for(Measure measure:measurement.getMeasures()){
+                measure.setAuditDetails(auditDetails);
+            }
+        }
+        response.setMeasurements(measurementServiceRequest.getMeasurements());
         return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
     }
 
     public List<String> getAllIds(MeasurementRequest measurementRequest){
         List<String> ids=new ArrayList<>();
         for (Measurement measurement : measurementRequest.getMeasurements()) {
+            String idAsString = measurement.getId().toString(); // Convert UUID to string
+            ids.add(idAsString);
+        }
+        return ids;
+    }
+
+    public List<String> getAllIdsFromMbService(MeasurementServiceRequest measurementServiceRequest){
+        List<String> ids=new ArrayList<>();
+        for (Measurement measurement : measurementServiceRequest.getMeasurements()) {
             String idAsString = measurement.getId().toString(); // Convert UUID to string
             ids.add(idAsString);
         }
@@ -223,6 +240,7 @@ public class MeasurementService {
 
         return measurementExistingIds;
     }
+
 
     private String checkMeasurementExistsById(NamedParameterJdbcTemplate namedParameterJdbcTemplate, String idToCheck) {
         // Define SQL query with named parameters

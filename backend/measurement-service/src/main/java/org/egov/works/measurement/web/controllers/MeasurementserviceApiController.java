@@ -57,18 +57,17 @@ public class MeasurementserviceApiController {
                 return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-
         return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value = "/measurementservice/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
-
         return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    // FIXME: ADD valid annotaion and then fix validation
     @RequestMapping(value = "/measurementservice/v1/_update", method = RequestMethod.POST)
-    public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body){
+    public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @RequestBody MeasurementServiceRequest body){
         return service.updateMeasurementService(body);
     }
 
