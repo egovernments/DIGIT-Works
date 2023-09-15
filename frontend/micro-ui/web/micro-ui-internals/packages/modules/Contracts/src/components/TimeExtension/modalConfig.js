@@ -16,8 +16,8 @@ const getModalConfig = ({
 
     return {
         label: {
-            heading: isEdit? `UPDATE_TE` : `CREATE_TE`,
-            submit: isEdit? `CORE_UPDATE_AND_FORWARD` : `CORE_CREATE_AND_FORWARD`,
+            heading: isEdit? `CORE_UPDATE_AND_FORWARD` : `CORE_CREATE_AND_FORWARD`,
+            submit: `CORE_FORWARD`,
             cancel: "WORKS_CANCEL",
         },
         form: [
