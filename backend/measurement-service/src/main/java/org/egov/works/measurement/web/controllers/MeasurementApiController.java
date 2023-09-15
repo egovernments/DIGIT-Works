@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-09-14T11:43:34.268+05:30[Asia/Calcutta]")
 @Controller
-@RequestMapping("")
+@RequestMapping("/measurement")
 public class MeasurementApiController {
 
     @Autowired
@@ -46,7 +46,7 @@ public class MeasurementApiController {
         this.service = service;
     }
 
-    @RequestMapping(value = "/measurement/v1/_create", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
         String accept = request.getHeader("Accept");
         return service.createMeasurement(body);
@@ -62,12 +62,12 @@ public class MeasurementApiController {
     }
 
 
-    @RequestMapping(value = "/measurement/v1/_update", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
         return service.updateMeasurement(body);
     }
 
-    @RequestMapping(value = "/measurement/v1/_search", method = RequestMethod.POST)
+    @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementsV1SearchPost(
             @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
         String accept = request.getHeader("Accept");
