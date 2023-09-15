@@ -27,7 +27,6 @@ import lombok.Builder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class MeasurementService extends Measurement  {
 
     @JsonProperty("wfStatus")
