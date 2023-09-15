@@ -43,4 +43,8 @@ CREATE TABLE eg_mb_measurement_measures (
   lastmodifiedtime BIGINT,
   lastmodifiedby VARCHAR(128),
   FOREIGN KEY (id) REFERENCES eg_mb_measurement_details (id)
+<<<<<<< HEAD
 );
+=======
+);
+>>>>>>> ac6d5055477881b6fa78a7f46af81dc8212a3527
