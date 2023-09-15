@@ -50,24 +50,21 @@ public class MeasurementService {
         MeasurementResponse response = new MeasurementResponse();
         List<Measurement> measurementList = new ArrayList<>();
 
+        // TODO: Shift to Utils
         request.getMeasurements().forEach(measurement -> {
-            measurement.setId(UUID.randomUUID());            // enrich UUID
 
-            // fetch the contract using referenceId
-//           ContractResponse contractResponse = contractService.getContracts(measurement,request.getRequestInfo()); // shift this to utils
-//            System.out.println(contractResponse.toString());
-//            System.out.println(contractResponse.getContracts().size());
+            // enrich UUID
+            measurement.setId(UUID.randomUUID());
 
+            // validate contracts
             Boolean isValidContract = contractUtil.validContract(measurement,request.getRequestInfo());
 
             if (!isValidContract) {
-                // FIXME: How to handle Error here ??
+                // FIXME: handle the Error here ??
                 throw new CustomException();
             }
 
-            if(isValidContract) System.out.println("Contract Validated");
-            // need a boolean to validate teh contracts details
-
+            // TODO: check the docs for each measure in measurement
             for (Measure measure : measurement.getMeasures()) {
 
                 // check all the docs;
@@ -88,17 +85,20 @@ public class MeasurementService {
             // fetch ids from IdGen
             List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
 
-            measurement.setMeasurementNumber(idList.get(0)); // enrich IdGen
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();
-            measurement.setAuditDetails(auditDetails);      // set audit details
+            // enrich IdGen
+            measurement.setMeasurementNumber(idList.get(0));
 
+            // set audit details
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();
+            measurement.setAuditDetails(auditDetails);
             // add the measurement to measurementList
             measurementList.add(measurement);
         });
-
         response.setMeasurements(measurementList);
+
         // push to kafka topic
         producer.push(configuration.getCreateMeasurementTopic(),response);
+
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
