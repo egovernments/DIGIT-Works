@@ -27,9 +27,11 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 
 import org.egov.works.measurement.kafka.Producer;
+import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.MdmsUtil;
 import org.egov.works.measurement.web.models.*;
@@ -63,6 +65,9 @@ public class MeasurementService {
     private MeasurementEnrichment enrichmentUtil;
 
     @Autowired
+    private ContractUtil contractUtil;
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Value("${egov.filestore.host}")
@@ -74,65 +79,63 @@ public class MeasurementService {
     @Value("${measurement.kafka.update.topic}")
     private String updateTopic;
 
-
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
         System.out.println("Create Measurement service is called");
-
         String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
         String idName = "mb.reference.number";
         String idFormat = "MB/[fy:yyyy-yy]/[SEQ_MEASUREMENT_NUM]";
-//        String moduleName = "common-masters"; // shift this to config
-//        List<String> masterNameList = new ArrayList<>();
-//        masterNameList.add("uom");
-//        Map<String, Map<String, JSONArray>> mdmsData =  mdmsUtil.fetchMdmsData(request.getRequestInfo(),tenantId,moduleName,masterNameList);
-//        JSONArray uomList = mdmsData.get("common-masters").get("uom");
-//        for (int i = 0; i < uomList.size(); i++) {
-//            Object item = uomList.get(i);
-//            System.out.println(item);
-//        }
 
-        // validate req params
-        // System.out.println(uomList);
-        // req & validate for mdms data
-        //---------------------------------
         MeasurementResponse response = new MeasurementResponse();
         List<Measurement> measurementList = new ArrayList<>();
 
         request.getMeasurements().forEach(measurement -> {
-            Measurement measurement1 = new Measurement();
+            measurement.setId(UUID.randomUUID());            // enrich UUID
+
+            // fetch the contract using referenceId
+//           ContractResponse contractResponse = contractService.getContracts(measurement,request.getRequestInfo()); // shift this to utils
+//            System.out.println(contractResponse.toString());
+//            System.out.println(contractResponse.getContracts().size());
+
+            Boolean isValidContract = contractUtil.validContract(measurement,request.getRequestInfo());
+
+            if (!isValidContract) {
+                // FIXME: How to handle Error here ??
+                throw new CustomException();
+            }
+
+            if(isValidContract) System.out.println("Contract Validated");
+            // need a boolean to validate teh contracts details
+
             for (Measure measure : measurement.getMeasures()) {
 
                 // check all the docs;
                 int isValidDocs = 1;
                 for (Document document : measure.getDocuments()) {
-                    System.out.println(document.getDocumentUid());
-                    if (!isValidDocuments(document.getDocumentUid())) {
+                    if (!isValidDocuments(document.getFileStore())) {
                         isValidDocs = 0;
                         throw new Error("No Documents found with the given Ids");
                     } else {
-                        // enrich the req
-                        // fetch the ids
-//                        System.out.println(tenantId);
-//                        List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
-//                        System.out.println(idList);
-//                        measure.setReferenceId(idList.get(0));
                     }
                 }
                 if(isValidDocs == 1){
                     measure.setId(UUID.randomUUID());
+                    measure.setReferenceId(measurement.getId().toString());
                 }
             }
-            measurement1.setMeasures(measurement.getMeasures());
+
+            // fetch ids from IdGen
             List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
-            System.out.println(idList.get(0));
-            measurement1.setMeasurementNumber(idList.get(0)); // enrich IdGen
-            measurement1.setId(UUID.randomUUID());            // enrich UUID
-            measurement1.setTenantId(tenantId);
-//            AuditDetails auditDetails = new AuditDetails().setCreatedBy(request.getRequestInfo());
-            measurementList.add(measurement1);
+
+            measurement.setMeasurementNumber(idList.get(0)); // enrich IdGen
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();
+            measurement.setAuditDetails(auditDetails);      // set audit details
+
+            // add the measurement to measurementList
+            measurementList.add(measurement);
         });
+
         response.setMeasurements(measurementList);
-        // FIXME: add audit details
+        // push to kafka topic
         producer.push(configuration.getCreateMeasurementTopic(),response);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
