@@ -975,7 +975,12 @@ export const UICustomizations = {
       const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom,'daystart');
       const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo,'dayend');
       const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
-      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
+      let status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
+
+       //Added the condition because to revised work order, it will have state as approved instead of pending for acceptance
+       if(status === "PENDING_FOR_ACCEPTANCE")
+       status = [...status, "APPROVED"]
+
       const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
       const projectName = data.body.inbox?.moduleSearchCriteria?.projectName?.trim();
       const ward = data.body.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
