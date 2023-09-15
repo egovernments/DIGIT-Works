@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import org.egov.works.measurement.config.Configuration;
+
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.MdmsUtil;
@@ -52,6 +54,9 @@ public class MeasurementService {
     private Producer producer;
 
     @Autowired
+    private Configuration configuration;
+
+    @Autowired
     private MeasurementServiceValidator validator;
 
     @Autowired
@@ -68,6 +73,78 @@ public class MeasurementService {
 
     @Value("${measurement.kafka.update.topic}")
     private String updateTopic;
+
+
+    public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
+        System.out.println("Create Measurement service is called");
+
+        String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
+        String idName = "mb.reference.number";
+        String idFormat = "MB/[fy:yyyy-yy]/[SEQ_MEASUREMENT_NUM]";
+//        String moduleName = "common-masters"; // shift this to config
+//        List<String> masterNameList = new ArrayList<>();
+//        masterNameList.add("uom");
+//        Map<String, Map<String, JSONArray>> mdmsData =  mdmsUtil.fetchMdmsData(request.getRequestInfo(),tenantId,moduleName,masterNameList);
+//        JSONArray uomList = mdmsData.get("common-masters").get("uom");
+//        for (int i = 0; i < uomList.size(); i++) {
+//            Object item = uomList.get(i);
+//            System.out.println(item);
+//        }
+
+        // validate req params
+        // System.out.println(uomList);
+        // req & validate for mdms data
+        //---------------------------------
+        MeasurementResponse response = new MeasurementResponse();
+        List<Measurement> measurementList = new ArrayList<>();
+
+        request.getMeasurements().forEach(measurement -> {
+            Measurement measurement1 = new Measurement();
+            for (Measure measure : measurement.getMeasures()) {
+
+                // check all the docs;
+                int isValidDocs = 1;
+                for (Document document : measure.getDocuments()) {
+                    System.out.println(document.getDocumentUid());
+                    if (!isValidDocuments(document.getDocumentUid())) {
+                        isValidDocs = 0;
+                        throw new Error("No Documents found with the given Ids");
+                    } else {
+                        // enrich the req
+                        // fetch the ids
+//                        System.out.println(tenantId);
+//                        List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
+//                        System.out.println(idList);
+//                        measure.setReferenceId(idList.get(0));
+                    }
+                }
+                if(isValidDocs == 1){
+                    measure.setId(UUID.randomUUID());
+                }
+            }
+            measurement1.setMeasures(measurement.getMeasures());
+            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
+            System.out.println(idList.get(0));
+            measurement1.setMeasurementNumber(idList.get(0)); // enrich IdGen
+            measurement1.setId(UUID.randomUUID());            // enrich UUID
+            measurement1.setTenantId(tenantId);
+//            AuditDetails auditDetails = new AuditDetails().setCreatedBy(request.getRequestInfo());
+            measurementList.add(measurement1);
+        });
+        response.setMeasurements(measurementList);
+        // FIXME: add audit details
+        producer.push(configuration.getCreateMeasurementTopic(),response);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+
+    public boolean isValidDocuments(String documentId){
+        return true;
+        // return !getDocuments(documentId).isEmpty(); // complete this method
+    }
+    public List<?> getDocuments(String documentId){
+        return new ArrayList<>();
+    }
 
     public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) throws InvalidDocumentIdException {
         // Extract document IDs from the measurement request
@@ -109,6 +186,12 @@ public class MeasurementService {
 
         // Return the success response
 
+        return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
+    }
+
+    public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest){
+
+        MeasurementServiceResponse response=new MeasurementServiceResponse();
         return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
     }
 
