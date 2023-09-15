@@ -85,7 +85,7 @@ public class MeasurementService {
         MeasurementResponse response=new MeasurementResponse();
         response.setResponseInfo(ResponseInfo.builder().apiId(measurementRegistrationRequest.getRequestInfo().getApiId()).msgId(measurementRegistrationRequest.getRequestInfo().getMsgId()).ts(measurementRegistrationRequest.getRequestInfo().getTs()).build());
 
-        // validate the documents ids by allIdsMatched
+        // FIXME: validate the documents ids by allIdsMatched
         if (true) {
             if(measurementExistingIds.size()==measurementRegistrationRequest.getMeasurements().size()){
                 response.setMeasurements(measurementRegistrationRequest.getMeasurements());
