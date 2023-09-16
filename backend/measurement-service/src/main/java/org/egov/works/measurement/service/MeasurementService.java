@@ -184,6 +184,9 @@ public class MeasurementService {
 
     public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest){
         MeasurementServiceResponse response=new MeasurementServiceResponse();
+
+        // Validate existing data and set audit details
+        validator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
         return new ResponseEntity<>(response,HttpStatus.NOT_IMPLEMENTED);
     }
 

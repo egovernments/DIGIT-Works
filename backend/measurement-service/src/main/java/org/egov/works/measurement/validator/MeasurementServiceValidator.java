@@ -12,6 +12,7 @@ import org.egov.works.measurement.repository.rowmapper.MeasurementUpdateRowMappe
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -29,6 +30,7 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
 
     @Value("${egov.filestore.host}")
     private String baseFilestoreUrl;
@@ -63,6 +65,61 @@ public class MeasurementServiceValidator {
         }
         setAuditDetails(measurementExisting, measurementRegistrationRequest);
     }
+
+    public void validateExistingServiceDataAndSetAuditDetails(MeasurementServiceRequest measurementServiceRequest) {
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        ServiceIds idsToCheck = getAllServiceIds(measurementServiceRequest);
+        for (String id : idsToCheck.getIds()) {
+            String mbNumber = idsToCheck.getMeasurementNumbers().get(idsToCheck.getIds().indexOf(id));
+
+            // Check if measurements exist in eg_mb_measurements
+            Measurement measurementInMBTable = getMeasurementFromMBTable(namedParameterJdbcTemplate, id, mbNumber);
+
+            // Check if measurements exist in eg_mbs_measurements
+            MeasurementService measurementServiceInMBSTable = getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate, mbNumber);
+
+            if (measurementInMBTable == null && measurementServiceInMBSTable == null) {
+                throw new RuntimeException("Data does not exist");
+            }
+        }
+    }
+
+    public Measurement getMeasurementFromMBTable(NamedParameterJdbcTemplate jdbcTemplate, String id, String mbNumber) {
+        String sql = "SELECT * FROM eg_mb_measurements WHERE id = :id AND mbNumber = :mbNumber";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id);
+        params.addValue("mbNumber", mbNumber);
+
+        try {
+            return jdbcTemplate.queryForObject(sql, params, new MeasurementUpdateRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null; // Measurement does not exist
+        }
+    }
+
+    public MeasurementService getMeasurementServiceFromMBSTable(NamedParameterJdbcTemplate jdbcTemplate, String mbNumber) {
+        String sql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber = :mbNumber";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("mbNumber", mbNumber);
+
+        try {
+            return jdbcTemplate.queryForObject(sql, params, (rs, rowNum) -> {
+                MeasurementService measurementService = new MeasurementService();
+                measurementService.setId(UUID.fromString(rs.getString("id")));
+                measurementService.setTenantId(rs.getString("tenantId"));
+                measurementService.setMeasurementNumber(rs.getString("mbNumber"));
+                measurementService.setWfStatus(rs.getString("wfStatus"));
+                // Set other properties as needed
+                return measurementService;
+            });
+        } catch (EmptyResultDataAccessException e) {
+            return null; // MeasurementService does not exist
+        }
+    }
+
+
 
     public void setAuditDetails(List<Measurement> measurementExisting,MeasurementRequest measurementRequest){
         List<Measurement> measurements=measurementRequest.getMeasurements();
@@ -108,13 +165,20 @@ public class MeasurementServiceValidator {
         return ids;
     }
 
-    public List<String> getAllIdsFromMbService(MeasurementServiceRequest measurementServiceRequest){
-        List<String> ids=new ArrayList<>();
-        for (Measurement measurement : measurementServiceRequest.getMeasurements()) {
-            String idAsString = measurement.getId().toString(); // Convert UUID to string
-            ids.add(idAsString);
+    public ServiceIds getAllServiceIds(MeasurementServiceRequest measurementServiceRequest) {
+        ServiceIds serviceIds = new ServiceIds();
+        List<String> ids = new ArrayList<>();
+        List<String> measurementNumbers = new ArrayList<>();
+
+        for (MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
+            ids.add(measurementService.getId().toString());
+            measurementNumbers.add(measurementService.getMeasurementNumber());
         }
-        return ids;
+
+        serviceIds.setIds(ids);
+        serviceIds.setMeasurementNumbers(measurementNumbers);
+
+        return serviceIds;
     }
 
     public List<Measurement> validateMeasurementRequest(List<String> idsToCheck) {
