@@ -81,11 +81,11 @@ public class MeasurementApiController {
                 for (String referenceId : referenceIds) {
                     // Use each referenceId as needed for your search
                     System.out.println(referenceId);
-                    List<Measurement> measurements = measurementService.searchMeasurements(criteria);
+//                    List<Measurement> measurements = measurementService.searchMeasurements(criteria);
 
                     // Create a MeasurementResponse using the search results
 
-                    response.setMeasurements(measurements);
+//                    response.setMeasurements(measurements);
 
                     // Return a successful response for each referenceId
                     return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
