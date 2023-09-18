@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
+import MeasurementHistory from "../../components/MBHistoryTable";
 
 const ViewMeasurement = () => {
   const { t } = useTranslation();
@@ -34,11 +35,11 @@ const ViewMeasurement = () => {
           moduleCode="contracts"
           isDataLoading={false}
           workflowDetails={applicationDetails?.workflowDetails}
-          // showTimeLine={"fgv"}
           mutate={() => {}}
           tenantId={tenantId}
           showT
         />
+         <MeasurementHistory contractNumber={"WO/2023-24/000784"}/>
       </Card>
     </React.Fragment>
   );
