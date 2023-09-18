@@ -39,10 +39,8 @@ const enabledModules = [
   "Mukta",
   "DSS",
   "Sample",
-
-  "Measurement"
-
- 
+  "Measurement",
+  // "Engagement"
 ];
 
 const initTokens = (stateCode) => {

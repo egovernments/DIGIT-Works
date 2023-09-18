@@ -4,11 +4,15 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
-const MeasureTable = ({ columns }) => {
+const MeasureTable = (props) => {
+  let { columns } = props;
+  var data = props.data.SOR.length > 0 ? props.data.SOR: props.data.NONSOR.length > 0 ? props.data.NONSOR : null;
+//DAATA SHPI BE A STATE HEREE
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
-  const [consumedQty, setConsumedQty] = useState(0);
+  
 
   const getStyles = (index) => {
     let obj = {};
@@ -56,69 +60,49 @@ const MeasureTable = ({ columns }) => {
     });
   };
 
-  const data = [
-    {
-      no: 1,
-      desc: "Construction of CC Road",
-      unit: "Sq. Mtr",
-      rate: "1000",
-      approvedQty: "100",
-      consumedQty: "50",
-      currentMBEntry: "10",
-      amount: "10000",
-    },
-    {
-      no: 1,
-      desc: "Construction of CC Road",
-      unit: "Sq. Mtr",
-      rate: "1000",
-      approvedQty: "100",
-      consumedQty: "50",
-      currentMBEntry: "10",
-      amount: "10000",
-    },
-    {
-      no: 1,
-      desc: "Construction of CC Road",
-      unit: "Sq. Mtr",
-      rate: "1000",
-      approvedQty: "100",
-      consumedQty: "50",
-      currentMBEntry: "10",
-      amount: "10000",
-    },
-  ];
-
   const renderBody = () => {
     return data?.map((row, index) => {
+      const [consumedQty, setConsumedQty] = useState(0);
       const [showMeasureCard, setShowMeasureCard] = useState(false);
-
+      const [initialState, setInitialState] = useState({tableState: row?.additionalDetails?.measurement});
       return (
         <>
           <tr key={index}>
-            <td>{row.no}</td>
-            <td>{row.desc}</td>
-            <td>{row.unit}</td>
-            <td>{row.rate}</td>
-            <td>{row.approvedQty}</td>
+            <td>{index + 1}</td>
+            <td>{row.description}</td>
+            <td>{row.uom}</td>
+            <td>{row.unitRate}</td>
+            <td>{row.noOfunit}</td>
+            <td>{null}</td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} />
-                <button
+                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={!initialState.length > 0} />
+                {!initialState.length > 0 && <button
                   onClick={() => {
                     setShowMeasureCard(!showMeasureCard);
                   }}
                 >
                   <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px", width: "20px", height: "20px" }} />
-                </button>
+                </button>}
               </div>
             </td>
-            <td>{row.currentMBEntry}</td>
-            <td>{row.amount}</td>
+            <td>{null}</td>
           </tr>
-          {showMeasureCard && (
+          {showMeasureCard && !initialState.length > 0 && (
             <tr>
-              <MeasureCard columns={[]} values={[]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} />
+            <td colSpan={"1"}></td>
+              <td colSpan={"7"}>
+                <MeasureCard columns={[
+                          t("WORKS_SNO"),
+                          t("Is Deduction?"),
+                          t("Description "),
+                          t("Number"),
+                          t("Length"),
+                          t("Width"),
+                          t("Depth/Height"),
+                          t("Quantity"),
+                        ]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} setInitialState={setInitialState} setShowMeasureCard={setShowMeasureCard} initialState={initialState}  />
+              </td>
             </tr>
           )}
         </>

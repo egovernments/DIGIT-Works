@@ -140,7 +140,7 @@ export const CreateConfig = ({ defaultValues }) => {
                 type: "component",
                 component: "MeasureTable",
                 withoutLabel: true,
-                key: "SOR",
+                key: "NONSOR",
               },
             ],
           },

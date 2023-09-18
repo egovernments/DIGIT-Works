@@ -1,21 +1,23 @@
-import { Button, Card } from "@egovernments/digit-ui-react-components";
-import React, { useReducer, useState } from "react";
+import { Button, Card, Toast } from "@egovernments/digit-ui-react-components";
+import React, { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
-const MeasureCard = ({ columns, values, consumedQty, setConsumedQty }) => {
+const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, initialState={}, setInitialState }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
-  values = [
-    { id: 1, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
-    { id: 2, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
-    { id: 3, type: "text", desc: "caac", number: "", length: "", width: "", depth: "", quantity: "1" },
-  ];
-  const initialState = {
-    tableState: values,
-  };
+  const [total,setTotal] = useState(0);
+
+  const validate = (value) => {
+    if(value === null || value === undefined || value === ""){
+      return 1;
+    }else{
+      return value;
+    }
+  }
+  
   const reducer = (state, action) => {
     switch (action.type) {
       case "ADD_ROW":
@@ -26,15 +28,28 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty }) => {
           state: { id, value, row, type },
         } = action;
         const { tableState } = state;
-        let findIndex = tableState.findIndex((row) => row.id === id);
-        if (type === "number") tableState[findIndex].number = value;
-        if (type === "length") tableState[findIndex].length = value;
-        if (type === "width") tableState[findIndex].width = value;
-        if (type === "depth") tableState[findIndex].depth = value;
+        let findIndex = tableState.findIndex((row,index) => {
+          return index + 1 === id;
+        });
+        if (type === "number") tableState[findIndex].currentNumber = value;
+        if (type === "length") tableState[findIndex].currentLength = value;
+        if (type === "width") tableState[findIndex].currentWidth = value;
+        if (type === "height") tableState[findIndex].currentHeight = value;
+        const element = tableState[findIndex];
+        const calculatedValue =
+        (validate(element.currentNumber)) *
+        (validate(element.currentLength)) *
+        (validate(element.currentWidth)) *
+        (validate(element.currentHeight));
+
+        tableState[findIndex].totalValue = calculatedValue;
+        setTotal(tableState.reduce((acc, curr) => acc+curr.totalValue,0));
+
+        
         return { ...state, tableState };
 
       case "CLEAR_STATE":
-        return { ...state, tableState: values };
+        return { ...state, tableState: initialState.tableState };
 
       default:
         return state;
@@ -68,16 +83,8 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty }) => {
     return obj;
   };
 
-  columns = [
-    t("WORKS_SNO"),
-    t("Description"),
-    t("Unit"),
-    t("Rate"),
-    t("Approved Quantity"),
-    t("Consumed Quantity"),
-    t("Current MB Entry"),
-    t("Amount for current entry"),
-  ];
+  
+
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return (
@@ -90,35 +97,37 @@ const MeasureCard = ({ columns, values, consumedQty, setConsumedQty }) => {
   };
 
   const renderBody = () => {
-    return values?.map((value, index) => {
+    return state?.tableState?.map((value, index) => {
       return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} />;
     });
   };
-
-  const calculate = () => {
-    let total = 0;
-    state.tableState.forEach((element) => {
-      total += element.number * element.length * element.width * element.depth;
-    });
-    return total;
-  };
+  
   return (
     <Card>
-      <table className="table reports-table sub-work-table" style={{ marginTop: "-2rem" }}>
+      <table className="table reports-table sub-work-table" >
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>
         <tbody>
           {renderBody()}
           <tr>
-            <button
-              onClick={() => {
-                setConsumedQty(calculate());
+          <td colSpan={"4"}>
+          <div style={{display: "flex", flexDirection: "row"}}>
+            <Button label={"Clear"} onButtonClick={() => {
                 dispatch({ type: "CLEAR_STATE" });
-              }}
-            >
-              Done
-            </button>
+              }}/>
+            <Button label={"Done"} onButtonClick={() => {
+              console.log("state",state);
+                setInitialState(state);
+                setConsumedQty(total);
+
+                setShowMeasureCard(false);
+              }}/>
+          </div>
+           </td> 
+          <td colSpan={"4"}>
+          SubTotal: {total}
+          </td> 
           </tr>
         </tbody>
       </table>

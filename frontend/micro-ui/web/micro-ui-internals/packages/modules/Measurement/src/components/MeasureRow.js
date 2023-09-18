@@ -8,14 +8,15 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
+
   return (
     <tr key={index}>
-      <td>{value.no}</td>
-      <td>{value.type}</td>
-      <td>{value.desc}</td>
+      <td>{index + 1}</td>
+      <td>{state.tableState[index].isDeduction? "YES": "NO"}</td>
+      <td>{state.tableState[index].description}</td>
       <td>
         <TextInput
-          value={state.tableState[index].number} // Replace field1 with the appropriate field name.
+          value={state.tableState[index].currentNumber} 
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -26,7 +27,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].length} // Replace field1 with the appropriate field name.
+          value={state.tableState[index].currentLength} 
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -37,7 +38,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].width} // Replace field1 with the appropriate field name.
+          value={state.tableState[index].currentWidth} 
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -48,16 +49,16 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].depth} // Replace field1 with the appropriate field name.
+          value={state.tableState[index].currentHeight} 
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
-              state: { id: index + 1, value: newValue.target.value, row: value, type: "depth" },
+              state: { id: index + 1, value: newValue.target.value, row: value, type: "height" },
             });
           }}
         />
       </td>
-      <td>{value.quantity}</td>
+      <td>{state.tableState[index].totalValue}</td>
     </tr>
   );
 };

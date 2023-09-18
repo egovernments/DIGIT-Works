@@ -1,7 +1,7 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-import EmployeeApp from "./pages/employee";
+import EmployeeApp from "./pages/employee/";
 import MeasurementCard from "./components/MeasurementCard";
 import MeasureTable from "./components/MeasureTable";
 import MeasureCard from "./components/MeasureCard";
@@ -23,20 +23,20 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
     if (isLoading) {
         return <Loader />;
     }
+  if (isLoading) {
+    return <Loader />;
+  }
 
 
     return <EmployeeApp path={path} stateCode={stateCode} />;
 };
 
 const componentsToRegister = {
-
-    MeasurementCard,
-    MeasurementModule,
-    MeasureCard,
-    MeasureTable,
-    MeasureRow,
-
-
+  MeasurementCard,
+  MeasurementModule,
+  MeasureTable,
+  MeasureCard,
+  MeasureRow,
 };
 
 export const initMeasurementComponents = () => {
@@ -44,3 +44,4 @@ export const initMeasurementComponents = () => {
         Digit.ComponentRegistryService.setComponent(key, value);
     });
 };
+
