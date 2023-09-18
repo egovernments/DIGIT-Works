@@ -19,19 +19,17 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
     });
 
 
+
     if (isLoading) {
         return <Loader />;
     }
-  if (isLoading) {
-    return <Loader />;
-  }
 
     return <EmployeeApp path={path} stateCode={stateCode} />;
 };
 
 const componentsToRegister = {
-  MeasurementCard,
-  MeasurementModule,
+  WorksCard: MeasurementCard,
+  WorksModule: MeasurementModule,
   MeasureTable,
   MeasureCard,
   MeasureRow,

@@ -86,7 +86,7 @@ const CreateMeasurement = () => {
   estimateDetails.reduce((_, currentItem) => {
     if (currentItem.category === 'SOR') {
       sorCategoryArray.push(currentItem);
-    } else if (currentItem.category === 'NONSOR') {
+    } else if (currentItem.category === 'NON-SOR') {
       nonSorCategoryArray.push(currentItem);
     }
   }, null);

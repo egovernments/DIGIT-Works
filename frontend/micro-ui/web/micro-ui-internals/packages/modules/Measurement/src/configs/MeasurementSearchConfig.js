@@ -2,11 +2,11 @@ const SearchMeasurementConfig = () => {
     return {
       label: "Search Measurement Book",
       type: "search",
-      actionLabel: "WORKS_ADD_WAGESEEKER",
-      actionRole: "INDIVIDUAL_CREATOR",
-      actionLink: "masters/create-wageseeker",
+      // actionLabel: "WORKS_ADD_WAGESEEKER",
+      // actionRole: "INDIVIDUAL_CREATOR",
+      // actionLink: "masters/create-wageseeker",
       apiDetails: {
-        serviceName: "/individual/v1/_search",
+        serviceName: "/measurementservice/v1/_search",
         requestParam: {},
         requestBody: {
           apiOperation: "SEARCH",
@@ -40,17 +40,17 @@ const SearchMeasurementConfig = () => {
             },
             fields: [
               {
-                "label": "WARD",
-                "type": "locationdropdown",
-                "isMandatory": false,
-                "disable": false,
-                "populators": {
-                    "name": "wardCode",
-                    "type": "ward",
-                  "optionsKey": "i18nKey",
-                    "defaultText": "COMMON_SELECT_WARD",
-                    "selectedText": "COMMON_SELECTED",
-                    "allowMultiSelect": false
+                label: "WARD",
+                type: "locationdropdown",
+                isMandatory: false,
+                disable: false,
+                populators: {
+                    name: "wardCode",
+                    type: "ward",
+                  optionsKey: "i18nKey",
+                    defaultText: "COMMON_SELECT_WARD",
+                    selectedText: "COMMON_SELECTED",
+                    allowMultiSelect: false
                 }
             },
               {
