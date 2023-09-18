@@ -10,7 +10,7 @@ const MeasurementCard = () => {
 
 
   const propsForModuleCard = {
-    Icon: <MuktaHomeIcon />,
+    Icon: <CaseIcon />,
     moduleName: t("WORKS_MEASUREMENT"),
     kpis: [
       // {
@@ -36,10 +36,13 @@ const MeasurementCard = () => {
         link: `/${window?.contextPath}/employee/measurement/inbox`,
       },
       {
+
         label: t("ACTION_TEST_CREATE_MEASUREMENT"),
         link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784`,
+
         roles: ["EMPLOYEE"],
       },
+    
       {
         label: t("Search"),
         link: `/${window?.contextPath}/employee/measurement/search`,
