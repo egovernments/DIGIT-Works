@@ -93,4 +93,8 @@ public class Configuration {
     // Kafka topics
     @Value("${measurement.kafka.create.topic}")
     private String createMeasurementTopic;
+
+    @Value("${measurement.kafka.enrich.create.topic}")
+    private String enrichMeasurementTopic;
+
 }

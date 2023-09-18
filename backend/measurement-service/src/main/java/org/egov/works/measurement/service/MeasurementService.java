@@ -124,9 +124,9 @@ public class MeasurementService {
             }
 
             // fetch ids from IdGen
-            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
+//            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
 
-            measurement.setMeasurementNumber(idList.get(0)); // enrich IdGen
+            measurement.setMeasurementNumber("IDGEN_DOWN_SA"); // enrich IdGen
             AuditDetails auditDetails = AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();
             measurement.setAuditDetails(auditDetails);      // set audit details
 
@@ -136,7 +136,7 @@ public class MeasurementService {
 
         response.setMeasurements(measurementList);
         // push to kafka topic
-        producer.push(configuration.getCreateMeasurementTopic(),response);
+        producer.push(configuration.getCreateMeasurementTopic(),request);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
