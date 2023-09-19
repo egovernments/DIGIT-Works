@@ -12,7 +12,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
-import org.egov.works.measurement.util.MdmsUtil;
+import org.egov.works.measurement.util.*;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.web.models.Document;
 import org.egov.works.measurement.web.models.Measure;
@@ -33,8 +33,6 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 
 import org.egov.works.measurement.kafka.Producer;
-import org.egov.works.measurement.util.ContractUtil;
-import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.MdmsUtil;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +63,9 @@ public class MeasurementService {
     private Producer producer;
 
     @Autowired
+    private WorkflowService workflowService;
+
+    @Autowired
     private Configuration configuration;
 
     @Autowired
@@ -76,13 +77,13 @@ public class MeasurementService {
     private MeasurementEnrichment enrichmentUtil;
 
     @Autowired
+    private WorkflowUtil workflowUtil;
+
+    @Autowired
     private ContractUtil contractUtil;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @Value("${measurement.kafka.update.topic}")
-    private String updateTopic;
 
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
         System.out.println("Create Measurement service is called");
@@ -126,10 +127,10 @@ public class MeasurementService {
             }
 
             // fetch ids from IdGen
-            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
+//            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
 
             // enrich IdGen
-            measurement.setMeasurementNumber(idList.get(0));
+            measurement.setMeasurementNumber("mb-287278-kjjkdfkjdf");
 
             // set audit details
             AuditDetails auditDetails = AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();
@@ -155,39 +156,114 @@ public class MeasurementService {
     }
 
     public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
-        // Validate document IDs from the measurement request
-        validator.validateDocumentIds(measurementRegistrationRequest);
+        //Validate document IDs from the measurement request
+        validator.validateDocumentIds(measurementRegistrationRequest.getMeasurements());
 
         // Validate existing data and set audit details
         validator.validateExistingDataAndSetAuditDetails(measurementRegistrationRequest);
 
         // Create the MeasurementResponse object
-        MeasurementResponse response = makeUpdateResponse(measurementRegistrationRequest);
+        MeasurementResponse response = makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
 
         // Push the response to the producer
-        producer.push(updateTopic, response);
+        producer.push(configuration.getUpdateTopic(), response);
 
         // Return the success response
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
-    private MeasurementResponse makeUpdateResponse(MeasurementRequest measurementRegistrationRequest) {
+
+    public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest) {
+        // Validate document IDs from the measurement service request
+         validator.validateDocumentIds(measurementServiceRequest.getMeasurements());
+
+        // Validate existing data and set audit details
+         validator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
+
+        // Validate contracts for each measurement
+        validator.validateContracts(measurementServiceRequest);
+
+        // Update workflow statuses for each measurement service
+        workflowService.updateWorkflowStatuses(measurementServiceRequest);
+
+        // Update measurements in the service and push to the update topic
+        updateMeasurementsInService(measurementServiceRequest);
+
+        // Create a MeasurementServiceResponse
+        MeasurementServiceResponse response = makeUpdateResponseService(measurementServiceRequest);
+
+        // Push the response to the service update topic
+        producer.push(configuration.getServiceUpdateTopic(), response);
+
+        // Return the response as a ResponseEntity with HTTP status NOT_IMPLEMENTED
+        return new ResponseEntity<>(response, HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public void updateMeasurementsInService(MeasurementServiceRequest measurementServiceRequest){
+        // Extract measurements from the request
+        List<Measurement> measurements = extractMeasurementsFromRequest(measurementServiceRequest);
+
+        // Create a MeasurementResponse based on the measurements and request
+        MeasurementResponse measurementResponse = makeUpdateResponseViaServiceRequest(measurements, measurementServiceRequest);
+
+        // Push the measurementResponse to the update topic
+        producer.push(configuration.getUpdateTopic(), measurementResponse);
+    }
+
+
+    public MeasurementServiceResponse makeUpdateResponseService(MeasurementServiceRequest measurementServiceRequest) {
+        MeasurementServiceResponse response = new MeasurementServiceResponse();
+
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(measurementServiceRequest.getRequestInfo().getApiId())
+                .msgId(measurementServiceRequest.getRequestInfo().getMsgId())
+                .ts(measurementServiceRequest.getRequestInfo().getTs())
+                .build());
+
+        response.setMeasurements(measurementServiceRequest.getMeasurements());
+
+        return response;
+    }
+
+
+    private MeasurementResponse makeUpdateResponse(List<Measurement> measurements,MeasurementRequest measurementRegistrationRequest) {
         MeasurementResponse response = new MeasurementResponse();
         response.setResponseInfo(ResponseInfo.builder()
                 .apiId(measurementRegistrationRequest.getRequestInfo().getApiId())
                 .msgId(measurementRegistrationRequest.getRequestInfo().getMsgId())
                 .ts(measurementRegistrationRequest.getRequestInfo().getTs())
                 .build());
-        response.setMeasurements(measurementRegistrationRequest.getMeasurements());
+        response.setMeasurements(measurements);
         return response;
     }
 
-    public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest){
-        MeasurementServiceResponse response=new MeasurementServiceResponse();
+    public MeasurementResponse makeUpdateResponseViaServiceRequest(List<Measurement> measurements, MeasurementServiceRequest measurementServiceRequest) {
+        MeasurementResponse response = new MeasurementResponse();
 
-        // Validate existing data and set audit details
-        validator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
-        return new ResponseEntity<>(response,HttpStatus.NOT_IMPLEMENTED);
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(measurementServiceRequest.getRequestInfo().getApiId())
+                .msgId(measurementServiceRequest.getRequestInfo().getMsgId())
+                .ts(measurementServiceRequest.getRequestInfo().getTs())
+                .build());
+
+        response.setMeasurements(measurements);
+
+        return response;
+    }
+
+
+    public List<Measurement> extractMeasurementsFromRequest(MeasurementServiceRequest request) {
+        List<Measurement> measurements = new ArrayList<>();
+
+        if (request != null && request.getMeasurements() != null) {
+            for (org.egov.works.measurement.web.models.MeasurementService measurementService : request.getMeasurements()) {
+                if (measurementService instanceof Measurement) {
+                    measurements.add((Measurement) measurementService);
+                }
+            }
+        }
+
+        return measurements;
     }
 
 

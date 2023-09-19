@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 @Component
-public class MeasurementServiceUpdateRowMapper implements RowMapper<Measurement> {
+public class MeasurementServiceUpdateRowMapper implements RowMapper<MeasurementService> {
 
     @Override
     public MeasurementService mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -20,12 +20,6 @@ public class MeasurementServiceUpdateRowMapper implements RowMapper<Measurement>
         measurementService.setTenantId(rs.getString("tenantId"));
         measurementService.setMeasurementNumber(rs.getString("mbNumber"));
         measurementService.setWfStatus(rs.getString("wfStatus"));
-
-        // Map common fields with Measurement
-        measurementService.setPhysicalRefNumber(rs.getString("phyRefNumber"));
-        measurementService.setReferenceId(rs.getString("referenceId"));
-        measurementService.setEntryDate(rs.getBigDecimal("entryDate"));
-        measurementService.setIsActive(rs.getBoolean("isActive"));
 
         // Set AuditDetails
         AuditDetails auditDetails = new AuditDetails();

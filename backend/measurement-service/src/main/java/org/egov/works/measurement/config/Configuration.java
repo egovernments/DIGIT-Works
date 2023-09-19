@@ -93,4 +93,10 @@ public class Configuration {
     // Kafka topics
     @Value("${measurement.kafka.create.topic}")
     private String createMeasurementTopic;
+
+    @Value("${measurement.kafka.update.topic}")
+    private String updateTopic;
+
+    @Value("${measurement-service.kafka.update.topic}")
+    private String serviceUpdateTopic;
 }

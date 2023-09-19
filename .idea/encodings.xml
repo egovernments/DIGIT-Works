@@ -2,6 +2,7 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/../../DIGIT-OSS/core-services/egov-persister/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../../DIGIT-OSS/core-services/egov-workflow-v2/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/backend/measurement-service/src/main/java" charset="UTF-8" />
   </component>
 </project>

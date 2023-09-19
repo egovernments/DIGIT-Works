@@ -8,7 +8,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.egov.works.measurement.repository.rowmapper.MeasureUpdateRowMapper;
+import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
+import org.egov.works.measurement.repository.rowmapper.MeasurementServiceUpdateRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementUpdateRowMapper;
+import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +34,9 @@ public class MeasurementServiceValidator {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private ContractUtil contractUtil;
+
 
     @Value("${egov.filestore.host}")
     private String baseFilestoreUrl;
@@ -38,39 +44,97 @@ public class MeasurementServiceValidator {
     @Value("${egov.filestore.endpoint}")
     private String baseFilestoreEndpoint;
 
-    public void validateDocumentIds(MeasurementRequest measurementRegistrationRequest) {
-        // Extract document IDs from the measurement request
-        List<String> documentIds = extractDocumentIds(measurementRegistrationRequest);
 
-        // Make an API request to retrieve file store IDs
+    public <T extends Measurement> void validateDocumentIds(List<T> measurements) {
+        List<String> documentIds = extractDocumentIds(measurements);
+
+        // Make an API request to validate document IDs
         String responseJson = makeApiRequest(documentIds);
 
-        // Parse the API response and check if all document IDs were found
-        boolean allIdsMatched = checkDocumentIdsMatch(documentIds, responseJson);
-        if (!allIdsMatched) {
-            throw new RuntimeException("Files are invalid");
+        // Check if document IDs match the response
+        boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
+
+        if (!documentIdsMatch) {
+            throw new RuntimeException("Document IDs are invalid");
         }
+    }
+
+
+    public void validateContracts(MeasurementServiceRequest measurementServiceRequest) {
+        measurementServiceRequest.getMeasurements().forEach(measurement -> {
+            // validate contracts
+            Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
+
+            if (!isValidContract) {
+                throw new RuntimeException("Estimate Ids are invalid");
+            }
+        });
     }
 
     public void validateExistingDataAndSetAuditDetails(MeasurementRequest measurementRegistrationRequest) {
-        Ids idsToCheck = getAllIds(measurementRegistrationRequest);
-        List<String> measurementIds = idsToCheck.getMeasurementIds();
-        List<String> measureIds = idsToCheck.getMeasureIds();
-        List<Measurement> measurementExisting = validateMeasurementRequest(measurementIds);
-        List<Measure> measureExisting = validateMeasureRequest(measureIds);
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        List<Measurement> measurementExisting = new ArrayList<>();
 
-        // Perform the measurement update (if filestore validate successfully)
-        if (measurementExisting.size() != measurementIds.size() || measureExisting.size() != measureIds.size()) {
-            throw new RuntimeException("Data does not exist");
+        for (Measurement measurement : measurementRegistrationRequest.getMeasurements()) {
+            // Validate the measurement
+            Measurement existingMeasurement = validateMeasurementRequest(namedParameterJdbcTemplate, measurement);
+            if (existingMeasurement == null) {
+                throw new RuntimeException("Data does not exist");
+            }
+            measurementExisting.add(existingMeasurement);
+
+            // Validate the measures
+            for (Measure measure : measurement.getMeasures()) {
+                Measure existingMeasure = validateMeasureRequest(namedParameterJdbcTemplate, measure);
+                if (existingMeasure == null) {
+                    throw new RuntimeException("Data does not exist");
+                }
+            }
         }
+
+        // Perform the measurement update
         setAuditDetails(measurementExisting, measurementRegistrationRequest);
     }
 
+
+    public Measurement validateMeasurementRequest(NamedParameterJdbcTemplate jdbcTemplate, Measurement measurement) {
+        // Fetch the Measurement object with the specified ID from the database
+        String idToCheck = measurement.getId().toString();
+        String sql = "SELECT * FROM eg_mb_measurements WHERE id = :id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", idToCheck);
+
+        try {
+            return jdbcTemplate.queryForObject(sql, params, new MeasurementUpdateRowMapper());
+        } catch (EmptyResultDataAccessException ex) {
+            return null; // Measurement does not exist
+        }
+    }
+
+    public Measure validateMeasureRequest(NamedParameterJdbcTemplate jdbcTemplate, Measure measure) {
+        // Fetch the Measure object with the specified ID from the database
+        String idToCheck = measure.getId().toString();
+        String sql = "SELECT * FROM eg_mb_measurement_measures WHERE id = :id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", idToCheck);
+
+        try {
+            return jdbcTemplate.queryForObject(sql, params, new MeasureUpdateRowMapper());
+        } catch (EmptyResultDataAccessException ex) {
+            return null; // Measure does not exist
+        }
+    }
+
+
     public void validateExistingServiceDataAndSetAuditDetails(MeasurementServiceRequest measurementServiceRequest) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        ServiceIds idsToCheck = getAllServiceIds(measurementServiceRequest);
-        for (String id : idsToCheck.getIds()) {
-            String mbNumber = idsToCheck.getMeasurementNumbers().get(idsToCheck.getIds().indexOf(id));
+        List<MeasurementService> existingMeasurementService = new ArrayList<>();
+
+        for (MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
+            String id = measurementService.getId().toString();
+            String mbNumber = measurementService.getMeasurementNumber();
 
             // Check if measurements exist in eg_mb_measurements
             Measurement measurementInMBTable = getMeasurementFromMBTable(namedParameterJdbcTemplate, id, mbNumber);
@@ -78,10 +142,14 @@ public class MeasurementServiceValidator {
             // Check if measurements exist in eg_mbs_measurements
             MeasurementService measurementServiceInMBSTable = getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate, mbNumber);
 
-            if (measurementInMBTable == null && measurementServiceInMBSTable == null) {
+            if (measurementInMBTable == null || measurementServiceInMBSTable == null) {
                 throw new RuntimeException("Data does not exist");
             }
+
+            existingMeasurementService.add(measurementServiceInMBSTable);
         }
+
+        setServiceAuditDetails(existingMeasurementService, measurementServiceRequest);
     }
 
     public Measurement getMeasurementFromMBTable(NamedParameterJdbcTemplate jdbcTemplate, String id, String mbNumber) {
@@ -105,15 +173,7 @@ public class MeasurementServiceValidator {
         params.addValue("mbNumber", mbNumber);
 
         try {
-            return jdbcTemplate.queryForObject(sql, params, (rs, rowNum) -> {
-                MeasurementService measurementService = new MeasurementService();
-                measurementService.setId(UUID.fromString(rs.getString("id")));
-                measurementService.setTenantId(rs.getString("tenantId"));
-                measurementService.setMeasurementNumber(rs.getString("mbNumber"));
-                measurementService.setWfStatus(rs.getString("wfStatus"));
-                // Set other properties as needed
-                return measurementService;
-            });
+            return jdbcTemplate.queryForObject(sql, params, new MeasurementServiceUpdateRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null; // MeasurementService does not exist
         }
@@ -124,11 +184,21 @@ public class MeasurementServiceValidator {
     public void setAuditDetails(List<Measurement> measurementExisting,MeasurementRequest measurementRequest){
         List<Measurement> measurements=measurementRequest.getMeasurements();
         for(int i=0;i<measurements.size();i++){
-            measurements.get(i).setAuditDetails(measurementExisting.get(0).getAuditDetails());
+            measurements.get(i).setAuditDetails(measurementExisting.get(i).getAuditDetails());
             measurements.get(i).getAuditDetails().setLastModifiedBy(measurementRequest.getRequestInfo().getUserInfo().getUuid());
             measurements.get(i).getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
         }
         measurementRequest.setMeasurements(measurements);
+    }
+
+    public void setServiceAuditDetails(List<MeasurementService> measurementServiceExisting,MeasurementServiceRequest measurementServiceRequest){
+        List<MeasurementService> measurementServices=measurementServiceRequest.getMeasurements();
+        for(int i=0;i<measurementServiceExisting.size();i++){
+            measurementServices.get(i).setAuditDetails(measurementServiceExisting.get(i).getAuditDetails());
+            measurementServices.get(i).getAuditDetails().setLastModifiedBy(measurementServiceRequest.getRequestInfo().getUserInfo().getUuid());
+            measurementServices.get(i).getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+        }
+        measurementServiceRequest.setMeasurements(measurementServices);
     }
 
     public boolean checkDocumentIdsMatch(List<String> documentIds, String responseJson) {
@@ -149,91 +219,6 @@ public class MeasurementServiceValidator {
             return false; // Error occurred while parsing the response
         }
     }
-    public Ids getAllIds(MeasurementRequest measurementRequest) {
-        Ids ids = new Ids();
-
-        for (Measurement measurement : measurementRequest.getMeasurements()) {
-            String measurementIdAsString = measurement.getId().toString(); // Convert UUID to string
-            ids.getMeasurementIds().add(measurementIdAsString);
-
-            for (Measure measure : measurement.getMeasures()) {
-                String measureIdAsString = measure.getId().toString(); // Convert UUID to string
-                ids.getMeasureIds().add(measureIdAsString);
-            }
-        }
-
-        return ids;
-    }
-
-    public ServiceIds getAllServiceIds(MeasurementServiceRequest measurementServiceRequest) {
-        ServiceIds serviceIds = new ServiceIds();
-        List<String> ids = new ArrayList<>();
-        List<String> measurementNumbers = new ArrayList<>();
-
-        for (MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
-            ids.add(measurementService.getId().toString());
-            measurementNumbers.add(measurementService.getMeasurementNumber());
-        }
-
-        serviceIds.setIds(ids);
-        serviceIds.setMeasurementNumbers(measurementNumbers);
-
-        return serviceIds;
-    }
-
-    public List<Measurement> validateMeasurementRequest(List<String> idsToCheck) {
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        List<Measurement> existingMeasurements = new ArrayList<>();
-
-        for (String idToCheck : idsToCheck) {
-            // Fetch the Measurement object with the specified ID from the database
-            Measurement existingMeasurement = getMeasurementById(namedParameterJdbcTemplate, idToCheck);
-
-            // If a Measurement object exists, add it to the list
-            if (existingMeasurement != null) {
-                existingMeasurements.add(existingMeasurement);
-            }
-        }
-
-        return existingMeasurements;
-    }
-
-    public List<Measure> validateMeasureRequest(List<String> idsToCheck) {
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        List<Measure> existingMeasures = new ArrayList<>();
-
-        for (String idToCheck : idsToCheck) {
-            // Fetch the Measurement object with the specified ID from the database
-            Measure existingMeasure = getMeasureById(namedParameterJdbcTemplate, idToCheck);
-
-            // If a Measurement object exists, add it to the list
-            if (existingMeasure != null) {
-                existingMeasures.add(existingMeasure);
-            }
-        }
-
-        return existingMeasures;
-    }
-
-
-    public Measurement getMeasurementById(NamedParameterJdbcTemplate jdbcTemplate, String id) {
-        String sql = "SELECT * FROM eg_mb_measurements WHERE id = :id";
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id.toString());
-
-        return jdbcTemplate.queryForObject(sql, params, new MeasurementUpdateRowMapper());
-    }
-
-
-    public Measure getMeasureById(NamedParameterJdbcTemplate jdbcTemplate, String id) {
-        String sql = "SELECT * FROM eg_mb_measurement_measures WHERE id = :id";
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
-
-        return jdbcTemplate.queryForObject(sql, params, new MeasureUpdateRowMapper());
-    }
 
 
     private String makeApiRequest(List<String> documentIds) {
@@ -253,7 +238,7 @@ public class MeasurementServiceValidator {
                 return EntityUtils.toString(response.getEntity());
             } else {
                 // Handle non-200 status codes (e.g., by throwing an exception)
-                throw new RuntimeException("API request failed with status code: " + response.getStatusLine().getStatusCode());
+                throw   new RuntimeException("API request failed with status code: " + response.getStatusLine().getStatusCode());
             }
         } catch (IOException e) {
             // Handle exceptions (e.g., by logging or rethrowing)
@@ -270,19 +255,26 @@ public class MeasurementServiceValidator {
         }
     }
 
-    private List<String> extractDocumentIds(MeasurementRequest measurementRegistrationRequest) {
+    private <T extends Measurement> List<String> extractDocumentIds(List<T> measurements) {
         List<String> documentIds = new ArrayList<>();
-
-        for (Measurement measurement : measurementRegistrationRequest.getMeasurements()) {
+        for (T measurement : measurements) {
             for (Measure measure : measurement.getMeasures()) {
                 for (Document document : measure.getDocuments()) {
                     documentIds.add(document.getFileStore());
                 }
             }
+            if(measurement instanceof  MeasurementService){
+                MeasurementService ms = (MeasurementService) measurement;
+                if (ms.getWorkflow() != null) {
+                    for (digit.models.coremodels.Document document : ms.getWorkflow().getVerificationDocuments()) {
+                        documentIds.add(document.getFileStore());
+                    }
+                }
+            }
         }
-
         return documentIds;
     }
+
     private HttpGet buildHttpGetRequest(List<String> documentIds) {
         String apiUrl = baseFilestoreUrl + baseFilestoreEndpoint+"?tenantId=pg.citya";
 

@@ -70,7 +70,7 @@ public class WorkflowUtil {
      * @return
      */
     public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId,
-                                       String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
+                                       String businessId, String businessServiceCode,Workflow workflow, String wfModuleName) {
         ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId,
                 businessServiceCode, workflow, wfModuleName);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));

@@ -30,7 +30,7 @@ public class ContractUtil {
      */
     public ContractResponse getContracts(Measurement measurement , RequestInfo requestInfo){
         ContractCriteria req  = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId()).contractNumber(measurement.getReferenceId()).build();
-        String searchContractUrl = "https://unified-dev.digit.org/contract/v1/_search";
+        String searchContractUrl = "https://works-qa.digit.org/contract/v1/_search";
         return restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody();
     }
 
