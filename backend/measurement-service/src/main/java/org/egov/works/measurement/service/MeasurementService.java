@@ -86,6 +86,8 @@ public class MeasurementService {
     private JdbcTemplate jdbcTemplate;
 
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
+        //Validate document IDs from the measurement request
+        validator.validateDocumentIds(request.getMeasurements());
 
         String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
         String idName = configuration.getIdName();
@@ -172,52 +174,6 @@ public class MeasurementService {
 
         // Return the success response
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-    }
-
-
-    public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest) {
-        // Validate document IDs from the measurement service request
-         validator.validateDocumentIds(measurementServiceRequest.getMeasurements());
-
-        // Validate existing data and set audit details
-         validator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
-
-        // Validate contracts for each measurement
-        validator.validateContracts(measurementServiceRequest);
-
-        // Update workflow statuses for each measurement service
-        workflowService.updateWorkflowStatuses(measurementServiceRequest);
-
-        // Create a MeasurementServiceResponse
-        MeasurementServiceResponse response = makeUpdateResponseService(measurementServiceRequest);
-
-        // Push the response to the service update topic
-        producer.push(configuration.getServiceUpdateTopic(), response);
-
-        // Return the response as a ResponseEntity with HTTP status NOT_IMPLEMENTED
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-    }
-
-
-    public MeasurementServiceResponse makeUpdateResponseService(MeasurementServiceRequest measurementServiceRequest) {
-        MeasurementServiceResponse response = new MeasurementServiceResponse();
-
-        //setting totalValue
-        for(Measurement measurement:measurementServiceRequest.getMeasurements() ){
-            for(Measure measure:measurement.getMeasures()){
-                measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
-            }
-        }
-
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(measurementServiceRequest.getRequestInfo().getApiId())
-                .msgId(measurementServiceRequest.getRequestInfo().getMsgId())
-                .ts(measurementServiceRequest.getRequestInfo().getTs())
-                .build());
-
-        response.setMeasurements(measurementServiceRequest.getMeasurements());
-
-        return response;
     }
 
 

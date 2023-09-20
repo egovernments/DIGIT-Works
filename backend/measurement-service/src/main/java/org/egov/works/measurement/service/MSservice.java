@@ -38,6 +38,8 @@ public class MSservice {
     @Autowired
     private Configuration configuration;
     public ResponseEntity<MeasurementServiceResponse> handleCreateMeasurementService(MeasurementServiceRequest body){
+        // Validate document IDs from the measurement service request
+        measurementServiceValidator.validateDocumentIds(body.getMeasurements());
         measurementServiceValidator.validateContracts(body);                             // validate contracts
         List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);        // update WF
         enrichMeasurementService(body,wfStatusList);                                     // enrich Measurement Service
@@ -46,6 +48,51 @@ public class MSservice {
         producer.push(configuration.getMeasurementServiceCreateTopic(),body);
         return new ResponseEntity<MeasurementServiceResponse>(measurementServiceResponse, HttpStatus.ACCEPTED);
 
+    }
+
+    public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest) {
+        // Validate document IDs from the measurement service request
+        measurementServiceValidator.validateDocumentIds(measurementServiceRequest.getMeasurements());
+
+        // Validate existing data and set audit details
+        measurementServiceValidator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
+
+        // Validate contracts for each measurement
+        measurementServiceValidator.validateContracts(measurementServiceRequest);
+
+        // Update workflow statuses for each measurement service
+        List<String> wfStatusList = workflowService.updateWorkflowStatuses(measurementServiceRequest);
+        enrichMeasurementService(measurementServiceRequest,wfStatusList);
+
+        // Create a MeasurementServiceResponse
+        MeasurementServiceResponse response = makeUpdateResponseService(measurementServiceRequest);
+
+        // Push the response to the service update topic
+        producer.push(configuration.getServiceUpdateTopic(), response);
+
+        // Return the response as a ResponseEntity with HTTP status NOT_IMPLEMENTED
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    public MeasurementServiceResponse makeUpdateResponseService(MeasurementServiceRequest measurementServiceRequest) {
+        MeasurementServiceResponse response = new MeasurementServiceResponse();
+
+        //setting totalValue
+        for(Measurement measurement:measurementServiceRequest.getMeasurements() ){
+            for(Measure measure:measurement.getMeasures()){
+                measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
+            }
+        }
+
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(measurementServiceRequest.getRequestInfo().getApiId())
+                .msgId(measurementServiceRequest.getRequestInfo().getMsgId())
+                .ts(measurementServiceRequest.getRequestInfo().getTs())
+                .build());
+
+        response.setMeasurements(measurementServiceRequest.getMeasurements());
+
+        return response;
     }
     public void enrichMeasurementService(MeasurementServiceRequest body , List<String> wfStatusList){
         List<MeasurementService> measurementServiceList = body.getMeasurements();
@@ -58,15 +105,13 @@ public class MSservice {
             enrichMeasures(measurementServiceList.get(i), body.getRequestInfo());                        // enrich id & audit details in measures
             measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich the workFlow Status
             measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
-            for(Measure measure:measurementServiceList.get(i).getMeasures()){
-                measure.setId(UUID.randomUUID());
-            }
         }
     }
 
     public void enrichMeasures(MeasurementService measurementService,RequestInfo requestInfo){
         List<Measure> measureList = measurementService.getMeasures();
         for(int i=0;i<measureList.size();i++){
+            measureList.get(i).setId(UUID.randomUUID());
             measureList.get(i).setReferenceId(measurementService.getId().toString()); // point to measurementId
             measureList.get(i).setAuditDetails(measurementService.getAuditDetails()); // enrich audit details
         }
