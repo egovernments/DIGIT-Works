@@ -90,6 +90,14 @@ public class Configuration {
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
 
+
+    // contract service
+    @Value("${egov.contract.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.path}")
+    private String contractPath;
+
     // Kafka topics
     @Value("${measurement.kafka.create.topic}")
     private String createMeasurementTopic;

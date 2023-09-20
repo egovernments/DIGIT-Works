@@ -22,14 +22,14 @@ import java.util.List;
 @Component
 public class Consumer {
     @Autowired
-    private ObjectMapper mapper;
+    ObjectMapper mapper;
 
     @Autowired
-    private RestTemplate restTemplate;
+    RestTemplate restTemplate;
     @Autowired
-    private Producer producer;
+    Producer producer;
     @Autowired
-    private Configuration configuration;
+    Configuration configuration;
 
 //    @Autowired
 //    private EstimateServiceConfiguration serviceConfiguration;
@@ -42,25 +42,29 @@ public class Consumer {
     @KafkaListener(topics = {"${measurement.kafka.create.topic}","${measurement.kafka.update.topic}","${measurement.kafka.enrich.create.topic}"})
     public void listen(final HashMap<String, Object> record , @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws IOException {
         MeasurementRequest measurementRequest = mapper.convertValue(record,MeasurementRequest.class);
-//        System.out.println(topic+"______________________");
+        System.out.println(topic+"______________________");
         List<HashMap<String, Object>> accumulatedDataList = new ArrayList<>();
         List<Measurement> measurements = measurementRequest.getMeasurements();
         RequestInfo requestInfo = measurementRequest.getRequestInfo();
 
         for (Measurement measurement : measurements) {
             String referenceId = measurement.getReferenceId();
-            ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurementRequest.getMeasurements().get(0).getTenantId()).contractNumber(referenceId).build();
-            String searchContractUrl = "https://works-qa.digit.org/contract/v1/_search";
 
-            ContractResponse contractResponse = restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody();
+            ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurementRequest.getMeasurements().get(0).getTenantId()).contractNumber(referenceId).build();
+
+            String searchContractUrl = configuration.getContractHost() + configuration.getContractPath();
+
+            ContractResponse contractResponse = restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody(); // inside try Catch
+
             HashMap<String, Object> mergedData = new HashMap<>();
             mergedData.put("measurement", measurement);
             mergedData.put("contract", contractResponse);
             accumulatedDataList.add(mergedData);
-
+//            System.out.println(contractResponse);
             System.out.println(mergedData);
 
         }
+//        System.out.println(accumulatedDataList);
         producer.push(configuration.getEnrichMeasurementTopic(), accumulatedDataList);
 
 
