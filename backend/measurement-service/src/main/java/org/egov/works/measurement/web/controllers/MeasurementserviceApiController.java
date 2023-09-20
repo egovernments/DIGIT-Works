@@ -53,8 +53,8 @@ public class MeasurementserviceApiController {
     @RequestMapping(value = "/measurementservice/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body) {
         String accept = request.getHeader("Accept");
-        msService.createMeasurementService(body);
-        return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.NOT_IMPLEMENTED);
+        return  msService.handleCreateMeasurementService(body);
+//        return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value = "/measurementservice/v1/_search", method = RequestMethod.POST)

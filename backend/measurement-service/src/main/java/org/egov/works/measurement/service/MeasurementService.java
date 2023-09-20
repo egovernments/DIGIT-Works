@@ -94,7 +94,7 @@ public class MeasurementService {
         MeasurementResponse response = new MeasurementResponse();
         List<Measurement> measurementList = new ArrayList<>();
 
-        // TODO: Shift to Utils
+        // TODO: Shift to a new function
         request.getMeasurements().forEach(measurement -> {
 
             // enrich UUID
@@ -144,8 +144,7 @@ public class MeasurementService {
         response.setMeasurements(measurementList);
 
         // push to kafka topic
-        producer.push(configuration.getCreateMeasurementTopic(),request);  // save  MeasurementResponse or request ?
-
+        producer.push(configuration.getCreateMeasurementTopic(),request);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
