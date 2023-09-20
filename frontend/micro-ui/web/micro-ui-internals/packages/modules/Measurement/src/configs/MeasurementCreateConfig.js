@@ -1,103 +1,10 @@
 export const CreateConfig = ({ defaultValue }) => {
-  console.log(defaultValue, "dddddddddd")
-  // Define default values for the basic details section
-  const basicDetailsDefaultValues = {
-    basicDetails_OrderNumber: defaultValue?.contractNumber || "",
-    basicDetails_projectID: defaultValue?.contractNumber || "",
-    basicDetails_projectSencDate: defaultValue?.contractNumber || "",
-    basicDetails_projectName: defaultValue?.contractNumber || "",
-    basicDetails_projectDesc: defaultValue?.contractNumber || "",
-    basicDetails_projectLoc: defaultValue?.contractNumber || "",
-  };
+  
   return {
     CreateConfig: [
       {
-        defaultValues: basicDetailsDefaultValues, // Use the default values here
+        defaultValues: defaultValue, // Use the default values here
         form: [
-          // {
-          //   head: "",
-          //   subHead: "",
-          //   body: [
-          //     {
-          //       inline: true,
-          //       label: "WORKS Order Number",
-          //       isMandatory: false,
-          //       key: "contractNumber",
-          //       type: "text",
-          //       disable: true,
-          //       appendColon: true,
-          //       populators: {
-          //         name: "contractNumber",
-          //         customClass: "fc-header-texts"
-          //       }
-          //     },
-          //     {
-          //       inline: true,
-          //       label: "Project Id",
-          //       isMandatory: false,
-          //       key: "basicDetails_projectID",
-          //       type: "text",
-          //       disable: true,
-          //       appendColon: true,
-          //       populators: {
-          //         name: "basicDetails_projectID",
-          //         customClass: "fc-header-texts"
-          //       }
-          //     },
-          //     {
-          //       inline: true,
-          //       label: "Project Senction Date",
-          //       isMandatory: false,
-          //       key: "basicDetails_projectSencDate",
-          //       type: "text",
-          //       disable: true,
-          //       appendColon: true,
-          //       populators: {
-          //         name: "basicDetails_projectSencDate",
-          //         customClass: "fc-header-texts"
-          //       }
-          //     },
-          //     {
-          //       inline: true,
-          //       label: "Project Name",
-          //       isMandatory: false,
-          //       key: "basicDetails_projectName",
-          //       type: "text",
-          //       disable: true,
-          //       appendColon: true,
-          //       populators: {
-          //         name: "basicDetails_projectName",
-          //         customClass: "fc-header-texts"
-          //       }
-          //     },
-          //     {
-          //       inline: true,
-          //       label: "Project Description",
-          //       isMandatory: false,
-          //       key: "basicDetails_projectDesc",
-          //       type: "text",
-          //       disable: true,
-          //       appendColon: true,
-          //       populators: {
-          //         name: "basicDetails_projectDesc",
-          //         customClass: "fc-header-texts"
-          //       }
-          //     },
-          //     {
-          //       inline: true,
-          //       label: "Project Location",
-          //       isMandatory: false,
-          //       key: "basicDetails_projectLoc",
-          //       type: "text",
-          //       disable: true,
-          //       appendColon: true,
-          //       populators: {
-          //         name: "basicDetails_projectLoc",
-          //         customClass: "fc-header-texts"
-          //       }
-          //     }
-          //   ]
-          // },
           {
             head: "Measurement Period",
             subHead: "",
