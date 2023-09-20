@@ -6,7 +6,6 @@ import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
   let { columns } = props;
-  console.log(props);
   const sorData = props.data.SOR.length > 0 ? props.data.SOR : null;
   const nonsorData = props.data.NONSOR.length > 0 ? props.data.NONSOR : null;
 
