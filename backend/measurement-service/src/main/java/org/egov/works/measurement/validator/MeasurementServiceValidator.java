@@ -200,6 +200,9 @@ public class MeasurementServiceValidator {
             measurementServices.get(i).setAuditDetails(measurementServiceExisting.get(i).getAuditDetails());
             measurementServices.get(i).getAuditDetails().setLastModifiedBy(measurementServiceRequest.getRequestInfo().getUserInfo().getUuid());
             measurementServices.get(i).getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            for(Measure measure:measurementServices.get(i).getMeasures()){
+                measure.setAuditDetails(measurementServiceExisting.get(i).getAuditDetails());
+            }
         }
         measurementServiceRequest.setMeasurements(measurementServices);
     }

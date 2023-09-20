@@ -14,7 +14,7 @@ public class WorkflowService {
     private WorkflowUtil workflowUtil;
     void updateWorkflowStatuses(MeasurementServiceRequest measurementServiceRequest) {
         for (org.egov.works.measurement.web.models.MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
-            workflowUtil.updateWorkflowStatus(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), "MB", measurementService.getWorkflow(), "measurement-book-service");
+            measurementService.setWfStatus(workflowUtil.updateWorkflowStatus(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), "MB", measurementService.getWorkflow(), "measurement-book-service"));
         }
     }
 }

@@ -136,6 +136,7 @@ public class MeasurementService {
             measurement.setAuditDetails(auditDetails);
             for(Measure measure:measurement.getMeasures()){
                 measure.setAuditDetails(auditDetails);
+                measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
             }
             // add the measurement to measurementList
             measurementList.add(measurement);
@@ -188,9 +189,6 @@ public class MeasurementService {
         // Update workflow statuses for each measurement service
         workflowService.updateWorkflowStatuses(measurementServiceRequest);
 
-        // Update measurements in the service and push to the update topic
-        updateMeasurementsInService(measurementServiceRequest);
-
         // Create a MeasurementServiceResponse
         MeasurementServiceResponse response = makeUpdateResponseService(measurementServiceRequest);
 
@@ -198,23 +196,19 @@ public class MeasurementService {
         producer.push(configuration.getServiceUpdateTopic(), response);
 
         // Return the response as a ResponseEntity with HTTP status NOT_IMPLEMENTED
-        return new ResponseEntity<>(response, HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public void updateMeasurementsInService(MeasurementServiceRequest measurementServiceRequest){
-        // Extract measurements from the request
-        List<Measurement> measurements = extractMeasurementsFromRequest(measurementServiceRequest);
-
-        // Create a MeasurementResponse based on the measurements and request
-        MeasurementResponse measurementResponse = makeUpdateResponseViaServiceRequest(measurements, measurementServiceRequest);
-
-        // Push the measurementResponse to the update topic
-        producer.push(configuration.getUpdateTopic(), measurementResponse);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
 
     public MeasurementServiceResponse makeUpdateResponseService(MeasurementServiceRequest measurementServiceRequest) {
         MeasurementServiceResponse response = new MeasurementServiceResponse();
+
+        //setting totalValue
+        for(Measurement measurement:measurementServiceRequest.getMeasurements() ){
+            for(Measure measure:measurement.getMeasures()){
+                measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
+            }
+        }
 
         response.setResponseInfo(ResponseInfo.builder()
                 .apiId(measurementServiceRequest.getRequestInfo().getApiId())
@@ -230,6 +224,13 @@ public class MeasurementService {
 
     private MeasurementResponse makeUpdateResponse(List<Measurement> measurements,MeasurementRequest measurementRegistrationRequest) {
         MeasurementResponse response = new MeasurementResponse();
+
+        //setting totalValue
+        for(Measurement measurement:measurements ){
+            for(Measure measure:measurement.getMeasures()){
+                measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
+            }
+        }
         response.setResponseInfo(ResponseInfo.builder()
                 .apiId(measurementRegistrationRequest.getRequestInfo().getApiId())
                 .msgId(measurementRegistrationRequest.getRequestInfo().getMsgId())
@@ -237,35 +238,6 @@ public class MeasurementService {
                 .build());
         response.setMeasurements(measurements);
         return response;
-    }
-
-    public MeasurementResponse makeUpdateResponseViaServiceRequest(List<Measurement> measurements, MeasurementServiceRequest measurementServiceRequest) {
-        MeasurementResponse response = new MeasurementResponse();
-
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(measurementServiceRequest.getRequestInfo().getApiId())
-                .msgId(measurementServiceRequest.getRequestInfo().getMsgId())
-                .ts(measurementServiceRequest.getRequestInfo().getTs())
-                .build());
-
-        response.setMeasurements(measurements);
-
-        return response;
-    }
-
-
-    public List<Measurement> extractMeasurementsFromRequest(MeasurementServiceRequest request) {
-        List<Measurement> measurements = new ArrayList<>();
-
-        if (request != null && request.getMeasurements() != null) {
-            for (org.egov.works.measurement.web.models.MeasurementService measurementService : request.getMeasurements()) {
-                if (measurementService instanceof Measurement) {
-                    measurements.add((Measurement) measurementService);
-                }
-            }
-        }
-
-        return measurements;
     }
 
 
