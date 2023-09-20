@@ -6,6 +6,7 @@ import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
   let { columns } = props;
+
   let data = props.data.SOR.length > 0 ? props.data.SOR : props.data.NONSOR.length > 0 ? props.data.NONSOR : null;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -39,7 +40,7 @@ const MeasureTable = (props) => {
 
   columns = [
     t("WORKS_SNO"),
-    t("Description"),
+    t("MB_DESCRIPTION"),
     t("Unit"),
     t("Rate"),
     t("Approved Quantity"),

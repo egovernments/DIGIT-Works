@@ -97,6 +97,7 @@ const CreateMeasurement = () => {
   if (isContractLoading || isEstimateLoading) {
     return <Loader />
   }
+
   return (
     <div>
       <h1>Measurement Book</h1>
