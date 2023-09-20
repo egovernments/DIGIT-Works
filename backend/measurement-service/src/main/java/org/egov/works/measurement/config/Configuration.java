@@ -99,4 +99,24 @@ public class Configuration {
 
     @Value("${measurement-service.kafka.update.topic}")
     private String serviceUpdateTopic;
+
+    @Value("${measurement.idgen.name}")
+    private String idName;
+
+    @Value("${measurement.idgen.format}")
+    private String idFormat;
+
+    // contract service
+    @Value("${egov.contract.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.path}")
+    private String contractPath;
+
+    // estimate service
+    @Value("${egov.estimate.host}")
+    private String estimateHost;
+
+    @Value("${egov.estimate.path}")
+    private String estimatePath;
 }
