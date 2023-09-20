@@ -91,10 +91,10 @@ public class MeasurementService {
     private String updateTopic;
 
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
-        System.out.println("Create Measurement service is called");
+
         String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
-        String idName = "mb.reference.number";
-        String idFormat = "MB/[fy:yyyy-yy]/[SEQ_MEASUREMENT_NUM]";
+        String idName = configuration.getIdName();
+        String idFormat = configuration.getIdFormat();
 
         MeasurementResponse response = new MeasurementResponse();
         List<Measurement> measurementList = new ArrayList<>();
@@ -104,13 +104,11 @@ public class MeasurementService {
 
             // enrich UUID
             measurement.setId(UUID.randomUUID());
-
             // validate contracts
             Boolean isValidContract = contractUtil.validContract(measurement,request.getRequestInfo());
 
             if (!isValidContract) {
-                // FIXME: handle the Error here ??
-                throw new CustomException();
+                throw new CustomException(Collections.singletonMap("", "Not a valid contract"));
             }
 
             // TODO: check the docs for each measure in measurement
@@ -132,10 +130,10 @@ public class MeasurementService {
             }
 
             // fetch ids from IdGen
-            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
+//            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
 
             // enrich IdGen
-            measurement.setMeasurementNumber(idList.get(0));
+            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // change this to idgen
 
             // set audit details
             AuditDetails auditDetails = AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();

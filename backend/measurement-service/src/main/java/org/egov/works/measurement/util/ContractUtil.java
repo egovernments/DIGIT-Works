@@ -1,91 +1,159 @@
 package org.egov.works.measurement.util;
 
+import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.works.measurement.web.models.ContractCriteria;
-import org.egov.works.measurement.web.models.ContractResponse;
-import org.egov.works.measurement.web.models.Measure;
-import org.egov.works.measurement.web.models.Measurement;
+import org.egov.tracer.model.CustomException;
+import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.lang.Error;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Component
 public class ContractUtil {
     private final RestTemplate restTemplate;
+    private final Configuration configuration;
 
     @Autowired
-    public ContractUtil(RestTemplate restTemplate) {
+    public ContractUtil(RestTemplate restTemplate, Configuration configuration) {
         this.restTemplate = restTemplate;
+        this.configuration = configuration;
     }
 
     /**
      * Fetch contracts for a particular measurement
      * based on ContractNumber
+     *
      * @param measurement
      * @param requestInfo
      * @return
      */
-    public ContractResponse getContracts(Measurement measurement , RequestInfo requestInfo){
-        ContractCriteria req  = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId()).contractNumber(measurement.getReferenceId()).build();
-        String searchContractUrl = "https://unified-dev.digit.org/contract/v1/_search";
-        return restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody();
+    public ContractResponse getContracts(Measurement measurement, RequestInfo requestInfo) {
+        ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId()).contractNumber(measurement.getReferenceId()).build();
+        String searchContractUrl = configuration.getContractHost() + configuration.getContractPath();
+        ContractResponse response = restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody();
+//        System.out.println(response.toString());
+        return response;
     }
 
     /**
      * Validate the Contract
+     *
      * @param measurement
      * @param requestInfo
      * @return
      */
-    public Boolean validContract(Measurement measurement, RequestInfo requestInfo){
-        Set<String> lineItemsIdList = new HashSet<>();
-        ContractResponse response = getContracts(measurement,requestInfo);
-        boolean isValidContract = !response.getContracts().isEmpty();         // check if there is a reference id
+    public Boolean validContract(Measurement measurement, RequestInfo requestInfo) {
+        Map<String, ArrayList<String>> lineItemsToEstimateIdMap = new HashMap<>();
+        List<String> lineItemIdsList = new ArrayList<>();
+        List<String> estimateIdsList = new ArrayList<>();
+        List<String> estimateLineItemIdsList = new ArrayList<>();
+        Map<String,ArrayList<BigDecimal>> lineItemsToDimentionsMap = new HashMap<>();
+        ContractResponse response = getContracts(measurement, requestInfo);
 
+        // check if there is a reference id
+        boolean isValidContract = !response.getContracts().isEmpty();
         // return if no contract is present
-        if(!isValidContract) return false;
+        if (!isValidContract) return false;
 
-        boolean isValidEntryDate =  ((measurement.getEntryDate().compareTo(response.getContracts().get(0).getStartDate())>=0) && (measurement.getEntryDate().compareTo(response.getContracts().get(0).getEndDate()) <=0));
+        boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(response.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(response.getContracts().get(0).getEndDate()) <= 0));
         boolean isTargetIdsPresent = true;
 
-        lineItemsIdList = getValidLineItemsId(response); // get set of active line items
-
-        // check for each measure targetId in LineItemsList
-        // set to false even if it fails for one measure in measurements
+        lineItemsToEstimateIdMap = getValidLineItemsId(response); // get set of active line items
 
         for (Measure measure : measurement.getMeasures()) {
-            boolean isTargetIdPresent = lineItemsIdList.contains(measure.getTargetId());
-            if(!isTargetIdPresent){
+            boolean isTargetIdPresent = lineItemsToEstimateIdMap.containsKey(measure.getTargetId());  // checks id of line item
+
+            if (!isTargetIdPresent) {
                 isTargetIdsPresent = false;
+                throw new CustomException(Collections.singletonMap("", "No active contract with the given contract id"));
+            } else {
+                lineItemIdsList.add(measure.getTargetId());
+                estimateIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0));
+                estimateLineItemIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(1));
+                ArrayList<BigDecimal> dimensionList = new ArrayList<>();
+                dimensionList.add(measure.getLength()); dimensionList.add(measure.getBreadth()); dimensionList.add(measure.getHeight());  // L B H
+                lineItemsToDimentionsMap.put(measure.getTargetId() , dimensionList);
             }
 
         }
+
+        // Estimate Validation TODO: Shift to validators
+        EstimateResponse estimateResponse = getEstimate(requestInfo, measurement.getTenantId(), estimateIdsList);  // assume a single estimate id for now
+        boolean validDimensions = true;
+        for(int i=0;i<estimateIdsList.size();i++){
+            boolean isValidEstimate = false;
+            for (EstimateDetail estimateDetail : estimateResponse.getEstimates().get(0).getEstimateDetails()) {
+                if (Objects.equals(estimateDetail.getId(), estimateLineItemIdsList.get(i))) {
+                    boolean isValidDimension = validateDimensions(estimateDetail,lineItemsToDimentionsMap.get(lineItemIdsList.get(i)));
+                    if(isValidDimension){
+                        isValidEstimate = true;
+                        break;
+                    }
+                }
+            }
+            if(!isValidEstimate){
+                validDimensions = false;
+                throw new CustomException("","No valid Estimate found");
+            }
+        }
+        System.out.println(estimateResponse.getEstimates().get(0).getId());
+
         return isValidContract && isValidEntryDate && isTargetIdsPresent;
     }
 
     /**
      * Generate a set of ACTIVE line Items from a particular Contract Response
+     *
      * @param response
      * @return
      */
-    public Set<String> getValidLineItemsId(ContractResponse response){
+    public Map<String, ArrayList<String>> getValidLineItemsId(ContractResponse response) {
 
         Set<String> lineItemsIdList = new HashSet<>();
+        Map<String, ArrayList<String>> lineItemsToEstimateId = new HashMap<>();    // estimateId , estimateLineItemId
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
-                    System.out.println(lineItems.getStatus().toString());
-                    String estimateId = lineItems.getEstimateId();
-                    String estimateLineItemId = lineItems.getEstimateLineItemId();
-                    if(lineItems.getStatus().toString().equals("ACTIVE")){
-                        System.out.println(lineItems.getId());
-                        lineItemsIdList.add(lineItems.getId());
+                    if (lineItems.getStatus().toString().equals("ACTIVE")) {
+                        lineItemsIdList.add(lineItems.getId());  // id  remove this
+                        ArrayList<String> arr = new ArrayList<>();
+                        arr.add(lineItems.getEstimateId());
+                        arr.add(lineItems.getEstimateLineItemId());
+                        lineItemsToEstimateId.put(lineItems.getId(), arr);
                     }
                 }
         );
-        return  lineItemsIdList;
+        return lineItemsToEstimateId;
+//        return  lineItemsIdList;
     }
 
+    public EstimateResponse getEstimate(RequestInfo requestInfo, String tenantId, List<String> estimateIdsList) {
+
+        String estimateSearchUrl = configuration.getEstimateHost()+configuration.getEstimatePath();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(estimateSearchUrl);
+        builder.queryParam("tenantId",tenantId);
+        builder.queryParam("ids",estimateIdsList);
+        String preparedUrl = builder.toUriString();
+
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+        // How to search by using multiples ids :?
+        EstimateResponse estimateResponse = restTemplate.postForObject(preparedUrl, requestInfoWrapper, EstimateResponse.class);
+        return estimateResponse;
+    }
+
+    public boolean validateDimensions(EstimateDetail estimateDetail,ArrayList<BigDecimal> dimensions)  {
+        try {
+            // FIXME: How to access the measurement object ??
+//            estimateDetail.getAdditionalDetails().getClass().getField("measurement");
+        } catch (Error e) {
+            System.out.println();
+        }
+        return true;
+    }
 }

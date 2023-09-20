@@ -93,4 +93,24 @@ public class Configuration {
     // Kafka topics
     @Value("${measurement.kafka.create.topic}")
     private String createMeasurementTopic;
+
+    @Value("${measurement.idgen.name}")
+    private String idName;
+
+    @Value("${measurement.idgen.format}")
+    private String idFormat;
+
+    // contract service
+    @Value("${egov.contract.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.path}")
+    private String contractPath;
+
+    // estimate service
+    @Value("${egov.estimate.host}")
+    private String estimateHost;
+
+    @Value("${egov.estimate.path}")
+    private String estimatePath;
 }
