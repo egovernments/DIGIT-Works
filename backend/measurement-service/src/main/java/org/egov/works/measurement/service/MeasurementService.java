@@ -135,6 +135,9 @@ public class MeasurementService {
             // set audit details
             AuditDetails auditDetails = AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();
             measurement.setAuditDetails(auditDetails);
+            for(Measure measure:measurement.getMeasures()){
+                measure.setAuditDetails(auditDetails);
+            }
             // add the measurement to measurementList
             measurementList.add(measurement);
         });
