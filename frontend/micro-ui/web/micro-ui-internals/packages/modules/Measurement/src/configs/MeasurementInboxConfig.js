@@ -1,12 +1,12 @@
 const InboxMeasurementConfig = () => {
   return {
-    label: "Inbox",
-    type: "inbox",
-    // actionLabel: "WORKS_ADD_WAGESEEKER",
-    // actionRole: "INDIVIDUAL_CREATOR",
-    // actionLink: "masters/create-wageseeker",
+    label: "WORKS_SEARCH_WAGESEEKERS",
+    type: "search",
+    actionLabel: "WORKS_ADD_WAGESEEKER",
+    actionRole: "INDIVIDUAL_CREATOR",
+    actionLink: "masters/create-wageseeker",
     apiDetails: {
-      serviceName: "/measurementservice/v1/_search",
+      serviceName: "/individual/v1/_search",
       requestParam: {},
       requestBody: {
         apiOperation: "SEARCH",
@@ -14,12 +14,10 @@ const InboxMeasurementConfig = () => {
       },
       minParametersForSearchForm: 1,
       masterName: "commonUiConfig",
-      moduleName: "SearchMeasurementConfig",
+      moduleName: "SearchWageSeekerConfig",
       tableFormJsonPath: "requestParam",
       filterFormJsonPath: "requestBody.Individual",
       searchFormJsonPath: "requestBody.Individual",
-      searchFormJsonPath: "requestParam",
-
     },
     sections: {
       search: {
@@ -30,149 +28,113 @@ const InboxMeasurementConfig = () => {
           secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
           minReqFields: 1,
           defaultValues: {
-            ProjectId: "",
-            MBReference: "",
-            ProjectType: "",
+            wardCode: "",
+            individualId: "",
+            name: "",
+            socialCategory: "",
+            mobileNumber: "",
+            createdFrom: "",
+            createdTo: "",
           },
           fields: [
             {
-              label: "MB Refernce Number",
+              "label": "COMMON_WARD",
+              "type": "locationdropdown",
+              "isMandatory": false,
+              "disable": false,
+              "populators": {
+                "name": "wardCode",
+                "type": "ward",
+                "optionsKey": "i18nKey",
+                "defaultText": "COMMON_SELECT_WARD",
+                "selectedText": "COMMON_SELECTED",
+                "allowMultiSelect": false
+              }
+            },
+            {
+              label: "MASTERS_WAGESEEKER_NAME",
+              type: "text",
+              isMandatory: false,
+              disable: false,
+              populators: { name: "name", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
+            },
+            {
+              label: "MASTERS_WAGESEEKER_ID",
               type: "text",
               isMandatory: false,
               disable: false,
               populators: {
-                name: "MBReference",
+                name: "individualId",
                 error: `PROJECT_PATTERN_ERR_MSG`,
-                validation: {  minlength: 2 },
+                validation: { minlength: 2 },
               },
             },
             {
-              label: "Project ID",
-              type: "text",
+              label: "CORE_COMMON_PROFILE_MOBILE_NUMBER",
+              type: "mobileNumber",
               isMandatory: false,
               disable: false,
-              populators: { name: "ProjectId", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
+              populators: {
+                name: "mobileNumber",
+                error: `PROJECT_PATTERN_ERR_MSG`,
+                validation: { pattern: /^[a-z0-9\/-@# ]*$/i, minlength: 2 },
+              },
             },
             {
-              label: "Project Type",
+              label: "MASTERS_SOCIAL_CATEGORY",
               type: "dropdown",
               isMandatory: false,
               disable: false,
               populators: {
-                name: "ProjectType",
-                optionsKey: "name",
+                name: "socialCategory",
+                optionsKey: "code",
                 optionsCustomStyle: {
                   top: "2.3rem",
                 },
                 mdmsConfig: {
-                  masterName: "ProjectType",
-                  moduleName: "works",
+                  masterName: "SocialCategory",
+                  moduleName: "common-masters",
                   localePrefix: "MASTERS",
                 },
+              },
+            },
+            {
+              label: "CREATED_FROM_DATE",
+              type: "date",
+              isMandatory: false,
+              disable: false,
+              key: "createdFrom",
+              preProcess: {
+                updateDependent: ["populators.max"]
+              },
+              populators: {
+                name: "createdFrom",
+                max: "currentDate"
+              },
+            },
+            {
+              label: "CREATED_TO_DATE",
+              type: "date",
+              isMandatory: false,
+              disable: false,
+              key: "createdTo",
+              preProcess: {
+                updateDependent: ["populators.max"]
+              },
+              populators: {
+                name: "createdTo",
+                error: "DATE_VALIDATION_MSG",
+                max: "currentDate"
+              },
+              additionalValidation: {
+                type: "date",
+                keys: { start: "createdFrom", end: "createdTo" },
               },
             },
           ],
         },
         label: "",
         children: {},
-        show: true,
-      
-      },
-      links: {
-        uiConfig: {
-          links: [
-            {
-              text: "Search MB",
-              url: "/employee/measurement/search",
-              roles: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
-            },
-            {
-              text: "Create MB",
-              url: "/employee/measurement/create",
-              roles: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
-            },
-          ],
-          label: "ES_COMMON_ATTENDENCEMGMT",
-          logoIcon: {
-            component: "MuktaIcon",
-            customClass: "search-icon--projects",
-          },
-        },
-        children: {},
-        show: true,
-      },
-      filter: {
-        uiConfig: {
-          type: "filter",
-          headerStyle: null,
-          primaryLabel: "Apply",
-          secondaryLabel: "",
-          minReqFields: 1,
-          defaultValues: {
-            state: "",
-            ward: [],
-            locality: [],
-            assignee: {
-              code: "ASSIGNED_TO_ALL",
-              name: "ASSIGNED_TO_ALL",
-            },
-          },
-          fields: [
-            {
-              label: "",
-              type: "radio",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "assignee",
-                options: [
-                  {
-                    code: "ASSIGNED TO ME",
-                    name: "Assigned to me",
-                  },
-                  {
-                    code: "ASSIGNED_TO_ALL",
-                    name: "Assigned to all",
-                  },
-                ],
-                optionsKey: "name",
-                styles: {
-                  gap: "1rem",
-                  flexDirection: "column",
-                },
-                innerStyles: {
-                  display: "flex",
-                },
-              },
-            },
-            {
-              "label": "Ward",
-              "type": "locationdropdown",
-              "isMandatory": false,
-              "disable": false,
-              "populators": {
-                  "name": "ward",
-                  "type": "ward",
-                  "optionsKey": "i18nKey",
-                  "defaultText": "COMMON_SELECT_WARD",
-                  "selectedText": "COMMON_SELECTED",
-                  "allowMultiSelect": true
-              }
-            },
-            {
-              label: "Workflow State",
-              type: "text",
-              isMandatory: false,
-              disable: false,
-              populators: {
-                name: "state",
-                labelPrefix: "WF_MUSTOR_",
-                businessService: "muster-roll-approval",
-              },
-            },
-          ],
-        },
-        label: "Filter",
         show: true,
       },
       searchResult: {
@@ -180,39 +142,42 @@ const InboxMeasurementConfig = () => {
         uiConfig: {
           columns: [
             {
-              label: "MB Reference Number",
-              jsonPath: "allOf?.measures[0].referenceId",
+              label: "MASTERS_WAGESEEKER_ID",
+              jsonPath: "individualId",
               additionalCustomization: true,
             },
             {
-              label: "Project Name",
+              label: "MASTERS_WAGESEEKER_NAME",
+              jsonPath: "name.givenName",
+            },
+            {
+              label: "MASTERS_FATHER_NAME",
               jsonPath: "fatherName",
             },
             {
-              label: "Assignee",
+              label: "MASTERS_SOCIAL_CATEGORY",
               jsonPath: "additionalFields.fields[0].value",
               // additionalCustomization: true,
             },
             {
-              label: "Workflow state",
+              label: "CORE_COMMON_PROFILE_CITY",
               jsonPath: "address[0].tenantId",
               additionalCustomization: true,
             },
             {
-              label: "MB Amount",
+              label: "MASTERS_WARD",
               jsonPath: "address[0].ward.code",
               additionalCustomization: true,
             },
             {
-              label: "SLA days remaining",
-              jsonPath: "address[0].ward.code",
+              label: "MASTERS_LOCALITY",
+              jsonPath: "address[0].locality.code",
               additionalCustomization: true,
             },
-          
           ],
           enableGlobalSearch: false,
           enableColumnSort: true,
-          resultsJsonPath: "measurements",
+          resultsJsonPath: "Individual",
         },
         children: {},
         show: true,
