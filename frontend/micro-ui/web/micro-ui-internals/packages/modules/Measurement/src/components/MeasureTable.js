@@ -6,13 +6,11 @@ import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
   let { columns } = props;
-  var data = props.data.SOR.length > 0 ? props.data.SOR: props.data.NONSOR.length > 0 ? props.data.NONSOR : null;
-//DAATA SHPI BE A STATE HEREE
-
+  let data = props.data.SOR.length > 0 ? props.data.SOR : props.data.NONSOR.length > 0 ? props.data.NONSOR : null;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
-  
+
 
   const getStyles = (index) => {
     let obj = {};
@@ -64,7 +62,7 @@ const MeasureTable = (props) => {
     return data?.map((row, index) => {
       const [consumedQty, setConsumedQty] = useState(0);
       const [showMeasureCard, setShowMeasureCard] = useState(false);
-      const [initialState, setInitialState] = useState({tableState: row?.additionalDetails?.measurement});
+      const [initialState, setInitialState] = useState({ tableState: row?.additionalDetails?.measurement });
       return (
         <>
           <tr key={index}>
@@ -76,32 +74,32 @@ const MeasureTable = (props) => {
             <td>{null}</td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={!initialState.length > 0} />
-                {!initialState.length > 0 && <button
+                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} />
+                <button
                   onClick={() => {
                     setShowMeasureCard(!showMeasureCard);
                   }}
                 >
                   <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px", width: "20px", height: "20px" }} />
-                </button>}
+                </button>
               </div>
             </td>
             <td>{null}</td>
           </tr>
           {showMeasureCard && !initialState.length > 0 && (
             <tr>
-            <td colSpan={"1"}></td>
+              <td colSpan={"1"}></td>
               <td colSpan={"7"}>
                 <MeasureCard columns={[
-                          t("WORKS_SNO"),
-                          t("Is Deduction?"),
-                          t("Description "),
-                          t("Number"),
-                          t("Length"),
-                          t("Width"),
-                          t("Depth/Height"),
-                          t("Quantity"),
-                        ]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} setInitialState={setInitialState} setShowMeasureCard={setShowMeasureCard} initialState={initialState}  />
+                  t("WORKS_SNO"),
+                  t("Is Deduction?"),
+                  t("Description "),
+                  t("Number"),
+                  t("Length"),
+                  t("Width"),
+                  t("Depth/Height"),
+                  t("Quantity"),
+                ]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} setInitialState={setInitialState} setShowMeasureCard={setShowMeasureCard} initialState={initialState} />
               </td>
             </tr>
           )}
