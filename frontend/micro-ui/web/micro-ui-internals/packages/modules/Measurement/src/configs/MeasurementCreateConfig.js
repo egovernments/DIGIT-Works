@@ -1,5 +1,5 @@
 export const CreateConfig = ({ defaultValue }) => {
-  console.log(defaultValue, "dddddddddd")
+  // console.log(defaultValue, "dddddddddd")
   // Define default values for the basic details section
   const basicDetailsDefaultValues = {
     basicDetails_OrderNumber: defaultValue?.contractNumber || "",
@@ -98,28 +98,28 @@ export const CreateConfig = ({ defaultValue }) => {
           //     }
           //   ]
           // },
-          {
-            head: "Measurement Period",
-            subHead: "",
-            body: [
-              {
-                inline: true,
-                label: "From Date",
-                isMandatory: false,
-                type: "date",
-                disable: false,
-                populators: { name: "fDate", error: "Required", validation: { required: true, } },
-              },
-              {
-                inline: true,
-                label: "To Date",
-                isMandatory: false,
-                type: "date",
-                disable: false,
-                populators: { name: "tDate", error: "Required", validation: { required: true, } },
-              },
-            ],
-          },
+          // {
+          //   head: "Measurement Period",
+          //   subHead: "",
+          //   body: [
+          //     {
+          //       inline: true,
+          //       label: "From Date",
+          //       isMandatory: false,
+          //       type: "date",
+          //       disable: false,
+          //       populators: { name: "fDate", error: "Required", validation: { required: true, } },
+          //     },
+          //     {
+          //       inline: true,
+          //       label: "To Date",
+          //       isMandatory: false,
+          //       type: "date",
+          //       disable: false,
+          //       populators: { name: "tDate", error: "Required", validation: { required: true, } },
+          //     },
+          //   ],
+          // },
           {
             head: "SORs",
             subHead: "",
@@ -144,6 +144,22 @@ export const CreateConfig = ({ defaultValue }) => {
               },
             ],
           },
+          {
+            // "navLink": "Work Details",
+            "head": "",
+            "body": [
+              {
+                "type": "documentUpload",
+                "withoutLabel": true,
+                "module": "Measurement",
+                "error": "WORKS_REQUIRED_ERR",
+                "name": "uploadedDocs",
+                "key": "documentDetails",
+                "customClass": "",
+                "localePrefix": "ESTIMATE_DOC"
+              }
+            ]
+          }
         ]
       }
     ]

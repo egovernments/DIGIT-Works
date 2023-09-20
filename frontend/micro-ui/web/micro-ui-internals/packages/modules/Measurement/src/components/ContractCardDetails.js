@@ -2,10 +2,12 @@ import React from "react";
 
 const ContractDetailsCard = ({ contract }) => {
 
+    console.log(contract, "contractData")
+
     // Define the card style
     const cardStyle = {
         backgroundColor: "#ffffff",
-        margin: "10px",
+        margin: "15px",
         padding: "20px",
         border: "1px solid #ccc",
         display: "flex",

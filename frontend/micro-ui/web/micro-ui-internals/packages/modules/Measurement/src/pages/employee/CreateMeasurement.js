@@ -1,24 +1,28 @@
-import { Loader, FormComposerV2 } from "@egovernments/digit-ui-react-components";
+import { Loader, FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CreateConfig } from "../../configs/MeasurementCreateConfig";
 import ContractDetailsCard from "../../components/ContractCardDetails";
 import _ from "lodash";
+
 const CreateMeasurement = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
+
   const MeasurementSession = Digit.Hooks.useSessionStorage("MEASUREMENT_CREATE", {})
   const [sessionFormData, setSessionFormData, clearSessionFormData] = MeasurementSession;
   const [createState, setState] = useState(sessionFormData || {});
   const [creatStateSet, setCreateState] = useState(false)
   // State to hold estimate data
   const [isEstimateEnabled, setIsEstimateEnabled] = useState(false);
+
+
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
-  console.log(contractNumber, "ccccccccccccc")
+
   //fetching contract data
   const { isLoading: isContractLoading, data: contract } = Digit.Hooks.contracts.useContractSearch({
     tenantId,
@@ -28,17 +32,15 @@ const CreateMeasurement = () => {
       cacheTime: 0
     }
   })
+
+
   // When contract data is available, enable estimate search
   useEffect(() => {
-    if (!isContractLoading) {
+    if (contract) {
       setIsEstimateEnabled(true);
     }
-  }, [isContractLoading]);
-  useEffect(() => {
-    if (!_.isEqual(sessionFormData, createState)) {
-      setSessionFormData({ ...createState });
-    }
-  }, [createState]);
+  }, [contract]);
+
   //fetching estimate data
   const { isLoading: isEstimateLoading, data: estimate, isError: isEstimateError } = Digit.Hooks.estimates.useEstimateSearch({
     tenantId,
@@ -47,12 +49,12 @@ const CreateMeasurement = () => {
       enabled: isEstimateEnabled,
     }
   })
-  console.log(estimate, "eeeeeeeeeeeeeee")
+
+  // after fetching the estimate data get sor and nonsor details
   useEffect(() => {
     if (estimate) {
       // get estimateDetails from the estimate data and get SOR and NONSOR data seperate
       const estimateDetails = estimate?.estimateDetails || [];
-      // console.log(estimateDetails, "eeeeeeeeeeeeddddddddddddd")
       const sorCategoryArray = [];
       const nonSorCategoryArray = [];
       estimateDetails.reduce((_, currentItem) => {
@@ -62,11 +64,12 @@ const CreateMeasurement = () => {
           nonSorCategoryArray.push(currentItem);
         }
       }, null);
+
       setState({ SOR: sorCategoryArray, NONSOR: nonSorCategoryArray });
       setCreateState(true)
     }
   }, [estimate, creatStateSet]);
-  ////// In progress
+
   // Define the request criteria for creating a measurement
   const reqCriteriaCreate = {
     url: `/measurementservice/v1/_create`,
@@ -85,21 +88,28 @@ const CreateMeasurement = () => {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+    if (!_.isEqual(sessionFormData, createState)) {
+      setSessionFormData({ ...createState });
+    }
+  }, [createState]);
+
+
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    // setSessionFormData({ ...sessionFormData, ...formData });
     if (!_.isEqual(formData, createState)) {
       setState({ ...formData })
     }
-    // console.log(formData, "formData")
-    // console.log(createState, "createStateData")
-    // console.log(sessionFormData, "sessionFormData")
+    console.log(formData, "formData")
   }
+  // if data is still loading return loader
   if (isContractLoading || isEstimateLoading) {
     return <Loader />
   }
+  // else render form and data
   return (
     <div>
-      <h1>Measurement Book</h1>
+      <Header className="works-header-view" style={{}}>Measurement Book</Header>
       <ContractDetailsCard contract={contract} /> {/* Display contract details */}
       <FormComposerV2
         // heading={t("Measurement Book")}
@@ -114,6 +124,10 @@ const CreateMeasurement = () => {
         onSubmit={onSubmit}
         fieldStyle={{ marginRight: 0 }}
         onFormValueChange={onFormValueChange}
+      // showWrapperContainers={true}
+      // isDescriptionBold={true}
+      // noBreakLine={false}
+      // showMultipleCards={true}
       />
     </div>
   );

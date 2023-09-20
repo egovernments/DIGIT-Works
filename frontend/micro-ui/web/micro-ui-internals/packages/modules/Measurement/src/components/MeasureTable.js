@@ -6,7 +6,7 @@ import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
   let { columns } = props;
-  console.log(props, "ppppppppppppppp")
+
   var data = props.data.SOR.length > 0 ? props.data.SOR : props.data.NONSOR.length > 0 ? props.data.NONSOR : null;
   //DAATA SHPI BE A STATE HEREE
 
