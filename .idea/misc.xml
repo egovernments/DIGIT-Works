@@ -1,11 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/backend/measurement-service/pom.xml" />
-        <option value="$PROJECT_DIR$/../../DIGIT-OSS/core-services/egov-persister/pom.xml" />
         <option value="$PROJECT_DIR$/../../DIGIT-OSS/core-services/egov-workflow-v2/pom.xml" />
+        <option value="$PROJECT_DIR$/../../DIGIT-OSS/core-services/egov-persister/pom.xml" />
       </list>
     </option>
   </component>
