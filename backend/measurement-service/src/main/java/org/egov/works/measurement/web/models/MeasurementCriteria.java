@@ -37,6 +37,11 @@ public class MeasurementCriteria {
     @JsonProperty("ids")
     private List<String> ids = null;
 
+    @JsonProperty("tenantId")
+    @Valid
+    @NotNull
+    private String tenantId = null;
+
 
     public MeasurementCriteria addReferenceIdItem(String referenceIdItem) {
         if (this.referenceId == null) {

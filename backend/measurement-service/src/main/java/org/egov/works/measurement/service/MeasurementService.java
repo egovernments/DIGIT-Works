@@ -141,10 +141,7 @@ public class MeasurementService {
      * @return
      */
     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria) {
-        // You can perform any necessary validation of the search criteria here.
-
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria);
-        // Call the repository to get the measurements based on the search criteria.
         return measurements;
     }
 
@@ -216,5 +213,4 @@ public class MeasurementService {
             measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
         }
     }
-
 }

@@ -12,8 +12,6 @@ import java.util.List;
 @Slf4j
 public class MeasurementQueryBuilder {
 
-
-
     private static final String BASE_MEASUREMENT_QUERY = "SELECT m.id as id, m.tenantId as tenantId, m.mbNumber as mbNumber, m.phyRefNumber as phyRefNumber, m.referenceId as referenceId, " +
             "m.entryDate as entryDate, m.isActive as isActive, m.createdby as createdby, m.lastmodifiedby as lastmodifiedby, " +
             "m.createdtime as createdtime, m.lastmodifiedtime as lastmodifiedtime, m.additionalDetails as additionalDetails, " +
@@ -34,10 +32,10 @@ public class MeasurementQueryBuilder {
     public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(BASE_MEASUREMENT_QUERY);
 
-        if (!ObjectUtils.isEmpty(criteria.getReferenceId())) {
+        if (!CollectionUtils.isEmpty(criteria.getReferenceId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" m.referenceId = ? ");
-            preparedStmtList.add(criteria.getReferenceId().get(0));
+            query.append(" m.referenceId IN (").append(createQuery(criteria.getReferenceId())).append(")");
+            addToPreparedStatement(preparedStmtList, criteria.getReferenceId());
         }
         if (!ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
             addClauseIfRequired(query, preparedStmtList);
@@ -49,10 +47,11 @@ public class MeasurementQueryBuilder {
             query.append(" m.id IN (").append(createQuery(criteria.getIds())).append(")");
             addToPreparedStatement(preparedStmtList, criteria.getIds());
         }
-
-        // Add additional criteria as needed
-
-        // Order measurements based on their createdtime in latest first manner
+        if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" m.tenantId = ? ");
+            preparedStmtList.add(criteria.getTenantId());
+        }
         query.append(ORDER_BY_CREATED_TIME);
 
         return query.toString();

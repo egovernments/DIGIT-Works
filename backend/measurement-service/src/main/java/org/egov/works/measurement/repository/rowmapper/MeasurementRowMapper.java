@@ -48,12 +48,12 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 measurement.setAuditDetails(auditDetails);
 
                 measurement.setAdditionalDetails(rs.getString("additionalDetails"));
-                measurement.setMeasures(new ArrayList<>()); // Assuming you have a List of Measure
+                measurement.setMeasures(new ArrayList<>());
 
                 measurementMap.put(uuid, measurement);
             }
 
-            // Create a Measure object and add it to the Measurement
+            // Created a Measure object and add it to the Measurement
             Measure measure = new Measure();
 
             measure.setReferenceId(rs.getString("referenceId"));
