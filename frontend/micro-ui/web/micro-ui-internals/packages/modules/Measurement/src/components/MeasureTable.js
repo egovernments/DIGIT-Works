@@ -16,7 +16,7 @@ const MeasureTable = (props) => {
   const history = useHistory();
   const [totalMBAmount, setTotalMBAmount] = useState(0);
   const tableMBAmounts = [];
-  const {register, tableState} = props;
+  const {register} = props;
   
 
   const getStyles = (index) => {
@@ -116,7 +116,7 @@ const MeasureTable = (props) => {
                           t("Width"),
                           t("Depth/Height"),
                           t("Quantity"),
-                        ]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} setInitialState={setInitialState} setShowMeasureCard={setShowMeasureCard} initialState={initialState}  />
+                        ]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} setInitialState={setInitialState} setShowMeasureCard={setShowMeasureCard} initialState={initialState} register={register}  />
               </td>
             </tr>
           )}
