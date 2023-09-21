@@ -15,7 +15,7 @@
     "@egovernments/digit-ui-module-dss": "1.5.52",
     "@egovernments/digit-ui-react-components": "^1.5.0",
     "@egovernments/digit-ui-module-attendencemgmt": "0.2.4",
-    "@egovernments/digit-ui-module-contracts": "0.2.9",
+    "@egovernments/digit-ui-module-contracts": "0.2.10",
     "@egovernments/digit-ui-module-estimate": "0.2.1",
     "@egovernments/digit-ui-module-masters": "0.2.24",
     "@egovernments/digit-ui-module-project": "0.2.9",
