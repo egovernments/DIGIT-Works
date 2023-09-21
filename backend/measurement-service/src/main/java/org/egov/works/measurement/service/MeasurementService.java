@@ -177,7 +177,7 @@ public class MeasurementService {
     public void enrichMeasurement(MeasurementRequest request){
 
         String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
-//        List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), request.getMeasurements().size());
+        List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), request.getMeasurements().size());
         List<Measurement> measurements = request.getMeasurements();
 
         for (int i = 0; i < measurements.size(); i++) {
@@ -195,8 +195,8 @@ public class MeasurementService {
             // enrich measures in a measurement
             enrichMeasures(measurement);
             // enrich IdGen
-            // measurement.setMeasurementNumber(measurementNumberList.get(i));
-            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for local-dev remove this
+            measurement.setMeasurementNumber(measurementNumberList.get(i));
+//            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for local-dev remove this
         }
     }
 
