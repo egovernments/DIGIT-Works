@@ -7,6 +7,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.util.ContractUtil;
+import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.ResponseInfoFactory;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.web.models.*;
@@ -37,6 +38,8 @@ public class MSservice {
     private Producer producer;
     @Autowired
     private Configuration configuration;
+    @Autowired
+    private IdgenUtil idgenUtil;
 
     /**
      * Handles create MeasurementService
@@ -127,13 +130,18 @@ public class MSservice {
      * @param wfStatusList
      */
     public void enrichMeasurementService(MeasurementServiceRequest body, List<String> wfStatusList) {
+
+        String tenantId = body.getMeasurements().get(0).getTenantId();
+        List<String> measurementNumberList = idgenUtil.getIdList(body.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), body.getMeasurements().size());
+
         List<MeasurementService> measurementServiceList = body.getMeasurements();
         RequestInfo requestInfo = body.getRequestInfo();
         for (int i = 0; i < measurementServiceList.size(); i++) {
             // create an audit details
             AuditDetails auditDetails = (AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(requestInfo.getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build());
             measurementServiceList.get(i).setId(UUID.randomUUID());
-            measurementServiceList.get(i).setAuditDetails(auditDetails);
+            measurementServiceList.get(i).setMeasurementNumber(measurementNumberList.get(i));            // enriches the measurement number
+            measurementServiceList.get(i).setAuditDetails(auditDetails);                                 // enrich audit details
             enrichMeasures(measurementServiceList.get(i), body.getRequestInfo());                        // enrich id & audit details in measures
             measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich the workFlow Status
             measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
