@@ -289,20 +289,6 @@ public class MeasurementServiceValidator {
         }
 
         HttpGet httpGet = new HttpGet(apiUrl);
-        httpGet.addHeader("authority", "qa.digit.org");
-        httpGet.addHeader("accept", "application/json, text/plain, */*");
-        httpGet.addHeader("accept-language", "en-GB,en;q=0.9");
-        httpGet.addHeader("cache-control", "no-cache");
-        httpGet.addHeader("pragma", "no-cache");
-        httpGet.addHeader("referer", "https://qa.digit.org/digit-ui/employee/dss/dashboard/fsm");
-        httpGet.addHeader("sec-ch-ua", "\"Google Chrome\";v=\"107\", \"Chromium\";v=\"107\", \"Not=A?Brand\";v=\"24\"");
-        httpGet.addHeader("sec-ch-ua-mobile", "?0");
-        httpGet.addHeader("sec-ch-ua-platform", "\"Windows\"");
-        httpGet.addHeader("sec-fetch-dest", "empty");
-        httpGet.addHeader("sec-fetch-mode", "cors");
-        httpGet.addHeader("sec-fetch-site", "same-origin");
-        httpGet.addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
-
         return httpGet;
     }
 
