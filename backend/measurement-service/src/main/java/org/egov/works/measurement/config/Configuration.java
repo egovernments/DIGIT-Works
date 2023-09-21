@@ -65,6 +65,9 @@ public class Configuration {
     @Value("${measurement-service.kafka.create.topic}")
     private String measurementServiceCreateTopic;
 
+    @Value("${measurement.kafka.enrich.create.topic}")
+    private String enrichMeasurementTopic;
+
     @Value("${measurement.idgen.name}")
     private String idName;
 
