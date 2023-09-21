@@ -113,6 +113,10 @@ config:
     build:
       - work-dir: "utilities/egov-bff-service"
         image-name: "egov-bff-service"  
+  - name: "builds/digit-works/utilities/mukta-services"
+    build:
+      - work-dir: "utilities/mukta-services"
+        image-name: "mukta-services"  
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
