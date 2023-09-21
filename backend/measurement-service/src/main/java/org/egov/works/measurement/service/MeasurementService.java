@@ -84,81 +84,36 @@ public class MeasurementService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
 
+    /**
+     * Handles measurement create
+     * @param request
+     * @return
+     */
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
+        // Just validate tenant id from idGen
+
         //Validate document IDs from the measurement request
         validator.validateDocumentIds(request.getMeasurements());
 
-        String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
-        String idName = configuration.getIdName();
-        String idFormat = configuration.getIdFormat();
-
-        MeasurementResponse response = new MeasurementResponse();
-        List<Measurement> measurementList = new ArrayList<>();
-
-        // TODO: Shift to a new function
-        request.getMeasurements().forEach(measurement -> {
-
-            // enrich UUID
-            measurement.setId(UUID.randomUUID());
-            // validate contracts
-            Boolean isValidContract = contractUtil.validContract(measurement,request.getRequestInfo());
-
-            if (!isValidContract) {
-                throw new CustomException(Collections.singletonMap("", "Not a valid contract"));
-            }
-
-            // TODO: check the docs for each measure in measurement
-            for (Measure measure : measurement.getMeasures()) {
-
-                // check all the docs;
-                int isValidDocs = 1;
-                for (Document document : measure.getDocuments()) {
-                    if (!isValidDocuments(document.getFileStore())) {
-                        isValidDocs = 0;
-                        throw new Error("No Documents found with the given Ids");
-                    } else {
-                    }
-                }
-                if(isValidDocs == 1){
-                    measure.setId(UUID.randomUUID());
-                    measure.setReferenceId(measurement.getId().toString());
-                }
-            }
-
-            // fetch ids from IdGen
-//            List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
-
-            // enrich IdGen
-
-            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // change this to idgen
-
-            // set audit details
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build();
-            measurement.setAuditDetails(auditDetails);
-            for(Measure measure:measurement.getMeasures()){
-                measure.setAuditDetails(auditDetails);
-                measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
-            }
-            // add the measurement to measurementList
-            measurementList.add(measurement);
-        });
-        response.setMeasurements(measurementList);
+        // enrich measurements
+        enrichMeasurement(request);
+        MeasurementResponse response = MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
 
         // push to kafka topic
         producer.push(configuration.getCreateMeasurementTopic(),request);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
-
-    public boolean isValidDocuments(String documentId){
-        return true;
-        // return !getDocuments(documentId).isEmpty(); // complete this method
-    }
-    public List<?> getDocuments(String documentId){
-        return new ArrayList<>();
-    }
-
+    /**
+     * Handles measurement update
+     * @param measurementRegistrationRequest
+     * @return
+     */
     public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
         //Validate document IDs from the measurement request
         validator.validateDocumentIds(measurementRegistrationRequest.getMeasurements());
@@ -176,7 +131,26 @@ public class MeasurementService {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
+    /**
+     * handles searching of a measurement
+     * @param searchCriteria
+     * @return
+     */
+    public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria) {
+        // You can perform any necessary validation of the search criteria here.
 
+        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria);
+        // Call the repository to get the measurements based on the search criteria.
+        return measurements;
+    }
+
+    /**
+     * Helper function to update Measurement
+     * create and enriches measurement
+     * @param measurements
+     * @param measurementRegistrationRequest
+     * @return
+     */
     private MeasurementResponse makeUpdateResponse(List<Measurement> measurements,MeasurementRequest measurementRegistrationRequest) {
         MeasurementResponse response = new MeasurementResponse();
 
@@ -195,20 +169,55 @@ public class MeasurementService {
         return response;
     }
 
+    /**
+     * Helper function to enrich a measurement
+     * @param request
+     */
+    public void enrichMeasurement(MeasurementRequest request){
 
-    private final ServiceRequestRepository serviceRequestRepository;
+        String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
+//        List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), request.getMeasurements().size());
+        List<Measurement> measurements = request.getMeasurements();
 
-    @Autowired
-    public MeasurementService(ServiceRequestRepository serviceRequestRepository) {
-        this.serviceRequestRepository = serviceRequestRepository;
+        for (int i = 0; i < measurements.size(); i++) {
+            Measurement measurement = measurements.get(i);
+
+            // enrich UUID
+            measurement.setId(UUID.randomUUID());
+//            // validate contracts
+//            Boolean isValidContract = contractUtil.validContract(measurement, request.getRequestInfo());
+//
+//            if (!isValidContract) {
+//                throw new CustomException(Collections.singletonMap("", "Not a valid contract"));
+//            }
+
+            // enrich the Audit details
+            measurement.setAuditDetails(AuditDetails.builder()
+                    .createdBy(request.getRequestInfo().getUserInfo().getUuid())
+                    .createdTime(System.currentTimeMillis())
+                    .lastModifiedTime(System.currentTimeMillis())
+                    .build());
+
+            // enrich measures in a measurement
+            enrichMeasures(measurement);
+            // enrich IdGen
+            // measurement.setMeasurementNumber(measurementNumberList.get(i));
+            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for testing remove this
+        }
     }
 
-    public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria) {
-        // You can perform any necessary validation of the search criteria here.
-
-
-        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria);
-        // Call the repository to get the measurements based on the search criteria.
-        return measurements;
+    /**
+     * Helper function to enriches a measure
+     * @param measurement
+     */
+    public void enrichMeasures(Measurement measurement){
+        List<Measure> measureList = measurement.getMeasures();
+        for (Measure measure : measureList) {
+            measure.setId(UUID.randomUUID());
+            measure.setReferenceId(measurement.getId().toString());
+            measure.setAuditDetails(measurement.getAuditDetails());
+            measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
+        }
     }
+
 }

@@ -82,11 +82,6 @@ public class Measure {
     @Size(min = 2, max = 256)
     private String comments = null;
 
-    @JsonProperty("documents")
-    @Valid
-    @Size(min = 1)
-    private List<Document> documents = null;
-
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
@@ -94,13 +89,5 @@ public class Measure {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-
-    public Measure addDocumentsItem(Document documentsItem) {
-        if (this.documents == null) {
-            this.documents = new ArrayList<>();
-        }
-        this.documents.add(documentsItem);
-        return this;
-    }
 
 }

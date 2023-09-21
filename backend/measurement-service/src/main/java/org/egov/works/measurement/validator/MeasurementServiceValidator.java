@@ -266,10 +266,19 @@ public class MeasurementServiceValidator {
         for (T measurement : measurements) {
             if(measurement instanceof  MeasurementService){
                 MeasurementService ms = (MeasurementService) measurement;
+                for(Document document:ms.getDocuments()){
+                    documentIds.add(document.getFileStore());
+                }
                 if (ms.getWorkflow() != null) {
                     for (digit.models.coremodels.Document document : ms.getWorkflow().getVerificationDocuments()) {
                         documentIds.add(document.getFileStore());
                     }
+                }
+            }
+            else{
+                Measurement ms = measurement;
+                for(Document document:ms.getDocuments()) {
+                    documentIds.add(document.getFileStore());
                 }
             }
         }

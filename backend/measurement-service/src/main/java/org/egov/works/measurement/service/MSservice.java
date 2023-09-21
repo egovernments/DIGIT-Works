@@ -37,19 +37,38 @@ public class MSservice {
     private Producer producer;
     @Autowired
     private Configuration configuration;
-    public ResponseEntity<MeasurementServiceResponse> handleCreateMeasurementService(MeasurementServiceRequest body){
+
+    /**
+     * Handles create MeasurementService
+     *
+     * @param body
+     * @return
+     */
+    public MeasurementServiceResponse handleCreateMeasurementService(MeasurementServiceRequest body) {
+
         // Validate document IDs from the measurement service request
         measurementServiceValidator.validateDocumentIds(body.getMeasurements());
-        measurementServiceValidator.validateContracts(body);                             // validate contracts
-        List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);        // update WF
-        enrichMeasurementService(body,wfStatusList);                                     // enrich Measurement Service
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(),true);
+        // validate contracts
+        measurementServiceValidator.validateContracts(body);
+        // update WF
+        List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);
+        // enrich Measurement Service
+        enrichMeasurementService(body, wfStatusList);
+
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         MeasurementServiceResponse measurementServiceResponse = MeasurementServiceResponse.builder().responseInfo(responseInfo).measurements(body.getMeasurements()).build();
-        producer.push(configuration.getMeasurementServiceCreateTopic(),body);
-        return new ResponseEntity<MeasurementServiceResponse>(measurementServiceResponse, HttpStatus.ACCEPTED);
+
+        producer.push(configuration.getMeasurementServiceCreateTopic(), body);
+        return measurementServiceResponse;
 
     }
 
+    /**
+     * Handles update MeasurementService
+     *
+     * @param measurementServiceRequest
+     * @return
+     */
     public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest) {
         // Validate document IDs from the measurement service request
         measurementServiceValidator.validateDocumentIds(measurementServiceRequest.getMeasurements());
@@ -74,12 +93,18 @@ public class MSservice {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
+    /**
+     * Helper function for MeasurementService Update
+     *
+     * @param measurementServiceRequest
+     * @return
+     */
     public MeasurementServiceResponse makeUpdateResponseService(MeasurementServiceRequest measurementServiceRequest) {
         MeasurementServiceResponse response = new MeasurementServiceResponse();
 
         //setting totalValue
-        for(Measurement measurement:measurementServiceRequest.getMeasurements() ){
-            for(Measure measure:measurement.getMeasures()){
+        for (Measurement measurement : measurementServiceRequest.getMeasurements()) {
+            for (Measure measure : measurement.getMeasures()) {
                 measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
             }
         }
@@ -94,10 +119,17 @@ public class MSservice {
 
         return response;
     }
-    public void enrichMeasurementService(MeasurementServiceRequest body , List<String> wfStatusList){
+
+    /**
+     * Helper function to enrich measurementservice
+     *
+     * @param body
+     * @param wfStatusList
+     */
+    public void enrichMeasurementService(MeasurementServiceRequest body, List<String> wfStatusList) {
         List<MeasurementService> measurementServiceList = body.getMeasurements();
         RequestInfo requestInfo = body.getRequestInfo();
-        for(int i=0;i<measurementServiceList.size();i++){
+        for (int i = 0; i < measurementServiceList.size(); i++) {
             // create an audit details
             AuditDetails auditDetails = (AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(requestInfo.getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build());
             measurementServiceList.get(i).setId(UUID.randomUUID());
@@ -115,9 +147,15 @@ public class MSservice {
         }
     }
 
-    public void enrichMeasures(MeasurementService measurementService,RequestInfo requestInfo){
+    /**
+     * Helper function to enrich measures
+     *
+     * @param measurementService
+     * @param requestInfo
+     */
+    public void enrichMeasures(MeasurementService measurementService, RequestInfo requestInfo) {
         List<Measure> measureList = measurementService.getMeasures();
-        for(int i=0;i<measureList.size();i++){
+        for (int i = 0; i < measureList.size(); i++) {
             measureList.get(i).setId(UUID.randomUUID());
             measureList.get(i).setReferenceId(measurementService.getId().toString()); // point to measurementId
             measureList.get(i).setAuditDetails(measurementService.getAuditDetails()); // enrich audit details
