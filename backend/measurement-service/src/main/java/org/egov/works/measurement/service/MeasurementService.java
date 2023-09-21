@@ -14,6 +14,7 @@ import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.util.*;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
+import org.egov.works.measurement.validator.MeasurementValidator;
 import org.egov.works.measurement.web.models.Document;
 import org.egov.works.measurement.web.models.Measure;
 import org.egov.works.measurement.web.models.Measurement;
@@ -88,6 +89,8 @@ public class MeasurementService {
     private ServiceRequestRepository serviceRequestRepository;
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
+    @Autowired
+    private MeasurementValidator measurementValidator;
 
     /**
      * Handles measurement create
@@ -96,10 +99,7 @@ public class MeasurementService {
      */
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
         // Just validate tenant id from idGen
-
-        //Validate document IDs from the measurement request
-        validator.validateDocumentIds(request.getMeasurements());
-
+        measurementValidator.validateTenantId(request);
         // enrich measurements
         enrichMeasurement(request);
         MeasurementResponse response = MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
@@ -184,13 +184,6 @@ public class MeasurementService {
 
             // enrich UUID
             measurement.setId(UUID.randomUUID());
-//            // validate contracts
-//            Boolean isValidContract = contractUtil.validContract(measurement, request.getRequestInfo());
-//
-//            if (!isValidContract) {
-//                throw new CustomException(Collections.singletonMap("", "Not a valid contract"));
-//            }
-
             // enrich the Audit details
             measurement.setAuditDetails(AuditDetails.builder()
                     .createdBy(request.getRequestInfo().getUserInfo().getUuid())
@@ -202,7 +195,7 @@ public class MeasurementService {
             enrichMeasures(measurement);
             // enrich IdGen
             // measurement.setMeasurementNumber(measurementNumberList.get(i));
-            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for testing remove this
+            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for local-dev remove this
         }
     }
 
