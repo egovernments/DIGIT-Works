@@ -100,6 +100,7 @@ public class MeasurementService {
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
         // Just validate tenant id from idGen
         measurementValidator.validateTenantId(request);
+        validator.validateDocumentIds(request.getMeasurements());
         // enrich measurements
         enrichMeasurement(request);
         MeasurementResponse response = MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
