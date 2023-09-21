@@ -3,6 +3,7 @@ package org.egov.works.measurement.service;
 import digit.models.coremodels.ProcessInstance;
 import digit.models.coremodels.Workflow;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.util.WorkflowUtil;
 import org.egov.works.measurement.web.models.MeasurementServiceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,13 @@ public class WorkflowService {
 
     @Autowired
     private WorkflowUtil workflowUtil;
+
+    @Autowired
+    private Configuration config;
     List<String> updateWorkflowStatuses(MeasurementServiceRequest measurementServiceRequest) {
         List<String> wfStatusList = new ArrayList<>();
         for (org.egov.works.measurement.web.models.MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
-//            measurementService.setWfStatus(workflowUtil.updateWorkflowStatus(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), "MB", measurementService.getWorkflow(), "measurement-book-service"));
-            // TODO: shift businessCode & moduleName to constants
-            String currWfStatus = workflowUtil.updateWorkflowStatus(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), "MB", measurementService.getWorkflow(), "measurement-book-service");
+            String currWfStatus = workflowUtil.updateWorkflowStatus(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), config.getBussinessServiceCode(), measurementService.getWorkflow(), config.getWfModuleName());
              wfStatusList.add(currWfStatus);
         }
         return  wfStatusList;
@@ -31,7 +33,7 @@ public class WorkflowService {
     public Map<String, Workflow> getCurrentWf(MeasurementServiceRequest measurementServiceRequest){
         List<ProcessInstance> processInstanceList = new ArrayList<>();
         for (org.egov.works.measurement.web.models.MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
-           ProcessInstance currProcessInstance = workflowUtil.getProcessInstanceForWorkflow(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), "MB", measurementService.getWorkflow(), "measurement-book-service");
+           ProcessInstance currProcessInstance = workflowUtil.getProcessInstanceForWorkflow(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber(), config.getBussinessServiceCode(), measurementService.getWorkflow(), config.getWfModuleName());
            processInstanceList.add(currProcessInstance);
         }
        return workflowUtil.getWorkflow(processInstanceList);

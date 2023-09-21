@@ -122,4 +122,10 @@ public class Configuration {
 
     @Value("${egov.estimate.path}")
     private String estimatePath;
+
+    @Value("${egov.workflow.bussinessServiceCode}")
+    private String bussinessServiceCode;
+
+    @Value("${egov.workflow.moduleName}")
+    private String wfModuleName;
 }
