@@ -632,6 +632,10 @@ public class ContractServiceValidator {
             log.error("Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
+        if (contractCriteria.getFromDate() != null && contractCriteria.getToDate() != null &&
+                contractCriteria.getFromDate().compareTo(contractCriteria.getToDate()) > 0) {
+            throw new CustomException("FROM_GREATER_THAN_TO_DATE", "From date is greater than to date");
+        }
     }
 
     /**
