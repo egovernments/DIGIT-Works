@@ -22,7 +22,7 @@ import java.util.List;
 @Setter
 public class MeasurementSearchRequest {
 
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
     @Valid
     private RequestInfo requestInfo = null;
 

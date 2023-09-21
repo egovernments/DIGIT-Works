@@ -79,7 +79,7 @@ public class MeasurementServiceValidator {
             // Validate the measurement
             Measurement existingMeasurement = validateMeasurementRequest(namedParameterJdbcTemplate, measurement);
             if (existingMeasurement == null) {
-                throw new RuntimeException("Data does not exist");
+                throw new RuntimeException("MB Data does not exist");
             }
             measurementExisting.add(existingMeasurement);
 
@@ -136,14 +136,11 @@ public class MeasurementServiceValidator {
             String id = measurementService.getId().toString();
             String mbNumber = measurementService.getMeasurementNumber();
 
-            // Check if measurements exist in eg_mb_measurements
-            Measurement measurementInMBTable = getMeasurementFromMBTable(namedParameterJdbcTemplate, id, mbNumber);
-
             // Check if measurements exist in eg_mbs_measurements
             MeasurementService measurementServiceInMBSTable = getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate, mbNumber);
 
-            if (measurementInMBTable == null || measurementServiceInMBSTable == null) {
-                throw new RuntimeException("Data does not exist");
+            if (measurementServiceInMBSTable == null) {
+                throw new RuntimeException("MBS Data does not exist");
             }
 
             existingMeasurementService.add(measurementServiceInMBSTable);

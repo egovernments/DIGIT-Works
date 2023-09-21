@@ -12,15 +12,13 @@ import org.egov.works.measurement.util.ResponseInfoFactory;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.web.models.*;
 import org.egov.works.measurement.web.models.MeasurementService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -38,6 +36,9 @@ public class MSservice {
     private Producer producer;
     @Autowired
     private Configuration configuration;
+
+    @Autowired
+    private org.egov.works.measurement.service.MeasurementService measurementService;
     @Autowired
     private IdgenUtil idgenUtil;
 
@@ -79,14 +80,16 @@ public class MSservice {
      * @return
      */
     public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest) {
-        // Validate document IDs from the measurement service request
-        measurementServiceValidator.validateDocumentIds(measurementServiceRequest.getMeasurements());
 
         // Validate existing data and set audit details
         measurementServiceValidator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
 
         // Validate contracts for each measurement
         measurementServiceValidator.validateContracts(measurementServiceRequest);
+
+        MeasurementResponse measurementResponse=updateMeasurementAndGetResponse(measurementServiceRequest);
+        measurementServiceRequest.setMeasurements(convertToMeasurementServiceList(measurementServiceRequest,measurementResponse.getMeasurements()));
+
 
         // Update workflow statuses for each measurement service
         List<String> wfStatusList = workflowService.updateWorkflowStatuses(measurementServiceRequest);
@@ -100,6 +103,86 @@ public class MSservice {
 
         // Return the response as a ResponseEntity with HTTP status NOT_IMPLEMENTED
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    public MeasurementResponse updateMeasurementAndGetResponse(MeasurementServiceRequest measurementServiceRequest) {
+        // Validate existing data and set audit details
+        measurementServiceValidator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
+
+        // Validate contracts for each measurement
+        measurementServiceValidator.validateContracts(measurementServiceRequest);
+
+        // Convert MeasurementServiceRequest to MeasurementRequest
+        MeasurementRequest measurementRequest = makeMeasurementUpdateRequest(measurementServiceRequest);
+
+        // Call the updateMeasurement method to update measurements
+        ResponseEntity<MeasurementResponse> responseEntity = measurementService.updateMeasurement(measurementRequest);
+
+        // Check if the response status is OK (2xx)
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            return responseEntity.getBody();
+        } else {
+            throw new RuntimeException("Error in update measurement");
+        }
+    }
+
+
+    public MeasurementRequest makeMeasurementUpdateRequest(MeasurementServiceRequest measurementServiceRequest) {
+        MeasurementRequest measurementRequest = new MeasurementRequest();
+
+        // Set the RequestInfo from MeasurementServiceRequest
+        measurementRequest.setRequestInfo(measurementServiceRequest.getRequestInfo());
+
+        // Set the Measurements from MeasurementServiceRequest
+        measurementRequest.setMeasurements(convertToMeasurementList(measurementServiceRequest.getMeasurements()));
+
+        return measurementRequest;
+    }
+
+    public List<Measurement> convertToMeasurementList(List<MeasurementService> measurementServices) {
+        List<Measurement> measurements = new ArrayList<>();
+
+        for (MeasurementService measurementService : measurementServices) {
+            Measurement measurement = new Measurement();
+
+            // Set the common properties
+            measurement.setId(measurementService.getId());
+            measurement.setTenantId(measurementService.getTenantId());
+            measurement.setMeasurementNumber(measurementService.getMeasurementNumber());
+            measurement.setPhysicalRefNumber(measurementService.getPhysicalRefNumber());
+            measurement.setReferenceId(measurementService.getReferenceId());
+            measurement.setEntryDate(measurementService.getEntryDate());
+            measurement.setIsActive(measurementService.getIsActive());
+            measurement.setDocuments(measurementService.getDocuments());
+            measurement.setAuditDetails(measurementService.getAuditDetails());
+            measurement.setAdditionalDetails(measurementService.getAdditionalDetails());
+
+            // Set measures if available
+            if (measurementService.getMeasures() != null) {
+                measurement.setMeasures(measurementService.getMeasures());
+            }
+
+            measurements.add(measurement);
+        }
+
+        return measurements;
+    }
+
+    private List<MeasurementService> convertToMeasurementServiceList(MeasurementServiceRequest measurementServiceRequest,List<Measurement> measurements) {
+        List<MeasurementService> measurementServiceList = new ArrayList<>();
+
+        for(int i=0;i<measurements.size();i++){
+            MeasurementService measurementService = new MeasurementService();
+            BeanUtils.copyProperties(measurements.get(i), measurementService); // Copy common properties
+
+            // Set wfStatus and workflow to null
+            measurementService.setWfStatus(null);
+            measurementService.setWorkflow(measurementServiceRequest.getMeasurements().get(i).getWorkflow());
+
+            measurementServiceList.add(measurementService);
+        }
+
+        return measurementServiceList;
     }
 
     /**

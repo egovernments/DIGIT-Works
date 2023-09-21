@@ -25,7 +25,7 @@ import javax.validation.constraints.*;
 @Setter
 @Getter
 public class MeasurementServiceResponse   {
-    @JsonProperty("responseInfo")
+    @JsonProperty("ResponseInfo")
 
     @Valid
     private ResponseInfo responseInfo = null;
