@@ -6,14 +6,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * Encapsulates a measurement service response. Returns an array of measurements with workflow.
@@ -25,6 +22,8 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Setter
+@Getter
 public class MeasurementServiceResponse   {
     @JsonProperty("responseInfo")
 
@@ -43,5 +42,4 @@ public class MeasurementServiceResponse   {
         this.measurements.add(measurementsItem);
         return this;
     }
-
 }
