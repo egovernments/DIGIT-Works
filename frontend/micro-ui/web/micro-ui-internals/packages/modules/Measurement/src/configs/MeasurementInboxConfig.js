@@ -84,12 +84,12 @@ const InboxMeasurementConfig = () => {
             {
               text: "MB_SEARCH_MB",
               url: "/employee/measurement/search",
-              roles: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
+              roles: ["MB_CREATOR", "MB_VERIFIER", "MB_APPROVER", "MB_VIEWER"],
             },
             {
               text: "MB_CREATE_MB",
               url: "/employee/measurement/create",
-              roles: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
+              roles: ["MB_CREATOR"],
             },
           ],
           label: "ES_COMMON_ATTENDENCEMGMT",
