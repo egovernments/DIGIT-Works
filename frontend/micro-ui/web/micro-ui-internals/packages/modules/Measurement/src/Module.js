@@ -22,8 +22,12 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
         return <Loader />;
     }
 
-    return <EmployeeApp path={path} stateCode={stateCode} />;
+
+
+
+  return <EmployeeApp path={path} stateCode={stateCode} />;
 };
+
 
 const componentsToRegister = {
     MeasurementCard,
@@ -31,6 +35,7 @@ const componentsToRegister = {
     MeasureCard,
     MeasureTable,
     MeasureRow,
+
 };
 
 export const initMeasurementComponents = () => {
