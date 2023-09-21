@@ -1,10 +1,8 @@
 const SearchMeasurementConfig = () => {
     return {
-      label: "Search Measurement Book",
+      label: "MB_SEARCH_MEASUREMENT",
       type: "search",
-      // actionLabel: "WORKS_ADD_WAGESEEKER",
-      // actionRole: "INDIVIDUAL_CREATOR",
-      // actionLink: "masters/create-wageseeker",
+    
       apiDetails: {
         serviceName: "/measurementservice/v1/_search",
         requestParam: {},
@@ -40,7 +38,7 @@ const SearchMeasurementConfig = () => {
             },
             fields: [
               {
-                label: "WARD",
+                label: "MB_WARD",
                 type: "locationdropdown",
                 isMandatory: false,
                 disable: false,
@@ -54,14 +52,14 @@ const SearchMeasurementConfig = () => {
                 }
             },
               {
-                label: "Project Name",
+                label: "MB_PROJECT_NAME",
                 type: "text",
                 isMandatory: false,
                 disable: false,
                 populators: { name: "Projectname", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
               },
               {
-                label: "MB Number",
+                label: "MB_NUMBER",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -72,7 +70,7 @@ const SearchMeasurementConfig = () => {
                 },
               },
               {
-                label: "MB Refernce Number",
+                label: "MB_REFERENCE_NUMBER",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -84,7 +82,7 @@ const SearchMeasurementConfig = () => {
               },
            
               {
-                label: "Status",
+                label: "MB_STATUS",
                 type: "dropdown",
                 isMandatory: false,
                 disable: false,
@@ -145,30 +143,30 @@ const SearchMeasurementConfig = () => {
           uiConfig: {
             columns: [
               {
-                label: "MB Reference Number",
+                label: "MB_REFERENCE_NUMBER",
                 jsonPath: "individualId",
                 additionalCustomization: true,
               },
               {
-                label: "MB Number",
+                label: "MB_NUMBER",
                 jsonPath: "allof.measurementNumber",
               },
               {
-                label: "Project Name",
+                label: "MB_PROJECT_NAME",
                 jsonPath: "fatherName",
               },
               {
-                label: "Name of CBO",
+                label: "MB_NAME_CBO",
                 jsonPath: "additionalFields.fields[0].value",
                 // additionalCustomization: true,
               },
               {
-                label: "Status",
+                label: "MB_STATUS",
                 jsonPath: "address[0].tenantId",
                 additionalCustomization: true,
               },
               {
-                label: "MB Amount",
+                label: "MB_AMOUNT",
                 jsonPath: "address[0].ward.code",
                 additionalCustomization: true,
               },

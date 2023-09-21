@@ -56,8 +56,8 @@ const MeasurementServiceResponse = () => {
 
     // Customize the message based on success or failure
     const message = true
-        ? t("Measurements book Submitted Successfully")
-        : t("Error while processing");
+        ? t("MB_SUCCESSFUL_MESSAGE")
+        : t("MB_ERROR_MESSAGE");
 
     return (
         <React.Fragment>
@@ -66,10 +66,7 @@ const MeasurementServiceResponse = () => {
                     <Banner
                         successful={true}
                         message={message}
-
-                       
-                        applicationNumber={"MB Reference Number : "
-                            + mbReference}
+                        applicationNumber={"MB_REFERENCE_NUMBER : "   + mbReference}
                     />
                 </div>
 
@@ -79,14 +76,14 @@ const MeasurementServiceResponse = () => {
                     <div className="link " >
                         <ArrowRightInbox style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
-                            {"Go to MB Inbox"}
+                            {"MB_GO_INBOX"}
                         </Link>
                     </div>
 
                     <div className="link">
                         <AddNewIcon style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
-                            {"Add MB Readings"}
+                            {"MB_ADD_READING"}
                         </Link>
                     </div>
                 </div>
@@ -94,7 +91,7 @@ const MeasurementServiceResponse = () => {
             </Card>
 
             <ActionBar>
-                <SubmitBar label={"Go To Home"} onSubmit={goToHome} />
+                <SubmitBar label={"MB_GO_HOME"} onSubmit={goToHome} />
             </ActionBar>
         </React.Fragment>
 
