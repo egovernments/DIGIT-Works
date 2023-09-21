@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class MeasurementServiceQueryBuilder {
-
-    // Update the BASE_MEASUREMENT_QUERY to include workflow information
     private static final String BASE_MEASUREMENT_QUERY = "SELECT m.id as id, m.tenantId as tenantId, m.mbNumber as mbNumber, m.phyRefNumber as phyRefNumber, m.referenceId as referenceId, " +
             "m.entryDate as entryDate, m.isActive as isActive, m.createdby as createdby, m.lastmodifiedby as lastmodifiedby, " +
             "m.createdtime as createdtime, m.lastmodifiedtime as lastmodifiedtime, m.additionalDetails as additionalDetails, " +

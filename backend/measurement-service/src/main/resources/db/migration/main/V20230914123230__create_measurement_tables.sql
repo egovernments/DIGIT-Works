@@ -43,4 +43,4 @@ CREATE TABLE eg_mb_measurement_measures (
   lastmodifiedtime BIGINT,
   lastmodifiedby VARCHAR(128),
   FOREIGN KEY (id) REFERENCES eg_mb_measurement_details (id)
-)
+);
