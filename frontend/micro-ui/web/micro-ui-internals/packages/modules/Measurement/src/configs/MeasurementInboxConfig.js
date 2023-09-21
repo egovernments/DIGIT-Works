@@ -1,6 +1,6 @@
 const InboxMeasurementConfig = () => {
   return {
-    label: "Inbox",
+    label: "MB_INBOX",
     type: "inbox",
     // actionLabel: "WORKS_ADD_WAGESEEKER",
     // actionRole: "INDIVIDUAL_CREATOR",
@@ -36,7 +36,7 @@ const InboxMeasurementConfig = () => {
           },
           fields: [
             {
-              label: "MB Refernce Number",
+              label: "MB_REFERENCE_NUMBER",
               type: "text",
               isMandatory: false,
               disable: false,
@@ -47,14 +47,14 @@ const InboxMeasurementConfig = () => {
               },
             },
             {
-              label: "Project ID",
+              label: "MB_PROJECT_ID",
               type: "text",
               isMandatory: false,
               disable: false,
               populators: { name: "ProjectId", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;""'']{1,50}$/i, maxlength: 140 } },
             },
             {
-              label: "Project Type",
+              label: "MB_PROJECT_TYPE",
               type: "dropdown",
               isMandatory: false,
               disable: false,
@@ -82,12 +82,12 @@ const InboxMeasurementConfig = () => {
         uiConfig: {
           links: [
             {
-              text: "Search MB",
+              text: "MB_SEARCH_MB",
               url: "/employee/measurement/search",
               roles: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
             },
             {
-              text: "Create MB",
+              text: "MB_CREATE_MB",
               url: "/employee/measurement/create",
               roles: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
             },
@@ -105,7 +105,7 @@ const InboxMeasurementConfig = () => {
         uiConfig: {
           type: "filter",
           headerStyle: null,
-          primaryLabel: "Apply",
+          primaryLabel: "MB_APPLY",
           secondaryLabel: "",
           minReqFields: 1,
           defaultValues: {
@@ -128,11 +128,11 @@ const InboxMeasurementConfig = () => {
                 options: [
                   {
                     code: "ASSIGNED TO ME",
-                    name: "Assigned to me",
+                    name: "MB_ASSIGNED_TO_ME",
                   },
                   {
                     code: "ASSIGNED_TO_ALL",
-                    name: "Assigned to all",
+                    name: "MB_ASSIGNED_TO_ALL",
                   },
                 ],
                 optionsKey: "name",
@@ -146,21 +146,21 @@ const InboxMeasurementConfig = () => {
               },
             },
             {
-              "label": "Ward",
-              "type": "locationdropdown",
-              "isMandatory": false,
-              "disable": false,
-              "populators": {
-                  "name": "ward",
-                  "type": "ward",
-                  "optionsKey": "i18nKey",
-                  "defaultText": "COMMON_SELECT_WARD",
-                  "selectedText": "COMMON_SELECTED",
-                  "allowMultiSelect": true
+              label: "MB_WARD",
+              type: "locationdropdown",
+              isMandatory: false,
+              disable: false,
+              populators: {
+                  name: "ward",
+                  type: "ward",
+                  optionsKey: "i18nKey",
+                  defaultText: "COMMON_SELECT_WARD",
+                  selectedText: "COMMON_SELECTED",
+                  allowMultiSelect: true
               }
             },
             {
-              label: "Workflow State",
+              label: "MB_WORKFLOW_STATE",
               type: "text",
               isMandatory: false,
               disable: false,
@@ -180,31 +180,31 @@ const InboxMeasurementConfig = () => {
         uiConfig: {
           columns: [
             {
-              label: "MB Reference Number",
+              label: "MB_REFERENCE_NUMBER",
               jsonPath: "allOf?.measures[0].referenceId",
               additionalCustomization: true,
             },
             {
-              label: "Project Name",
+              label: "MB_PROJECT_NAME",
               jsonPath: "fatherName",
             },
             {
-              label: "Assignee",
+              label: "MB_ASSIGNEE",
               jsonPath: "additionalFields.fields[0].value",
               // additionalCustomization: true,
             },
             {
-              label: "Workflow state",
+              label: "MB_WORKFLOW_STATE",
               jsonPath: "address[0].tenantId",
               additionalCustomization: true,
             },
             {
-              label: "MB Amount",
+              label: "MB_AMOUNT",
               jsonPath: "address[0].ward.code",
               additionalCustomization: true,
             },
             {
-              label: "SLA days remaining",
+              label: "MB_SLA_DAYS_REMAINING",
               jsonPath: "address[0].ward.code",
               additionalCustomization: true,
             },

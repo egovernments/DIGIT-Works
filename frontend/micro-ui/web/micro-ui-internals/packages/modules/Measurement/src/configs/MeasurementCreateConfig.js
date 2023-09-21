@@ -1,18 +1,11 @@
+
 export const CreateConfig = ({ defaultValue }) => {
-  // console.log(defaultValue, "dddddddddd")
-  // Define default values for the basic details section
-  const basicDetailsDefaultValues = {
-    basicDetails_OrderNumber: defaultValue?.contractNumber || "",
-    basicDetails_projectID: defaultValue?.contractNumber || "",
-    basicDetails_projectSencDate: defaultValue?.contractNumber || "",
-    basicDetails_projectName: defaultValue?.contractNumber || "",
-    basicDetails_projectDesc: defaultValue?.contractNumber || "",
-    basicDetails_projectLoc: defaultValue?.contractNumber || "",
-  };
+
   return {
     CreateConfig: [
       {
-        defaultValues: basicDetailsDefaultValues, // Use the default values here
+        defaultValues: defaultValue, // Use the default values here
+
         form: [
           // {
           //   head: "",
@@ -120,6 +113,7 @@ export const CreateConfig = ({ defaultValue }) => {
           //     },
           //   ],
           // },
+          
           {
             head: "SORs",
             subHead: "",
@@ -136,6 +130,7 @@ export const CreateConfig = ({ defaultValue }) => {
             head: "Non SORs",
             subHead: "",
             body: [
+
               {
                 type: "component",
                 component: "MeasureTable",
@@ -164,4 +159,6 @@ export const CreateConfig = ({ defaultValue }) => {
       }
     ]
   };
+
 };
+

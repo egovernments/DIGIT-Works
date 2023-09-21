@@ -35,7 +35,6 @@ const MeasurementCard = () => {
         link: `/${window?.contextPath}/employee/measurement/inbox`,
       },
       {
-
         label: t("ACTION_TEST_CREATE_MEASUREMENT"),
         link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784`,
       },

@@ -18,12 +18,10 @@ const CreateMeasurement = () => {
   // State to hold estimate data
   const [isEstimateEnabled, setIsEstimateEnabled] = useState(false);
 
-
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
 
-  debugger
 
   //fetching contract data
   const { isLoading: isContractLoading, data: contract } = Digit.Hooks.contracts.useContractSearch({
@@ -35,13 +33,13 @@ const CreateMeasurement = () => {
     }
   })
 
-
   // When contract data is available, enable estimate search
   useEffect(() => {
     if (contract) {
       setIsEstimateEnabled(true);
     }
   }, [contract]);
+
 
   //fetching estimate data
   const { isLoading: isEstimateLoading, data: estimate, isError: isEstimateError } = Digit.Hooks.estimates.useEstimateSearch({
@@ -51,8 +49,6 @@ const CreateMeasurement = () => {
       enabled: isEstimateEnabled,
     }
   })
-
-
 
   // Define the request criteria for creating a measurement
 
@@ -64,6 +60,7 @@ const CreateMeasurement = () => {
       enabled: true,
     },
   };
+
 
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);
 
@@ -125,6 +122,7 @@ const CreateMeasurement = () => {
       setCreateState(true)
     }
   }, [estimate]);
+  
   // if data is still loading return loader
   if (isContractLoading || isEstimateLoading || !contract || !estimate || !creatStateSet) {
     return <Loader />
@@ -132,7 +130,9 @@ const CreateMeasurement = () => {
   // else render form and data
   return (
     <div>
+
       <Header className="works-header-view" style={{}}>Measurement Book</Header>
+
       <ContractDetailsCard contract={contract} /> {/* Display contract details */}
       <FormComposerV2
         // heading={t("Measurement Book")}
@@ -147,10 +147,12 @@ const CreateMeasurement = () => {
         onSubmit={onSubmit}
         fieldStyle={{ marginRight: 0 }}
         onFormValueChange={onFormValueChange}
+
       // showWrapperContainers={true}
       // isDescriptionBold={true}
       // noBreakLine={false}
       // showMultipleCards={true}
+
       />
     </div>
   );

@@ -6,11 +6,7 @@ import InboxMeasurementConfig from "../../configs/MeasurementInboxConfig";
 
 const InboxMeasurement = () => {
   const { t } = useTranslation();
-  const history = useHistory()
-  const location = useLocation()
   const configs = InboxMeasurementConfig();
-
-
   return (
     <React.Fragment>
       <div className="jk-header-btn-wrapper">
