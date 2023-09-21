@@ -5,18 +5,17 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
-  console.log(props);
   const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
   const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
 
   const data = props.config.key === "SOR" ? sorData : nonsorData;
-
+  const tableKey = props.config.key;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
   const [totalMBAmount, setTotalMBAmount] = useState(0);
   const tableMBAmounts = [];
-  const {register} = props;
+  const {register,setValue} = props;
   
 
   const getStyles = (index) => {
@@ -116,7 +115,16 @@ const MeasureTable = (props) => {
                           t("Width"),
                           t("Depth/Height"),
                           t("Quantity"),
-                        ]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} setInitialState={setInitialState} setShowMeasureCard={setShowMeasureCard} initialState={initialState} register={register}  />
+                        ]} consumedQty={consumedQty} 
+                        setConsumedQty={setConsumedQty} 
+                        setInitialState={setInitialState} 
+                        setShowMeasureCard={setShowMeasureCard} 
+                        initialState={initialState} 
+                        register={register} 
+                        setValue= {setValue} 
+                        tableData={props.data} 
+                        tableKey={tableKey} 
+                        tableIndex={index} />
               </td>
             </tr>
           )}

@@ -1,7 +1,5 @@
 export const CreateConfig = ({ defaultValues }) => {
 
-  console.log(defaultValues, "dddddddddd")
-
   return {
     CreateConfig: [
       {

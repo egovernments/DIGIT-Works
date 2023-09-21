@@ -18,7 +18,6 @@ const CreateMeasurement = () => {
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
-  console.log(contractNumber, "ccccccccccccc")
 
   //fetching contract data
   const { isLoading: isContractLoading, data: contract } = Digit.Hooks.contracts.useContractSearch({
@@ -61,7 +60,6 @@ const CreateMeasurement = () => {
 
   // Handle form submission
   const onSubmit = async (data) => {
-
     try {
       const result = await Digit.Hooks.useCustomAPIMutationHook(reqCriteriaCreate);
       console.log("result:", result);
