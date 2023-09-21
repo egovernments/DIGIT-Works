@@ -95,6 +95,7 @@ public class MeasurementService {
      * @return
      */
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
+        // Just validate tenant id from idGen
 
         //Validate document IDs from the measurement request
         validator.validateDocumentIds(request.getMeasurements());
@@ -175,32 +176,34 @@ public class MeasurementService {
     public void enrichMeasurement(MeasurementRequest request){
 
         String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
-        String idName = configuration.getIdName();
-        String idFormat = configuration.getIdFormat();
+        List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), request.getMeasurements().size());
+        List<Measurement> measurements = request.getMeasurements();
 
-        request.getMeasurements().forEach(measurement -> {
+        for (int i = 0; i < measurements.size(); i++) {
+            Measurement measurement = measurements.get(i);
 
             // enrich UUID
             measurement.setId(UUID.randomUUID());
+//            // validate contracts
+//            Boolean isValidContract = contractUtil.validContract(measurement, request.getRequestInfo());
+//
+//            if (!isValidContract) {
+//                throw new CustomException(Collections.singletonMap("", "Not a valid contract"));
+//            }
 
-            // validate contracts
-            Boolean isValidContract = contractUtil.validContract(measurement,request.getRequestInfo());
+            // enrich the Audit details
+            measurement.setAuditDetails(AuditDetails.builder()
+                    .createdBy(request.getRequestInfo().getUserInfo().getUuid())
+                    .createdTime(System.currentTimeMillis())
+                    .lastModifiedTime(System.currentTimeMillis())
+                    .build());
 
-            if (!isValidContract) {
-                throw new CustomException(Collections.singletonMap("", "Not a valid contract"));
-            }
-
-            // enriches the Audit details
-            measurement.setAuditDetails(AuditDetails.builder().createdBy(request.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedTime(System.currentTimeMillis()).build());
             // enrich measures in a measurement
             enrichMeasures(measurement);
-
-
-            // fetch ids from IdGen
-            // List<String> idList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, idName, idFormat, 1);
             // enrich IdGen
-            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // change this to idgen
-        });
+            // measurement.setMeasurementNumber(measurementNumberList.get(i));
+            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for testing remove this
+        }
     }
 
     /**
