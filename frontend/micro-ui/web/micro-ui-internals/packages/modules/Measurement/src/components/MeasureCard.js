@@ -117,7 +117,6 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
                 dispatch({ type: "CLEAR_STATE" });
               }}/>
             <Button label={"Done"} onButtonClick={() => {
-              console.log("state",state);
                 setInitialState(state);
                 setConsumedQty(total);
                 setShowMeasureCard(false);

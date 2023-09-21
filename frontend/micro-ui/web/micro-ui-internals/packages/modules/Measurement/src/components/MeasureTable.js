@@ -1,20 +1,22 @@
 import { AddIcon, Card, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
-  let { columns } = props;
   console.log(props);
-  const sorData = props.data.SOR.length > 0 ? props.data.SOR : null;
-  const nonsorData = props.data.NONSOR.length > 0 ? props.data.NONSOR : null;
+  const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
+  const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
 
   const data = props.config.key === "SOR" ? sorData : nonsorData;
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
+  const [totalMBAmount, setTotalMBAmount] = useState(0);
+  const tableMBAmounts = [];
+  const {register, tableState} = props;
   
 
   const getStyles = (index) => {
@@ -63,11 +65,21 @@ const MeasureTable = (props) => {
     });
   };
 
+
   const renderBody = () => {
     return data?.map((row, index) => {
       const [consumedQty, setConsumedQty] = useState(0);
       const [showMeasureCard, setShowMeasureCard] = useState(false);
       const [initialState, setInitialState] = useState({tableState: row?.additionalDetails?.measurement});
+
+      useEffect(() => {
+        tableMBAmounts[index] = consumedQty * row.unitRate;
+        let sum = 0;
+        for(let i = 0;i < tableMBAmounts.length; i++){
+          sum += tableMBAmounts[i];
+        }
+        setTotalMBAmount(sum);
+      }, [consumedQty,tableMBAmounts]);
       return (
         <>
           <tr key={index}>
@@ -119,8 +131,17 @@ const MeasureTable = (props) => {
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>
-        <tbody>{renderBody()}</tbody>
+        <tbody>{renderBody()}
+        
+        </tbody>
+        
       </table>
+      <div style={{display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px"}}>
+          <div style={{display: "flex", flexDirection: "row", fontSize: "1.2rem"}}>
+            <span style={{fontWeight: "bold"}}>Total MB Amount(For Current Entry): </span>
+            <span style={{marginLeft: "3px"}}>{totalMBAmount}</span>
+          </div>
+        </div>
     </Card>
   );
 };
