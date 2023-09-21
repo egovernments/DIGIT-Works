@@ -12,15 +12,11 @@ const assetsProxy = createProxyMiddleware({
   changeOrigin: true,
   secure: false,
 });
-const assetsProxy1 = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_ASSETS || "https://UNIFIED-dev.digit.org",
-  changeOrigin: true,
-  secure: false,
-});
+
 module.exports = function (app) {
   [
     "/access/v1/actions/mdms",
-    // "/egov-mdms-service",
+    "/egov-mdms-service",
     "/egov-location",
     "/localization",
     "/egov-workflow-v2",
@@ -95,5 +91,4 @@ module.exports = function (app) {
     "/expense-calculator/"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
-  ["/egov-mdms-service"].forEach((location) => app.use(location, assetsProxy1));
 };
