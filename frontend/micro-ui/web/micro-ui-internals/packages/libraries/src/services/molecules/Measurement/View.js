@@ -41,15 +41,15 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     title: " ",
     asSectionHeader: false,
     values: [
-        {title : t("MB Number"), value : t("NA")},
-        {title : t("Work Order Number"), value : contract?.contractNumber || t("NA")},
-        {title : t("Project ID"), value : contract?.additionalDetails?.projectId || t("NA")},
-        {title : t("Muster roll ID"), value : t("NA")},
-        {title : t("Project Sanction Date"), value : t("NA")},
-        {title : t("Project Name"), value : contract?.additionalDetails?.projectName || t("NA")},
-        {title : t("Project Description"), value : contract?.additionalDetails?.projectDesc || t("NA")},
-        {title : t("Project Location"), value : t("NA")},
-        {title : t("Measurement Period"), value : t("NA")}
+      {title : t("MB_NUMBER"), value : t("NA")},
+      {title : t("MB_WORK_ORDER_NUMBER"), value : contract?.contractNumber || t("NA")},
+      {title : t("MB_PROJECT_ID"), value : contract?.additionalDetails?.projectId || t("NA")},
+      {title : t("MB_MUSTER_ROLL_ID"), value : t("NA")},
+      {title : t("MB_PROJECT_DATE"), value : t("NA")},
+      {title : t("MB_PROJECT_NAME"), value : contract?.additionalDetails?.projectName || t("NA")},
+      {title : t("MB_PROJECT_DESC"), value : contract?.additionalDetails?.projectDesc || t("NA")},
+      {title : t("MB_LOCATION"), value : t("NA")},
+      {title : t("MB_MEASUREMENT_PERIOD"), value : t("NA")}
     //   { title: "COMMON_NAME_OF_CBO", value: contract?.additionalDetails?.orgName || t("NA") },
     //   { title: "WORKS_ORGN_ID", value: contract?.additionalDetails?.cboOrgNumber || t("NA") },
     //   { title: "COMMON_ROLE_OF_CBO", value: contract?.executingAuthority ? t(`COMMON_MASTERS_${contract?.executingAuthority}`) : "NA" },
@@ -119,7 +119,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   });
 
   const applicationDetails = revisedWONumber ? { applicationDetails: [contractDetails] } : { applicationDetails: [contractDetails, documentDetails] };
-  console.log(applicationDetails);
+
   return {
     applicationDetails,
     applicationData: {contract : contract},

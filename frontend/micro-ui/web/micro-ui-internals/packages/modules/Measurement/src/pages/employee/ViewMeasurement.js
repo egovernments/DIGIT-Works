@@ -29,7 +29,7 @@ const ViewMeasurement = () => {
 
   return (
     <React.Fragment>
-      <Header className="works-header-view">VIEW MEASUREMENT BOOK</Header>
+      <Header className="works-header-view">{t("MB_VIEW_MEASUREMENT_BOOK")}</Header>
       <ApplicationDetails
         applicationDetails={projectDetails}
         isLoading={isLoading}
