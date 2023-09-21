@@ -115,6 +115,9 @@ public class MeasurementService {
      * @return
      */
     public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
+        // Just validate tenant id from idGen
+        measurementValidator.validateTenantId(measurementRegistrationRequest);
+
         //Validate document IDs from the measurement request
         validator.validateDocumentIds(measurementRegistrationRequest.getMeasurements());
 
