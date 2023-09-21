@@ -7,7 +7,6 @@ import MeasureCard from "./MeasureCard";
 const MeasureTable = (props) => {
   const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
   const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
-
   const data = props.config.key === "SOR" ? sorData : nonsorData;
   const tableKey = props.config.key;
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -79,6 +78,7 @@ const MeasureTable = (props) => {
         }
         setTotalMBAmount(sum);
       }, [consumedQty,tableMBAmounts]);
+
       return (
         <>
           <tr key={index}>
@@ -107,6 +107,7 @@ const MeasureTable = (props) => {
               <td colSpan={"1"}></td>
               <td colSpan={"7"}>
                 <MeasureCard columns={[
+
                           t("WORKS_SNO"),
                           t("Is Deduction?"),
                           t("Description "),

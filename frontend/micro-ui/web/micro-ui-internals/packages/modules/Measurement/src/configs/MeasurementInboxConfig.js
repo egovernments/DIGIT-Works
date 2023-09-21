@@ -51,7 +51,7 @@ const InboxMeasurementConfig = () => {
               type: "text",
               isMandatory: false,
               disable: false,
-              populators: { name: "ProjectId", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
+              populators: { name: "ProjectId", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;""'']{1,50}$/i, maxlength: 140 } },
             },
             {
               label: "MB_PROJECT_TYPE",
