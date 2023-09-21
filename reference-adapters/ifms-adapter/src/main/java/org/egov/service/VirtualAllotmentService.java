@@ -80,10 +80,27 @@ public class VirtualAllotmentService {
                 JSONArray ssuList = ssuDetailsResponse.get(MDMS_IFMS_MODULE_NAME).get(MDMS_SSU_DETAILS_MASTER);
 
                 for (Object ssu: ssuList) {
+                    Boolean dateValidator = false;
+                    JsonNode ssuNode = objectMapper.valueToTree(ssu);
+                    JsonNode ssuDetailsArray = ssuNode.get("SSUDetails");
+                    if (ssuDetailsArray != null && ssuDetailsArray.isArray()) {
+                        for (JsonNode ssuDetails : ssuDetailsArray) {
+                            long effectiveFrom = ssuDetails.get("effectiveFrom").asLong();
+                            Long effectiveTo = ssuDetails.has("effectiveTo") ?
+                                    ssuDetails.get("effectiveTo").asLong() : null;
+                            long currentTime = System.currentTimeMillis();
+
+                            if (effectiveFrom > currentTime || (effectiveTo != null && effectiveTo < currentTime)) {
+                                dateValidator = true;
+                            }
+                        }
+                        if (dateValidator) {
+                            continue;
+                        }
+                    }
                     for (Object hoa: hoaList) {
                         // Convert object to JsonNode
                         JsonNode hoaNode = objectMapper.valueToTree(hoa);
-                        JsonNode ssuNode = objectMapper.valueToTree(ssu);
                         processVAForHOA(tenantId, hoaNode, ssuNode, requestInfo);
                     }
 
