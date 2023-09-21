@@ -2,7 +2,6 @@ import React from "react";
 
 const ContractDetailsCard = ({ contract }) => {
 
-    console.log(contract, "contractData")
 
     // Define the card style
     const cardStyle = {
