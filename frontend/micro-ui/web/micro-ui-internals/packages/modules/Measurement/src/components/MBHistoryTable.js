@@ -1,22 +1,15 @@
-import { Card, Header } from "@egovernments/digit-ui-react-components";
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 const MeasurementHistory = ({ contractNumber }) => {
-  const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-
   const requestCriteria = {
-    url: "/measurement-service/measurement/v1/_search",
+    url: "/measurement/v1/_search",
     body: {
       criteria: {
-        tenantId : tenantId,
         referenceId: [contractNumber],
-        measurementNumber: "mbNumber1",
-        ids: ["1a39840f-6b30-4d19-9d1b-e5c88bd88d55"],
+        // measurementNumber : "mbNumber1",
+        // ids: ["1a39840f-6b30-4d19-9d1b-e5c88bd88d55"]
       },
     },
-    
   };
 
   var dummyResponse = {
@@ -60,13 +53,13 @@ const MeasurementHistory = ({ contractNumber }) => {
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
   const columns = [
-    { label: t("MB_SNO"), key: "sno" },
-    { label: t("MB_REFERENCE_NUMBER"), key: "mbref" },
-    { label: t("MB_MUSTER_ROLL_ID"), key: "musterid" },
-    { label: t("MB_DATE"), key: "mbDate" },
-    { label: t("MB_PERIOD"), key: "period" },
-    { label: t("MB_STATUS"), key: "status" },
-    { label: t("MB_ONLY_AMOUNT"), key: "amount" },
+    { label: "S.No", key: "sno" },
+    { label: "MB reference number", key: "mbref" },
+    { label: "Muster Roll ID", key: "musterid" },
+    { label: "MB Date", key: "mbDate" },
+    { label: "Period", key: "period" },
+    { label: "Status", key: "status" },
+    { label: "Amount", key: "amount" },
   ];
 
   const rows = [
@@ -83,27 +76,24 @@ const MeasurementHistory = ({ contractNumber }) => {
   ];
 
   return (
-    <Card>
-      <Header className="works-header-view">{t("MB_HISTORY")}</Header>
-      <table className="table reports-table sub-work-table">
-        <thead>
-          <tr>
-            {columns.map((column, index) => (
-              <th key={index}>{column.label}</th>
+    <table className="table reports-table sub-work-table" style={{ marginTop: "-2rem" }}>
+      <thead>
+        <tr>
+          {columns.map((column, index) => (
+            <th key={index}>{column.label}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, rowIndex) => (
+          <tr key={rowIndex}>
+            {columns.map((column, columnIndex) => (
+              <td key={columnIndex}>{row[column.key]}</td>
             ))}
           </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((column, columnIndex) => (
-                <td key={columnIndex}>{row[column.key]}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </Card>
+        ))}
+      </tbody>
+    </table>
   );
 };
 
