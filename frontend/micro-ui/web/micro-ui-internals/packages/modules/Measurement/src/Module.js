@@ -28,8 +28,8 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
 };
 
 const componentsToRegister = {
-  WorksCard: MeasurementCard,
-  WorksModule: MeasurementModule,
+  MeasurementCard,
+  MeasurementModule,
   MeasureTable,
   MeasureCard,
   MeasureRow,
