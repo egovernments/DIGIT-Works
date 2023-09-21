@@ -37,19 +37,18 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   if (revisedWONumber) {
     contract = data?.contracts?.filter((row) => row?.supplementNumber === revisedWONumber)?.[0];
   }
+  console.log(contract, "contractssssssssssssssssssssss");
   const contractDetails = {
     title: " ",
     asSectionHeader: false,
     values: [
-        {title : t("MB Number"), value : t("NA")},
-        {title : t("Work Order Number"), value : contract?.contractNumber || t("NA")},
-        {title : t("Project ID"), value : contract?.additionalDetails?.projectId || t("NA")},
-        {title : t("Muster roll ID"), value : t("NA")},
-        {title : t("Project Sanction Date"), value : t("NA")},
-        {title : t("Project Name"), value : contract?.additionalDetails?.projectName || t("NA")},
-        {title : t("Project Description"), value : contract?.additionalDetails?.projectDesc || t("NA")},
-        {title : t("Project Location"), value : t("NA")},
-        {title : t("Measurement Period"), value : t("NA")}
+        {title : "MB Number", value : "NA"},
+        {title : "Work Order Number", value : contract?.contractNumber || t("NA")},
+        {title : "Project ID", value : contract?.additionalDetails?.projectId || t("NA")},
+        {title : "Project Sanction Date", value : t("NA")},
+        {title : "Project Name", value : contract?.additionalDetails?.projectName || t("NA")},
+        {title : "Project Description", value : contract?.additionalDetails?.projectDesc || t("NA")},
+        {title : "Project Location", value : t("NA")},
     //   { title: "COMMON_NAME_OF_CBO", value: contract?.additionalDetails?.orgName || t("NA") },
     //   { title: "WORKS_ORGN_ID", value: contract?.additionalDetails?.cboOrgNumber || t("NA") },
     //   { title: "COMMON_ROLE_OF_CBO", value: contract?.executingAuthority ? t(`COMMON_MASTERS_${contract?.executingAuthority}`) : "NA" },
@@ -119,10 +118,10 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   });
 
   const applicationDetails = revisedWONumber ? { applicationDetails: [contractDetails] } : { applicationDetails: [contractDetails, documentDetails] };
-  console.log(applicationDetails);
+
   return {
     applicationDetails,
-    applicationData: {contract : contract},
+    applicationData: contract,
     processInstancesDetails: workflowDetails?.ProcessInstances,
     workflowDetails,
     isNoDataFound: data?.contracts?.length === 0 ? true : false,
@@ -143,12 +142,12 @@ export const View = {
       const filters = { ids: estimateId };
 
       const estimateResponse = await WorksService.estimateSearch({tenantId, filters});
+      console.log(estimateResponse, "estimate response");
 
       const response = {
             contracts : contractDetails.contracts,
             estimate : estimateResponse.estimates
         }
-
       return transformViewDataToApplicationDetails(t, response, undefined, revisedWONumber);
     } catch (error) {
       throw new Error(error?.response?.data?.Errors[0].message);
