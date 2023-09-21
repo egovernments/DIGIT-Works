@@ -54,10 +54,11 @@ public class MSservice {
         // validate contracts
         measurementServiceValidator.validateContracts(body);
         // update WF
-        List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);
+//        List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);
         // enrich Measurement Service
-        enrichMeasurementService(body, wfStatusList);
-
+        enrichMeasurementService(body);
+        List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);
+        enrichWf(body,wfStatusList);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         MeasurementServiceResponse measurementServiceResponse = MeasurementServiceResponse.builder().responseInfo(responseInfo).measurements(body.getMeasurements()).build();
 
@@ -65,7 +66,12 @@ public class MSservice {
         return measurementServiceResponse;
 
     }
-
+    public void enrichWf(MeasurementServiceRequest measurementServiceRequest , List<String> wfStatusList){
+        List<MeasurementService> measurementServiceList = measurementServiceRequest.getMeasurements();
+        for(int i=0;i<measurementServiceList.size();i++){
+            measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));
+        }
+    }
     /**
      * Handles update MeasurementService
      *
@@ -127,9 +133,8 @@ public class MSservice {
      * Helper function to enrich measurementservice
      *
      * @param body
-     * @param wfStatusList
      */
-    public void enrichMeasurementService(MeasurementServiceRequest body, List<String> wfStatusList) {
+    public void enrichMeasurementService(MeasurementServiceRequest body) {
 
         String tenantId = body.getMeasurements().get(0).getTenantId();
         List<String> measurementNumberList = idgenUtil.getIdList(body.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), body.getMeasurements().size());
@@ -143,7 +148,7 @@ public class MSservice {
             measurementServiceList.get(i).setMeasurementNumber(measurementNumberList.get(i));            // enriches the measurement number
             measurementServiceList.get(i).setAuditDetails(auditDetails);                                 // enrich audit details
             enrichMeasures(measurementServiceList.get(i), body.getRequestInfo());                        // enrich id & audit details in measures
-            measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich the workFlow Status
+//            measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich the workFlow Status
             measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
         }
     }
