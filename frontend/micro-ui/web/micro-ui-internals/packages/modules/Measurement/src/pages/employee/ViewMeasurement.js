@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
 import MeasurementHistory from "../../components/MBHistoryTable";
-import Photos from "../../../../templates/ApplicationDetails/components/Photos";
 
 const ViewMeasurement = () => {
   const { t } = useTranslation();
@@ -29,7 +28,7 @@ const ViewMeasurement = () => {
 
   return (
     <React.Fragment>
-      <Header className="works-header-view">VIEW MEASUREMENT BOOK</Header>
+      <Header className="works-header-view">{t("MB_VIEW_MEASUREMENT_BOOK")}</Header>
       <ApplicationDetails
         applicationDetails={projectDetails}
         isLoading={isLoading}
