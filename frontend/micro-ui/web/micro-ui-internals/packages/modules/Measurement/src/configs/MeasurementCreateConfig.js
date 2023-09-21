@@ -1,29 +1,58 @@
-export const CreateConfig = [
-  {
-    head: "Sample Object Creation",
-    subHead: "Supporting Details",
-    body: [
-      {
-        inline: true,
-        label: "Salutation",
-        isMandatory: false,
-        type: "text",
-        disable: false,
-        populators: { name: "salutation", error: "Required", validation: { pattern: /^[A-Za-z]+$/i, maxlength: 5 } },
-      },
-      {
-        type: "component",
-        component: "MeasureTable",
-        withoutLabel: true,
-        key: "SOR",
-      },
-      {
-        type: "component",
-        component: "MeasureTable",
-        withoutLabel: true,
-        key: "SOR",
-      },
-    ],
-  },
-];
+export const CreateConfig = ({ defaultValues }) => {
 
+  return {
+    CreateConfig: [
+      {
+        defaultValues: defaultValue, // Use the default values here
+        form: [
+          {
+            head: "Measurement Period",
+            subHead: "",
+            body: [
+              {
+                inline: true,
+                label: "From Date",
+                isMandatory: false,
+                type: "date",
+                disable: false,
+                populators: { name: "fDate", error: "Required", validation: { required: true, } },
+              },
+              {
+                inline: true,
+                label: "To Date",
+                isMandatory: false,
+                type: "date",
+                disable: false,
+                populators: { name: "tDate", error: "Required", validation: { required: true, } },
+              },
+            ],
+          },
+          {
+            head: "SORs",
+            subHead: "",
+            body: [
+              {
+                type: "component",
+                component: "MeasureTable",
+                withoutLabel: true,
+                key: "SOR",
+              },
+            ],
+          },
+          {
+            head: "Non SORs",
+            subHead: "",
+            body: [
+              {
+                type: "component",
+                component: "MeasureTable",
+                withoutLabel: true,
+                key: "NONSOR",
+              },
+            ],
+          },
+        ]
+      }
+    ]
+  };
+};

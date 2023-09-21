@@ -2,7 +2,6 @@ const SearchMeasurementConfig = () => {
     return {
       label: "MB_SEARCH_MEASUREMENT",
       type: "search",
-    
       apiDetails: {
         serviceName: "/measurementservice/v1/_search",
         requestParam: {},
@@ -38,7 +37,9 @@ const SearchMeasurementConfig = () => {
             },
             fields: [
               {
+
                 label: "MB_WARD",
+
                 type: "locationdropdown",
                 isMandatory: false,
                 disable: false,

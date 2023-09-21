@@ -6,7 +6,9 @@ import ViewMeasurement from "./ViewMeasurement";
 import SearchMeasurement from "./SearchMeasurement";
 import InboxMeasurement from "./InboxMeasurement";
 import CreateMeasurement from "./CreateMeasurement";
+
 import ResponseBanner from "./ResponseBanner"
+
 
 const MeasurementBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -35,15 +37,12 @@ const App = ({ path }) => {
   return (
     <Switch>
       <React.Fragment>
-
-            <MeasurementBreadCrumbs location={location} />
+           <MeasurementBreadCrumbs location={location} />
           <PrivateRoute path={`${path}/create`} component={() => <CreateMeasurement {...{ path }} />} />
           <PrivateRoute path={`${path}/search`} component={() => <SearchMeasurement {...{ path }} />} />
           <PrivateRoute path={`${path}/inbox`} component={() => <InboxMeasurement {...{ path }} />} />
           <PrivateRoute path={`${path}/view`} component={() => <ViewMeasurement {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <ResponseBanner {...{ path }} />} />
-
-
       </React.Fragment>
     </Switch>
   );
