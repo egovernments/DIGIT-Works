@@ -58,22 +58,17 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
 
             measure.setReferenceId(rs.getString("referenceId"));
 
-//            measure.setId(UUID.fromString(rs.getString("measure_id"))); // Assuming you have a UUID field for measures
+            measure.setId(UUID.fromString(rs.getString("id"))); // Assuming you have a UUID field for measures
             measure.setLength(rs.getBigDecimal("mmlength"));
             measure.setBreadth(rs.getBigDecimal("mmbreadth"));
             measure.setHeight(rs.getBigDecimal("mmheight"));
             measure.setNumItems(rs.getBigDecimal("mmnumOfItems"));
-//            measure.setCurrentValue(rs.getBigDecimal("mmcurrentValue"));
-//            measure.setCumulativeValue(rs.getBigDecimal("cumulativeValue"));
-//            measure.setIsActive(rs.getBoolean("measure_isActive"));
-//            measure.setComments(rs.getString("measure_comments"));
-
+            measure.setTotalValue(rs.getBigDecimal("mmtotalValue"));
+            measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
             // Add the Measure to the Measurement
             measurement.getMeasures().add(measure);
         }
-
         // Return the list of unique Measurement objects
         return new ArrayList<>(measurementMap.values());
     }
 }
-

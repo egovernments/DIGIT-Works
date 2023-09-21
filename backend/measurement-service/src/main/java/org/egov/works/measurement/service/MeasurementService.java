@@ -3,6 +3,7 @@ package org.egov.works.measurement.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -141,8 +142,35 @@ public class MeasurementService {
      * @return
      */
     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria) {
+
+        if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
+            throw new IllegalArgumentException("TenantId is required.");
+        }
+
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria);
         return measurements;
+    }
+    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
+
+        for (Measurement measurement : measurements) {
+            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+            measurementService.setId(measurement.getId());
+            measurementService.setTenantId(measurement.getTenantId());
+            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
+            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
+            measurementService.setReferenceId(measurement.getReferenceId());
+            measurementService.setEntryDate(measurement.getEntryDate());
+            measurementService.setMeasures(measurement.getMeasures());
+            measurementService.setIsActive(measurement.getIsActive());
+            measurementService.setAuditDetails(measurement.getAuditDetails());
+
+            measurementService.setWfStatus(null);
+            measurementService.setWorkflow(null);
+
+            measurementServices.add(measurementService);
+        }
+        return measurementServices;
     }
 
     /**

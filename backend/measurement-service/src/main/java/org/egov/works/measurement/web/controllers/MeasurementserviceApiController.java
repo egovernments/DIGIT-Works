@@ -61,33 +61,9 @@ public class MeasurementserviceApiController {
         ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(measurementServiceUrl, body, MeasurementResponse.class);
         MeasurementResponse measurementResponse = responseEntity.getBody();
         MeasurementServiceResponse measurementServiceResponse = new MeasurementServiceResponse();
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = changeToMeasurementService(measurementResponse.getMeasurements());
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = service.changeToMeasurementService(measurementResponse.getMeasurements());
         measurementServiceResponse.setMeasurements(measurementServices);
         return new ResponseEntity<>(measurementServiceResponse, responseEntity.getStatusCode());
-    }
-
-    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
-
-        for (Measurement measurement : measurements) {
-            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
-            measurementService.setId(measurement.getId());
-            measurementService.setTenantId(measurement.getTenantId());
-            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
-            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
-            measurementService.setReferenceId(measurement.getReferenceId());
-            measurementService.setEntryDate(measurement.getEntryDate());
-            measurementService.setMeasures(measurement.getMeasures());
-            measurementService.setIsActive(measurement.getIsActive());
-            measurementService.setAuditDetails(measurement.getAuditDetails());
-
-            measurementService.setWfStatus(null);
-            measurementService.setWorkflow(null);
-
-            measurementServices.add(measurementService);
-        }
-
-        return measurementServices;
     }
 
 

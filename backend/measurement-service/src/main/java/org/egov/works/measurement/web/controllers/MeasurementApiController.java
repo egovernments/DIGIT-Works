@@ -64,19 +64,10 @@ public class MeasurementApiController {
         String accept = request.getHeader("Accept");
         MeasurementCriteria criteria = body.getCriteria();
         MeasurementResponse response = new MeasurementResponse();
-
         if (criteria != null) {
-            List<String> referenceIds = criteria.getReferenceId();
-
-            if (referenceIds != null && !referenceIds.isEmpty()) {
-                for (String referenceId : referenceIds) {
-                    // Use each referenceId as needed for your search
-                    System.out.println(referenceId);
-                    List<Measurement> measurements = measurementService.searchMeasurements(criteria);
-                    response.setMeasurements(measurements);
-                    return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
-                }
-            }
+            List<Measurement> measurements = measurementService.searchMeasurements(criteria);
+            response.setMeasurements(measurements);
+            return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
         }
         return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
     }

@@ -11,7 +11,6 @@ import java.util.List;
 @Component
 @Slf4j
 public class MeasurementQueryBuilder {
-
     private static final String BASE_MEASUREMENT_QUERY = "SELECT m.id as id, m.tenantId as tenantId, m.mbNumber as mbNumber, m.phyRefNumber as phyRefNumber, m.referenceId as referenceId, " +
             "m.entryDate as entryDate, m.isActive as isActive, m.createdby as createdby, m.lastmodifiedby as lastmodifiedby, " +
             "m.createdtime as createdtime, m.lastmodifiedtime as lastmodifiedtime, m.additionalDetails as additionalDetails, " +
@@ -19,7 +18,7 @@ public class MeasurementQueryBuilder {
             "md.id as mdid, md.targetId as targetId, md.isActive as mdisActive, md.description as mddescription, " +
             "md.createdby as mdcreatedby, md.lastmodifiedby as mdlastmodifiedby, md.createdtime as mdcreatedtime, md.lastmodifiedtime as mdlastmodifiedtime, " +
 
-            "mm.id as mmid, mm.length as mmlength, mm.breadth as mmbreadth, mm.height as mmheight, mm.numOfItems as mmnumOfItems, mm.totalValue as mmtotalValue, " +
+            "mm.id as mmid, mm.length as mmlength, mm.breadth as mmbreadth, mm.height as mmheight, mm.numOfItems as mmnumOfItems, mm.totalValue as mmtotalValue, mm.cumulative as mmcumulativeValue, " +
 
             "mm.createdby as mmcreatedby, mm.lastmodifiedby as mmlastmodifiedby, mm.createdtime as mmcreatedtime, mm.lastmodifiedtime as mmlastmodifiedtime " +
             "FROM eg_mb_measurements m " +
@@ -29,29 +28,48 @@ public class MeasurementQueryBuilder {
 
     private final String ORDER_BY_CREATED_TIME = "ORDER BY m.createdtime DESC";
 
+
     public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(BASE_MEASUREMENT_QUERY);
 
-        if (!CollectionUtils.isEmpty(criteria.getReferenceId())) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" m.referenceId IN (").append(createQuery(criteria.getReferenceId())).append(")");
-            addToPreparedStatement(preparedStmtList, criteria.getReferenceId());
-        }
-        if (!ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" m.mbNumber = ? ");
-            preparedStmtList.add(criteria.getMeasurementNumber());
-        }
-        if (!CollectionUtils.isEmpty(criteria.getIds())) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" m.id IN (").append(createQuery(criteria.getIds())).append(")");
-            addToPreparedStatement(preparedStmtList, criteria.getIds());
-        }
-        if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
+        boolean tenantIdProvided = !ObjectUtils.isEmpty(criteria.getTenantId());
+
+        if (tenantIdProvided) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" m.tenantId = ? ");
             preparedStmtList.add(criteria.getTenantId());
         }
+
+        if (!ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
+            if (tenantIdProvided) {
+                query.append(" AND "); // Add AND if tenantId is provided
+            } else {
+                addClauseIfRequired(query, preparedStmtList);
+            }
+            query.append(" m.mbNumber = ? ");
+            preparedStmtList.add(criteria.getMeasurementNumber());
+        }
+
+        if (!CollectionUtils.isEmpty(criteria.getReferenceId())) {
+            if (tenantIdProvided || !ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
+                query.append(" AND "); // Add AND if tenantId or mbNumber is provided
+            } else {
+                addClauseIfRequired(query, preparedStmtList);
+            }
+            query.append(" m.referenceId IN (").append(createQuery(criteria.getReferenceId())).append(")");
+            addToPreparedStatement(preparedStmtList, criteria.getReferenceId());
+        }
+
+        if (!CollectionUtils.isEmpty(criteria.getIds())) {
+            if (tenantIdProvided || !ObjectUtils.isEmpty(criteria.getMeasurementNumber()) || !CollectionUtils.isEmpty(criteria.getReferenceId())) {
+                query.append(" AND "); // Add AND if tenantId, mbNumber, or referenceId is provided
+            } else {
+                addClauseIfRequired(query, preparedStmtList);
+            }
+            query.append(" m.id IN (").append(createQuery(criteria.getIds())).append(")");
+            addToPreparedStatement(preparedStmtList, criteria.getIds());
+        }
+
         query.append(ORDER_BY_CREATED_TIME);
 
         return query.toString();
@@ -82,5 +100,3 @@ public class MeasurementQueryBuilder {
         });
     }
 }
-
-

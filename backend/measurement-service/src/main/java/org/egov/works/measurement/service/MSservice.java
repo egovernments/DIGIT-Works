@@ -42,9 +42,6 @@ public class MSservice {
     @Autowired
     private IdgenUtil idgenUtil;
 
-    @Autowired
-    private org.egov.works.measurement.service.MeasurementService measurementService;
-
     /**
      * Handles create MeasurementService
      *
@@ -95,22 +92,6 @@ public class MSservice {
 
     }
 
-    private List<MeasurementService> convertToMeasurementServiceList(MeasurementServiceRequest measurementServiceRequest,List<Measurement> measurements) {
-        List<MeasurementService> measurementServiceList = new ArrayList<>();
-
-        for(int i=0;i<measurements.size();i++){
-            MeasurementService measurementService = new MeasurementService();
-            BeanUtils.copyProperties(measurements.get(i), measurementService); // Copy common properties
-
-            // Set wfStatus and workflow to null
-            measurementService.setWfStatus(null);
-            measurementService.setWorkflow(measurementServiceRequest.getMeasurements().get(i).getWorkflow());
-
-            measurementServiceList.add(measurementService);
-        }
-
-        return measurementServiceList;
-    }
 
     /**
      * Helper to covert measurementService to measurement
