@@ -137,6 +137,9 @@ public class MSservice {
             enrichMeasures(measurementServiceList.get(i), body.getRequestInfo());                        // enrich id & audit details in measures
             measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich the workFlow Status
             measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
+            for(Document document:measurementServiceList.get(i).getDocuments()){
+                document.setId(UUID.randomUUID().toString());
+            }
         }
     }
     public void enrichMeasurementServiceUpdate(MeasurementServiceRequest body , List<String> wfStatusList){

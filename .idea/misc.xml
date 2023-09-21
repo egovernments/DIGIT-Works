@@ -5,8 +5,8 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/backend/measurement-service/pom.xml" />
-        <option value="$PROJECT_DIR$/../../DIGIT-OSS/core-services/egov-workflow-v2/pom.xml" />
         <option value="$PROJECT_DIR$/../../DIGIT-OSS/core-services/egov-persister/pom.xml" />
+        <option value="$PROJECT_DIR$/../../DIGIT-OSS/core-services/egov-workflow-v2/pom.xml" />
       </list>
     </option>
   </component>
