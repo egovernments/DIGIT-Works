@@ -12,39 +12,6 @@ import java.util.List;
 @Slf4j
 public class MeasurementQueryBuilder {
 
-//    private static final String BASE_MEASUREMENT_QUERY = "SELECT " +
-//            "m.id as id, " +
-//            "m.tenantId as tenantId, " +
-//            "m.mbNumber as measurementNumber, " +
-//            "m.phyRefNumber as physicalRefNumber, " +
-//            "m.referenceId as referenceId, " +
-//            "m.entryDate as entryDate, " +
-//            "m.isActive as isActive, " +
-//            "m.createdby as auditDetails_createdBy, " +  // Modify aliases for nested fields
-//            "m.lastmodifiedby as auditDetails_lastModifiedBy, " +
-//            "m.createdtime as auditDetails_createdTime, " +
-//            "m.lastmodifiedtime as auditDetails_lastModifiedTime, " +
-//            "m.additionalDetails as additionalDetails, " +
-//            "md.id as measures_0_id, " +  // Modify aliases for nested fields
-//            "md.referenceId as measures_0_referenceId, " +
-//            "md.targetId as measures_0_targetId, " +
-//            "md.length as measures_0_length, " +
-//            "md.breadth as measures_0_breadth, " +
-//            "md.height as measures_0_height, " +
-//            "md.numItems as measures_0_numItems, " +
-//            "md.currentValue as measures_0_currentValue, " +
-//            "md.cumulativeValue as measures_0_cumulativeValue, " +
-//            "md.isActive as measures_0_isActive, " +
-//            "md.comments as measures_0_comments, " +
-//            "md.documents as measures_0_documents, " +
-//            "md.auditDetails as measures_0_auditDetails, " +
-//            "md.additionalDetails as measures_0_additionalDetails " +
-//            "FROM eg_mb_measurements m " +
-//            "LEFT JOIN eg_mb_measurement_details md ON m.id = md.referenceId " +
-//            "LEFT JOIN eg_mb_measurement_measures mm ON md.id = mm.id";
-
-
-
     private static final String BASE_MEASUREMENT_QUERY = "SELECT m.id as id, m.tenantId as tenantId, m.mbNumber as mbNumber, m.phyRefNumber as phyRefNumber, m.referenceId as referenceId, " +
             "m.entryDate as entryDate, m.isActive as isActive, m.createdby as createdby, m.lastmodifiedby as lastmodifiedby, " +
             "m.createdtime as createdtime, m.lastmodifiedtime as lastmodifiedtime, m.additionalDetails as additionalDetails, " +
@@ -65,10 +32,10 @@ public class MeasurementQueryBuilder {
     public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(BASE_MEASUREMENT_QUERY);
 
-        if (!ObjectUtils.isEmpty(criteria.getReferenceId())) {
+        if (!CollectionUtils.isEmpty(criteria.getReferenceId())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" m.referenceId = ? ");
-            preparedStmtList.add(criteria.getReferenceId().get(0));
+            query.append(" m.referenceId IN (").append(createQuery(criteria.getReferenceId())).append(")");
+            addToPreparedStatement(preparedStmtList, criteria.getReferenceId());
         }
         if (!ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
             addClauseIfRequired(query, preparedStmtList);
@@ -80,10 +47,11 @@ public class MeasurementQueryBuilder {
             query.append(" m.id IN (").append(createQuery(criteria.getIds())).append(")");
             addToPreparedStatement(preparedStmtList, criteria.getIds());
         }
-
-        // Add additional criteria as needed
-
-        // Order measurements based on their createdtime in latest first manner
+        if (!ObjectUtils.isEmpty(criteria.getTenantId())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" m.tenantId = ? ");
+            preparedStmtList.add(criteria.getTenantId());
+        }
         query.append(ORDER_BY_CREATED_TIME);
 
         return query.toString();

@@ -31,7 +31,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             if (measurement == null) {
                 // Create a new Measurement object
                 measurement = new Measurement();
-//                measurement.setId(UUID.fromString(uuid)); // Assuming you have a UUID field
+                measurement.setId(UUID.fromString(uuid)); // Assuming you have a UUID field
                 measurement.setTenantId(rs.getString("tenantId"));
                 measurement.setMeasurementNumber(rs.getString("mbNumber"));
                 measurement.setPhysicalRefNumber(rs.getString("phyRefNumber"));
@@ -48,12 +48,12 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 measurement.setAuditDetails(auditDetails);
 
                 measurement.setAdditionalDetails(rs.getString("additionalDetails"));
-                measurement.setMeasures(new ArrayList<>()); // Assuming you have a List of Measure
+                measurement.setMeasures(new ArrayList<>());
 
                 measurementMap.put(uuid, measurement);
             }
 
-            // Create a Measure object and add it to the Measurement
+            // Created a Measure object and add it to the Measurement
             Measure measure = new Measure();
 
             measure.setReferenceId(rs.getString("referenceId"));

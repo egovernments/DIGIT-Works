@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+
+import lombok.*;
 import org.egov.works.measurement.web.models.AuditDetails;
 import org.egov.works.measurement.web.models.Measure;
 import org.egov.works.measurement.web.models.Measurement;
@@ -14,10 +16,6 @@ import org.egov.works.measurement.web.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * MeasurementService
@@ -27,6 +25,8 @@ import lombok.Builder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class MeasurementService extends Measurement  {
 
     @JsonProperty("wfStatus")
