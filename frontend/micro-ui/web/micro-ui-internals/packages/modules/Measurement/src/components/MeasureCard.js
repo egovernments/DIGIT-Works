@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
-const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, initialState={}, setInitialState }) => {
+const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, initialState={}, setInitialState,register,setValue,tableData,tableKey,tableIndex }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -57,6 +57,9 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
+  useEffect(() => {
+    register("measurements", tableData);
+  },[])
 
   const getStyles = (index) => {
     let obj = {};
@@ -82,7 +85,7 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
     }
     return obj;
   };
-
+  
   
 
   const renderHeader = () => {
@@ -117,7 +120,8 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
                 dispatch({ type: "CLEAR_STATE" });
               }}/>
             <Button label={"Done"} onButtonClick={() => {
-              console.log("state",state);
+                tableData[tableKey][tableIndex].additionalDetails.measurement = state.tableState;
+                setValue("measurements", tableData);
                 setInitialState(state);
                 setConsumedQty(total);
                 setShowMeasureCard(false);

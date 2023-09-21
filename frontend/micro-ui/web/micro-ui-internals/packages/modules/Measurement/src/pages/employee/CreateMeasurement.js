@@ -18,7 +18,7 @@ const CreateMeasurement = () => {
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
-  console.log(contractNumber, "ccccccccccccc")
+
   //fetching contract data
   const { isLoading: isContractLoading, data: contract } = Digit.Hooks.contracts.useContractSearch({
     tenantId,
@@ -97,6 +97,20 @@ const CreateMeasurement = () => {
   if (isContractLoading || isEstimateLoading) {
     return <Loader />
   }
+
+  const estimateDetails = estimate?.estimateDetails || [];
+  // console.log(estimateDetails, "eeeeeeeeeeee")
+  const sorCategoryArray = [];
+  const nonSorCategoryArray = [];
+
+  estimateDetails.reduce((_, currentItem) => {
+    if (currentItem.category === 'SOR') {
+      sorCategoryArray.push(currentItem);
+    } else if (currentItem.category === 'NON-SOR') {
+      nonSorCategoryArray.push(currentItem);
+    }
+  }, null);
+
 
   return (
     <div>

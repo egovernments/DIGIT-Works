@@ -1,5 +1,5 @@
-export const CreateConfig = ({ defaultValue }) => {
-  
+export const CreateConfig = ({ defaultValues }) => {
+
   return {
     CreateConfig: [
       {
