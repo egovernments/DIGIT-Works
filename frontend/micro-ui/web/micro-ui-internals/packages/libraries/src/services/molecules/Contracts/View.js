@@ -57,11 +57,11 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     if(contract.startDate){
         contractDetails.values.push({ title: "WORKS_START_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.startDate)  || t("NA")})
     }
-    if(contract.endDate && contract?.additionalDetails?.timeExt){
+    if(contract.endDate && contract?.additionalDetails?.timeExt && revisedWONumber){
         contractDetails.values.push({ title: "WORKS_ORIGINAL_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate - (Number(contract?.additionalDetails?.timeExt)*24*60*60*1000))  || t("NA")})
     }
     if(contract.endDate){
-        contractDetails.values.push({ title: contract?.additionalDetails?.timeExt ? "WORKS_EXTENDED_END_DATE":"WORKS_ORIGINAL_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate)  || t("NA")})
+        contractDetails.values.push({ title: contract?.additionalDetails?.timeExt && revisedWONumber ? "WORKS_EXTENDED_END_DATE":"WORKS_ORIGINAL_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate)  || t("NA")})
     }
     if(contract.additionalDetails.timeExt && revisedWONumber){
         contractDetails.values.push({ title: "EXTENSION_REQ", value: contract?.additionalDetails?.timeExt  || t("NA")})
