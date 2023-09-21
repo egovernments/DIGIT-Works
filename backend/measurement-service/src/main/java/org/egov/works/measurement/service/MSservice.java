@@ -12,15 +12,13 @@ import org.egov.works.measurement.util.ResponseInfoFactory;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.web.models.*;
 import org.egov.works.measurement.web.models.MeasurementService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -41,6 +39,9 @@ public class MSservice {
     @Autowired
     private IdgenUtil idgenUtil;
 
+    @Autowired
+    private org.egov.works.measurement.service.MeasurementService measurementService;
+
     /**
      * Handles create MeasurementService
      *
@@ -53,23 +54,87 @@ public class MSservice {
         measurementServiceValidator.validateDocumentIds(body.getMeasurements());
         // validate contracts
         measurementServiceValidator.validateContracts(body);
-        // update WF
-//        List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);
-        // enrich Measurement Service
-        enrichMeasurementService(body);
+
+        List<Measurement> measurementList = new ArrayList<>();
+        for(MeasurementService measurementService:body.getMeasurements()){
+            Measurement measurement = Measurement.builder().id(measurementService.getId())
+                    .tenantId(measurementService.getTenantId())
+                    .measurementNumber(measurementService.getMeasurementNumber())
+                    .physicalRefNumber(measurementService.getPhysicalRefNumber())
+                    .referenceId(measurementService.getReferenceId())
+                    .entryDate(measurementService.getEntryDate())
+                    .measures(measurementService.getMeasures())
+                    .isActive(measurementService.getIsActive())
+                    .documents(measurementService.getDocuments())
+                    .auditDetails(measurementService.getAuditDetails())
+                    .additionalDetails(measurementService.getAdditionalDetails())
+                    .build();
+            measurementList.add(measurement);
+        }
+
+        MeasurementRequest measurementRegistryRequest = MeasurementRequest.builder().requestInfo(body.getRequestInfo()).measurements(measurementList).build();
+        ResponseEntity<MeasurementResponse> measurementResponse =  measurementService.createMeasurement(measurementRegistryRequest);
+
+        List<MeasurementService> measurementServiceList = convertToMeasurementServiceList(body, Objects.requireNonNull(measurementResponse.getBody()).getMeasurements());
+        body.setMeasurements(measurementServiceList);
+
+        //  update WF
         List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);
         enrichWf(body,wfStatusList);
+
+        // create response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         MeasurementServiceResponse measurementServiceResponse = MeasurementServiceResponse.builder().responseInfo(responseInfo).measurements(body.getMeasurements()).build();
 
+        // push to kafka
         producer.push(configuration.getMeasurementServiceCreateTopic(), body);
         return measurementServiceResponse;
 
     }
+
+    private List<MeasurementService> convertToMeasurementServiceList(MeasurementServiceRequest measurementServiceRequest,List<Measurement> measurements) {
+        List<MeasurementService> measurementServiceList = new ArrayList<>();
+
+        for(int i=0;i<measurements.size();i++){
+            MeasurementService measurementService = new MeasurementService();
+            BeanUtils.copyProperties(measurements.get(i), measurementService); // Copy common properties
+
+            // Set wfStatus and workflow to null
+            measurementService.setWfStatus(null);
+            measurementService.setWorkflow(measurementServiceRequest.getMeasurements().get(i).getWorkflow());
+
+            measurementServiceList.add(measurementService);
+        }
+
+        return measurementServiceList;
+    }
+
+    /**
+     * Helper to covert measurementService to measurement
+     * @param measurementServices
+     */
+    public void measurementServiceToMeasurementConverter(List<MeasurementService> measurementServices){
+        for(MeasurementService measurementService:measurementServices){
+            Measurement measurement = Measurement.builder().id(measurementService.getId())
+                    .tenantId(measurementService.getTenantId())
+                    .measurementNumber(measurementService.getMeasurementNumber())
+                    .physicalRefNumber(measurementService.getPhysicalRefNumber())
+                    .referenceId(measurementService.getReferenceId())
+                    .entryDate(measurementService.getEntryDate())
+                    .measures(measurementService.getMeasures())
+                    .isActive(measurementService.getIsActive())
+                    .documents(measurementService.getDocuments())
+                    .auditDetails(measurementService.getAuditDetails())
+                    .additionalDetails(measurementService.getAdditionalDetails())
+                    .measurementNumber(measurementService.getMeasurementNumber())
+                    .build();
+        }
+    }
     public void enrichWf(MeasurementServiceRequest measurementServiceRequest , List<String> wfStatusList){
         List<MeasurementService> measurementServiceList = measurementServiceRequest.getMeasurements();
         for(int i=0;i<measurementServiceList.size();i++){
-            measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));
+            measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich wf status
+            measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
         }
     }
     /**
