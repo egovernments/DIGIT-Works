@@ -90,21 +90,21 @@ const MeasureTable = (props) => {
             <td>{null}</td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={!initialState.length > 0} />
-                {!initialState.length > 0 && <button
+                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} />
+                <button
                   onClick={() => {
                     setShowMeasureCard(!showMeasureCard);
                   }}
                 >
                   <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px", width: "20px", height: "20px" }} />
-                </button>}
+                </button>
               </div>
             </td>
             <td>{null}</td>
           </tr>
           {showMeasureCard && !initialState.length > 0 && (
             <tr>
-            <td colSpan={"1"}></td>
+              <td colSpan={"1"}></td>
               <td colSpan={"7"}>
                 <MeasureCard columns={[
                           t("WORKS_SNO"),

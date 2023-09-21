@@ -18,8 +18,6 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
         language,
     });
 
-
-
     if (isLoading) {
         return <Loader />;
     }
@@ -28,11 +26,11 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
 };
 
 const componentsToRegister = {
-  MeasurementCard,
-  MeasurementModule,
-  MeasureTable,
-  MeasureCard,
-  MeasureRow,
+    MeasurementCard,
+    MeasurementModule,
+    MeasureCard,
+    MeasureTable,
+    MeasureRow,
 };
 
 export const initMeasurementComponents = () => {
