@@ -264,11 +264,6 @@ public class MeasurementServiceValidator {
     private <T extends Measurement> List<String> extractDocumentIds(List<T> measurements) {
         List<String> documentIds = new ArrayList<>();
         for (T measurement : measurements) {
-            for (Measure measure : measurement.getMeasures()) {
-                for (Document document : measure.getDocuments()) {
-                    documentIds.add(document.getFileStore());
-                }
-            }
             if(measurement instanceof  MeasurementService){
                 MeasurementService ms = (MeasurementService) measurement;
                 if (ms.getWorkflow() != null) {

@@ -62,7 +62,7 @@ public class MSservice {
 
         // Update workflow statuses for each measurement service
         List<String> wfStatusList = workflowService.updateWorkflowStatuses(measurementServiceRequest);
-        enrichMeasurementService(measurementServiceRequest,wfStatusList);
+        enrichMeasurementServiceUpdate(measurementServiceRequest,wfStatusList);
 
         // Create a MeasurementServiceResponse
         MeasurementServiceResponse response = makeUpdateResponseService(measurementServiceRequest);
@@ -100,9 +100,16 @@ public class MSservice {
         for(int i=0;i<measurementServiceList.size();i++){
             // create an audit details
             AuditDetails auditDetails = (AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(requestInfo.getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build());
-            measurementServiceList.get(i).setId(UUID.randomUUID()); // set ID
+            measurementServiceList.get(i).setId(UUID.randomUUID());
             measurementServiceList.get(i).setAuditDetails(auditDetails);
             enrichMeasures(measurementServiceList.get(i), body.getRequestInfo());                        // enrich id & audit details in measures
+            measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich the workFlow Status
+            measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
+        }
+    }
+    public void enrichMeasurementServiceUpdate(MeasurementServiceRequest body , List<String> wfStatusList){
+        List<MeasurementService> measurementServiceList = body.getMeasurements();
+        for(int i=0;i<measurementServiceList.size();i++){
             measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich the workFlow Status
             measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
         }

@@ -66,6 +66,10 @@ public class Measurement {
     @JsonProperty("isActive")
     private Boolean isActive = true;
 
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = null;
+
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
