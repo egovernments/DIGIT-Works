@@ -54,6 +54,13 @@ public class MeasurementserviceApiController {
         return new ResponseEntity<MeasurementServiceResponse>(measurementServiceResponse,HttpStatus.ACCEPTED);
     }
 
+
+
+    @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
+    public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body){
+        return msService.updateMeasurementService(body);
+    }
+
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
         RestTemplate restTemplate = new RestTemplate();
@@ -64,13 +71,6 @@ public class MeasurementserviceApiController {
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = service.changeToMeasurementService(measurementResponse.getMeasurements());
         measurementServiceResponse.setMeasurements(measurementServices);
         return new ResponseEntity<>(measurementServiceResponse, responseEntity.getStatusCode());
-    }
-
-
-
-    @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
-    public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body){
-        return msService.updateMeasurementService(body);
     }
 
 }
