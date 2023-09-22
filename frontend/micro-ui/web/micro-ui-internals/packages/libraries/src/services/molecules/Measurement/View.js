@@ -1,8 +1,9 @@
 import { ContractService } from "../../elements/Contracts";
 import { WorksService } from "../../elements/Works";
+import { getThumbnails } from "../../../utils/thumbnail";
 
 const combine = (docs, estimateDocs) => {
-    let allDocuments = [];
+  let allDocuments = [];
   for (let i = 0; i < docs?.length; i++) {
     if (docs[i]?.fileStoreId !== undefined || docs[i]?.fileStore !== undefined) {
       allDocuments.push(docs[i]);
@@ -18,6 +19,7 @@ const combine = (docs, estimateDocs) => {
 
 const transformViewDataToApplicationDetails = async (t, data, workflowDetails, revisedWONumber) => {
   //if revisedWONumber is defined then it's a time extension screen(use TE object here)
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   console.log(data.contracts);
   const isTimeExtAlreadyInWorkflow = data.contracts.some(
     (element) =>
@@ -37,29 +39,27 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   if (revisedWONumber) {
     contract = data?.contracts?.filter((row) => row?.supplementNumber === revisedWONumber)?.[0];
   }
+
+  let thumbnails = "";
+  try {
+    thumbnails = await getThumbnails(["8f158603-26a7-4c3a-8433-64b9ed20db60", "10ca8e0f-6d2e-4918-b628-b8bda860f061", "611d55d1-9a43-4037-ab9a-fae24466a4a6"], tenantId);
+  } catch (error) {
+    console.log(error)
+  }
+
   const contractDetails = {
     title: " ",
     asSectionHeader: false,
     values: [
-        {title : t("MB_NUMBER"), value : t("NA")},
-        {title : t("MB_WORK_ORDER_NUMBER"), value : contract?.contractNumber || t("NA")},
-        {title : t("MB_PROJECT_ID"), value : contract?.additionalDetails?.projectId || t("NA")},
-        {title : t("MB_MUSTER_ROLL_ID"), value : t("NA")},
-        {title : t("MB_PROJECT_DATE"), value : t("NA")},
-        {title : t("MB_PROJECT_NAME"), value : contract?.additionalDetails?.projectName || t("NA")},
-        {title : t("MB_PROJECT_DESC"), value : contract?.additionalDetails?.projectDesc || t("NA")},
-        {title : t("MB_LOCATION"), value : t("NA")},
-        {title : t("MB_MEASUREMENT_PERIOD"), value : t("NA")}
-    //   { title: "COMMON_NAME_OF_CBO", value: contract?.additionalDetails?.orgName || t("NA") },
-    //   { title: "WORKS_ORGN_ID", value: contract?.additionalDetails?.cboOrgNumber || t("NA") },
-    //   { title: "COMMON_ROLE_OF_CBO", value: contract?.executingAuthority ? t(`COMMON_MASTERS_${contract?.executingAuthority}`) : "NA" },
-    //   { title: "COMMON_DESGN_OF_OFFICER_IN_CHARGE", value: contract?.additionalDetails?.officerInChargeDesgn || "NA" },
-    //   { title: "COMMON_NAME_OF_OFFICER_IN_CHARGE", value: contract?.additionalDetails?.officerInChargeName?.name || "NA" },
-    //   { title: "COMMON_PROJECT_COMP_PERIOD_DAYS", value: contract?.completionPeriod || t("NA") },
-    //   {
-    //     title: "COMMON_WORK_ORDER_AMT_RS",
-    //     value: `₹ ${Digit.Utils.dss.formatterWithoutRound(contract?.totalContractedAmount, "number")}` || t("NA"),
-    //   },
+      { title: t("MB_NUMBER"), value: t("NA") },
+      { title: t("MB_WORK_ORDER_NUMBER"), value: contract?.contractNumber || t("NA") },
+      { title: t("MB_PROJECT_ID"), value: contract?.additionalDetails?.projectId || t("NA") },
+      { title: t("MB_MUSTER_ROLL_ID"), value: t("NA") },
+      { title: t("MB_PROJECT_DATE"), value: t("NA") },
+      { title: t("MB_PROJECT_NAME"), value: contract?.additionalDetails?.projectName || t("NA") },
+      { title: t("MB_PROJECT_DESC"), value: contract?.additionalDetails?.projectDesc || t("NA") },
+      { title: t("MB_LOCATION"), value: t("NA") },
+      { title: t("MB_MEASUREMENT_PERIOD"), value: t("NA") }
     ],
   };
   if (contract.startDate) {
@@ -111,6 +111,16 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     },
   };
 
+  const imageDetails = {
+    title: "MB_WORKSITE_PHOTOS",
+    asSectionHeader: true,
+    additionalDetails: {
+      photo: {
+        thumbnailsToShow: thumbnails,
+      },
+    },
+  };
+
   //filter any empty object
   documentDetails.additionalDetails.documents[0].values = documentDetails?.additionalDetails?.documents?.[0]?.values?.filter((value) => {
     if (value?.title) {
@@ -118,11 +128,13 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     }
   });
 
-  const applicationDetails = revisedWONumber ? { applicationDetails: [contractDetails] } : { applicationDetails: [contractDetails, documentDetails] };
+  const applicationDetails = revisedWONumber
+    ? { applicationDetails: [contractDetails] }
+    : { applicationDetails: [contractDetails, documentDetails, imageDetails] };
 
   return {
     applicationDetails,
-    applicationData: {contract : contract},
+    applicationData: { contract: contract },
     processInstancesDetails: workflowDetails?.ProcessInstances,
     workflowDetails,
     isNoDataFound: data?.contracts?.length === 0 ? true : false,
@@ -131,7 +143,6 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     },
   };
 };
-
 
 export const View = {
   fetchContractDetails: async (t, tenantId, data, searchParams, revisedWONumber) => {
@@ -142,12 +153,12 @@ export const View = {
 
       const filters = { ids: estimateId };
 
-      const estimateResponse = await WorksService.estimateSearch({tenantId, filters});
+      const estimateResponse = await WorksService.estimateSearch({ tenantId, filters });
 
       const response = {
-            contracts : contractDetails.contracts,
-            estimate : estimateResponse.estimates
-        }
+        contracts: contractDetails.contracts,
+        estimate: estimateResponse.estimates,
+      };
 
       return transformViewDataToApplicationDetails(t, response, undefined, revisedWONumber);
     } catch (error) {
