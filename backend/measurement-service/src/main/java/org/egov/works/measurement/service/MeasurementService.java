@@ -123,6 +123,7 @@ public class MeasurementService {
             measurementService.setReferenceId(measurement.getReferenceId());
             measurementService.setEntryDate(measurement.getEntryDate());
             measurementService.setMeasures(measurement.getMeasures());
+            measurementService.setDocuments(measurement.getDocuments());
             measurementService.setIsActive(measurement.getIsActive());
             measurementService.setAuditDetails(measurement.getAuditDetails());
 

@@ -3,6 +3,8 @@ package org.egov.works.measurement.repository.rowmapper;
 
 
 import org.egov.works.measurement.web.models.AuditDetails;
+import org.egov.works.measurement.web.models.Document;
+import org.egov.works.measurement.web.models.*;
 import org.egov.works.measurement.web.models.Measure;
 import org.egov.works.measurement.web.models.Measurement;
 import org.springframework.dao.DataAccessException;
@@ -32,13 +34,12 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 // Create a new Measurement object
                 measurement = new Measurement();
                 measurement.setId(UUID.fromString(uuid)); // Assuming you have a UUID field
+                measurement.setTenantId(rs.getString("tenantId"));
                 measurement.setMeasurementNumber(rs.getString("mbNumber"));
                 measurement.setPhysicalRefNumber(rs.getString("phyRefNumber"));
                 measurement.setReferenceId(rs.getString("referenceId"));
                 measurement.setEntryDate(rs.getBigDecimal("entryDate"));
                 measurement.setIsActive(rs.getBoolean("isActive"));
-                measurement.setTenantId(rs.getString("tenantId"));
-                
 
                 AuditDetails auditDetails = new AuditDetails();
                 auditDetails.setCreatedBy(rs.getString("createdby"));
@@ -50,6 +51,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
 
                 measurement.setAdditionalDetails(rs.getString("additionalDetails"));
                 measurement.setMeasures(new ArrayList<>());
+                measurement.setDocuments(new ArrayList<>());
 
                 measurementMap.put(uuid, measurement);
             }
@@ -57,20 +59,41 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             // Created a Measure object and add it to the Measurement
             Measure measure = new Measure();
 
-            measure.setReferenceId(rs.getString("referenceId"));
-
-            measure.setId(UUID.fromString(rs.getString("id"))); // Assuming you have a UUID field for measures
+            measure.setId(UUID.fromString(rs.getString("mmid"))); // Assuming you have a UUID field for measures
+            measure.setReferenceId(rs.getString("mdreferenceId"));
             measure.setLength(rs.getBigDecimal("mmlength"));
             measure.setBreadth(rs.getBigDecimal("mmbreadth"));
+            measure.setHeight(rs.getBigDecimal("mmheight"));
             measure.setNumItems(rs.getBigDecimal("mmnumOfItems"));
             measure.setTotalValue(rs.getBigDecimal("mmtotalValue"));
             measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
-            measure.setHeight(rs.getBigDecimal("mmheight"));
-            
+            measure.setTargetId(rs.getString("targetId"));
+            measure.setIsActive(rs.getBoolean("mdisActive"));
+
+            AuditDetails auditDetails = new AuditDetails();
+            auditDetails.setCreatedBy(rs.getString("createdby"));
+            auditDetails.setCreatedTime(rs.getLong("createdtime"));
+            auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
+            auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
+
+            measure.setAuditDetails(auditDetails);
+
             // Add the Measure to the Measurement
             measurement.getMeasures().add(measure);
+
+            // Retrieve and set document details
+            Document document = new Document();
+
+            document.setId(rs.getString("id")); // Assuming you have a UUID field for documents
+            document.setDocumentType(rs.getString("documentType"));
+            document.setFileStore(rs.getString("filestore"));
+            document.setDocumentUid(rs.getString("documentuuid"));
+            document.setAdditionalDetails(rs.getString("additionalDetails")); // Adjust the column name as per your table
+
+
+            // Add the document to the Measurement
+            measurement.getDocuments().add(document);
         }
-        
         // Return the list of unique Measurement objects
         return new ArrayList<>(measurementMap.values());
     }

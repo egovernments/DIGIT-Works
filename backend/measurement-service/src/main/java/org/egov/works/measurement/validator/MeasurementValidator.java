@@ -12,7 +12,6 @@ import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.awt.X11.XSystemTrayPeer;
 
 import java.util.*;
 
