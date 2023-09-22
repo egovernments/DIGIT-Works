@@ -37,13 +37,13 @@ const MeasurementCard = () => {
       },
       {
         label: t("ACTION_TEST_CREATE_MEASUREMENT"),
-        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000783`,
+        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784`,
         roles: ["EMPLOYEE"],
       },
 
       {
         label: t("MB_SEARCH"),
-        link: `/${window?.contextPath}/employee/measurement/search`,
+        link: `/${window?.contextPath}/employee/measurement/searchplain`,
       },
     ],
   };
