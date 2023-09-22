@@ -111,6 +111,30 @@ public class MeasurementService {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
+    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
+
+        for (Measurement measurement : measurements) {
+            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+            measurementService.setId(measurement.getId());
+            measurementService.setTenantId(measurement.getTenantId());
+            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
+            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
+            measurementService.setReferenceId(measurement.getReferenceId());
+            measurementService.setEntryDate(measurement.getEntryDate());
+            measurementService.setMeasures(measurement.getMeasures());
+            measurementService.setDocuments(measurement.getDocuments());
+            measurementService.setIsActive(measurement.getIsActive());
+            measurementService.setAuditDetails(measurement.getAuditDetails());
+
+            measurementService.setWfStatus(null);
+            measurementService.setWorkflow(null);
+
+            measurementServices.add(measurementService);
+        }
+        return measurementServices;
+    }
+
     /**
      * Handles measurement update
      * @param measurementRegistrationRequest
@@ -141,37 +165,7 @@ public class MeasurementService {
      * @param searchCriteria
      * @return
      */
-    public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria) {
-
-        if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
-            throw new IllegalArgumentException("TenantId is required.");
-        }
-
-        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria);
-        return measurements;
-    }
-    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
-
-        for (Measurement measurement : measurements) {
-            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
-            measurementService.setId(measurement.getId());
-            measurementService.setTenantId(measurement.getTenantId());
-            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
-            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
-            measurementService.setReferenceId(measurement.getReferenceId());
-            measurementService.setEntryDate(measurement.getEntryDate());
-            measurementService.setMeasures(measurement.getMeasures());
-            measurementService.setIsActive(measurement.getIsActive());
-            measurementService.setAuditDetails(measurement.getAuditDetails());
-
-            measurementService.setWfStatus(null);
-            measurementService.setWorkflow(null);
-
-            measurementServices.add(measurementService);
-        }
-        return measurementServices;
-    }
+   
 
     /**
      * Helper function to update Measurement
@@ -196,6 +190,16 @@ public class MeasurementService {
                 .build());
         response.setMeasurements(measurements);
         return response;
+    }
+
+     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria) {
+
+        if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
+            throw new IllegalArgumentException("TenantId is required.");
+        }
+
+        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria);
+        return measurements;
     }
 
     /**
