@@ -12,7 +12,7 @@ const jp = require('jsonpath');
    delete check interval. 0 = no periodic check.
 
 */
-const appCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
+const appCache = new NodeCache({ stdTTL: 100, checkperiod: 300 });
 
 /* 
 Send The Error Response back to client with proper response code 
@@ -51,16 +51,40 @@ const getErrorResponse = (
 /* 
 Send The Response back to client with proper response code and response info
 */
-const sendResponse = (res: Response, response: Response, req: Request, code: number) => {
+const sendResponse = (res: Response, response: any, req: Request, code: number) => {
   if (code != 304) {
-    appCache.set(req.originalUrl, { ...response });
+    appCache.set(req.headers.cachekey, { ...response });
   } else {
-    logger.info("CACHED RESPONSE FOR :: " + req.originalUrl);
+    logger.info("CACHED RESPONSE FOR :: " + req.headers.cachekey);
   }
   res.status(200).send({
     ...getResponseInfo(code),
     ...response,
   });
+};
+
+/* 
+Sets the cahce response
+*/
+const cacheResponse = (res: Response, key: string) => {
+  if (key != null) {
+    appCache.set(key, { ...res });
+    logger.info("CACHED RESPONSE FOR :: " + key);
+  }
+};
+
+/* 
+gets the cahce response
+*/
+const getCachedResponse = (key: string) => {
+  if (key != null) {
+    const data = appCache.get(key);
+    if (data) {
+      logger.info("RETURNS THE CACHED RESPONSE FOR :: " + key);
+      return data;
+    }
+  }
+  return null;
 };
 
 /* 
@@ -109,19 +133,19 @@ const convertObjectForMeasurment = (obj: any, config: any) => {
     const jsonPathValue = jp.query(obj, jsonPath);
 
     // Assign jsonPathValue to the corresponding property in resultBody
-    resultBody[path] = jsonPathValue;
+    resultBody[path] = jsonPathValue[0];
   });
   return resultBody;
 }
 
 // Extract estimateIds from all contracts
 const extractEstimateIds = (contractResponse: any): any[] => {
-  const allEstimateIds = [];
+  const allEstimateIds = new Set();
   for (const contract of contractResponse.contracts) {
     const contractEstimateIds = contract.lineItems.map((item: { estimateId: any; }) => item.estimateId);
-    allEstimateIds.push(...contractEstimateIds);
+    contractEstimateIds.forEach((id: any) => allEstimateIds.add(id));
   }
-  return allEstimateIds;
+  return Array.from(allEstimateIds);
 }
 
 export {
@@ -133,5 +157,7 @@ export {
   sendResponse,
   appCache,
   convertObjectForMeasurment,
-  extractEstimateIds
+  extractEstimateIds,
+  cacheResponse,
+  getCachedResponse
 };

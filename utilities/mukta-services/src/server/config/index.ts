@@ -42,6 +42,7 @@ const config = {
     individual: process.env.WORKS_INDIVIDUAL_HOST || "http://localhost:8071/",
     contract: process.env.WORKS_CONTRACT_HOST || "http://localhost:8072/",
     estimate: process.env.WORKS_ESTIMATE_HOST || "http://localhost:8073/",
+    measurement: process.env.WORKS_MEASUREMENT_HOST || "http://localhost:8074/",
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -53,6 +54,7 @@ const config = {
     localization_search: "/localization/messages/v1/_search",
     contract_search: "/contract/v1/_search",
     estimate_search: "/estimate/v1/_search",
+    measurement_search: "/measurement-service/measurement/v1/_search",
   },
 };
 

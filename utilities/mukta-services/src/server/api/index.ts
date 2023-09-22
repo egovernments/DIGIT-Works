@@ -119,26 +119,40 @@ const checkIfCitizen = async (requestinfo: any) => {
   }
 }
 
-const search_contract = async (tenantId: string, requestBody: any) => {
+const search_contract = async (tenantId: string, requestBody: any, cacheKey: any) => {
   return await httpRequest(
     url.resolve(config.host.contract, config.paths.contract_search),
     requestBody,
     {
       tenantId: tenantId,
-    }
+    },
+    "post",
+    "",
+    { cachekey: cacheKey }
   );
 }
 
-const search_estimate = async (tenantId: string, ids: string, requestBody: any) => {
+const search_estimate = async (tenantId: string, ids: string, requestBody: any, cacheKey: string) => {
   return await httpRequest(
     url.resolve(config.host.estimate, config.paths.estimate_search),
     requestBody,
     {
       tenantId: tenantId,
       ids: ids
-    }
+    },
+    "post",
+    "",
+    { cachekey: cacheKey }
   );
 }
+
+const search_measurement = async (requestBody: any) => {
+  return await httpRequest(
+    url.resolve(config.host.measurement, config.paths.measurement_search),
+    requestBody,
+  );
+}
+
 
 export {
   create_pdf,
@@ -150,5 +164,6 @@ export {
   search_individual,
   search_localization,
   search_contract,
-  search_estimate
+  search_estimate,
+  search_measurement
 };

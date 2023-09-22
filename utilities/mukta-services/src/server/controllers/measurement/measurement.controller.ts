@@ -19,20 +19,26 @@ class MeasurementController {
             const requestBody = {
                 "RequestInfo": request.body.RequestInfo,
             }
-            var contractResponse = await search_contract(request.body.tenantId, request.body);
-
-            // Extract estimateIds from all contracts
+            var contractResponse = await search_contract(request.body.tenantId, request.body, request.body.contractNumber);
             const allEstimateIds = extractEstimateIds(contractResponse);
-            var estimateResponse = await search_estimate(request.body.tenantId, allEstimateIds.join(','), requestBody);
+            const estimateIds = allEstimateIds.join(',');
+            var estimateResponse = await search_estimate(request.body.tenantId, estimateIds, requestBody, estimateIds);
             const payload = {
                 contracts: contractResponse.contracts,
                 estimates: estimateResponse.estimates
             }
-
             const config = [
                 {
-                    "path": "contractsId",
-                    "jsonPath": "$.contracts[*].id",
+                    "path": "contractNumber",
+                    "jsonPath": "$.contracts[*].contractNumber",
+                },
+                {
+                    "path": "estimateId",
+                    "jsonPath": "$.contracts[*].lineItems[*].estimateId"
+                },
+                {
+                    "path": "measurements",
+                    "jsonPath": "$.contracts[*].lineItems[*].additionalDetails.measurement"
                 }
             ]
             const finalResponse = convertObjectForMeasurment(payload, config);
