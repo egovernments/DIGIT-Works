@@ -135,11 +135,11 @@ public class MSservice {
         // Validate contracts for each measurement
         measurementServiceValidator.validateContracts(measurementServiceRequest);
 
+        // Update measurements
         MeasurementResponse measurementResponse=updateMeasurementAndGetResponse(measurementServiceRequest);
         measurementServiceRequest.setMeasurements(convertToMeasurementServiceList(measurementServiceRequest,measurementResponse.getMeasurements()));
 
-
-        // Update workflow statuses for each measurement service
+        // Update workflow statuses for each measurement service and enrich
         List<String> wfStatusList = workflowService.updateWorkflowStatuses(measurementServiceRequest);
         enrichMeasurementServiceUpdate(measurementServiceRequest,wfStatusList);
 
@@ -245,7 +245,7 @@ public class MSservice {
         //setting totalValue
         for (Measurement measurement : measurementServiceRequest.getMeasurements()) {
             for (Measure measure : measurement.getMeasures()) {
-                measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
+                measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
             }
         }
 

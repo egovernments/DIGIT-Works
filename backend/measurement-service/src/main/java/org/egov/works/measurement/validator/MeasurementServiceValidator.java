@@ -48,14 +48,16 @@ public class MeasurementServiceValidator {
     public <T extends Measurement> void validateDocumentIds(List<T> measurements) {
         List<String> documentIds = extractDocumentIds(measurements);
 
-        // Make an API request to validate document IDs
-        String responseJson = makeApiRequest(documentIds);
+        if(!documentIds.isEmpty()){
+            // Make an API request to validate document IDs
+            String responseJson = makeApiRequest(documentIds);
 
-        // Check if document IDs match the response
-        boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
+            // Check if document IDs match the response
+            boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
 
-        if (!documentIdsMatch) {
-            throw new RuntimeException("Document IDs are invalid");
+            if (!documentIdsMatch) {
+                throw new RuntimeException("Document IDs are invalid");
+            }
         }
     }
 
@@ -263,8 +265,10 @@ public class MeasurementServiceValidator {
         for (T measurement : measurements) {
             if(measurement instanceof  MeasurementService){
                 MeasurementService ms = (MeasurementService) measurement;
-                for(Document document:ms.getDocuments()){
-                    documentIds.add(document.getFileStore());
+                if(ms.getDocuments()!=null){
+                    for(Document document:ms.getDocuments()){
+                        documentIds.add(document.getFileStore());
+                    }
                 }
                 if (ms.getWorkflow() != null) {
                     for (digit.models.coremodels.Document document : ms.getWorkflow().getVerificationDocuments()) {
@@ -274,8 +278,10 @@ public class MeasurementServiceValidator {
             }
             else{
                 Measurement ms = measurement;
-                for(Document document:ms.getDocuments()) {
-                    documentIds.add(document.getFileStore());
+                if(ms.getDocuments()!=null){
+                    for(Document document:ms.getDocuments()){
+                        documentIds.add(document.getFileStore());
+                    }
                 }
             }
         }

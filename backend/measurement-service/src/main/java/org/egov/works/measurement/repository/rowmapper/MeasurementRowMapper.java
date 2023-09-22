@@ -63,7 +63,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             measure.setBreadth(rs.getBigDecimal("mmbreadth"));
             measure.setHeight(rs.getBigDecimal("mmheight"));
             measure.setNumItems(rs.getBigDecimal("mmnumOfItems"));
-            measure.setTotalValue(rs.getBigDecimal("mmtotalValue"));
+            measure.setCurrentValue(rs.getBigDecimal("mmtotalValue"));
             measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
             // Add the Measure to the Measurement
             measurement.getMeasures().add(measure);

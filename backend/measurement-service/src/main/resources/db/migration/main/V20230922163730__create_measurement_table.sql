@@ -14,7 +14,6 @@ CREATE TABLE eg_mb_measurements (
   lastmodifiedby VARCHAR(128)
 );
 
-
 -- Create eg_mb_measurement_details Table
 CREATE TABLE eg_mb_measurement_details (
   id VARCHAR(128) PRIMARY KEY,
@@ -27,7 +26,8 @@ CREATE TABLE eg_mb_measurement_details (
   createdby VARCHAR(128),
   lastmodifiedtime BIGINT,
   lastmodifiedby VARCHAR(128),
-  FOREIGN KEY (referenceId) REFERENCES eg_mb_measurements(id)
+  CONSTRAINT fk_measurement_details_referenceId
+    FOREIGN KEY (referenceId) REFERENCES eg_mb_measurements(id)
 );
 
 -- Create eg_mb_measurement_measures Table
@@ -43,9 +43,9 @@ CREATE TABLE eg_mb_measurement_measures (
   createdby VARCHAR(128) NOT NULL,
   lastmodifiedtime BIGINT,
   lastmodifiedby VARCHAR(128),
-  FOREIGN KEY (id) REFERENCES eg_mb_measurement_details(id)
+  CONSTRAINT fk_measurement_measures_id
+    FOREIGN KEY (id) REFERENCES eg_mb_measurement_details(id)
 );
-
 
 -- Create eg_mb_measurement_documents Table
 CREATE TABLE eg_mb_measurement_documents (
@@ -58,7 +58,9 @@ CREATE TABLE eg_mb_measurement_documents (
   createdby VARCHAR(64) NOT NULL,
   lastmodifiedby VARCHAR(64),
   createdtime BIGINT NOT NULL,
-  lastmodifiedtime BIGINT
+  lastmodifiedtime BIGINT,
+  CONSTRAINT fk_measurement_documents_referenceId
+    FOREIGN KEY (referenceId) REFERENCES eg_mb_measurements(id)
 );
 
 -- Create eg_mbs_measurements Table

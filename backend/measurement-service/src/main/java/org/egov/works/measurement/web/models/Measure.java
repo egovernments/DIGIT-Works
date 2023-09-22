@@ -71,10 +71,6 @@ public class Measure {
     @Valid
     private BigDecimal cumulativeValue = null;
 
-    @JsonProperty("totalValue")
-    @Valid
-    private BigDecimal totalValue = null;
-
     @JsonProperty("isActive")
     private Boolean isActive = null;
 

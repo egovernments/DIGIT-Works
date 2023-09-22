@@ -117,7 +117,7 @@ public class MeasurementService {
      * @return
      */
     public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
-        // Just validate tenant id from idGen
+        // Just validate tenant id
         measurementValidator.validateTenantId(measurementRegistrationRequest);
 
         //Validate document IDs from the measurement request
@@ -186,7 +186,7 @@ public class MeasurementService {
         //setting totalValue
         for(Measurement measurement:measurements ){
             for(Measure measure:measurement.getMeasures()){
-                measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
+                measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
             }
         }
         response.setResponseInfo(ResponseInfo.builder()
@@ -241,7 +241,7 @@ public class MeasurementService {
             measure.setId(UUID.randomUUID());
             measure.setReferenceId(measurement.getId().toString());
             measure.setAuditDetails(measurement.getAuditDetails());
-            measure.setTotalValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
+            measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
         }
     }
 }
