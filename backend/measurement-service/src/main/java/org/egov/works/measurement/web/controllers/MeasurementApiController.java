@@ -60,7 +60,7 @@ public class MeasurementApiController {
 
         MeasurementResponse response = new MeasurementResponse();
         if (criteria != null) {
-            List<Measurement> measurements = measurementService.searchMeasurements(criteria, new MeasurementSearchRequest());
+            List<Measurement> measurements = measurementService.searchMeasurements(criteria, body);
             response.setMeasurements(measurements);
             return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
         }

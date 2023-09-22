@@ -106,17 +106,20 @@ public class MeasurementQueryBuilder {
 
         query.append(ORDER_BY_CREATED_TIME);
 
-//        return addPagination(query, measurementSearchRequest.getPagination(), preparedStmtList);
+        addPagination(query, measurementSearchRequest.getPagination(), preparedStmtList);
 
         return query.toString();
     }
 
-    public String getMeasurementSearchQuery(String query, Pagination pagination, List<Object> preparedStmtList) {
-//        String query = createQuery();
-        StringBuilder paginatedquery = new StringBuilder(query);
-        query = QueryUtil.addOrderByClause(query,pagination);
-        query = getPaginatedQuery(query, preparedStmtList);
-        return query;
+    public void addPagination(StringBuilder query, Pagination pagination, List<Object> preparedStmtList) {
+        // Append offset
+        query.append(" OFFSET ? ");
+        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getOffSet()) ? config.getDefaultOffset() : pagination.getOffSet());
+
+        // Append limit
+        query.append(" LIMIT ? ");
+        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() : pagination.getLimit());
+
     }
 
     private String getPaginatedQuery(String query, List<Object> preparedStmtList) {
