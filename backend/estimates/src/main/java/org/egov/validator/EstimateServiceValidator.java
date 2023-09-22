@@ -410,6 +410,8 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
+        List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
+        validateUomValue(estimateDetails);
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
