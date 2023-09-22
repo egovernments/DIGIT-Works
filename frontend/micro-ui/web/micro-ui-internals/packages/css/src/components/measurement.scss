@@ -1,6 +1,20 @@
-.measurement-table-input{
+.measurement-table-input {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+}
+
+.plus-button {
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    background-color: #ff9100;
+    color: #ffffff;
+    font-size: 20px;
+    text-align: center;
+    line-height: 5px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
 }

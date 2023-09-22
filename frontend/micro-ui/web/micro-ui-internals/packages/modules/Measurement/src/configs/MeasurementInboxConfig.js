@@ -43,7 +43,7 @@ const InboxMeasurementConfig = () => {
               populators: {
                 name: "MBReference",
                 error: `PROJECT_PATTERN_ERR_MSG`,
-                validation: {  minlength: 2 },
+                validation: { minlength: 2 },
               },
             },
             {
@@ -76,7 +76,7 @@ const InboxMeasurementConfig = () => {
         label: "",
         children: {},
         show: true,
-      
+
       },
       links: {
         uiConfig: {
@@ -151,12 +151,12 @@ const InboxMeasurementConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                  name: "ward",
-                  type: "ward",
-                  optionsKey: "i18nKey",
-                  defaultText: "COMMON_SELECT_WARD",
-                  selectedText: "COMMON_SELECTED",
-                  allowMultiSelect: true
+                name: "ward",
+                type: "ward",
+                optionsKey: "i18nKey",
+                defaultText: "COMMON_SELECT_WARD",
+                selectedText: "COMMON_SELECTED",
+                allowMultiSelect: true
               }
             },
             {
@@ -208,7 +208,7 @@ const InboxMeasurementConfig = () => {
               jsonPath: "address[0].ward.code",
               additionalCustomization: true,
             },
-          
+
           ],
           enableGlobalSearch: false,
           enableColumnSort: true,
