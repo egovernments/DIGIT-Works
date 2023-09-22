@@ -52,12 +52,6 @@ public class MeasurementApiController {
         return service.createMeasurement(body);
     }
 
-
-    @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
-    public ResponseEntity<MeasurementResponse> measurementV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
-        return service.updateMeasurement(body);
-    }
-
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementsV1SearchPost(
             @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
@@ -71,4 +65,12 @@ public class MeasurementApiController {
         }
         return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
     }
+
+
+    @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
+    public ResponseEntity<MeasurementResponse> measurementV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
+        return service.updateMeasurement(body);
+    }
+
+    
 }
