@@ -21,7 +21,7 @@ const CreateMeasurement = () => {
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
 
-  // debugger
+
   //fetching contract data
   const { isLoading: isContractLoading, data: contract } = Digit.Hooks.contracts.useContractSearch({
     tenantId,
@@ -49,13 +49,13 @@ const CreateMeasurement = () => {
     }
   })
 
-
+  // targetId for measure object
+  const contractLineItemId = contract?.lineItems[0]?.id;
   //function to create measure object of transform data
   const createMeasurement = (item, type) => {
-    console.log(item, "iiiiiiiiiiiiiii")
     return {
       referenceId: null,
-      targetId: item.amountDetail[0].id || "",
+      targetId: contractLineItemId || "",
       length: 200,
       breadth: 200,
       height: 200,
@@ -93,6 +93,20 @@ const CreateMeasurement = () => {
             nonSorAmount: data.sumNonSor || 0,
             totalAmount: (data.sumSor ? data.sumSor : 0) + (data.sumNonSor ? data.sumNonSor : 0),
           },
+          "wfStatus": "DRAFTED",
+          "workflow": {
+            "action": "SAVE_AS_DRAFT",
+            "assignes": [],
+            "comments": "string",
+            "verificationDocuments": [
+              {
+                "documentType": "string",
+                "fileStore": "be14ceb8-01ba-485b-a6e2-489e5474a576",
+                "documentUid": "string",
+                "additionalDetails": {}
+              }
+            ]
+          }
         },
       ],
     };
@@ -115,9 +129,8 @@ const CreateMeasurement = () => {
   };
 
   // Define the request criteria for creating a measurement
-
   const reqCriteriaUpdate = {
-    url: `/measurement-service/measurement/v1/_create`,
+    url: `/measurement-service/v1/_create`,
     params: {},
     body: {},
     config: {
@@ -125,12 +138,10 @@ const CreateMeasurement = () => {
     },
   };
 
-
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);
 
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
-    console.log(data, "DDDDDDDDDDDDDDDDDDDDdd")
 
     // Create the measurement payload with transformed data
     const measurements = transformData(data);
@@ -171,7 +182,6 @@ const CreateMeasurement = () => {
     if (!_.isEqual(formData, createState)) {
       setState({ ...formData })
     }
-    console.log(formData, "formData")
   }
 
   // after fetching the estimate data get sor and nonsor details
@@ -206,7 +216,6 @@ const CreateMeasurement = () => {
 
       <ContractDetailsCard contract={contract} /> {/* Display contract details */}
       <FormComposerV2
-        // heading={t("Measurement Book")}
         label={t("Submit Bar")}
         config={CreateConfig({ defaultValue: contract }).CreateConfig[0]?.form?.map((config) => {
           return {
@@ -218,11 +227,6 @@ const CreateMeasurement = () => {
         onSubmit={handleCreateMeasurement}
         fieldStyle={{ marginRight: 0 }}
         onFormValueChange={onFormValueChange}
-
-      // showWrapperContainers={true}
-      // isDescriptionBold={true}
-      // noBreakLine={false}
-      // showMultipleCards={true}
 
       />
     </div>
