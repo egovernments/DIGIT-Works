@@ -1,9 +1,11 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
+
 
 const ContractDetailsCard = ({ contract }) => {
 
 
-
+    const { t } = useTranslation();
     // Define the card style
     const cardStyle = {
         backgroundColor: "#ffffff",
@@ -43,7 +45,7 @@ const ContractDetailsCard = ({ contract }) => {
     // Create an object for key-value pairs
     const keyValuePairs = {
         "Work Order Number:": contractNumber,
-        "Project ID:": projectID,
+        "Project Id:": projectID,
         "Project Sanction Date:": "", // did not find the value yet
         "Project Name:": projectName,
         "Project Description:": projectDesc,

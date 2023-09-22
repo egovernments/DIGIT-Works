@@ -1,9 +1,10 @@
-import { Button, Card, Toast } from "@egovernments/digit-ui-react-components";
+import { Button, Card, Toast, Amount } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
+{/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */}
 const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, initialState={}, setInitialState,register,setValue,tableData,tableKey,tableIndex }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -107,6 +108,7 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
   
   return (
     <Card>
+
       <table className="table reports-table sub-work-table" >
         <thead>
           <tr>{renderHeader()}</tr>

@@ -6,6 +6,7 @@ import ViewMeasurement from "./ViewMeasurement";
 import SearchMeasurement from "./SearchMeasurement";
 import InboxMeasurement from "./InboxMeasurement";
 import CreateMeasurement from "./CreateMeasurement";
+import SearchPlain from "./SearchPlain";
 
 import ResponseBanner from "./ResponseBanner"
 
@@ -43,6 +44,8 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/inbox`} component={() => <InboxMeasurement {...{ path }} />} />
           <PrivateRoute path={`${path}/view`} component={() => <ViewMeasurement {...{ path }} />} />
           <PrivateRoute path={`${path}/response`} component={() => <ResponseBanner {...{ path }} />} />
+          <PrivateRoute path={`${path}/searchplain`} component={() => <SearchPlain {...{ path }} />} />
+
       </React.Fragment>
     </Switch>
   );

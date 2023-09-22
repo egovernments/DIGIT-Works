@@ -66,7 +66,7 @@ const MeasurementServiceResponse = () => {
                     <Banner
                         successful={true}
                         message={message}
-                        applicationNumber={"MB_REFERENCE_NUMBER : "   + mbReference}
+                        applicationNumber={t("MB_REFERENCE_NUMBER") + " : "   + mbReference}
                     />
                 </div>
 
