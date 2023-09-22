@@ -211,7 +211,7 @@ public class MeasurementService {
         String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
         List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), request.getMeasurements().size());
         List<Measurement> measurements = request.getMeasurements();
-
+//        enrichCumulativeValue(request);
         for (int i = 0; i < measurements.size(); i++) {
             Measurement measurement = measurements.get(i);
 
@@ -228,10 +228,37 @@ public class MeasurementService {
             enrichMeasures(measurement);
             // enrich IdGen
             measurement.setMeasurementNumber(measurementNumberList.get(i));
-//            measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for local-dev remove this
+            // enrich Cumulative value
+            enrichCumulativeValue(measurement);
+            // measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for local-dev remove this
+        }
+    }
+    public void enrichCumulativeValue(Measurement measurement){
+        MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
+                                                  .referenceId(Collections.singletonList(measurement.getReferenceId()))
+                                                  .tenantId(measurement.getTenantId())
+                                                  .build();
+        List<Measurement> measurementList = searchMeasurements(measurementCriteria);
+        if(!measurementList.isEmpty()){
+            Measurement latestMeasurement = measurementList.get(0);
+            calculateCumulativeValue(latestMeasurement,measurement);
+        }
+        else{
+            for(Measure measure : measurement.getMeasures()){
+                measure.setCumulativeValue(measure.getCurrentValue());
+            }
         }
     }
 
+    public void calculateCumulativeValue(Measurement latestMeasurement,Measurement currMeasurement){
+        Map<String,BigDecimal> targetIdtoCumulativeMap = new HashMap<>();
+        for(Measure measure:latestMeasurement.getMeasures()){
+            targetIdtoCumulativeMap.put(measure.getTargetId(),measure.getCumulativeValue());
+        }
+        for(Measure measure:currMeasurement.getMeasures()){
+            measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));
+        }
+    }
     /**
      * Helper function to enriches a measure
      * @param measurement
