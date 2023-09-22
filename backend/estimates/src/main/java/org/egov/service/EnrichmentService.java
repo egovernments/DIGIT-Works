@@ -160,6 +160,7 @@ public class EnrichmentService {
 
         //upsert line item and amount detail
         List<EstimateDetail> lineItemsFromReq = estimate.getEstimateDetails();
+        enrichUomValue(lineItemsFromReq);
         //check ids are there in the request or not, if not then its a new record that has to be inserted
         for (EstimateDetail lineItem : lineItemsFromReq) {
             if (StringUtils.isBlank(lineItem.getId())) {
