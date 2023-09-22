@@ -77,7 +77,7 @@ public class MeasurementServiceValidator {
         });
     }
 
-    public void validateExistingDataAndSetAuditDetails(MeasurementRequest measurementRegistrationRequest) {
+    public void validateExistingDataAndEnrich(MeasurementRequest measurementRegistrationRequest) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         List<Measurement> measurementExisting = new ArrayList<>();
 
@@ -95,6 +95,13 @@ public class MeasurementServiceValidator {
                 if (existingMeasure == null) {
                     throw new RuntimeException("Data does not exist");
                 }
+            }
+        }
+
+        //setting totalValue
+        for(Measurement measurement:measurementRegistrationRequest.getMeasurements() ){
+            for(Measure measure:measurement.getMeasures()){
+                measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
             }
         }
 
@@ -134,7 +141,7 @@ public class MeasurementServiceValidator {
     }
 
 
-    public void validateExistingServiceDataAndSetAuditDetails(MeasurementServiceRequest measurementServiceRequest) {
+    public void validateExistingServiceDataAndEnrich(MeasurementServiceRequest measurementServiceRequest) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         List<MeasurementService> existingMeasurementService = new ArrayList<>();
 

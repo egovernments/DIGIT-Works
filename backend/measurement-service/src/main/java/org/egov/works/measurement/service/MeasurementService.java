@@ -148,7 +148,11 @@ public class MeasurementService {
         validator.validateDocumentIds(measurementRegistrationRequest.getMeasurements());
 
         // Validate existing data and set audit details
-        validator.validateExistingDataAndSetAuditDetails(measurementRegistrationRequest);
+        validator.validateExistingDataAndEnrich(measurementRegistrationRequest);
+
+        //Updating Cummulative Value
+        handleCumulativeUpdate(measurementRegistrationRequest);
+
 
         // Create the MeasurementResponse object
         MeasurementResponse response = makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
@@ -159,6 +163,18 @@ public class MeasurementService {
         // Return the success response
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
+
+    public  void handleCumulativeUpdate(MeasurementRequest measurementRequest){
+        for(Measurement measurement:measurementRequest.getMeasurements()){
+            try {
+                enrichCumulativeValueOnUpdate(measurement);
+            }
+            catch (Exception  e){
+                throw new CustomException("","Error during Cumulative enrichment");
+            }
+        }
+    }
+
 
     /**
      * handles searching of a measurement
@@ -176,13 +192,6 @@ public class MeasurementService {
      */
     private MeasurementResponse makeUpdateResponse(List<Measurement> measurements,MeasurementRequest measurementRegistrationRequest) {
         MeasurementResponse response = new MeasurementResponse();
-
-        //setting totalValue
-        for(Measurement measurement:measurements ){
-            for(Measure measure:measurement.getMeasures()){
-                measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
-            }
-        }
         response.setResponseInfo(ResponseInfo.builder()
                 .apiId(measurementRegistrationRequest.getRequestInfo().getApiId())
                 .msgId(measurementRegistrationRequest.getRequestInfo().getMsgId())
@@ -229,7 +238,12 @@ public class MeasurementService {
             // enrich IdGen
             measurement.setMeasurementNumber(measurementNumberList.get(i));
             // enrich Cumulative value
-            enrichCumulativeValue(measurement);
+            try {
+                enrichCumulativeValue(measurement);
+            }
+            catch (Exception e){
+                throw new CustomException("","Error during Cumulative enrichment");
+            }
             // measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for local-dev remove this
         }
     }
@@ -250,10 +264,36 @@ public class MeasurementService {
         }
     }
 
+    public void enrichCumulativeValueOnUpdate(Measurement measurement){
+        MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
+                .referenceId(Collections.singletonList(measurement.getReferenceId()))
+                .tenantId(measurement.getTenantId())
+                .build();
+        List<Measurement> measurementList = searchMeasurements(measurementCriteria);
+        if(!measurementList.isEmpty()){
+            Measurement latestMeasurement = measurementList.get(0);
+            calculateCumulativeValueOnUpdate(latestMeasurement,measurement);
+        }
+        else{
+            for(Measure measure : measurement.getMeasures()){
+                measure.setCumulativeValue(measure.getCurrentValue());
+            }
+        }
+    }
+
     public void calculateCumulativeValue(Measurement latestMeasurement,Measurement currMeasurement){
         Map<String,BigDecimal> targetIdtoCumulativeMap = new HashMap<>();
         for(Measure measure:latestMeasurement.getMeasures()){
             targetIdtoCumulativeMap.put(measure.getTargetId(),measure.getCumulativeValue());
+        }
+        for(Measure measure:currMeasurement.getMeasures()){
+            measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));
+        }
+    }
+    public void calculateCumulativeValueOnUpdate(Measurement latestMeasurement,Measurement currMeasurement){
+        Map<String,BigDecimal> targetIdtoCumulativeMap = new HashMap<>();
+        for(Measure measure:latestMeasurement.getMeasures()){
+            targetIdtoCumulativeMap.put(measure.getTargetId(),measure.getCumulativeValue().subtract(measure.getCurrentValue()));
         }
         for(Measure measure:currMeasurement.getMeasures()){
             measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));

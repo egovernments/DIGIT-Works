@@ -131,7 +131,7 @@ public class MSservice {
     public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest) {
 
         // Validate existing data and set audit details
-        measurementServiceValidator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
+        measurementServiceValidator.validateExistingServiceDataAndEnrich(measurementServiceRequest);
 
         // Validate contracts for each measurement
         measurementServiceValidator.validateContracts(measurementServiceRequest);
@@ -155,12 +155,6 @@ public class MSservice {
     }
 
     public MeasurementResponse updateMeasurementAndGetResponse(MeasurementServiceRequest measurementServiceRequest) {
-        // Validate existing data and set audit details
-        measurementServiceValidator.validateExistingServiceDataAndSetAuditDetails(measurementServiceRequest);
-
-        // Validate contracts for each measurement
-        measurementServiceValidator.validateContracts(measurementServiceRequest);
-
         // Convert MeasurementServiceRequest to MeasurementRequest
         MeasurementRequest measurementRequest = makeMeasurementUpdateRequest(measurementServiceRequest);
 
@@ -242,13 +236,6 @@ public class MSservice {
      */
     public MeasurementServiceResponse makeUpdateResponseService(MeasurementServiceRequest measurementServiceRequest) {
         MeasurementServiceResponse response = new MeasurementServiceResponse();
-
-        //setting totalValue
-        for (Measurement measurement : measurementServiceRequest.getMeasurements()) {
-            for (Measure measure : measurement.getMeasures()) {
-                measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
-            }
-        }
 
         response.setResponseInfo(ResponseInfo.builder()
                 .apiId(measurementServiceRequest.getRequestInfo().getApiId())
