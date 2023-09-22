@@ -90,7 +90,6 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             document.setDocumentUid(rs.getString("documentuuid"));
             document.setAdditionalDetails(rs.getString("additionalDetails")); // Adjust the column name as per your table
 
-
             // Add the document to the Measurement
             measurement.getDocuments().add(document);
         }

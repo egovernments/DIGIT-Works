@@ -57,9 +57,10 @@ public class MeasurementApiController {
             @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
         String accept = request.getHeader("Accept");
         MeasurementCriteria criteria = body.getCriteria();
+
         MeasurementResponse response = new MeasurementResponse();
         if (criteria != null) {
-            List<Measurement> measurements = measurementService.searchMeasurements(criteria);
+            List<Measurement> measurements = measurementService.searchMeasurements(criteria, new MeasurementSearchRequest());
             response.setMeasurements(measurements);
             return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
         }

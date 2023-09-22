@@ -3,14 +3,34 @@ package org.egov.works.measurement.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
+import org.egov.works.measurement.web.models.MeasurementSearchRequest;
+import org.egov.works.measurement.web.models.Pagination;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.egov.works.measurement.config.Configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Import;
+
+
+import javax.validation.constraints.DecimalMax;
 import java.util.List;
 
 @Component
 @Slf4j
 public class MeasurementQueryBuilder {
+
+    @Autowired
+    private MeasurementQueryBuilder QueryUtil;
+
+    @Autowired
+    private Pagination pagination;
+
+    @Autowired
+    private Configuration config;
+
 
     private static final String BASE_MEASUREMENT_QUERY = "SELECT m.id as id, m.tenantId as tenantId, m.mbNumber as mbNumber,m.referenceId as referenceId, m.phyRefNumber as phyRefNumber,  " +
             "m.entryDate as entryDate, m.isActive as isActive, m.createdby as createdby, m.lastmodifiedby as lastmodifiedby, " +
@@ -24,16 +44,12 @@ public class MeasurementQueryBuilder {
 
             "dc.filestore as filestore, dc.documentType as documentType, dc.documentuuid as documentuuid, dc.additionaldetails as additionaldetails, dc.id as id " +
 
-//            "mbs.tenantId as mbsTenantId, mbs.mbNumber as mbsMbNumber, mbs.wfStatus as mbsWfStatus " +
-//            "mbs.createdby as mbsCreatedBy, mbs.createdtime as mbsCreatedTime, mbs.lastmodifiedby as mbsLastModifiedBy, " +
-//            "mbs.lastmodifiedtime as mbsLastModifiedTime, mbs.additionalDetails as mbsAdditionalDetails " +
-
             "FROM eg_mb_measurements m " +
 
             "INNER JOIN eg_mb_measurement_details md ON m.id = md.referenceId " +
             "INNER JOIN eg_mb_measurement_measures mm ON md.id = mm.id "+
-            "INNER JOIN eg_mb_measurement_documents dc ON m.id = dc.referenceId " ;
-//            "INNER JOIN eg_mbs_measurements mbs ON m.mbNumber = mbs.mbNumber";
+            "INNER JOIN eg_mb_measurement_documents dc ON m.id = dc.referenceId ";
+
 
 
     private final String ORDER_BY_CREATED_TIME = "ORDER BY m.createdtime DESC";
@@ -47,7 +63,7 @@ public class MeasurementQueryBuilder {
         }
     }
 
-    public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList) {
+    public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList, MeasurementSearchRequest measurementSearchRequest) {
         StringBuilder query = new StringBuilder(BASE_MEASUREMENT_QUERY);
 
         boolean tenantIdProvided = !ObjectUtils.isEmpty(criteria.getTenantId());
@@ -90,7 +106,45 @@ public class MeasurementQueryBuilder {
 
         query.append(ORDER_BY_CREATED_TIME);
 
+//        return addPagination(query, measurementSearchRequest.getPagination(), preparedStmtList);
+
         return query.toString();
+    }
+
+    public String getMeasurementSearchQuery(String query, Pagination pagination, List<Object> preparedStmtList) {
+//        String query = createQuery();
+        StringBuilder paginatedquery = new StringBuilder(query);
+        query = QueryUtil.addOrderByClause(query,pagination);
+        query = getPaginatedQuery(query, preparedStmtList);
+        return query;
+    }
+
+    private String getPaginatedQuery(String query, List<Object> preparedStmtList) {
+        StringBuilder paginatedQuery = new StringBuilder(query);
+
+        // Append offset
+        paginatedQuery.append(" OFFSET ? ");
+        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getOffSet()) ? config.getDefaultOffset() : pagination.getOffSet());
+
+        // Append limit
+        paginatedQuery.append(" LIMIT ? ");
+        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() : pagination.getLimit());
+
+        return paginatedQuery.toString();
+    }
+    private String addOrderByClause(String query,Pagination pagination) {
+
+        String paginationWrapper = BASE_MEASUREMENT_QUERY;
+
+        if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {
+            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
+
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.ASC.name());
+        }
+
+        return paginationWrapper;
     }
 
     private String createQuery(List<String> ids) {
