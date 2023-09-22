@@ -108,11 +108,13 @@ public class NotificationService {
         if(config.isAdditonalFieldRequired()){
             setAdditionalFields(request,ContractServiceConstants.CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE,additionalField);
         }
-        log.info("Sending message to CBO");
-        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetailsMap);
 
-        if (!isSendBack) {
-            pushNotificationToOriginator(request, message);
+        if (isSendBack) {
+            log.info("Sending message to CBO");
+            checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetailsMap);
+        }else{
+            log.info("Sending message to Originator:");
+            pushNotificationToOriginator(request,message);
         }
 
     }
