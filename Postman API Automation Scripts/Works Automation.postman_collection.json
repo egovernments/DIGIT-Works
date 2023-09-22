@@ -36,7 +36,7 @@
 									"    var project = req.Projects[0];",
 									"    pm.expect(project.tenantId).to.be.not.null;",
 									"    pm.expect(project.tenantId).to.be.not.undefined;",
-									"    pm.expect(project.tenantId).not.to.eql(\"\");",
+									"    pm.expect(project.tenantId).to.not.equal(\"\");",
 									"}",
 									");",
 									"",
@@ -84,8 +84,6 @@
 									"let responseData = pm.response.json();",
 									"",
 									"//Storing the response data into collection variable to reuse",
-									"",
-									"pm.collectionVariables.set(\"tenantId\", responseData.Project[0].tenantId);",
 									"",
 									"pm.collectionVariables.set(\"projectId\", responseData.Project[0].id);",
 									"",
@@ -4564,6 +4562,213 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Individual Service Test Script",
+			"item": [
+				{
+					"name": "Create Individual - Success",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Arrays of common first and last names\r",
+									"const firstNames = [\r",
+									"    \"John\",\r",
+									"    \"Jane\",\r",
+									"    \"Michael\",\r",
+									"    \"Emily\",\r",
+									"    \"David\",\r",
+									"    \"Sarah\"\r",
+									"];\r",
+									"const lastNames = [\r",
+									"    \"Smith\",\r",
+									"    \"Johnson\",\r",
+									"    \"Williams\",\r",
+									"    \"Brown\",\r",
+									"    \"Jones\",\r",
+									"    \"Davis\"\r",
+									"];\r",
+									"// Function to generate a random individual name\r",
+									"function generateRandomName() {\r",
+									"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+									"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+									"\r",
+									"    return `${randomFirstName} ${randomLastName}`;\r",
+									"}\r",
+									"// Generate random names for Son and Father\r",
+									"const sonName = generateRandomName();\r",
+									"const fatherName = generateRandomName();\r",
+									"\r",
+									"// Set the generated names as environment variables\r",
+									"pm.collectionVariables.set(\"IndName\", sonName);\r",
+									"pm.collectionVariables.set(\"IndFatherName\", fatherName);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Generate a random 10-digit mobile number\r",
+									"function generateRandomMobileNumber() {\r",
+									"    let mobileNumber = \"9\"; // Start with 9 as the first digit\r",
+									"\r",
+									"    for (let i = 1; i < 10; i++) {\r",
+									"        mobileNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"\r",
+									"    return mobileNumber;\r",
+									"}\r",
+									"\r",
+									"// Generate a random mobile number\r",
+									"const randomMobileNumber = generateRandomMobileNumber();\r",
+									"\r",
+									"// Set the generated mobile number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndmobileNo\", randomMobileNumber);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate a random 12-digit number\r",
+									"function generateRandomNumber() {\r",
+									"    let randomNumber = \"\";\r",
+									"    for (let i = 0; i < 12; i++) {\r",
+									"        randomNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"    return randomNumber;\r",
+									"}\r",
+									"// Generate a random 12-digit number\r",
+									"const random12DigitNumber = generateRandomNumber();\r",
+									"\r",
+									"// Set the generated number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndAadharNo\", random12DigitNumber);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RequestInfo is required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(req.RequestInfo).to.not.be.null;\r",
+									"    pm.expect(req.RequestInfo).to.not.be.undefined;\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test(\"Individual are required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(req.Individual).to.not.be.undefined;\r",
+									"    pm.expect(req.Individual).to.not.be.null;\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test(\"TenantId is required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    var Individual = req.Individual;  \r",
+									"    pm.expect(Individual.tenantId).to.not.be.null;\r",
+									"    pm.expect(Individual.tenantId).to.not.be.undefined;\r",
+									"    pm.expect(Individual.tenantId).to.not.equal(\"\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is successful\", () =>\r",
+									"    pm.expect(pm.response.to.have.status(200))\r",
+									");\r",
+									"\r",
+									"// pm.test(\"print and save IndividualId in environment\", function () {\r",
+									"//     var res = pm.response.json();\r",
+									"//     var IndividualId = res.Individual.id;\r",
+									"//     console.log('id:', IndividualId);\r",
+									"//     pm.environment.set('IndId', IndividualId);\r",
+									"// }\r",
+									"// );\r",
+									"// pm.test(\"print and save IndividualNumber in environment\", function () {\r",
+									"//     var res = pm.response.json();\r",
+									"//     var IndividualNo = res.Individual.individualId;\r",
+									"//     console.log('individualId:', IndividualNo);\r",
+									"//     pm.environment.set('IndNo', IndividualNo);\r",
+									"// }\r",
+									"// );\r",
+									"\r",
+									"// pm.test(\"print and save Ind-addressid in environment\", function () {\r",
+									"//     var res = pm.response.json();\r",
+									"//     var addressid = res.Individual.address.id;\r",
+									"//     console.log('id:', addressid);\r",
+									"//     pm.environment.set('Ind-addressid',addressid);\r",
+									"// }\r",
+									"// );\r",
+									"\r",
+									"let responseData = pm.response.json();\r",
+									"\r",
+									"//Storing the response data into collection variable to reuse\r",
+									"\r",
+									"pm.collectionVariables.set(\"IndId\", responseData.Individual.id);\r",
+									"\r",
+									"pm.collectionVariables.set(\"IndNo\", responseData.Individual.individualId);\r",
+									"\r",
+									"pm.collectionVariables.set(\"IndDOB\", responseData.Individual.dateOfBirth);\r",
+									"\r",
+									"pm.collectionVariables.set(\"Indgender\", responseData.Individual.gender);\r",
+									"\r",
+									"pm.collectionVariables.set(\"createdTime\", (responseData.Individual.auditDetails.createdTime));\r",
+									"\r",
+									"pm.collectionVariables.set(\"lastModifiedTime\",(responseData.Individual.auditDetails.lastModifiedTime));\r",
+									"\r",
+									"pm.collectionVariables.set(\"IndaddressId\", responseData.Individual.address.id);\r",
+									"\r",
+									"pm.collectionVariables.set(\"IndskillId\", responseData.Individual.skills.id);\r",
+									"\r",
+									"pm.collectionVariables.set(\"Indskilltype\", responseData.Individual.skills.type);\r",
+									"\r",
+									"pm.collectionVariables.set(\"Indskilllevel\", responseData.Individual.skills.level);\r",
+									"\r",
+									"pm.collectionVariables.set(\"Social Category\", responseData.Individual.fields[0].value);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"04/09/1990\",\r\n        \"gender\": \"MALE\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"pincode\": \"600003\",\r\n                \"city\": \"{{tenantId}}\",\r\n                \"street\": \"Brindavanam\",\r\n                \"doorNo\": \"27\",\r\n                \"type\": \"PERMANENT\",\r\n                \"locality\": {\r\n                    \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"identifiers\": [\r\n            {\r\n                \"identifierType\": \"AADHAAR\",\r\n                \"identifierId\": \"{{IndAadharNo}}\"\r\n            }\r\n        ],\r\n        \"skills\": [\r\n            {\r\n                \"type\": \"HAMMER_MAN\",\r\n                \"level\": \"SEMI_SKILLED\"\r\n            }\r\n        ],\r\n        \"photo\": null,\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"SC\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -4641,18 +4846,6 @@
 		}
 	],
 	"variable": [
-		{
-			"key": "tenantId",
-			"value": ""
-		},
-		{
-			"key": "natureOfWork",
-			"value": ""
-		},
-		{
-			"key": "department",
-			"value": ""
-		},
 		{
 			"key": "boundaryType",
 			"value": ""
@@ -4787,6 +4980,54 @@
 		},
 		{
 			"key": "completionPeriod",
+			"value": ""
+		},
+		{
+			"key": "IndName",
+			"value": ""
+		},
+		{
+			"key": "IndFatherName",
+			"value": ""
+		},
+		{
+			"key": "IndmobileNo",
+			"value": ""
+		},
+		{
+			"key": "IndAadharNo",
+			"value": ""
+		},
+		{
+			"key": "IndId",
+			"value": ""
+		},
+		{
+			"key": "IndNo",
+			"value": ""
+		},
+		{
+			"key": "IndDOB",
+			"value": ""
+		},
+		{
+			"key": "Indgender",
+			"value": ""
+		},
+		{
+			"key": "IndaddressId",
+			"value": ""
+		},
+		{
+			"key": "IndskillId",
+			"value": ""
+		},
+		{
+			"key": "Indskilltype",
+			"value": ""
+		},
+		{
+			"key": "Indskilllevel",
 			"value": ""
 		}
 	]
