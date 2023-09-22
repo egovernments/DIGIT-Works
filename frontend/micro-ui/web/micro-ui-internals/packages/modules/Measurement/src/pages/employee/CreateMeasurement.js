@@ -21,7 +21,7 @@ const CreateMeasurement = () => {
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
 
-  // debugger
+  
   //fetching contract data
   const { isLoading: isContractLoading, data: contract } = Digit.Hooks.contracts.useContractSearch({
     tenantId,
@@ -52,7 +52,6 @@ const CreateMeasurement = () => {
 
   //function to create measure object of transform data
   const createMeasurement = (item, type) => {
-    console.log(item, "iiiiiiiiiiiiiii")
     return {
       referenceId: null,
       targetId: item.amountDetail[0].id || "",
@@ -130,7 +129,6 @@ const CreateMeasurement = () => {
 
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
-    console.log(data, "DDDDDDDDDDDDDDDDDDDDdd")
 
     // Create the measurement payload with transformed data
     const measurements = transformData(data);
