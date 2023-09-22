@@ -32,12 +32,13 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 // Create a new Measurement object
                 measurement = new Measurement();
                 measurement.setId(UUID.fromString(uuid)); // Assuming you have a UUID field
-                measurement.setTenantId(rs.getString("tenantId"));
                 measurement.setMeasurementNumber(rs.getString("mbNumber"));
                 measurement.setPhysicalRefNumber(rs.getString("phyRefNumber"));
                 measurement.setReferenceId(rs.getString("referenceId"));
                 measurement.setEntryDate(rs.getBigDecimal("entryDate"));
                 measurement.setIsActive(rs.getBoolean("isActive"));
+                measurement.setTenantId(rs.getString("tenantId"));
+                
 
                 AuditDetails auditDetails = new AuditDetails();
                 auditDetails.setCreatedBy(rs.getString("createdby"));
@@ -61,13 +62,15 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             measure.setId(UUID.fromString(rs.getString("id"))); // Assuming you have a UUID field for measures
             measure.setLength(rs.getBigDecimal("mmlength"));
             measure.setBreadth(rs.getBigDecimal("mmbreadth"));
-            measure.setHeight(rs.getBigDecimal("mmheight"));
             measure.setNumItems(rs.getBigDecimal("mmnumOfItems"));
             measure.setTotalValue(rs.getBigDecimal("mmtotalValue"));
             measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
+            measure.setHeight(rs.getBigDecimal("mmheight"));
+            
             // Add the Measure to the Measurement
             measurement.getMeasures().add(measure);
         }
+        
         // Return the list of unique Measurement objects
         return new ArrayList<>(measurementMap.values());
     }
