@@ -114,11 +114,11 @@ public class NotificationService {
             checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetailsMap);
         }else{
             log.info("Sending message to Originator:");
-            pushNotificationToOriginator(request,message);
+            pushNotificationToOriginator(request,message,cboMobileNumber);
         }
 
     }
-    private void pushNotificationToOriginator (ContractRequest request, String message) {
+    private void pushNotificationToOriginator (ContractRequest request, String message,String cboMobileNumber) {
 
         Pagination pagination = Pagination.builder()
                 .limit(config.getContractMaxLimit())
@@ -141,7 +141,7 @@ public class NotificationService {
         Map<String, String> smsDetailsMap = new HashMap<>();
 
         smsDetailsMap.put("mobileNumber",officerInChargeMobileNumber);
-
+        smsDetailsMap.put("cboMobileNumber",cboMobileNumber);
         Workflow workflow = request.getWorkflow();
         String message1 = null;
 
@@ -567,7 +567,14 @@ public class NotificationService {
 
 
         if(!additionalField.isEmpty()){
-            WorksSmsRequest smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
+            WorksSmsRequest smsRequest= new WorksSmsRequest();
+            if(null!=smsDetails.get("cboMobileNumber")){
+                smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
+                        .mobileNumber(smsDetails.get("cboMobileNumber")).build();
+                log.info("SMS message with additonal fields to CBO:::::" + smsRequest.toString());
+                producer.push(config.getMuktaNotificationTopic(), smsRequest);
+            }
+            smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
                     .mobileNumber(smsDetails.get("mobileNumber")).build();
             log.info("SMS message with additonal fields:::::" + smsRequest.toString());
             producer.push(config.getMuktaNotificationTopic(), smsRequest);
