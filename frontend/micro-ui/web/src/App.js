@@ -47,6 +47,7 @@ const enabledModules = [
   "Estimate",
   "Project",
   "Mukta",
+  "Measurement"
 ];
 
 const initDigitUI = () => {

@@ -46,6 +46,7 @@ const enabledModules = [
   "Masters",
   "Estimate",
   "Project",
+  "Measurement",
   // "Mukta"
 ];
 

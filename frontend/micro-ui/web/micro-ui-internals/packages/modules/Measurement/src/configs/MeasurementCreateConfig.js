@@ -7,8 +7,7 @@ export const CreateConfig = ({ defaultValue }) => {
         defaultValues: defaultValue, // Use the default values here
 
         form: [
-         
-          
+
           {
             head: "MB_SORS",
             subHead: "",
@@ -35,20 +34,22 @@ export const CreateConfig = ({ defaultValue }) => {
             ],
           },
           {
-            head: "Worksite Photos",
-            body: [
+
+            // "navLink": "Work Details",
+            "head": "Worksite Photos",
+            "body": [
               {
-                type: "documentUpload",
-                withoutLabel: true,
-                module: "Measurement",
-                error: "WORKS_REQUIRED_ERR",
-                name: "uploadedDocs",
-                key: "documentDetails",
-                customClass: "",
-                localePrefix: ""
+                "type": "documentUpload",
+                "withoutLabel": true,
+                "module": "Measurement",
+                "error": "WORKS_REQUIRED_ERR",
+                "name": "uploadedDocs",
+                "key": "documentDetails",
+                "customClass": "my doc",
+                "localePrefix": "MEASUREMENT_DOC"
+
               }
-            ]
-          }
+         
         ]
       }
     ]

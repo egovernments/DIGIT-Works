@@ -1,4 +1,6 @@
-import { AddIcon, Card, TextInput, Amount } from "@egovernments/digit-ui-react-components";
+
+import { AddIcon, Card, TextInput, Amount, Button } from "@egovernments/digit-ui-react-components";
+
 import React, { useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -14,8 +16,10 @@ const MeasureTable = (props) => {
   const history = useHistory();
   const [totalMBAmount, setTotalMBAmount] = useState(0);
   const tableMBAmounts = [];
-  const {register,setValue} = props;
-  
+  const { register, setValue } = props;
+
+  register("sumSor", 0);
+  register("sumNonSor", 0);
 
   const getStyles = (index) => {
     let obj = {};
@@ -68,16 +72,29 @@ const MeasureTable = (props) => {
     return data?.map((row, index) => {
       const [consumedQty, setConsumedQty] = useState(0);
       const [showMeasureCard, setShowMeasureCard] = useState(false);
-      const [initialState, setInitialState] = useState({tableState: row?.additionalDetails?.measurement});
+      const [initialState, setInitialState] = useState({ tableState: row?.additionalDetails?.measurement });
+      const [totalAmount, setTotalAmount] = useState(0)
 
       useEffect(() => {
         tableMBAmounts[index] = consumedQty * row.unitRate;
+        setTotalAmount(tableMBAmounts[index]);
         let sum = 0;
-        for(let i = 0;i < tableMBAmounts.length; i++){
+        for (let i = 0; i < tableMBAmounts.length; i++) {
           sum += tableMBAmounts[i];
         }
         setTotalMBAmount(sum);
-      }, [consumedQty,tableMBAmounts]);
+        if (props.config.key == "SOR") {
+          if (props.formData.sumSor != sum) {
+            setValue('sumSor', sum);
+          }
+        } else {
+          if (props.formData.sumNonSor != sum) {
+            setValue('sumNonSor', sum);
+          }
+        }
+        // console.log(props, "FFFFFFFFFFFFFFFFFFF")
+
+      }, [consumedQty, tableMBAmounts]);
 
       return (
         <>
@@ -90,23 +107,29 @@ const MeasureTable = (props) => {
             <td><Amount customStyle={{ textAlign: 'right'}} value={null} t={t}></Amount></td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} />
-                <button
-                  onClick={() => {
+                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={initialState.length > 0 ? "true" : "false"} />
+                <Button
+                  className={"plus-button"}
+                  onButtonClick={() => {
                     setShowMeasureCard(!showMeasureCard);
                   }}
+                  label={"+"}
                 >
                   <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px", width: "20px", height: "20px" }} />
-                </button>
+                </Button>
               </div>
             </td>
-            <td><Amount customStyle={{ textAlign: 'right'}} value={null} t={t}></Amount></td>
+
+            <td><Amount customStyle={{ textAlign: 'right'}} value={totalAmount} t={t}></Amount></td>
+
+
           </tr>
           {showMeasureCard && !initialState.length > 0 && (
             <tr>
               <td colSpan={"1"}></td>
               <td colSpan={"7"}>
                 <MeasureCard columns={[
+
 
                           t("WORKS_SNO"),
                           t("MB_IS_DEDUCTION"),
@@ -126,6 +149,8 @@ const MeasureTable = (props) => {
                         tableData={props.data} 
                         tableKey={tableKey} 
                         tableIndex={index} />
+
+  
               </td>
             </tr>
           )}
@@ -141,16 +166,16 @@ const MeasureTable = (props) => {
           <tr>{renderHeader()}</tr>
         </thead>
         <tbody>{renderBody()}
-        
+
         </tbody>
-        
+
       </table>
-      <div style={{display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px"}}>
-          <div style={{display: "flex", flexDirection: "row", fontSize: "1.2rem"}}>
-            <span style={{fontWeight: "bold"}}>Total MB Amount(For Current Entry): </span>
-            <span style={{marginLeft: "3px"}}>{totalMBAmount}</span>
-          </div>
+      <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
+        <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
+          <span style={{ fontWeight: "bold" }}>Total MB Amount(For Current Entry): </span>
+          <span style={{ marginLeft: "3px" }}>{totalMBAmount}</span>
         </div>
+      </div>
     </Card>
   );
 };

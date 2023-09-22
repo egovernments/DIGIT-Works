@@ -10,7 +10,7 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/Project",
+    "micro-ui-internals/packages/modules/Measurement",
     "micro-ui-internals/packages/modules/Estimate"
   ],
   "homepage": "/core-ui",

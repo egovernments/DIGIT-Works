@@ -1,6 +1,50 @@
-.measurement-table-input{
+.measurement-table-input {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+}
+
+.plus-button {
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    background-color: #ff9100;
+    color: #ffffff;
+    font-size: 20px;
+    text-align: center;
+    line-height: 5px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+.override-card {
+  margin-left: 0px !important;
+}
+
+.custom-collapsible-table {
+  overflow: hidden; /* Hide the overflow when collapsed */
+  transition: max-height 0.3s ease-out; /* Add a smooth transition */
+
+  &.collapsed {
+    max-height: 0; /* Collapse the content by setting max-height to 0 */
+  }
+  padding: 10px;
+  margin-bottom: 10px;
+
+  button {
+    background-color: #dbd3d3;
+    color: #cc7b2f;
+    margin-top: 10px;
+  }
+}
+
+.collapse-button {
+  background-color: #ffffff;
+  color: #f37f12;
+  margin-top: 10px;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
