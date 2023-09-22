@@ -53,7 +53,9 @@ export const CreateConfig = ({ defaultValue }) => {
         ]
       }
     ]
-  };
+  }
+    ]
 
 };
+}
 
