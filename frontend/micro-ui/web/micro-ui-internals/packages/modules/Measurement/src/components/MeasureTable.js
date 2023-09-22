@@ -1,17 +1,20 @@
 import { AddIcon, Card, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
-  let { columns } = props;
-  var data = props.data.SOR.length > 0 ? props.data.SOR: props.data.NONSOR.length > 0 ? props.data.NONSOR : null;
-//DAATA SHPI BE A STATE HEREE
-
+  const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
+  const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
+  const data = props.config.key === "SOR" ? sorData : nonsorData;
+  const tableKey = props.config.key;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
+  const [totalMBAmount, setTotalMBAmount] = useState(0);
+  const tableMBAmounts = [];
+  const {register,setValue} = props;
   
 
   const getStyles = (index) => {
@@ -41,7 +44,7 @@ const MeasureTable = (props) => {
 
   columns = [
     t("WORKS_SNO"),
-    t("Description"),
+    t("MB_DESCRIPTION"),
     t("Unit"),
     t("Rate"),
     t("Approved Quantity"),
@@ -60,11 +63,22 @@ const MeasureTable = (props) => {
     });
   };
 
+
   const renderBody = () => {
     return data?.map((row, index) => {
       const [consumedQty, setConsumedQty] = useState(0);
       const [showMeasureCard, setShowMeasureCard] = useState(false);
       const [initialState, setInitialState] = useState({tableState: row?.additionalDetails?.measurement});
+
+      useEffect(() => {
+        tableMBAmounts[index] = consumedQty * row.unitRate;
+        let sum = 0;
+        for(let i = 0;i < tableMBAmounts.length; i++){
+          sum += tableMBAmounts[i];
+        }
+        setTotalMBAmount(sum);
+      }, [consumedQty,tableMBAmounts]);
+
       return (
         <>
           <tr key={index}>
@@ -76,23 +90,24 @@ const MeasureTable = (props) => {
             <td>{null}</td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={!initialState.length > 0} />
-                {!initialState.length > 0 && <button
+                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} />
+                <button
                   onClick={() => {
                     setShowMeasureCard(!showMeasureCard);
                   }}
                 >
                   <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px", width: "20px", height: "20px" }} />
-                </button>}
+                </button>
               </div>
             </td>
             <td>{null}</td>
           </tr>
           {showMeasureCard && !initialState.length > 0 && (
             <tr>
-            <td colSpan={"1"}></td>
+              <td colSpan={"1"}></td>
               <td colSpan={"7"}>
                 <MeasureCard columns={[
+
                           t("WORKS_SNO"),
                           t("Is Deduction?"),
                           t("Description "),
@@ -101,7 +116,16 @@ const MeasureTable = (props) => {
                           t("Width"),
                           t("Depth/Height"),
                           t("Quantity"),
-                        ]} consumedQty={consumedQty} setConsumedQty={setConsumedQty} setInitialState={setInitialState} setShowMeasureCard={setShowMeasureCard} initialState={initialState}  />
+                        ]} consumedQty={consumedQty} 
+                        setConsumedQty={setConsumedQty} 
+                        setInitialState={setInitialState} 
+                        setShowMeasureCard={setShowMeasureCard} 
+                        initialState={initialState} 
+                        register={register} 
+                        setValue= {setValue} 
+                        tableData={props.data} 
+                        tableKey={tableKey} 
+                        tableIndex={index} />
               </td>
             </tr>
           )}
@@ -116,8 +140,17 @@ const MeasureTable = (props) => {
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>
-        <tbody>{renderBody()}</tbody>
+        <tbody>{renderBody()}
+        
+        </tbody>
+        
       </table>
+      <div style={{display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px"}}>
+          <div style={{display: "flex", flexDirection: "row", fontSize: "1.2rem"}}>
+            <span style={{fontWeight: "bold"}}>Total MB Amount(For Current Entry): </span>
+            <span style={{marginLeft: "3px"}}>{totalMBAmount}</span>
+          </div>
+        </div>
     </Card>
   );
 };

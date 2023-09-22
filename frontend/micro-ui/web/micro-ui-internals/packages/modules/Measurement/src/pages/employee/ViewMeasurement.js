@@ -1,4 +1,6 @@
+
 import { Header, Card, Loader, Button } from "@egovernments/digit-ui-react-components";
+
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -24,6 +26,7 @@ const ViewMeasurement = () => {
 
   const projectDetails = {"applicationDetails" : [applicationDetails?.applicationDetails?.applicationDetails[0]]};
   const imageDetails = {"applicationDetails" : [applicationDetails?.applicationDetails?.applicationDetails[2]]};
+
 
 
 

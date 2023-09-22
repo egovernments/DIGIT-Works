@@ -10,6 +10,8 @@ const ROLES = {
   BILLS: ["BILL_CREATOR", "BILL_VERIFIER","BILL_APPROVER"],
   PAYMENT: ["BILL_ACCOUNTANT"],
   MUSTERROLLS: ["MUSTER_ROLL_VERIFIER", "MUSTER_ROLL_APPROVER"],
+  MEASUREMENT: ["MB_CREATOR", "MB_VERIFIER", "MB_APPROVER", "MB_VIEWER"],
+
   DSS: ["STADMIN"],
 };
 
@@ -180,6 +182,11 @@ const WorksCard = () => {
       label: t("EXP_PAYMENT_INS"),
       link: `/${window?.contextPath}/employee/expenditure/search-payment-instruction`,
       roles: ROLES.PAYMENT,
+    },
+    {
+      label: t("ACTION_TEST_5MEASUREMENT"),
+      link: `/${window?.contextPath}/employee/measurement/inbox`,
+      roles: ROLES.MEASUREMENT,
     }
   ];
 

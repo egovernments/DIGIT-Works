@@ -12,6 +12,7 @@ const assetsProxy = createProxyMiddleware({
   changeOrigin: true,
   secure: false,
 });
+
 module.exports = function (app) {
   [
     "/access/v1/actions/mdms",

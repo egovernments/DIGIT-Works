@@ -11,32 +11,31 @@ const MeasurementModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const moduleCode = ["Measurement", "common-masters", "workflow", tenantId];
+    const moduleCode = ["measurement", "common-masters", "workflow", tenantId];
     const { isLoading, data: store } = Digit.Services.useStore({
         stateCode,
         moduleCode,
         language,
     });
 
-
-
     if (isLoading) {
         return <Loader />;
     }
-  if (isLoading) {
-    return <Loader />;
-  }
 
 
-    return <EmployeeApp path={path} stateCode={stateCode} />;
+
+
+  return <EmployeeApp path={path} stateCode={stateCode} />;
 };
 
+
 const componentsToRegister = {
-  MeasurementCard,
-  MeasurementModule,
-  MeasureTable,
-  MeasureCard,
-  MeasureRow,
+    MeasurementCard,
+    MeasurementModule,
+    MeasureCard,
+    MeasureTable,
+    MeasureRow,
+
 };
 
 export const initMeasurementComponents = () => {

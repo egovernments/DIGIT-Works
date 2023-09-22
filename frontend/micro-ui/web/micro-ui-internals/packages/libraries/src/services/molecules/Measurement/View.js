@@ -40,6 +40,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     contract = data?.contracts?.filter((row) => row?.supplementNumber === revisedWONumber)?.[0];
   }
 
+
   let thumbnails = "";
   try {
     thumbnails = await getThumbnails(["8f158603-26a7-4c3a-8433-64b9ed20db60", "10ca8e0f-6d2e-4918-b628-b8bda860f061", "611d55d1-9a43-4037-ab9a-fae24466a4a6"], tenantId);
@@ -51,6 +52,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     title: " ",
     asSectionHeader: false,
     values: [
+
       { title: t("MB_NUMBER"), value: t("NA") },
       { title: t("MB_WORK_ORDER_NUMBER"), value: contract?.contractNumber || t("NA") },
       { title: t("MB_PROJECT_ID"), value: contract?.additionalDetails?.projectId || t("NA") },
@@ -60,6 +62,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
       { title: t("MB_PROJECT_DESC"), value: contract?.additionalDetails?.projectDesc || t("NA") },
       { title: t("MB_LOCATION"), value: t("NA") },
       { title: t("MB_MEASUREMENT_PERIOD"), value: t("NA") }
+
     ],
   };
   if (contract.startDate) {
@@ -134,7 +137,9 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
 
   return {
     applicationDetails,
+
     applicationData: { contract: contract },
+
     processInstancesDetails: workflowDetails?.ProcessInstances,
     workflowDetails,
     isNoDataFound: data?.contracts?.length === 0 ? true : false,
@@ -153,12 +158,14 @@ export const View = {
 
       const filters = { ids: estimateId };
 
+
       const estimateResponse = await WorksService.estimateSearch({ tenantId, filters });
 
       const response = {
         contracts: contractDetails.contracts,
         estimate: estimateResponse.estimates,
       };
+
 
       return transformViewDataToApplicationDetails(t, response, undefined, revisedWONumber);
     } catch (error) {

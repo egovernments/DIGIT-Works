@@ -1,24 +1,27 @@
-import { Loader, FormComposerV2 } from "@egovernments/digit-ui-react-components";
+import { Loader, FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CreateConfig } from "../../configs/MeasurementCreateConfig";
-
-
+import ContractDetailsCard from "../../components/ContractCardDetails";
+import _ from "lodash";
 
 const CreateMeasurement = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
 
-
+  const MeasurementSession = Digit.Hooks.useSessionStorage("MEASUREMENT_CREATE", {})
+  const [sessionFormData, setSessionFormData, clearSessionFormData] = MeasurementSession;
+  const [createState, setState] = useState(sessionFormData || {});
+  const [creatStateSet, setCreateState] = useState(false)
   // State to hold estimate data
   const [isEstimateEnabled, setIsEstimateEnabled] = useState(false);
 
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
-  console.log(contractNumber, "ccccccccccccc")
+
 
   //fetching contract data
   const { isLoading: isContractLoading, data: contract } = Digit.Hooks.contracts.useContractSearch({
@@ -32,11 +35,10 @@ const CreateMeasurement = () => {
 
   // When contract data is available, enable estimate search
   useEffect(() => {
-    if (!isContractLoading) {
+    if (contract) {
       setIsEstimateEnabled(true);
     }
-  }, [isContractLoading]);
-
+  }, [contract]);
 
 
   //fetching estimate data
@@ -48,9 +50,9 @@ const CreateMeasurement = () => {
     }
   })
 
-
   // Define the request criteria for creating a measurement
-  const reqCriteriaCreate = {
+
+  const reqCriteriaUpdate = {
     url: `/measurementservice/v1/_create`,
     params: {},
     body: {},
@@ -59,56 +61,102 @@ const CreateMeasurement = () => {
     },
   };
 
+
+  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);
+
   // Handle form submission
   const onSubmit = async (data) => {
+    //create Measurement payload here and call the createMutation for MB and route to response page on onSuccess or console error
+    const onError = (resp) => {
+      console.log(resp);
+    };
 
-    try {
-      const result = await Digit.Hooks.useCustomAPIMutationHook(reqCriteriaCreate);
-      console.log("result:", result);
+    const onSuccess = (resp) => {
 
-    } catch (error) {
-      console.error("Error:", error);
-    }
+      history.push(`/${window.contextPath}/employee/measurement/response?mbreference=${resp.mbNumber}`)
+    };
+
+    mutation.mutate(
+      {
+        params: {},
+        body: {},
+      },
+      {
+        onError,
+        onSuccess,
+      }
+    );
+
   };
 
+  useEffect(() => {
+    if (!_.isEqual(sessionFormData, createState)) {
+      setSessionFormData({ ...createState });
+    }
+  }, [createState]);
 
 
-
-  if (isContractLoading || isEstimateLoading) {
-    return <Loader />
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    if (!_.isEqual(formData, createState)) {
+      setState({ ...formData })
+    }
+    console.log(formData, "formData")
   }
 
-  const estimateDetails = estimate?.estimateDetails || [];
-  // console.log(estimateDetails, "eeeeeeeeeeee")
-  const sorCategoryArray = [];
-  const nonSorCategoryArray = [];
+  // after fetching the estimate data get sor and nonsor details
+  useEffect(() => {
+    if (estimate) {
+      // get estimateDetails from the estimate data and get SOR and NONSOR data seperate
+      const estimateDetails = estimate?.estimateDetails || [];
+      const sorCategoryArray = [];
+      const nonSorCategoryArray = [];
+      estimateDetails.reduce((_, currentItem) => {
+        if (currentItem.category === 'SOR') {
+          sorCategoryArray.push(currentItem);
+        } else if (currentItem.category === 'NON-SOR') {
+          nonSorCategoryArray.push(currentItem);
+        }
+      }, null);
 
-  estimateDetails.reduce((_, currentItem) => {
-    if (currentItem.category === 'SOR') {
-      sorCategoryArray.push(currentItem);
-    } else if (currentItem.category === 'NONSOR') {
-      nonSorCategoryArray.push(currentItem);
+      setState({ SOR: sorCategoryArray, NONSOR: nonSorCategoryArray });
+      setCreateState(true)
     }
-  }, null);
-
-
+  }, [estimate]);
+  
+  // if data is still loading return loader
+  if (isContractLoading || isEstimateLoading || !contract || !estimate || !creatStateSet) {
+    return <Loader />
+  }
+  // else render form and data
   return (
-    <FormComposerV2
-      heading={t("Measurement Book")}
-      label={t("Submit Bar")}
-      description={"Description"}
-      text={"Sample Text if required"}
-      config={CreateConfig({ defaultValues: contract }).CreateConfig[0]?.form?.map((config) => {
-        return {
-          ...config,
-          body: config.body.filter((a) => !a.hideInEmployee),
-        };
-      })}
-      defaultValues={{ SOR: sorCategoryArray, NONSOR: nonSorCategoryArray }}
-      onSubmit={onSubmit}
-      fieldStyle={{ marginRight: 0 }}
-    />
+    <div>
+
+      <Header className="works-header-view" style={{}}>Measurement Book</Header>
+
+      <ContractDetailsCard contract={contract} /> {/* Display contract details */}
+      <FormComposerV2
+        // heading={t("Measurement Book")}
+        label={t("Submit Bar")}
+        config={CreateConfig({ defaultValue: contract }).CreateConfig[0]?.form?.map((config) => {
+          return {
+            ...config,
+            body: config.body.filter((a) => !a.hideInEmployee),
+          };
+        })}
+        defaultValues={{ ...createState }}
+        onSubmit={onSubmit}
+        fieldStyle={{ marginRight: 0 }}
+        onFormValueChange={onFormValueChange}
+
+      // showWrapperContainers={true}
+      // isDescriptionBold={true}
+      // noBreakLine={false}
+      // showMultipleCards={true}
+
+      />
+    </div>
   );
 };
-
 export default CreateMeasurement;
+
+
