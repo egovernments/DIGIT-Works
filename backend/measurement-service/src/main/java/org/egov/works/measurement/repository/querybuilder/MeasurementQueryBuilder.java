@@ -39,15 +39,15 @@ public class MeasurementQueryBuilder {
             query.append(" m.tenantId = ? ");
             preparedStmtList.add(criteria.getTenantId());
         }
-
-        if (!ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
-            if (tenantIdProvided) {
-                query.append(" AND "); // Add AND if tenantId is provided
+        
+        if (!CollectionUtils.isEmpty(criteria.getIds())) {
+            if (tenantIdProvided || !ObjectUtils.isEmpty(criteria.getMeasurementNumber()) || !CollectionUtils.isEmpty(criteria.getReferenceId())) {
+                query.append(" AND "); // Add AND if tenantId, mbNumber, or referenceId is provided
             } else {
                 addClauseIfRequired(query, preparedStmtList);
             }
-            query.append(" m.mbNumber = ? ");
-            preparedStmtList.add(criteria.getMeasurementNumber());
+            query.append(" m.id IN (").append(createQuery(criteria.getIds())).append(")");
+            addToPreparedStatement(preparedStmtList, criteria.getIds());
         }
 
         if (!CollectionUtils.isEmpty(criteria.getReferenceId())) {
@@ -59,16 +59,20 @@ public class MeasurementQueryBuilder {
             query.append(" m.referenceId IN (").append(createQuery(criteria.getReferenceId())).append(")");
             addToPreparedStatement(preparedStmtList, criteria.getReferenceId());
         }
-
-        if (!CollectionUtils.isEmpty(criteria.getIds())) {
-            if (tenantIdProvided || !ObjectUtils.isEmpty(criteria.getMeasurementNumber()) || !CollectionUtils.isEmpty(criteria.getReferenceId())) {
-                query.append(" AND "); // Add AND if tenantId, mbNumber, or referenceId is provided
+        
+        if (!ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
+            if (tenantIdProvided) {
+                query.append(" AND "); // Add AND if tenantId is provided
             } else {
                 addClauseIfRequired(query, preparedStmtList);
             }
-            query.append(" m.id IN (").append(createQuery(criteria.getIds())).append(")");
-            addToPreparedStatement(preparedStmtList, criteria.getIds());
+            query.append(" m.mbNumber = ? ");
+            preparedStmtList.add(criteria.getMeasurementNumber());
         }
+
+        
+
+        
 
         query.append(ORDER_BY_CREATED_TIME);
 
