@@ -5,7 +5,7 @@ const { httpRequest } = require("./request");
 
 
 
-const search_user = async (uuid:string, tenantId:string, requestinfo:any)=> {
+const search_user = async (uuid: string, tenantId: string, requestinfo: any) => {
   return await httpRequest(
     url.resolve(config.host.user, config.paths.user_search),
     {
@@ -16,7 +16,7 @@ const search_user = async (uuid:string, tenantId:string, requestinfo:any)=> {
   );
 }
 
-const search_muster= async (musterRollNumber:string, tenantId:string, requestinfo:any) =>{
+const search_muster = async (musterRollNumber: string, tenantId: string, requestinfo: any) => {
   if (musterRollNumber) {
     musterRollNumber = musterRollNumber.trim();
   }
@@ -31,7 +31,7 @@ const search_muster= async (musterRollNumber:string, tenantId:string, requestinf
   );
 }
 
-const search_individual= async (individualIds:Array<string>, tenantId:string, requestinfo:any)=> {
+const search_individual = async (individualIds: Array<string>, tenantId: string, requestinfo: any) => {
   // currently single property pdfs supported
   // if (individualIds) {
   //   individualId = individualId.trim();
@@ -52,7 +52,7 @@ const search_individual= async (individualIds:Array<string>, tenantId:string, re
   );
 }
 
-const search_workflow= async (applicationNumber:string, tenantId:string, requestinfo :any)=> {
+const search_workflow = async (applicationNumber: string, tenantId: string, requestinfo: any) => {
   var params = {
     tenantId: tenantId,
     businessIds: applicationNumber,
@@ -63,20 +63,20 @@ const search_workflow= async (applicationNumber:string, tenantId:string, request
     params
   );
 }
-const search_localization= async (tenantId:string, module:string="rainmaker-common", locale:string="en_IN", requestinfo :any)=> {
+const search_localization = async (tenantId: string, module: string = "rainmaker-common", locale: string = "en_IN", requestinfo: any) => {
   return await httpRequest(
     url.resolve(config.host.localization, config.paths.localization_search),
     requestinfo,
     {
       tenantId: tenantId,
       module: module,
-      locale:locale
+      locale: locale
     }
   );
 }
 
-const search_mdms= async (tenantId:string, module:string, master:string, requestinfo :any)=> {
-    checkIfCitizen(requestinfo);
+const search_mdms = async (tenantId: string, module: string, master: string, requestinfo: any) => {
+  checkIfCitizen(requestinfo);
   return await httpRequest(
     url.resolve(config.host.mdms, config.paths.mdms_search),
     requestinfo,
@@ -87,7 +87,7 @@ const search_mdms= async (tenantId:string, module:string, master:string, request
   );
 }
 
-const create_pdf= async (tenantId:string, key:string, data:string, requestinfo :any)=> {
+const create_pdf = async (tenantId: string, key: string, data: string, requestinfo: any) => {
   return await httpRequest(
     url.resolve(config.host.pdf, config.paths.pdf_create),
     Object.assign(requestinfo, data),
@@ -100,7 +100,7 @@ const create_pdf= async (tenantId:string, key:string, data:string, requestinfo :
   );
 }
 
-const create_pdf_and_upload= async (tenantId:string, key:string, data:any, requestinfo :any)=> {
+const create_pdf_and_upload = async (tenantId: string, key: string, data: any, requestinfo: any) => {
   return await httpRequest(
     url.resolve(config.host.pdf, config.paths.pdf_create),
     Object.assign(requestinfo, data),
@@ -111,7 +111,7 @@ const create_pdf_and_upload= async (tenantId:string, key:string, data:any, reque
   );
 }
 
-const  checkIfCitizen= async (requestinfo :any) =>{
+const checkIfCitizen = async (requestinfo: any) => {
   if (requestinfo.RequestInfo.userInfo.type == "CITIZEN") {
     return true;
   } else {
@@ -119,7 +119,28 @@ const  checkIfCitizen= async (requestinfo :any) =>{
   }
 }
 
-export  {
+const search_contract = async (tenantId: string, requestBody: any) => {
+  return await httpRequest(
+    url.resolve(config.host.contract, config.paths.contract_search),
+    requestBody,
+    {
+      tenantId: tenantId,
+    }
+  );
+}
+
+const search_estimate = async (tenantId: string, ids: string, requestBody: any) => {
+  return await httpRequest(
+    url.resolve(config.host.estimate, config.paths.estimate_search),
+    requestBody,
+    {
+      tenantId: tenantId,
+      ids: ids
+    }
+  );
+}
+
+export {
   create_pdf,
   create_pdf_and_upload,
   search_mdms,
@@ -127,5 +148,7 @@ export  {
   search_workflow,
   search_muster,
   search_individual,
-  search_localization
+  search_localization,
+  search_contract,
+  search_estimate
 };

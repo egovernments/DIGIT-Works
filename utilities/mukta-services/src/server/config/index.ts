@@ -26,20 +26,22 @@ const config = {
     host: HOST,
     contextPath: process.env.CONTEXT_PATH || "/mukta-services",
   },
-  configs:{
-    DATA_CONFIG_URLS:  'file:///Users/klrao/Documents/pdf-config/data-config/consolidatedreceipt.json',
+  configs: {
+    DATA_CONFIG_URLS: 'file:///Users/klrao/Documents/pdf-config/data-config/consolidatedreceipt.json',
     FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS
   },
   host: {
-    serverHost:HOST,
-    localization:process.env.EGOV_LOCALIZATION_HOST || HOST,
+    serverHost: HOST,
+    localization: process.env.EGOV_LOCALIZATION_HOST || HOST,
     mdms: process.env.EGOV_MDMS_HOST || HOST || "http://localhost:8085/",
     pdf: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8087/",
     user: process.env.EGOV_USER_HOST || HOST || "http://localhost:8089/",
     workflow:
       process.env.EGOV_WORKFLOW_HOST || HOST || "http://localhost:8091/",
-    muster: process.env.WORKS_MUSTER_HOST  || "http://localhost:8070/",
-    individual: process.env.WORKS_INDIVIDUAL_HOST  || "http://localhost:8071/",
+    muster: process.env.WORKS_MUSTER_HOST || "http://localhost:8070/",
+    individual: process.env.WORKS_INDIVIDUAL_HOST || "http://localhost:8071/",
+    contract: process.env.WORKS_CONTRACT_HOST || "http://localhost:8072/",
+    estimate: process.env.WORKS_ESTIMATE_HOST || "http://localhost:8073/",
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -48,7 +50,9 @@ const config = {
     workflow_search: "/egov-workflow-v2/egov-wf/process/_search",
     ind_search: "/individual/v1/_search",
     mus_search: "/muster-roll/v1/_search",
-    localization_search : "/localization/messages/v1/_search"
+    localization_search: "/localization/messages/v1/_search",
+    contract_search: "/contract/v1/_search",
+    estimate_search: "/estimate/v1/_search",
   },
 };
 

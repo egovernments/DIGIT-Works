@@ -1,5 +1,8 @@
- import express from "express";
-import  logger from "morgan";
+/**
+ * 
+ *
+import express from "express";
+import logger from "morgan";
 import config from "./config";
 import { cacheMiddleware, requestMiddleware } from "./middlewares";
 import routeConfig from "./routes";
@@ -22,8 +25,8 @@ app.use(cacheMiddleware);
 
 // app.use(config.app?.contextPath + "/muster", musterRouter);
 
-routeConfig.map(route=>{
-    app.use(config.app?.contextPath +route.path, route.router)
+routeConfig.map(route => {
+  app.use(config.app?.contextPath + route.path, route.router)
 })
 
 // Attach the first Error handling Middleware
@@ -40,43 +43,40 @@ app.use(invalidPathHandler);
 
 export default app;
 
+**/
 
-/**
- * 
- *
 import express from 'express';
 import * as bodyParser from 'body-parser';
 import config from './config';
- 
+
 class App {
   public app: express.Application;
   public port: number;
- 
-  constructor(controllers:any, port:any) {
+
+  constructor(controllers: any, port: any) {
     this.app = express();
     this.port = port;
- 
+
     this.initializeMiddlewares();
     this.initializeControllers(controllers);
   }
- 
+
   private initializeMiddlewares() {
     this.app.use(bodyParser.json());
   }
- 
-  private initializeControllers(controllers:any) {
-    controllers.forEach((controller:any) => {
+
+  private initializeControllers(controllers: any) {
+    controllers.forEach((controller: any) => {
       this.app.use(config.app?.contextPath, controller.router);
     });
   }
- 
+
   public listen() {
     this.app.listen(this.port, () => {
       console.log(`App listening on the port ${this.port}`);
     });
   }
 }
- 
+
 export default App;
 
-**/

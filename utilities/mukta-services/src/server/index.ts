@@ -1,3 +1,5 @@
+/**
+ * 
 import app from "./app";
 import compression from "compression";
 import helmet from "helmet";
@@ -12,17 +14,15 @@ const port = config.app.port;
 const server =  app.listen(port,()=>console.log(`Starting mukta services server on Port ${port} `));
 
 export default server;
-/**
- * 
+
+**/
 
 import App from './app';
 import controllers from './controllers';
- 
+
 const app = new App(
-    controllers,
+  controllers,
   8080,
 );
- 
-app.listen();
 
-**/
+app.listen();

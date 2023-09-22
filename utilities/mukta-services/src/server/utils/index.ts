@@ -1,7 +1,8 @@
-import { NextFunction, Request,Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
-import {logger} from "../logger";
+import { logger } from "../logger";
 const NodeCache = require("node-cache");
+const jp = require('jsonpath');
 
 /*
   stdTTL: (default: 0) the standard ttl as number in seconds for every generated
@@ -22,9 +23,9 @@ const throwError = (
   status = 500
 ) => {
   let error = new Error(message);
-//   error.status = status;
-//   error.code = code;
-console.log(error,'error');
+  //   error.status = status;
+  //   error.code = code;
+  console.log(error, 'error');
 
   throw error;
 };
@@ -50,7 +51,7 @@ const getErrorResponse = (
 /* 
 Send The Response back to client with proper response code and response info
 */
-const sendResponse = (res:Response, response:Response, req:Request, code:number) => {
+const sendResponse = (res: Response, response: Response, req: Request, code: number) => {
   if (code != 304) {
     appCache.set(req.originalUrl, { ...response });
   } else {
@@ -65,7 +66,7 @@ const sendResponse = (res:Response, response:Response, req:Request, code:number)
 /* 
 Response Object
 */
-const getResponseInfo = (code :Number) => ({
+const getResponseInfo = (code: Number) => ({
   ResponseInfo: {
     apiId: "bff-0.0.1",
     ver: "1",
@@ -78,7 +79,7 @@ const getResponseInfo = (code :Number) => ({
 /* 
 Fallback Middleware function for returning 404 error for undefined paths
 */
-const invalidPathHandler = (request:any, response:any, next:NextFunction) => {
+const invalidPathHandler = (request: any, response: any, next: NextFunction) => {
   response.status(404);
   response.send(getErrorResponse("INVALID_PATH", "invalid path"));
 };
@@ -86,7 +87,7 @@ const invalidPathHandler = (request:any, response:any, next:NextFunction) => {
 /*
 Error handling Middleware function for logging the error message
 */
-const errorLogger = (error:Error, request:any, response:any, next:NextFunction) => {
+const errorLogger = (error: Error, request: any, response: any, next: NextFunction) => {
   logger.error(error.stack);
   logger.error(`error ${error.message}`);
   next(error); // calling next middleware
@@ -95,13 +96,35 @@ const errorLogger = (error:Error, request:any, response:any, next:NextFunction) 
 /*
 Error handling Middleware function reads the error message and sends back a response in JSON format
 */
-const errorResponder = (error:any, request:any, response:Response, next:NextFunction) => {
+const errorResponder = (error: any, request: any, response: Response, next: NextFunction) => {
   response.header("Content-Type", "application/json");
   const status = 500;
   response.status(status).send(getErrorResponse("INTERNAL_SERVER_ERROR", error.message));
 };
 
-export  {
+const convertObjectForMeasurment = (obj: any, config: any) => {
+  const resultBody: Record<string, any> = {};
+  config.forEach((configObj: any) => {
+    const { path, jsonPath } = configObj;
+    const jsonPathValue = jp.query(obj, jsonPath);
+
+    // Assign jsonPathValue to the corresponding property in resultBody
+    resultBody[path] = jsonPathValue;
+  });
+  return resultBody;
+}
+
+// Extract estimateIds from all contracts
+const extractEstimateIds = (contractResponse: any): any[] => {
+  const allEstimateIds = [];
+  for (const contract of contractResponse.contracts) {
+    const contractEstimateIds = contract.lineItems.map((item: { estimateId: any; }) => item.estimateId);
+    allEstimateIds.push(...contractEstimateIds);
+  }
+  return allEstimateIds;
+}
+
+export {
   errorResponder,
   errorLogger,
   invalidPathHandler,
@@ -109,4 +132,6 @@ export  {
   throwError,
   sendResponse,
   appCache,
+  convertObjectForMeasurment,
+  extractEstimateIds
 };
