@@ -1,13 +1,33 @@
-import { Card, Header } from "@egovernments/digit-ui-react-components";
+
+import { Card, Header, CollapseAndExpandGroups, Button } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+
+const CustomCollapsibleTable = ({ children, isTableCollapsed }) => {
+  return (
+    <div className={`custom-collapsible-table ${isTableCollapsed ? 'collapsed' : ''}`}>
+      {children}
+    </div>
+  );
+};
+
+
 
 const MeasurementHistory = ({ contractNumber }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
+
+  const [isTableCollapsed, setIsTableCollapsed] = useState(false);
+
+  const toggleTableCollapse = () => {
+    setIsTableCollapsed(prevState => !prevState);
+  };
+
   const requestCriteria = {
-    url: "/measurement-service/measurement/v1/_search",
+    url: "/measurement-service/v1/_search",
+
     body: {
       criteria: {
         tenantId : tenantId,
@@ -83,8 +103,13 @@ const MeasurementHistory = ({ contractNumber }) => {
   ];
 
   return (
-    <Card>
+
+    <Card className = "override-card">
       <Header className="works-header-view">{t("MB_HISTORY")}</Header>
+      <CustomCollapsibleTable
+        isTableCollapsed={isTableCollapsed}
+      >
+
       <table className="table reports-table sub-work-table">
         <thead>
           <tr>
@@ -103,6 +128,13 @@ const MeasurementHistory = ({ contractNumber }) => {
           ))}
         </tbody>
       </table>
+
+      </CustomCollapsibleTable>
+      <Button 
+      className={"collapse-button"}
+      onButtonClick={toggleTableCollapse}
+      label={isTableCollapsed ? 'Show MB History' : 'Hide MB History'}>
+      </Button>
     </Card>
   );
 };
