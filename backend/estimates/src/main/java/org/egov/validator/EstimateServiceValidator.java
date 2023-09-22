@@ -362,6 +362,9 @@ public class EstimateServiceValidator {
         if (searchCriteria.getIds() != null && !searchCriteria.getIds().isEmpty() && searchCriteria.getIds().size() > 10) {
             throw new CustomException("IDS", "Ids should be of max 10.");
         }
+        if (searchCriteria.getFromProposalDate() != null && searchCriteria.getToProposalDate() != null && searchCriteria.getFromProposalDate().compareTo(searchCriteria.getToProposalDate()) > 0) {
+            throw new CustomException("FROM_GREATER_THAN_TO_DATE", "From date is greater than to date");
+        }
     }
 
     /**
