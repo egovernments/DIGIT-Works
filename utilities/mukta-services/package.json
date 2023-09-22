@@ -10,7 +10,7 @@
     "build": "yarn run build-ts",
     "build-ts": "tsc",
     "clean": "rm -rf ./dist",
-    "serve": "node dist/server/index.js",
+    "serve": "node dist/index.js",
     "start": "yarn run serve",
     "test": "jest",
     "dev": "ts-node-dev --respawn src/server/index.ts",

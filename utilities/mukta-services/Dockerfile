@@ -10,4 +10,4 @@ RUN yarn
 
 COPY ${WORK_DIR}/src .
 
-CMD ["yarn", "dev"]
+CMD ["yarn", "build" ,"serve"]
