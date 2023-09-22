@@ -50,6 +50,11 @@ For any new requirement one new endpoint with validations and logic for getting 
 ### API Details
 Currently below endpoints are in use for 'EMPLOYEE’ roles
 
+###Flow Diagram
+![Flow](https://raw.githubusercontent.com/egovernments/DIGIT-Works/blob/measurement-bff/utilities/mukta-services/docs/flowdiagram.png)
+
+
+
 ## Install, Build, Run
 
 Install node package dependencies:
