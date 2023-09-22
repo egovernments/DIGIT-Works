@@ -54,6 +54,8 @@ public class EnrichmentService {
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
         Address address = estimate.getAddress();
 
+        enrichUomValue(estimateDetails);
+
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, true);
         estimate.setAuditDetails(auditDetails);
         estimate.setId(UUID.randomUUID().toString());
@@ -210,5 +212,27 @@ public class EnrichmentService {
 
         }
         return rolePresent;
+    }
+
+    public void enrichUomValue(List<EstimateDetail> estimateDetails){
+        for(int i =0;i<estimateDetails.size();i++){
+            EstimateDetail estimateDetail = estimateDetails.get(i);
+            if(estimateDetail.getUomValue()==null){
+                BigDecimal total =new BigDecimal(1);
+                BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
+                total = total.multiply(noOfUnit);
+                if(estimateDetail.getLength()!=null){
+                    total =total.multiply(estimateDetail.getLength());
+                }
+                if(estimateDetail.getWidth()!=null){
+                    total =total.multiply(estimateDetail.getWidth());
+                }
+                if(estimateDetail.getHeight()!=null){
+                    total =total.multiply(estimateDetail.getHeight());
+                }
+                double totalNew = total.doubleValue();
+                estimateDetail.setUomValue(totalNew);
+            }
+        }
     }
 }

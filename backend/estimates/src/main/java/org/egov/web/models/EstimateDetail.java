@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,18 @@ public class EstimateDetail {
 
     @JsonProperty("uomValue")
     private Double uomValue = null;
+
+    @JsonProperty("length")
+    private BigDecimal length = null;
+
+    @JsonProperty("width")
+    private BigDecimal width = null;
+
+    @JsonProperty("height")
+    private BigDecimal height =null;
+
+    @JsonProperty("isDeduction")
+    private Boolean isDeduction=null;
 
     @JsonProperty("amountDetail")
     @Valid
