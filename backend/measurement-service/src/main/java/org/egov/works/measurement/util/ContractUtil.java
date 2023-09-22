@@ -55,10 +55,12 @@ public class ContractUtil {
         List<String> estimateIdsList = new ArrayList<>();
         List<String> estimateLineItemIdsList = new ArrayList<>();
         Map<String,ArrayList<BigDecimal>> lineItemsToDimentionsMap = new HashMap<>();
+        Set<String> targetIdSet = new HashSet<>();
         ContractResponse response = getContracts(measurement, requestInfo);
 
         // check if there is a reference id
         boolean isValidContract = !response.getContracts().isEmpty();
+
         // return if no contract is present
         if (!isValidContract) return false;
 
@@ -68,6 +70,12 @@ public class ContractUtil {
         lineItemsToEstimateIdMap = getValidLineItemsId(response); // get set of active line items
 
         for (Measure measure : measurement.getMeasures()) {
+
+            if(targetIdSet.contains(measure.getTargetId())){
+                throw new CustomException("","Duplicate Target Ids received, its should be unique");
+            }
+            else targetIdSet.add(measure.getTargetId());  // create a set of received target Ids
+
             boolean isTargetIdPresent = lineItemsToEstimateIdMap.containsKey(measure.getTargetId());  // checks id of line item
 
             if (!isTargetIdPresent) {
@@ -84,7 +92,10 @@ public class ContractUtil {
 
         }
 
-        // Estimate Validation TODO: Shift to validators
+        // check exact match of targetIs in Contract Active line Items
+        isAllTargetIdsPresent(targetIdSet,lineItemsToEstimateIdMap);
+
+        // Estimate Validation
         EstimateResponse estimateResponse = getEstimate(requestInfo, measurement.getTenantId(), estimateIdsList);  // assume a single estimate id for now
         boolean validDimensions = true;
         for(int i=0;i<estimateIdsList.size();i++){
@@ -109,6 +120,22 @@ public class ContractUtil {
     }
 
     /**
+     * Checks given req for all line items ids
+     * in the corresponding contract
+     * @param measuresTargetIdSet
+     * @param lineItemsToEstimateIdMap
+     */
+    public void isAllTargetIdsPresent(Set<String> measuresTargetIdSet, Map<String, ArrayList<String>> lineItemsToEstimateIdMap ){
+
+        for (Map.Entry<String, ArrayList<String>> entry : lineItemsToEstimateIdMap.entrySet()) {
+            String key = entry.getKey();
+            if(!measuresTargetIdSet.contains(key)){
+                throw new CustomException("","Incomplete Measures, some active line items are missed for the given contract");
+            }
+        }
+    }
+
+    /**
      * Generate a set of ACTIVE line Items from a particular Contract Response
      *
      * @param response
@@ -117,7 +144,7 @@ public class ContractUtil {
     public Map<String, ArrayList<String>> getValidLineItemsId(ContractResponse response) {
 
         Set<String> lineItemsIdList = new HashSet<>();
-        Map<String, ArrayList<String>> lineItemsToEstimateId = new HashMap<>();    // estimateId , estimateLineItemId
+        Map<String, ArrayList<String>> lineItemsToEstimateId = new HashMap<>();    // [estimateId , estimateLineItemId]
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
                     if (lineItems.getStatus().toString().equals("ACTIVE")) {

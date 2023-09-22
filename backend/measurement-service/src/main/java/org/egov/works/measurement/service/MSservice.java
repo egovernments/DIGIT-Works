@@ -92,7 +92,6 @@ public class MSservice {
 
     }
 
-
     /**
      * Helper to covert measurementService to measurement
      * @param measurementServices
@@ -114,6 +113,7 @@ public class MSservice {
                     .build();
         }
     }
+
     public void enrichWf(MeasurementServiceRequest measurementServiceRequest , List<String> wfStatusList){
         List<MeasurementService> measurementServiceList = measurementServiceRequest.getMeasurements();
         for(int i=0;i<measurementServiceList.size();i++){
@@ -121,6 +121,7 @@ public class MSservice {
             measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
         }
     }
+
     /**
      * Handles update MeasurementService
      *
