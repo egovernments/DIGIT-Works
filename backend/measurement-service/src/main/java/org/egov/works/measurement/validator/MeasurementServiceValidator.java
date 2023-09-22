@@ -11,6 +11,7 @@ import org.egov.works.measurement.repository.rowmapper.MeasureUpdateRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceUpdateRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementUpdateRowMapper;
+import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private ContractUtil contractUtil;
+
+    @Autowired
+    private MeasurementRowMapper rowMapper;
 
 
     @Value("${egov.filestore.host}")

@@ -13,7 +13,7 @@ public class MeasurementServiceQueryBuilder {
             "md.id as mdid, md.targetId as targetId, md.mbNumber as mdmbNumber, md.isActive as mdisActive, md.description as mddescription, " +
             "md.createdby as mdcreatedby, md.lastmodifiedby as mdlastmodifiedby, md.createdtime as mdcreatedtime, md.lastmodifiedtime as mdlastmodifiedtime, " +
 
-            "mm.id as mmid, mm.length as mmlength, mm.breadth as mmbreadth, mm.height as mmheight, mm.numOfItems as mmnumOfItems, mm.totalValue as mmtotalValue, " +
+            "mm.id as mmid, mm.length as mmlength, mm.breadth as mmbreadth, mm.height as mmheight, mm.numOfItems as mmnumOfItems, mm.currentValue as mmcurrentValue, " +
 
             "mm.createdby as mmcreatedby, mm.lastmodifiedby as mmlastmodifiedby, mm.createdtime as mmcreatedtime, mm.lastmodifiedtime as mmlastmodifiedtime, " +
 

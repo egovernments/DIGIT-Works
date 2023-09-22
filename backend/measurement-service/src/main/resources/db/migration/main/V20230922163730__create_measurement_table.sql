@@ -37,7 +37,7 @@ CREATE TABLE eg_mb_measurement_measures (
   breadth NUMERIC,
   height NUMERIC,
   numOfItems NUMERIC,
-  totalValue NUMERIC,
+  currentValue NUMERIC,
   cumulative NUMERIC,
   createdtime BIGINT NOT NULL,
   createdby VARCHAR(128) NOT NULL,

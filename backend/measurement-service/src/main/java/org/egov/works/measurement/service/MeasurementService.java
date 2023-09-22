@@ -238,8 +238,10 @@ public class MeasurementService {
      */
     public void enrichMeasures(Measurement measurement){
         List<Measure> measureList = measurement.getMeasures();
-        for(Document document:measurement.getDocuments()){
-            document.setId(UUID.randomUUID().toString());
+        if(measurement.getDocuments()!=null){
+            for(Document document:measurement.getDocuments()){
+                document.setId(UUID.randomUUID().toString());
+            }
         }
         for (Measure measure : measureList) {
             measure.setId(UUID.randomUUID());

@@ -65,7 +65,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             measure.setBreadth(rs.getBigDecimal("mmbreadth"));
             measure.setHeight(rs.getBigDecimal("mmheight"));
             measure.setNumItems(rs.getBigDecimal("mmnumOfItems"));
-            measure.setCurrentValue(rs.getBigDecimal("mmtotalValue"));
+            measure.setCurrentValue(rs.getBigDecimal("mmcurrentValue"));
             measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
             measure.setTargetId(rs.getString("targetId"));
             measure.setIsActive(rs.getBoolean("mdisActive"));
@@ -84,7 +84,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             // Retrieve and set document details
             Document document = new Document();
 
-            document.setId(rs.getString("id")); // Assuming you have a UUID field for documents
+            document.setId(rs.getString("dcid")); // Assuming you have a UUID field for documents
             document.setDocumentType(rs.getString("documentType"));
             document.setFileStore(rs.getString("filestore"));
             document.setDocumentUid(rs.getString("documentuuid"));

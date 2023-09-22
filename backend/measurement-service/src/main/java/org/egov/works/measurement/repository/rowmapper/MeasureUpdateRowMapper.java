@@ -20,7 +20,7 @@ public class MeasureUpdateRowMapper implements RowMapper<Measure> {
         measure.setBreadth(rs.getBigDecimal("breadth"));
         measure.setHeight(rs.getBigDecimal("height"));
         measure.setNumItems(rs.getBigDecimal("numOfItems"));
-        measure.setCurrentValue(rs.getBigDecimal("totalValue"));
+        measure.setCurrentValue(rs.getBigDecimal("currentValue"));
 
         // Set AuditDetails (if applicable in your database schema)
         // Note: You might need to adjust this part based on your actual schema.
