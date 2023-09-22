@@ -136,7 +136,7 @@ const CreateMeasurement = () => {
       <ContractDetailsCard contract={contract} /> {/* Display contract details */}
       <FormComposerV2
         // heading={t("Measurement Book")}
-        label={t("Submit Bar")}
+        label={t("MB_SUBMIT_BAR")}
         config={CreateConfig({ defaultValue: contract }).CreateConfig[0]?.form?.map((config) => {
           return {
             ...config,
@@ -150,10 +150,11 @@ const CreateMeasurement = () => {
 
       // showWrapperContainers={true}
       // isDescriptionBold={true}
-      // noBreakLine={false}
-      // showMultipleCards={true}
+      noBreakLine={false}
+      showMultipleCards={true}
 
       />
+  
     </div>
   );
 };

@@ -617,62 +617,37 @@ export const UICustomizations = {
 
   SearchMeasurementConfig: {
     preProcess: (data) => {
-      // const createdFrom = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdFrom);
-      // const createdTo = Digit.Utils.pt.convertDateToEpoch(data.body.Projects[0]?.createdTo);
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
-      // data.body.Individual = { ...data.body.Individual, tenantId: Digit.ULBService.getCurrentTenantId() };
-      // data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
-      // , challanNo:data.body.Individual.challanNumber
-      let requestBody = { ...data.body.Individual };
-      const pathConfig = {
-        name: "name.givenName",
-      };
-      const dateConfig = {
-        createdFrom: "daystart",
-        createdTo: "dayend",
-      };
-      const selectConfig = {
-        wardCode: "wardCode[0].code",
-        socialCategory: "socialCategory.code",
-      };
-      const textConfig = ["name", "individualId"]
-      let Individual = Object.keys(requestBody)
-        .map((key) => {
-          if (selectConfig[key]) {
-            requestBody[key] = _.get(requestBody, selectConfig[key], null);
-          } else if (typeof requestBody[key] == "object") {
-            requestBody[key] = requestBody[key]?.code;
-          } else if (textConfig?.includes(key)) {
-            requestBody[key] = requestBody[key]?.trim()
-          }
-          return key;
-        })
-        .filter((key) => requestBody[key])
-        .reduce((acc, curr) => {
-          if (pathConfig[curr]) {
-            _.set(acc, pathConfig[curr], requestBody[curr]);
-          } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-          } else {
-            _.set(acc, curr, requestBody[curr]);
-          }
-          return acc;
-        }, {});
 
-      data.body.Individual = { ...Individual };
       // console.log(data);
+    const mbNumber=data?.body?.Individual?.MBNumber || null;
+    const refId= data?.body?.Individual?.MBReference || null;
+
+      data.body.criteria = {
+        "tenantId": Digit.ULBService.getCurrentTenantId() ,
+        "measurementNumber": mbNumber,
+        
+      };
+      data.body.pagination = {
+        "limit": 10,
+    "offSet": 0,
+    "sortBy": "string",
+    "order": "DESC"
+      };
+      data.body.params = {};
+    
       return data;
-      return data;
+      
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      console.log(key,value);
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
       switch (key) {
-        case "MBMB Reference Number":
+        case "MB_REFERENCE_NUMBER":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
+              <Link to={`/${window.contextPath}/employee/measurement/view?tenantId=${row?.tenantId}&referenceNumber=${value}`}>
                 {value ? value : t("ES_COMMON_NA")}
               </Link>
             </span>

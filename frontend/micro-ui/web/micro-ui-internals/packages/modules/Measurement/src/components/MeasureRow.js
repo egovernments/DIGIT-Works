@@ -1,4 +1,4 @@
-import { Card, TextInput } from "@egovernments/digit-ui-react-components";
+import { Card, TextInput ,Amount} from "@egovernments/digit-ui-react-components";
 import React, { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";

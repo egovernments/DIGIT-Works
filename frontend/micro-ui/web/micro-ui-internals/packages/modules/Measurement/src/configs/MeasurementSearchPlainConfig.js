@@ -1,9 +1,9 @@
-const SearchMeasurementConfig = () => {
+const SearchMeasurementPlainConfig = () => {
     return {
       label: "MB_SEARCH_MEASUREMENT",
       type: "search",
       apiDetails: {
-        serviceName: "/measurement-service/measurement/v1/_search",
+        serviceName: "/measurement-service/v1/_search",
         requestParam: {},
         requestBody: {
           apiOperation: "SEARCH",
@@ -168,8 +168,8 @@ const SearchMeasurementConfig = () => {
               },
               {
                 label: "MB_AMOUNT",
-                jsonPath: "totalValue",
-                additionalCustomization: true,
+                jsonPath: "measures[0].totalValue",
+                // additionalCustomization: true,
               },
             
             ],
@@ -185,4 +185,4 @@ const SearchMeasurementConfig = () => {
     };
   };
   
-  export default SearchMeasurementConfig;
+  export default SearchMeasurementPlainConfig;

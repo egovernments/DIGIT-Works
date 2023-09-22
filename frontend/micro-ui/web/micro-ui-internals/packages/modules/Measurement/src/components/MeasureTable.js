@@ -1,4 +1,4 @@
-import { AddIcon, Card, TextInput } from "@egovernments/digit-ui-react-components";
+import { AddIcon, Card, TextInput, Amount } from "@egovernments/digit-ui-react-components";
 import React, { useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -45,12 +45,12 @@ const MeasureTable = (props) => {
   columns = [
     t("WORKS_SNO"),
     t("MB_DESCRIPTION"),
-    t("Unit"),
-    t("Rate"),
-    t("Approved Quantity"),
-    t("Consumed Quantity"),
-    t("Current MB Entry"),
-    t("Amount for current entry"),
+    t("MB_UNIT"),
+    t("MB_RATE"),
+    t("MB_APPROVER_QUANT"),
+    t("MB_CONSUMED_QUANT"),
+    t("MB_CURRENT_MB_ENTRY"),
+    t("MB_AMOUNT_CURRENT_ENTRY"),
   ];
   const renderHeader = () => {
     return columns?.map((key, index) => {
@@ -85,9 +85,9 @@ const MeasureTable = (props) => {
             <td>{index + 1}</td>
             <td>{row.description}</td>
             <td>{row.uom}</td>
-            <td>{row.unitRate}</td>
-            <td>{row.noOfunit}</td>
-            <td>{null}</td>
+            <td><Amount customStyle={{ textAlign: 'right'}} value={Math.round(row.unitRate)} t={t}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right'}} value={Math.round(row.noOfunit)} t={t}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right'}} value={null} t={t}></Amount></td>
             <td>
               <div className="measurement-table-input">
                 <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} />
@@ -100,7 +100,7 @@ const MeasureTable = (props) => {
                 </button>
               </div>
             </td>
-            <td>{null}</td>
+            <td><Amount customStyle={{ textAlign: 'right'}} value={null} t={t}></Amount></td>
           </tr>
           {showMeasureCard && !initialState.length > 0 && (
             <tr>
@@ -109,13 +109,13 @@ const MeasureTable = (props) => {
                 <MeasureCard columns={[
 
                           t("WORKS_SNO"),
-                          t("Is Deduction?"),
-                          t("Description "),
-                          t("Number"),
-                          t("Length"),
-                          t("Width"),
-                          t("Depth/Height"),
-                          t("Quantity"),
+                          t("MB_IS_DEDUCTION"),
+                          t("MB_DESCRIPTION"),
+                          t("MB_ONLY_NUMBER"),
+                          t("MB_LENGTH"),
+                          t("MB_WIDTH"),
+                          t("MB_HEIGHT"),
+                          t("MB_QUANTITY"),
                         ]} consumedQty={consumedQty} 
                         setConsumedQty={setConsumedQty} 
                         setInitialState={setInitialState} 
