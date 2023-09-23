@@ -257,7 +257,7 @@ public class MeasurementService {
                                                   .referenceId(Collections.singletonList(measurement.getReferenceId()))
                                                   .tenantId(measurement.getTenantId())
                                                   .build();
-        Pagination pagination= Pagination.builder().offSet((double) 0).limit((double) measurement.getMeasures().size()+1).build();
+        Pagination pagination= Pagination.builder().offSet((double) 0).build();
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
         List<Measurement> measurementList = searchMeasurements(measurementCriteria,measurementSearchRequest);
         if(!measurementList.isEmpty()){
@@ -276,9 +276,9 @@ public class MeasurementService {
                 .referenceId(Collections.singletonList(measurement.getReferenceId()))
                 .tenantId(measurement.getTenantId())
                 .build();
-        Pagination pagination= Pagination.builder().offSet((double) 0).limit((double) measurement.getMeasures().size()+1).build();
+        Pagination pagination= Pagination.builder().offSet((double) 0).build();
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
-        List<Measurement> measurementList = searchMeasurements(measurementCriteria,measurementSearchRequest);
+        List<Measurement> measurementList =searchMeasurements(measurementCriteria,measurementSearchRequest);
         if(!measurementList.isEmpty()){
             Measurement latestMeasurement = measurementList.get(0);
             calculateCumulativeValueOnUpdate(latestMeasurement,measurement);
