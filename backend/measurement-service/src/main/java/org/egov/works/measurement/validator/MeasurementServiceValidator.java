@@ -241,7 +241,7 @@ public class MeasurementServiceValidator {
                         documentIds.add(document.getFileStore());
                     }
                 }
-                if (ms.getWorkflow() != null) {
+                if (ms.getWorkflow() != null & ms.getWorkflow().getVerificationDocuments()!=null) {
                     for (digit.models.coremodels.Document document : ms.getWorkflow().getVerificationDocuments()) {
                         documentIds.add(document.getFileStore());
                     }
