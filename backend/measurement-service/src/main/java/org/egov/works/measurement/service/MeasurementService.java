@@ -1,6 +1,7 @@
 package org.egov.works.measurement.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import digit.models.coremodels.Workflow;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +28,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.egov.works.measurement.web.models.Pagination;
+
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -111,30 +114,6 @@ public class MeasurementService {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
-    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
-
-        for (Measurement measurement : measurements) {
-            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
-            measurementService.setId(measurement.getId());
-            measurementService.setTenantId(measurement.getTenantId());
-            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
-            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
-            measurementService.setReferenceId(measurement.getReferenceId());
-            measurementService.setEntryDate(measurement.getEntryDate());
-            measurementService.setMeasures(measurement.getMeasures());
-            measurementService.setDocuments(measurement.getDocuments());
-            measurementService.setIsActive(measurement.getIsActive());
-            measurementService.setAuditDetails(measurement.getAuditDetails());
-
-            measurementService.setWfStatus(null);
-            measurementService.setWorkflow(null);
-
-            measurementServices.add(measurementService);
-        }
-        return measurementServices;
-    }
-
     /**
      * Handles measurement update
      * @param measurementRegistrationRequest
@@ -164,6 +143,41 @@ public class MeasurementService {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
+     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
+
+        if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
+            throw new IllegalArgumentException("TenantId is required.");
+        }
+
+        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
+        return measurements;
+    }
+
+    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
+
+        for (Measurement measurement : measurements) {
+//            Workflow workflow=workflowUtil.getProcessInstanceForWorkflow(body.getRequestInfo(),measurement.getTenantId(),measurement.getMeasurementNumber(),"MB",,)
+            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+            measurementService.setId(measurement.getId());
+            measurementService.setTenantId(measurement.getTenantId());
+            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
+            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
+            measurementService.setReferenceId(measurement.getReferenceId());
+            measurementService.setEntryDate(measurement.getEntryDate());
+            measurementService.setMeasures(measurement.getMeasures());
+            measurementService.setDocuments(measurement.getDocuments());
+            measurementService.setIsActive(measurement.getIsActive());
+            measurementService.setAuditDetails(measurement.getAuditDetails());
+
+            measurementService.setWfStatus(null);
+            measurementService.setWorkflow(null);
+
+            measurementServices.add(measurementService);
+        }
+        return measurementServices;
+    }
+
     public  void handleCumulativeUpdate(MeasurementRequest measurementRequest){
         for(Measurement measurement:measurementRequest.getMeasurements()){
             try {
@@ -181,7 +195,7 @@ public class MeasurementService {
      * @param searchCriteria
      * @return
      */
-   
+
 
     /**
      * Helper function to update Measurement
@@ -201,15 +215,6 @@ public class MeasurementService {
         return response;
     }
 
-     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria) {
-
-        if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
-            throw new IllegalArgumentException("TenantId is required.");
-        }
-
-        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria);
-        return measurements;
-    }
 
     /**
      * Helper function to enrich a measurement
@@ -252,7 +257,9 @@ public class MeasurementService {
                                                   .referenceId(Collections.singletonList(measurement.getReferenceId()))
                                                   .tenantId(measurement.getTenantId())
                                                   .build();
-        List<Measurement> measurementList = searchMeasurements(measurementCriteria);
+        Pagination pagination= Pagination.builder().offSet((double) 0).limit((double) measurement.getMeasures().size()+1).build();
+        MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
+        List<Measurement> measurementList = searchMeasurements(measurementCriteria,measurementSearchRequest);
         if(!measurementList.isEmpty()){
             Measurement latestMeasurement = measurementList.get(0);
             calculateCumulativeValue(latestMeasurement,measurement);
@@ -269,7 +276,9 @@ public class MeasurementService {
                 .referenceId(Collections.singletonList(measurement.getReferenceId()))
                 .tenantId(measurement.getTenantId())
                 .build();
-        List<Measurement> measurementList = searchMeasurements(measurementCriteria);
+        Pagination pagination= Pagination.builder().offSet((double) 0).limit((double) measurement.getMeasures().size()+1).build();
+        MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
+        List<Measurement> measurementList = searchMeasurements(measurementCriteria,measurementSearchRequest);
         if(!measurementList.isEmpty()){
             Measurement latestMeasurement = measurementList.get(0);
             calculateCumulativeValueOnUpdate(latestMeasurement,measurement);

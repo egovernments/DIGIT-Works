@@ -3,6 +3,7 @@ package org.egov.works.measurement.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
+import org.egov.works.measurement.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,18 @@ import java.util.TimeZone;
 @Getter
 public class Configuration {
 
+    @Bean
+    public Pagination pagination() {
+            return new Pagination(); // Initialize Pagination bean as needed
+    }
+
+
+
+    @Value("${measurement-service.default.offset}")
+    private Integer defaultOffset;
+
+    @Value("${measurement-service.default.limit}")
+    private Integer defaultLimit;
 
     //Idgen Config
     @Value("${egov.idgen.host}")
