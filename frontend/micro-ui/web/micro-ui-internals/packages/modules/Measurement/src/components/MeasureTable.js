@@ -18,8 +18,12 @@ const MeasureTable = (props) => {
   const tableMBAmounts = [];
   const { register, setValue } = props;
 
-  register("sumSor", 0);
-  register("sumNonSor", 0);
+
+  if (!props?.isView) {
+    register("sumSor", 0);
+    register("sumNonSor", 0);
+  }
+
 
   const getStyles = (index) => {
     let obj = {};
@@ -83,13 +87,15 @@ const MeasureTable = (props) => {
           sum += tableMBAmounts[i];
         }
         setTotalMBAmount(sum);
-        if (props.config.key == "SOR") {
-          if (props.formData.sumSor != sum) {
-            setValue('sumSor', sum);
-          }
-        } else {
-          if (props.formData.sumNonSor != sum) {
-            setValue('sumNonSor', sum);
+        if (!props.isView) {
+          if (props.config.key == "SOR") {
+            if (props.formData.sumSor != sum) {
+              setValue("sumSor", sum);
+            }
+          } else {
+            if (props.formData.sumNonSor != sum) {
+              setValue("sumNonSor", sum);
+            }
           }
         }
         // console.log(props, "FFFFFFFFFFFFFFFFFFF")
@@ -139,17 +145,18 @@ const MeasureTable = (props) => {
                   t("MB_WIDTH"),
                   t("MB_HEIGHT"),
                   t("MB_QUANTITY"),
+
                 ]} consumedQty={consumedQty}
                   setConsumedQty={setConsumedQty}
                   setInitialState={setInitialState}
                   setShowMeasureCard={setShowMeasureCard}
                   initialState={initialState}
-                  register={register}
-                  setValue={setValue}
+                  unitRate={row.unitRate} />
+                  register={props.isView ? () => {} : register}
+                  setValue={props.isView ? () => {} : setValue}
                   tableData={props.data}
                   tableKey={tableKey}
-                  tableIndex={index}
-                  unitRate={row.unitRate} />
+                  tableIndex={index} />
 
 
               </td>
@@ -161,8 +168,8 @@ const MeasureTable = (props) => {
   };
 
   return (
-    <Card>
-      <table className="table reports-table sub-work-table" style={{ marginTop: "-2rem" }}>
+    <Card className = "override-card">
+      <table className="table reports-table sub-work-table">
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>

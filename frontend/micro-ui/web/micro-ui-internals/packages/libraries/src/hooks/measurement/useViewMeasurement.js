@@ -6,8 +6,8 @@ import { View } from '../../../../libraries/src/services/molecules/Measurement/V
 const useViewMeasurement = (tenantId, data, searchParams, config = {},revisedWONumber) => {
     const { t } = useTranslation();
     return useQuery(
-        ["VIEW_CONTRACT_DETAILS", tenantId, searchParams?.contractNumber], 
-        () => View.fetchContractDetails(t, tenantId, data, searchParams,revisedWONumber), 
+        ["VIEW_MEASUREMENT_DETAILS", tenantId, searchParams?.contractNumber], 
+        () => View.fetchMeasurementDetails(t, tenantId, data, searchParams,revisedWONumber), 
         config
     );
 }
