@@ -1,15 +1,16 @@
 import { Button, Card, Toast, Amount } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
 {/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */}
-const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, initialState={}, setInitialState,register,setValue,tableData,tableKey,tableIndex }) => {
+const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, initialState={}, setInitialState,register,setValue,tableData,tableKey,tableIndex, isView }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
   const [total,setTotal] = useState(consumedQty);
+  console.log(isView,"view page is rendering");
 
   const validate = (value) => {
     if(value === null || value === undefined || value === "" || value === "0"){
@@ -107,6 +108,7 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
   };
   
   return (
+    <Fragment>
     <Card>
 
       <table className="table reports-table sub-work-table" >
@@ -117,18 +119,35 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
           {renderBody()}
           <tr>
           <td colSpan={"4"}>
-          <div style={{display: "flex", flexDirection: "row"}}>
-            <Button label={"Clear"} onButtonClick={() => {
-                dispatch({ type: "CLEAR_STATE" });
-              }}/>
-            <Button label={"Done"} onButtonClick={() => {
-                tableData[tableKey][tableIndex].additionalDetails.measurement = state.tableState;
-                setValue("measurements", tableData);
-                setInitialState(state);
-                setConsumedQty(total);
-                setShowMeasureCard(false);
-              }}/>
-          </div>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+              {isView ? (
+                <Button
+                  label={"Close"}
+                  onButtonClick={() => {
+                    setShowMeasureCard(false);
+                  }}
+                />
+              ) : (
+                <>
+                  <Button
+                    label={"Clear"}
+                    onButtonClick={() => {
+                      dispatch({ type: "CLEAR_STATE" });
+                    }}
+                  />
+                  <Button
+                    label={"Done"}
+                    onButtonClick={() => {
+                      tableData[tableKey][tableIndex].additionalDetails.measurement = state.tableState;
+                      setValue("measurements", tableData);
+                      setInitialState(state);
+                      setConsumedQty(total);
+                      setShowMeasureCard(false);
+                    }}
+                  />
+                </>
+              )}
+            </div>
            </td> 
           <td colSpan={"4"}>
           SubTotal: {total}
@@ -137,6 +156,7 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
         </tbody>
       </table>
     </Card>
+    </Fragment>
   );
 };
 
