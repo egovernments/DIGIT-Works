@@ -1,6 +1,7 @@
 import { ContractService } from "../../elements/Contracts";
 import { WorksService } from "../../elements/Works";
 import { getThumbnails } from "../../../utils/thumbnail";
+import { MeasurementService } from "../../elements/Measurement";
 
 const combine = (docs, estimateDocs) => {
   let allDocuments = [];
@@ -40,20 +41,25 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     contract = data?.contracts?.filter((row) => row?.supplementNumber === revisedWONumber)?.[0];
   }
 
-
   let thumbnails = "";
   try {
-    thumbnails = await getThumbnails(["8f158603-26a7-4c3a-8433-64b9ed20db60", "10ca8e0f-6d2e-4918-b628-b8bda860f061", "611d55d1-9a43-4037-ab9a-fae24466a4a6"], tenantId);
+    thumbnails = await getThumbnails(
+      ["8f158603-26a7-4c3a-8433-64b9ed20db60", "10ca8e0f-6d2e-4918-b628-b8bda860f061", "611d55d1-9a43-4037-ab9a-fae24466a4a6"],
+      tenantId
+    );
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
+
+  let estimateDetails = data?.estimate;
+  let measurements = data?.measurements;
+
 
   const contractDetails = {
     title: " ",
     asSectionHeader: false,
     values: [
-
-      { title: t("MB_NUMBER"), value: t("NA") },
+      { title: t("MB_NUMBER"), value: measurements[0]?.measurementNumber || t("NA") },
       { title: t("MB_WORK_ORDER_NUMBER"), value: contract?.contractNumber || t("NA") },
       { title: t("MB_PROJECT_ID"), value: contract?.additionalDetails?.projectId || t("NA") },
       { title: t("MB_MUSTER_ROLL_ID"), value: t("NA") },
@@ -61,8 +67,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
       { title: t("MB_PROJECT_NAME"), value: contract?.additionalDetails?.projectName || t("NA") },
       { title: t("MB_PROJECT_DESC"), value: contract?.additionalDetails?.projectDesc || t("NA") },
       { title: t("MB_LOCATION"), value: t("NA") },
-      { title: t("MB_MEASUREMENT_PERIOD"), value: t("NA") }
-
+      { title: t("MB_MEASUREMENT_PERIOD"), value: t("NA") },
     ],
   };
   if (contract.startDate) {
@@ -138,7 +143,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   return {
     applicationDetails,
 
-    applicationData: { contract: contract },
+    applicationData: { contract: contract, estimate: estimateDetails, measurements :measurements },
 
     processInstancesDetails: workflowDetails?.ProcessInstances,
     workflowDetails,
@@ -150,22 +155,27 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
 };
 
 export const View = {
-  fetchContractDetails: async (t, tenantId, data, searchParams, revisedWONumber) => {
+  fetchMeasurementDetails: async (t, tenantId, data, searchParams, revisedWONumber) => {
     try {
-      const contractDetails = await ContractService.search(tenantId, data, searchParams);
+      const measurementResponse = await MeasurementService.search(data, tenantId);
+
+      const payload = {
+        contractNumber: measurementResponse?.measurements[0]?.referenceId,
+        tenantId: tenantId,
+      };
+      const contractDetails = await ContractService.search(tenantId, payload, searchParams);
 
       const estimateId = contractDetails?.contracts[0]?.lineItems[0]?.estimateId;
 
       const filters = { ids: estimateId };
 
-
       const estimateResponse = await WorksService.estimateSearch({ tenantId, filters });
 
       const response = {
+        measurements : measurementResponse.measurements,
         contracts: contractDetails.contracts,
         estimate: estimateResponse.estimates,
       };
-
 
       return transformViewDataToApplicationDetails(t, response, undefined, revisedWONumber);
     } catch (error) {
