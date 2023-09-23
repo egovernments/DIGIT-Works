@@ -49,13 +49,13 @@ export const CreateConfig = ({ defaultValue }) => {
                 "localePrefix": "MEASUREMENT_DOC"
 
               }
-         
+
+            ]
+          }
         ]
       }
     ]
-  }
-    ]
 
-};
+  };
 }
 
