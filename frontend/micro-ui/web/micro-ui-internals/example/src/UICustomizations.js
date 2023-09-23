@@ -694,6 +694,69 @@ export const UICustomizations = {
       }
     },
   },
+ 
+  WMSSearchConfig: {
+
+    preProcess: (data) => {
+    const mbNumber=data?.body?.inbox?.measurementNumber || null;
+    const refId= data?.body?.Individual?.referenceId || null;
+    
+      return data;
+      
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      console.log(key,value);
+      console.log(row,"qwertyuiop");
+      //here we can add multiple conditions
+      //like if a cell is link then we return link
+      //first we can identify which column it belongs to then we can return relevant result
+      switch (key) {
+        case "MB_REFERENCE_NUMBER-2":
+          return (
+            <span className="link">
+              <Link to={`/${window.contextPath}/employee/measurement/view?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}&mbNumber=${row?.ProcessInstance.businessId}`}>
+                {value ? value : t("ES_COMMON_NA")}
+              </Link>
+            </span>
+          );
+
+        case "MASTERS_SOCIAL_CATEGORY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+
+        case "CORE_COMMON_PROFILE_CITY":
+          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
+
+        case "MASTERS_WARD":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+
+        case "MASTERS_LOCALITY":
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
+        default:
+          return t("NA");
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "MASTERS_WAGESEEKER_ID")
+          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+      });
+      return link;
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+  },
 
 
 
@@ -709,6 +772,7 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
@@ -729,6 +793,7 @@ export const UICustomizations = {
           ) : (
             t("ES_COMMON_NA")
           );
+
         case "CORE_COMMON_STATUS":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
 

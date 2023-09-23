@@ -9,6 +9,7 @@ import CreateMeasurement from "./CreateMeasurement";
 import SearchPlain from "./SearchPlain";
 
 import ResponseBanner from "./ResponseBanner"
+import UpdateMeasurement from "./UpdateMeasurement";
 
 
 const MeasurementBreadCrumbs = ({ location }) => {
@@ -38,14 +39,14 @@ const App = ({ path }) => {
   return (
     <Switch>
       <React.Fragment>
-           <MeasurementBreadCrumbs location={location} />
-          <PrivateRoute path={`${path}/create`} component={() => <CreateMeasurement {...{ path }} />} />
-          <PrivateRoute path={`${path}/search`} component={() => <SearchMeasurement {...{ path }} />} />
-          <PrivateRoute path={`${path}/inbox`} component={() => <InboxMeasurement {...{ path }} />} />
-          <PrivateRoute path={`${path}/view`} component={() => <ViewMeasurement {...{ path }} />} />
-          <PrivateRoute path={`${path}/response`} component={() => <ResponseBanner {...{ path }} />} />
-          <PrivateRoute path={`${path}/searchplain`} component={() => <SearchPlain {...{ path }} />} />
-
+        <MeasurementBreadCrumbs location={location} />
+        <PrivateRoute path={`${path}/create`} component={() => <CreateMeasurement {...{ path }} />} />
+        <PrivateRoute path={`${path}/search`} component={() => <SearchMeasurement {...{ path }} />} />
+        <PrivateRoute path={`${path}/inbox`} component={() => <InboxMeasurement {...{ path }} />} />
+        <PrivateRoute path={`${path}/view`} component={() => <ViewMeasurement {...{ path }} />} />
+        <PrivateRoute path={`${path}/response`} component={() => <ResponseBanner {...{ path }} />} />
+        <PrivateRoute path={`${path}/searchplain`} component={() => <SearchPlain {...{ path }} />} />
+        <PrivateRoute path={`${path}/update`} component={() => <UpdateMeasurement {...{ path }} />} />
       </React.Fragment>
     </Switch>
   );
