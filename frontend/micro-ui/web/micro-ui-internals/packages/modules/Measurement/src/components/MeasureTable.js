@@ -102,9 +102,9 @@ const MeasureTable = (props) => {
             <td>{index + 1}</td>
             <td>{row.description}</td>
             <td>{row.uom}</td>
-            <td><Amount customStyle={{ textAlign: 'right'}} value={Math.round(row.unitRate)} t={t}></Amount></td>
-            <td><Amount customStyle={{ textAlign: 'right'}} value={Math.round(row.noOfunit)} t={t}></Amount></td>
-            <td><Amount customStyle={{ textAlign: 'right'}} value={null} t={t}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={Math.round(row.unitRate)} t={t}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={Math.round(row.noOfunit)} t={t}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={null} t={t}></Amount></td>
             <td>
               <div className="measurement-table-input">
                 <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={initialState.length > 0 ? "true" : "false"} />
@@ -120,7 +120,7 @@ const MeasureTable = (props) => {
               </div>
             </td>
 
-            <td><Amount customStyle={{ textAlign: 'right'}} value={totalAmount} t={t}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={totalAmount} t={t}></Amount></td>
 
 
           </tr>
@@ -131,26 +131,27 @@ const MeasureTable = (props) => {
                 <MeasureCard columns={[
 
 
-                          t("WORKS_SNO"),
-                          t("MB_IS_DEDUCTION"),
-                          t("MB_DESCRIPTION"),
-                          t("MB_ONLY_NUMBER"),
-                          t("MB_LENGTH"),
-                          t("MB_WIDTH"),
-                          t("MB_HEIGHT"),
-                          t("MB_QUANTITY"),
-                        ]} consumedQty={consumedQty} 
-                        setConsumedQty={setConsumedQty} 
-                        setInitialState={setInitialState} 
-                        setShowMeasureCard={setShowMeasureCard} 
-                        initialState={initialState} 
-                        register={register} 
-                        setValue= {setValue} 
-                        tableData={props.data} 
-                        tableKey={tableKey} 
-                        tableIndex={index} />
+                  t("WORKS_SNO"),
+                  t("MB_IS_DEDUCTION"),
+                  t("MB_DESCRIPTION"),
+                  t("MB_ONLY_NUMBER"),
+                  t("MB_LENGTH"),
+                  t("MB_WIDTH"),
+                  t("MB_HEIGHT"),
+                  t("MB_QUANTITY"),
+                ]} consumedQty={consumedQty}
+                  setConsumedQty={setConsumedQty}
+                  setInitialState={setInitialState}
+                  setShowMeasureCard={setShowMeasureCard}
+                  initialState={initialState}
+                  register={register}
+                  setValue={setValue}
+                  tableData={props.data}
+                  tableKey={tableKey}
+                  tableIndex={index}
+                  unitRate={row.unitRate} />
 
-  
+
               </td>
             </tr>
           )}

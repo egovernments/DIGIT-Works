@@ -4,21 +4,21 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
-{/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */}
-const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, initialState={}, setInitialState,register,setValue,tableData,tableKey,tableIndex }) => {
+{/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
+const MeasureCard = ({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
-  const [total,setTotal] = useState(consumedQty);
+  const [total, setTotal] = useState(consumedQty);
 
   const validate = (value) => {
-    if(value === null || value === undefined || value === "" || value === "0"){
+    if (value === null || value === undefined || value === "" || value === "0") {
       return 1;
-    }else{
+    } else {
       return value;
     }
   }
-  
+
   const reducer = (state, action) => {
     switch (action.type) {
       case "ADD_ROW":
@@ -29,7 +29,7 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
           state: { id, value, row, type },
         } = action;
         const { tableState } = state;
-        let findIndex = tableState.findIndex((row,index) => {
+        let findIndex = tableState.findIndex((row, index) => {
           return index + 1 === id;
         });
         if (type === "number") tableState[findIndex].currentNumber = value;
@@ -38,15 +38,16 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
         if (type === "height") tableState[findIndex].currentHeight = value;
         const element = tableState[findIndex];
         const calculatedValue =
-        (validate(element.currentNumber)) *
-        (validate(element.currentLength)) *
-        (validate(element.currentWidth)) *
-        (validate(element.currentHeight));
+          (validate(element.currentNumber)) *
+          (validate(element.currentLength)) *
+          (validate(element.currentWidth)) *
+          (validate(element.currentHeight));
 
         tableState[findIndex].totalValue = calculatedValue;
-        setTotal(tableState.reduce((acc, curr) => acc+validate(curr.totalValue),0));
+        tableState[findIndex].rowAmount = unitRate * calculatedValue;
+        setTotal(tableState.reduce((acc, curr) => acc + validate(curr.totalValue), 0));
 
-        
+
         return { ...state, tableState };
 
       case "CLEAR_STATE":
@@ -60,7 +61,7 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
   const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
     register("measurements", tableData);
-  },[])
+  }, [])
 
   const getStyles = (index) => {
     let obj = {};
@@ -86,8 +87,8 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
     }
     return obj;
   };
-  
-  
+
+
 
   const renderHeader = () => {
     return columns?.map((key, index) => {
@@ -105,7 +106,7 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
       return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} />;
     });
   };
-  
+
   return (
     <Card>
 
@@ -116,23 +117,23 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty,setShowMeasureCard, 
         <tbody>
           {renderBody()}
           <tr>
-          <td colSpan={"4"}>
-          <div style={{display: "flex", flexDirection: "row"}}>
-            <Button label={"Clear"} onButtonClick={() => {
-                dispatch({ type: "CLEAR_STATE" });
-              }}/>
-            <Button label={"Done"} onButtonClick={() => {
-                tableData[tableKey][tableIndex].additionalDetails.measurement = state.tableState;
-                setValue("measurements", tableData);
-                setInitialState(state);
-                setConsumedQty(total);
-                setShowMeasureCard(false);
-              }}/>
-          </div>
-           </td> 
-          <td colSpan={"4"}>
-          SubTotal: {total}
-          </td> 
+            <td colSpan={"4"}>
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <Button label={"Clear"} onButtonClick={() => {
+                  dispatch({ type: "CLEAR_STATE" });
+                }} />
+                <Button label={"Done"} onButtonClick={() => {
+                  tableData[tableKey][tableIndex].additionalDetails.measurement = state.tableState;
+                  setValue("measurements", tableData);
+                  setInitialState(state);
+                  setConsumedQty(total);
+                  setShowMeasureCard(false);
+                }} />
+              </div>
+            </td>
+            <td colSpan={"4"}>
+              SubTotal: {total}
+            </td>
           </tr>
         </tbody>
       </table>
