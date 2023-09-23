@@ -145,34 +145,6 @@ public class MeasurementQueryBuilder {
         return paginationWrapper;
     }
 
-    private String getPaginatedQuery(String query, List<Object> preparedStmtList) {
-        StringBuilder paginatedQuery = new StringBuilder(query);
-
-        // Append offset
-        paginatedQuery.append(" OFFSET ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getOffSet()) ? config.getDefaultOffset() : pagination.getOffSet());
-
-        // Append limit
-        paginatedQuery.append(" LIMIT ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() : pagination.getLimit());
-
-        return paginatedQuery.toString();
-    }
-    private String addOrderByClause(String query,Pagination pagination) {
-
-        String paginationWrapper = BASE_MEASUREMENT_QUERY;
-
-        if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {
-            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
-
-        }
-        else{
-            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.ASC.name());
-        }
-
-        return paginationWrapper;
-    }
-
     private String createQuery(List<String> ids) {
         StringBuilder builder = new StringBuilder();
         int length = ids.size();
