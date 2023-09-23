@@ -49,7 +49,7 @@ public class MeasurementQueryBuilder {
 
             "INNER JOIN eg_mb_measurement_details md ON m.id = md.referenceId " +
             "INNER JOIN eg_mb_measurement_measures mm ON md.id = mm.id "+
-            "INNER JOIN eg_mb_measurement_documents dc ON m.id = dc.referenceId ";
+            "LEFT JOIN eg_mb_measurement_documents dc ON m.id = dc.referenceId ";
 
     private final String ORDER_BY_CREATED_TIME = "ORDER BY m.createdtime DESC";
 
