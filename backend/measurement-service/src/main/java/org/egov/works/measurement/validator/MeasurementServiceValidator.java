@@ -1,16 +1,15 @@
 package org.egov.works.measurement.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Criteria;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.egov.works.measurement.repository.rowmapper.MeasureUpdateRowMapper;
-import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
+import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceUpdateRowMapper;
-import org.egov.works.measurement.repository.rowmapper.MeasurementUpdateRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.web.models.*;
@@ -23,10 +22,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -39,7 +35,19 @@ public class MeasurementServiceValidator {
     private ContractUtil contractUtil;
 
     @Autowired
+    private Configuration configuration;
+
+    @Autowired
     private MeasurementRowMapper rowMapper;
+
+    String getMeasuressql = "SELECT mm.* FROM eg_mb_measurement_measures mm " +
+            "JOIN eg_mb_measurement_details md ON mm.id = md.id " +
+            "WHERE mm.id = :id AND md.referenceId = :referenceId";
+
+    String getMBSsql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber = :mbNumber";
+
+    @Autowired
+    private org.egov.works.measurement.service.MeasurementService measurementService;
 
 
     @Value("${egov.filestore.host}")
@@ -78,24 +86,23 @@ public class MeasurementServiceValidator {
     }
 
     public void validateExistingDataAndEnrich(MeasurementRequest measurementRegistrationRequest) {
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         List<Measurement> measurementExisting = new ArrayList<>();
+        MeasurementCriteria criteria=new MeasurementCriteria();
+        Pagination pagination=new Pagination();
+        MeasurementSearchRequest searchRequest=MeasurementSearchRequest.builder().requestInfo(measurementRegistrationRequest.getRequestInfo()).criteria(criteria).pagination(pagination).build();
 
         for (Measurement measurement : measurementRegistrationRequest.getMeasurements()) {
             // Validate the measurement
-            Measurement existingMeasurement = validateMeasurementRequest(namedParameterJdbcTemplate, measurement);
-            if (existingMeasurement == null) {
+            criteria.setIds(Collections.singletonList(measurement.getId().toString()));
+            criteria.setTenantId(measurement.getTenantId());
+
+            //Getting list every time because tenantId may vary
+            List<Measurement> existingMeasurementList=measurementService.searchMeasurements(criteria,searchRequest);
+            if (existingMeasurementList.isEmpty()) {
                 throw new RuntimeException("MB Data does not exist");
             }
-            measurementExisting.add(existingMeasurement);
-
-            // Validate the measures
-            for (Measure measure : measurement.getMeasures()) {
-                Measure existingMeasure = validateMeasureRequest(namedParameterJdbcTemplate, measure);
-                if (existingMeasure == null) {
-                    throw new RuntimeException("Data does not exist");
-                }
-            }
+            measurementExisting.add(existingMeasurementList.get(0));
+            validateMeasureRequest(existingMeasurementList.get(0),measurement);
         }
 
         //setting totalValue
@@ -109,34 +116,15 @@ public class MeasurementServiceValidator {
         setAuditDetails(measurementExisting, measurementRegistrationRequest);
     }
 
-
-    public Measurement validateMeasurementRequest(NamedParameterJdbcTemplate jdbcTemplate, Measurement measurement) {
-        // Fetch the Measurement object with the specified ID from the database
-        String idToCheck = measurement.getId().toString();
-        String sql = "SELECT * FROM eg_mb_measurements WHERE id = :id";
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", idToCheck);
-
-        try {
-            return jdbcTemplate.queryForObject(sql, params, new MeasurementUpdateRowMapper());
-        } catch (EmptyResultDataAccessException ex) {
-            return null; // Measurement does not exist
+    public void validateMeasureRequest(Measurement existingMeasurement,Measurement measurement){
+        Set<UUID> measuresIds=new HashSet<>();
+        for(Measure measure:existingMeasurement.getMeasures()){
+            measuresIds.add(measure.getId());
         }
-    }
-
-    public Measure validateMeasureRequest(NamedParameterJdbcTemplate jdbcTemplate, Measure measure) {
-        // Fetch the Measure object with the specified ID from the database
-        String idToCheck = measure.getId().toString();
-        String sql = "SELECT * FROM eg_mb_measurement_measures WHERE id = :id";
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", idToCheck);
-
-        try {
-            return jdbcTemplate.queryForObject(sql, params, new MeasureUpdateRowMapper());
-        } catch (EmptyResultDataAccessException ex) {
-            return null; // Measure does not exist
+        for(Measure measure:measurement.getMeasures()){
+            if(!measuresIds.contains(measure.getId())){
+                throw new RuntimeException("Measures data does not exist");
+            }
         }
     }
 
@@ -162,28 +150,13 @@ public class MeasurementServiceValidator {
         setServiceAuditDetails(existingMeasurementService, measurementServiceRequest);
     }
 
-    public Measurement getMeasurementFromMBTable(NamedParameterJdbcTemplate jdbcTemplate, String id, String mbNumber) {
-        String sql = "SELECT * FROM eg_mb_measurements WHERE id = :id AND mbNumber = :mbNumber";
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", id);
-        params.addValue("mbNumber", mbNumber);
-
-        try {
-            return jdbcTemplate.queryForObject(sql, params, new MeasurementUpdateRowMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return null; // Measurement does not exist
-        }
-    }
-
     public MeasurementService getMeasurementServiceFromMBSTable(NamedParameterJdbcTemplate jdbcTemplate, String mbNumber) {
-        String sql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber = :mbNumber";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("mbNumber", mbNumber);
 
         try {
-            return jdbcTemplate.queryForObject(sql, params, new MeasurementServiceUpdateRowMapper());
+            return jdbcTemplate.queryForObject(getMBSsql, params, new MeasurementServiceUpdateRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null; // MeasurementService does not exist
         }
