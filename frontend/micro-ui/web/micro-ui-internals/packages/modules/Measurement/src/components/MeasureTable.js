@@ -164,6 +164,7 @@ const MeasureTable = (props) => {
                   unitRate={row.unitRate}
                   register={props.isView ? () => { } : register}
                   setValue={props.isView ? () => { } : setValue}
+
                   tableData={props.data}
                   tableKey={tableKey}
                   tableIndex={index}
