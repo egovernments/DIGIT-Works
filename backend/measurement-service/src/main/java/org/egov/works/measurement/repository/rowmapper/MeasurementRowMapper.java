@@ -4,12 +4,10 @@ package org.egov.works.measurement.repository.rowmapper;
 
 import org.egov.works.measurement.web.models.AuditDetails;
 import org.egov.works.measurement.web.models.Document;
-import org.egov.works.measurement.web.models.*;
 import org.egov.works.measurement.web.models.Measure;
 import org.egov.works.measurement.web.models.Measurement;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,7 +20,6 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
     @Override
     public ArrayList<Measurement> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<String, Measurement> measurementMap = new LinkedHashMap<>();
-//        Map<String,Map<String, Document>> documentMapCheck = new LinkedHashMap<>();
         Map<String,Document>documentMap = new HashMap<>();
         Set<String> measuresIds=new HashSet<>();
 
@@ -31,11 +28,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             String uuid = rs.getString("id");
             Measurement measurement = measurementMap.get(uuid);
 
-            System.out.println("id: " + rs.getString("id"));
-            System.out.println("tenantId: " + rs.getString("tenantId"));
-
             if (measurement == null) {
-                // Create a new Measurement object
                 measurement = new Measurement();
                 measurement.setId(UUID.fromString(uuid)); // Assuming you have a UUID field
                 measurement.setTenantId(rs.getString("tenantId"));
@@ -50,10 +43,10 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 auditDetails.setCreatedTime(rs.getLong("createdtime"));
                 auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
                 auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
-
                 measurement.setAuditDetails(auditDetails);
 
                 measurement.setAdditionalDetails(rs.getString("additionalDetails"));
+
                 measurement.setMeasures(new ArrayList<>());
                 measurement.setDocuments(new ArrayList<>());
 
@@ -64,7 +57,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             Measure measure = new Measure();
             if(!measuresIds.contains(rs.getString("mmid"))){
                 measuresIds.add(rs.getString("mmid"));
-                measure.setId(UUID.fromString(rs.getString("mmid"))); // Assuming you have a UUID field for measures
+                measure.setId(UUID.fromString(rs.getString("mmid")));
                 measure.setReferenceId(rs.getString("mdreferenceId"));
                 measure.setLength(rs.getBigDecimal("mmlength"));
                 measure.setBreadth(rs.getBigDecimal("mmbreadth"));
@@ -80,18 +73,14 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 auditDetails.setCreatedTime(rs.getLong("createdtime"));
                 auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
                 auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
-
                 measure.setAuditDetails(auditDetails);
-
-                // Add the Measure to the Measurement
                 measurement.getMeasures().add(measure);
             }
-//            documentMapCheck.put(String.valueOf(measurement.getId()),documentMap);
+
             Document document = new Document();
-            document.setId(rs.getString("dcid")); // Assuming you have a UUID field for documents
+            document.setId(rs.getString("dcid"));
 
             if(document.getId()!=null & documentMap.get(document.getId())==null) {
-
 
                 document.setDocumentType(rs.getString("documentType"));
                 document.setFileStore(rs.getString("filestore"));
@@ -101,11 +90,9 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
 
                 documentMap.put(document.getId(), document);
 
-                // Add the document to the Measurement
                 measurement.getDocuments().add(document);
             }
         }
-        // Return the list of unique Measurement objects
         return new ArrayList<>(measurementMap.values());
     }
 }

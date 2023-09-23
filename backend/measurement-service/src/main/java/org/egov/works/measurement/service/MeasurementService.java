@@ -1,20 +1,12 @@
 package org.egov.works.measurement.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.Workflow;
+
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
-import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.util.*;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.validator.MeasurementValidator;
@@ -23,41 +15,27 @@ import org.egov.works.measurement.web.models.Measure;
 import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.egov.works.measurement.web.models.Pagination;
 
-
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 
-import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.util.MdmsUtil;
 import org.egov.works.measurement.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
-import java.lang.Error;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @Slf4j
@@ -146,15 +124,23 @@ public class MeasurementService {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
+
+    /**
+     * Helper function to search measurements
+     */
      public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
 
-        if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
+        if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
             throw new IllegalArgumentException("TenantId is required.");
         }
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;
     }
 
+
+    /**
+     converting all measurement registry to measurement-Service
+     */
     public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
 
@@ -179,6 +165,7 @@ public class MeasurementService {
         }
         return measurementServices;
     }
+
 
     public  void handleCumulativeUpdate(MeasurementRequest measurementRequest){
         for(Measurement measurement:measurementRequest.getMeasurements()){
@@ -256,7 +243,7 @@ public class MeasurementService {
                                                   .referenceId(Collections.singletonList(measurement.getReferenceId()))
                                                   .tenantId(measurement.getTenantId())
                                                   .build();
-        Pagination pagination= Pagination.builder().offSet((double) 0).build();
+        Pagination pagination= Pagination.builder().offSet(0).build();
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
         List<Measurement> measurementList = searchMeasurements(measurementCriteria,measurementSearchRequest);
         if(!measurementList.isEmpty()){
@@ -275,7 +262,7 @@ public class MeasurementService {
                 .referenceId(Collections.singletonList(measurement.getReferenceId()))
                 .tenantId(measurement.getTenantId())
                 .build();
-        Pagination pagination= Pagination.builder().offSet((double) 0).build();
+        Pagination pagination= Pagination.builder().offSet(0).build();
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
         List<Measurement> measurementList =searchMeasurements(measurementCriteria,measurementSearchRequest);
         if(!measurementList.isEmpty()){

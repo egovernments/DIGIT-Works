@@ -2,6 +2,7 @@ package org.egov.works.measurement.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
 import org.egov.works.measurement.web.models.MeasurementSearchRequest;
 import org.egov.works.measurement.web.models.Pagination;
@@ -10,12 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.egov.works.measurement.config.Configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Import;
-
-
-import javax.validation.constraints.DecimalMax;
 import java.util.List;
 
 @Component
@@ -53,6 +48,12 @@ public class MeasurementQueryBuilder {
 
     private final String ORDER_BY_CREATED_TIME = "ORDER BY m.createdtime DESC";
 
+    private static String WRAPPER_QUERY = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY id, {sortBy} {orderBy}) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
+
 
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
         if (preparedStmtList.isEmpty()) {
@@ -75,7 +76,7 @@ public class MeasurementQueryBuilder {
 
         if (!CollectionUtils.isEmpty(criteria.getIds())) {
             if (tenantIdProvided || !ObjectUtils.isEmpty(criteria.getMeasurementNumber()) || !CollectionUtils.isEmpty(criteria.getReferenceId())) {
-                query.append(" AND "); // Add AND if tenantId, mbNumber, or referenceId is provided
+                query.append(" AND ");
             } else {
                 addClauseIfRequired(query, preparedStmtList);
             }
@@ -85,7 +86,7 @@ public class MeasurementQueryBuilder {
 
         if (!CollectionUtils.isEmpty(criteria.getReferenceId())) {
             if (tenantIdProvided || !ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
-                query.append(" AND "); // Add AND if tenantId or mbNumber is provided
+                query.append(" AND ");
             } else {
                 addClauseIfRequired(query, preparedStmtList);
             }
@@ -95,7 +96,7 @@ public class MeasurementQueryBuilder {
 
         if (!ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
             if (tenantIdProvided) {
-                query.append(" AND "); // Add AND if tenantId is provided
+                query.append(" AND ");
             } else {
                 addClauseIfRequired(query, preparedStmtList);
             }
@@ -103,22 +104,45 @@ public class MeasurementQueryBuilder {
             preparedStmtList.add(criteria.getMeasurementNumber());
         }
 
-        query.append(ORDER_BY_CREATED_TIME);
-
-        addPagination(query, measurementSearchRequest.getPagination(), preparedStmtList);
-
-        return query.toString();
+        return addPaginationWrapper(query, measurementSearchRequest.getPagination(), preparedStmtList);
     }
 
-    public void addPagination(StringBuilder query, Pagination pagination, List<Object> preparedStmtList) {
-        // Append offset
-        query.append(" OFFSET ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getOffSet()) ? config.getDefaultOffset() : pagination.getOffSet());
 
-        // Append limit
-        query.append(" LIMIT ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() : pagination.getLimit());
+    public String addPaginationWrapper(StringBuilder query, Pagination pagination, List<Object> preparedStmtList) {
+        String paginatedQuery = addOrderByClause(pagination);
 
+        int limit = null != pagination.getLimit() ? pagination.getLimit() : config.getDefaultLimit();
+        int offset = null != pagination.getOffSet() ? pagination.getOffSet() : config.getDefaultOffset();
+
+        String finalQuery = paginatedQuery.replace("{}", query);
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
+
+        return finalQuery;
+    }
+
+
+    private String addOrderByClause(Pagination pagination) {
+
+        String paginationWrapper = WRAPPER_QUERY;
+
+        // TODO: Add possible fields on which we can sort
+        if ( !StringUtils.isEmpty(pagination.getSortBy())) {
+            paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{sortBy}", "createdtime");
+        }
+
+        if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {
+            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
+        }
+        else{
+            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.DESC.name());
+        }
+
+        return paginationWrapper;
     }
 
     private String getPaginatedQuery(String query, List<Object> preparedStmtList) {
