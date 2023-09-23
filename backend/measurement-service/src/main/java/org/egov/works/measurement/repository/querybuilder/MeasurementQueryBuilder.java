@@ -49,7 +49,7 @@ public class MeasurementQueryBuilder {
     private final String ORDER_BY_CREATED_TIME = "ORDER BY m.createdtime DESC";
 
     private static String WRAPPER_QUERY = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY id, {sortBy} {orderBy}) offset_ FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY  {sortBy} {orderBy}) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
@@ -140,34 +140,6 @@ public class MeasurementQueryBuilder {
         }
         else{
             paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.DESC.name());
-        }
-
-        return paginationWrapper;
-    }
-
-    private String getPaginatedQuery(String query, List<Object> preparedStmtList) {
-        StringBuilder paginatedQuery = new StringBuilder(query);
-
-        // Append offset
-        paginatedQuery.append(" OFFSET ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getOffSet()) ? config.getDefaultOffset() : pagination.getOffSet());
-
-        // Append limit
-        paginatedQuery.append(" LIMIT ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() : pagination.getLimit());
-
-        return paginatedQuery.toString();
-    }
-    private String addOrderByClause(String query,Pagination pagination) {
-
-        String paginationWrapper = BASE_MEASUREMENT_QUERY;
-
-        if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {
-            paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
-
-        }
-        else{
-            paginationWrapper=paginationWrapper.replace("{orderBy}", Pagination.OrderEnum.ASC.name());
         }
 
         return paginationWrapper;
