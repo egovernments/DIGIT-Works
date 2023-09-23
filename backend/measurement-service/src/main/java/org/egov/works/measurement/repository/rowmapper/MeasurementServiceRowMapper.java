@@ -21,7 +21,6 @@ public class MeasurementServiceRowMapper implements RowMapper<MeasurementService
         measurementService.setMeasurementNumber(rs.getString("mbNumber"));
         measurementService.setWfStatus(rs.getString("wfStatus"));
 
-        // Set AuditDetails
         AuditDetails auditDetails = new AuditDetails();
         auditDetails.setCreatedBy(rs.getString("createdby"));
         auditDetails.setCreatedTime(rs.getLong("createdtime"));
@@ -29,9 +28,7 @@ public class MeasurementServiceRowMapper implements RowMapper<MeasurementService
         auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
         measurementService.setAuditDetails(auditDetails);
 
-        // Set additionalDetails and other common fields
-        measurementService.setAdditionalDetails(rs.getObject("additionalDetails")); // Assuming additionalDetails is a JSONB field
-        // Map other common fields as needed
+        measurementService.setAdditionalDetails(rs.getObject("additionalDetails"));
 
         return measurementService;
     }

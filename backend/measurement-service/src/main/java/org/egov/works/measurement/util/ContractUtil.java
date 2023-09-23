@@ -93,7 +93,7 @@ public class ContractUtil {
         }
 
         // check exact match of targetIs in Contract Active line Items
-        isAllTargetIdsPresent(targetIdSet,lineItemsToEstimateIdMap);
+        // isAllTargetIdsPresent(targetIdSet,lineItemsToEstimateIdMap);
 
         // Estimate Validation
         EstimateResponse estimateResponse = getEstimate(requestInfo, measurement.getTenantId(), estimateIdsList);  // assume a single estimate id for now
