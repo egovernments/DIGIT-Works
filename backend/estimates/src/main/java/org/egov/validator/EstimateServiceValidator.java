@@ -52,7 +52,6 @@ public class EstimateServiceValidator {
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
-        validateUomValue(estimateDetails);
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
@@ -67,6 +66,8 @@ public class EstimateServiceValidator {
 
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
+
+        validateUomValue(estimateDetails);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -410,6 +411,7 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
+        List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
@@ -441,6 +443,8 @@ public class EstimateServiceValidator {
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
         validateProjectId(request, errorMap);
+
+        validateUomValue(estimateDetails);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
