@@ -1,22 +1,22 @@
 .measurement-table-input {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .plus-button {
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    background-color: #ff9100;
-    color: #ffffff;
-    font-size: 20px;
-    text-align: center;
-    line-height: 5px;
-    text-decoration: none;
-    display: inline-block;
-    cursor: pointer;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  background-color: #ff9100;
+  color: #ffffff;
+  font-size: 20px;
+  text-align: center;
+  line-height: 5px;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
 }
 .override-card {
   margin-left: 0px !important;
@@ -47,4 +47,21 @@
   border: none;
   outline: none;
   box-shadow: none;
+}
+
+.view-utilization-btn {
+  background-color: #ffffff;
+  color: #f37f12;
+  font-weight: bold;
+  outline: #f37f12;
+  margin: 10px;
+  box-shadow: none;
+  padding: 8px;
+}
+
+.view-utilization-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: #cc7b2f;
 }

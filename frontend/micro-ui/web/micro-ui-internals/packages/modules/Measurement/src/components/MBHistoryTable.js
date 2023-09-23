@@ -1,5 +1,5 @@
 
-import { Card, Header, CollapseAndExpandGroups, Button } from "@egovernments/digit-ui-react-components";
+import { Card, Header, Button } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -32,11 +32,15 @@ const MeasurementHistory = ({ contractNumber }) => {
       criteria: {
         tenantId : tenantId,
         referenceId: [contractNumber],
-        measurementNumber: "mbNumber1",
-        ids: ["1a39840f-6b30-4d19-9d1b-e5c88bd88d55"],
+        ids: ["70380648-45c2-4407-bf91-27ede3c481e5"],
       },
+      pagination: {
+        "limit": 10,
+        "offSet": 0,
+        "sortBy": "string",
+        "order": "DESC"
+    }
     },
-    
   };
 
   var dummyResponse = {
@@ -99,7 +103,6 @@ const MeasurementHistory = ({ contractNumber }) => {
       status: "Paid",
       amount: 1000,
     },
-    // Add more rows as needed
   ];
 
   return (
