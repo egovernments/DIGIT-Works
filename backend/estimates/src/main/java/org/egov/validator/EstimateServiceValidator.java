@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,7 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
+        List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
@@ -65,8 +67,47 @@ public class EstimateServiceValidator {
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
 
+        validateUomValue(estimateDetails);
+
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
+    }
+
+    /**
+     * validate the uom value in estimate details
+     */
+    public void validateUomValue(List<EstimateDetail> estimateDetails){
+        for(int i=0;i<estimateDetails.size();i++){
+            EstimateDetail estimateDetail = estimateDetails.get(i);
+            if(estimateDetail.getNoOfunit()==null){
+                throw new CustomException("noOfUnit", "noOfUnit is mandatory");
+            }
+
+            if(estimateDetail.getUomValue()==null){
+                continue;
+            }
+            else{
+                BigDecimal total =new BigDecimal(1);
+                BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
+                total = total.multiply(noOfUnit);
+                if(estimateDetail.getLength()!=null){
+                    total =total.multiply(estimateDetail.getLength());
+                }
+                if(estimateDetail.getWidth()!=null){
+                    total =total.multiply(estimateDetail.getWidth());
+                }
+                if(estimateDetail.getHeight()!=null){
+                    total =total.multiply(estimateDetail.getHeight());
+                }
+                double totalNew = total.doubleValue();
+                if(totalNew==estimateDetail.getUomValue()){
+                    continue;
+                }
+                else{
+                    throw new CustomException("UOM_VALUE", "uom value is not correct");
+                }
+            }
+        }
     }
 
     private void validateProjectId(EstimateRequest estimateRequest, Map<String, String> errorMap) {
@@ -380,6 +421,7 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
+        List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
@@ -411,6 +453,8 @@ public class EstimateServiceValidator {
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
         validateProjectId(request, errorMap);
+
+        validateUomValue(estimateDetails);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
