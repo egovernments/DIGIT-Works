@@ -43,7 +43,7 @@ public class MeasurementQueryBuilder {
             "mm.createdby as mmcreatedby, mm.lastmodifiedby as mmlastmodifiedby, mm.createdtime as mmcreatedtime, mm.lastmodifiedtime as mmlastmodifiedtime, " +
 
             "dc.filestore as filestore, dc.documentType as documentType, dc.documentuuid as documentuuid, dc.additionaldetails as additionaldetails, dc.id as dcid ," +
-            "dc.filestore as filestore, dc.documentType as documentType, dc.documentuuid as documentuuid, dc.additionaldetails as additionaldetails, dc.id as id " +
+            "dc.filestore as filestore, dc.documentType as documentType, dc.documentuuid as documentuuid, dc.additionaldetails as additionaldetails, dc.id as dcid " +
 
             "FROM eg_mb_measurements m " +
 

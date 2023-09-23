@@ -22,6 +22,10 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
     @Override
     public ArrayList<Measurement> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<String, Measurement> measurementMap = new LinkedHashMap<>();
+//        Map<String,Map<String, Document>> documentMapCheck = new LinkedHashMap<>();
+        Map<String,Document>documentMap = new HashMap<>();
+        Set<String> measuresIds=new HashSet<>();
+
         System.out.println("Records : " + rs.getFetchSize());
         while (rs.next()) {
             String uuid = rs.getString("id");
@@ -58,40 +62,48 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
 
             // Created a Measure object and add it to the Measurement
             Measure measure = new Measure();
+            if(!measuresIds.contains(rs.getString("mmid"))){
+                measuresIds.add(rs.getString("mmid"));
+                measure.setId(UUID.fromString(rs.getString("mmid"))); // Assuming you have a UUID field for measures
+                measure.setReferenceId(rs.getString("mdreferenceId"));
+                measure.setLength(rs.getBigDecimal("mmlength"));
+                measure.setBreadth(rs.getBigDecimal("mmbreadth"));
+                measure.setHeight(rs.getBigDecimal("mmheight"));
+                measure.setNumItems(rs.getBigDecimal("mmnumOfItems"));
+                measure.setCurrentValue(rs.getBigDecimal("mmcurrentValue"));
+                measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
+                measure.setTargetId(rs.getString("targetId"));
+                measure.setIsActive(rs.getBoolean("mdisActive"));
 
-            measure.setId(UUID.fromString(rs.getString("mmid"))); // Assuming you have a UUID field for measures
-            measure.setReferenceId(rs.getString("mdreferenceId"));
-            measure.setLength(rs.getBigDecimal("mmlength"));
-            measure.setBreadth(rs.getBigDecimal("mmbreadth"));
-            measure.setHeight(rs.getBigDecimal("mmheight"));
-            measure.setNumItems(rs.getBigDecimal("mmnumOfItems"));
-            measure.setCurrentValue(rs.getBigDecimal("mmcurrentValue"));
-            measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
-            measure.setTargetId(rs.getString("targetId"));
-            measure.setIsActive(rs.getBoolean("mdisActive"));
+                AuditDetails auditDetails = new AuditDetails();
+                auditDetails.setCreatedBy(rs.getString("createdby"));
+                auditDetails.setCreatedTime(rs.getLong("createdtime"));
+                auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
+                auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
 
-            AuditDetails auditDetails = new AuditDetails();
-            auditDetails.setCreatedBy(rs.getString("createdby"));
-            auditDetails.setCreatedTime(rs.getLong("createdtime"));
-            auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
-            auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
+                measure.setAuditDetails(auditDetails);
 
-            measure.setAuditDetails(auditDetails);
-
-            // Add the Measure to the Measurement
-            measurement.getMeasures().add(measure);
-
-            // Retrieve and set document details
+                // Add the Measure to the Measurement
+                measurement.getMeasures().add(measure);
+            }
+//            documentMapCheck.put(String.valueOf(measurement.getId()),documentMap);
             Document document = new Document();
-
             document.setId(rs.getString("dcid")); // Assuming you have a UUID field for documents
-            document.setDocumentType(rs.getString("documentType"));
-            document.setFileStore(rs.getString("filestore"));
-            document.setDocumentUid(rs.getString("documentuuid"));
-            document.setAdditionalDetails(rs.getString("additionalDetails")); // Adjust the column name as per your table
 
-            // Add the document to the Measurement
-            measurement.getDocuments().add(document);
+            if(document.getId()!=null & documentMap.get(document.getId())==null) {
+
+
+                document.setDocumentType(rs.getString("documentType"));
+                document.setFileStore(rs.getString("filestore"));
+                document.setDocumentUid(rs.getString("documentuuid"));
+                document.setAdditionalDetails(rs.getString("additionalDetails")); // Adjust the column name as per your table
+                document.setId(rs.getString("dcid")); // Assuming you have a UUID field for documents
+
+                documentMap.put(document.getId(), document);
+
+                // Add the document to the Measurement
+                measurement.getDocuments().add(document);
+            }
         }
         // Return the list of unique Measurement objects
         return new ArrayList<>(measurementMap.values());

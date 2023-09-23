@@ -51,16 +51,6 @@ public class ServiceRequestRepository {
         System.out.println("Query  ::::::::::: " + query);
         System.out.println("preparedStmtList  ::::::::::: " + preparedStmtList);
         ArrayList<Measurement> measurementsList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-        for(Measurement measurement:measurementsList){
-            List<Document> documents=new ArrayList<>();
-            for(Document document:measurement.getDocuments()){
-                if(document.getId()!=null){
-                    documents.add(document);
-                }
-            }
-            measurement.setDocuments(documents);
-        }
-
         return measurementsList;
     }
 

@@ -148,7 +148,6 @@ public class MeasurementService {
         if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
             throw new IllegalArgumentException("TenantId is required.");
         }
-
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;
     }
