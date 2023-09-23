@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import { useHistory, useLocation } from "react-router-dom";
-import SearchMeasurementConfig from "../../configs/MeasurementSearchConfig";
+import SearchMeasurementConfig from "../../configs/SearchWMSConfig";
 
 const SearchMeasurement = () => {
   const { t } = useTranslation();
