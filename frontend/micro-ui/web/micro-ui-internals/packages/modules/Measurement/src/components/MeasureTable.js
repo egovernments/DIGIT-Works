@@ -103,7 +103,6 @@ const MeasureTable = (props) => {
 
       // }, [consumedQty, tableMBAmounts]);
       useEffect(() => {
-        debugger;
         let updatedData = tablesState?.map(tableRow => {
           tableRow.currentMBEntry = initialState?.tableState?.reduce((acc, curr) => acc + curr.noOfunit, 0);
           tableRow.amount = tableRow.currentMBEntry * tableRow?.unitRate;
