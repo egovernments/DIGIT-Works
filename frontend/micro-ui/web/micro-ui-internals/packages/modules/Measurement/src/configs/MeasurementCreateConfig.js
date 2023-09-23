@@ -36,7 +36,7 @@ export const CreateConfig = ({ defaultValue }) => {
           {
 
             // "navLink": "Work Details",
-            "head": "Worksite Photos",
+            // "head": "Worksite Photos",
             "body": [
               {
                 "type": "documentUpload",

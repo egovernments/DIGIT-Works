@@ -10,6 +10,7 @@ const MeasureTable = (props) => {
   const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
   const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
   const data = props.config.key === "SOR" ? sorData : nonsorData;
+  const [tablesState, setTablesState] = useState(data);
   const tableKey = props.config.key;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -73,34 +74,42 @@ const MeasureTable = (props) => {
 
 
   const renderBody = () => {
-    return data?.map((row, index) => {
-      const [consumedQty, setConsumedQty] = useState(0);
+    return tablesState?.map((row, index) => {
+      const [consumedQty, setConsumedQty] = useState(row.currentMBEntry);
       const [showMeasureCard, setShowMeasureCard] = useState(false);
-      const [initialState, setInitialState] = useState({ tableState: row?.additionalDetails?.measurement });
+      const [initialState, setInitialState] = useState({ tableState: row?.measures });
       const [totalAmount, setTotalAmount] = useState(0)
 
-      useEffect(() => {
-        tableMBAmounts[index] = consumedQty * row.unitRate;
-        setTotalAmount(tableMBAmounts[index]);
-        let sum = 0;
-        for (let i = 0; i < tableMBAmounts.length; i++) {
-          sum += tableMBAmounts[i];
-        }
-        setTotalMBAmount(sum);
-        if (!props.isView) {
-          if (props.config.key == "SOR") {
-            if (props.formData.sumSor != sum) {
-              setValue("sumSor", sum);
-            }
-          } else {
-            if (props.formData.sumNonSor != sum) {
-              setValue("sumNonSor", sum);
-            }
-          }
-        }
-        // console.log(props, "FFFFFFFFFFFFFFFFFFF")
+      // useEffect(() => {
+      //   tableMBAmounts[index] = consumedQty * row.unitRate;
+      //   setTotalAmount(tableMBAmounts[index]);
+      //   let sum = 0;
+      //   for (let i = 0; i < tableMBAmounts.length; i++) {
+      //     sum += tableMBAmounts[i];
+      //   }
+      //   setTotalMBAmount(sum);
+      //   if (!props.isView) {
+      //     if (props.config.key == "SOR") {
+      //       if (props.formData.sumSor != sum) {
+      //         setValue("sumSor", sum);
+      //       }
+      //     } else {
+      //       if (props.formData.sumNonSor != sum) {
+      //         setValue("sumNonSor", sum);
+      //       }
+      //     }
+      //   }
+      //   // console.log(props, "FFFFFFFFFFFFFFFFFFF")
 
-      }, [consumedQty, tableMBAmounts]);
+      // }, [consumedQty, tableMBAmounts]);
+      useEffect(() => {
+        let updatedData = tablesState?.map(tableRow => {
+          tableRow.currentMBEntry = initialState?.tableState?.reduce((acc, curr) => acc + curr.noOfunit, 0);
+          tableRow.amount = tableRow.currentMBEntry * tableRow?.unitRate;
+          return tableRow;
+        })
+        setTablesState(updatedData)
+      }, [initialState])
 
       return (
         <>
@@ -109,8 +118,8 @@ const MeasureTable = (props) => {
             <td>{row.description}</td>
             <td>{row.uom}</td>
             <td><Amount customStyle={{ textAlign: 'right' }} value={Math.round(row.unitRate)} t={t}></Amount></td>
-            <td><Amount customStyle={{ textAlign: 'right' }} value={Math.round(row.noOfunit)} t={t}></Amount></td>
-            <td><Amount customStyle={{ textAlign: 'right' }} value={null} t={t}></Amount></td>
+            <td>{Math.round(row.approvedQuantity)}</td>
+            <td>{Math.round(row.consumedQ)}</td>
             <td>
               <div className="measurement-table-input">
                 <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={initialState.length > 0 ? "true" : "false"} />
@@ -126,7 +135,7 @@ const MeasureTable = (props) => {
               </div>
             </td>
 
-            <td><Amount customStyle={{ textAlign: 'right' }} value={totalAmount} t={t}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={row.amount} t={t}></Amount></td>
 
 
           </tr>
@@ -151,12 +160,14 @@ const MeasureTable = (props) => {
                   setInitialState={setInitialState}
                   setShowMeasureCard={setShowMeasureCard}
                   initialState={initialState}
-                  unitRate={row.unitRate} 
-                  register={props.isView ? () => {} : register}
-                  setValue={props.isView ? () => {} : setValue}
+                  unitRate={row.unitRate}
+                  register={props.isView ? () => { } : register}
+                  setValue={props.isView ? () => { } : setValue}
+
                   tableData={props.data}
                   tableKey={tableKey}
-                  tableIndex={index} />
+                  tableIndex={index}
+                />
 
 
               </td>
@@ -168,7 +179,8 @@ const MeasureTable = (props) => {
   };
 
   return (
-    <Card className = "override-card">
+    // <Card className="override-card">
+    <React.Fragment>
       <table className="table reports-table sub-work-table">
         <thead>
           <tr>{renderHeader()}</tr>
@@ -184,7 +196,8 @@ const MeasureTable = (props) => {
           <span style={{ marginLeft: "3px" }}>{totalMBAmount}</span>
         </div>
       </div>
-    </Card>
+    </React.Fragment>
+    // </Card>
   );
 };
 
