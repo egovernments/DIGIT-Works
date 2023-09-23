@@ -14,6 +14,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
+import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.util.*;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.validator.MeasurementValidator;
@@ -23,6 +24,7 @@ import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -96,6 +98,7 @@ public class MeasurementService {
     @Autowired
     private MeasurementValidator measurementValidator;
 
+
     /**
      * Handles measurement create
      * @param request
@@ -148,7 +151,6 @@ public class MeasurementService {
         if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
             throw new IllegalArgumentException("TenantId is required.");
         }
-
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;
     }
@@ -157,7 +159,8 @@ public class MeasurementService {
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
 
         for (Measurement measurement : measurements) {
-//            Workflow workflow=workflowUtil.getProcessInstanceForWorkflow(body.getRequestInfo(),measurement.getTenantId(),measurement.getMeasurementNumber(),"MB",,)
+            NamedParameterJdbcTemplate namedParameterJdbcTemplate=new NamedParameterJdbcTemplate(jdbcTemplate);
+            org.egov.works.measurement.web.models.MeasurementService measurementService1=serviceRequestRepository.getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate,measurement.getMeasurementNumber());
             org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
             measurementService.setId(measurement.getId());
             measurementService.setTenantId(measurement.getTenantId());
@@ -170,8 +173,7 @@ public class MeasurementService {
             measurementService.setIsActive(measurement.getIsActive());
             measurementService.setAuditDetails(measurement.getAuditDetails());
 
-            measurementService.setWfStatus(null);
-            measurementService.setWorkflow(null);
+            measurementService.setWfStatus(measurementService1.getWfStatus());
 
             measurementServices.add(measurementService);
         }
@@ -189,29 +191,26 @@ public class MeasurementService {
         }
     }
 
-
-    /**
-     * handles searching of a measurement
-     * @param searchCriteria
-     * @return
-     */
-
-
-    /**
-     * Helper function to update Measurement
-     * create and enriches measurement
-     * @param measurements
-     * @param measurementRegistrationRequest
-     * @return
-     */
-    private MeasurementResponse makeUpdateResponse(List<Measurement> measurements,MeasurementRequest measurementRegistrationRequest) {
+    public MeasurementResponse makeUpdateResponse(List<Measurement> measurements,MeasurementRequest measurementRegistrationRequest) {
         MeasurementResponse response = new MeasurementResponse();
         response.setResponseInfo(ResponseInfo.builder()
                 .apiId(measurementRegistrationRequest.getRequestInfo().getApiId())
                 .msgId(measurementRegistrationRequest.getRequestInfo().getMsgId())
                 .ts(measurementRegistrationRequest.getRequestInfo().getTs())
+                .status("successful")
                 .build());
         response.setMeasurements(measurements);
+        return response;
+    }
+
+    public MeasurementServiceResponse makeSearchResponse(MeasurementSearchRequest measurementSearchRequest) {
+        MeasurementServiceResponse response = new MeasurementServiceResponse();
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(measurementSearchRequest.getRequestInfo().getApiId())
+                .msgId(measurementSearchRequest.getRequestInfo().getMsgId())
+                .ts(measurementSearchRequest.getRequestInfo().getTs())
+                .status("successful")
+                .build());
         return response;
     }
 

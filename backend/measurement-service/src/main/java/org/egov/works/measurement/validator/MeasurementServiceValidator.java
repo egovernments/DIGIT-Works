@@ -9,7 +9,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.egov.works.measurement.config.Configuration;
-import org.egov.works.measurement.repository.rowmapper.MeasurementServiceUpdateRowMapper;
+import org.egov.works.measurement.repository.ServiceRequestRepository;
+import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.web.models.*;
@@ -40,11 +41,9 @@ public class MeasurementServiceValidator {
     @Autowired
     private MeasurementRowMapper rowMapper;
 
-    String getMeasuressql = "SELECT mm.* FROM eg_mb_measurement_measures mm " +
-            "JOIN eg_mb_measurement_details md ON mm.id = md.id " +
-            "WHERE mm.id = :id AND md.referenceId = :referenceId";
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
-    String getMBSsql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber = :mbNumber";
 
     @Autowired
     private org.egov.works.measurement.service.MeasurementService measurementService;
@@ -138,7 +137,7 @@ public class MeasurementServiceValidator {
             String mbNumber = measurementService.getMeasurementNumber();
 
             // Check if measurements exist in eg_mbs_measurements
-            MeasurementService measurementServiceInMBSTable = getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate, mbNumber);
+            MeasurementService measurementServiceInMBSTable = serviceRequestRepository.getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate, mbNumber);
 
             if (measurementServiceInMBSTable == null) {
                 throw new RuntimeException("MBS Data does not exist");
@@ -148,18 +147,6 @@ public class MeasurementServiceValidator {
         }
 
         setServiceAuditDetails(existingMeasurementService, measurementServiceRequest);
-    }
-
-    public MeasurementService getMeasurementServiceFromMBSTable(NamedParameterJdbcTemplate jdbcTemplate, String mbNumber) {
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("mbNumber", mbNumber);
-
-        try {
-            return jdbcTemplate.queryForObject(getMBSsql, params, new MeasurementServiceUpdateRowMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return null; // MeasurementService does not exist
-        }
     }
 
 

@@ -1,6 +1,7 @@
 package org.egov.works.measurement.web.controllers;
 
 
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.service.MeasurementService;
 import org.egov.works.measurement.web.models.ErrorRes;
 import org.egov.works.measurement.web.models.MeasurementRequest;
@@ -59,6 +60,12 @@ public class MeasurementApiController {
         MeasurementCriteria criteria = body.getCriteria();
 
         MeasurementResponse response = new MeasurementResponse();
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(body.getRequestInfo().getApiId())
+                .msgId(body.getRequestInfo().getMsgId())
+                .ts(body.getRequestInfo().getTs())
+                .status("successful")
+                .build());
         if (criteria != null) {
             List<Measurement> measurements = measurementService.searchMeasurements(criteria, body);
             response.setMeasurements(measurements);

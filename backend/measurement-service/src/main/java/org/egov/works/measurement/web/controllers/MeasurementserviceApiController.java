@@ -67,7 +67,7 @@ public class MeasurementserviceApiController {
         String measurementServiceUrl = "http://localhost:8080/measurement-service/measurement/v1/_search";
         ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(measurementServiceUrl, body, MeasurementResponse.class);
         MeasurementResponse measurementResponse = responseEntity.getBody();
-        MeasurementServiceResponse measurementServiceResponse = new MeasurementServiceResponse();
+        MeasurementServiceResponse measurementServiceResponse = service.makeSearchResponse(body);
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = service.changeToMeasurementService(measurementResponse.getMeasurements());
         measurementServiceResponse.setMeasurements(measurementServices);
         return new ResponseEntity<>(measurementServiceResponse, responseEntity.getStatusCode());

@@ -7,16 +7,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.measurement.repository.querybuilder.MeasurementQueryBuilder;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
-import org.egov.works.measurement.web.models.AuditDetails;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
+import org.egov.works.measurement.web.models.AuditDetails;
 import org.egov.works.measurement.service.MeasurementService;
 import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.*;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -42,8 +45,8 @@ public class ServiceRequestRepository {
     @Autowired
     private MeasurementRowMapper rowMapper;
 
-    @Autowired
-    private MeasurementServiceRowMapper rowMapper1;
+    String getMBSsql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber = :mbNumber";
+
 
     public ArrayList<Measurement> getMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();
@@ -51,7 +54,6 @@ public class ServiceRequestRepository {
         System.out.println("Query  ::::::::::: " + query);
         System.out.println("preparedStmtList  ::::::::::: " + preparedStmtList);
         ArrayList<Measurement> measurementsList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-
         return measurementsList;
     }
 
@@ -75,5 +77,17 @@ public class ServiceRequestRepository {
         }
 
         return response;
+    }
+
+    public org.egov.works.measurement.web.models.MeasurementService getMeasurementServiceFromMBSTable(NamedParameterJdbcTemplate jdbcTemplate, String mbNumber) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("mbNumber", mbNumber);
+
+        try {
+            return jdbcTemplate.queryForObject(getMBSsql, params, new MeasurementServiceRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null; // MeasurementService does not exist
+        }
     }
 }

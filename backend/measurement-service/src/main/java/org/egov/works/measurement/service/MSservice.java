@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.kafka.Producer;
+import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.ResponseInfoFactory;
@@ -16,6 +17,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -36,6 +39,9 @@ public class MSservice {
     private Producer producer;
     @Autowired
     private Configuration configuration;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private org.egov.works.measurement.service.MeasurementService measurementService;
@@ -241,6 +247,7 @@ public class MSservice {
                 .apiId(measurementServiceRequest.getRequestInfo().getApiId())
                 .msgId(measurementServiceRequest.getRequestInfo().getMsgId())
                 .ts(measurementServiceRequest.getRequestInfo().getTs())
+                .status("successful")
                 .build());
 
         response.setMeasurements(measurementServiceRequest.getMeasurements());
