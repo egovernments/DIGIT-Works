@@ -80,6 +80,9 @@ public class EstimateServiceValidator {
                 continue;
             }
             else{
+                if(estimateDetail.getNoOfunit()==null){
+                    throw new CustomException("noOfUnit", "noOfUnit is mandatory");
+                }
                 BigDecimal total =new BigDecimal(1);
                 BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
                 total = total.multiply(noOfUnit);
