@@ -696,7 +696,6 @@ export const UICustomizations = {
     preProcess: (data) => {
     const mbNumber=data?.body?.inbox?.measurementNumber || null;
     const refId= data?.body?.Individual?.referenceId || null;
-    console.log(data,"hjjjjjjjjjj",mbNumber);
     
       return data;
       
