@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { CreateConfig } from "../../configs/MeasurementCreateConfig";
 import ContractDetailsCard from "../../components/ContractCardDetails";
 import _ from "lodash";
-const CreateMeasurement = () => {
+const CreateMeasurement = ({ update }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -14,6 +14,7 @@ const CreateMeasurement = () => {
   const [createState, setState] = useState(sessionFormData || {});
   const [creatStateSet, setCreateState] = useState(false)
   const [isEstimateEnabled, setIsEstimateEnabled] = useState(false);
+  console.log(update, "pppppppppppp")
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
@@ -112,7 +113,6 @@ const CreateMeasurement = () => {
         transformedData.measurements[0].measures.push(createMeasurement(nonsorItem, "NONSOR"));
       });
     }
-    console.log(transformedData, "TTTTTTTTTTT")
     return transformedData;
   };
   // Define the request criteria for creating a measurement
@@ -127,7 +127,7 @@ const CreateMeasurement = () => {
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
-    console.log(data, "ddddddddddddddd")
+
     // Create the measurement payload with transformed data
     const measurements = transformData(data);
     //call the createMutation for MB and route to response page on onSuccess or console error
