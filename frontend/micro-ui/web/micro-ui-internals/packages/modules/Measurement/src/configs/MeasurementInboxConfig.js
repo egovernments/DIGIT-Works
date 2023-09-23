@@ -81,9 +81,14 @@ const InboxMeasurementConfig = () => {
       links: {
         uiConfig: {
           links: [
+            // {
+            //   text: "MB_SEARCH_MB",
+            //   url: "/employee/measurement/search",
+            //   roles: ["MB_CREATOR", "MB_VERIFIER", "MB_APPROVER", "MB_VIEWER"],
+            // },
             {
               text: "MB_SEARCH_MB",
-              url: "/employee/measurement/search",
+              url: "/employee/measurement/searchplain",
               roles: ["MB_CREATOR", "MB_VERIFIER", "MB_APPROVER", "MB_VIEWER"],
             },
             {

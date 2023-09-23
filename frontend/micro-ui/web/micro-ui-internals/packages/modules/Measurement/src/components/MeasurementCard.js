@@ -1,6 +1,7 @@
 import { EmployeeModuleCard, CaseIcon, MuktaHomeIcon } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 
+
 import { useTranslation } from "react-i18next";
 
 const MeasurementCard = () => {
@@ -27,22 +28,22 @@ const MeasurementCard = () => {
       // }
 
       {
-        label: t("Create"),
+        label: t("MB_CREATE"),
         link: `/${window?.contextPath}/employee/measurement/create`,
       },
       {
-        label: t("Inbox"),
+        label: t("MB_INBOX"),
         link: `/${window?.contextPath}/employee/measurement/inbox`,
       },
       {
         label: t("ACTION_TEST_CREATE_MEASUREMENT"),
-        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000783`,
+        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784`,
         roles: ["EMPLOYEE"],
       },
 
       {
-        label: t("Search"),
-        link: `/${window?.contextPath}/employee/measurement/search`,
+        label: t("MB_SEARCH"),
+        link: `/${window?.contextPath}/employee/measurement/searchplain`,
       },
     ],
   };
