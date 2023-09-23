@@ -76,13 +76,14 @@ public class EstimateServiceValidator {
     public void validateUomValue(List<EstimateDetail> estimateDetails){
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
+            if(estimateDetail.getNoOfunit()==null){
+                throw new CustomException("noOfUnit", "noOfUnit is mandatory");
+             }
+            
             if(estimateDetail.getUomValue()==null){
                 continue;
             }
             else{
-                if(estimateDetail.getNoOfunit()==null){
-                    throw new CustomException("noOfUnit", "noOfUnit is mandatory");
-                }
                 BigDecimal total =new BigDecimal(1);
                 BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
                 total = total.multiply(noOfUnit);
