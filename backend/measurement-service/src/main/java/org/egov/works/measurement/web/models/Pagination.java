@@ -28,11 +28,11 @@ public class Pagination {
 
     @JsonProperty("limit")
     @DecimalMax("100")
-    @NotNull
+//    @NotNull
     private Double limit = 10d;
 
     @JsonProperty("offSet")
-    @NotNull
+//    @NotNull
     private Double offSet = 0d;
 
     @JsonProperty("totalCount")
