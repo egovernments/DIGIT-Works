@@ -145,7 +145,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   return {
     applicationDetails,
 
-    applicationData: { contract: contract, estimate: estimateDetails, measurements :measurements },
+    applicationData: data ,
 
     processInstancesDetails: workflowDetails?.ProcessInstances,
     workflowDetails,

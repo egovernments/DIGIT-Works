@@ -1,6 +1,6 @@
 import { Header, Card, Loader, Button, WorkflowActions } from "@egovernments/digit-ui-react-components";
-
-import React, { useState } from "react";
+import { transformEstimateData } from "../../utils/transformEstimateData";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
@@ -12,16 +12,16 @@ const ViewMeasurement = () => {
   const history = useHistory();
   const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement");
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const searchparams = new URLSearchParams(location.search);
-  const workOrderNumber = searchparams.get("workOrderNumber");
-  const mbNumber = searchparams.get("mbNumber");
-  console.log(businessService, "bbbbbbbbb");
+  const { workOrderNumber, mbNumber } = Digit.Hooks.useQueryParams();
+  const [loading, setLoading] = useState(true); 
+  const [sorCategoryArray, setSorCategoryArray] = useState([]);
+  const [nonSorCategoryArray, setNonSorCategoryArray] = useState([]);
 
   const pagination = {
     pagination: {
       limit: 10,
       offSet: 0,
-      sortBy: "string",
+      sortBy: "createdTime",
       order: "DESC",
     },
   };
@@ -40,25 +40,43 @@ const ViewMeasurement = () => {
   const projectDetails = { applicationDetails: [applicationDetails?.applicationDetails?.applicationDetails[0]] };
   const imageDetails = { applicationDetails: [applicationDetails?.applicationDetails?.applicationDetails[2]] };
 
-  const sorEstimates = applicationDetails?.applicationData?.estimate[0]?.estimateDetails.filter((item) => item.category === "SOR");
-  const nonSorEstimates = applicationDetails?.applicationData?.estimate[0]?.estimateDetails.filter((item) => item.category === "NONSOR");
 
   const measures = applicationDetails?.applicationData?.measurements[0].measures;
   console.log(measures, "measure");
 
-  console.log(sorEstimates, "estimate");
+  const data = applicationDetails?.applicationData;
+
+  const estimateDetails = data?.estimate[0]?.estimateDetails || [];
+
+  useEffect(() => {
+    const processArrays = () => {
+      if (data) {
+        const sorData = transformEstimateData(estimateDetails, data?.contracts[0], 'SOR', measures);
+        const nonSorData = transformEstimateData(estimateDetails, data?.contracts[0], 'NON-SOR', measures);
+
+        setSorCategoryArray(sorData);
+        setNonSorCategoryArray(nonSorData);
+        setLoading(false);
+      }
+    };
+
+    processArrays();
+  }, [data]);
 
   const tableData = {
     data: {
-      SOR: sorEstimates,
-      NONSOR: nonSorEstimates,
+      SOR: sorCategoryArray,
+      NONSOR: nonSorCategoryArray,
     },
     config: {
       key: "SOR",
     },
-  };
+  };  
 
   if (isLoading) {
+    return <Loader />;
+  }
+  if (loading || sorCategoryArray.length === 0 || nonSorCategoryArray.length === 0) {
     return <Loader />;
   }
 
@@ -76,7 +94,11 @@ const ViewMeasurement = () => {
         showTimeLine={false}
       />
       <MeasurementHistory contractNumber={workOrderNumber} measurementNumber={mbNumber} />
-      <MeasureTable {...tableData} isView={true} measureData={measures} />
+      <MeasureTable
+        {...tableData}
+        isView={true}
+        measureData={measures} 
+      />
       <MeasureTable
         {...tableData}
         config={{
@@ -96,12 +118,9 @@ const ViewMeasurement = () => {
         showTimeLine={false}
       />
       <ApplicationDetails
-        // applicationDetails={applicationDetails?.applicationDetails}
         isLoading={isLoading}
-        applicationData={applicationDetails?.applicationData}
+        applicationData={applicationDetails?.applicationData?.measurements[0]}
         moduleCode="measurements"
-        // workflowDetails={applicationDetails?.workflowDetails}
-        // mutate={() => {}}
         timelineStatusPrefix={`WF_${businessService}_`}
         businessService={businessService}
         tenantId={tenantId}
@@ -113,7 +132,7 @@ const ViewMeasurement = () => {
         businessService={businessService}
         applicationNo={mbNumber}
         tenantId={tenantId}
-        applicationDetails={applicationDetails?.applicationData}
+        applicationDetails={applicationDetails?.applicationData?.measurements[0]}
         url={Digit.Utils.Urls.measurement.update}
         // setStateChanged={setStateChanged}
         moduleCode="measurements"
