@@ -209,7 +209,7 @@ const CreateMeasurement = () => {
       <Header className="works-header-view" style={{}}>Measurement Book</Header>
       <ContractDetailsCard contract={contract} /> {/* Display contract details */}
       <FormComposerV2
-        label={t("Submit Bar")}
+        label={t("MB_SUBMIT_BAR")}
         config={CreateConfig({ defaultValue: contract }).CreateConfig[0]?.form?.map((config) => {
           return {
             ...config,
