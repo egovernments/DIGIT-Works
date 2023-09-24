@@ -36,7 +36,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
       pagination: {
         "limit": 10,
         "offSet": 0,
-        "sortBy": "string",
+        "sortBy": "createdTime",
         "order": "DESC"
     }
     },
@@ -59,10 +59,10 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
   const filteredRows = filteredArray?.map((item, index) =>({
     sno :index + 1,
     mbref : item?.measurementNumber,
-    musterid : "M1234",
+    musterid : t("NA"),
     mbDate : item?.entryDate,
-    period : "test",
-    status : "Submitted",
+    period : t("NA"),
+    status : item?.wfStatus,
     amount : 1000
   }))
 
