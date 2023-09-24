@@ -66,6 +66,14 @@ public class MeasurementApiController {
                 .ts(body.getRequestInfo().getTs())
                 .status("successful")
                 .build());
+
+        if (body.getPagination() == null) {
+            body.setPagination(new Pagination());
+            body.getPagination().setLimit(null);
+            body.getPagination().setOffSet(null);
+            body.getPagination().setOrder(Pagination.OrderEnum.DESC);
+        }
+
         if (criteria != null) {
             List<Measurement> measurements = measurementService.searchMeasurements(criteria, body);
             response.setMeasurements(measurements);
