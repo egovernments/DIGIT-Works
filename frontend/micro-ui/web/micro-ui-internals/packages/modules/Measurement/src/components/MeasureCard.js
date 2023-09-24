@@ -4,9 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
+
 {/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
 const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate , isView }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
+
+
   const { t } = useTranslation();
   const history = useHistory();
   const [total, setTotal] = useState(consumedQty);

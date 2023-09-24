@@ -46,80 +46,6 @@ const CreateMeasurement = () => {
       enabled: isEstimateEnabled,
     }
   })
-  // targetId for measure object
-  const contractLineItemId = contract?.lineItems[0]?.id;
-  //function to create measure object of transform data
-  // const createMeasurement = (item, type) => {
-  //   return {
-  //     referenceId: null,
-  //     targetId: contractLineItemId || "",
-  //     length: item.measures?.[0]?.length,
-  //     width: item.measures?.[0]?.width,
-  //     height: item.measures?.[0]?.height,
-  //     numItems: 1,
-  //     currentValue: 0,
-  //     cumulativeValue: 0,
-  //     isActive: true,
-  //     comments: null,
-  //     additionalDetails: {
-  //       mbAmount: item.amount || 0,
-  //       type: type,
-  //     },
-  //   };
-  // };
-  // // transform the data according requestbody
-  // const transformData = (data) => {
-  //   const transformedData = {
-  //     measurements: [
-  //       {
-  //         tenantId: "pg.citya",
-  //         physicalRefNumber: null,
-  //         referenceId: contractNumber || "",
-  //         entryDate: 0,
-  //         documents: [{
-  //           "documentType": data?.uploadedDocs?.img_measurement_book[0][1]?.file?.type,
-  //           "fileStore": data?.uploadedDocs?.img_measurement_book[0][1]?.fileStoreId?.fileStoreId,
-  //           "documentUid": data?.uploadedDocs?.img_measurement_book[0][0],
-  //           "additionalDetails": {}
-  //         }],
-  //         measures: [],
-  //         isActive: true,
-  //         additionalDetails: {
-  //           sorAmount: data.sumSor || 0,
-  //           nonSorAmount: data.sumNonSor || 0,
-  //           totalAmount: (data.sumSor ? data.sumSor : 0) + (data.sumNonSor ? data.sumNonSor : 0),
-  //         },
-  //         "wfStatus": "DRAFTED",
-  //         "workflow": {
-  //           "action": "SAVE_AS_DRAFT",
-  //           "assignes": [],
-  //           "comments": "string",
-  //           "verificationDocuments": [
-  //             {
-  //               "documentType": "string",
-  //               "fileStore": "be14ceb8-01ba-485b-a6e2-489e5474a576",
-  //               "documentUid": "string",
-  //               "additionalDetails": {}
-  //             }
-  //           ]
-  //         }
-  //       },
-  //     ],
-  //   };
-  //   // Process SOR data
-  //   if (data.SOR && Array.isArray(data.SOR)) {
-  //     data.SOR.forEach((sorItem) => {
-  //       transformedData.measurements[0].measures.push(createMeasurement(sorItem, "SOR"));
-  //     });
-  //   }
-  //   // Process NONSOR data
-  //   if (data.NONSOR && Array.isArray(data.NONSOR)) {
-  //     data.NONSOR.forEach((nonsorItem) => {
-  //       transformedData.measurements[0].measures.push(createMeasurement(nonsorItem, "NONSOR"));
-  //     });
-  //   }
-  //   return transformedData;
-  // };
   // Define the request criteria for creating a measurement
   const reqCriteriaUpdate = {
     url: `/measurement-service/v1/_create`,
@@ -133,6 +59,7 @@ const CreateMeasurement = () => {
 
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
+
     // Create the measurement payload with transformed data
     const measurements = transformData(data);
     //call the createMutation for MB and route to response page on onSuccess or console error

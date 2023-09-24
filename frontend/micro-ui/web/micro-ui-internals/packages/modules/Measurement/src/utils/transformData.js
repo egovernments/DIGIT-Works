@@ -1,3 +1,30 @@
+/*
+input is document array, 
+output is document array containing object
+*/
+
+const processDocuments = (uploadedDocs) => {
+    const documents = [];
+
+    for (const docType in uploadedDocs) {
+        if (uploadedDocs.hasOwnProperty(docType)) {
+            const docList = uploadedDocs[docType];
+            docList.forEach(([filename, fileInfo]) => {
+                const document = {
+                    documentType: fileInfo?.file?.type,
+                    fileStore: fileInfo?.fileStoreId?.fileStoreId,
+                    documentUid: fileInfo?.file?.name,
+                    additionalDetails: {},
+                };
+                documents.push(document);
+            });
+        }
+    }
+
+    return documents;
+};
+
+
 
 /*
 input is lineitem, 
@@ -36,14 +63,11 @@ const getMeasurementFromMeasures = (item, type) => {
 /*
 input is formdata, 
 output is measurements[{
-    //parent measurement details
+    parent measurement details
     and measures array
 }]
 
 */
-
-
-
 
 export const transformData = (data) => {
 
@@ -54,19 +78,10 @@ export const transformData = (data) => {
                 physicalRefNumber: null,
                 referenceId: data.SOR?.[0]?.contractNumber || data.NONSOR?.[0]?.contractNumber,
                 entryDate: 0,
-                //data?.uploadedDocs?.img_measurement_book iterate in this array map ==>  {}
-                documents: [
-                    {
-                        "documentType": data?.uploadedDocs?.img_measurement_book?.[0]?.[1]?.file?.type,
-                        "fileStore": data?.uploadedDocs?.img_measurement_book?.[0]?.[1]?.fileStoreId?.fileStoreId,
-                        "documentUid": data?.uploadedDocs?.img_measurement_book?.[0]?.[0],
-                        "additionalDetails": {},
-                    },
-                ],
+                documents: processDocuments(data.uploadedDocs),
                 measures: [],
                 isActive: true,
                 additionalDetails: {
-                    /// add logi c to calculate sum pof sor amt and nonsor amt
                     sorAmount: data.sumSor || 0,
                     nonSorAmount: data.sumNonSor || 0,
                     totalAmount: (data.sumSor ? data.sumSor : 0) + (data.sumNonSor ? data.sumNonSor : 0),
@@ -88,17 +103,31 @@ export const transformData = (data) => {
             },
         ],
     };
+
+
+    let sumSor = 0;
+    let sumNonSor = 0;
+
     // Process SOR data
     if (data.SOR && Array.isArray(data.SOR)) {
         data.SOR.forEach((sorItem) => {
+            sumSor += sorItem.amount;
             transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(sorItem, "SOR"));
         });
     }
+
     // Process NONSOR data
     if (data.NONSOR && Array.isArray(data.NONSOR)) {
         data.NONSOR.forEach((nonsorItem) => {
+            sumNonSor += nonsorItem.amount;
             transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(nonsorItem, "NONSOR"));
         });
     }
-    return transformedData; // Return the transformed data object, not the function itself
+
+    // update the additional details
+    transformedData.measurements[0].additionalDetails.sorAmount = sumSor;
+    transformedData.measurements[0].additionalDetails.nonSorAmount = sumNonSor;
+    transformedData.measurements[0].additionalDetails.totalAmount = sumSor + sumNonSor;
+
+    return transformedData;
 };
