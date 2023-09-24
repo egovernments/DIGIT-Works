@@ -12,11 +12,9 @@ const MeasureTable = (props) => {
   const data = props.config.key === "SOR" ? sorData : nonsorData;
   const [tablesState, setTablesState] = useState(data);
   const tableKey = props.config.key;
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
   const [totalMBAmount, setTotalMBAmount] = useState(0);
-  const tableMBAmounts = [];
   const { register, setValue } = props;
 
 
@@ -78,38 +76,27 @@ const MeasureTable = (props) => {
       const [consumedQty, setConsumedQty] = useState(row.currentMBEntry);
       const [showMeasureCard, setShowMeasureCard] = useState(false);
       const [initialState, setInitialState] = useState({ tableState: row?.measures });
-      const [totalAmount, setTotalAmount] = useState(0)
 
-      // useEffect(() => {
-      //   tableMBAmounts[index] = consumedQty * row.unitRate;
-      //   setTotalAmount(tableMBAmounts[index]);
-      //   let sum = 0;
-      //   for (let i = 0; i < tableMBAmounts.length; i++) {
-      //     sum += tableMBAmounts[i];
-      //   }
-      //   setTotalMBAmount(sum);
-      //   if (!props.isView) {
-      //     if (props.config.key == "SOR") {
-      //       if (props.formData.sumSor != sum) {
-      //         setValue("sumSor", sum);
-      //       }
-      //     } else {
-      //       if (props.formData.sumNonSor != sum) {
-      //         setValue("sumNonSor", sum);
-      //       }
-      //     }
-      //   }
-      //   // console.log(props, "FFFFFFFFFFFFFFFFFFF")
-
-      // }, [consumedQty, tableMBAmounts]);
       useEffect(() => {
         let updatedData = tablesState?.map(tableRow => {
-          tableRow.currentMBEntry = initialState?.tableState?.reduce((acc, curr) => acc + curr.noOfunit, 0);
-          tableRow.amount = tableRow.currentMBEntry * tableRow?.unitRate;
-          return tableRow;
-        })
-        setTablesState(updatedData)
-      }, [initialState])
+
+          const currentMBEntry = tableRow?.measures[0]?.noOfunit;
+
+          const amount = currentMBEntry * tableRow?.unitRate;
+
+          return {
+            ...tableRow,
+            currentMBEntry,
+            amount,
+          };
+        });
+        let sum = updatedData.reduce((acc, row) => acc + row.amount, 0);
+
+        // Update the state with the new data
+        setTablesState(updatedData);
+        setTotalMBAmount(sum);
+      }, [initialState]);
+
 
       return (
         <>
