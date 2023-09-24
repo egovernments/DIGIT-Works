@@ -127,27 +127,44 @@ public class MeasurementServiceValidator {
         }
     }
 
-
     public void validateExistingServiceDataAndEnrich(MeasurementServiceRequest measurementServiceRequest) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        List<MeasurementService> existingMeasurementService = new ArrayList<>();
+        List<String> mbNumbers = new ArrayList<>();
+        Map<String, MeasurementService> mbNumberToServiceMap = new HashMap<>();
 
         for (MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
-            String id = measurementService.getId().toString();
-            String mbNumber = measurementService.getMeasurementNumber();
-
-            // Check if measurements exist in eg_mbs_measurements
-            MeasurementService measurementServiceInMBSTable = serviceRequestRepository.getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate, mbNumber);
-
-            if (measurementServiceInMBSTable == null) {
-                throw new RuntimeException("MBS Data does not exist");
-            }
-
-            existingMeasurementService.add(measurementServiceInMBSTable);
+            mbNumbers.add(measurementService.getMeasurementNumber());
         }
 
-        setServiceAuditDetails(existingMeasurementService, measurementServiceRequest);
+        List<MeasurementService> existingMeasurementService = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
+
+        // Create a map to associate mbNumbers with corresponding MeasurementService objects
+        for (MeasurementService existingService : existingMeasurementService) {
+            mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
+        }
+
+        List<MeasurementService> orderedExistingMeasurementService = createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap);
+
+        // Set audit details for orderedExistingMeasurementService
+        setServiceAuditDetails(orderedExistingMeasurementService, measurementServiceRequest);
     }
+
+    public List<MeasurementService> createOrderedMeasurementServiceList(List<String> mbNumbers, Map<String, MeasurementService> mbNumberToServiceMap) {
+        List<MeasurementService> orderedExistingMeasurementService = new ArrayList<>();
+
+        // Populate orderedExistingMeasurementService to match the order of mbNumbers
+        for (String mbNumber : mbNumbers) {
+            MeasurementService existingService = mbNumberToServiceMap.get(mbNumber);
+            if (existingService != null) {
+                orderedExistingMeasurementService.add(existingService);
+            } else {
+                throw new RuntimeException("MBS data does not exist");
+            }
+        }
+
+        return orderedExistingMeasurementService;
+    }
+
 
 
 

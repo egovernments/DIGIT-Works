@@ -54,7 +54,7 @@ public class MeasurementService {
     private Configuration configuration;
 
     @Autowired
-    private MeasurementServiceValidator validator;
+    private MeasurementServiceValidator serviceValidator;
     @Autowired
     private MeasurementRowMapper rowMapper;
 
@@ -85,7 +85,7 @@ public class MeasurementService {
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
         // Just validate tenant id from idGen
         measurementValidator.validateTenantId(request);
-        validator.validateDocumentIds(request.getMeasurements());
+        serviceValidator.validateDocumentIds(request.getMeasurements());
         // enrich measurements
         enrichMeasurement(request);
         MeasurementResponse response = MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
@@ -105,10 +105,10 @@ public class MeasurementService {
         measurementValidator.validateTenantId(measurementRegistrationRequest);
 
         //Validate document IDs from the measurement request
-        validator.validateDocumentIds(measurementRegistrationRequest.getMeasurements());
+        serviceValidator.validateDocumentIds(measurementRegistrationRequest.getMeasurements());
 
         // Validate existing data and set audit details
-        validator.validateExistingDataAndEnrich(measurementRegistrationRequest);
+        serviceValidator.validateExistingDataAndEnrich(measurementRegistrationRequest);
 
         //Updating Cummulative Value
         handleCumulativeUpdate(measurementRegistrationRequest);
@@ -142,12 +142,26 @@ public class MeasurementService {
      converting all measurement registry to measurement-Service
      */
     public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        List<String> mbNumbers = getMbNumbers(measurements);
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
+        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = getMbNumberToServiceMap(measurementServices);
+        List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService = serviceValidator.createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap);
+
+        // Create measurement services for each measurement
+        List<org.egov.works.measurement.web.models.MeasurementService> result = createMeasurementServices(measurements, orderedExistingMeasurementService);
+
+        return result;
+    }
+
+    private List<org.egov.works.measurement.web.models.MeasurementService> createMeasurementServices(List<Measurement> measurements, List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService) {
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
 
-        for (Measurement measurement : measurements) {
-            NamedParameterJdbcTemplate namedParameterJdbcTemplate=new NamedParameterJdbcTemplate(jdbcTemplate);
-            org.egov.works.measurement.web.models.MeasurementService measurementService1=serviceRequestRepository.getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate,measurement.getMeasurementNumber());
+        for (int i = 0; i < measurements.size(); i++) {
+            Measurement measurement = measurements.get(i);
             org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+
+            // Set properties of the measurement service based on the measurement object
             measurementService.setId(measurement.getId());
             measurementService.setTenantId(measurement.getTenantId());
             measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
@@ -158,13 +172,38 @@ public class MeasurementService {
             measurementService.setDocuments(measurement.getDocuments());
             measurementService.setIsActive(measurement.getIsActive());
             measurementService.setAuditDetails(measurement.getAuditDetails());
-            if(measurementService1!=null){
-                measurementService.setWfStatus(measurementService1.getWfStatus());
+
+            // If an existing measurement service exists, set its workflow status
+            org.egov.works.measurement.web.models.MeasurementService existingMeasurementService = orderedExistingMeasurementService.get(i);
+            if (existingMeasurementService != null) {
+                measurementService.setWfStatus(existingMeasurementService.getWfStatus());
             }
+
             measurementServices.add(measurementService);
         }
+
         return measurementServices;
     }
+
+
+
+    public  List<String> getMbNumbers(List<Measurement> measurements){
+        List<String> mbNumbers=new ArrayList<>();
+        for(Measurement measurement:measurements){
+            mbNumbers.add(measurement.getMeasurementNumber());
+        }
+        return mbNumbers;
+    }
+
+    public Map<String, org.egov.works.measurement.web.models.MeasurementService> getMbNumberToServiceMap(List<org.egov.works.measurement.web.models.MeasurementService> measurementServices){
+        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = new HashMap<>();
+        for (org.egov.works.measurement.web.models.MeasurementService existingService : measurementServices) {
+            mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
+        }
+        return mbNumberToServiceMap;
+    }
+
+
 
 
     public  void handleCumulativeUpdate(MeasurementRequest measurementRequest){

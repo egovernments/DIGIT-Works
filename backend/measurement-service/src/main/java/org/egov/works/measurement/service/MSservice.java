@@ -6,7 +6,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.kafka.Producer;
-import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.ResponseInfoFactory;
