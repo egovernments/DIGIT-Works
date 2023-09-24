@@ -48,6 +48,9 @@ public class MeasurementserviceApiController {
     @Autowired
     private MSservice msService;
 
+    private String measurementServiceUrl = "http://localhost:8080/measurement-service/measurement/v1/_search";
+
+
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body) {
         MeasurementServiceResponse measurementServiceResponse = msService.handleCreateMeasurementService(body);
@@ -64,7 +67,6 @@ public class MeasurementserviceApiController {
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
         RestTemplate restTemplate = new RestTemplate();
-        String measurementServiceUrl = "http://localhost:8080/measurement-service/measurement/v1/_search";
         ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(measurementServiceUrl, body, MeasurementResponse.class);
         MeasurementResponse measurementResponse = responseEntity.getBody();
         MeasurementServiceResponse measurementServiceResponse = service.makeSearchResponse(body);

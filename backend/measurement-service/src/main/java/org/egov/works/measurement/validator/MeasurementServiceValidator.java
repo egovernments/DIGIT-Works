@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -98,7 +99,7 @@ public class MeasurementServiceValidator {
             //Getting list every time because tenantId may vary
             List<Measurement> existingMeasurementList=measurementService.searchMeasurements(criteria,searchRequest);
             if (existingMeasurementList.isEmpty()) {
-                throw new RuntimeException("MB Data does not exist");
+                throw new RuntimeException("Measurement data does not exist");
             }
             measurementExisting.add(existingMeasurementList.get(0));
             validateMeasureRequest(existingMeasurementList.get(0),measurement);
@@ -137,17 +138,41 @@ public class MeasurementServiceValidator {
         }
 
         List<MeasurementService> existingMeasurementService = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
-
+        if(existingMeasurementService.size()!=measurementServiceRequest.getMeasurements().size()){
+            throw new RuntimeException("MeasurementService data does not exist");
+        }
         // Create a map to associate mbNumbers with corresponding MeasurementService objects
         for (MeasurementService existingService : existingMeasurementService) {
             mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
         }
 
-        List<MeasurementService> orderedExistingMeasurementService = createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap);
-
-        // Set audit details for orderedExistingMeasurementService
-        setServiceAuditDetails(orderedExistingMeasurementService, measurementServiceRequest);
+        List<MeasurementService> orderedExistingMeasurementService = createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap); //ordering measurementServices
+        matchIdsAndMbNumber(orderedExistingMeasurementService,measurementServiceRequest.getMeasurements()); // Match ids and measurement Numbers
+        setServiceAuditDetails(orderedExistingMeasurementService, measurementServiceRequest); // Set audit details for orderedExistingMeasurementService
     }
+
+    public void matchIdsAndMbNumber(List<MeasurementService> orderedExistingMeasurementService, List<MeasurementService> measurementServices) {
+        List<UUID> existingIds = orderedExistingMeasurementService.stream()
+                .map(MeasurementService::getId)
+                .collect(Collectors.toList());
+
+        List<String> existingMeasurementNumbers = orderedExistingMeasurementService.stream()
+                .map(MeasurementService::getMeasurementNumber)
+                .collect(Collectors.toList());
+
+        List<UUID> newIds = measurementServices.stream()
+                .map(MeasurementService::getId)
+                .collect(Collectors.toList());
+
+        List<String> newMeasurementNumbers = measurementServices.stream()
+                .map(MeasurementService::getMeasurementNumber)
+                .collect(Collectors.toList());
+
+        if (!existingIds.equals(newIds) || !existingMeasurementNumbers.equals(newMeasurementNumbers)) {
+            throw new RuntimeException("Id and Measurement Number is not matching");
+        }
+    }
+
 
     public List<MeasurementService> createOrderedMeasurementServiceList(List<String> mbNumbers, Map<String, MeasurementService> mbNumberToServiceMap) {
         List<MeasurementService> orderedExistingMeasurementService = new ArrayList<>();
@@ -155,11 +180,7 @@ public class MeasurementServiceValidator {
         // Populate orderedExistingMeasurementService to match the order of mbNumbers
         for (String mbNumber : mbNumbers) {
             MeasurementService existingService = mbNumberToServiceMap.get(mbNumber);
-            if (existingService != null) {
-                orderedExistingMeasurementService.add(existingService);
-            } else {
-                throw new RuntimeException("MBS data does not exist");
-            }
+            orderedExistingMeasurementService.add(existingService);
         }
 
         return orderedExistingMeasurementService;
