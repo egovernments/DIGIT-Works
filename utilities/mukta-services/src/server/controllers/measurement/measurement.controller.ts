@@ -61,9 +61,9 @@ class MeasurementController {
                 // Convert the payload according to the configuration
                 const finalResponse = convertObjectForMeasurment(payload, config);
 
-                console.log(finalResponse)
+                // console.log(finalResponse)
                 // Send the final response
-                return response.json(payload);
+                return response.json(finalResponse);
             } else {
                 // Handle the case where contractResponse is null
                 return response.status(404).json({ error: 'Contract not found' });

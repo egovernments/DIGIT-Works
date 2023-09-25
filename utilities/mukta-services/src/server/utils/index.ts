@@ -129,15 +129,31 @@ const errorResponder = (error: any, request: any, response: Response, next: Next
 // Convert the object to the format required for measurement
 const convertObjectForMeasurment = (obj: any, config: any) => {
   const resultBody: Record<string, any> = {};
+
+  const assignValueAtPath = (obj: any, path: string, value: any) => {
+    const pathSegments = path.split('.');
+    let current = obj;
+    for (let i = 0; i < pathSegments.length - 1; i++) {
+      const segment = pathSegments[i];
+      if (!current[segment]) {
+        current[segment] = {};
+      }
+      current = current[segment];
+    }
+    current[pathSegments[pathSegments.length - 1]] = value;
+  };
+
   config.forEach((configObj: any) => {
     const { path, jsonPath } = configObj;
     const jsonPathValue = jp.query(obj, jsonPath);
 
     // Assign jsonPathValue to the corresponding property in resultBody
-    resultBody[path] = jsonPathValue;
+    assignValueAtPath(resultBody, path, jsonPathValue);
   });
+
   return resultBody;
-}
+};
+
 
 // Extract estimateIds from all contracts
 const extractEstimateIds = (contractResponse: any): any[] => {
