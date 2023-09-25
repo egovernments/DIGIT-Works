@@ -110,7 +110,7 @@ const MeasureTable = (props) => {
             <td>{Math.round(row.consumedQ)}</td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={initialState.length > 0 ? "true" : "false"} />
+                <TextInput style={{ width: "80%", marginTop : "12px" }} value={consumedQty} onChange={() => {}} disable={initialState.length > 0 ? "true" : "false"} />
                 <Button
                   className={"plus-button"}
                   onButtonClick={() => {
@@ -118,7 +118,7 @@ const MeasureTable = (props) => {
                   }}
                   label={"+"}
                 >
-                  <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px", width: "20px", height: "20px" }} />
+                  <AddIcon className="addIcon" />
                 </Button>
               </div>
             </td>
@@ -148,9 +148,9 @@ const MeasureTable = (props) => {
                   setInitialState={setInitialState}
                   setShowMeasureCard={setShowMeasureCard}
                   initialState={initialState}
-                  unitRate={row.unitRate}
-                  register={props.isView ? () => { } : register}
-                  setValue={props.isView ? () => { } : setValue}
+                  unitRate={row.unitRate} 
+                  register={props.isView ? () => {} : register}
+                  setValue={props.isView ? () => {} : setValue}
 
                   tableData={props.data}
                   tableKey={tableKey}

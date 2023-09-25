@@ -6,29 +6,6 @@ const ContractDetailsCard = ({ contract }) => {
 
 
     const { t } = useTranslation();
-    // Define the card style
-    const cardStyle = {
-        backgroundColor: "#ffffff",
-        margin: "15px",
-
-        padding: "20px",
-        border: "1px solid #ccc",
-        display: "flex",
-        flexDirection: "column",
-    };
-
-    // Define the style for the container of key-value pairs
-    const keyValueContainerStyle = {
-        display: "grid",
-        gridTemplateColumns: "15% 85%",
-        marginBottom: "10px"
-    };
-
-    // Define the style for labels
-    const labelStyle = {
-        fontWeight: "bold",
-        marginRight: "10px",
-    };
 
     // extract details from contract 
     const {
@@ -53,10 +30,10 @@ const ContractDetailsCard = ({ contract }) => {
     };
 
     return (
-        <div className="contract-details-card" style={cardStyle}>
+        <div className="contract-details-card contract-card" >
             {Object.entries(keyValuePairs).map(([key, value]) => (
-                <div key={key} style={keyValueContainerStyle}>
-                    <span style={labelStyle}>{key}</span>
+                <div key={key} className="key-value-container">
+                    <span className="contract-card-label">{key}</span>
                     <span>{value}</span>
                 </div>
             ))}
