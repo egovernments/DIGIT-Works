@@ -16,6 +16,7 @@ const configEstimateModal = (
     const bsMuster = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll");
     const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase");
     const bsRevisedWO = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("revisedWO");
+    const bsMeasurement = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement")
     
     const configMap = {
         [bsEstimate]: {
@@ -387,6 +388,23 @@ const configEstimateModal = (
                 upload:{
                     isMandatory:false,
                     show:true
+                }
+            }
+        },
+        [bsMeasurement] : {
+            "default":{
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:true
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
             }
         }
