@@ -23,14 +23,23 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     // let contract = data.contracts.filter(element => element.supplementNumber=== null)?.[0]
     if(data.contracts.length === 1) contract = data.contracts[0]
     else {
+        //this condition is added because to show work order when there are multiple object in response array
+        // if(revisedWONumber)
         contract = data.contracts.filter(element => element.supplementNumber && (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]
-
-        contract = {...contract, wfStatus:"ACCEPTED"}
+        contract = contract ? {...contract, wfStatus:"ACCEPTED"} : {}
+        // else
+        // contract = data.contracts.filter(element => (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]   
     }
     
     if(revisedWONumber){
         contract = data?.contracts?.filter(row => row?.supplementNumber===revisedWONumber)?.[0]
     }
+    //Added this condition if from the response array not able to find contract then takes the original contract (usecase : of rejected TE)
+    if(Object.keys(contract)?.length <= 0)
+    {   
+        contract = data?.contracts?.filter((row) => row?.supplementNumber == null && row?.status === "ACTIVE")?.[0];
+    }
+
 
     const contractDetails = {
         title: " ",
@@ -48,8 +57,11 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     if(contract.startDate){
         contractDetails.values.push({ title: "WORKS_START_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.startDate)  || t("NA")})
     }
+    if(contract.endDate && contract?.additionalDetails?.timeExt && revisedWONumber){
+        contractDetails.values.push({ title: "WORKS_ORIGINAL_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate - (Number(contract?.additionalDetails?.timeExt)*24*60*60*1000))  || t("NA")})
+    }
     if(contract.endDate){
-        contractDetails.values.push({ title: "WORKS_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate)  || t("NA")})
+        contractDetails.values.push({ title: contract?.additionalDetails?.timeExt && revisedWONumber ? "WORKS_EXTENDED_END_DATE":"WORKS_ORIGINAL_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate)  || t("NA")})
     }
     if(contract.additionalDetails.timeExt && revisedWONumber){
         contractDetails.values.push({ title: "EXTENSION_REQ", value: contract?.additionalDetails?.timeExt  || t("NA")})

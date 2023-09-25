@@ -377,16 +377,24 @@ class _CreateTimeExtensionRequestPage
                                   timeExtensionState.maybeWhen(orElse: () => false,
                                       loading: () => Loaders.circularLoader(context),
                                       error: (String? error) => Notifiers.getToastMessage(context, error.toString(), 'ERROR'),
-                                      loaded: (ContractsModel? contractsModel) =>
+                                      loaded: (ContractsModel? contractsModel) {
+                                        if (widget.isEdit == true) {
+                                          Notifiers.getToastMessage(
+                                              context, t.translate(i18.workOrder.timeExtensionRequestedUpdatedSuccessfully), "SUCCESS");
+                                          context.router.pop();
+                                        }
+                                        else {
                                           context.router
                                               .popAndPush(
                                               SuccessResponseRoute(
-                                                  header: t.translate(i18.workOrder
-                                                      .timeExtensionRequestedSuccess),
+                                                  header: t.translate(
+                                                      i18.workOrder
+                                                          .timeExtensionRequestedSuccess),
                                                   subHeader: t.translate(
                                                       i18.workOrder.requestID),
                                                   subText:
-                                                  contractsModel?.contracts?.first
+                                                  contractsModel?.contracts
+                                                      ?.first
                                                       .supplementNumber,
                                                   subTitle: t
                                                       .translate(
@@ -402,7 +410,9 @@ class _CreateTimeExtensionRequestPage
                                                     i18
                                                         .common
                                                         .backToHome,
-                                                  ))));
+                                                  )));
+                                        }
+                                      });
                                 },
                                 child: const SizedBox.shrink(),)
                             ],

@@ -240,6 +240,7 @@ router.post(
                 }
                 
                 var date = new Date(issueDate);
+
                 if ((date.getMonth() + 1) <= 3) {
                   fiscalyear = (date.getFullYear() - 1) + "-" + date.getFullYear()
                 } else {

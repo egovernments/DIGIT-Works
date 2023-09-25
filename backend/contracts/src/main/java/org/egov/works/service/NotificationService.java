@@ -98,19 +98,27 @@ public class NotificationService {
         smsDetailsMap.put("projectNumber", orgDetails.get("projectNumber").get(0));
         smsDetailsMap.put("supplementNumber", request.getContract().getSupplementNumber());
 
-        Boolean isSendBack = (request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK") || request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK_TO_ORIGINATOR"));
+        Boolean isSendBack = (request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK") || request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK_TO_ORIGINATOR")
+                || request.getWorkflow().getAction().equalsIgnoreCase("SEND_BACK_TO_CBO"));
         message = buildMessageForRevisedContract(smsDetailsMap, message, isSendBack);
 
-        SMSRequest smsRequestCBO = SMSRequest.builder().mobileNumber(cboMobileNumber).message(message).build();
-        log.info("Sending message to CBO");
-        producer.push(config.getSmsNotifTopic(), smsRequestCBO);
+        smsDetailsMap.put("mobileNumber",cboMobileNumber);
 
-        if (!isSendBack) {
-            pushNotificationToOriginator(request, message);
+        Map<String, Object> additionalField=new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ContractServiceConstants.CONTRACT_REVISION_SEND_BACK_LOCALIZATION_CODE,additionalField);
+        }
+
+        if (isSendBack) {
+            log.info("Sending message to CBO");
+            checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetailsMap);
+        }else{
+            log.info("Sending message to Originator:");
+            pushNotificationToOriginator(request,message,cboMobileNumber);
         }
 
     }
-    private void pushNotificationToOriginator (ContractRequest request, String message) {
+    private void pushNotificationToOriginator (ContractRequest request, String message,String cboMobileNumber) {
 
         Pagination pagination = Pagination.builder()
                 .limit(config.getContractMaxLimit())
@@ -130,10 +138,27 @@ public class NotificationService {
         String officerInChargeUuid = originalContractFromDB.getAuditDetails().getCreatedBy();
         Map<String,String> officerInChargeMobileNumberMap =hrmsUtils.getEmployeeDetailsByUuid(request.getRequestInfo(), request.getContract().getTenantId(),officerInChargeUuid);
         String officerInChargeMobileNumber = officerInChargeMobileNumberMap.get("mobileNumber");
+        Map<String, String> smsDetailsMap = new HashMap<>();
 
-        SMSRequest smsRequestOfficerInCharge = SMSRequest.builder().mobileNumber(officerInChargeMobileNumber).message(message).build();
+        smsDetailsMap.put("mobileNumber",officerInChargeMobileNumber);
+        smsDetailsMap.put("cboMobileNumber",cboMobileNumber);
+        Workflow workflow = request.getWorkflow();
+        String message1 = null;
+
+
+
+        Map<String, Object> additionalField=new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            if ("REJECT".equalsIgnoreCase(workflow.getAction())){
+                setAdditionalFields(request,ContractServiceConstants.CONTRACT_REVISION_REJECT_LOCALIZATION_CODE,additionalField);
+            }
+            else if ("APPROVE".equalsIgnoreCase(workflow.getAction())) {
+                setAdditionalFields(request,ContractServiceConstants.CONTRACT_REVISION_APPROVE_LOCALIZATION_CODE,additionalField);
+            }
+
+        }
         log.info("Sending message to Officer In charge");
-        producer.push(config.getSmsNotifTopic(), smsRequestOfficerInCharge);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetailsMap);
 
     }
 
@@ -542,7 +567,14 @@ public class NotificationService {
 
 
         if(!additionalField.isEmpty()){
-            WorksSmsRequest smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
+            WorksSmsRequest smsRequest= new WorksSmsRequest();
+            if(null!=smsDetails.get("cboMobileNumber")){
+                smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
+                        .mobileNumber(smsDetails.get("cboMobileNumber")).build();
+                log.info("SMS message with additonal fields to CBO:::::" + smsRequest.toString());
+                producer.push(config.getMuktaNotificationTopic(), smsRequest);
+            }
+            smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
                     .mobileNumber(smsDetails.get("mobileNumber")).build();
             log.info("SMS message with additonal fields:::::" + smsRequest.toString());
             producer.push(config.getMuktaNotificationTopic(), smsRequest);

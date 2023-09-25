@@ -205,6 +205,8 @@ class WorkOrder {
   String get requestID => 'WORKS_TIME_EXT_REQUEST_ID';
   String get timeExtensionRequestedSuccessSubText =>
       'WORKS_TIME_EXTENSION_REQ_SUCCESSFULLY_SUB_TEXT';
+  String get timeExtensionRequestedUpdatedSuccessfully =>
+      'WORKS_TIME_EXTENSION_REQ_UPDATED_SUCCESSFULLY';
   String get requestTimeExtension => 'ACTION_TEST_TIME_EXTENSION';
   String get projectClosure => 'ACTION_TEST_PROJECT_CLOSURE';
   String get errNoMusterRollExists => 'ERR_NO_MUSTER_EXISTS';

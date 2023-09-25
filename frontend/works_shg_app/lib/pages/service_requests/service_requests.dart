@@ -341,7 +341,7 @@ class _MyServiceRequestsPage extends State<MyServiceRequestsPage> {
                                                                       title: t.translate(i18
                                                                           .common
                                                                           .status), // Replace with actual data
-                                                                      description: t.translate('WF_CONTRACT_STATE_${contract.wfStatus.toString()}') ??
+                                                                      description: t.translate('WF_CONTRACT_TE_STATE_${contract.wfStatus.toString()}') ??
                                                                           t.translate(i18
                                                                               .common
                                                                               .noValue),
