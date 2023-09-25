@@ -89,16 +89,6 @@ export const transformData = (data) => {
                 "wfStatus": "DRAFTED",
                 "workflow": {
                     "action": "SAVE_AS_DRAFT",
-                    "assignes": [],
-                    "comments": "string",
-                    "verificationDocuments": [
-                        {
-                            "documentType": "string",
-                            "fileStore": "be14ceb8-01ba-485b-a6e2-489e5474a576",
-                            "documentUid": "string",
-                            "additionalDetails": {},
-                        },
-                    ],
                 },
             },
         ],
@@ -111,7 +101,7 @@ export const transformData = (data) => {
     // Process SOR data
     if (data.SOR && Array.isArray(data.SOR)) {
         data.SOR.forEach((sorItem) => {
-            sumSor += sorItem.amount;
+            sumSor += sorItem.measures?.[0]?.rowAmount;
             transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(sorItem, "SOR"));
         });
     }
@@ -119,7 +109,8 @@ export const transformData = (data) => {
     // Process NONSOR data
     if (data.NONSOR && Array.isArray(data.NONSOR)) {
         data.NONSOR.forEach((nonsorItem) => {
-            sumNonSor += nonsorItem.amount;
+            // console.log(nonsorItem, "nnnnnnnnnnnnn")
+            sumNonSor += nonsorItem.measures?.[0]?.rowAmount;
             transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(nonsorItem, "NONSOR"));
         });
     }

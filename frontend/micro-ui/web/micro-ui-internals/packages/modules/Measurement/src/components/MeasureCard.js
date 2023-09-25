@@ -31,10 +31,22 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
         let findIndex = tableState.findIndex((row, index) => {
           return index + 1 === id;
         });
-        if (type === "number") tableState[findIndex].number = value;
-        if (type === "length") tableState[findIndex].length = value;
-        if (type === "width") tableState[findIndex].width = value;
-        if (type === "height") tableState[findIndex].height = value;
+        switch (type) {
+          case "number":
+            tableState[findIndex].number = value;
+            break;
+          case "length":
+            tableState[findIndex].length = value;
+            break;
+          case "width":
+            tableState[findIndex].width = value;
+            break;
+          case "height":
+            tableState[findIndex].height = value;
+            break;
+          default:
+
+        }
         const element = tableState[findIndex];
         const calculatedValue =
           (validate(element.number)) *

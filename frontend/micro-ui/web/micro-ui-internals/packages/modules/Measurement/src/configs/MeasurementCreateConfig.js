@@ -34,6 +34,19 @@ export const CreateConfig = ({ defaultValue }) => {
             ],
           },
           {
+            head: "",
+            subHead: "",
+            body: [
+
+              {
+                type: "component",
+                component: "ViewOnlyCard",
+                withoutLabel: true,
+                key: "viewAmount",
+              },
+            ],
+          },
+          {
 
             // "navLink": "Work Details",
             // "head": "Worksite Photos",
