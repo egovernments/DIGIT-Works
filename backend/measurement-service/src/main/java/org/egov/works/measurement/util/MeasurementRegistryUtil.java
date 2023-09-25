@@ -5,6 +5,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
+import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,9 @@ import java.util.*;
 public class MeasurementRegistryUtil {
     @Autowired
     private IdgenUtil idgenUtil;
+
+    @Autowired
+    private MeasurementRegistry measurementRegistry;
     @Autowired
     private Configuration configuration;
     @Autowired
@@ -86,7 +90,7 @@ public class MeasurementRegistryUtil {
                 .build();
         Pagination pagination= Pagination.builder().offSet(0).build();
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
-        List<Measurement> measurementList = searchMeasurements(measurementCriteria,measurementSearchRequest);
+        List<Measurement> measurementList = measurementRegistry.searchMeasurements(measurementCriteria,measurementSearchRequest);
         if(!measurementList.isEmpty()){
             Measurement latestMeasurement = measurementList.get(0);
             calculateCumulativeValue(latestMeasurement,measurement);
@@ -107,22 +111,6 @@ public class MeasurementRegistryUtil {
         }
     }
 
-    public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
-
-        handleNullPagination(measurementSearchRequest);
-        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
-        return measurements;
-    }
-
-    private void handleNullPagination(MeasurementSearchRequest body){
-        if (body.getPagination() == null) {
-            body.setPagination(new Pagination());
-            body.getPagination().setLimit(null);
-            body.getPagination().setOffSet(null);
-            body.getPagination().setOrder(Pagination.OrderEnum.DESC);
-        }
-    }
-
     public  void handleCumulativeUpdate(MeasurementRequest measurementRequest){
         for(Measurement measurement:measurementRequest.getMeasurements()){
             try {
@@ -140,7 +128,7 @@ public class MeasurementRegistryUtil {
                 .build();
         Pagination pagination= Pagination.builder().offSet(0).build();
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
-        List<Measurement> measurementList =searchMeasurements(measurementCriteria,measurementSearchRequest);
+        List<Measurement> measurementList =measurementRegistry.searchMeasurements(measurementCriteria,measurementSearchRequest);
         if(!measurementList.isEmpty()){
             Measurement latestMeasurement = measurementList.get(0);
             calculateCumulativeValueOnUpdate(latestMeasurement,measurement);
