@@ -71,7 +71,6 @@ output is measurements[{
 */
 
 export const transformData = (data) => {
-    console.log(data, "dddddddddd")
     const transformedData = {
         measurements: [
             {
