@@ -126,6 +126,7 @@ const errorResponder = (error: any, request: any, response: Response, next: Next
   response.status(status).send(getErrorResponse("INTERNAL_SERVER_ERROR", error.message));
 };
 
+// Convert the object to the format required for measurement
 const convertObjectForMeasurment = (obj: any, config: any) => {
   const resultBody: Record<string, any> = {};
   config.forEach((configObj: any) => {
@@ -148,6 +149,34 @@ const extractEstimateIds = (contractResponse: any): any[] => {
   return Array.from(allEstimateIds);
 }
 
+// Filter estimateDetails based on sorId
+const filterEstimateDetails = (estimateDetails: any) => {
+  const estimates: any = {};
+  estimateDetails.forEach((estimate: any) => {
+    if (estimate.sorId !== null) {
+      if (estimates[estimate.sorId] === undefined) {
+        estimates[estimate.sorId] = estimate;
+      } else {
+        estimates[estimate.sorId].additionalDetails.measurement = estimates[estimate.sorId].additionalDetails.measurement.concat(estimate.additionalDetails.measurement);
+      }
+    }
+  });
+  const result = [];
+  for (const key in estimates) {
+    if (estimates.hasOwnProperty(key)) {
+      const sorObject = estimates[key];
+      const measurementArray = sorObject.additionalDetails.measurement;
+
+      // Update sorId in each measurement object
+      measurementArray.forEach((measurement: { sorId: any; }) => {
+        measurement.sorId = sorObject.sorId;
+      });
+    }
+    result.push(estimates[key]);
+  }
+
+  return result;
+}
 export {
   errorResponder,
   errorLogger,
@@ -159,5 +188,6 @@ export {
   convertObjectForMeasurment,
   extractEstimateIds,
   cacheResponse,
-  getCachedResponse
+  getCachedResponse,
+  filterEstimateDetails
 };

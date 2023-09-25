@@ -76,14 +76,25 @@ const search_localization = async (tenantId: string, module: string = "rainmaker
 }
 
 const search_mdms = async (tenantId: string, module: string, master: string, requestinfo: any) => {
-  checkIfCitizen(requestinfo);
+  const requestBody = {
+    RequestInfo: requestinfo.RequestInfo,
+    MdmsCriteria: {
+      tenantId: tenantId,
+      moduleDetails: [
+        {
+          moduleName: module,
+          masterDetails: [
+            {
+              name: master,
+            },
+          ],
+        },
+      ],
+    },
+  };
   return await httpRequest(
     url.resolve(config.host.mdms, config.paths.mdms_search),
-    requestinfo,
-    {
-      tenantId: tenantId,
-      ids: "",
-    }
+    requestBody
   );
 }
 
@@ -111,13 +122,6 @@ const create_pdf_and_upload = async (tenantId: string, key: string, data: any, r
   );
 }
 
-const checkIfCitizen = async (requestinfo: any) => {
-  if (requestinfo.RequestInfo.userInfo.type == "CITIZEN") {
-    return true;
-  } else {
-    return false;
-  }
-}
 
 const search_contract = async (tenantId: string, requestBody: any, cacheKey: any) => {
   return await httpRequest(
@@ -146,10 +150,16 @@ const search_estimate = async (tenantId: string, ids: string, requestBody: any, 
   );
 }
 
-const search_measurement = async (requestBody: any) => {
+const search_measurement = async (requestBody: any, tenantId: string, measurementNumber: string) => {
   return await httpRequest(
     url.resolve(config.host.measurement, config.paths.measurement_search),
-    requestBody,
+    {
+      RequestInfo: requestBody.RequestInfo,
+      criteria: {
+        tenantId: tenantId,
+        measurementNumber: measurementNumber
+      }
+    },
   );
 }
 
