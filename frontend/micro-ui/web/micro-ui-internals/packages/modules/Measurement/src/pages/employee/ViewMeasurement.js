@@ -43,7 +43,6 @@ const ViewMeasurement = () => {
 
   const measures = applicationDetails?.applicationData?.measurements[0].measures;
   console.log(measures, "measure");
-
   const data = applicationDetails?.applicationData;
 
   const estimateDetails = data?.estimate[0]?.estimateDetails || [];

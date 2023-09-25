@@ -3,6 +3,7 @@ import { Card, Header, Button, Loader } from "@egovernments/digit-ui-react-compo
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const CustomCollapsibleTable = ({ children, isTableCollapsed }) => {
   return (
@@ -17,7 +18,7 @@ const CustomCollapsibleTable = ({ children, isTableCollapsed }) => {
 const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
+  const history = useHistory();
   const [isTableCollapsed, setIsTableCollapsed] = useState(false);
 
   const toggleTableCollapse = () => {
@@ -88,12 +89,15 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
                 {columns.map((column, columnIndex) => (
                   <td key={columnIndex}>
                     {column.key === "mbref" ? (
-                      <a
-                        href={`${window.location.origin}${window.location.pathname}?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${row.mbref}`}
-                        style={{ color: "#f37f12" }}
-                      >
-                        {row[column.key]}
-                      </a>
+                      <Link
+                      to={{
+                        pathname: window.location.pathname,
+                        search: `?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${row.mbref}`
+                      }}
+                      style={{ color: "#f37f12" }}
+                    >
+                      {row[column.key]}
+                    </Link>
                     ) : (
                       row[column.key]
                     )}
