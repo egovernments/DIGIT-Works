@@ -1,11 +1,15 @@
 import { Button, Card, Toast, Amount } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
 
-const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate }) => {
+{/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
+const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate , isView }) => {
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+
+
   const { t } = useTranslation();
   const history = useHistory();
   const [total, setTotal] = useState(consumedQty);
@@ -107,6 +111,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
   };
 
   return (
+    <Fragment>
     <Card>
 
       <table className="table reports-table sub-work-table" >
@@ -118,6 +123,14 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
           <tr>
             <td colSpan={"4"}>
               <div style={{ display: "flex", flexDirection: "row" }}>
+              {isView ? (
+                <Button
+                  label={"Close"}
+                  onButtonClick={() => {
+                    setShowMeasureCard(false);
+                  }}
+                />
+              ) : (<>
                 <Button label={"Clear"} onButtonClick={() => {
                   dispatch({ type: "CLEAR_STATE" });
                 }} />
@@ -129,6 +142,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
                   setConsumedQty(total);
                   setShowMeasureCard(false);
                 }} />
+                </>)}
               </div>
             </td>
             <td colSpan={"4"}>
@@ -138,6 +152,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
         </tbody>
       </table>
     </Card>
+    </Fragment>
   );
 });
 

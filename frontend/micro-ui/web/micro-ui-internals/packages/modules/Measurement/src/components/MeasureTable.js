@@ -153,9 +153,8 @@ const MeasureTable = (props) => {
 
                   tableData={props.data}
                   tableKey={tableKey}
-                  tableIndex={index}
-                />
-
+                  tableIndex={index} 
+                  isView = {props?.isView}/>
 
               </td>
             </tr>

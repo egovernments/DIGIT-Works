@@ -41,6 +41,9 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
     contract = data?.contracts?.filter((row) => row?.supplementNumber === revisedWONumber)?.[0];
   }
 
+  let measurements = data?.measurements;
+  const fileStoreIds = measurements[0]?.documents.map((item) => item.id);
+
   let thumbnails = "";
   try {
     thumbnails = await getThumbnails(
@@ -52,7 +55,6 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   }
 
   let estimateDetails = data?.estimate;
-  let measurements = data?.measurements;
 
 
   const contractDetails = {
@@ -143,7 +145,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   return {
     applicationDetails,
 
-    applicationData: { contract: contract, estimate: estimateDetails, measurements :measurements },
+    applicationData: data ,
 
     processInstancesDetails: workflowDetails?.ProcessInstances,
     workflowDetails,
