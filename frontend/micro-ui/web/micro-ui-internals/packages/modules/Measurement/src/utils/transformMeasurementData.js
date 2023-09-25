@@ -26,7 +26,6 @@ export const transformMeasurementData = async (mbNumber) => {
         const measurementResponse = await Digit.MeasurementService.search(criteria, tenantId);
         // Check if the response is valid and contains data
         if (measurementResponse && measurementResponse.measurements) {
-            console.log(measurementResponse, "HHHHHHHHHHH")
             // Perform your data transformation here
             const transformedData = transformData(measurementResponse);
 
