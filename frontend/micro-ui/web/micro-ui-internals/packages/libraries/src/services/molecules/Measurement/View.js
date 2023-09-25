@@ -40,7 +40,7 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   if (revisedWONumber) {
     contract = data?.contracts?.filter((row) => row?.supplementNumber === revisedWONumber)?.[0];
   }
-  debugger;
+
   let measurements = data?.measurements;
   const fileStoreIds = measurements[0]?.documents.map((item) => item.id);
 
