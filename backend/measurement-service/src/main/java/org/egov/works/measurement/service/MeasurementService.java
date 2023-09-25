@@ -4,6 +4,7 @@ package org.egov.works.measurement.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
@@ -63,6 +64,9 @@ public class MeasurementService {
 
     @Autowired
     private WorkflowUtil workflowUtil;
+
+    @Autowired
+    private ErrorConfiguration errorConfigs;
 
     @Autowired
     private ContractUtil contractUtil;
@@ -131,7 +135,7 @@ public class MeasurementService {
      public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
 
         if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
-            throw new IllegalArgumentException("TenantId is required.");
+            throw errorConfigs.tenantIdRequired;
         }
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;
@@ -212,7 +216,7 @@ public class MeasurementService {
                 enrichCumulativeValueOnUpdate(measurement);
             }
             catch (Exception  e){
-                throw new CustomException("","Error during Cumulative enrichment");
+                throw errorConfigs.cumulativeEnrichmentError;
             }
         }
     }
@@ -272,7 +276,7 @@ public class MeasurementService {
                 enrichCumulativeValue(measurement);
             }
             catch (Exception e){
-                throw new CustomException("","Error during Cumulative enrichment");
+                throw errorConfigs.cumulativeEnrichmentError;
             }
             // measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for local-dev remove this
         }

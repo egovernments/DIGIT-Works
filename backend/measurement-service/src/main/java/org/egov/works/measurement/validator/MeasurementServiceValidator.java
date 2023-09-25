@@ -8,7 +8,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
@@ -43,6 +45,9 @@ public class MeasurementServiceValidator {
     private MeasurementRowMapper rowMapper;
 
     @Autowired
+    private ErrorConfiguration errorConfigs;
+
+    @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
 
@@ -68,7 +73,7 @@ public class MeasurementServiceValidator {
             boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
 
             if (!documentIdsMatch) {
-                throw new RuntimeException("Document IDs are invalid");
+                throw errorConfigs.invalidDocuments;
             }
         }
     }
@@ -80,7 +85,7 @@ public class MeasurementServiceValidator {
             Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
 
             if (!isValidContract) {
-                throw new RuntimeException("Estimate Ids are invalid");
+                throw errorConfigs.invalidEstimateID;
             }
         });
     }
@@ -99,7 +104,7 @@ public class MeasurementServiceValidator {
             //Getting list every time because tenantId may vary
             List<Measurement> existingMeasurementList=measurementService.searchMeasurements(criteria,searchRequest);
             if (existingMeasurementList.isEmpty()) {
-                throw new RuntimeException("Measurement data does not exist");
+                throw errorConfigs.measurementDataNotExist;
             }
             measurementExisting.add(existingMeasurementList.get(0));
             validateMeasureRequest(existingMeasurementList.get(0),measurement);
@@ -123,7 +128,7 @@ public class MeasurementServiceValidator {
         }
         for(Measure measure:measurement.getMeasures()){
             if(!measuresIds.contains(measure.getId())){
-                throw new RuntimeException("Measures data does not exist");
+                throw errorConfigs.measuresDataNotExist;
             }
         }
     }
@@ -139,7 +144,7 @@ public class MeasurementServiceValidator {
 
         List<MeasurementService> existingMeasurementService = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
         if(existingMeasurementService.size()!=measurementServiceRequest.getMeasurements().size()){
-            throw new RuntimeException("MeasurementService data does not exist");
+            throw errorConfigs.measurementServiceDataNotExist;
         }
         // Create a map to associate mbNumbers with corresponding MeasurementService objects
         for (MeasurementService existingService : existingMeasurementService) {
@@ -169,7 +174,7 @@ public class MeasurementServiceValidator {
                 .collect(Collectors.toList());
 
         if (!existingIds.equals(newIds) || !existingMeasurementNumbers.equals(newMeasurementNumbers)) {
-            throw new RuntimeException("Id and Measurement Number is not matching");
+            throw errorConfigs.idsAndMbNumberMismatch;
         }
     }
 
@@ -252,12 +257,12 @@ public class MeasurementServiceValidator {
                 return EntityUtils.toString(response.getEntity());
             } else {
                 // Handle non-200 status codes (e.g., by throwing an exception)
-                throw   new RuntimeException("API request failed with status code: " + response.getStatusLine().getStatusCode());
+                throw errorConfigs.apiRequestFailed(response);
             }
         } catch (IOException e) {
             // Handle exceptions (e.g., by logging or rethrowing)
             e.printStackTrace();
-            throw new RuntimeException("API request failed: " + e.getMessage(), e);
+            throw errorConfigs.apiRequestFailedIOexception(e);
         } finally {
             try {
                 // Close the HttpClient
