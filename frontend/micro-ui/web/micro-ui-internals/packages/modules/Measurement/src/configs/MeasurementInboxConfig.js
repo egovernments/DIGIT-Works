@@ -6,20 +6,26 @@ const InboxMeasurementConfig = () => {
     // actionRole: "INDIVIDUAL_CREATOR",
     // actionLink: "masters/create-wageseeker",
     apiDetails: {
-      serviceName: "/measurementservice/v1/_search",
+      serviceName: "/inbox/v2/_search",
       requestParam: {},
       requestBody: {
-        apiOperation: "SEARCH",
-        Individual: {},
+        inbox: {
+          tenantId: Digit.ULBService.getCurrentTenantId(),
+          moduleSearchCriteria: {
+            tenantId: Digit.ULBService.getCurrentTenantId()
+          },
+          processSearchCriteria: {
+            businessService: ["MB"],
+            moduleName: "measurement-service"
+          }
+        }
       },
       minParametersForSearchForm: 1,
       masterName: "commonUiConfig",
-      moduleName: "SearchMeasurementConfig",
-      tableFormJsonPath: "requestParam",
-      filterFormJsonPath: "requestBody.Individual",
-      searchFormJsonPath: "requestBody.Individual",
-      searchFormJsonPath: "requestParam",
-
+      moduleName: "InboxMeasurementConfig",
+      tableFormJsonPath: "requestBody.inbox",
+      filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+      searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
     },
     sections: {
       search: {
@@ -31,7 +37,7 @@ const InboxMeasurementConfig = () => {
           minReqFields: 1,
           defaultValues: {
             ProjectId: "",
-            MBReference: "",
+            measurementNumber: "",
             ProjectType: "",
           },
           fields: [
@@ -41,7 +47,7 @@ const InboxMeasurementConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                name: "MBReference",
+                name: "measurementNumber",
                 error: `PROJECT_PATTERN_ERR_MSG`,
                 validation: { minlength: 2 },
               },
@@ -76,7 +82,6 @@ const InboxMeasurementConfig = () => {
         label: "",
         children: {},
         show: true,
-
       },
       links: {
         uiConfig: {
@@ -213,11 +218,10 @@ const InboxMeasurementConfig = () => {
               jsonPath: "address[0].ward.code",
               additionalCustomization: true,
             },
-
           ],
           enableGlobalSearch: false,
           enableColumnSort: true,
-          resultsJsonPath: "measurements",
+          resultsJsonPath: "Data",
         },
         children: {},
         show: true,

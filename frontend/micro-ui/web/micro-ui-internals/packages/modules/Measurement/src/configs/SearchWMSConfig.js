@@ -18,6 +18,7 @@ const SearchMeasurementConfig = () => {
         minParametersForSearchForm: 1,
         masterName: "commonUiConfig",
         moduleName: "WMSSearchConfig",
+
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
         searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
@@ -165,6 +166,7 @@ const SearchMeasurementConfig = () => {
               {
                 label: "MB_NAME_CBO",
                 jsonPath: "businessObject.contract.additionalDetails.orgName",
+
                 // additionalCustomization: true,
               },
               {
@@ -175,6 +177,7 @@ const SearchMeasurementConfig = () => {
               {
                 label: "MB_AMOUNT",
                 jsonPath: "businessObject.additionalDetails.totalAmount",
+
                 additionalCustomization: true,
               },
             

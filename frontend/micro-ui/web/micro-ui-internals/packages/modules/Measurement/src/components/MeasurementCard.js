@@ -40,11 +40,14 @@ const MeasurementCard = () => {
         link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784`,
         roles: ["EMPLOYEE"],
       },
-
       {
         label: t("MB_SEARCH"),
         link: `/${window?.contextPath}/employee/measurement/searchplain`,
       },
+      {
+        label: t("MB_UPDATE"),
+        link: `/${window?.contextPath}/employee/measurement/update?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784&mbNumber=MB/2023-24/000507`,
+      }
     ],
   };
   return <EmployeeModuleCard {...propsForModuleCard} />;

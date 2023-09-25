@@ -25,7 +25,8 @@ const businessServiceMap = {
   "works.wages":"EXPENSE.WAGES",
   "works.purchase":"EXPENSE.PURCHASE",
   "works.supervision":"EXPENSE.SUPERVISION",
-  revisedWO:"CONTRACT-REVISION"
+  revisedWO:"CONTRACT-REVISION",
+  measurment : "MB"
 };
 
 const inboxModuleNameMap = {
@@ -189,6 +190,9 @@ export const UICustomizations = {
     }
     else if (moduleCode?.includes("revisedWO")) {
       return businessServiceMap?.["revisedWO"];
+    }
+    else if (moduleCode?.includes("measurement")) {
+      return businessServiceMap?.measurment;
     }
     else {
       return businessServiceMap;
@@ -697,7 +701,6 @@ export const UICustomizations = {
     preProcess: (data) => {
     const mbNumber=data?.body?.inbox?.measurementNumber || null;
     const refId= data?.body?.Individual?.referenceId || null;
-    console.log(data,"hjjjjjjjjjj",mbNumber);
     
       return data;
       
