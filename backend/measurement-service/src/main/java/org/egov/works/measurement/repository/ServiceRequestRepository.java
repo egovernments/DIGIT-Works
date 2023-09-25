@@ -77,6 +77,9 @@ public class ServiceRequestRepository {
     public List<org.egov.works.measurement.web.models.MeasurementService> getMeasurementServicesFromMBSTable(NamedParameterJdbcTemplate jdbcTemplate, List<String> mbNumbers) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("mbNumbers", mbNumbers);
+        if(mbNumbers.isEmpty()){
+            return Collections.emptyList();
+        }
 
         try {
             return jdbcTemplate.query(getMBSsql, params, new MeasurementServiceRowMapper());
