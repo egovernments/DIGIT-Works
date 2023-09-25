@@ -33,7 +33,7 @@ const config = {
   host: {
     serverHost: HOST,
     localization: process.env.EGOV_LOCALIZATION_HOST || HOST,
-    mdms: process.env.EGOV_MDMS_HOST || HOST || "http://localhost:8085/",
+    mdms: process.env.EGOV_MDMS_HOST || "http://localhost:8094/",
     pdf: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8087/",
     user: process.env.EGOV_USER_HOST || HOST || "http://localhost:8089/",
     workflow:
@@ -54,7 +54,7 @@ const config = {
     localization_search: "/localization/messages/v1/_search",
     contract_search: "/contract/v1/_search",
     estimate_search: "/estimate/v1/_search",
-    measurement_search: "/measurement-service/measurement/v1/_search",
+    measurement_search: "/measurement-service/v1/_search",
   },
 };
 
