@@ -150,16 +150,18 @@ const search_estimate = async (tenantId: string, ids: string, requestBody: any, 
   );
 }
 
-const search_measurement = async (requestBody: any, tenantId: string, measurementNumber: string) => {
+const search_measurement = async (requestBody: any, tenantId: string, measurementNumber: any, referenceId: any) => {
+  const body = {
+    RequestInfo: requestBody.RequestInfo,
+    criteria: {
+      tenantId: tenantId,
+      measurementNumber: measurementNumber,
+      referenceId: referenceId ? [referenceId] : null
+    }
+  }
   return await httpRequest(
     url.resolve(config.host.measurement, config.paths.measurement_search),
-    {
-      RequestInfo: requestBody.RequestInfo,
-      criteria: {
-        tenantId: tenantId,
-        measurementNumber: measurementNumber
-      }
-    },
+    body,
   );
 }
 
