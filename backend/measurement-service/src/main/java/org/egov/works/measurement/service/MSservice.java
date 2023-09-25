@@ -6,7 +6,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.kafka.Producer;
-import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.ResponseInfoFactory;
@@ -134,7 +133,7 @@ public class MSservice {
      * @param measurementServiceRequest
      * @return
      */
-    public ResponseEntity<MeasurementServiceResponse> updateMeasurementService(MeasurementServiceRequest measurementServiceRequest) {
+    public MeasurementServiceResponse updateMeasurementService(MeasurementServiceRequest measurementServiceRequest) {
 
         // Validate existing data and set audit details
         measurementServiceValidator.validateExistingServiceDataAndEnrich(measurementServiceRequest);
@@ -157,7 +156,7 @@ public class MSservice {
         producer.push(configuration.getServiceUpdateTopic(), response);
 
         // Return the response as a ResponseEntity with HTTP status NOT_IMPLEMENTED
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return response;
     }
 
     public MeasurementResponse updateMeasurementAndGetResponse(MeasurementServiceRequest measurementServiceRequest) {
@@ -165,14 +164,9 @@ public class MSservice {
         MeasurementRequest measurementRequest = makeMeasurementUpdateRequest(measurementServiceRequest);
 
         // Call the updateMeasurement method to update measurements
-        ResponseEntity<MeasurementResponse> responseEntity = measurementService.updateMeasurement(measurementRequest);
+        MeasurementResponse measurementResponse = measurementService.updateMeasurement(measurementRequest);
 
-        // Check if the response status is OK (2xx)
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return responseEntity.getBody();
-        } else {
-            throw new RuntimeException("Error in update measurement");
-        }
+        return  measurementResponse;
     }
 
 

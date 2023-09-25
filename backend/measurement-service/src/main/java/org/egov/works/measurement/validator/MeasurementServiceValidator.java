@@ -8,7 +8,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -40,6 +43,9 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private MeasurementRowMapper rowMapper;
+
+    @Autowired
+    private ErrorConfiguration errorConfigs;
 
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
@@ -67,7 +73,7 @@ public class MeasurementServiceValidator {
             boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
 
             if (!documentIdsMatch) {
-                throw new RuntimeException("Document IDs are invalid");
+                throw errorConfigs.invalidDocuments;
             }
         }
     }
@@ -79,7 +85,7 @@ public class MeasurementServiceValidator {
             Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
 
             if (!isValidContract) {
-                throw new RuntimeException("Estimate Ids are invalid");
+                throw errorConfigs.invalidEstimateID;
             }
         });
     }
@@ -98,7 +104,7 @@ public class MeasurementServiceValidator {
             //Getting list every time because tenantId may vary
             List<Measurement> existingMeasurementList=measurementService.searchMeasurements(criteria,searchRequest);
             if (existingMeasurementList.isEmpty()) {
-                throw new RuntimeException("MB Data does not exist");
+                throw errorConfigs.measurementDataNotExist;
             }
             measurementExisting.add(existingMeasurementList.get(0));
             validateMeasureRequest(existingMeasurementList.get(0),measurement);
@@ -122,32 +128,69 @@ public class MeasurementServiceValidator {
         }
         for(Measure measure:measurement.getMeasures()){
             if(!measuresIds.contains(measure.getId())){
-                throw new RuntimeException("Measures data does not exist");
+                throw errorConfigs.measuresDataNotExist;
             }
         }
     }
-
 
     public void validateExistingServiceDataAndEnrich(MeasurementServiceRequest measurementServiceRequest) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        List<MeasurementService> existingMeasurementService = new ArrayList<>();
+        List<String> mbNumbers = new ArrayList<>();
+        Map<String, MeasurementService> mbNumberToServiceMap = new HashMap<>();
 
         for (MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
-            String id = measurementService.getId().toString();
-            String mbNumber = measurementService.getMeasurementNumber();
-
-            // Check if measurements exist in eg_mbs_measurements
-            MeasurementService measurementServiceInMBSTable = serviceRequestRepository.getMeasurementServiceFromMBSTable(namedParameterJdbcTemplate, mbNumber);
-
-            if (measurementServiceInMBSTable == null) {
-                throw new RuntimeException("MBS Data does not exist");
-            }
-
-            existingMeasurementService.add(measurementServiceInMBSTable);
+            mbNumbers.add(measurementService.getMeasurementNumber());
         }
 
-        setServiceAuditDetails(existingMeasurementService, measurementServiceRequest);
+        List<MeasurementService> existingMeasurementService = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
+        if(existingMeasurementService.size()!=measurementServiceRequest.getMeasurements().size()){
+            throw errorConfigs.measurementServiceDataNotExist;
+        }
+        // Create a map to associate mbNumbers with corresponding MeasurementService objects
+        for (MeasurementService existingService : existingMeasurementService) {
+            mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
+        }
+
+        List<MeasurementService> orderedExistingMeasurementService = createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap); //ordering measurementServices
+        matchIdsAndMbNumber(orderedExistingMeasurementService,measurementServiceRequest.getMeasurements()); // Match ids and measurement Numbers
+        setServiceAuditDetails(orderedExistingMeasurementService, measurementServiceRequest); // Set audit details for orderedExistingMeasurementService
     }
+
+    public void matchIdsAndMbNumber(List<MeasurementService> orderedExistingMeasurementService, List<MeasurementService> measurementServices) {
+        List<UUID> existingIds = orderedExistingMeasurementService.stream()
+                .map(MeasurementService::getId)
+                .collect(Collectors.toList());
+
+        List<String> existingMeasurementNumbers = orderedExistingMeasurementService.stream()
+                .map(MeasurementService::getMeasurementNumber)
+                .collect(Collectors.toList());
+
+        List<UUID> newIds = measurementServices.stream()
+                .map(MeasurementService::getId)
+                .collect(Collectors.toList());
+
+        List<String> newMeasurementNumbers = measurementServices.stream()
+                .map(MeasurementService::getMeasurementNumber)
+                .collect(Collectors.toList());
+
+        if (!existingIds.equals(newIds) || !existingMeasurementNumbers.equals(newMeasurementNumbers)) {
+            throw errorConfigs.idsAndMbNumberMismatch;
+        }
+    }
+
+
+    public List<MeasurementService> createOrderedMeasurementServiceList(List<String> mbNumbers, Map<String, MeasurementService> mbNumberToServiceMap) {
+        List<MeasurementService> orderedExistingMeasurementService = new ArrayList<>();
+
+        // Populate orderedExistingMeasurementService to match the order of mbNumbers
+        for (String mbNumber : mbNumbers) {
+            MeasurementService existingService = mbNumberToServiceMap.get(mbNumber);
+            orderedExistingMeasurementService.add(existingService);
+        }
+
+        return orderedExistingMeasurementService;
+    }
+
 
 
 
@@ -214,12 +257,12 @@ public class MeasurementServiceValidator {
                 return EntityUtils.toString(response.getEntity());
             } else {
                 // Handle non-200 status codes (e.g., by throwing an exception)
-                throw   new RuntimeException("API request failed with status code: " + response.getStatusLine().getStatusCode());
+                throw errorConfigs.apiRequestFailed(response);
             }
         } catch (IOException e) {
             // Handle exceptions (e.g., by logging or rethrowing)
             e.printStackTrace();
-            throw new RuntimeException("API request failed: " + e.getMessage(), e);
+            throw errorConfigs.apiRequestFailedIOexception(e);
         } finally {
             try {
                 // Close the HttpClient

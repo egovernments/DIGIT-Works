@@ -85,7 +85,8 @@ public class MeasurementApiController {
 
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
-        return service.updateMeasurement(body);
+        MeasurementResponse measurementResponse= service.updateMeasurement(body);
+        return new ResponseEntity<>(measurementResponse, HttpStatus.ACCEPTED);
     }
 
     

@@ -24,7 +24,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.IOException;
 import java.util.*;
 
 import javax.validation.constraints.*;
@@ -48,6 +47,9 @@ public class MeasurementserviceApiController {
     @Autowired
     private MSservice msService;
 
+    private String measurementServiceUrl = "http://localhost:8080/measurement-service/measurement/v1/_search";
+
+
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body) {
         MeasurementServiceResponse measurementServiceResponse = msService.handleCreateMeasurementService(body);
@@ -58,13 +60,13 @@ public class MeasurementserviceApiController {
 
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body){
-        return msService.updateMeasurementService(body);
+        MeasurementServiceResponse measurementServiceResponse= msService.updateMeasurementService(body);
+        return new ResponseEntity<>(measurementServiceResponse, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
         RestTemplate restTemplate = new RestTemplate();
-        String measurementServiceUrl = "http://localhost:8080/measurement-service/measurement/v1/_search";
         ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(measurementServiceUrl, body, MeasurementResponse.class);
         MeasurementResponse measurementResponse = responseEntity.getBody();
         MeasurementServiceResponse measurementServiceResponse = service.makeSearchResponse(body);

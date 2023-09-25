@@ -4,6 +4,7 @@ import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,10 +20,13 @@ public class ContractUtil {
     private final RestTemplate restTemplate;
     private final Configuration configuration;
 
+    private final ErrorConfiguration errorConfigs;
+
     @Autowired
-    public ContractUtil(RestTemplate restTemplate, Configuration configuration) {
+    public ContractUtil(RestTemplate restTemplate, Configuration configuration,ErrorConfiguration errorConfigs) {
         this.restTemplate = restTemplate;
         this.configuration = configuration;
+        this.errorConfigs=errorConfigs;
     }
 
     /**
@@ -72,7 +76,7 @@ public class ContractUtil {
         for (Measure measure : measurement.getMeasures()) {
 
             if(targetIdSet.contains(measure.getTargetId())){
-                throw new CustomException("","Duplicate Target Ids received, its should be unique");
+                throw errorConfigs.duplicateTargetIds;
             }
             else targetIdSet.add(measure.getTargetId());  // create a set of received target Ids
 
@@ -80,7 +84,7 @@ public class ContractUtil {
 
             if (!isTargetIdPresent) {
                 isTargetIdsPresent = false;
-                throw new CustomException(Collections.singletonMap("", "No active contract with the given contract id"));
+                throw errorConfigs.noActiveContractId;
             } else {
                 lineItemIdsList.add(measure.getTargetId());
                 estimateIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0));
@@ -111,7 +115,7 @@ public class ContractUtil {
             }
             if(!isValidEstimate){
                 validDimensions = false;
-                throw new CustomException("","No valid Estimate found");
+                throw errorConfigs.noValidEstimate;
             }
         }
         System.out.println(estimateResponse.getEstimates().get(0).getId());
@@ -130,7 +134,7 @@ public class ContractUtil {
         for (Map.Entry<String, ArrayList<String>> entry : lineItemsToEstimateIdMap.entrySet()) {
             String key = entry.getKey();
             if(!measuresTargetIdSet.contains(key)){
-                throw new CustomException("","Incomplete Measures, some active line items are missed for the given contract");
+                throw errorConfigs.incompleteMeasures;
             }
         }
     }

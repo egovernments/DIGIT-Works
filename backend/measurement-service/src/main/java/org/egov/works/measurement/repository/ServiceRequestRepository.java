@@ -45,7 +45,7 @@ public class ServiceRequestRepository {
     @Autowired
     private MeasurementRowMapper rowMapper;
 
-    String getMBSsql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber = :mbNumber";
+    private String getMBSsql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber IN (:mbNumbers)";
 
 
     public ArrayList<Measurement> getMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
@@ -79,15 +79,14 @@ public class ServiceRequestRepository {
         return response;
     }
 
-    public org.egov.works.measurement.web.models.MeasurementService getMeasurementServiceFromMBSTable(NamedParameterJdbcTemplate jdbcTemplate, String mbNumber) {
-
+    public List<org.egov.works.measurement.web.models.MeasurementService> getMeasurementServicesFromMBSTable(NamedParameterJdbcTemplate jdbcTemplate, List<String> mbNumbers) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("mbNumber", mbNumber);
+        params.addValue("mbNumbers", mbNumbers);
 
         try {
-            return jdbcTemplate.queryForObject(getMBSsql, params, new MeasurementServiceRowMapper());
+            return jdbcTemplate.query(getMBSsql, params, new MeasurementServiceRowMapper());
         } catch (EmptyResultDataAccessException e) {
-            return null; // MeasurementService does not exist
+            return Collections.emptyList(); // No MeasurementServices found
         }
     }
 }
