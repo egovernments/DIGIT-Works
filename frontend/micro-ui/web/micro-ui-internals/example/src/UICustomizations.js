@@ -25,7 +25,7 @@ const businessServiceMap = {
   "works.purchase":"EXPENSE.PURCHASE",
   "works.supervision":"EXPENSE.SUPERVISION",
   revisedWO:"CONTRACT-REVISION",
-  measurment : "MB"
+  measurement : "MB"
 };
 
 const inboxModuleNameMap = {
@@ -145,6 +145,31 @@ export const UICustomizations = {
         workflow,
       };
     }
+    if (businessService === businessServiceMap?.measurement) {
+      const workflow = {
+        comment: data.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
+      // ap[0] = {...ap[0]wor:{}}
+      applicationDetails[0] = {...applicationDetails[0],"workflow" : workflow}
+      return {
+        measurements: applicationDetails
+      };
+    }
   },
   enableModalSubmit:(businessService,action,setModalSubmit,data)=>{
     if(businessService === businessServiceMap?.["muster roll"] && action.action==="APPROVE"){
@@ -191,7 +216,7 @@ export const UICustomizations = {
       return businessServiceMap?.["revisedWO"];
     }
     else if (moduleCode?.includes("measurement")) {
-      return businessServiceMap?.measurment;
+      return businessServiceMap?.measurement;
     }
     else {
       return businessServiceMap;
