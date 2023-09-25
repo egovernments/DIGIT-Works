@@ -1,8 +1,9 @@
 /*\
 input is estimatedetails array, contract object , type and measurement object 
-add comments
+output is array of object of type which is passed
 
 */
+
 
 export const transformEstimateData = (lineItems, contract, type, measurement = {}) => {
     const transformedContract = transformContractObject(contract)
@@ -66,3 +67,5 @@ export const transformContractObject = (contract = {}) => {
     }
 
 }
+
+
