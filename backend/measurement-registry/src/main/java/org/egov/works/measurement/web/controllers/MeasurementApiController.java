@@ -1,92 +1,70 @@
 package org.egov.works.measurement.web.controllers;
 
 
-import org.egov.works.measurement.web.models.ErrorRes;
+import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.egov.works.measurement.web.models.MeasurementResponse;
-import org.egov.works.measurement.web.models.MeasurementSearchRequest;
+import org.egov.works.measurement.web.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.egov.works.measurement.web.models.MeasurementSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
-import javax.validation.constraints.*;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
-@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-09-25T13:42:37.896+05:30[Asia/Calcutta]")
+@javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-09-14T11:43:34.268+05:30[Asia/Calcutta]")
 @Controller
 @RequestMapping("")
 public class MeasurementApiController {
 
+    @Autowired
+    private MeasurementRegistry measurementRegistry; // Import MeasurementRegistry if not imported already
+
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
+    private final MeasurementRegistry service;
 
-    @Autowired
-    public MeasurementApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public MeasurementApiController(ObjectMapper objectMapper, HttpServletRequest request, MeasurementRegistry service) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.service = service;
     }
 
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<MeasurementResponse>(objectMapper.readValue("{  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"measurements\" : [ {    \"measures\" : [ {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    }, {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    } ],    \"entryDate\" : 6.027456183070403,    \"documents\" : [ null, null ],    \"measurementNumber\" : \"measurementNumber\",    \"tenantId\" : \"pb.jalandhar,dwss\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"physicalRefNumber\" : \"physicalRefNumber\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"referenceId\" : \"Contract number\"  }, {    \"measures\" : [ {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    }, {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    } ],    \"entryDate\" : 6.027456183070403,    \"documents\" : [ null, null ],    \"measurementNumber\" : \"measurementNumber\",    \"tenantId\" : \"pb.jalandhar,dwss\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"physicalRefNumber\" : \"physicalRefNumber\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"referenceId\" : \"Contract number\"  } ]}", MeasurementResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<MeasurementResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<MeasurementResponse>(HttpStatus.NOT_IMPLEMENTED);
+        return service.createMeasurement(body);
     }
 
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
-    public ResponseEntity<MeasurementResponse> measurementV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<MeasurementResponse>(objectMapper.readValue("{  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"measurements\" : [ {    \"measures\" : [ {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    }, {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    } ],    \"entryDate\" : 6.027456183070403,    \"documents\" : [ null, null ],    \"measurementNumber\" : \"measurementNumber\",    \"tenantId\" : \"pb.jalandhar,dwss\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"physicalRefNumber\" : \"physicalRefNumber\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"referenceId\" : \"Contract number\"  }, {    \"measures\" : [ {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    }, {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    } ],    \"entryDate\" : 6.027456183070403,    \"documents\" : [ null, null ],    \"measurementNumber\" : \"measurementNumber\",    \"tenantId\" : \"pb.jalandhar,dwss\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"physicalRefNumber\" : \"physicalRefNumber\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"referenceId\" : \"Contract number\"  } ]}", MeasurementResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<MeasurementResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<MeasurementResponse> measurementsV1SearchPost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
+        MeasurementResponse response= measurementRegistry.createSearchResponse(body);
+        MeasurementCriteria criteria = body.getCriteria();
+        if (criteria != null) {
+            List<Measurement> measurements = measurementRegistry.searchMeasurements(criteria, body);
+            response.setMeasurements(measurements);
+            return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
         }
-
-        return new ResponseEntity<MeasurementResponse>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
     }
+
 
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<MeasurementResponse>(objectMapper.readValue("{  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"measurements\" : [ {    \"measures\" : [ {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    }, {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    } ],    \"entryDate\" : 6.027456183070403,    \"documents\" : [ null, null ],    \"measurementNumber\" : \"measurementNumber\",    \"tenantId\" : \"pb.jalandhar,dwss\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"physicalRefNumber\" : \"physicalRefNumber\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"referenceId\" : \"Contract number\"  }, {    \"measures\" : [ {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    }, {      \"comments\" : \"comments\",      \"targetId\" : \"contractlineitemid\",      \"breadth\" : 200,      \"documents\" : [ {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      }, {        \"documentType\" : \"documentType\",        \"documentUid\" : \"documentUid\",        \"fileStore\" : \"fileStore\",        \"id\" : \"id\",        \"additionalDetails\" : { }      } ],      \"length\" : 200,      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"measurementId\",      \"numItems\" : 1.4658129805029452,      \"auditDetails\" : {        \"lastModifiedTime\" : 7,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 2      },      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"currentValue\" : 5.962133916683182,      \"cumulativeValue\" : 5.637376656633329,      \"height\" : 200    } ],    \"entryDate\" : 6.027456183070403,    \"documents\" : [ null, null ],    \"measurementNumber\" : \"measurementNumber\",    \"tenantId\" : \"pb.jalandhar,dwss\",    \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",    \"physicalRefNumber\" : \"physicalRefNumber\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"referenceId\" : \"Contract number\"  } ]}", MeasurementResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<MeasurementResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<MeasurementResponse>(HttpStatus.NOT_IMPLEMENTED);
+        MeasurementResponse measurementResponse= service.updateMeasurement(body);
+        return new ResponseEntity<>(measurementResponse, HttpStatus.ACCEPTED);
     }
-
 }

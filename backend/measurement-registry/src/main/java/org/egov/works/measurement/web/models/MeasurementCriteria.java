@@ -30,16 +30,18 @@ import lombok.Builder;
 @Builder
 public class MeasurementCriteria {
     @JsonProperty("referenceId")
-
     private List<String> referenceId = null;
 
     @JsonProperty("measurementNumber")
-
     private String measurementNumber = null;
 
     @JsonProperty("ids")
-
     private List<String> ids = null;
+
+    @JsonProperty("tenantId")
+    @Valid
+    @NotNull
+    private String tenantId = null;
 
 
     public MeasurementCriteria addReferenceIdItem(String referenceIdItem) {
