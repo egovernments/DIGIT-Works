@@ -22,8 +22,6 @@ import java.util.*;
 public class MeasurementService {
 
     @Autowired
-    private ContractUtil contractUtil;
-    @Autowired
     private WorkflowService workflowService;
     @Autowired
     private MeasurementServiceValidator measurementServiceValidator;
@@ -34,11 +32,7 @@ public class MeasurementService {
     @Autowired
     private Configuration configuration;
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
     private MeasurementRegistry measurementRegistry;
-    @Autowired
-    private IdgenUtil idgenUtil;
     @Autowired
     private MeasurementServiceUtil measurementServiceUtil;
 
@@ -106,7 +100,6 @@ public class MeasurementService {
         // Push the response to the service update topic
         producer.push(configuration.getServiceUpdateTopic(), response);
 
-        // Return the response as a ResponseEntity with HTTP status NOT_IMPLEMENTED
         return response;
     }
 

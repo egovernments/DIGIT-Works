@@ -98,7 +98,6 @@ public class MeasurementRegistry {
         // Push the response to the producer
         producer.push(configuration.getUpdateTopic(), response);
 
-        // Return the success response
         return response;
     }
 
