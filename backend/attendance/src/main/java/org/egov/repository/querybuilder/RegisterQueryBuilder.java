@@ -1,5 +1,6 @@
 package org.egov.repository.querybuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.tracer.model.CustomException;
@@ -16,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
+@Slf4j
 public class RegisterQueryBuilder {
 
     @Autowired
@@ -47,6 +49,7 @@ public class RegisterQueryBuilder {
 
     public String getAttendanceRegisterSearchQuery(AttendanceRegisterSearchCriteria searchCriteria, List<Object> preparedStmtList) {
 
+        log.info("Search criteria of attendance search : " + searchCriteria.toString());
         StringBuilder query = new StringBuilder(ATTENDANCE_REGISTER_SELECT_QUERY);
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {

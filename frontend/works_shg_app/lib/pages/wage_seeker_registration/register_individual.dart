@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:works_shg_app/blocs/wage_seeker_registration/wage_seeker_locality_bloc.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/financial_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/individual_details.dart';
 import 'package:works_shg_app/pages/wage_seeker_registration/location_details.dart';
@@ -60,6 +61,12 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
                   .organisationListModel!.organisations!.first.tenantId
                   .toString()),
         );
+    context.read<WageSeekerLocalityBloc>().add(
+      LocalityEventWageSeeker(
+          tenantId: GlobalVariables
+              .organisationListModel!.organisations!.first.tenantId
+              .toString()),
+    );
   }
 
   int currentStep = 0;
@@ -150,9 +157,19 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
                               builder: (context, locationState) {
                             return locationState.maybeWhen(
                                 orElse: () => Container(),
-                                loaded: (Location? location) {
-                                  return getFormConfig(
-                                      wageSeekerMDMS, location);
+                                loaded: (Location? ward) {
+                                  return BlocBuilder<WageSeekerLocalityBloc,
+                                      WageSeekerLocalityState>(
+                                      builder: (context, localityState) {
+                                        return localityState.maybeWhen(orElse:  () => Container(),
+                                          loaded: (Location? locality) {
+                                            return getFormConfig(
+                                                wageSeekerMDMS, ward,locality);
+                                          }
+                                        );
+
+                                    }
+                                  );
                                 });
                           });
                         },
@@ -171,7 +188,7 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
     });
   }
 
-  Widget getFormConfig(WageSeekerMDMS? wageSeekerMDMS, Location? location) {
+  Widget getFormConfig(WageSeekerMDMS? wageSeekerMDMS, Location? ward,Location? locality) {
     switch (currentStep) {
       case 0:
         return IndividualDetailsPage(
@@ -188,7 +205,8 @@ class RegisterIndividualPageState extends State<RegisterIndividualPage> {
           onPressed: updateCurrentStep,
           city: GlobalVariables
               .organisationListModel?.organisations?.first.tenantId,
-          location: location,
+          ward: ward,
+          locality: locality,
           wageSeekerMDMS: wageSeekerMDMS,
         );
       case 2:

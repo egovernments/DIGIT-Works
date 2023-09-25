@@ -1,0 +1,1 @@
+ALTER TABLE jit_payment_inst_details ADD COLUMN isActive boolean DEFAULT true;

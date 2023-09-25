@@ -184,7 +184,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
 
     const sendDataToResponsePage = (individualId, isSuccess, message, showId) => {
         history.push({
-            pathname: `/${window?.contextPath}/employee/masters/response`,
+            pathname: `/${window?.contextPath}/employee/masters/response-wage-seeker`,
             search: individualId ? `?tenantId=${tenantId}&individualId=${individualId}` : '',
             state : {
                 message,
@@ -275,7 +275,7 @@ const ModifyWageSeekerForm = ({createWageSeekerConfig, sessionFormData, setSessi
     }
 
     const onSubmit = (data) => {
-        
+        data = Digit.Utils.trimStringsInObject(data)
         const validationError = validateSelectedSkills(data)
         if(validationError) return
         const wageSeekerPayload = getWageSeekerUpdatePayload({formData: data, wageSeekerDataFromAPI, tenantId, isModify})

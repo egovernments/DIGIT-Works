@@ -71,7 +71,7 @@ public class StaffApiControllerTest {
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         ResponseInfo responseInfo = StaffRequestBuilderTest.getResponseInfo_Success();
 
-        when(staffService.createAttendanceStaff(any(StaffPermissionRequest.class))).thenReturn(staffPermissionRequest);
+        when(staffService.createAttendanceStaff(any(StaffPermissionRequest.class), eq(false))).thenReturn(staffPermissionRequest);
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).thenReturn(responseInfo);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -94,7 +94,7 @@ public class StaffApiControllerTest {
         StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
         staffPermissionRequest.setStaff(null);
 
-        when(staffService.createAttendanceStaff(any(StaffPermissionRequest.class))).thenThrow(new CustomException("STAFF", "Staff is mandatory"));
+        when(staffService.createAttendanceStaff(any(StaffPermissionRequest.class), eq(false))).thenThrow(new CustomException("STAFF", "Staff is mandatory"));
 
         ObjectMapper objectMapper = new ObjectMapper();
         String content = objectMapper.writeValueAsString(staffPermissionRequest);

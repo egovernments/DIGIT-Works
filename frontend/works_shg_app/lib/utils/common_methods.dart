@@ -138,6 +138,15 @@ class CommonMethods {
     return flag;
   }
 
+  static bool validateImageFileExtension(
+      String fileExtension, List<String> supportedExtensions) {
+    // Define the list of supported image file extensions
+    // List<String> supportedExtensions = ['png', 'jpg', 'jpeg'];
+    // Check if the file extension is in the list of supported extensions
+
+    return supportedExtensions.contains(fileExtension);
+  }
+
   static String getRandomName() {
     return '${GlobalVariables.userRequestModel!['id']}${Random().nextInt(3)}';
   }
@@ -158,7 +167,7 @@ class CommonMethods {
   }
 
   static String getLocaleModules() {
-    return 'rainmaker-common,rainmaker-common-masters,rainmaker-contracts,rainmaker-expenditure,rainmaker-attendencemgmt,rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}';
+    return 'rainmaker-common,rainmaker-common-masters,rainmaker-contracts,rainmaker-expenditure,rainmaker-workflow,rainmaker-attendencemgmt,rainmaker-${GlobalVariables.organisationListModel!.organisations!.first.tenantId.toString()},rainmaker-${GlobalVariables.stateInfoListModel!.code.toString()}';
   }
 
   static DateTime firstDayOfWeek(DateTime date) {

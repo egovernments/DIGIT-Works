@@ -2,6 +2,7 @@ package org.egov.works.enrichment;
 
 
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.ProcessInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,6 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.config.ContractServiceConfiguration;
+import org.egov.works.kafka.Producer;
+import org.egov.works.repository.ContractRepository;
+import org.egov.works.service.ContractService;
+import org.egov.works.service.WorkflowService;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +31,7 @@ import java.util.stream.Collectors;
 import org.egov.works.web.models.ContractCriteria;
 import org.egov.works.web.models.Pagination;
 
-import static org.egov.works.util.ContractServiceConstants.JSON_PATH_FOR_CONTRACT_TYPE_VERIFICATION;
-import static org.egov.works.util.ContractServiceConstants.JSON_PATH_FOR_OVER_HEADS_VERIFICATION;
+import static org.egov.works.util.ContractServiceConstants.*;
 
 @Component
 @Slf4j
@@ -57,12 +61,30 @@ public class ContractEnrichment {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private ContractService contractService;
+
+    @Autowired
+    private Producer producer;
+
+    @Autowired
+    private WorkflowService workflowService;
+
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
-        // Enrich LineItems
-        enrichContractLineItems(contractRequest,mdmsForEnrichment);
-        // Enrich Contract Number
-        enrichContractNumber(contractRequest);
+        // Enrich Supplement number and mark contracts and document status as in-workflow
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+            // Enrich Supplement Number
+            enrichSupplementNumber(contractRequest);
+            markContractAndDocumentsStatus(contractRequest, Status.INWORKFLOW);
+            markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INWORKFLOW);
+
+        } else {
+            // Enrich LineItems
+            enrichContractLineItems(contractRequest,mdmsForEnrichment);
+            // Enrich Contract Number
+            enrichContractNumber(contractRequest);
+        }
         // Enrich UUID and AuditDetails
         enrichIdsAgreementDateAndAuditDetailsOnCreate(contractRequest);
 
@@ -128,31 +150,68 @@ public class ContractEnrichment {
         Contract contract = contractRequest.getContract();
         if("REJECT".equalsIgnoreCase(workflow.getAction())){
             log.info("Enriching contract components as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
-            markContractAndDocumentsAsInactive(contractRequest);
-            markLineItemsAndAmountBreakupsAsInactive(contractRequest);
+            markContractAndDocumentsStatus(contractRequest, Status.INACTIVE);
+            markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INACTIVE);
             log.info("Contract components are marked as INACTIVE on workflow 'REJECT' action. Contract Id ["+contract.getId()+"]");
+        }
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)
+                && contractRequest.getContract().getSupplementNumber() != null && "APPROVE".equalsIgnoreCase(workflow.getAction())) {
+            List<Contract> contractsFromDB = contractService.getContracts(ContractCriteria.builder()
+                    .tenantId(contract.getTenantId())
+                    .contractNumber(contract.getContractNumber())
+                    .pagination(Pagination.builder()
+                            .limit(config.getContractMaxLimit())
+                            .offSet(config.getContractDefaultOffset())
+                            .build()).build());
+
+            for (Contract contractFromDB : contractsFromDB) {
+                if (contractFromDB.getStatus().equals(Status.ACTIVE)) {
+                    ContractRequest contractRequestFromDB = ContractRequest.builder()
+                            .requestInfo(contractRequest.getRequestInfo())
+                            .contract(contractFromDB).build();
+                    ProcessInstance processInstance = workflowService.getProcessInstance(contractRequestFromDB);
+                    contractRequestFromDB.getContract().setProcessInstance(processInstance);
+                    markContractAndDocumentsStatus(contractRequestFromDB, Status.INACTIVE);
+                    markLineItemsAndAmountBreakupsStatus(contractRequestFromDB, Status.INACTIVE);
+                    producer.push(config.getUpdateContractTopic(), contractRequestFromDB);
+                }
+            }
+            markContractAndDocumentsStatus(contractRequest, Status.ACTIVE);
+            markLineItemsAndAmountBreakupsStatus(contractRequest, Status.ACTIVE);
+
+            // Push updated end date to kafka topic to update attendance register end date
+            JsonNode requestInfo = mapper.convertValue(contractRequest.getRequestInfo(), JsonNode.class);
+            JsonNode attendanceContractRevisionRequest = mapper.createObjectNode()
+                    .putPOJO("RequestInfo", requestInfo)
+                    .put("tenantId", contract.getTenantId())
+                    .put("referenceId", contract.getContractNumber())
+                    .put("endDate", contract.getEndDate());
+
+            producer.push(config.getUpdateTimeExtensionTopic(), attendanceContractRevisionRequest);
         }
     }
 
-    private void markContractAndDocumentsAsInactive(ContractRequest contractRequest){
+    private void markContractAndDocumentsStatus(ContractRequest contractRequest, Status status){
+        log.info("Setting contract and document status");
         Contract contract=contractRequest.getContract();
         List<Document> documents=contractRequest.getContract().getDocuments();
-        contract.setStatus(Status.INACTIVE);
+        contract.setStatus(status);
         // Check if documents exists then only update the status
         if (documents != null && !documents.isEmpty()) {
             for(Document document:documents){
-                document.setStatus(Status.INACTIVE);
+                document.setStatus(status);
             }
         }
     }
 
-    private void markLineItemsAndAmountBreakupsAsInactive(ContractRequest contractRequest){
+    private void markLineItemsAndAmountBreakupsStatus(ContractRequest contractRequest, Status status){
+        log.info("Setting line items and amount breakup status");
         List<LineItems> lineItems=contractRequest.getContract().getLineItems();
         for(LineItems lineItem:lineItems){
-            lineItem.setStatus(Status.INACTIVE);
+            lineItem.setStatus(status);
             List<AmountBreakup> amountBreakups=lineItem.getAmountBreakups();
             for(AmountBreakup amountBreakup:amountBreakups){
-                amountBreakup.setStatus(Status.INACTIVE);
+                amountBreakup.setStatus(status);
             }
         }
     }
@@ -284,6 +343,28 @@ public class ContractEnrichment {
 
     private void enrichIdsAgreementDateAndAuditDetailsOnCreate(ContractRequest contractRequest) {
         Contract contract = contractRequest.getContract();
+        if (contract.getBusinessService() != null && contract.getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+            Pagination pagination = Pagination.builder()
+                    .limit(config.getContractMaxLimit())
+                    .offSet(config.getContractDefaultOffset())
+                    .build();
+            ContractCriteria contractCriteria = ContractCriteria.builder()
+                    .contractNumber(contractRequest.getContract().getContractNumber())
+                    .status("ACTIVE")
+                    .tenantId(contractRequest.getContract().getTenantId())
+                    .requestInfo(contractRequest.getRequestInfo())
+                    .pagination(pagination)
+                    .build();
+            List<Contract> contractsFromDB = contractService.getContracts(contractCriteria);
+            contract.setOldUuid(contractsFromDB.get(0).getId());
+            Long versionNumber = contractsFromDB.get(0).getVersionNumber();
+            if (versionNumber == null) {
+                versionNumber = 1L;
+            }else {
+                versionNumber += 1;
+            }
+            contract.setVersionNumber(versionNumber);
+        }
         contract.setId(String.valueOf(UUID.randomUUID()));
         BigDecimal agreementDate = contract.getAgreementDate();
         if(agreementDate == null){
@@ -299,9 +380,11 @@ public class ContractEnrichment {
                 amountBreakup.setId(String.valueOf(UUID.randomUUID()));
             }
             List<Document> documents = contract.getDocuments();
-            for (Document document : documents) {
-                document.setId(String.valueOf(UUID.randomUUID()));
-                document.setContractId(contract.getId());
+            if (documents != null) {
+                for (Document document : documents) {
+                    document.setId(String.valueOf(UUID.randomUUID()));
+                    document.setContractId(contract.getId());
+                }
             }
         }
 
@@ -316,6 +399,14 @@ public class ContractEnrichment {
         String generatedContractNumber = idList.get(0);
         contract.setContractNumber(generatedContractNumber);
         log.info("Contract Number enrichment is done. Generated Contract Number["+generatedContractNumber+"]");
+    }
+    private void enrichSupplementNumber (ContractRequest contractRequest) {
+        log.info("Generating supplement number");
+        List<String> idList = idgenUtil.getIdList(contractRequest.getRequestInfo(), contractRequest.getContract().getTenantId(),
+                config.getIdgenSupplementNumberName(), "", 1);
+        String generatedSupplementNumber = idList.get(0);
+        contractRequest.getContract().setSupplementNumber(generatedSupplementNumber);
+        log.info("Supplement Number enrichment is done. Generated Supplement Number ["+generatedSupplementNumber+"]");
     }
     public void enrichSearchContractRequest(ContractCriteria contractCriteria) {
 

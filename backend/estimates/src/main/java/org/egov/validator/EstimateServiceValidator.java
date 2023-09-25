@@ -64,6 +64,7 @@ public class EstimateServiceValidator {
 
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
+        validateEstimateAlreadyExistsForProjectOrNot(request, errorMap);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
@@ -86,6 +87,27 @@ public class EstimateServiceValidator {
 
         if (projects == null || projects.isEmpty())
             throw new CustomException("PROJECT_ID", "The project id : " + estimateRequest.getEstimate().getProjectId() + " is invalid");
+    }
+
+    private void validateEstimateAlreadyExistsForProjectOrNot(EstimateRequest estimateRequest, Map<String, String> errorMap){
+        log.info("EstimateServiceValidator::validateEstimateAlreadyExistsForProjectOrNot");
+        EstimateSearchCriteria searchCriteria = EstimateSearchCriteria.builder().tenantId(estimateRequest.getEstimate().getTenantId())
+                .projectId(estimateRequest.getEstimate().getProjectId()).build();
+
+        List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
+        if(!estimateList.isEmpty()){
+        for(Estimate estimate:estimateList){
+            if(!estimate.getWfStatus().equals("REJECTED")&& !estimate.getStatus().equals(Estimate.StatusEnum.INACTIVE)){
+                log.info("Create :: Estimate  already exists for this project");
+                throw new CustomException("INVALID_ESTIMATE_CREATE_REQUEST", "This Project is already associated to a different Estimate.");
+            }else{
+                log.info("Project Is Not Associated to any Estimate");
+            }
+        }          
+        }else{
+            log.info("Project Is Not Associated to any Estimate");
+        }
+
     }
 
     private void validateWorkFlow(Workflow workflow, Map<String, String> errorMap) {

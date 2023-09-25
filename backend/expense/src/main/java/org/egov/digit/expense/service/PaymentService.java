@@ -84,7 +84,7 @@ public class PaymentService {
         log.info("PaymentService::update");
         Payment payment = paymentRequest.getPayment();
         List<Payment> paymentsFromSearch = validator.validateUpdateRequest(paymentRequest);
-        enrichmentUtil.encrichUpdatePayment(paymentRequest);
+        enrichmentUtil.encrichUpdatePayment(paymentRequest, paymentsFromSearch.get(0));
         paymentRequest.setPayment(paymentsFromSearch.get(0));
         backUpdateBillForPayment(paymentRequest);
 
@@ -146,28 +146,34 @@ public class PaymentService {
 		for (PaymentBill paymentBill : payment.getBills()) {
 
 			Bill billFromSearch = billMap.get(paymentBill.getBillId());
-			billFromSearch.setTotalPaidAmount(
-					getResultantAmount(billFromSearch.getTotalPaidAmount(),paymentBill.getTotalPaidAmount(), isPaymentCancelled));
 			billFromSearch.setPaymentStatus(payment.getStatus());
 			billFromSearch.setAuditDetails(auditDetails);
-
-			for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
+            // Define bill paid amount to ZERO, it will calculeted in bill details
+            BigDecimal billPaidAmount = BigDecimal.ZERO;
+            for (PaymentBillDetail paymentBillDetail : paymentBill.getBillDetails()) {
 
 				BillDetail billDetailFromSearch = billDetailMap.get(paymentBillDetail.getBillDetailId());
 				billDetailFromSearch.setPaymentStatus(paymentBillDetail.getStatus());
-				billDetailFromSearch.setTotalPaidAmount(
-						getResultantAmount(billDetailFromSearch.getTotalPaidAmount(), paymentBillDetail.getTotalPaidAmount(), isPaymentCancelled));
 				billDetailFromSearch.setAuditDetails(auditDetails);
-
-				for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
+                // Define bill details paid amount to ZERO, it will calculeted in lineitem
+                BigDecimal billDetailPaidAmount = BigDecimal.ZERO;
+                for (PaymentLineItem payableLineItem : paymentBillDetail.getPayableLineItems()) {
 
 					LineItem lineItemFromSearch = payableLineItemMap.get(payableLineItem.getLineItemId());
 					lineItemFromSearch.setPaymentStatus(payableLineItem.getStatus());
-					lineItemFromSearch.setPaidAmount(
-							getResultantAmount(lineItemFromSearch.getPaidAmount(), payableLineItem.getPaidAmount(), isPaymentCancelled));
+                    /**
+                     * Set paid amount based on payment status, because don't have support of partial payment
+                     * todo: Remove this while implementing partial payment
+                     */
+                    lineItemFromSearch.setPaidAmount(getLineItemPaidAmountByStatus(lineItemFromSearch, payableLineItem.getStatus()));
+                    billDetailPaidAmount = billDetailPaidAmount.add(lineItemFromSearch.getPaidAmount());
 					lineItemFromSearch.setAuditDetails(auditDetails);
 				}
+                // Add lineitem paid amount to billdetails and
+                billDetailFromSearch.setTotalPaidAmount(billDetailPaidAmount);
+                billPaidAmount = billPaidAmount.add(billDetailPaidAmount);
 			}
+            billFromSearch.setTotalPaidAmount(billPaidAmount);
 		}
 		
         /*
@@ -181,6 +187,22 @@ public class PaymentService {
                     .build();
             producer.push(config.getBillUpdateTopic(), billRequest);
         }
+    }
+
+
+    /**
+     * For lineitem paid amount will be either ZERO or same as Payable amount
+     * @param lineItem
+     * @param paymentStatus
+     * @return
+     */
+    private BigDecimal getLineItemPaidAmountByStatus(LineItem lineItem, PaymentStatus paymentStatus) {
+        BigDecimal paidAmount = BigDecimal.ZERO;
+        if (lineItem != null && paymentStatus != null) {
+            if (paymentStatus.equals(PaymentStatus.SUCCESSFUL))
+                paidAmount = lineItem.getAmount();
+        }
+        return paidAmount;
     }
 
 	private BigDecimal getResultantAmount(BigDecimal billPaidAmount, BigDecimal paymentPaidAmount,

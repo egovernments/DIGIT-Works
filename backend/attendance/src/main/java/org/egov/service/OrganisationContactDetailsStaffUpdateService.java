@@ -4,6 +4,7 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
+import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.util.IndividualServiceUtil;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.AttendanceRegisterSearchCriteria;
@@ -28,6 +29,9 @@ public class OrganisationContactDetailsStaffUpdateService {
     @Autowired
     private IndividualServiceUtil individualServiceUtil;
 
+    @Autowired
+    private AttendanceServiceConfiguration configuration;
+
     public void updateStaffPermissionsForContactDetails(OrgContactUpdateDiff orgContactUpdateDiff) {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(orgContactUpdateDiff.getRequestInfo()).build();
         String tenantId = orgContactUpdateDiff.getTenantId();
@@ -35,12 +39,12 @@ public class OrganisationContactDetailsStaffUpdateService {
 
         for(ContactDetails oldContact : oldContacts) {
             AttendanceRegisterSearchCriteria attendanceRegisterSearchCriteria =
-                    AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(oldContact.getIndividualId()).build();
+                    AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(oldContact.getIndividualId()).limit(configuration.getAttendanceRegisterMaxLimit()).build();
             List<AttendanceRegister> attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
             if(CollectionUtils.isEmpty(attendanceRegisterList)) {
                 try {
                     String userUuid = individualServiceUtil.getIndividualDetails(Collections.singletonList(oldContact.getIndividualId()), requestInfoWrapper.getRequestInfo(), tenantId).get(0).getUserUuid();
-                    attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(userUuid).build();
+                    attendanceRegisterSearchCriteria = AttendanceRegisterSearchCriteria.builder().tenantId(tenantId).staffId(userUuid).limit(configuration.getAttendanceRegisterMaxLimit()).build();
                     attendanceRegisterList = attendanceRegisterService.searchAttendanceRegister(requestInfoWrapper, attendanceRegisterSearchCriteria);
                 }catch (Exception e){
                     log.error(e.toString());
@@ -52,7 +56,7 @@ public class OrganisationContactDetailsStaffUpdateService {
         }
     }
 
-    public void revokePermission(List<AttendanceRegister> attendanceRegisters, String individualOrUserId, RequestInfo requestInfo) {
+    private void revokePermission(List<AttendanceRegister> attendanceRegisters, String individualOrUserId, RequestInfo requestInfo) {
         if(attendanceRegisters.isEmpty()) {
             log.info("No attendance registers to revoke permissions on");
             return;
@@ -70,7 +74,7 @@ public class OrganisationContactDetailsStaffUpdateService {
         log.info("Revoked permission for: " + individualOrUserId + " on " + attendanceRegisters.size() + " registers.");
     }
 
-    public void grantPermission(List<AttendanceRegister> attendanceRegisters, List<ContactDetails> newContacts, RequestInfo requestInfo) {
+    private void grantPermission(List<AttendanceRegister> attendanceRegisters, List<ContactDetails> newContacts, RequestInfo requestInfo) {
         if(attendanceRegisters.isEmpty()) {
             log.info("No attendance registers to grant permission on");
             return;
@@ -86,7 +90,7 @@ public class OrganisationContactDetailsStaffUpdateService {
         }
         StaffPermissionRequest staffPermissionRequest = StaffPermissionRequest.builder()
                 .requestInfo(requestInfo).staff(staffPermissionList).build();
-        staffService.createAttendanceStaff(staffPermissionRequest);
+        staffService.createAttendanceStaff(staffPermissionRequest, true);
         log.info("Granted permission on " + attendanceRegisters.size() + " registers for " + newContacts.size() + " new contacts.");
     }
 

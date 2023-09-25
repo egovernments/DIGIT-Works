@@ -202,6 +202,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 				.tenantId(rs.getString("payee_tenantid"))
 				.type(rs.getString("payee_type"))
 				.auditDetails(payeeAuditDetails)
+				.additionalDetails(getadditionalDetail(rs,"payee_additionaldetails"))
 				.id(rs.getString("payee_id"))
 				.build();
 		return payee;
@@ -252,7 +253,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 			throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
 		}
 
-		if(additionalDetails.isEmpty())
+		if(additionalDetails != null && additionalDetails.isEmpty())
 			additionalDetails = null;
 		
 		return additionalDetails;

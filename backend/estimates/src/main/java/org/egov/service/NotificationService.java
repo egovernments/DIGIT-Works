@@ -17,6 +17,7 @@ import org.egov.util.ProjectUtil;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
 import org.egov.web.models.Workflow;
+import org.egov.web.models.WorksSmsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -84,13 +85,16 @@ public class NotificationService {
         //get project number, location, userDetails
         log.info("get project number, location, userDetails");
         Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
+        Map<String, Object> additionalField=new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ESTIMATE_REJECT_LOCALIZATION_CODE,additionalField);
+        }
 
         log.info("build Message For Reject Action");
         message = buildMessageForRejectAction(estimate, smsDetails, message);
-        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
-
         log.info("push message for REJECT Action");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetails);
+
     }
 
     private void pushNotificationToCreatorForApproveAction(EstimateRequest request) {
@@ -108,14 +112,16 @@ public class NotificationService {
         //get project number, location, userDetails
         log.info("get project number, location, userDetails");
         Map<String, String> smsDetails = getDetailsForSMS(request, createdByUuid);
-
+        Map<String, Object> additionalField=new HashMap<>();
+        if(config.isAdditonalFieldRequired()){
+            setAdditionalFields(request,ESTIMATE_APPROVE_LOCALIZATION_CODE,additionalField);
+        }
         log.info("build Message For Approve Action for Estimate Creator");
         message = buildMessageForApproveAction_Creator(estimate, smsDetails, message);
-        SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(message).build();
-
-        log.info("push Message For Approve Action for Estimate Creator");
-        producer.push(config.getSmsNotifTopic(), smsRequest);
+        checkAdditionalFieldAndPushONSmsTopic(message,additionalField,smsDetails);
     }
+
+
 
     private Map<String, String> getDetailsForSMS(EstimateRequest request, String uuid) {
         RequestInfo requestInfo = request.getRequestInfo();
@@ -194,7 +200,7 @@ public class NotificationService {
      */
     public String getMessage(EstimateRequest request, String msgCode) {
         String rootTenantId = request.getEstimate().getTenantId().split("\\.")[0];
-        RequestInfo requestInfo = request.getRequestInfo();
+        RequestInfo requestInfo= request.getRequestInfo();
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
@@ -265,6 +271,27 @@ public class NotificationService {
         }
 
         return localizedMessageMap;
+    }
+    private void setAdditionalFields(EstimateRequest request, String localizationCode, Map<String, Object> additionalField){
+            additionalField.put("templateCode",localizationCode);
+            additionalField.put("requestInfo",request.getRequestInfo());
+            additionalField.put("tenantId",request.getEstimate().getTenantId());
+    }
+
+    private void checkAdditionalFieldAndPushONSmsTopic( String customizedMessage , Map<String, Object> additionalField,Map<String,String> smsDetails){
+
+
+        if(!additionalField.isEmpty()){
+            WorksSmsRequest smsRequest=WorksSmsRequest.builder().message(customizedMessage).additionalFields(additionalField)
+                    .mobileNumber(smsDetails.get("mobileNumber")).build();
+            log.info("SMS message with Additonal Fields:::::" + smsRequest.toString());
+            producer.push(config.getMuktaNotificationTopic(), smsRequest);
+
+        }else{
+            SMSRequest smsRequest = SMSRequest.builder().mobileNumber(smsDetails.get("mobileNumber")).message(customizedMessage).build();
+            log.info("SMS message without additional fields:::::" + smsRequest.toString());
+            producer.push(config.getSmsNotifTopic(), smsRequest);
+        }
     }
 
 }

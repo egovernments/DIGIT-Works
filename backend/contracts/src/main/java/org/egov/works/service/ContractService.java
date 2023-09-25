@@ -103,7 +103,7 @@ public class ContractService {
         return contracts;
     }
 
-    private List<Contract> getContracts(ContractCriteria contractCriteria) {
+    public List<Contract> getContracts(ContractCriteria contractCriteria) {
 
         //get lineItems from db
         log.info("get lineItems from db");

@@ -176,8 +176,8 @@ const StarEmpty = ({ className, onClick, styles }) => (
   </svg>
 );
 
-const DownloadImgIcon = () => (
-  <svg width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+const DownloadImgIcon = ({styles}) => (
+  <svg width="14" height="17" style={styles} viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M14 6H10V0H4V6H0L7 13L14 6ZM0 15V17H14V15H0Z" fill="#F47738" />
   </svg>
 );
@@ -466,20 +466,20 @@ const UpwardArrow = ({ color = "#00703C", rotate = 0, marginRight = 0 }) => (
 
 const DownwardArrow = (props) => <UpwardArrow {...props} color="#e54d42" rotate={180} />;
 
-const DownloadIcon = ({ styles, className, onClick }) => (
+const DownloadIcon = ({ styles, className, onClick,fill="#f47738" }) => (
   <svg
     style={{ ...styles }}
     width="19"
     height="24"
     viewBox="0 0 19 24"
-    fill="none"
+    fill={fill}
     xmlns="http://www.w3.org/2000/svg"
     className={className}
     onClick={onClick}
   >
     <path
       d="M18.8337 8.5H13.5003V0.5H5.50033V8.5H0.166992L9.50033 17.8333L18.8337 8.5ZM0.166992 20.5V23.1667H18.8337V20.5H0.166992Z"
-      fill="#505A5F"
+      fill={fill}
     />
   </svg>
 );
@@ -580,9 +580,9 @@ function PropertyHouse({ className, styles }) {
   );
 }
 
-const InfoBannerIcon = ({ fill = "#3498DB" }) => {
+const InfoBannerIcon = ({ fill = "#3498DB",styles }) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" style={{...styles}} viewBox="0 0 20 20" fill="none">
       <path
         d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V9H11V15ZM11 7H9V5H11V7Z"
         fill={fill}
@@ -590,17 +590,17 @@ const InfoBannerIcon = ({ fill = "#3498DB" }) => {
     </svg>
   );
 };
-const ShareIcon = ({ styles, className }) => (
-  <svg style={{ ...styles }} className={className} width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+const ShareIcon = ({ styles, className, fill="#f47738" }) => (
+  <svg style={{ ...styles }} className={className} width="18" height="20" viewBox="0 0 18 20" fill={fill} xmlns="http://www.w3.org/2000/svg">
     <path
       d="M15 14.08C14.24 14.08 13.56 14.38 13.04 14.85L5.91 10.7C5.96 10.47 6 10.24 6 10C6 9.76 5.96 9.53 5.91 9.3L12.96 5.19C13.5 5.69 14.21 6 15 6C16.66 6 18 4.66 18 3C18 1.34 16.66 0 15 0C13.34 0 12 1.34 12 3C12 3.24 12.04 3.47 12.09 3.7L5.04 7.81C4.5 7.31 3.79 7 3 7C1.34 7 0 8.34 0 10C0 11.66 1.34 13 3 13C3.79 13 4.5 12.69 5.04 12.19L12.16 16.35C12.11 16.56 12.08 16.78 12.08 17C12.08 18.61 13.39 19.92 15 19.92C16.61 19.92 17.92 18.61 17.92 17C17.92 15.39 16.61 14.08 15 14.08Z"
-      fill="#505A5F"
+      fill={fill}
     />
   </svg>
-);
+)
 
 const RupeeIcon = ({ className }) => (
-  <svg width="48" className={className} height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="48" className={className} height="48" viewBox="0 0 48 48" fill={fill} xmlns="http://www.w3.org/2000/svg">
     <rect width="48" height="48" rx="6" fill="#F47738" />
   </svg>
 );

@@ -98,6 +98,8 @@ public class EstimateServiceConfiguration {
     @Value("${kafka.topics.notification.sms}")
     private String smsNotifTopic;
 
+    @Value("${kafka.topics.works.notification.sms.name}")
+    private String muktaNotificationTopic;
     //Localization
     @Value("${egov.localization.host}")
     private String localizationHost;
@@ -111,6 +113,8 @@ public class EstimateServiceConfiguration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
+    @Value("${sms.isAdditonalFieldRequired}")
+    private boolean isAdditonalFieldRequired;
 
     @PostConstruct
     public void initialize() {

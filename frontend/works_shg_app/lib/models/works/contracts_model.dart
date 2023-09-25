@@ -12,6 +12,7 @@ class ContractsModel with ContractsModelMappable {
 class Contracts with ContractsMappable {
   String? id;
   String? contractNumber;
+  String? businessService;
   String? tenantId;
   String? wfStatus;
   String? executingAuthority;
@@ -27,35 +28,37 @@ class Contracts with ContractsMappable {
   int? completionPeriod;
   String? status;
   List<LineItems>? lineItems;
+  String? supplementNumber;
   List<Documents>? documents;
   ContractAuditDetails? auditDetails;
   ContractAdditionalDetails? additionalDetails;
   ContractProcessInstance? processInstance;
-  ORGAdditionalDetails? orgAdditionalDetails;
 
-  Contracts(
-      {this.id,
-      this.contractNumber,
-      this.tenantId,
-      this.status,
-      this.endDate,
-      this.startDate,
-      this.agreementDate,
-      this.completionPeriod,
-      this.contractType,
-      this.defectLiabilityPeriod,
-      this.executingAuthority,
-      this.issueDate,
-      this.orgId,
-      this.securityDeposit,
-      this.wfStatus,
-      this.totalContractedAmount,
-      this.lineItems,
-      this.documents,
-      this.processInstance,
-      this.additionalDetails,
-      this.auditDetails,
-      this.orgAdditionalDetails});
+  Contracts({
+    this.id,
+    this.contractNumber,
+    this.tenantId,
+    this.status,
+    this.endDate,
+    this.startDate,
+    this.agreementDate,
+    this.completionPeriod,
+    this.contractType,
+    this.defectLiabilityPeriod,
+    this.executingAuthority,
+    this.issueDate,
+    this.orgId,
+    this.securityDeposit,
+    this.wfStatus,
+    this.totalContractedAmount,
+    this.lineItems,
+    this.documents,
+    this.processInstance,
+    this.additionalDetails,
+    this.auditDetails,
+    this.businessService,
+    this.supplementNumber,
+  });
 }
 
 @MappableClass()
@@ -134,6 +137,8 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
   List<EstimateDocs>? estimateDocs;
   List<Description?>? termsAndConditions;
   int? completionPeriod;
+  String? timeExtReason;
+  String? timeExt;
   ContractAdditionalDetails({
     this.officerInChargeId,
     this.attendanceRegisterNumber,
@@ -154,6 +159,8 @@ class ContractAdditionalDetails with ContractAdditionalDetailsMappable {
     this.projectDesc,
     this.officerInChargeName,
     this.officerInChargeDesgn,
+    this.timeExtReason,
+    this.timeExt,
   });
 }
 

@@ -11,7 +11,8 @@ import {
   Row,
   StatusTable,
   Table,
-  WorkflowTimeline
+  WorkflowTimeline,
+  CitizenInfoLabel
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useCallback, useReducer, useState } from "react";
@@ -66,7 +67,8 @@ function ApplicationDetailsContent({
   tenantId,
   businessService,
   customClass,
-  setAttendanceError
+  setAttendanceError,
+  timeExtensionCreate=undefined
 }) {
   const { t } = useTranslation();
   const [localSearchParams, setLocalSearchParams] = useState(() => ({}));
@@ -172,6 +174,9 @@ function ApplicationDetailsContent({
         marginBottom:"1rem"
       }
     }
+    else if(tab?.type==="statusColor"){
+      return tab?.style
+    }
     else {
       return {};
     }
@@ -183,6 +188,7 @@ function ApplicationDetailsContent({
         width:"100%"
       }
     }
+    
     else {
       return {};
     }
@@ -211,7 +217,8 @@ function ApplicationDetailsContent({
       window.location.href.includes("employee/expenditure") 
     ) {
       return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
-    } else if (checkLocation) {
+    } 
+    else if (checkLocation) {
       return { lineHeight: "19px", maxWidth: "600px", minWidth: "280px" };
     } else {
       return {};
@@ -264,9 +271,10 @@ function ApplicationDetailsContent({
       {applicationDetails?.applicationDetails?.map((detail, index) => (
         <CollapseAndExpandGroups groupElements={detail?.expandAndCollapse?.groupComponents} groupHeader={detail?.expandAndCollapse?.groupHeader} headerLabel={detail?.expandAndCollapse?.headerLabel} headerValue={detail?.expandAndCollapse?.headerValue} customClass={detail?.expandAndCollapse?.customClass}>
           <React.Fragment key={index}>
-          <div style={getMainDivStyles()} className={customClass}>
+          
+          <div style={detail.mainDivStyles ? detail.mainDivStyles : getMainDivStyles()} className={customClass}>
             {index === 0 && !detail.asSectionHeader ? (
-              <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
+              <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail?.title)}</CardSubHeader>
             ) : (
               <React.Fragment>
                 <CardSectionHeader
@@ -307,6 +315,8 @@ function ApplicationDetailsContent({
               </table>
             )} */}
             {detail?.isTable && <SubWorkTableDetails data={detail} />}
+
+            {detail?.isInfoLabel && <CitizenInfoLabel info={detail?.infoHeader} text={detail?.infoText} fill={detail?.infoIconFill} className={"doc-banner"} style={detail?.style} textStyle={detail?.textStyle} ></CitizenInfoLabel>}
 
             <StatusTable style={getTableStyles()}>
               {detail?.title &&
@@ -364,7 +374,7 @@ function ApplicationDetailsContent({
                       privacy={value?.privacy}
                       // TODO, Later will move to classes
                       rowContainerStyle={getRowStyles(detail?.tab)}
-                      textStyle={getTextStyles(detail?.tab)}
+                      textStyle={getTextStyles(value?.tab)}
                       labelStyle={getLabelStyles(detail?.tab)}
                       amountStyle={detail?.amountStyle}
                     />
@@ -469,6 +479,7 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.skills  &&  <SkillDetails data={detail?.additionalDetails?.skills} />}
           {detail?.additionalDetails?.photo  &&  <Photos data={detail?.additionalDetails?.photo} OpenImage={OpenImage}/>}
+          {timeExtensionCreate && timeExtensionCreate.getTimeExtensionJSX()}
         </React.Fragment>
         </CollapseAndExpandGroups>
       ))}

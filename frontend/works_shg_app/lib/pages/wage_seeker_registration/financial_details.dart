@@ -173,6 +173,7 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                     }),
                     DigitTextFormField(
                         formControlName: ifscCodeKey,
+                        textCapitalization: TextCapitalization.characters,
                         label: t.translate(i18.common.ifscCode),
                         onChanged: (val) async {
                           final url = Uri.parse(
@@ -217,7 +218,9 @@ class FinancialDetailsState extends State<FinancialDetailsPage> {
                                     form.value[accountNoKey].toString(),
                                 reAccountNumber:
                                     form.value[reAccountNoKey].toString(),
-                                ifscCode: form.value[ifscCodeKey].toString(),
+                                ifscCode: form.value[ifscCodeKey]
+                                    .toString()
+                                    .toUpperCase(),
                                 accountType:
                                     form.value[accountTypeKey].toString(),
                                 bankName: hintText);
