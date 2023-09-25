@@ -75,34 +75,6 @@ public class MeasurementRegistry {
     }
 
     /**
-     * Handles measurement update
-     * @param measurementRegistrationRequest
-     * @return
-     */
-    public MeasurementResponse updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
-        // Just validate tenant id
-        measurementValidator.validateTenantId(measurementRegistrationRequest);
-
-        //Validate document IDs from the measurement request
-        serviceValidator.validateDocumentIds(measurementRegistrationRequest.getMeasurements());
-
-        // Validate existing data and set audit details
-        serviceValidator.validateExistingDataAndEnrich(measurementRegistrationRequest);
-
-        //Updating Cumulative Value
-        measurementRegistryUtil.handleCumulativeUpdate(measurementRegistrationRequest);
-
-        // Create the MeasurementResponse object
-        MeasurementResponse response = measurementRegistryUtil.makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
-
-        // Push the response to the producer
-        producer.push(configuration.getUpdateTopic(), response);
-
-        return response;
-    }
-
-
-    /**
      * Handles search measurements
      */
      public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
@@ -115,7 +87,37 @@ public class MeasurementRegistry {
         return measurements;
     }
 
+    /**
+    Creating ResponseInfo for Registry search Response
+    */
 
+    public MeasurementResponse createSearchResponse(MeasurementSearchRequest body){
+        MeasurementResponse response = new MeasurementResponse();
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(body.getRequestInfo().getApiId())
+                .msgId(body.getRequestInfo().getMsgId())
+                .ts(body.getRequestInfo().getTs())
+                .status("successful")
+                .build());
+        return response;
+    }
+
+    /**
+    Creating ResponseInfo for Service search Response
+    */
+    
+    public MeasurementServiceResponse makeSearchResponse(MeasurementSearchRequest measurementSearchRequest) {
+        MeasurementServiceResponse response = new MeasurementServiceResponse();
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(measurementSearchRequest.getRequestInfo().getApiId())
+                .msgId(measurementSearchRequest.getRequestInfo().getMsgId())
+                .ts(measurementSearchRequest.getRequestInfo().getTs())
+                .status("successful")
+                .build());
+        return response;
+    }
+
+    
     /**
      converting all measurement registry to measurement-Service
      */
@@ -147,9 +149,10 @@ public class MeasurementRegistry {
             measurementService.setReferenceId(measurement.getReferenceId());
             measurementService.setEntryDate(measurement.getEntryDate());
             measurementService.setMeasures(measurement.getMeasures());
+            measurementService.setAuditDetails(measurement.getAuditDetails());
             measurementService.setDocuments(measurement.getDocuments());
             measurementService.setIsActive(measurement.getIsActive());
-            measurementService.setAuditDetails(measurement.getAuditDetails());
+           
 
             // If an existing measurement service exists, set its workflow status
             org.egov.works.measurement.web.models.MeasurementService existingMeasurementService = orderedExistingMeasurementService.get(i);
@@ -163,25 +166,33 @@ public class MeasurementRegistry {
         return measurementServices;
     }
 
-    private void handleNullPagination(MeasurementSearchRequest body){
-        if (body.getPagination() == null) {
-            body.setPagination(new Pagination());
-            body.getPagination().setLimit(null);
-            body.getPagination().setOffSet(null);
-            body.getPagination().setOrder(Pagination.OrderEnum.DESC);
-        }
-    }
+    /**
+     * Handles measurement update
+     * @param measurementRegistrationRequest
+     * @return
+     */
+    public MeasurementResponse updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
+        // Just validate tenant id
+        measurementValidator.validateTenantId(measurementRegistrationRequest);
 
-    public MeasurementResponse createSearchResponse(MeasurementSearchRequest body){
-        MeasurementResponse response = new MeasurementResponse();
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(body.getRequestInfo().getApiId())
-                .msgId(body.getRequestInfo().getMsgId())
-                .ts(body.getRequestInfo().getTs())
-                .status("successful")
-                .build());
+        //Validate document IDs from the measurement request
+        serviceValidator.validateDocumentIds(measurementRegistrationRequest.getMeasurements());
+
+        // Validate existing data and set audit details
+        serviceValidator.validateExistingDataAndEnrich(measurementRegistrationRequest);
+
+        //Updating Cumulative Value
+        measurementRegistryUtil.handleCumulativeUpdate(measurementRegistrationRequest);
+
+        // Create the MeasurementResponse object
+        MeasurementResponse response = measurementRegistryUtil.makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
+
+        // Push the response to the producer
+        producer.push(configuration.getUpdateTopic(), response);
+
         return response;
     }
+
 
     public  List<String> getMbNumbers(List<Measurement> measurements){
         List<String> mbNumbers=new ArrayList<>();
@@ -199,15 +210,6 @@ public class MeasurementRegistry {
         return mbNumberToServiceMap;
     }
 
-    public MeasurementServiceResponse makeSearchResponse(MeasurementSearchRequest measurementSearchRequest) {
-        MeasurementServiceResponse response = new MeasurementServiceResponse();
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(measurementSearchRequest.getRequestInfo().getApiId())
-                .msgId(measurementSearchRequest.getRequestInfo().getMsgId())
-                .ts(measurementSearchRequest.getRequestInfo().getTs())
-                .status("successful")
-                .build());
-        return response;
-    }
+    
 
 }
