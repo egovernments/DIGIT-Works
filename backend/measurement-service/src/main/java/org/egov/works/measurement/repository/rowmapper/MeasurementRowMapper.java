@@ -67,6 +67,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
                 measure.setTargetId(rs.getString("targetId"));
                 measure.setIsActive(rs.getBoolean("mdisActive"));
+                measure.setAdditionalDetails(rs.getString("mdadditionalDetails"));
 
                 AuditDetails auditDetails = new AuditDetails();
                 auditDetails.setCreatedBy(rs.getString("createdby"));
@@ -95,4 +96,5 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
         }
         return new ArrayList<>(measurementMap.values());
     }
+
 }

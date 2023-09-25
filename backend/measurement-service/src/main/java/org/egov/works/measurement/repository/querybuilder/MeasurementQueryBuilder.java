@@ -31,7 +31,7 @@ public class MeasurementQueryBuilder {
             "m.entryDate as entryDate, m.isActive as isActive, m.createdby as createdby, m.lastmodifiedby as lastmodifiedby, " +
             "m.createdtime as createdtime, m.lastmodifiedtime as lastmodifiedtime, m.additionalDetails as additionalDetails, " +
 
-            "md.id as mdid, md.targetId as targetId, md.isActive as mdisActive, md.description as mddescription, md.referenceId as mdreferenceId ," +
+            "md.id as mdid, md.targetId as targetId, md.isActive as mdisActive, md.description as mddescription, md.referenceId as mdreferenceId , md.additionalDetails as mdadditionalDetails, " +
             "md.createdby as mdcreatedby, md.lastmodifiedby as mdlastmodifiedby, md.createdtime as mdcreatedtime, md.lastmodifiedtime as mdlastmodifiedtime, " +
 
             "mm.id as mmid, mm.length as mmlength, mm.breadth as mmbreadth, mm.height as mmheight, mm.numOfItems as mmnumOfItems, mm.currentValue as mmcurrentValue, mm.cumulative as mmcumulativeValue, " +
