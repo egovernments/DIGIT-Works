@@ -58,7 +58,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
           }}
         />
       </td>
-      <td>{state.tableState[index].totalValue}</td>
+      <td>{state.tableState[index].noOfunit}</td>
     </tr>
   );
 };

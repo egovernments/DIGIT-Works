@@ -1,9 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import MeasurementHistory from "./MBHistoryTable";
 
 
-const ContractDetailsCard = ({ contract }) => {
-
+const ContractDetailsCard = ({ contract, isUpdate }) => {
+    // isUpdate = true;
+    // get MBNumber from the url
+    const searchparams = new URLSearchParams(location.search);
+    const mbNumber = searchparams.get("mbNumber");
 
     const { t } = useTranslation();
     // Define the card style
@@ -16,6 +20,18 @@ const ContractDetailsCard = ({ contract }) => {
         display: "flex",
         flexDirection: "column",
     };
+
+    // if (key === "ES_COMMON_LOCATION") {
+    //     const location = value;
+    //     const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+    //     if (location) {
+    //         let locality = location?.locality ? t(`${headerLocale}_ADMIN_${location?.locality}`) : "";
+    //         let ward = location?.ward ? t(`${headerLocale}_ADMIN_${location?.ward}`) : "";
+    //         let city = location?.city ? t(`TENANT_TENANTS_${Digit.Utils.locale.getTransformedLocale(location?.city)}`) : "";
+    //         return <p>{`${ward ? ward + ", " : ""}${city}`}</p>;
+    //     }
+    //     return <p>{"NA"}</p>;
+    // }
 
     // Define the style for the container of key-value pairs
     const keyValueContainerStyle = {
@@ -39,27 +55,36 @@ const ContractDetailsCard = ({ contract }) => {
             projectName: projectName,
             projectDesc: projectDesc,
             locality: projectLoc,
+            ward: projectWard,
         },
     } = contract;
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+    const Pward = projectWard ? t(`${headerLocale}_ADMIN_${projectWard}`) : "";
+    // const city = projectLoc ? t(`${Digit.Utils.locale.getTransformedLocale(projectLoc)}`) : "";
+    const city = projectLoc ? t(`${headerLocale}_ADMIN_${projectLoc}`) : "";
 
     // Create an object for key-value pairs
     const keyValuePairs = {
         "Work Order Number:": contractNumber,
         "Project Id:": projectID,
-        "Project Sanction Date:": "", // did not find the value yet
+        "Project Sanction Date:": "NA", // did not find the value yet
         "Project Name:": projectName,
         "Project Description:": projectDesc,
-        "Project Location:": projectLoc,
+        "Project Location:": `${Pward ? Pward + ", " : ""}${city}`,
     };
 
     return (
-        <div className="contract-details-card" style={cardStyle}>
-            {Object.entries(keyValuePairs).map(([key, value]) => (
-                <div key={key} style={keyValueContainerStyle}>
-                    <span style={labelStyle}>{key}</span>
-                    <span>{value}</span>
-                </div>
-            ))}
+        <div>
+            <div className="contract-details-card" style={cardStyle}>
+                {Object.entries(keyValuePairs).map(([key, value]) => (
+                    <div key={key} style={keyValueContainerStyle}>
+                        <span style={labelStyle}>{key}</span>
+                        <span>{value}</span>
+                    </div>
+                ))}
+            </div>
+
+            {isUpdate && <MeasurementHistory contractNumber={contractNumber} measurementNumber={mbNumber}></MeasurementHistory>}
         </div>
     );
 };

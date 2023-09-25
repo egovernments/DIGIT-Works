@@ -37,7 +37,7 @@ const MeasurementCard = () => {
       },
       {
         label: t("ACTION_TEST_CREATE_MEASUREMENT"),
-        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784`,
+        link: `/${window?.contextPath}/employee/measurement/create?tenantId=pg.citya&workOrderNumber=WO/2023-24/000785`,
         roles: ["EMPLOYEE"],
       },
       {
@@ -46,7 +46,7 @@ const MeasurementCard = () => {
       },
       {
         label: t("MB_UPDATE"),
-        link: `/${window?.contextPath}/employee/measurement/update?tenantId=pg.citya&workOrderNumber=WO/2023-24/000784&mbNumber=MB/2023-24/000507`,
+        link: `/${window?.contextPath}/employee/measurement/update?tenantId=pg.citya&workOrderNumber=WO/2023-24/000785&mbNumber=MB/2023-24/000714`,
       }
     ],
   };

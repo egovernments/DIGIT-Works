@@ -4,6 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const CustomCollapsibleTable = ({ children, isTableCollapsed }) => {
   return (
@@ -30,7 +31,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
 
     body: {
       criteria: {
-        tenantId : tenantId,
+        tenantId: tenantId,
         referenceId: [contractNumber]
         // ids: ["70380648-45c2-4407-bf91-27ede3c481e5"],
       },
@@ -39,7 +40,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
         "offSet": 0,
         "sortBy": "createdTime",
         "order": "DESC"
-    }
+      }
     },
   };
 
@@ -57,14 +58,14 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
 
   const filteredArray = data?.measurements.filter(item => item.measurementNumber !== measurementNumber);
 
-  const filteredRows = filteredArray?.map((item, index) =>({
-    sno :index + 1,
-    mbref : item?.measurementNumber,
-    musterid : t("NA"),
-    mbDate : item?.entryDate,
-    period : t("NA"),
-    status : item?.wfStatus,
-    amount : 1000
+  const filteredRows = filteredArray?.map((item, index) => ({
+    sno: index + 1,
+    mbref: item?.measurementNumber,
+    musterid: t("NA"),
+    mbDate: item?.entryDate,
+    period: t("NA"),
+    status: item?.wfStatus,
+    amount: 1000
   }))
 
   if (isLoading) {
@@ -90,14 +91,14 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
                   <td key={columnIndex}>
                     {column.key === "mbref" ? (
                       <Link
-                      to={{
-                        pathname: window.location.pathname,
-                        search: `?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${row.mbref}`
-                      }}
-                      style={{ color: "#f37f12" }}
-                    >
-                      {row[column.key]}
-                    </Link>
+                        to={{
+                          pathname: window.location.pathname,
+                          search: `?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${row.mbref}`
+                        }}
+                        style={{ color: "#f37f12" }}
+                      >
+                        {row[column.key]}
+                      </Link>
                     ) : (
                       row[column.key]
                     )}
