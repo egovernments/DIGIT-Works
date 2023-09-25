@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
+ 
   const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
   const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
   const data = props.config.key === "SOR" ? sorData : nonsorData;
@@ -109,7 +110,7 @@ const MeasureTable = (props) => {
             <td>{Math.round(row.consumedQ)}</td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%" }} value={consumedQty} onChange={() => { }} disable={initialState.length > 0 ? "true" : "false"} />
+                <TextInput style={{ width: "80%", marginTop : "12px" }} value={consumedQty} onChange={() => {}} disable={initialState.length > 0 ? "true" : "false"} />
                 <Button
                   className={"plus-button"}
                   onButtonClick={() => {
@@ -117,7 +118,7 @@ const MeasureTable = (props) => {
                   }}
                   label={"+"}
                 >
-                  <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px", width: "20px", height: "20px" }} />
+                  <AddIcon className="addIcon" />
                 </Button>
               </div>
             </td>
@@ -147,9 +148,9 @@ const MeasureTable = (props) => {
                   setInitialState={setInitialState}
                   setShowMeasureCard={setShowMeasureCard}
                   initialState={initialState}
-                  unitRate={row.unitRate}
-                  register={props.isView ? () => { } : register}
-                  setValue={props.isView ? () => { } : setValue}
+                  unitRate={row.unitRate} 
+                  register={props.isView ? () => {} : register}
+                  setValue={props.isView ? () => {} : setValue}
 
                   tableData={props.data}
                   tableKey={tableKey}
@@ -178,8 +179,10 @@ const MeasureTable = (props) => {
       </table>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
+
           <span style={{ fontWeight: "bold" }}>Total {props.config.key} MB Amount(For Current Entry): </span>
           <span style={{ marginLeft: "3px" }}><Amount customStyle={{ textAlign: 'right' }} value={totalMBAmount} t={t}></Amount></span>
+
         </div>
       </div>
     </React.Fragment>

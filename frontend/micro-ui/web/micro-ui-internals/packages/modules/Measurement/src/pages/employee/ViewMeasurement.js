@@ -50,8 +50,11 @@ const ViewMeasurement = () => {
   useEffect(() => {
     const processArrays = () => {
       if (data) {
-        const sorData = transformEstimateData(estimateDetails, data?.contracts[0], 'SOR', measures);
-        const nonSorData = transformEstimateData(estimateDetails, data?.contracts[0], 'NON-SOR', measures);
+        const sorData = transformEstimateData(estimateDetails, data?.contracts[0], "SOR", measures);
+        const nonSorData = transformEstimateData(estimateDetails, data?.contracts[0], "NON-SOR", measures);
+
+
+  const measures = applicationDetails?.applicationData?.measurements[0].measures
 
         setSorCategoryArray(sorData);
         setNonSorCategoryArray(nonSorData);
@@ -61,6 +64,7 @@ const ViewMeasurement = () => {
 
     processArrays();
   }, [data]);
+
 
   const tableData = {
     data: {
@@ -92,12 +96,9 @@ const ViewMeasurement = () => {
         tenantId={tenantId}
         showTimeLine={false}
       />
+
       <MeasurementHistory contractNumber={workOrderNumber} measurementNumber={mbNumber} />
-      <MeasureTable
-        {...tableData}
-        isView={true}
-        measureData={measures} 
-      />
+      <MeasureTable {...tableData} isView={true} measureData={measures} />
       <MeasureTable
         {...tableData}
         config={{
@@ -106,6 +107,7 @@ const ViewMeasurement = () => {
         isView={true}
         measureData={measures}
       />
+
       <ApplicationDetails
         applicationDetails={imageDetails}
         isLoading={isLoading}
@@ -118,7 +120,7 @@ const ViewMeasurement = () => {
       />
       <ApplicationDetails
         isLoading={isLoading}
-        applicationData={applicationDetails?.applicationData?.measurements[0]}
+        applicationData={applicationDetails?.applicationData?.measurements}
         moduleCode="measurements"
         timelineStatusPrefix={`WF_${businessService}_`}
         businessService={businessService}
@@ -131,7 +133,7 @@ const ViewMeasurement = () => {
         businessService={businessService}
         applicationNo={mbNumber}
         tenantId={tenantId}
-        applicationDetails={applicationDetails?.applicationData?.measurements[0]}
+        applicationDetails={applicationDetails?.applicationData?.measurements}
         url={Digit.Utils.Urls.measurement.update}
         // setStateChanged={setStateChanged}
         moduleCode="measurements"

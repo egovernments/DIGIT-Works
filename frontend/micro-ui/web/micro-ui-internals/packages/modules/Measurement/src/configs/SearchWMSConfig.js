@@ -18,6 +18,7 @@ const SearchMeasurementConfig = () => {
         minParametersForSearchForm: 1,
         masterName: "commonUiConfig",
         moduleName: "WMSSearchMeasurementConfig",
+
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
         searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
@@ -150,31 +151,33 @@ const SearchMeasurementConfig = () => {
           uiConfig: {
             columns: [
               {
-                label: "MB_REFERENCE_NUMBER-2",
-                jsonPath: "businessObject.referenceId",
-                additionalCustomization: true,
+                 label: "MB__NUMBER",
+                 jsonPath: "ProcessInstance.businessId",
+                 additionalCustomization: true,
               },
               {
-                label: "MB_NUMBER",
-                jsonPath: "ProcessInstance.businessId",
+                label: "MB_REFERENCE_NUMBER",
+                jsonPath: "businessObject.referenceId",
               },
               {
                 label: "MB_PROJECT_NAME",
-                jsonPath: "",
+                jsonPath: "businessObject.contract.additionalDetails.projectName",
               },
               {
                 label: "MB_NAME_CBO",
-                jsonPath: "",
+                jsonPath: "businessObject.contract.additionalDetails.orgName",
+
                 // additionalCustomization: true,
               },
               {
                 label: "MB_STATUS",
-                jsonPath: "",
-                additionalCustomization: true,
+                jsonPath: "ProcessInstance.state.applicationStatus",
+                //additionalCustomization: true,
               },
               {
                 label: "MB_AMOUNT",
-                jsonPath: "totalValue",
+                jsonPath: "businessObject.additionalDetails.totalAmount",
+
                 additionalCustomization: true,
               },
             
