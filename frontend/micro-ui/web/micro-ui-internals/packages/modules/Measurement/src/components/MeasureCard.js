@@ -138,16 +138,17 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
               {isView ? (
                 <Button
+                className={"outline-btn"}
                   label={t("MB_CLOSE")}
                   onButtonClick={() => {
                     setShowMeasureCard(false);
                   }}
                 />
               ) : (<>
-                <Button label={t("MB_CLEAR")} onButtonClick={() => {
+                <Button className={"outline-btn"} label={t("MB_CLEAR")} onButtonClick={() => {
                   dispatch({ type: "CLEAR_STATE" });
                 }} />
-                <Button label={t("MB_DONE")} onButtonClick={() => {
+                <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
                   tableData[tableKey][tableIndex].measures = state.tableState;
                   setValue("measurements", tableData);
 
