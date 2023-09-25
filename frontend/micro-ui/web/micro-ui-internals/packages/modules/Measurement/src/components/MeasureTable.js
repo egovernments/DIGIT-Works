@@ -154,9 +154,8 @@ const MeasureTable = (props) => {
 
                   tableData={props.data}
                   tableKey={tableKey}
-                  tableIndex={index}
-                />
-
+                  tableIndex={index} 
+                  isView = {props?.isView}/>
 
               </td>
             </tr>
@@ -180,8 +179,10 @@ const MeasureTable = (props) => {
       </table>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
-          <span style={{ fontWeight: "bold" }} >{t("MB_TOTAL_AMOUNT")}: </span>
-          <span style={{ marginLeft: "3px" }}>{totalMBAmount}</span>
+
+          <span style={{ fontWeight: "bold" }}>Total {props.config.key} MB Amount(For Current Entry): </span>
+          <span style={{ marginLeft: "3px" }}><Amount customStyle={{ textAlign: 'right' }} value={totalMBAmount} t={t}></Amount></span>
+
         </div>
       </div>
     </React.Fragment>

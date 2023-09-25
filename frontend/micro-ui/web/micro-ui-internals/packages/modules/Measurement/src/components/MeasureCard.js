@@ -1,11 +1,15 @@
 import { Button, Card, Toast, Amount } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
 
-const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate }) => {
+{/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
+const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate , isView }) => {
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+
+
   const { t } = useTranslation();
   const history = useHistory();
   const [total, setTotal] = useState(consumedQty);
@@ -31,10 +35,22 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
         let findIndex = tableState.findIndex((row, index) => {
           return index + 1 === id;
         });
-        if (type === "number") tableState[findIndex].number = value;
-        if (type === "length") tableState[findIndex].length = value;
-        if (type === "width") tableState[findIndex].width = value;
-        if (type === "height") tableState[findIndex].height = value;
+        switch (type) {
+          case "number":
+            tableState[findIndex].number = value;
+            break;
+          case "length":
+            tableState[findIndex].length = value;
+            break;
+          case "width":
+            tableState[findIndex].width = value;
+            break;
+          case "height":
+            tableState[findIndex].height = value;
+            break;
+          default:
+
+        }
         const element = tableState[findIndex];
         const calculatedValue =
           (validate(element.number)) *
@@ -107,6 +123,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
   };
 
   return (
+    <Fragment>
     <Card>
 
       <table className="table reports-table sub-work-table" >
@@ -118,6 +135,15 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
           <tr>
             <td colSpan={"4"}>
               <div style={{ display: "flex", flexDirection: "row" }}>
+
+              {isView ? (
+                <Button
+                  label={t("MB_CLOSE")}
+                  onButtonClick={() => {
+                    setShowMeasureCard(false);
+                  }}
+                />
+              ) : (<>
                 <Button label={t("MB_CLEAR")} onButtonClick={() => {
                   dispatch({ type: "CLEAR_STATE" });
                 }} />
@@ -129,6 +155,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
                   setConsumedQty(total);
                   setShowMeasureCard(false);
                 }} />
+                </>)}
               </div>
             </td>
             <td colSpan={"4"}>
@@ -138,6 +165,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
         </tbody>
       </table>
     </Card>
+    </Fragment>
   );
 });
 
