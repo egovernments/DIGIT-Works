@@ -639,7 +639,7 @@ export const UICustomizations = {
       
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      console.log(key,value);
+      // console.log(key,value);
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
@@ -776,8 +776,8 @@ export const UICustomizations = {
       
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      console.log(key,value);
-      console.log(row,"qwertyuiop");
+      // console.log(key,value);
+      // console.log(row,"qwertyuiop");
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result

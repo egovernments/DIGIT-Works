@@ -34,9 +34,9 @@ const ViewMeasurement = () => {
   const nonSorEstimates = applicationDetails?.applicationData?.estimate[0]?.estimateDetails.filter(item => item.category === 'NONSOR');
 
   const measures = applicationDetails?.applicationData?.measurements[0].measures
-  console.log(measures, "measure")
+  // console.log(measures, "measure")
 
-  console.log(sorEstimates, "estimate");
+  // console.log(sorEstimates, "estimate");
 
   const tableData = {
     "data" : {
@@ -69,9 +69,9 @@ const ViewMeasurement = () => {
       <Card className="override-card view-utilization-card">
         <Button 
         className={"view-utilization-btn"} 
-        label={"View Utilisation Statement"}>
+        label={t("MB_VIEW_UTILISATION_STATE")}>
         </Button>
-        <Card>Total amount</Card>
+        <Card>{t("MB_AMOUNT_TOTAL")}</Card>
       </Card>
       <MeasureTable {...tableData} isView = {true} measureData = {measures}/>
       <ApplicationDetails

@@ -136,7 +136,7 @@ const MeasurementHistory = ({ contractNumber }) => {
       <Button 
       className={"collapse-button"}
       onButtonClick={toggleTableCollapse}
-      label={isTableCollapsed ? 'Show MB History' : 'Hide MB History'}>
+      label={isTableCollapsed ? t('MB_SHOW_HISTORY') : t('MB_HIDE_HISTORY')}>
       </Button>
     </Card>
   );
