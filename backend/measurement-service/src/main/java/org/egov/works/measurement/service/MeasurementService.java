@@ -42,35 +42,13 @@ import org.egov.works.measurement.web.models.MeasurementCriteria;
 @Slf4j
 public class MeasurementService {
     @Autowired
-    private MdmsUtil mdmsUtil;
-    @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
     private Producer producer;
-
-    @Autowired
-    private WorkflowService workflowService;
-
     @Autowired
     private Configuration configuration;
-
     @Autowired
     private MeasurementServiceValidator serviceValidator;
     @Autowired
-    private MeasurementRowMapper rowMapper;
-
-    @Autowired
-    private MeasurementEnrichment enrichmentUtil;
-
-    @Autowired
-    private WorkflowUtil workflowUtil;
-
-    @Autowired
     private ErrorConfiguration errorConfigs;
-
-    @Autowired
-    private ContractUtil contractUtil;
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
@@ -79,7 +57,8 @@ public class MeasurementService {
     private ResponseInfoFactory responseInfoFactory;
     @Autowired
     private MeasurementValidator measurementValidator;
-
+    @Autowired
+    private MeasurementRegistryUtil measurementRegistryUtil;
 
     /**
      * Handles measurement create
@@ -87,13 +66,15 @@ public class MeasurementService {
      * @return
      */
     public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
-        // Just validate tenant id from idGen
+
+        //  validate tenant id
         measurementValidator.validateTenantId(request);
+        // validate documents ids if present
         serviceValidator.validateDocumentIds(request.getMeasurements());
         // enrich measurements
-        enrichMeasurement(request);
+        measurementRegistryUtil.enrichMeasurement(request);
+        // create a response
         MeasurementResponse response = MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
-
         // push to kafka topic
         producer.push(configuration.getCreateMeasurementTopic(),request);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
@@ -114,12 +95,11 @@ public class MeasurementService {
         // Validate existing data and set audit details
         serviceValidator.validateExistingDataAndEnrich(measurementRegistrationRequest);
 
-        //Updating Cummulative Value
-        handleCumulativeUpdate(measurementRegistrationRequest);
-
+        //Updating Cumulative Value
+        measurementRegistryUtil.handleCumulativeUpdate(measurementRegistrationRequest);
 
         // Create the MeasurementResponse object
-        MeasurementResponse response = makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
+        MeasurementResponse response = measurementRegistryUtil.makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
 
         // Push the response to the producer
         producer.push(configuration.getUpdateTopic(), response);
@@ -130,7 +110,7 @@ public class MeasurementService {
 
 
     /**
-     * Helper function to search measurements
+     * Handles search measurements
      */
      public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
 
@@ -210,8 +190,6 @@ public class MeasurementService {
         return response;
     }
 
-
-
     public  List<String> getMbNumbers(List<Measurement> measurements){
         List<String> mbNumbers=new ArrayList<>();
         for(Measurement measurement:measurements){
@@ -228,32 +206,6 @@ public class MeasurementService {
         return mbNumberToServiceMap;
     }
 
-
-
-
-    public  void handleCumulativeUpdate(MeasurementRequest measurementRequest){
-        for(Measurement measurement:measurementRequest.getMeasurements()){
-            try {
-                enrichCumulativeValueOnUpdate(measurement);
-            }
-            catch (Exception  e){
-                throw errorConfigs.cumulativeEnrichmentError;
-            }
-        }
-    }
-
-    public MeasurementResponse makeUpdateResponse(List<Measurement> measurements,MeasurementRequest measurementRegistrationRequest) {
-        MeasurementResponse response = new MeasurementResponse();
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(measurementRegistrationRequest.getRequestInfo().getApiId())
-                .msgId(measurementRegistrationRequest.getRequestInfo().getMsgId())
-                .ts(measurementRegistrationRequest.getRequestInfo().getTs())
-                .status("successful")
-                .build());
-        response.setMeasurements(measurements);
-        return response;
-    }
-
     public MeasurementServiceResponse makeSearchResponse(MeasurementSearchRequest measurementSearchRequest) {
         MeasurementServiceResponse response = new MeasurementServiceResponse();
         response.setResponseInfo(ResponseInfo.builder()
@@ -265,115 +217,4 @@ public class MeasurementService {
         return response;
     }
 
-
-    /**
-     * Helper function to enrich a measurement
-     * @param request
-     */
-    public void enrichMeasurement(MeasurementRequest request){
-
-        String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
-        List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), request.getMeasurements().size());
-        List<Measurement> measurements = request.getMeasurements();
-//        enrichCumulativeValue(request);
-        for (int i = 0; i < measurements.size(); i++) {
-            Measurement measurement = measurements.get(i);
-
-            // enrich UUID
-            measurement.setId(UUID.randomUUID());
-            // enrich the Audit details
-            measurement.setAuditDetails(AuditDetails.builder()
-                    .createdBy(request.getRequestInfo().getUserInfo().getUuid())
-                    .createdTime(System.currentTimeMillis())
-                    .lastModifiedTime(System.currentTimeMillis())
-                    .build());
-
-            // enrich measures in a measurement
-            enrichMeasures(measurement);
-            // enrich IdGen
-            measurement.setMeasurementNumber(measurementNumberList.get(i));
-            // enrich Cumulative value
-            try {
-                enrichCumulativeValue(measurement);
-            }
-            catch (Exception e){
-                throw errorConfigs.cumulativeEnrichmentError;
-            }
-            // measurement.setMeasurementNumber("DEMO_ID_TILL_MDMS_DOWN");  // for local-dev remove this
-        }
-    }
-    public void enrichCumulativeValue(Measurement measurement){
-        MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
-                                                  .referenceId(Collections.singletonList(measurement.getReferenceId()))
-                                                  .tenantId(measurement.getTenantId())
-                                                  .build();
-        Pagination pagination= Pagination.builder().offSet(0).build();
-        MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
-        List<Measurement> measurementList = searchMeasurements(measurementCriteria,measurementSearchRequest);
-        if(!measurementList.isEmpty()){
-            Measurement latestMeasurement = measurementList.get(0);
-            calculateCumulativeValue(latestMeasurement,measurement);
-        }
-        else{
-            for(Measure measure : measurement.getMeasures()){
-                measure.setCumulativeValue(measure.getCurrentValue());
-            }
-        }
-    }
-
-    public void enrichCumulativeValueOnUpdate(Measurement measurement){
-        MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
-                .referenceId(Collections.singletonList(measurement.getReferenceId()))
-                .tenantId(measurement.getTenantId())
-                .build();
-        Pagination pagination= Pagination.builder().offSet(0).build();
-        MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
-        List<Measurement> measurementList =searchMeasurements(measurementCriteria,measurementSearchRequest);
-        if(!measurementList.isEmpty()){
-            Measurement latestMeasurement = measurementList.get(0);
-            calculateCumulativeValueOnUpdate(latestMeasurement,measurement);
-        }
-        else{
-            for(Measure measure : measurement.getMeasures()){
-                measure.setCumulativeValue(measure.getCurrentValue());
-            }
-        }
-    }
-
-    public void calculateCumulativeValue(Measurement latestMeasurement,Measurement currMeasurement){
-        Map<String,BigDecimal> targetIdtoCumulativeMap = new HashMap<>();
-        for(Measure measure:latestMeasurement.getMeasures()){
-            targetIdtoCumulativeMap.put(measure.getTargetId(),measure.getCumulativeValue());
-        }
-        for(Measure measure:currMeasurement.getMeasures()){
-            measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));
-        }
-    }
-    public void calculateCumulativeValueOnUpdate(Measurement latestMeasurement,Measurement currMeasurement){
-        Map<String,BigDecimal> targetIdtoCumulativeMap = new HashMap<>();
-        for(Measure measure:latestMeasurement.getMeasures()){
-            targetIdtoCumulativeMap.put(measure.getTargetId(),measure.getCumulativeValue().subtract(measure.getCurrentValue()));
-        }
-        for(Measure measure:currMeasurement.getMeasures()){
-            measure.setCumulativeValue( targetIdtoCumulativeMap.get(measure.getTargetId()).add(measure.getCurrentValue()));
-        }
-    }
-    /**
-     * Helper function to enriches a measure
-     * @param measurement
-     */
-    public void enrichMeasures(Measurement measurement){
-        List<Measure> measureList = measurement.getMeasures();
-        if(measurement.getDocuments()!=null){
-            for(Document document:measurement.getDocuments()){
-                document.setId(UUID.randomUUID().toString());
-            }
-        }
-        for (Measure measure : measureList) {
-            measure.setId(UUID.randomUUID());
-            measure.setReferenceId(measurement.getId().toString());
-            measure.setAuditDetails(measurement.getAuditDetails());
-            measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
-        }
-    }
 }
