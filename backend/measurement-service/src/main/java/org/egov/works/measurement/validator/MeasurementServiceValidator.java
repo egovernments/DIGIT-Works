@@ -1,26 +1,22 @@
 package org.egov.works.measurement.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.Criteria;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
+import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +48,7 @@ public class MeasurementServiceValidator {
 
 
     @Autowired
-    private org.egov.works.measurement.service.MeasurementService measurementService;
+    private MeasurementRegistry measurementRegistry;
 
 
     @Value("${egov.filestore.host}")
@@ -102,7 +98,7 @@ public class MeasurementServiceValidator {
             criteria.setTenantId(measurement.getTenantId());
 
             //Getting list every time because tenantId may vary
-            List<Measurement> existingMeasurementList=measurementService.searchMeasurements(criteria,searchRequest);
+            List<Measurement> existingMeasurementList= measurementRegistry.searchMeasurements(criteria,searchRequest);
             if (existingMeasurementList.isEmpty()) {
                 throw errorConfigs.measurementDataNotExist;
             }
@@ -146,7 +142,7 @@ public class MeasurementServiceValidator {
         if(existingMeasurementService.size()!=measurementServiceRequest.getMeasurements().size()){
             throw errorConfigs.measurementServiceDataNotExist;
         }
-        // Create a map to associate mbNumbers with corresponding MeasurementService objects
+        // Create a map to associate mbNumbers with corresponding MeasurementRegistry objects
         for (MeasurementService existingService : existingMeasurementService) {
             mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
         }

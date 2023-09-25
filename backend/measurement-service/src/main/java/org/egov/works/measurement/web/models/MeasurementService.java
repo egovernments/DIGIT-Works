@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * MeasurementService
+ * MeasurementRegistry
  */
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-09-15T11:39:57.604+05:30[Asia/Calcutta]")

@@ -8,22 +8,17 @@ import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.measurement.repository.querybuilder.MeasurementQueryBuilder;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
-import org.egov.works.measurement.web.models.AuditDetails;
-import org.egov.works.measurement.service.MeasurementService;
 import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.*;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.egov.works.measurement.service.MeasurementService;
 
 import java.util.*;
 

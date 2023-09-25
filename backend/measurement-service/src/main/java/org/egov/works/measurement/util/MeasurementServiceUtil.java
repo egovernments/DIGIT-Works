@@ -3,6 +3,7 @@ package org.egov.works.measurement.util;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class MeasurementServiceUtil {
 
     @Autowired
-    private org.egov.works.measurement.service.MeasurementService measurementService;
+    private MeasurementRegistry measurementRegistry;
     @Autowired
     private IdgenUtil idgenUtil;
     @Autowired
@@ -128,7 +129,7 @@ public class MeasurementServiceUtil {
         MeasurementRequest measurementRequest = makeMeasurementUpdateRequest(measurementServiceRequest);
 
         // Call the updateMeasurement method to update measurements
-        MeasurementResponse measurementResponse = measurementService.updateMeasurement(measurementRequest);
+        MeasurementResponse measurementResponse = measurementRegistry.updateMeasurement(measurementRequest);
 
         return  measurementResponse;
     }

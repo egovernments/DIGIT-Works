@@ -1,9 +1,7 @@
 package org.egov.works.measurement.web.controllers;
 
 
-import org.egov.common.contract.response.ResponseInfo;
-import org.egov.works.measurement.service.MeasurementService;
-import org.egov.works.measurement.web.models.ErrorRes;
+import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.egov.works.measurement.web.models.MeasurementResponse;
 import org.egov.works.measurement.web.models.*;
@@ -12,8 +10,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.egov.works.measurement.web.models.MeasurementSearchRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -34,14 +29,14 @@ import javax.servlet.http.HttpServletRequest;
 public class MeasurementApiController {
 
     @Autowired
-    private MeasurementService measurementService; // Import MeasurementService if not imported already
+    private MeasurementRegistry measurementRegistry; // Import MeasurementRegistry if not imported already
 
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
-    private final MeasurementService service;
+    private final MeasurementRegistry service;
 
-    public MeasurementApiController(ObjectMapper objectMapper, HttpServletRequest request, MeasurementService service) {
+    public MeasurementApiController(ObjectMapper objectMapper, HttpServletRequest request, MeasurementRegistry service) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.service = service;
@@ -56,10 +51,10 @@ public class MeasurementApiController {
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementsV1SearchPost(
             @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
-        MeasurementResponse response=measurementService.createSearchResponse(body);
+        MeasurementResponse response= measurementRegistry.createSearchResponse(body);
         MeasurementCriteria criteria = body.getCriteria();
         if (criteria != null) {
-            List<Measurement> measurements = measurementService.searchMeasurements(criteria, body);
+            List<Measurement> measurements = measurementRegistry.searchMeasurements(criteria, body);
             response.setMeasurements(measurements);
             return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
         }
