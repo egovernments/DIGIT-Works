@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-const HOST = process.env.EGOV_HOST || "https://works-dev.digit.org/";
+const HOST = process.env.EGOV_HOST || "https://unified-dev.digit.org/";
 
 if (!HOST) {
   console.log("You need to set the HOST variable");
@@ -33,7 +33,7 @@ const config = {
   host: {
     serverHost: HOST,
     localization: process.env.EGOV_LOCALIZATION_HOST || HOST,
-    mdms: process.env.EGOV_MDMS_HOST || "http://localhost:8094/",
+    mdms: process.env.EGOV_MDMS_HOST || HOST || "http://localhost:8094/",
     pdf: process.env.EGOV_PDF_HOST || HOST || "http://localhost:8087/",
     user: process.env.EGOV_USER_HOST || HOST || "http://localhost:8089/",
     workflow:
