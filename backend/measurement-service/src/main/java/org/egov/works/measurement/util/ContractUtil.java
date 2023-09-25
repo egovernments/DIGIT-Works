@@ -57,6 +57,7 @@ public class ContractUtil {
         Map<String, ArrayList<String>> lineItemsToEstimateIdMap = new HashMap<>();
         List<String> lineItemIdsList = new ArrayList<>();
         List<String> estimateIdsList = new ArrayList<>();
+        Set<String> estimateIdsSet = new HashSet<>();
         List<String> estimateLineItemIdsList = new ArrayList<>();
         Map<String,ArrayList<BigDecimal>> lineItemsToDimentionsMap = new HashMap<>();
         Set<String> targetIdSet = new HashSet<>();
@@ -87,7 +88,8 @@ public class ContractUtil {
                 throw errorConfigs.noActiveContractId;
             } else {
                 lineItemIdsList.add(measure.getTargetId());
-                estimateIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0));
+                if(!estimateIdsSet.contains(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0))) estimateIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0)); // take only unique ids
+                estimateIdsSet.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0));     // add estimateId to estimateId set
                 estimateLineItemIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(1));
                 ArrayList<BigDecimal> dimensionList = new ArrayList<>();
                 dimensionList.add(measure.getLength()); dimensionList.add(measure.getBreadth()); dimensionList.add(measure.getHeight());  // L B H
@@ -170,6 +172,7 @@ public class ContractUtil {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(estimateSearchUrl);
         builder.queryParam("tenantId",tenantId);
         builder.queryParam("ids",estimateIdsList);
+
         String preparedUrl = builder.toUriString();
 
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
