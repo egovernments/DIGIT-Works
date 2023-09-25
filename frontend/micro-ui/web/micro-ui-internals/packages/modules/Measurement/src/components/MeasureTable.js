@@ -148,9 +148,9 @@ const MeasureTable = (props) => {
                   setInitialState={setInitialState}
                   setShowMeasureCard={setShowMeasureCard}
                   initialState={initialState}
-                  unitRate={row.unitRate}
-                  register={props.isView ? () => { } : register}
-                  setValue={props.isView ? () => { } : setValue}
+                  unitRate={row.unitRate} 
+                  register={props.isView ? () => {} : register}
+                  setValue={props.isView ? () => {} : setValue}
 
                   tableData={props.data}
                   tableKey={tableKey}
