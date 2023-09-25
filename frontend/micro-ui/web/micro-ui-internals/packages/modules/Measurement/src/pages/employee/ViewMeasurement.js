@@ -53,6 +53,9 @@ const ViewMeasurement = () => {
         const sorData = transformEstimateData(estimateDetails, data?.contracts[0], 'SOR', measures);
         const nonSorData = transformEstimateData(estimateDetails, data?.contracts[0], 'NON-SOR', measures);
 
+
+  const measures = applicationDetails?.applicationData?.measurements[0].measures
+
         setSorCategoryArray(sorData);
         setNonSorCategoryArray(nonSorData);
         setLoading(false);
@@ -61,6 +64,7 @@ const ViewMeasurement = () => {
 
     processArrays();
   }, [data]);
+
 
   const tableData = {
     data: {
@@ -92,6 +96,7 @@ const ViewMeasurement = () => {
         tenantId={tenantId}
         showTimeLine={false}
       />
+
       <MeasurementHistory contractNumber={workOrderNumber} measurementNumber={mbNumber} />
       <MeasureTable
         {...tableData}
@@ -106,6 +111,7 @@ const ViewMeasurement = () => {
         isView={true}
         measureData={measures}
       />
+
       <ApplicationDetails
         applicationDetails={imageDetails}
         isLoading={isLoading}

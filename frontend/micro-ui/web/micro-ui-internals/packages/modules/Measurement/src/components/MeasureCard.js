@@ -135,18 +135,19 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
           <tr>
             <td colSpan={"4"}>
               <div style={{ display: "flex", flexDirection: "row" }}>
+
               {isView ? (
                 <Button
-                  label={"Close"}
+                  label={t("MB_CLOSE")}
                   onButtonClick={() => {
                     setShowMeasureCard(false);
                   }}
                 />
               ) : (<>
-                <Button label={"Clear"} onButtonClick={() => {
+                <Button label={t("MB_CLEAR")} onButtonClick={() => {
                   dispatch({ type: "CLEAR_STATE" });
                 }} />
-                <Button label={"Done"} onButtonClick={() => {
+                <Button label={t("MB_DONE")} onButtonClick={() => {
                   tableData[tableKey][tableIndex].measures = state.tableState;
                   setValue("measurements", tableData);
 
@@ -158,7 +159,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
               </div>
             </td>
             <td colSpan={"4"}>
-              SubTotal: {total}
+              {t("MB_SUBTOTAL")}: {total}
             </td>
           </tr>
         </tbody>

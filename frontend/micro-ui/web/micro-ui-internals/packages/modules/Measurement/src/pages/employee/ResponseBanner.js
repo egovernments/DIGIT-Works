@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { EditIcon, AddNewIcon, InboxIcon , ArrowRightInbox } from "@egovernments/digit-ui-react-components";
+import { EditIcon, AddNewIcon, InboxIcon , ArrowRightInbox , CreateLoiIcon } from "@egovernments/digit-ui-react-components";
 
 import { useHistory } from "react-router-dom";
 
@@ -43,15 +43,10 @@ const MeasurementServiceResponse = () => {
 
 
     const goToHome = () => {
-
-
         history.push({
             pathname: "/digit-ui/employee",
 
         });
-
-
-
     };
 
     // Customize the message based on success or failure
@@ -72,18 +67,23 @@ const MeasurementServiceResponse = () => {
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
 
-
+                <div className="link">
+                        <CreateLoiIcon style={{ width: '24px', height: '24px' }} />
+                        <Link to={`/${window.contextPath}/employee/measurement/create`}>
+                            {t("MB_GO_TO_CREATE")}
+                        </Link>
+                    </div>
                     <div className="link " >
                         <ArrowRightInbox style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
-                            {"MB_GO_INBOX"}
+                            {t("MB_GO_INBOX")}
                         </Link>
                     </div>
 
                     <div className="link">
                         <AddNewIcon style={{ width: '24px', height: '24px' }} />
                         <Link to={`/${window.contextPath}/employee/measurement/inbox`}>
-                            {"MB_ADD_READING"}
+                            {t("MB_ADD_READING")}
                         </Link>
                     </div>
                 </div>
@@ -91,7 +91,7 @@ const MeasurementServiceResponse = () => {
             </Card>
 
             <ActionBar>
-                <SubmitBar label={"MB_GO_HOME"} onSubmit={goToHome} />
+                <SubmitBar label={t("MB_GO_HOME")} onSubmit={goToHome} />
             </ActionBar>
         </React.Fragment>
 

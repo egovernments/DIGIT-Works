@@ -12,7 +12,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
   return (
     <tr key={index}>
       <td>{state.tableState[index].sNo}</td>
-      <td>{state.tableState[index].isDeduction ? "YES" : "NO"}</td>
+      <td>{state.tableState[index].isDeduction ? "MB_YES" : "MB_NO"}</td>
       <td>{state.tableState[index].description}</td>
       <td>
         <TextInput
