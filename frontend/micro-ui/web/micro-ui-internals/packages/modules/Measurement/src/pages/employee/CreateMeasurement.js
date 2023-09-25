@@ -59,7 +59,6 @@ const CreateMeasurement = () => {
 
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
-    console.log(data, "ddddddddddddd")
 
     // Create the measurement payload with transformed data
     const measurements = transformData(data);
