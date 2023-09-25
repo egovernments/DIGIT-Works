@@ -17,7 +17,7 @@ const SearchMeasurementConfig = () => {
         },
         minParametersForSearchForm: 1,
         masterName: "commonUiConfig",
-        moduleName: "WMSSearchConfig",
+        moduleName: "WMSSearchMeasurementConfig",
 
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
