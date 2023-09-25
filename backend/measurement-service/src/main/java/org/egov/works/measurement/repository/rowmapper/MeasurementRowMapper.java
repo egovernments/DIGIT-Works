@@ -2,6 +2,8 @@ package org.egov.works.measurement.repository.rowmapper;
 
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.works.measurement.web.models.AuditDetails;
 import org.egov.works.measurement.web.models.Document;
 import org.egov.works.measurement.web.models.Measure;
@@ -9,12 +11,16 @@ import org.egov.works.measurement.web.models.Measurement;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
 @Component
 public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measurement>> {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     @Override
@@ -45,8 +51,17 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
                 measurement.setAuditDetails(auditDetails);
 
-                measurement.setAdditionalDetails(rs.getString("additionalDetails"));
+                String additionalDetailsString = rs.getString("additionalDetails");
+                JsonNode additionalDetailsJson = null;
+                try {
+                    additionalDetailsJson = objectMapper.readTree(additionalDetailsString);
+                } catch (IOException e) {
+                    // Handle the JSON parsing error
+                    e.printStackTrace();
+                }
 
+                // Set the parsed JSON object to the measurement or document
+                measurement.setAdditionalDetails(additionalDetailsJson);
                 measurement.setMeasures(new ArrayList<>());
                 measurement.setDocuments(new ArrayList<>());
 
@@ -67,8 +82,18 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
                 measure.setTargetId(rs.getString("targetId"));
                 measure.setIsActive(rs.getBoolean("mdisActive"));
-                measure.setAdditionalDetails(rs.getString("mdadditionalDetails"));
 
+                String additionalDetailsString = rs.getString("mdadditionalDetails");
+                JsonNode additionalDetailsJson = null;
+                try {
+                    additionalDetailsJson = objectMapper.readTree(additionalDetailsString);
+                } catch (IOException e) {
+                    // Handle the JSON parsing error
+                    e.printStackTrace();
+                }
+
+                // Set the parsed JSON object to the measurement or document
+                measure.setAdditionalDetails(additionalDetailsJson);
                 AuditDetails auditDetails = new AuditDetails();
                 auditDetails.setCreatedBy(rs.getString("createdby"));
                 auditDetails.setCreatedTime(rs.getLong("createdtime"));
@@ -86,9 +111,20 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 document.setDocumentType(rs.getString("documentType"));
                 document.setFileStore(rs.getString("filestore"));
                 document.setDocumentUid(rs.getString("documentuuid"));
-                document.setAdditionalDetails(rs.getString("additionalDetails"));
-                document.setId(rs.getString("dcid"));
 
+                String additionalDetailsString = rs.getString("dcadditionalDetails");
+                JsonNode additionalDetailsJson = null;
+                try {
+                    additionalDetailsJson = objectMapper.readTree(additionalDetailsString);
+                } catch (IOException e) {
+                    // Handle the JSON parsing error
+                    e.printStackTrace();
+                }
+
+                // Set the parsed JSON object to the measurement or document
+                document.setAdditionalDetails(additionalDetailsJson);
+
+                document.setId(rs.getString("dcid"));
                 documentMap.put(document.getId(), document);
 
                 measurement.getDocuments().add(document);
