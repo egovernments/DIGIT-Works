@@ -74,6 +74,121 @@ public class MeasurementRegistry {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
+
+    /**
+     * Handles search measurements
+     */
+    public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
+
+        handleNullPagination(measurementSearchRequest);
+        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
+        return measurements;
+    }
+
+    /**
+    Creating ResponseInfo for Registry search Response
+    */
+    public MeasurementResponse createSearchResponse(MeasurementSearchRequest body){
+        MeasurementResponse response = new MeasurementResponse();
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(body.getRequestInfo().getApiId())
+                .msgId(body.getRequestInfo().getMsgId())
+                .ts(body.getRequestInfo().getTs())
+                .status("successful")
+                .build());
+        return response;
+    }
+
+    /**
+    Creating ResponseInfo for Service search Response
+    */
+    public MeasurementServiceResponse makeSearchResponse(MeasurementSearchRequest measurementSearchRequest) {
+        MeasurementServiceResponse response = new MeasurementServiceResponse();
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(measurementSearchRequest.getRequestInfo().getApiId())
+                .msgId(measurementSearchRequest.getRequestInfo().getMsgId())
+                .ts(measurementSearchRequest.getRequestInfo().getTs())
+                .status("successful")
+                .build());
+        return response;
+    }
+
+    
+    /**
+     converting all measurement registry to measurement-Service
+     */
+    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        List<String> mbNumbers = getMbNumbers(measurements);
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
+        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = getMbNumberToServiceMap(measurementServices);
+        List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService = serviceValidator.createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap);
+
+        // Create measurement services for each measurement
+        List<org.egov.works.measurement.web.models.MeasurementService> result = createMeasurementServices(measurements, orderedExistingMeasurementService);
+
+        return result;
+    }
+
+    public  List<String> getMbNumbers(List<Measurement> measurements){
+        List<String> mbNumbers=new ArrayList<>();
+        for(Measurement measurement:measurements){
+            mbNumbers.add(measurement.getMeasurementNumber());
+        }
+        return mbNumbers;
+    }
+
+    public Map<String, org.egov.works.measurement.web.models.MeasurementService> getMbNumberToServiceMap(List<org.egov.works.measurement.web.models.MeasurementService> measurementServices){
+        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = new HashMap<>();
+        for (org.egov.works.measurement.web.models.MeasurementService existingService : measurementServices) {
+            mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
+        }
+        return mbNumberToServiceMap;
+    }
+
+    private void handleNullPagination(MeasurementSearchRequest body){
+        if (body.getPagination() == null) {
+            body.setPagination(new Pagination());
+            body.getPagination().setLimit(null);
+            body.getPagination().setOffSet(null);
+            body.getPagination().setOrder(Pagination.OrderEnum.DESC);
+        }
+    }
+
+    private List<org.egov.works.measurement.web.models.MeasurementService> createMeasurementServices(List<Measurement> measurements, List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService) {
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
+
+        for (int i = 0; i < measurements.size(); i++) {
+            Measurement measurement = measurements.get(i);
+            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+
+            // Set properties of the measurement service based on the measurement object
+            measurementService.setId(measurement.getId());
+            measurementService.setTenantId(measurement.getTenantId());
+            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
+            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
+            measurementService.setReferenceId(measurement.getReferenceId());
+            measurementService.setEntryDate(measurement.getEntryDate());
+            measurementService.setMeasures(measurement.getMeasures());
+            measurementService.setAuditDetails(measurement.getAuditDetails());
+            measurementService.setDocuments(measurement.getDocuments());
+            measurementService.setIsActive(measurement.getIsActive());
+            measurementService.setAuditDetails(measurement.getAuditDetails());
+
+            measurementService.setAdditionalDetails(measurement.getAdditionalDetails());
+
+            // If an existing measurement service exists, set its workflow status
+            org.egov.works.measurement.web.models.MeasurementService existingMeasurementService = orderedExistingMeasurementService.get(i);
+            if (existingMeasurementService != null) {
+                measurementService.setWfStatus(existingMeasurementService.getWfStatus());
+            }
+
+            measurementServices.add(measurementService);
+        }
+
+        return measurementServices;
+    }
+
     /**
      * Handles measurement update
      * @param measurementRegistrationRequest
@@ -100,112 +215,4 @@ public class MeasurementRegistry {
 
         return response;
     }
-
-
-    /**
-     * Handles search measurements
-     */
-     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
-
-         handleNullPagination(measurementSearchRequest);
-        List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
-        return measurements;
-    }
-
-
-    /**
-     converting all measurement registry to measurement-Service
-     */
-    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        List<String> mbNumbers = getMbNumbers(measurements);
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
-        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = getMbNumberToServiceMap(measurementServices);
-        List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService = serviceValidator.createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap);
-
-        // Create measurement services for each measurement
-        List<org.egov.works.measurement.web.models.MeasurementService> result = createMeasurementServices(measurements, orderedExistingMeasurementService);
-
-        return result;
-    }
-
-    private List<org.egov.works.measurement.web.models.MeasurementService> createMeasurementServices(List<Measurement> measurements, List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService) {
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
-
-        for (int i = 0; i < measurements.size(); i++) {
-            Measurement measurement = measurements.get(i);
-            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
-
-            // Set properties of the measurement service based on the measurement object
-            measurementService.setId(measurement.getId());
-            measurementService.setTenantId(measurement.getTenantId());
-            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
-            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
-            measurementService.setReferenceId(measurement.getReferenceId());
-            measurementService.setEntryDate(measurement.getEntryDate());
-            measurementService.setMeasures(measurement.getMeasures());
-            measurementService.setDocuments(measurement.getDocuments());
-            measurementService.setIsActive(measurement.getIsActive());
-            measurementService.setAuditDetails(measurement.getAuditDetails());
-            measurementService.setAdditionalDetails(measurement.getAdditionalDetails());
-
-            // If an existing measurement service exists, set its workflow status
-            org.egov.works.measurement.web.models.MeasurementService existingMeasurementService = orderedExistingMeasurementService.get(i);
-            if (existingMeasurementService != null) {
-                measurementService.setWfStatus(existingMeasurementService.getWfStatus());
-            }
-
-            measurementServices.add(measurementService);
-        }
-
-        return measurementServices;
-    }
-
-    private void handleNullPagination(MeasurementSearchRequest body){
-        if (body.getPagination() == null) {
-            body.setPagination(new Pagination());
-            body.getPagination().setLimit(null);
-            body.getPagination().setOffSet(null);
-            body.getPagination().setOrder(Pagination.OrderEnum.DESC);
-        }
-    }
-
-    public MeasurementResponse createSearchResponse(MeasurementSearchRequest body){
-        MeasurementResponse response = new MeasurementResponse();
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(body.getRequestInfo().getApiId())
-                .msgId(body.getRequestInfo().getMsgId())
-                .ts(body.getRequestInfo().getTs())
-                .status("successful")
-                .build());
-        return response;
-    }
-
-    public  List<String> getMbNumbers(List<Measurement> measurements){
-        List<String> mbNumbers=new ArrayList<>();
-        for(Measurement measurement:measurements){
-            mbNumbers.add(measurement.getMeasurementNumber());
-        }
-        return mbNumbers;
-    }
-
-    public Map<String, org.egov.works.measurement.web.models.MeasurementService> getMbNumberToServiceMap(List<org.egov.works.measurement.web.models.MeasurementService> measurementServices){
-        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = new HashMap<>();
-        for (org.egov.works.measurement.web.models.MeasurementService existingService : measurementServices) {
-            mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
-        }
-        return mbNumberToServiceMap;
-    }
-
-    public MeasurementServiceResponse makeSearchResponse(MeasurementSearchRequest measurementSearchRequest) {
-        MeasurementServiceResponse response = new MeasurementServiceResponse();
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(measurementSearchRequest.getRequestInfo().getApiId())
-                .msgId(measurementSearchRequest.getRequestInfo().getMsgId())
-                .ts(measurementSearchRequest.getRequestInfo().getTs())
-                .status("successful")
-                .build());
-        return response;
-    }
-
 }
