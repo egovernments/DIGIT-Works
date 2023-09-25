@@ -45,7 +45,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
             contractNumber: transformedContract?.contractNumber,
             targetId: transformedContract?.lineItemsObject[convertedObject[key][0].id]?.contractLineItemId,
             approvedQuantity: convertedObject[key].reduce((acc, curr) => acc + curr.noOfunit, 0),
-            measures
+        
         }
     })
 
