@@ -100,7 +100,7 @@ public class MeasurementService {
      * @param measurementRegistrationRequest
      * @return
      */
-    public ResponseEntity<MeasurementResponse> updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
+    public MeasurementResponse updateMeasurement(MeasurementRequest measurementRegistrationRequest) {
         // Just validate tenant id
         measurementValidator.validateTenantId(measurementRegistrationRequest);
 
@@ -121,7 +121,7 @@ public class MeasurementService {
         producer.push(configuration.getUpdateTopic(), response);
 
         // Return the success response
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return response;
     }
 
 
