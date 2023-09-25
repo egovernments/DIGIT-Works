@@ -31,6 +31,7 @@ public class MeasurementSearchRequest {
     private MeasurementCriteria criteria = null;
 
     @JsonProperty("pagination")
+    @Valid
     private Pagination pagination = null;
 
 }
