@@ -177,5 +177,6 @@ export {
   convertObjectForMeasurment,
   extractEstimateIds,
   cacheResponse,
-  getCachedResponse
+  getCachedResponse,
+  filterEstimateDetails
 };
