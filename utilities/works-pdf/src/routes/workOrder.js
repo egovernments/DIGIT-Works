@@ -227,9 +227,19 @@ router.post(
                     newTC.push({ "terms": termAndConditions[idx] })
                 }
                 contract.contracts[0].termsAndConditionList = newTC;
+                var issueDate;
 
                 var fiscalyear = "";
-                var date = new Date(contract.contracts[0].issueDate);
+                for(var con in contract.contracts){
+                    var date=contract.contracts[con].issueDate;
+                    if(date!=null){
+                        issueDate=contract.contracts[con].issueDate;
+                        break;
+                    }
+
+                }
+                
+                var date = new Date(issueDate);
                 if ((date.getMonth() + 1) <= 3) {
                   fiscalyear = (date.getFullYear() - 1) + "-" + date.getFullYear()
                 } else {

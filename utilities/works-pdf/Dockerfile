@@ -1,4 +1,4 @@
-FROM manastanmay0809/node-builder-16:yarn
+FROM egovio/node-builder:yarn
 
 ARG WORK_DIR
 ENV npm_config_cache=/tmp
