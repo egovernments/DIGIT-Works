@@ -108,9 +108,6 @@ public class MeasurementRegistry {
      public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
 
          handleNullPagination(measurementSearchRequest);
-        if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
-            throw errorConfigs.tenantIdRequired;
-        }
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;
     }
@@ -150,6 +147,7 @@ public class MeasurementRegistry {
             measurementService.setDocuments(measurement.getDocuments());
             measurementService.setIsActive(measurement.getIsActive());
             measurementService.setAuditDetails(measurement.getAuditDetails());
+            measurementService.setAdditionalDetails(measurement.getAdditionalDetails());
 
             // If an existing measurement service exists, set its workflow status
             org.egov.works.measurement.web.models.MeasurementService existingMeasurementService = orderedExistingMeasurementService.get(i);

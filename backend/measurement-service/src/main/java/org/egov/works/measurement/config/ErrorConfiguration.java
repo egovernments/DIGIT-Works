@@ -39,6 +39,4 @@ public class ErrorConfiguration {
     public CustomException apiRequestFailedIOexception(IOException e){
         return new CustomException("","API request failed: " + e.getMessage());
     }
-    public IllegalArgumentException tenantIdRequired= new IllegalArgumentException("TenantId is required.");
-
 }

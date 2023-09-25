@@ -1,6 +1,7 @@
 package org.egov.works.measurement.web.controllers;
 
 
+import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.egov.works.measurement.web.models.MeasurementResponse;
@@ -53,11 +54,8 @@ public class MeasurementApiController {
             @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
         MeasurementResponse response= measurementRegistry.createSearchResponse(body);
         MeasurementCriteria criteria = body.getCriteria();
-        if (criteria != null) {
-            List<Measurement> measurements = measurementRegistry.searchMeasurements(criteria, body);
-            response.setMeasurements(measurements);
-            return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
-        }
+        List<Measurement> measurements = measurementRegistry.searchMeasurements(criteria, body);
+        response.setMeasurements(measurements);
         return new ResponseEntity<MeasurementResponse>(response, HttpStatus.OK);
     }
 

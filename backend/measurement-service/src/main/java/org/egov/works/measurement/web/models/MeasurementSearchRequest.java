@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class MeasurementSearchRequest {
 
     @JsonProperty("criteria")
     @Valid
+    @NotNull
     private MeasurementCriteria criteria = null;
 
     @JsonProperty("pagination")
