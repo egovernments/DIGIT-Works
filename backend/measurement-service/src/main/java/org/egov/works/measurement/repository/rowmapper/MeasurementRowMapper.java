@@ -30,7 +30,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
 
             if (measurement == null) {
                 measurement = new Measurement();
-                measurement.setId(UUID.fromString(uuid)); // Assuming you have a UUID field
+                measurement.setId(UUID.fromString(uuid));
                 measurement.setTenantId(rs.getString("tenantId"));
                 measurement.setMeasurementNumber(rs.getString("mbNumber"));
                 measurement.setPhysicalRefNumber(rs.getString("phyRefNumber"));
@@ -85,8 +85,8 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 document.setDocumentType(rs.getString("documentType"));
                 document.setFileStore(rs.getString("filestore"));
                 document.setDocumentUid(rs.getString("documentuuid"));
-                document.setAdditionalDetails(rs.getString("additionalDetails")); // Adjust the column name as per your table
-                document.setId(rs.getString("dcid")); // Assuming you have a UUID field for documents
+                document.setAdditionalDetails(rs.getString("additionalDetails"));
+                document.setId(rs.getString("dcid"));
 
                 documentMap.put(document.getId(), document);
 

@@ -56,24 +56,8 @@ public class MeasurementApiController {
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementsV1SearchPost(
             @Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
-        String accept = request.getHeader("Accept");
+        MeasurementResponse response=measurementService.createSearchResponse(body);
         MeasurementCriteria criteria = body.getCriteria();
-
-        MeasurementResponse response = new MeasurementResponse();
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(body.getRequestInfo().getApiId())
-                .msgId(body.getRequestInfo().getMsgId())
-                .ts(body.getRequestInfo().getTs())
-                .status("successful")
-                .build());
-
-        if (body.getPagination() == null) {
-            body.setPagination(new Pagination());
-            body.getPagination().setLimit(null);
-            body.getPagination().setOffSet(null);
-            body.getPagination().setOrder(Pagination.OrderEnum.DESC);
-        }
-
         if (criteria != null) {
             List<Measurement> measurements = measurementService.searchMeasurements(criteria, body);
             response.setMeasurements(measurements);
@@ -88,6 +72,4 @@ public class MeasurementApiController {
         MeasurementResponse measurementResponse= service.updateMeasurement(body);
         return new ResponseEntity<>(measurementResponse, HttpStatus.ACCEPTED);
     }
-
-    
 }

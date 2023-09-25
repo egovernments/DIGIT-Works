@@ -134,6 +134,7 @@ public class MeasurementService {
      */
      public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
 
+         handleNullPagination(measurementSearchRequest);
         if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
             throw errorConfigs.tenantIdRequired;
         }
@@ -187,6 +188,26 @@ public class MeasurementService {
         }
 
         return measurementServices;
+    }
+
+    private void handleNullPagination(MeasurementSearchRequest body){
+        if (body.getPagination() == null) {
+            body.setPagination(new Pagination());
+            body.getPagination().setLimit(null);
+            body.getPagination().setOffSet(null);
+            body.getPagination().setOrder(Pagination.OrderEnum.DESC);
+        }
+    }
+
+    public MeasurementResponse createSearchResponse(MeasurementSearchRequest body){
+        MeasurementResponse response = new MeasurementResponse();
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(body.getRequestInfo().getApiId())
+                .msgId(body.getRequestInfo().getMsgId())
+                .ts(body.getRequestInfo().getTs())
+                .status("successful")
+                .build());
+        return response;
     }
 
 

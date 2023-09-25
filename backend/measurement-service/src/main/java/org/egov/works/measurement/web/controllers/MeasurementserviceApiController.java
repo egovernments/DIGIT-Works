@@ -47,7 +47,9 @@ public class MeasurementserviceApiController {
     @Autowired
     private MSservice msService;
 
-    private String measurementServiceUrl = "http://localhost:8080/measurement-service/measurement/v1/_search";
+    @Autowired MeasurementApiController measurementApiController;
+
+//    private String measurementServiceUrl = "http://localhost:8080/measurement-service/measurement/v1/_search";
 
 
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
@@ -67,7 +69,8 @@ public class MeasurementserviceApiController {
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(measurementServiceUrl, body, MeasurementResponse.class);
+//        ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(measurementServiceUrl, body, MeasurementResponse.class);
+        ResponseEntity<MeasurementResponse> responseEntity=measurementApiController.measurementsV1SearchPost(body);
         MeasurementResponse measurementResponse = responseEntity.getBody();
         MeasurementServiceResponse measurementServiceResponse = service.makeSearchResponse(body);
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = service.changeToMeasurementService(measurementResponse.getMeasurements());
