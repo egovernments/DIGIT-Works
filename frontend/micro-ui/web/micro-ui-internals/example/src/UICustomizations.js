@@ -805,18 +805,25 @@ export const UICustomizations = {
       
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      console.log(searchResult[0], "sss")
       // console.log(key,value);
       // console.log(row,"qwertyuiop");
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
+      const state = searchResult[0]?.ProcessInstance?.state?.state;
+      const contractNumber = searchResult[0]?.businessObject?.referenceId;
+      const measurementNumber = searchResult[0]?.businessObject?.measurementNumber;
+      const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+
       switch (key) {
         case "MB_REFERENCE_NUMBER-2":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/measurement/view?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}&mbNumber=${row?.ProcessInstance.businessId}`}>
+              {/* <Link to={`/${window.contextPath}/employee/measurement/view?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}&mbNumber=${row?.ProcessInstance.businessId}`}>
                 {value ? value : t("ES_COMMON_NA")}
-              </Link>
+              </Link> */}
+              {Digit.Utils.statusBasedNavigation(state, contractNumber, measurementNumber, tenantId, value)}
             </span>
           );
 
