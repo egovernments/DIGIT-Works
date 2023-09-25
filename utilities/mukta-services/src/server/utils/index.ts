@@ -178,5 +178,4 @@ export {
   extractEstimateIds,
   cacheResponse,
   getCachedResponse,
-  filterEstimateDetails
 };
