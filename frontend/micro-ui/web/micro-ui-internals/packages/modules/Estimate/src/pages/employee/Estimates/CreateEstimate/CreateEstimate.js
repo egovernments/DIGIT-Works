@@ -60,6 +60,7 @@ const CreateEstimate = () => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
    
+
     const cardState = [
 
         {
@@ -153,7 +154,7 @@ const CreateEstimate = () => {
             }
         }
     );
-
+console.log(overheads , "uuuuuuuuuuuuu");
     
     const moduleName = Digit.Utils.getConfigModuleName()
     // let { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
@@ -183,7 +184,7 @@ const CreateEstimate = () => {
     const [sessionFormData,setSessionFormData, clearSessionFormData] = EstimateSession;
     
     const initialDefaultValues = editEstimateUtil(estimate,uom,overheads)
-   
+    console.log(initialDefaultValues);
 
     // useEffect(() => {
         
@@ -371,7 +372,7 @@ const CreateEstimate = () => {
     // const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
     const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
 
-
+console.log(sessionFormData);
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
 
     useEffect(() => {
