@@ -12,7 +12,8 @@ import ViewEstimateComponent from "./components/ViewEstimateComponent";
 import TotalEstAmount from "./pageComponents/TotalEstAmount";
 import LabourAnalysis from "./pageComponents/LabourAnalysis";
 import ViewTotalEstAmount from "./components/ViewTotalEstAmount";
-import ViewLabourAnalysis from "./components/ViewLabourAnalysis"
+import ViewLabourAnalysis from "./components/ViewLabourAnalysis";
+import SORTable from "./pageComponents/SORTable";
 
 const EstimateModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -44,7 +45,8 @@ const componentsToRegister = {
     TotalEstAmount,
     LabourAnalysis,
     ViewTotalEstAmount,
-    ViewLabourAnalysis
+    ViewLabourAnalysis,
+    SORTable
 };
 
 export const initEstimateComponents = () => {

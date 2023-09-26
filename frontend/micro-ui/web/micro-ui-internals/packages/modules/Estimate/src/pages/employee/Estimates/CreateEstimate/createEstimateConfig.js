@@ -25,7 +25,7 @@ export const createEstimateConfig = () => {
             body: [
               {
                 type: "component",
-                component: "MeasureTable",
+                component: "SORTable",
                 withoutLabel: true,
                 key: "SOR",
               },
