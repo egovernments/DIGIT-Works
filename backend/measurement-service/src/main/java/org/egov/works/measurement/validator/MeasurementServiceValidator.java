@@ -13,6 +13,7 @@ import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.ContractUtil;
+import org.egov.works.measurement.util.MeasurementRegistryUtil;
 import org.egov.works.measurement.web.models.*;
 import digit.models.coremodels.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private MeasurementRegistry measurementRegistry;
+
+    @Autowired
+    private MeasurementRegistryUtil measurementRegistryUtil;
 
 
     @Value("${egov.filestore.host}")
@@ -97,9 +101,10 @@ public class MeasurementServiceValidator {
             // Validate the measurement
             criteria.setIds(Collections.singletonList(measurement.getId().toString()));
             criteria.setTenantId(measurement.getTenantId());
+            searchRequest.setCriteria(criteria);
 
             //Getting list every time because tenantId may vary
-            List<Measurement> existingMeasurementList= measurementRegistry.searchMeasurements(criteria,searchRequest);
+            List<Measurement> existingMeasurementList= measurementRegistryUtil.searchMeasurements(searchRequest).getBody().getMeasurements();
             if (existingMeasurementList.isEmpty()) {
                 throw errorConfigs.measurementDataNotExist;
             }

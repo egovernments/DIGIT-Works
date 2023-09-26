@@ -5,6 +5,7 @@ import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.MeasurementRegistryUtil;
 import org.egov.works.measurement.web.models.*;
+import digit.models.coremodels.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
