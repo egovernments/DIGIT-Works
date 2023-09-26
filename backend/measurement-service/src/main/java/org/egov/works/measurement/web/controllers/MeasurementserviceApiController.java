@@ -1,10 +1,8 @@
 package org.egov.works.measurement.web.controllers;
 
 
-import org.egov.works.measurement.web.models.ErrorRes;
-import org.egov.works.measurement.web.models.MeasurementSearchRequest;
-import org.egov.works.measurement.web.models.MeasurementServiceRequest;
-import org.egov.works.measurement.web.models.MeasurementServiceResponse;
+import org.egov.works.measurement.service.MeasurementService;
+import org.egov.works.measurement.web.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -37,15 +36,14 @@ import java.util.Optional;
 @RequestMapping("")
 public class MeasurementserviceApiController {
 
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public MeasurementserviceApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-    }
+    private HttpServletRequest request;
+
+    @Autowired
+    private MeasurementService service;
 
     @RequestMapping(value = "/measurementservice/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body) {
@@ -57,36 +55,50 @@ public class MeasurementserviceApiController {
                 return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-
         return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value = "/measurementservice/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<MeasurementServiceResponse>(objectMapper.readValue("{  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"measurements\" : [ {    \"allOf\" : {      \"measures\" : [ {        \"comments\" : \"comments\",        \"targetId\" : \"contractlineitemid\",        \"breadth\" : 200,        \"documents\" : [ {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        }, {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        } ],        \"length\" : 200,        \"isActive\" : true,        \"additionalDetails\" : { },        \"referenceId\" : \"measurementId\",        \"numItems\" : 1.4658129805029452,        \"auditDetails\" : {          \"lastModifiedTime\" : 7,          \"createdBy\" : \"createdBy\",          \"lastModifiedBy\" : \"lastModifiedBy\",          \"createdTime\" : 2        },        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"currentValue\" : 5.962133916683182,        \"cumulativeValue\" : 5.637376656633329,        \"height\" : 200      }, {        \"comments\" : \"comments\",        \"targetId\" : \"contractlineitemid\",        \"breadth\" : 200,        \"documents\" : [ {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        }, {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        } ],        \"length\" : 200,        \"isActive\" : true,        \"additionalDetails\" : { },        \"referenceId\" : \"measurementId\",        \"numItems\" : 1.4658129805029452,        \"auditDetails\" : {          \"lastModifiedTime\" : 7,          \"createdBy\" : \"createdBy\",          \"lastModifiedBy\" : \"lastModifiedBy\",          \"createdTime\" : 2        },        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"currentValue\" : 5.962133916683182,        \"cumulativeValue\" : 5.637376656633329,        \"height\" : 200      } ],      \"entryDate\" : 6.027456183070403,      \"measurementNumber\" : \"measurementNumber\",      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"physicalRefNumber\" : \"physicalRefNumber\",      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"Contract number\"    },    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    }  }, {    \"allOf\" : {      \"measures\" : [ {        \"comments\" : \"comments\",        \"targetId\" : \"contractlineitemid\",        \"breadth\" : 200,        \"documents\" : [ {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        }, {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        } ],        \"length\" : 200,        \"isActive\" : true,        \"additionalDetails\" : { },        \"referenceId\" : \"measurementId\",        \"numItems\" : 1.4658129805029452,        \"auditDetails\" : {          \"lastModifiedTime\" : 7,          \"createdBy\" : \"createdBy\",          \"lastModifiedBy\" : \"lastModifiedBy\",          \"createdTime\" : 2        },        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"currentValue\" : 5.962133916683182,        \"cumulativeValue\" : 5.637376656633329,        \"height\" : 200      }, {        \"comments\" : \"comments\",        \"targetId\" : \"contractlineitemid\",        \"breadth\" : 200,        \"documents\" : [ {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        }, {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        } ],        \"length\" : 200,        \"isActive\" : true,        \"additionalDetails\" : { },        \"referenceId\" : \"measurementId\",        \"numItems\" : 1.4658129805029452,        \"auditDetails\" : {          \"lastModifiedTime\" : 7,          \"createdBy\" : \"createdBy\",          \"lastModifiedBy\" : \"lastModifiedBy\",          \"createdTime\" : 2        },        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"currentValue\" : 5.962133916683182,        \"cumulativeValue\" : 5.637376656633329,        \"height\" : 200      } ],      \"entryDate\" : 6.027456183070403,      \"measurementNumber\" : \"measurementNumber\",      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"physicalRefNumber\" : \"physicalRefNumber\",      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"Contract number\"    },    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    }  } ]}", MeasurementServiceResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.NOT_IMPLEMENTED);
+        RestTemplate restTemplate = new RestTemplate();
+        String measurementServiceUrl = "http://localhost:8080/measurement/v1/_search";
+        ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(measurementServiceUrl, body, MeasurementResponse.class);
+        MeasurementResponse measurementResponse = responseEntity.getBody();
+        MeasurementServiceResponse measurementServiceResponse = new MeasurementServiceResponse();
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = changeToMeasurementService(measurementResponse.getMeasurements());
+        measurementServiceResponse.setMeasurements(measurementServices);
+        return new ResponseEntity<>(measurementServiceResponse, responseEntity.getStatusCode());
     }
 
-    @RequestMapping(value = "/measurementservice/v1/_update", method = RequestMethod.POST)
-    public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<MeasurementServiceResponse>(objectMapper.readValue("{  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"measurements\" : [ {    \"allOf\" : {      \"measures\" : [ {        \"comments\" : \"comments\",        \"targetId\" : \"contractlineitemid\",        \"breadth\" : 200,        \"documents\" : [ {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        }, {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        } ],        \"length\" : 200,        \"isActive\" : true,        \"additionalDetails\" : { },        \"referenceId\" : \"measurementId\",        \"numItems\" : 1.4658129805029452,        \"auditDetails\" : {          \"lastModifiedTime\" : 7,          \"createdBy\" : \"createdBy\",          \"lastModifiedBy\" : \"lastModifiedBy\",          \"createdTime\" : 2        },        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"currentValue\" : 5.962133916683182,        \"cumulativeValue\" : 5.637376656633329,        \"height\" : 200      }, {        \"comments\" : \"comments\",        \"targetId\" : \"contractlineitemid\",        \"breadth\" : 200,        \"documents\" : [ {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        }, {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        } ],        \"length\" : 200,        \"isActive\" : true,        \"additionalDetails\" : { },        \"referenceId\" : \"measurementId\",        \"numItems\" : 1.4658129805029452,        \"auditDetails\" : {          \"lastModifiedTime\" : 7,          \"createdBy\" : \"createdBy\",          \"lastModifiedBy\" : \"lastModifiedBy\",          \"createdTime\" : 2        },        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"currentValue\" : 5.962133916683182,        \"cumulativeValue\" : 5.637376656633329,        \"height\" : 200      } ],      \"entryDate\" : 6.027456183070403,      \"measurementNumber\" : \"measurementNumber\",      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"physicalRefNumber\" : \"physicalRefNumber\",      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"Contract number\"    },    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    }  }, {    \"allOf\" : {      \"measures\" : [ {        \"comments\" : \"comments\",        \"targetId\" : \"contractlineitemid\",        \"breadth\" : 200,        \"documents\" : [ {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        }, {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        } ],        \"length\" : 200,        \"isActive\" : true,        \"additionalDetails\" : { },        \"referenceId\" : \"measurementId\",        \"numItems\" : 1.4658129805029452,        \"auditDetails\" : {          \"lastModifiedTime\" : 7,          \"createdBy\" : \"createdBy\",          \"lastModifiedBy\" : \"lastModifiedBy\",          \"createdTime\" : 2        },        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"currentValue\" : 5.962133916683182,        \"cumulativeValue\" : 5.637376656633329,        \"height\" : 200      }, {        \"comments\" : \"comments\",        \"targetId\" : \"contractlineitemid\",        \"breadth\" : 200,        \"documents\" : [ {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        }, {          \"documentType\" : \"documentType\",          \"documentUid\" : \"documentUid\",          \"fileStore\" : \"fileStore\",          \"id\" : \"id\",          \"additionalDetails\" : { }        } ],        \"length\" : 200,        \"isActive\" : true,        \"additionalDetails\" : { },        \"referenceId\" : \"measurementId\",        \"numItems\" : 1.4658129805029452,        \"auditDetails\" : {          \"lastModifiedTime\" : 7,          \"createdBy\" : \"createdBy\",          \"lastModifiedBy\" : \"lastModifiedBy\",          \"createdTime\" : 2        },        \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",        \"currentValue\" : 5.962133916683182,        \"cumulativeValue\" : 5.637376656633329,        \"height\" : 200      } ],      \"entryDate\" : 6.027456183070403,      \"measurementNumber\" : \"measurementNumber\",      \"id\" : \"251c51eb-e970-4e01-a99a-70136c47a934\",      \"physicalRefNumber\" : \"physicalRefNumber\",      \"isActive\" : true,      \"additionalDetails\" : { },      \"referenceId\" : \"Contract number\"    },    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    }  } ]}", MeasurementServiceResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
+
+        for (Measurement measurement : measurements) {
+            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+            measurementService.setId(measurement.getId());
+            measurementService.setTenantId(measurement.getTenantId());
+            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
+            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
+            measurementService.setReferenceId(measurement.getReferenceId());
+            measurementService.setEntryDate(measurement.getEntryDate());
+            measurementService.setMeasures(measurement.getMeasures());
+            measurementService.setIsActive(measurement.getIsActive());
+            measurementService.setAuditDetails(measurement.getAuditDetails());
+
+            measurementService.setWfStatus(null);
+            measurementService.setWorkflow(null);
+
+            measurementServices.add(measurementService);
         }
 
-        return new ResponseEntity<MeasurementServiceResponse>(HttpStatus.NOT_IMPLEMENTED);
+        return measurementServices;
+    }
+
+
+
+    @RequestMapping(value = "/measurementservice/v1/_update", method = RequestMethod.POST)
+    public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body){
+        return service.updateMeasurementService(body);
     }
 
 }

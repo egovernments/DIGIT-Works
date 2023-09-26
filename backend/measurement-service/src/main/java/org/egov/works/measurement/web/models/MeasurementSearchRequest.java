@@ -1,15 +1,13 @@
 package org.egov.works.measurement.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
+import java.util.List;
 
 /**
  * MeasurementSearchRequest
@@ -20,6 +18,8 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class MeasurementSearchRequest {
 
     @JsonProperty("requestInfo")
@@ -33,6 +33,5 @@ public class MeasurementSearchRequest {
     @JsonProperty("pagination")
     @Valid
     private Pagination pagination = null;
-
 
 }

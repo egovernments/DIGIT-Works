@@ -11,17 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.*;
 import org.egov.works.measurement.web.models.AuditDetails;
 import org.egov.works.measurement.web.models.Measure;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * This defines a measurement with or without detailed measures.
@@ -33,6 +29,8 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Measurement {
 
     @JsonProperty("id")
@@ -40,7 +38,6 @@ public class Measurement {
     private UUID id = null;
 
     @JsonProperty("tenantId")
-    @NotNull
     @Size(min = 2, max = 64)
     private String tenantId = null;
 
@@ -75,7 +72,6 @@ public class Measurement {
 
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
-
 
     public Measurement addMeasuresItem(Measure measuresItem) {
         if (this.measures == null) {

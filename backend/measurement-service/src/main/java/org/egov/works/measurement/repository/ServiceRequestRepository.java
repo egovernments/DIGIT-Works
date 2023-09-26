@@ -5,11 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.ServiceCallException;
+import org.egov.works.measurement.repository.querybuilder.MeasurementQueryBuilder;
+import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
+import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
+import org.egov.works.measurement.service.MeasurementService;
+import org.egov.works.measurement.web.models.Measurement;
+import org.egov.works.measurement.web.models.*;
+import org.egov.works.measurement.web.models.MeasurementCriteria;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.egov.works.measurement.service.MeasurementService;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import static org.egov.works.measurement.config.ServiceConstants.*;
@@ -19,9 +32,29 @@ import static org.egov.works.measurement.config.ServiceConstants.*;
 public class ServiceRequestRepository {
 
     private ObjectMapper mapper;
+    @Autowired
+    private MeasurementQueryBuilder queryBuilder;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private RestTemplate restTemplate;
 
+    @Autowired
+    private MeasurementRowMapper rowMapper;
+
+    @Autowired
+    private MeasurementServiceRowMapper rowMapper1;
+
+    public ArrayList<Measurement> getMeasurements(MeasurementCriteria searchCriteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getMeasurementSearchQuery(searchCriteria, preparedStmtList);
+        System.out.println("Query  ::::::::::: " + query);
+        System.out.println("preparedStmtList  ::::::::::: " + preparedStmtList);
+        ArrayList<Measurement> measurementsList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+
+        return measurementsList;
+    }
 
     @Autowired
     public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
