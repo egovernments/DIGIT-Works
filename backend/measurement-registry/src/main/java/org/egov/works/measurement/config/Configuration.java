@@ -28,8 +28,6 @@ public class Configuration {
         return new Pagination(); // Initialize Pagination bean as needed
     }
 
-
-
     @Value("${mb.default.offset}")
     private Integer defaultOffset;
 
@@ -65,13 +63,21 @@ public class Configuration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
+    @Value("${egov.mdms.tenantId}")
+    private String mdmsTenantId;
+
+    @Value("${egov.mdms.moduleName}")
+    private String mdmsModuleName;
+
+    @Value("${egov.mdms.masterName}")
+    private String mdmsMasterName;
+
     // Kafka topics
     @Value("${measurement.kafka.create.topic}")
     private String createMeasurementTopic;
 
     @Value("${measurement.kafka.update.topic}")
     private String updateTopic;
-
 
     @Value("${measurement.kafka.enrich.create.topic}")
     private String enrichMeasurementTopic;
@@ -101,4 +107,12 @@ public class Configuration {
 
     @Value("${egov.workflow.moduleName}")
     private String wfModuleName;
+
+    // filestore
+    @Value("${egov.filestore.host}")
+    private String baseFilestoreUrl;
+
+    @Value("${egov.filestore.endpoint}")
+    private String baseFilestoreEndpoint;
+
 }

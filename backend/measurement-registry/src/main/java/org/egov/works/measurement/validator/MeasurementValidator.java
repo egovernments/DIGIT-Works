@@ -11,6 +11,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.MdmsUtil;
@@ -34,22 +35,20 @@ public class MeasurementValidator {
 
     @Autowired
     private ErrorConfiguration errorConfigs;
-
+    @Autowired
+    private Configuration configuration;
     @Autowired
     private MeasurementRegistry measurementRegistry;
 
-    @Value("${egov.filestore.host}")
-    private String baseFilestoreUrl;
-
-    @Value("${egov.filestore.endpoint}")
-    private String baseFilestoreEndpoint;
+    /**
+     * Validate the measurement Req for valid tenantId
+     * @param measurementRequest
+     */
     public void validateTenantId(MeasurementRequest measurementRequest){
-        List<String> masterList = new ArrayList<>();
-        masterList.add("tenants");
-        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(),"pg","tenant",masterList);
-        JSONArray jsonArray = response.get("tenant").get("tenants");
-        String node = jsonArray.toString();
         Set<String> validTenantSet = new HashSet<>();
+        List<String> masterList = Collections.singletonList(configuration.getMdmsMasterName());
+        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(),configuration.getMdmsTenantId(),configuration.getMdmsModuleName(),masterList);
+        String node = response.get(configuration.getMdmsModuleName()).get(configuration.getMdmsMasterName()).toString();
         try {
                 JsonNode currNode = objectMapper.readTree(node);
                 for (JsonNode tenantNode : currNode) {
@@ -64,7 +63,7 @@ public class MeasurementValidator {
         List<Measurement> measurementList = measurementRequest.getMeasurements();
         for(int i=0;i<measurementList.size();i++){
             if(!validTenantSet.contains(measurementList.get(i).getTenantId())){
-                 throw new CustomException("","Tenant Id is Not found");
+                 throw new CustomException("",measurementList.get(i).getTenantId().toString()+" Tenant Id is Not found");
             }
         }
     }
@@ -114,6 +113,17 @@ public class MeasurementValidator {
             }
         }
     }
+    public void validateMeasureRequest(Measurement existingMeasurement,Measurement measurement){
+        Set<UUID> measuresIds=new HashSet<>();
+        for(Measure measure:existingMeasurement.getMeasures()){
+            measuresIds.add(measure.getId());
+        }
+        for(Measure measure:measurement.getMeasures()){
+            if(!measuresIds.contains(measure.getId())){
+                throw errorConfigs.measuresDataNotExist;
+            }
+        }
+    }
 
     public boolean checkDocumentIdsMatch(List<String> documentIds, String responseJson) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -133,7 +143,6 @@ public class MeasurementValidator {
             return false; // Error occurred while parsing the response
         }
     }
-
 
     private String makeApiRequest(List<String> documentIds) {
         // API URL with query parameters
@@ -170,7 +179,7 @@ public class MeasurementValidator {
     }
 
     private HttpGet buildHttpGetRequest(List<String> documentIds) {
-        String apiUrl = baseFilestoreUrl + baseFilestoreEndpoint+"?tenantId=pg.citya";
+        String apiUrl = configuration.getBaseFilestoreUrl() + configuration.getBaseFilestoreEndpoint()+"?tenantId=pg.citya";
 
         for (String documentId : documentIds) {
             apiUrl += "&fileStoreIds=" + documentId;
@@ -191,18 +200,6 @@ public class MeasurementValidator {
             }
         }
         return documentIds;
-    }
-
-    public void validateMeasureRequest(Measurement existingMeasurement,Measurement measurement){
-        Set<UUID> measuresIds=new HashSet<>();
-        for(Measure measure:existingMeasurement.getMeasures()){
-            measuresIds.add(measure.getId());
-        }
-        for(Measure measure:measurement.getMeasures()){
-            if(!measuresIds.contains(measure.getId())){
-                throw errorConfigs.measuresDataNotExist;
-            }
-        }
     }
 
     public void setAuditDetails(List<Measurement> measurementExisting,MeasurementRequest measurementRequest){
