@@ -103,8 +103,13 @@ export const transformData = (data) => {
     // Process SOR data
     if (data.SOR && Array.isArray(data.SOR)) {
         data.SOR.forEach((sorItem) => {
-            sumSor += sorItem.measures?.[0]?.rowAmount;
+            // sumSor += sorItem.measures?.[0]?.rowAmount;
             transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(sorItem, "SOR"));
+            sorItem.measures.forEach((measure) => {
+                if (measure.rowAmount) {
+                    sumSor += measure.rowAmount;
+                }
+            });
         });
     }
 
@@ -113,6 +118,11 @@ export const transformData = (data) => {
         data.NONSOR.forEach((nonsorItem) => {
             sumNonSor += nonsorItem.measures?.[0]?.rowAmount;
             transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(nonsorItem, "NONSOR"));
+            nonsorItem.measures?.forEach((measure) => {
+                if (measure.rowAmount) {
+                    sumNonSor += measure.rowAmount;
+                }
+            });
         });
     }
 
