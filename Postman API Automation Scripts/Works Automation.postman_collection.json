@@ -4674,31 +4674,31 @@
 									"});\r",
 									"\r",
 									"pm.test(\"Response is successful\", () =>\r",
-									"    pm.expect(pm.response.to.have.status(200))\r",
+									"    pm.expect(pm.response.to.have.status(202))\r",
 									");\r",
 									"\r",
-									"// pm.test(\"print and save IndividualId in environment\", function () {\r",
-									"//     var res = pm.response.json();\r",
-									"//     var IndividualId = res.Individual.id;\r",
-									"//     console.log('id:', IndividualId);\r",
-									"//     pm.environment.set('IndId', IndividualId);\r",
-									"// }\r",
-									"// );\r",
-									"// pm.test(\"print and save IndividualNumber in environment\", function () {\r",
-									"//     var res = pm.response.json();\r",
-									"//     var IndividualNo = res.Individual.individualId;\r",
-									"//     console.log('individualId:', IndividualNo);\r",
-									"//     pm.environment.set('IndNo', IndividualNo);\r",
-									"// }\r",
-									"// );\r",
+									"pm.test(\"print and save IndividualId in environment\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var IndividualId = res.Individual.id;\r",
+									"    console.log('id:', IndividualId);\r",
+									"    pm.environment.set('IndId', IndividualId);\r",
+									"}\r",
+									");\r",
+									"pm.test(\"print and save IndividualNumber in environment\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var IndividualNo = res.Individual.individualId;\r",
+									"    console.log('individualId:', IndividualNo);\r",
+									"    pm.environment.set('IndNo', IndividualNo);\r",
+									"}\r",
+									");\r",
 									"\r",
-									"// pm.test(\"print and save Ind-addressid in environment\", function () {\r",
-									"//     var res = pm.response.json();\r",
-									"//     var addressid = res.Individual.address.id;\r",
-									"//     console.log('id:', addressid);\r",
-									"//     pm.environment.set('Ind-addressid',addressid);\r",
-									"// }\r",
-									"// );\r",
+									"pm.test(\"print and save Ind-addressid in environment\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var addressid = res.Individual.address.id;\r",
+									"    console.log('id:', addressid);\r",
+									"    pm.environment.set('Ind-addressid',addressid);\r",
+									"}\r",
+									");\r",
 									"\r",
 									"let responseData = pm.response.json();\r",
 									"\r",
@@ -4716,16 +4716,19 @@
 									"\r",
 									"pm.collectionVariables.set(\"lastModifiedTime\",(responseData.Individual.auditDetails.lastModifiedTime));\r",
 									"\r",
-									"pm.collectionVariables.set(\"IndaddressId\", responseData.Individual.address.id);\r",
+									"pm.collectionVariables.set(\"IndaddressId\", responseData.Individual.address[0].id);\r",
 									"\r",
-									"pm.collectionVariables.set(\"IndskillId\", responseData.Individual.skills.id);\r",
+									"pm.collectionVariables.set(\"IndskillId\", responseData.Individual.skills[0].id);\r",
 									"\r",
-									"pm.collectionVariables.set(\"Indskilltype\", responseData.Individual.skills.type);\r",
+									"pm.collectionVariables.set(\"Indskilltype\", responseData.Individual.skills[0].type);\r",
 									"\r",
-									"pm.collectionVariables.set(\"Indskilllevel\", responseData.Individual.skills.level);\r",
+									"pm.collectionVariables.set(\"Indskilllevel\", responseData.Individual.skills[0].level);\r",
 									"\r",
-									"pm.collectionVariables.set(\"Social Category\", responseData.Individual.fields[0].value);\r",
+									"pm.collectionVariables.set(\"Social Category\", responseData.Individual.additionalFields.fields[0].value);\r",
 									"\r",
+									"pm.collectionVariables.set(\"identifiersId\", responseData.Individual.identifiers[0].id);\r",
+									"\r",
+									"pm.collectionVariables.set(\"IndrowVersion\", responseData.Individual.rowVersion);\r",
 									"\r",
 									"\r",
 									"\r",
@@ -4763,6 +4766,1720 @@
 								"individual",
 								"v1",
 								"_create"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Individual - Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"04/09/1990\",\r\n        \"gender\": \"MALE\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"pincode\": \"600003\",\r\n                \"city\": \"{{tenantId}}\",\r\n                \"street\": \"Brindavanam\",\r\n                \"doorNo\": \"27\",\r\n                \"type\": \"PERMANENT\",\r\n                \"locality\": {\r\n                    \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"identifiers\": [\r\n            {\r\n                \"identifierType\": \"AADHAAR\",\r\n                \"identifierId\": \"{{IndAadharNo}}\"\r\n            }\r\n        ],\r\n        \"skills\": [\r\n            {\r\n                \"type\": \"HAMMER_MAN\",\r\n                \"level\": \"SEMI_SKILLED\"\r\n            }\r\n        ],\r\n        \"photo\": null,\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"SC\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/individual/v1/_create",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"individual",
+										"v1",
+										"_create"
+									]
+								}
+							},
+							"status": "Accepted",
+							"code": 202,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Mon, 25 Sep 2023 06:00:30 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=63072000; includeSubdomains; preload"
+								},
+								{
+									"key": "X-Lua-Resty-WAF-ID",
+									"value": "597ff587c2e76ea5ade2"
+								},
+								{
+									"key": "x-correlation-id",
+									"value": "5def8131-3297-475d-9e6a-f78eddbf1864"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer-when-downgrade"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "sameorigin"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"ver\": \".01\",\n        \"ts\": 1695621630290,\n        \"resMsgId\": \"1695367848064|en_IN\",\n        \"msgId\": \"1695367848064|en_IN\",\n        \"status\": \"successful\"\n    },\n    \"Individual\": {\n        \"id\": \"f8833110-1c40-48e6-b82b-f8968209e574\",\n        \"individualId\": \"IND-2023-09-25-000525\",\n        \"tenantId\": \"pg.citya\",\n        \"clientReferenceId\": null,\n        \"userId\": null,\n        \"userUuid\": null,\n        \"name\": {\n            \"givenName\": \"John Williams\",\n            \"familyName\": null,\n            \"otherNames\": null\n        },\n        \"dateOfBirth\": \"04/09/1990\",\n        \"gender\": \"MALE\",\n        \"bloodGroup\": null,\n        \"mobileNumber\": \"9675784830\",\n        \"altContactNumber\": null,\n        \"email\": null,\n        \"address\": [\n            {\n                \"id\": \"90714054-28b2-4e1e-9f4b-2d5fe16d898d\",\n                \"clientReferenceId\": null,\n                \"individualId\": \"f8833110-1c40-48e6-b82b-f8968209e574\",\n                \"tenantId\": \"pg.citya\",\n                \"doorNo\": \"27\",\n                \"latitude\": null,\n                \"longitude\": null,\n                \"locationAccuracy\": null,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": null,\n                \"addressLine2\": null,\n                \"landmark\": null,\n                \"city\": \"pg.citya\",\n                \"pincode\": \"600003\",\n                \"buildingName\": null,\n                \"street\": \"Brindavanam\",\n                \"locality\": {\n                    \"code\": \"SUN01\",\n                    \"name\": null,\n                    \"label\": null,\n                    \"latitude\": null,\n                    \"longitude\": null,\n                    \"children\": null,\n                    \"materializedPath\": null\n                },\n                \"ward\": {\n                    \"code\": \"B1\",\n                    \"name\": null,\n                    \"label\": null,\n                    \"latitude\": null,\n                    \"longitude\": null,\n                    \"children\": null,\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"7ee53b13-5cba-4091-83b1-e2c45d9077f2\",\n                    \"lastModifiedBy\": \"7ee53b13-5cba-4091-83b1-e2c45d9077f2\",\n                    \"createdTime\": 1695621630241,\n                    \"lastModifiedTime\": 1695621630241\n                }\n            }\n        ],\n        \"fatherName\": \"John Smith\",\n        \"husbandName\": null,\n        \"relationship\": \"FATHER\",\n        \"identifiers\": [\n            {\n                \"id\": \"babff6c3-f759-4b62-b4ca-d213623d756c\",\n                \"clientReferenceId\": null,\n                \"individualId\": \"f8833110-1c40-48e6-b82b-f8968209e574\",\n                \"identifierType\": \"AADHAAR\",\n                \"identifierId\": \"********8156\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"7ee53b13-5cba-4091-83b1-e2c45d9077f2\",\n                    \"lastModifiedBy\": \"7ee53b13-5cba-4091-83b1-e2c45d9077f2\",\n                    \"createdTime\": 1695621630241,\n                    \"lastModifiedTime\": 1695621630241\n                }\n            }\n        ],\n        \"skills\": [\n            {\n                \"id\": \"155c6c83-073c-4257-88db-9151f0944ce2\",\n                \"clientReferenceId\": null,\n                \"individualId\": \"f8833110-1c40-48e6-b82b-f8968209e574\",\n                \"type\": \"HAMMER_MAN\",\n                \"level\": \"SEMI_SKILLED\",\n                \"experience\": null,\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"7ee53b13-5cba-4091-83b1-e2c45d9077f2\",\n                    \"lastModifiedBy\": \"7ee53b13-5cba-4091-83b1-e2c45d9077f2\",\n                    \"createdTime\": 1695621630241,\n                    \"lastModifiedTime\": 1695621630241\n                }\n            }\n        ],\n        \"photo\": null,\n        \"additionalFields\": {\n            \"schema\": null,\n            \"version\": null,\n            \"fields\": [\n                {\n                    \"key\": \"SOCIAL_CATEGORY\",\n                    \"value\": \"SC\"\n                }\n            ]\n        },\n        \"isDeleted\": false,\n        \"rowVersion\": 1,\n        \"auditDetails\": {\n            \"createdBy\": \"7ee53b13-5cba-4091-83b1-e2c45d9077f2\",\n            \"lastModifiedBy\": \"7ee53b13-5cba-4091-83b1-e2c45d9077f2\",\n            \"createdTime\": 1695621630241,\n            \"lastModifiedTime\": 1695621630241\n        },\n        \"isSystemUser\": false,\n        \"isSystemUserActive\": true,\n        \"userDetails\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Individual - Validation Error - Individual not provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () =>\r",
+									"    pm.expect(pm.response.to.have.status(400)));\r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"NotNull.individualRequest.individual\");\r",
+									"    pm.expect(message).to.eql(\"must not be null\");\r",
+									"}\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Individual - Validation Error - Tenant Id not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => {\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"   \r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"NotNull.individualRequest.individual.tenantId\");\r",
+									"    pm.expect(message).to.eql(\"must not be null\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"04/09/1990\",\r\n        \"gender\": \"MALE\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"pincode\": \"600003\",\r\n                \"city\": \"{{tenantId}}\",\r\n                \"street\": \"Brindavanam\",\r\n                \"doorNo\": \"27\",\r\n                \"type\": \"PERMANENT\",\r\n                \"locality\": {\r\n                    \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"identifiers\": [\r\n            {\r\n                \"identifierType\": \"AADHAAR\",\r\n                \"identifierId\": \"{{IndAadharNo}}\"\r\n            }\r\n        ],\r\n        \"skills\": [\r\n            {\r\n                \"type\": \"HAMMER_MAN\",\r\n                \"level\": \"SEMI_SKILLED\"\r\n            }\r\n        ],\r\n        \"photo\": null,\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"SC\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Individual - Validation Error - Ind name not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Arrays of common first and last names\r",
+									"const firstNames = [\r",
+									"    \"John\",\r",
+									"    \"Jane\",\r",
+									"    \"Michael\",\r",
+									"    \"Emily\",\r",
+									"    \"David\",\r",
+									"    \"Sarah\"\r",
+									"];\r",
+									"const lastNames = [\r",
+									"    \"Smith\",\r",
+									"    \"Johnson\",\r",
+									"    \"Williams\",\r",
+									"    \"Brown\",\r",
+									"    \"Jones\",\r",
+									"    \"Davis\"\r",
+									"];\r",
+									"// Function to generate a random individual name\r",
+									"function generateRandomName() {\r",
+									"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+									"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+									"\r",
+									"    return `${randomFirstName} ${randomLastName}`;\r",
+									"}\r",
+									"// Generate random names for Son and Father\r",
+									"const sonName = generateRandomName();\r",
+									"const fatherName = generateRandomName();\r",
+									"\r",
+									"// Set the generated names as environment variables\r",
+									"pm.collectionVariables.set(\"IndName\", sonName);\r",
+									"pm.collectionVariables.set(\"IndFatherName\", fatherName);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Generate a random 10-digit mobile number\r",
+									"function generateRandomMobileNumber() {\r",
+									"    let mobileNumber = \"9\"; // Start with 9 as the first digit\r",
+									"\r",
+									"    for (let i = 1; i < 10; i++) {\r",
+									"        mobileNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"\r",
+									"    return mobileNumber;\r",
+									"}\r",
+									"\r",
+									"// Generate a random mobile number\r",
+									"const randomMobileNumber = generateRandomMobileNumber();\r",
+									"\r",
+									"// Set the generated mobile number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndmobileNo\", randomMobileNumber);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate a random 12-digit number\r",
+									"function generateRandomNumber() {\r",
+									"    let randomNumber = \"\";\r",
+									"    for (let i = 0; i < 12; i++) {\r",
+									"        randomNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"    return randomNumber;\r",
+									"}\r",
+									"// Generate a random 12-digit number\r",
+									"const random12DigitNumber = generateRandomNumber();\r",
+									"\r",
+									"// Set the generated number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndAadharNo\", random12DigitNumber);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => {\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"   \r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"NotNull.individualRequest.individual.name\");\r",
+									"    pm.expect(message).to.eql(\"must not be null\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n\r\n        \"dateOfBirth\": \"04/09/1990\",\r\n        \"gender\": \"MALE\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"pincode\": \"600003\",\r\n                \"city\": \"{{tenantId}}\",\r\n                \"street\": \"Brindavanam\",\r\n                \"doorNo\": \"27\",\r\n                \"type\": \"PERMANENT\",\r\n                \"locality\": {\r\n                    \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"identifiers\": [\r\n            {\r\n                \"identifierType\": \"AADHAAR\",\r\n                \"identifierId\": \"{{IndAadharNo}}\"\r\n            }\r\n        ],\r\n        \"skills\": [\r\n            {\r\n                \"type\": \"HAMMER_MAN\",\r\n                \"level\": \"SEMI_SKILLED\"\r\n            }\r\n        ],\r\n        \"photo\": null,\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"SC\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Individual - Validation Error - Locality not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Arrays of common first and last names\r",
+									"const firstNames = [\r",
+									"    \"John\",\r",
+									"    \"Jane\",\r",
+									"    \"Michael\",\r",
+									"    \"Emily\",\r",
+									"    \"David\",\r",
+									"    \"Sarah\"\r",
+									"];\r",
+									"const lastNames = [\r",
+									"    \"Smith\",\r",
+									"    \"Johnson\",\r",
+									"    \"Williams\",\r",
+									"    \"Brown\",\r",
+									"    \"Jones\",\r",
+									"    \"Davis\"\r",
+									"];\r",
+									"// Function to generate a random individual name\r",
+									"function generateRandomName() {\r",
+									"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+									"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+									"\r",
+									"    return `${randomFirstName} ${randomLastName}`;\r",
+									"}\r",
+									"// Generate random names for Son and Father\r",
+									"const sonName = generateRandomName();\r",
+									"const fatherName = generateRandomName();\r",
+									"\r",
+									"// Set the generated names as environment variables\r",
+									"pm.collectionVariables.set(\"IndName\", sonName);\r",
+									"pm.collectionVariables.set(\"IndFatherName\", fatherName);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Generate a random 10-digit mobile number\r",
+									"function generateRandomMobileNumber() {\r",
+									"    let mobileNumber = \"9\"; // Start with 9 as the first digit\r",
+									"\r",
+									"    for (let i = 1; i < 10; i++) {\r",
+									"        mobileNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"\r",
+									"    return mobileNumber;\r",
+									"}\r",
+									"\r",
+									"// Generate a random mobile number\r",
+									"const randomMobileNumber = generateRandomMobileNumber();\r",
+									"\r",
+									"// Set the generated mobile number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndmobileNo\", randomMobileNumber);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate a random 12-digit number\r",
+									"function generateRandomNumber() {\r",
+									"    let randomNumber = \"\";\r",
+									"    for (let i = 0; i < 12; i++) {\r",
+									"        randomNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"    return randomNumber;\r",
+									"}\r",
+									"// Generate a random 12-digit number\r",
+									"const random12DigitNumber = generateRandomNumber();\r",
+									"\r",
+									"// Set the generated number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndAadharNo\", random12DigitNumber);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => {\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"   \r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"NotNull.individualRequest.individual.address[0].locality.code\");\r",
+									"    pm.expect(message).to.eql(\"must not be null\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"04/09/1990\",\r\n        \"gender\": \"MALE\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"pincode\": \"600003\",\r\n                \"city\": \"{{tenantId}}\",\r\n                \"street\": \"Brindavanam\",\r\n                \"doorNo\": \"27\",\r\n                \"type\": \"PERMANENT\",\r\n                \"locality\": {\r\n  \r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"identifiers\": [\r\n            {\r\n                \"identifierType\": \"AADHAAR\",\r\n                \"identifierId\": \"{{IndAadharNo}}\"\r\n            }\r\n        ],\r\n        \"skills\": [\r\n            {\r\n                \"type\": \"HAMMER_MAN\",\r\n                \"level\": \"SEMI_SKILLED\"\r\n            }\r\n        ],\r\n        \"photo\": null,\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"SC\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Individual - Validation Error - Ward not provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Arrays of common first and last names\r",
+									"const firstNames = [\r",
+									"    \"John\",\r",
+									"    \"Jane\",\r",
+									"    \"Michael\",\r",
+									"    \"Emily\",\r",
+									"    \"David\",\r",
+									"    \"Sarah\"\r",
+									"];\r",
+									"const lastNames = [\r",
+									"    \"Smith\",\r",
+									"    \"Johnson\",\r",
+									"    \"Williams\",\r",
+									"    \"Brown\",\r",
+									"    \"Jones\",\r",
+									"    \"Davis\"\r",
+									"];\r",
+									"// Function to generate a random individual name\r",
+									"function generateRandomName() {\r",
+									"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+									"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+									"\r",
+									"    return `${randomFirstName} ${randomLastName}`;\r",
+									"}\r",
+									"// Generate random names for Son and Father\r",
+									"const sonName = generateRandomName();\r",
+									"const fatherName = generateRandomName();\r",
+									"\r",
+									"// Set the generated names as environment variables\r",
+									"pm.collectionVariables.set(\"IndName\", sonName);\r",
+									"pm.collectionVariables.set(\"IndFatherName\", fatherName);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Generate a random 10-digit mobile number\r",
+									"function generateRandomMobileNumber() {\r",
+									"    let mobileNumber = \"9\"; // Start with 9 as the first digit\r",
+									"\r",
+									"    for (let i = 1; i < 10; i++) {\r",
+									"        mobileNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"\r",
+									"    return mobileNumber;\r",
+									"}\r",
+									"\r",
+									"// Generate a random mobile number\r",
+									"const randomMobileNumber = generateRandomMobileNumber();\r",
+									"\r",
+									"// Set the generated mobile number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndmobileNo\", randomMobileNumber);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate a random 12-digit number\r",
+									"function generateRandomNumber() {\r",
+									"    let randomNumber = \"\";\r",
+									"    for (let i = 0; i < 12; i++) {\r",
+									"        randomNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"    return randomNumber;\r",
+									"}\r",
+									"// Generate a random 12-digit number\r",
+									"const random12DigitNumber = generateRandomNumber();\r",
+									"\r",
+									"// Set the generated number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndAadharNo\", random12DigitNumber);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => {\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"   \r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"NotNull.individualRequest.individual.address[0].ward.code\");\r",
+									"    pm.expect(message).to.eql(\"must not be null\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"04/09/1990\",\r\n        \"gender\": \"MALE\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"pincode\": \"600003\",\r\n                \"city\": \"{{tenantId}}\",\r\n                \"street\": \"Brindavanam\",\r\n                \"doorNo\": \"27\",\r\n                \"type\": \"PERMANENT\",\r\n                \"locality\": {\r\n                      \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"identifiers\": [\r\n            {\r\n                \"identifierType\": \"AADHAAR\",\r\n                \"identifierId\": \"{{IndAadharNo}}\"\r\n            }\r\n        ],\r\n        \"skills\": [\r\n            {\r\n                \"type\": \"HAMMER_MAN\",\r\n                \"level\": \"SEMI_SKILLED\"\r\n            }\r\n        ],\r\n        \"photo\": null,\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"SC\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Individual - Validation Error - Invalid Aadhar",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Arrays of common first and last names\r",
+									"const firstNames = [\r",
+									"    \"John\",\r",
+									"    \"Jane\",\r",
+									"    \"Michael\",\r",
+									"    \"Emily\",\r",
+									"    \"David\",\r",
+									"    \"Sarah\"\r",
+									"];\r",
+									"const lastNames = [\r",
+									"    \"Smith\",\r",
+									"    \"Johnson\",\r",
+									"    \"Williams\",\r",
+									"    \"Brown\",\r",
+									"    \"Jones\",\r",
+									"    \"Davis\"\r",
+									"];\r",
+									"// Function to generate a random individual name\r",
+									"function generateRandomName() {\r",
+									"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+									"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+									"\r",
+									"    return `${randomFirstName} ${randomLastName}`;\r",
+									"}\r",
+									"// Generate random names for Son and Father\r",
+									"const sonName = generateRandomName();\r",
+									"const fatherName = generateRandomName();\r",
+									"\r",
+									"// Set the generated names as environment variables\r",
+									"pm.collectionVariables.set(\"IndName\", sonName);\r",
+									"pm.collectionVariables.set(\"IndFatherName\", fatherName);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Generate a random 10-digit mobile number\r",
+									"function generateRandomMobileNumber() {\r",
+									"    let mobileNumber = \"9\"; // Start with 9 as the first digit\r",
+									"\r",
+									"    for (let i = 1; i < 10; i++) {\r",
+									"        mobileNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"\r",
+									"    return mobileNumber;\r",
+									"}\r",
+									"\r",
+									"// Generate a random mobile number\r",
+									"const randomMobileNumber = generateRandomMobileNumber();\r",
+									"\r",
+									"// Set the generated mobile number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndmobileNo\", randomMobileNumber);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate a random 12-digit number\r",
+									"function generateRandomNumber() {\r",
+									"    let randomNumber = \"\";\r",
+									"    for (let i = 0; i < 12; i++) {\r",
+									"        randomNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"    return randomNumber;\r",
+									"}\r",
+									"// Generate a random 12-digit number\r",
+									"const random12DigitNumber = generateRandomNumber();\r",
+									"\r",
+									"// Set the generated number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndAadharNo\", random12DigitNumber);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => {\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"   \r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"INVALID_AADHAAR\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"04/09/1990\",\r\n        \"gender\": \"MALE\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"pincode\": \"600003\",\r\n                \"city\": \"{{tenantId}}\",\r\n                \"street\": \"Brindavanam\",\r\n                \"doorNo\": \"27\",\r\n                \"type\": \"PERMANENT\",\r\n                \"locality\": {\r\n                      \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"identifiers\": [\r\n            {\r\n                \"identifierType\": \"AADHAAR\",\r\n                \"identifierId\": \"1236581\"\r\n            }\r\n        ],\r\n        \"skills\": [\r\n            {\r\n                \"type\": \"HAMMER_MAN\",\r\n                \"level\": \"SEMI_SKILLED\"\r\n            }\r\n        ],\r\n        \"photo\": null,\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"SC\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Individual - Validation Error - Same Aadhar",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Arrays of common first and last names\r",
+									"const firstNames = [\r",
+									"    \"John\",\r",
+									"    \"Jane\",\r",
+									"    \"Michael\",\r",
+									"    \"Emily\",\r",
+									"    \"David\",\r",
+									"    \"Sarah\"\r",
+									"];\r",
+									"const lastNames = [\r",
+									"    \"Smith\",\r",
+									"    \"Johnson\",\r",
+									"    \"Williams\",\r",
+									"    \"Brown\",\r",
+									"    \"Jones\",\r",
+									"    \"Davis\"\r",
+									"];\r",
+									"// Function to generate a random individual name\r",
+									"function generateRandomName() {\r",
+									"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+									"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+									"\r",
+									"    return `${randomFirstName} ${randomLastName}`;\r",
+									"}\r",
+									"// Generate random names for Son and Father\r",
+									"const sonName = generateRandomName();\r",
+									"const fatherName = generateRandomName();\r",
+									"\r",
+									"// Set the generated names as environment variables\r",
+									"pm.collectionVariables.set(\"IndName\", sonName);\r",
+									"pm.collectionVariables.set(\"IndFatherName\", fatherName);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Generate a random 10-digit mobile number\r",
+									"function generateRandomMobileNumber() {\r",
+									"    let mobileNumber = \"9\"; // Start with 9 as the first digit\r",
+									"\r",
+									"    for (let i = 1; i < 10; i++) {\r",
+									"        mobileNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"\r",
+									"    return mobileNumber;\r",
+									"}\r",
+									"\r",
+									"// Generate a random mobile number\r",
+									"const randomMobileNumber = generateRandomMobileNumber();\r",
+									"\r",
+									"// Set the generated mobile number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndmobileNo\", randomMobileNumber);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate a random 12-digit number\r",
+									"function generateRandomNumber() {\r",
+									"    let randomNumber = \"\";\r",
+									"    for (let i = 0; i < 12; i++) {\r",
+									"        randomNumber += Math.floor(Math.random() * 10);\r",
+									"    }\r",
+									"    return randomNumber;\r",
+									"}\r",
+									"// Generate a random 12-digit number\r",
+									"const random12DigitNumber = generateRandomNumber();\r",
+									"\r",
+									"// Set the generated number as an environment variable\r",
+									"pm.collectionVariables.set(\"IndAadharNo\", random12DigitNumber);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => {\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"   \r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"DUPLICATE_AADHAAR\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"04/09/1990\",\r\n        \"gender\": \"MALE\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"tenantId\": \"{{tenantId}}\",\r\n                \"pincode\": \"600003\",\r\n                \"city\": \"{{tenantId}}\",\r\n                \"street\": \"Brindavanam\",\r\n                \"doorNo\": \"27\",\r\n                \"type\": \"PERMANENT\",\r\n                \"locality\": {\r\n                      \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"identifiers\": [\r\n            {\r\n                \"identifierType\": \"AADHAAR\",\r\n                \"identifierId\": \"123658158962\"\r\n            }\r\n        ],\r\n        \"skills\": [\r\n            {\r\n                \"type\": \"HAMMER_MAN\",\r\n                \"level\": \"SEMI_SKILLED\"\r\n            }\r\n        ],\r\n        \"photo\": null,\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"SC\"\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Success - Searchby ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(200)));\r",
+									"\r",
+									"pm.test(\"Individual Search response is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var id = res.Individual.id;\r",
+									"    pm.expect(id).to.eql(pm.collectionVariables.get(\"IndId\"));\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"id\": [\r\n            \"{{IndId}}\"\r\n        ]\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // },\r\n        // \"individualId\": \"{{IndNo}}\",\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        // \"socialCategory\": \"{{Social Category}}\",\r\n        // \"createdFrom\": \"{{createdTime}}\",\r\n        // \"createdTo\": \"{{lastModifiedTime}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Success - Searchby ward",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(200)));\r",
+									"\r",
+									"pm.test(\"Individual Search response is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var ward = res.Individual.ward.code;\r",
+									"    pm.expect(ward).to.eql(pm.collectionVariables.get(\"ward\"));\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"wardCode\": \"{{ward}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Success - Searchby IndName",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(200)));\r",
+									"\r",
+									"pm.test(\"Individual Search response is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var id = res.Individual.id;\r",
+									"    pm.expect(id).to.eql(pm.collectionVariables.get(\"IndId\"));\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        }\r\n        // \"individualId\": \"{{IndNo}}\",\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        // \"socialCategory\": \"{{Social Category}}\",\r\n        // \"createdFrom\": \"{{createdTime}}\",\r\n        // \"createdTo\": \"{{lastModifiedTime}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Success - Searchby IndNo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(200)));\r",
+									"\r",
+									"pm.test(\"Individual Search response is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var id = res.Individual.id;\r",
+									"    pm.expect(id).to.eql(pm.collectionVariables.get(\"IndId\"));\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // }\r\n        \"individualId\": \"{{IndNo}}\"\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        // \"socialCategory\": \"{{Social Category}}\",\r\n        // \"createdFrom\": \"{{createdTime}}\",\r\n        // \"createdTo\": \"{{lastModifiedTime}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Success - Searchby MobileNo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(200)));\r",
+									"\r",
+									"pm.test(\"Individual Search response is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var id = res.Individual.id;\r",
+									"    pm.expect(id).to.eql(pm.collectionVariables.get(\"IndId\"));\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // }\r\n        // \"individualId\": \"{{IndNo}}\"\r\n        \"mobileNumber\": \"{{IndmobileNo}}\"\r\n        // \"socialCategory\": \"{{Social Category}}\",\r\n        // \"createdFrom\": \"{{createdTime}}\",\r\n        // \"createdTo\": \"{{lastModifiedTime}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Success - Searchby SC",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(200)));\r",
+									"\r",
+									"pm.test(\"Individual Search response is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var id = res.Individual.id;\r",
+									"    pm.expect(id).to.eql(pm.collectionVariables.get(\"IndId\"));\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // }\r\n        // \"individualId\": \"{{IndNo}}\"\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\"\r\n        \"socialCategory\": \"{{Social Category}}\"\r\n        // \"createdFrom\": \"{{createdTime}}\",\r\n        // \"createdTo\": \"{{lastModifiedTime}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Success - Searchby Created from and to date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(200)));\r",
+									"\r",
+									"pm.test(\"Individual Search response is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var id = res.Individual.id;\r",
+									"    pm.expect(id).to.eql(pm.collectionVariables.get(\"IndId\"));\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // }\r\n        // \"individualId\": \"{{IndNo}}\"\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\"\r\n        // \"socialCategory\": \"{{Social Category}}\"\r\n        \"createdFrom\": \"{{createdTime}}\",\r\n        \"createdTo\": \"{{lastModifiedTime}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Validation error - Without tenantId in params",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(400)));\r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"\");\r",
+									"    pm.expect(message).to.eql(\"Required String parameter 'tenantId' is not present\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // }\r\n        // \"individualId\": \"{{IndNo}}\"\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\"\r\n        // \"socialCategory\": \"{{Social Category}}\"\r\n        // \"createdFrom\": \"{{createdTime}}\",\r\n        // \"createdTo\": \"{{lastModifiedTime}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Validation error - createdFrom greater than createdTo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(400)));\r",
+									"\r",
+									"// pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"//     var res = pm.response.json();\r",
+									"//     var code = res.Errors[0].code;\r",
+									"//     var message = res.Errors[0].message;\r",
+									"//     pm.expect(code).to.eql(\"\");\r",
+									"//     pm.expect(message).to.eql(\"Required String parameter 'tenantId' is not present\");\r",
+									"//     }\r",
+									"// );"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // }\r\n        // \"individualId\": \"{{IndNo}}\"\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\"\r\n        // \"socialCategory\": \"{{Social Category}}\"\r\n        \"createdFrom\": 5000,\r\n        \"createdTo\": 2000\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Validation error - Created from date greater than created to date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(400)));\r",
+									"\r",
+									"// pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"//     var res = pm.response.json();\r",
+									"//     var code = res.Errors[0].code;\r",
+									"//     var message = res.Errors[0].message;\r",
+									"//     pm.expect(code).to.eql(\"\");\r",
+									"//     pm.expect(message).to.eql(\"Required String parameter 'tenantId' is not present\");\r",
+									"//     }\r",
+									"// );"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // }\r\n        // \"individualId\": \"{{IndNo}}\"\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\"\r\n        // \"socialCategory\": \"{{Social Category}}\"\r\n        \"createdFrom\": 1695723990000,\r\n        \"createdTo\": 1695378390000\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual - Validation error - createdTo without createdFrom",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => \r",
+									"   pm.expect(pm.response.to.have.status(400)));\r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"DATABASE_ERROR\");\r",
+									"    pm.expect(message).to.eql(\"Cannot specify createdToDate without a createdFromDate\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        // \"id\": [\r\n        //     \"{{IndId}}\"\r\n        // ],\r\n        // \"wardCode\": \"{{ward}}\",\r\n        // \"name\": {\r\n        //     \"givenName\": \"{{IndName}}\"\r\n        // }\r\n        // \"individualId\": \"{{IndNo}}\"\r\n        // \"mobileNumber\": \"{{IndmobileNo}}\"\r\n        // \"socialCategory\": \"{{Social Category}}\"\r\n        \"createdTo\": 2000\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_search?limit=100&offset=0&tenantId={{tenantId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "100"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "{{tenantId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Individual - Success - Update Indname and Father Name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RequestInfo is required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(req.RequestInfo).to.not.be.null;\r",
+									"    pm.expect(req.RequestInfo).to.not.be.undefined;\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test(\"Individual are required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(req.Individual).to.not.be.undefined;\r",
+									"    pm.expect(req.Individual).to.not.be.null;\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test(\"TenantId is required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    var Individual = req.Individual;  \r",
+									"    pm.expect(Individual.tenantId).to.not.be.null;\r",
+									"    pm.expect(Individual.tenantId).to.not.be.undefined;\r",
+									"    pm.expect(Individual.tenantId).to.not.equal(\"\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is successful\", () =>\r",
+									"    pm.expect(pm.response.to.have.status(202))\r",
+									");\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Arrays of common first and last names\r",
+									"const firstNames = [\r",
+									"    \"John\",\r",
+									"    \"Jane\",\r",
+									"    \"Michael\",\r",
+									"    \"Emily\",\r",
+									"    \"David\",\r",
+									"    \"Sarah\"\r",
+									"];\r",
+									"const lastNames = [\r",
+									"    \"Smith\",\r",
+									"    \"Johnson\",\r",
+									"    \"Williams\",\r",
+									"    \"Brown\",\r",
+									"    \"Jones\",\r",
+									"    \"Davis\"\r",
+									"];\r",
+									"// Function to generate a random individual name\r",
+									"function generateRandomName() {\r",
+									"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+									"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+									"\r",
+									"    return `${randomFirstName} ${randomLastName}`;\r",
+									"}\r",
+									"// Generate random names for Son and Father\r",
+									"const sonName = generateRandomName();\r",
+									"const fatherName = generateRandomName();\r",
+									"\r",
+									"// Set the generated names as environment variables\r",
+									"pm.collectionVariables.set(\"IndName\", sonName);\r",
+									"pm.collectionVariables.set(\"IndFatherName\", fatherName);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"id\": \"{{IndId}}\",\r\n        \"tenantId\": \"{{tenantId}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"{{IndDOB}}\",\r\n        \"gender\": \"{{Indgender}}\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"id\": \"{{IndaddressId}}\",\r\n                \"individualId\": \"{{IndId}}\",\r\n                \"tenantId\": \"pg.citya\",\r\n                \"doorNo\": \"124\",\r\n                \"type\": \"PERMANENT\",\r\n                \"pincode\": \"123457\",\r\n                \"buildingName\": \"Apartment\",\r\n                \"street\": \"Necklace Road1\",\r\n                \"locality\": {\r\n                    \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"skills\": [\r\n            {\r\n                \"id\": \"{{IndskillId}}\",\r\n                \"individualId\": \"{{IndId}}\",\r\n                \"type\": \"{{Indskilltype}}\",\r\n                \"level\": \"{{Indskilllevel}}\"\r\n            }\r\n        ],\r\n        \"photo\": \"test_35bd4e8545d8\",\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"{{Social Category}}\"\r\n                }\r\n            ]\r\n        },\r\n        \"rowVersion\": {{IndrowVersion}}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Individual - Validation error - Tenant Id not provided",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RequestInfo is required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(req.RequestInfo).to.not.be.null;\r",
+									"    pm.expect(req.RequestInfo).to.not.be.undefined;\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test(\"Individual are required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(req.Individual).to.not.be.undefined;\r",
+									"    pm.expect(req.Individual).to.not.be.null;\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test(\"TenantId is required\", function () {\r",
+									"    var req = JSON.parse(pm.request.body.raw);\r",
+									"    var Individual = req.Individual;  \r",
+									"    pm.expect(Individual.tenantId).to.not.be.null;\r",
+									"    pm.expect(Individual.tenantId).to.not.be.undefined;\r",
+									"    pm.expect(Individual.tenantId).to.not.equal(\"\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is successful\", () =>\r",
+									"    pm.expect(pm.response.to.have.status(202))\r",
+									");\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.test(\"Response is successful\", () => {\r",
+									"    pm.expect(pm.response.to.have.status(400));\r",
+									"});\r",
+									"   \r",
+									"\r",
+									"pm.test(\"Correct Error with message and code is received\", function () {\r",
+									"    var res = pm.response.json();\r",
+									"    var code = res.Errors[0].code;\r",
+									"    var message = res.Errors[0].message;\r",
+									"    pm.expect(code).to.eql(\"NotNull.individualRequest.individual.tenantId\");\r",
+									"    pm.expect(message).to.eql(\"must not be null\");\r",
+									"    }\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"Rainmaker\",\r\n        \"ver\": \".01\",\r\n        \"ts\": \"\",\r\n        \"action\": \"_search\",\r\n        \"did\": \"1\",\r\n        \"key\": \"\",\r\n        \"msgId\": \"1695367848064|en_IN\",\r\n        \"authToken\": \"{{auth}}\",\r\n        \"userInfo\": {\r\n            \"active\": true,\r\n            \"id\": 488,\r\n            \"emailId\": null,\r\n            \"mobileNumber\": \"9000000001\",\r\n            \"name\": \"Aug JIT testing null\",\r\n            \"scope\": null,\r\n            \"tenantId\": \"pg\",\r\n            \"type\": \"CITIZEN\",\r\n            \"userName\": \"9000000001\",\r\n            \"uuid\": \"f2cfbb49-0aec-438e-872d-0d0f5fba83a6\",\r\n            \"roles\": [\r\n                {\r\n                    \"code\": \"ORG_ADMIN\",\r\n                    \"name\": \"Organization admin\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"Individual\": {\r\n        \"id\": \"{{IndId}}\",\r\n        \"name\": {\r\n            \"givenName\": \"{{IndName}}\"\r\n        },\r\n        \"dateOfBirth\": \"{{IndDOB}}\",\r\n        \"gender\": \"{{Indgender}}\",\r\n        \"mobileNumber\": \"{{IndmobileNo}}\",\r\n        \"address\": [\r\n            {\r\n                \"id\": \"{{IndaddressId}}\",\r\n                \"individualId\": \"{{IndId}}\",\r\n                \"tenantId\": \"pg.citya\",\r\n                \"doorNo\": \"124\",\r\n                \"type\": \"PERMANENT\",\r\n                \"pincode\": \"123457\",\r\n                \"buildingName\": \"Apartment\",\r\n                \"street\": \"Necklace Road1\",\r\n                \"locality\": {\r\n                    \"code\": \"{{locality}}\"\r\n                },\r\n                \"ward\": {\r\n                    \"code\": \"{{ward}}\"\r\n                }\r\n            }\r\n        ],\r\n        \"fatherName\": \"{{IndFatherName}}\",\r\n        \"husbandName\": null,\r\n        \"relationship\": \"FATHER\",\r\n        \"skills\": [\r\n            {\r\n                \"id\": \"{{IndskillId}}\",\r\n                \"individualId\": \"{{IndId}}\",\r\n                \"type\": \"{{Indskilltype}}\",\r\n                \"level\": \"{{Indskilllevel}}\"\r\n            }\r\n        ],\r\n        \"photo\": \"test_35bd4e8545d8\",\r\n        \"additionalFields\": {\r\n            \"fields\": [\r\n                {\r\n                    \"key\": \"SOCIAL_CATEGORY\",\r\n                    \"value\": \"{{Social Category}}\"\r\n                }\r\n            ]\r\n        },\r\n        \"rowVersion\": {{IndrowVersion}}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/individual/v1/_update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_update"
 							]
 						}
 					},
@@ -5028,6 +6745,18 @@
 		},
 		{
 			"key": "Indskilllevel",
+			"value": ""
+		},
+		{
+			"key": "Social Category",
+			"value": ""
+		},
+		{
+			"key": "identifiersId",
+			"value": ""
+		},
+		{
+			"key": "IndrowVersion",
 			"value": ""
 		}
 	]
