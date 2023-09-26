@@ -1,15 +1,17 @@
 package org.egov.works.measurement.util;
 
-import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.Document;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
-import digit.models.coremodels.Document;
+import digit.models.coremodels.AuditDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -24,6 +26,10 @@ public class MeasurementRegistryUtil {
     private ErrorConfiguration errorConfigs;
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
+    @Autowired
+    private MeasurementServiceUtil measurementServiceUtil;
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     /**
@@ -176,6 +182,25 @@ public class MeasurementRegistryUtil {
                 .build());
         response.setMeasurements(measurements);
         return response;
+    }
+
+    public ResponseEntity<MeasurementResponse> createMeasurements(MeasurementServiceRequest body){
+        List<Measurement> measurementList = measurementServiceUtil.convertToMeasurementList(body.getMeasurements());
+        String url = "http://localhost:8081/measurement/v1/_create";
+        MeasurementRequest measurementRegistryRequest = MeasurementRequest.builder().requestInfo(body.getRequestInfo()).measurements(measurementList).build();
+        ResponseEntity<MeasurementResponse> measurementResponse = restTemplate.postForEntity(url, measurementRegistryRequest, MeasurementResponse.class);
+        return measurementResponse;
+    }
+    public ResponseEntity<MeasurementResponse> updateMeasurements(MeasurementServiceRequest body){
+        String url = "http://localhost:8081/measurement/v1/_update";
+        MeasurementRequest measurementRequest = measurementServiceUtil.makeMeasurementUpdateRequest(body);
+        ResponseEntity<MeasurementResponse> measurementResponse = restTemplate.postForEntity(url, measurementRequest, MeasurementResponse.class);
+        return measurementResponse;
+    }
+    public ResponseEntity<MeasurementResponse> searchMeasurements(MeasurementSearchRequest body){
+        String measurementServiceUrl = "http://localhost:8081/measurement/v1/_search";
+        ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(measurementServiceUrl, body, MeasurementResponse.class);
+        return responseEntity;
     }
 
 }

@@ -29,7 +29,7 @@ import lombok.Builder;
 @Builder
 public class MeasurementRequest {
 
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
     @Valid
     private RequestInfo requestInfo = null;
 

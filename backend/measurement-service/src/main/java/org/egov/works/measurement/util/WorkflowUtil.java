@@ -69,10 +69,8 @@ public class WorkflowUtil {
      * @param wfModuleName
      * @return
      */
-    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId,
-                                       String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
-        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId,
-                businessServiceCode, workflow, wfModuleName);
+    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode,Workflow workflow, String wfModuleName) {
+        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId, businessServiceCode, workflow, wfModuleName);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
 
@@ -107,8 +105,8 @@ public class WorkflowUtil {
      * @param wfModuleName
      * @return
      */
-    private ProcessInstance getProcessInstanceForWorkflow(RequestInfo requestInfo, String tenantId,
-                                                          String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
+    public ProcessInstance getProcessInstanceForWorkflow(RequestInfo requestInfo, String tenantId,
+                                                         String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
 
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(businessId);

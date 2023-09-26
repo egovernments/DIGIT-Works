@@ -5,12 +5,12 @@ package org.egov.works.measurement.repository.rowmapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.models.coremodels.AuditDetails;
-import org.egov.works.measurement.web.models.Document;
 import org.egov.works.measurement.web.models.Measure;
 import org.egov.works.measurement.web.models.Measurement;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import digit.models.coremodels.Document;
 
 import java.io.IOException;
 import java.sql.ResultSet;

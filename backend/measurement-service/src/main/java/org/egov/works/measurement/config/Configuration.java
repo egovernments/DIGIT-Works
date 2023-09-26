@@ -3,6 +3,7 @@ package org.egov.works.measurement.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
+import org.egov.works.measurement.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,23 +23,18 @@ import java.util.TimeZone;
 @Getter
 public class Configuration {
 
+    @Bean
+    public Pagination pagination() {
+        return new Pagination(); // Initialize Pagination bean as needed
+    }
 
-    // User Config
-    @Value("${egov.user.host}")
-    private String userHost;
 
-    @Value("${egov.user.context.path}")
-    private String userContextPath;
 
-    @Value("${egov.user.create.path}")
-    private String userCreateEndpoint;
+    @Value("${measurement-service.default.offset}")
+    private Integer defaultOffset;
 
-    @Value("${egov.user.search.path}")
-    private String userSearchEndpoint;
-
-    @Value("${egov.user.update.path}")
-    private String userUpdateEndpoint;
-
+    @Value("${measurement-service.default.limit}")
+    private Integer defaultLimit;
 
     //Idgen Config
     @Value("${egov.idgen.host}")
@@ -69,24 +65,45 @@ public class Configuration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
+    // Kafka topics
+    @Value("${measurement.kafka.create.topic}")
+    private String createMeasurementTopic;
 
-    //HRMS
-    @Value("${egov.hrms.host}")
-    private String hrmsHost;
+    @Value("${measurement.kafka.update.topic}")
+    private String updateTopic;
 
-    @Value("${egov.hrms.search.endpoint}")
-    private String hrmsEndPoint;
+    @Value("${measurement-service.kafka.update.topic}")
+    private String serviceUpdateTopic;
 
+    @Value("${measurement-service.kafka.create.topic}")
+    private String measurementServiceCreateTopic;
 
-    //URLShortening
-    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
+    @Value("${measurement.kafka.enrich.create.topic}")
+    private String enrichMeasurementTopic;
 
-    @Value("${egov.url.shortner.endpoint}")
-    private String urlShortnerEndpoint;
+    @Value("${measurement.idgen.name}")
+    private String idName;
 
+    @Value("${measurement.idgen.format}")
+    private String idFormat;
 
-    //SMSNotification
-    @Value("${egov.sms.notification.topic}")
-    private String smsNotificationTopic;
+    // contract service
+    @Value("${egov.contract.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.path}")
+    private String contractPath;
+
+    // estimate service
+    @Value("${egov.estimate.host}")
+    private String estimateHost;
+
+    @Value("${egov.estimate.path}")
+    private String estimatePath;
+
+    @Value("${egov.workflow.bussinessServiceCode}")
+    private String bussinessServiceCode;
+
+    @Value("${egov.workflow.moduleName}")
+    private String wfModuleName;
 }

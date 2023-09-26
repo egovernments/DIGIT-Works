@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import digit.models.coremodels.AuditDetails;
+import digit.models.coremodels.Document;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.*;
+import org.egov.works.measurement.web.models.Measure;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;

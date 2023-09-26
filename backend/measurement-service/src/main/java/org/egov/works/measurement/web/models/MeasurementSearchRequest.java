@@ -22,7 +22,7 @@ import lombok.Builder;
 @Builder
 public class MeasurementSearchRequest {
 
-    @JsonProperty("requestInfo")
+    @JsonProperty("RequestInfo")
     @Valid
     private RequestInfo requestInfo = null;
 
