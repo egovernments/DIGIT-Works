@@ -118,7 +118,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
   const renderBody = () => {
     return state?.tableState?.map((value, index) => {
-      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} />;
+      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView = {isView}/>;
     });
   };
 
