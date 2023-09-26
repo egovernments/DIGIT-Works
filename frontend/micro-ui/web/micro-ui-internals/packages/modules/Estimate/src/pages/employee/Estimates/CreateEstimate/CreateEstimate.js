@@ -60,6 +60,7 @@ const CreateEstimate = () => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
    
+    
 
     const cardState = [
 
