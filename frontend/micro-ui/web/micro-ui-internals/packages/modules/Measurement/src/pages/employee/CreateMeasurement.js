@@ -81,7 +81,6 @@ const CreateMeasurement = ({ props }) => {
 
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
-    console.log(data, "dddddddddddddddd")
     if (props?.isUpdate) {
       data.id = props?.data?.[0].id;
       data.measurementNumber = props?.data?.[0].measurementNumber;
