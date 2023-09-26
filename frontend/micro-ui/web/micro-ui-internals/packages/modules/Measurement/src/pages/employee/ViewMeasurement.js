@@ -41,7 +41,7 @@ const ViewMeasurement = () => {
   const imageDetails = { applicationDetails: [applicationDetails?.applicationDetails?.applicationDetails[2]] };
 
 
-  const measures = applicationDetails?.applicationData?.measurements[0].measures;
+  const measures = applicationDetails?.applicationData?.measurements[0];
   console.log(measures, "measure");
   const data = applicationDetails?.applicationData;
 
@@ -52,9 +52,6 @@ const ViewMeasurement = () => {
       if (data) {
         const sorData = transformEstimateData(estimateDetails, data?.contracts[0], "SOR", measures);
         const nonSorData = transformEstimateData(estimateDetails, data?.contracts[0], "NON-SOR", measures);
-
-
-  const measures = applicationDetails?.applicationData?.measurements[0].measures
 
         setSorCategoryArray(sorData);
         setNonSorCategoryArray(nonSorData);

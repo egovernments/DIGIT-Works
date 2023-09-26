@@ -42,7 +42,7 @@ const MeasurementCard = () => {
       },
       {
         label: t("MB_SEARCH"),
-        link: `/${window?.contextPath}/employee/measurement/searchplain`,
+        link: `/${window?.contextPath}/employee/measurement/search`,
       },
       {
         label: t("MB_UPDATE"),
