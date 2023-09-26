@@ -6,6 +6,7 @@ WORKDIR /app
 
 COPY ${WORK_DIR}/package.json  ${WORK_DIR}/yarn.lock .
 
+
 RUN yarn
 
 COPY ${WORK_DIR}/src .
