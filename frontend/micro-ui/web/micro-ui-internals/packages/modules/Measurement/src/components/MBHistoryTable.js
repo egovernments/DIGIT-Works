@@ -105,6 +105,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
                       <Link
                         to={{
                           pathname: window.location.pathname,
+
                           search: `?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${row.mbref}`,
                         }}
                         style={{ color: "#f37f12" }}

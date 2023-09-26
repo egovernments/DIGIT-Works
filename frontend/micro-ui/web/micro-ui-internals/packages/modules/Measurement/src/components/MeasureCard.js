@@ -6,7 +6,7 @@ import MeasureRow from "./MeasureRow";
 
 
 {/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
-const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate , isView }) => {
+const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
 
@@ -124,7 +124,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
   return (
     <Fragment>
-    <Card>
+
 
       <table className="table reports-table sub-work-table" >
         <thead>
@@ -135,27 +135,28 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
           <tr>
             <td colSpan={"4"}>
               <div style={{ display: "flex", flexDirection: "row" }}>
-
-              {isView ? (
-                <Button
-                className={"outline-btn"}
+                {isView ? (
+                  <Button
+                     className={"outline-btn"}
                   label={t("MB_CLOSE")}
-                  onButtonClick={() => {
-                    setShowMeasureCard(false);
-                  }}
-                />
-              ) : (<>
-                <Button className={"outline-btn"} label={t("MB_CLEAR")} onButtonClick={() => {
-                  dispatch({ type: "CLEAR_STATE" });
-                }} />
-                <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
-                  tableData[tableKey][tableIndex].measures = state.tableState;
-                  setValue("measurements", tableData);
+                    onButtonClick={() => {
+                      setShowMeasureCard(false);
+                    }}
+                  />
+                ) : (<>
+                  <Button className={"outline-btn"} label={t("MB_CLEAR")} onButtonClick={() => {
+                    dispatch({ type: "CLEAR_STATE" });
+                  }} />
+                  <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
+                    tableData[tableKey][tableIndex].measures = state.tableState;
+                    tableData[tableKey][tableIndex].amount = tableData[tableKey][tableIndex].measures?.[0]?.rowAmount
+                    setValue("measurements", tableData);
 
-                  setInitialState(state);
-                  setConsumedQty(total);
-                  setShowMeasureCard(false);
-                }} />
+                    setInitialState(state);
+                    setConsumedQty(total);
+                    setShowMeasureCard(false);
+                  }} />
+
                 </>)}
               </div>
             </td>
@@ -165,7 +166,6 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
           </tr>
         </tbody>
       </table>
-    </Card>
     </Fragment>
   );
 });
