@@ -3,7 +3,7 @@ import React, { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const MeasureRow = ({ value, index, state, dispatch }) => {
+const MeasureRow = ({ value, index, state, dispatch, isView }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -23,6 +23,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
               state: { id: index + 1, value: newValue.target.value, row: value, type: "number" },
             });
           }}
+          disable = {isView}
         />
       </td>
       <td>
@@ -34,6 +35,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
               state: { id: index + 1, value: newValue.target.value, row: value, type: "length" },
             });
           }}
+          disable = {isView}
         />
       </td>
       <td>
@@ -45,6 +47,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
               state: { id: index + 1, value: newValue.target.value, row: value, type: "width" },
             });
           }}
+          disable = {isView}
         />
       </td>
       <td>
@@ -56,6 +59,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
               state: { id: index + 1, value: newValue.target.value, row: value, type: "height" },
             });
           }}
+          disable = {isView}
         />
       </td>
       <td>{state.tableState[index].noOfunit}</td>
