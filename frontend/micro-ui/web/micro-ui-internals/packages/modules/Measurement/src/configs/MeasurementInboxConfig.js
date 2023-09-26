@@ -11,6 +11,7 @@ const InboxMeasurementConfig = () => {
       requestBody: {
         inbox: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
+
           moduleSearchCriteria: {
             tenantId: Digit.ULBService.getCurrentTenantId()
           },
@@ -38,7 +39,7 @@ const InboxMeasurementConfig = () => {
           defaultValues: {
             ProjectId: "",
             measurementNumber: "",
-            ProjectType: "",
+            projectType: "",
           },
           fields: [
             {
@@ -65,7 +66,7 @@ const InboxMeasurementConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                name: "ProjectType",
+                name: "projectType",
                 optionsKey: "name",
                 optionsCustomStyle: {
                   top: "2.3rem",
@@ -73,7 +74,7 @@ const InboxMeasurementConfig = () => {
                 mdmsConfig: {
                   masterName: "ProjectType",
                   moduleName: "works",
-                  localePrefix: "MASTERS",
+                  localePrefix: "",
                 },
               },
             },
@@ -171,13 +172,13 @@ const InboxMeasurementConfig = () => {
             },
             {
               label: "MB_WORKFLOW_STATE",
-              type: "text",
+              type: "workflowstatesfilter",
               isMandatory: false,
               disable: false,
               populators: {
-                name: "state",
-                labelPrefix: "WF_MUSTOR_",
-                businessService: "muster-roll-approval",
+                name: "status",
+                labelPrefix: "Pending for Verification",
+                businessService: "MB",
               },
             },
           ],
@@ -191,37 +192,37 @@ const InboxMeasurementConfig = () => {
           columns: [
             {
               label: "MB_REFERENCE_NUMBER",
-              jsonPath: "allOf?.measures[0].referenceId",
+              jsonPath: "ProcessInstance.businessId",
               additionalCustomization: true,
             },
             {
               label: "MB_PROJECT_NAME",
-              jsonPath: "fatherName",
+              jsonPath: "businessObject.contract.additionalDetails.projectName",
             },
             {
               label: "MB_ASSIGNEE",
-              jsonPath: "additionalFields.fields[0].value",
+              jsonPath: "ProcessInstance.assignes",
               // additionalCustomization: true,
             },
             {
               label: "MB_WORKFLOW_STATE",
-              jsonPath: "address[0].tenantId",
+              jsonPath: "ProcessInstance.state.state",
               additionalCustomization: true,
             },
             {
               label: "MB_AMOUNT",
-              jsonPath: "address[0].ward.code",
+              jsonPath: "businessObject.additionalDetails.totalAmount",
               additionalCustomization: true,
             },
             {
               label: "MB_SLA_DAYS_REMAINING",
-              jsonPath: "address[0].ward.code",
+              jsonPath: "businessObject.serviceSla",
               additionalCustomization: true,
             },
           ],
           enableGlobalSearch: false,
           enableColumnSort: true,
-          resultsJsonPath: "Data",
+          resultsJsonPath: "items",
         },
         children: {},
         show: true,
