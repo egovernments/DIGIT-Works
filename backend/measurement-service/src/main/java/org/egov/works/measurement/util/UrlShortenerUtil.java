@@ -23,20 +23,20 @@ public class UrlShortenerUtil {
     private Configuration configs;
 
 
-    public String getShortenedUrl(String url) {
-
-        HashMap<String, String> body = new HashMap<>();
-        body.put(URL, url);
-        StringBuilder builder = new StringBuilder(configs.getUrlShortnerHost());
-        builder.append(configs.getUrlShortnerEndpoint());
-        String res = restTemplate.postForObject(builder.toString(), body, String.class);
-
-        if (StringUtils.isEmpty(res)) {
-            log.error(URL_SHORTENING_ERROR_CODE, URL_SHORTENING_ERROR_MESSAGE + url);
-            ;
-            return url;
-        } else return res;
-    }
+//    public String getShortenedUrl(String url) {
+//
+//        HashMap<String, String> body = new HashMap<>();
+//        body.put(URL, url);
+//        StringBuilder builder = new StringBuilder(configs.getUrlShortnerHost());
+//        builder.append(configs.getUrlShortnerEndpoint());
+//        String res = restTemplate.postForObject(builder.toString(), body, String.class);
+//
+//        if (StringUtils.isEmpty(res)) {
+//            log.error(URL_SHORTENING_ERROR_CODE, URL_SHORTENING_ERROR_MESSAGE + url);
+//            ;
+//            return url;
+//        } else return res;
+//    }
 
 
 }

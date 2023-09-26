@@ -28,7 +28,7 @@ import lombok.Builder;
 @Builder
 public class MeasurementResponse {
 
-    @JsonProperty("responseInfo")
+    @JsonProperty("ResponseInfo")
     @Valid
     private ResponseInfo responseInfo = null;
 
