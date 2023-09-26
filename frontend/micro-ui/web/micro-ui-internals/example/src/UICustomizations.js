@@ -723,79 +723,76 @@ export const UICustomizations = {
 
   InboxMeasurementConfig: {
     preProcess: (data) => {
-      //set tenantId
-      data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
-      const estimateNumber = data?.body?.inbox?.moduleSearchCriteria?.estimateNumber?.trim()
-      if(estimateNumber) data.body.inbox.moduleSearchCriteria.estimateNumber = estimateNumber
-      const projectId = data?.body?.inbox?.moduleSearchCriteria?.projectId?.trim()
-      if(projectId) data.body.inbox.moduleSearchCriteria.projectId = projectId
-      // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
-      const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
-      delete data.body.inbox.moduleSearchCriteria.assignee;
-      if (assignee?.code === "ASSIGNED_TO_ME") {
-        data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
+      let moduleSearchCriteria = data.body.inbox.moduleSearchCriteria;
+
+      const statusValues = Object.keys(moduleSearchCriteria?.status || {}).filter(key => moduleSearchCriteria.status[key]);
+      moduleSearchCriteria = {
+        ...(moduleSearchCriteria?.measurementNumber && { measurementNumber: moduleSearchCriteria?.measurementNumber?.trim() }),
+        ...(moduleSearchCriteria?.projectType?.code && { projectType: moduleSearchCriteria?.projectType?.code }),
+        ...(moduleSearchCriteria?.projectId && { projectId: moduleSearchCriteria?.projectId?.trim() }),
+        ...(moduleSearchCriteria?.assignee?.code === "ASSIGNED TO ME" && { assignee: Digit.UserService.getUser().info.uuid }),
+        ...(moduleSearchCriteria?.ward?.length > 0 && { ward: moduleSearchCriteria.ward?.map(e => e?.code) }),
+        ...(statusValues.length > 0 && { status: statusValues })
       }
 
-      let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
-      delete data.body.inbox.moduleSearchCriteria.ward;
-      ward = ward?.map((row) => row?.code);
-      if (ward.length > 0) data.body.inbox.moduleSearchCriteria.ward = ward;
-      //cloning locality and workflow states to format them
-      let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
-      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
-      delete data.body.inbox.moduleSearchCriteria.locality;
-      delete data.body.inbox.moduleSearchCriteria.state;
-      locality = locality?.map((row) => row?.code);
-      states = Object.keys(states)?.filter((key) => states[key]);
-      //adding formatted data to these keys
-      if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
-      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
-      const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
-      if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
-      //adding tenantId to moduleSearchCriteria
-      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
-      return data;
-    },
-    additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      switch(key){
-         case "ESTIMATE_ESTIMATE_NO":
-          return (
-           <span className="link">
-            <Link to={`/${window.contextPath}/employee/estimate/estimate-details?tenantId=${row.ProcessInstance.tenantId}&estimateNumber=${value}`}>
-              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-            </Link>
-           </span>
-          );
-         case "COMMON_ASSIGNEE":
-          return value? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
-         case "COMMON_WORKFLOW_STATES":
-          return <span>{t(`WF_EST_${value}`)}</span>;
-         case "WORKS_ESTIMATED_AMOUNT":
-          return <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount>
-         case "COMMON_SLA_DAYS":
-          return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
-
-         default:
-          return t("ES_COMMON_NA");
-      }
-     },
-     additionalValidations: (type, data, keys) => {
-      if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
-      }
-    },
-    MobileDetailsOnClick: (row, tenantId) => {
-      let link;
-      Object.keys(row).map((key) => {
-        if (key === "ESTIMATE_ESTIMATE_NO")
-          link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${
-            row[key]
-          }`;
-      });
-      return link;
-    },
-  },     
+        // let status;
+        // if (states.length > 0) status = states;
+        // }
+        // // //cloning locality and workflow states to format them
+        // // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
+        // let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
+        // // delete data.body.inbox.moduleSearchCriteria.locality;
+        // delete data.body.inbox.moduleSearchCriteria.state;
+        // // locality = locality?.map((row) => row?.code);
+        // states = Object.keys(states)?.filter((key) => states[key]);
+        // // //adding formatted data to these keys
+        // // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
+        // if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
+        // //adding tenantId to moduleSearchCriteria
+        data.body.inbox.moduleSearchCriteria = { ...moduleSearchCriteria };
+        data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
+        return data;
+      },
+        additionalCustomizations: (row, key, column, value, t, searchResult) => {
+          console.log(searchResult[0], "sss")
+          const state = searchResult[0]?.ProcessInstance?.state?.state;
+          const contractNumber = searchResult[0]?.businessObject?.referenceId;
+          const measurementNumber = searchResult[0]?.businessObject?.measurementNumber;
+          const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+          switch (key) {
+            case "MB_REFERENCE_NUMBER":
+              return (
+                <span className="link">
+                  {Digit.Utils.statusBasedNavigation(state, contractNumber, measurementNumber, tenantId, value)}
+                </span>
+              );
+            case "MB_ASSIGNEE":
+              return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
+            case "MB_WORKFLOW_STATE":
+              return <span>{t(`WF_EST_${value}`)}</span>;
+            case "MB_AMOUNT":
+              return <Amount customStyle={{ textAlign: 'right' }} value={Math.round(value)} t={t}></Amount>
+            case "MB_SLA_DAYS_REMAINING":
+              return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
+            default:
+              return t("ES_COMMON_NA");
+          }
+        },
+          additionalValidations: (type, data, keys) => {
+            if (type === "date") {
+              return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+            }
+          },
+            MobileDetailsOnClick: (row, tenantId) => {
+              let link;
+              Object.keys(row).map((key) => {
+                if (key === "ESTIMATE_ESTIMATE_NO")
+                  link = `/${window.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${row[key]
+                    }`;
+              });
+              return link;
+            },
+  },   
  
   WMSSearchMeasurementConfig: {
 
@@ -807,7 +804,6 @@ export const UICustomizations = {
       
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      console.log(searchResult[0], "sss")
       // console.log(key,value);
       // console.log(row,"qwertyuiop");
       //here we can add multiple conditions
