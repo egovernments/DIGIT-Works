@@ -60,7 +60,6 @@ const CreateEstimate = () => {
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
    
-    
 
     const cardState = [
 
@@ -185,7 +184,7 @@ console.log(overheads , "uuuuuuuuuuuuu");
     const [sessionFormData,setSessionFormData, clearSessionFormData] = EstimateSession;
     
     const initialDefaultValues = editEstimateUtil(estimate,uom,overheads)
-    console.log(initialDefaultValues);
+
 
     // useEffect(() => {
         

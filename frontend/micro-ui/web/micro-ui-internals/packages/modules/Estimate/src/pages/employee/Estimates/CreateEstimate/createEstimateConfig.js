@@ -39,7 +39,9 @@ export const createEstimateConfig = () => {
 
               {
                 type: "component",
+
                 component: "NonSORTable",
+
                 withoutLabel: true,
                 key: "NONSOR",
               },

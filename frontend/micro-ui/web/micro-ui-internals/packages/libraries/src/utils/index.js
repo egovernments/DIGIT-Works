@@ -12,6 +12,7 @@ import { configUpdater } from "./configUpdater";
 import preProcessMDMSConfigInboxSearch from "./preProcessMDMSConfigInboxSearch";
 import Urls from "../services/atoms/urls";
 import { getLoggedInUserDetails } from "./user";
+import { statusBasedNavigation } from "./statusBasedNavigation";
 
 const GetParamFromUrl = (key, fallback, search) => {
   if (typeof window !== "undefined") {
@@ -362,5 +363,6 @@ export default {
   getConfigModuleName,
   createFunction,
   configUpdater,
-  trimStringsInObject
+  trimStringsInObject,
+  statusBasedNavigation
 };

@@ -3,10 +3,6 @@
 export const transformMeasurementData = async (mbNumber) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
 
-    const transformData = (data) => {
-        console.log(data, "eeeeeeeeeeeeeeee")
-
-    };
     try {
 
         const pagination = {
@@ -28,10 +24,8 @@ export const transformMeasurementData = async (mbNumber) => {
 
         // Make a search request using MeasurementService
         const measurementResponse = await Digit.MeasurementService.search(criteria, tenantId);
-
         // Check if the response is valid and contains data
         if (measurementResponse && measurementResponse.measurements) {
-
             // Perform your data transformation here
             const transformedData = transformData(measurementResponse);
 

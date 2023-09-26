@@ -37,6 +37,7 @@ const getMeasurementFromMeasures = (item, type) => {
     item?.measures?.map(measure => {
         const measurement = {
             referenceId: null,
+            id: measure?.id,
             targetId: measure?.targetId,
             length: measure?.length,
             width: measure?.width,
@@ -70,10 +71,11 @@ output is measurements[{
 */
 
 export const transformData = (data) => {
-
     const transformedData = {
         measurements: [
             {
+                id: data?.id ? data?.id : null,
+                measurementNumber: data?.measurementNumber ? data?.measurementNumber : null,
                 tenantId: "pg.citya",
                 physicalRefNumber: null,
                 referenceId: data.SOR?.[0]?.contractNumber || data.NONSOR?.[0]?.contractNumber,
@@ -86,9 +88,9 @@ export const transformData = (data) => {
                     nonSorAmount: data.sumNonSor || 0,
                     totalAmount: (data.sumSor ? data.sumSor : 0) + (data.sumNonSor ? data.sumNonSor : 0),
                 },
-                "wfStatus": "DRAFTED",
+                "wfStatus": null,
                 "workflow": {
-                    "action": "SAVE_AS_DRAFT",
+                    "action": data?.id ? "SUBMIT" : "SAVE_AS_DRAFT",
                 },
             },
         ],
@@ -109,7 +111,6 @@ export const transformData = (data) => {
     // Process NONSOR data
     if (data.NONSOR && Array.isArray(data.NONSOR)) {
         data.NONSOR.forEach((nonsorItem) => {
-            // console.log(nonsorItem, "nnnnnnnnnnnnn")
             sumNonSor += nonsorItem.measures?.[0]?.rowAmount;
             transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(nonsorItem, "NONSOR"));
         });

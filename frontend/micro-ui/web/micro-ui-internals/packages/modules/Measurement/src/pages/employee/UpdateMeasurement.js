@@ -2,7 +2,7 @@ import { Loader, FormComposerV2, Header } from "@egovernments/digit-ui-react-com
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-// import CreateMeasurement from "./CreateMeasurement";
+import CreateMeasurement from "./CreateMeasurement";
 import _ from "lodash";
 import { transformMeasurementData } from "../../utils/transformMeasurementData";
 const UpdateMeasurement = () => {
@@ -15,28 +15,59 @@ const UpdateMeasurement = () => {
     const searchparams = new URLSearchParams(location.search);
     const mbNumber = searchparams.get("mbNumber");
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Call the utility function to fetch and transform measurement data
-                const data = await transformMeasurementData(mbNumber);
+    const pagination = {
 
-                // Update state with the transformed data
-                setData(data);
-            } catch (error) {
-                // Handle any errors here
-                console.error('Error:', error);
-            }
+    }
+    const criteria = {
+        tenantId: tenantId,
+        measurementNumber: mbNumber
+    }
+    const body = {
+        criteria,
+        pagination
+    }
+    const reqCriteriaUpdate = {
+        url: `/measurement-service/v1/_search`,
+        params: {},
+        body: {},
+        config: {
+            enabled: false,
+        },
+    };
+    const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);
+    useEffect(() => {
+        const onError = (resp) => {
+            setErrorMessage(resp?.response?.data?.Errors?.[0]?.message);
+            setShowErrorToast(true);
         };
 
-        // Trigger the data fetching when the component mounts
-        fetchData();
-    }, []);
+        const onSuccess = (resp) => {
+            setData(resp);
+        };
 
+        mutation.mutate(
+            {
+                params: {},
+                body: { ...body },
+                config: {
+                    enabled: true,
+                }
+            },
+            {
+                onError,
+                onSuccess,
+            }
+        );
+    }, []);
+    if (data == undefined) {
+        return <Loader />
+    }
+    const propsToSend = {
+        isUpdate: true,
+        data: data?.measurements,
+    }
     return (
-        <div>
-            <h2>jhdgfhgfhgf</h2>
-        </div>
+        <CreateMeasurement props={propsToSend}></CreateMeasurement>
     );
 };
 export default UpdateMeasurement;
