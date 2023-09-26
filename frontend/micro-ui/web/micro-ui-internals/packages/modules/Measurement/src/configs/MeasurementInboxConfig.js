@@ -117,7 +117,7 @@ const InboxMeasurementConfig = () => {
           headerStyle: null,
           primaryLabel: "MB_APPLY",
           secondaryLabel: "",
-          minReqFields: 1,
+          minReqFields: 0,
           defaultValues: {
             state: "",
             ward: [],
@@ -170,15 +170,31 @@ const InboxMeasurementConfig = () => {
               }
             },
             {
-              label: "MB_WORKFLOW_STATE",
-              type: "text",
+              label: "COMMON_LOCALITY",
+              type: "locationdropdown",
+              isMandatory: false,
+              disable: false,
+              populators: {
+                name: "locality",
+                type: "locality",
+                optionsKey: "i18nKey",
+                defaultText: "COMMON_SELECT_LOCALITY",
+                selectedText: "COMMON_SELECTED",
+                allowMultiSelect: true,
+              },
+            },
+            {
+              label: "COMMON_WORKFLOW_STATES",
+              type: "workflowstatesfilter",
               isMandatory: false,
               disable: false,
               populators: {
                 name: "state",
-                labelPrefix: "WF_MUSTOR_",
-                businessService: "muster-roll-approval",
+                labelPrefix: "",
+                businessService: "MB",
+               
               },
+          
             },
           ],
         },

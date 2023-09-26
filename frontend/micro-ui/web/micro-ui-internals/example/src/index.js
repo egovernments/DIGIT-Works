@@ -5,6 +5,7 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 
+import {initEstimateComponents} from "@egovernments/digit-ui-module-estimate";
 // import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
 // import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 // import { initWorksComponents } from "@egovernments/digit-ui-module-works";
@@ -40,6 +41,7 @@ const enabledModules = [
   "DSS",
   "Sample",
   "Measurement",
+ 
   // "Engagement"
 ];
 
@@ -78,7 +80,7 @@ const initDigitUI = () => {
 
   // initPGRComponents();
   initDSSComponents();
-  // initEstimateComponents();
+  initEstimateComponents();
   // initEngagementComponents();
   // initWorksComponents();
   initAttendenceMgmtComponents();

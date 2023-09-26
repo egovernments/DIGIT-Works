@@ -19,28 +19,55 @@ export const createEstimateConfig = () => {
             ]
         },
         {
-            "head": "WORKS_NON_SOR",
-            "subHead": "",
-            "navLink": "Work Details",
-            "body": [
-                {
-                    "type": "component",
-                    "component": "NonSORTable",
-                    "withoutLabel": true,
-                    "key": "nonSORDetails",
-                    "populators":{
-                      "rate":{
-                        "max":5000000,
-                        "error":"ESTIMATE_LINE_ITEM_RATE_LIMIT",
-                      },
-                      "quantity":{
-                        "max":999999,
-                        "error":"ESTIMATE_LINE_ITEM_QTY_LIMIT"
-                      }
-                    }
-                }
-            ]
-        },
+            head: "MB_SORS",
+            subHead: "",
+            navLink: "Work Details",
+            body: [
+              {
+                type: "component",
+                component: "MeasureTable",
+                withoutLabel: true,
+                key: "SOR",
+              },
+            ],
+          },
+          {
+            head: "MB_NONSOR",
+            subHead: "",
+            navLink: "Work Details",
+            body: [
+
+              {
+                type: "component",
+                component: "MeasureTable",
+                withoutLabel: true,
+                key: "NONSOR",
+              },
+            ],
+          },
+        // {
+        //     "head": "WORKS",
+        //     "subHead": "",
+        //     "navLink": "Work Details",
+        //     "body": [
+        //         {
+        //             "type": "component",
+        //             "component": "NonSORTable",
+        //             "withoutLabel": true,
+        //             "key": "nonSORDetails",
+        //             "populators":{
+        //               "rate":{
+        //                 "max":5000000,
+        //                 "error":"ESTIMATE_LINE_ITEM_RATE_LIMIT",
+        //               },
+        //               "quantity":{
+        //                 "max":999999,
+        //                 "error":"ESTIMATE_LINE_ITEM_QTY_LIMIT"
+        //               }
+        //             }
+        //         }
+        //     ]
+        // },
         {
             "head": "WORKS_OVERHEADS",
             "subHead": "",

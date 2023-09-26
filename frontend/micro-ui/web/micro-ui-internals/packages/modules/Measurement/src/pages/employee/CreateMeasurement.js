@@ -164,8 +164,11 @@ const CreateMeasurement = ({ props }) => {
   // else render form and data
   return (
     <div>
-      <Header className="works-header-view" style={{}}>Measurement Book</Header>
+
+      <Header className="works-header-view" style={{}}>{t("MB_MEASUREMENT_BOOK")}</Header>
+
       <ContractDetailsCard contract={contract} isUpdate={props?.isUpdate} /> {/* Display contract details */}
+
       <FormComposerV2
         label={t("MB_SUBMIT_BAR")}
         config={CreateConfig({ defaultValue: contract }).CreateConfig[0]?.form?.map((config) => {
