@@ -23,11 +23,12 @@ const CreateEstimate = () => {
     const tenant = Digit.ULBService.getStateId();
     const { t } = useTranslation()
     const [showToast, setShowToast] = useState(null)
-    const { tenantId, projectNumber,isEdit,estimateNumber } = Digit.Hooks.useQueryParams();
+    const { projectNumber,isEdit,estimateNumber } = Digit.Hooks.useQueryParams();
     // const [ isFormReady,setIsFormReady ] = useState(isEdit ? false : true) 
     const [ isFormReady,setIsFormReady ] = useState(true) 
     
     const history = useHistory()
+    const tenantId = Digit.ULBService.getCurrentTenantId();
     
     // const {state} = useLocation()
     
@@ -41,13 +42,11 @@ const CreateEstimate = () => {
         }
     })
     
-    
-    
     const searchParams = {
         Projects: [
             {
                 tenantId,
-                projectNumber: projectNumber
+                projectNumber
             }
         ]
     }
@@ -60,7 +59,7 @@ const CreateEstimate = () => {
 
     const headerLocale = Digit.Utils.locale.getTransformedLocale(tenantId);
     const { data:projectData, isLoading } = Digit.Hooks.works.useViewProjectDetails(t, tenantId, searchParams, filters, headerLocale);
-
+   
     const cardState = [
 
         {
@@ -154,23 +153,23 @@ const CreateEstimate = () => {
             }
         }
     );
-
+console.log(overheads , "uuuuuuuuuuuuu");
     
     const moduleName = Digit.Utils.getConfigModuleName()
-    let { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
-        tenant,
-        moduleName,
-        [
-            {
-                "name": "CreateEstimateConfig"
-            }
-        ],
-        {
-            select:(data)=> {
-                return data?.[moduleName]?.CreateEstimateConfig?.[0]
-            }
-        }
-    );
+    // let { isLoading: isConfigLoading, data: estimateFormConfig } = Digit.Hooks.useCustomMDMS(
+    //     tenant,
+    //     moduleName,
+    //     [
+    //         {
+    //             "name": "CreateEstimateConfig"
+    //         }
+    //     ],
+    //     {
+    //         select:(data)=> {
+    //             return data?.[moduleName]?.CreateEstimateConfig?.[0]
+    //         }
+    //     }
+    // );
 
     const closeToast = () => {
         setTimeout(() => {
@@ -178,12 +177,13 @@ const CreateEstimate = () => {
         }, 7000);
     }
     //to use local config
-    // estimateFormConfig = createEstimateConfig()
+    estimateFormConfig = createEstimateConfig()
 
     const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", {});
     const [sessionFormData,setSessionFormData, clearSessionFormData] = EstimateSession;
     
     const initialDefaultValues = editEstimateUtil(estimate,uom,overheads)
+    console.log(initialDefaultValues);
 
     // useEffect(() => {
         
@@ -371,7 +371,7 @@ const CreateEstimate = () => {
     // const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ designations: selectedDesignation?.code, departments: selectedDept?.code, roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled: !!(selectedDept || selectedDesignation) });
     const { isLoading: approverLoading, isError, error, data: employeeDatav1 } = Digit.Hooks.hrms.useHRMSSearch({ roles: rolesForThisAction, isActive: true }, Digit.ULBService.getCurrentTenantId(), null, null, { enabled:true });
 
-
+console.log(sessionFormData);
     employeeDatav1?.Employees.map(emp => emp.nameOfEmp = emp?.user?.name || "NA")
 
     useEffect(() => {
@@ -398,8 +398,8 @@ const CreateEstimate = () => {
 
     }, [approvers])
 
-    
-    if(isConfigLoading || isEstimateLoading || isUomLoading || isOverheadsLoading){
+   
+    if( isEstimateLoading || isUomLoading || isOverheadsLoading){
         return <Loader />
     }
     if(isEdit && Object.keys(sessionFormData).length ===0) return <Loader />

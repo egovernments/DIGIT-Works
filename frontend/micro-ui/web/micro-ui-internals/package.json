@@ -8,6 +8,7 @@
     "packages/css",
     "packages/react-components",
     "packages/modules/Measurement",
+    "packages/modules/Estimate",
     "packages/Mukta"
   ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
@@ -30,7 +31,7 @@
     "devD:masters": "cd packages/modules/Masters && yarn start",
     "dev:measurement": "cd packages/modules/Measurement && yarn start",
     "devD:project": "cd packages/modules/Project && yarn start",
-    "devD:estimate": "cd packages/modules/Estimate && yarn start",
+    "dev:estimate": "cd packages/modules/Estimate && yarn start",
     "dev:mukta": "cd packages/Mukta && yarn start",
     "devD:works": "cd packages/modules/works && yarn start",
     "devD:expenditure": "cd packages/modules/Expenditure && yarn start",
