@@ -275,6 +275,11 @@ expense:{
   calculator: {
     expenseBill: "/expense-calculator/v1/_estimate",
   },
+
+  measurement : {
+    search : "/measurement-service/v1/_search",
+    update : "/measurement-service/v1/_update"
+  }
 };
 
 export default Urls;

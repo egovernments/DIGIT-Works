@@ -24,7 +24,10 @@ const ViewContractDetails = () => {
     const [sessionFormData, setSessionFormData, clearSessionFormData] = ContractSession;
 
     const loggedInUserRoles = Digit.Utils.getLoggedInUserDetails("roles");
-    const [actionsMenu, setActionsMenu] = useState([]);
+    const [actionsMenu, setActionsMenu] = useState([{
+        name:"CREATE_MEASUREMENT_REQUEST",
+        action:"CREATE_MEASUREMENT"
+    }]);
 
     
 
@@ -123,7 +126,9 @@ const ViewContractDetails = () => {
         if (option?.name === "CREATE_PURCHASE_BILL") {
             history.push(`/${window.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&workOrderNumber=${contractId}`);
         }
-
+        if (option?.action === "CREATE_MEASUREMENT") {
+            history.push(`/${window.contextPath}/employee/measurement/create?tenantId=${tenantId}&workOrderNumber=${contractId}`);
+        }
         if (option?.action === "TIME_EXTENSTION") {
             setShowTimeExtension(true)
            //goto create time extenstion screen (basically view WO screen with two extra fields for time extension)
@@ -203,7 +208,8 @@ const ViewContractDetails = () => {
                         moduleCode="Contract"
                         editCallback = {handleEditTimeExtension}
                     />}
-                    {data?.applicationData?.wfStatus === "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension ?
+                    {/* //added temp logic to enable measurement option */}
+                    {actionsMenu?.length>0 ?
                         <ActionBar>
 
                             {showActions ? <Menu
