@@ -1,4 +1,4 @@
-import { Loader, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { Loader, FormComposerV2, Header, Toast, ActionBar, Menu, SubmitBar } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -7,7 +7,7 @@ import ContractDetailsCard from "../../components/ContractCardDetails";
 import { transformEstimateData } from "../../utils/transformEstimateData";
 import { transformData } from "../../utils/transformData";
 import _ from "lodash";
-const CreateMeasurement = () => {
+const CreateMeasurement = ({ props }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -17,7 +17,8 @@ const CreateMeasurement = () => {
   const [creatStateSet, setCreateState] = useState(false)
   const [isEstimateEnabled, setIsEstimateEnabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState("");
+  const [displayMenu, setDisplayMenu] = useState(false);
 
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
@@ -46,20 +47,44 @@ const CreateMeasurement = () => {
       enabled: isEstimateEnabled,
     }
   })
+
+  const actionMB = [
+    {
+      "name": "SUBMIT"
+    },
+    {
+      "name": "SAVE_AS_DRAFT"
+    }
+  ]
+
+  function onActionSelect(action) {
+    if (action?.name === "SUBMIT") {
+      handleCreateMeasurement(createState);
+    }
+    if (action?.name === "SAVE_AS_DRAFT") {
+      handleCreateMeasurement(createState);
+    }
+  }
+
+
   // Define the request criteria for creating a measurement
   const reqCriteriaUpdate = {
-    url: `/measurement-service/v1/_create`,
+    url: props?.isUpdate ? `/measurement-service/v1/_update` : `/measurement-service/v1/_create`,
     params: {},
     body: {},
     config: {
       enabled: false,
     },
   };
+
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);
 
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
-
+    if (props?.isUpdate) {
+      data.id = props?.data?.[0].id;
+      data.measurementNumber = props?.data?.[0].measurementNumber;
+    }
     // Create the measurement payload with transformed data
     const measurements = transformData(data);
     //call the createMutation for MB and route to response page on onSuccess or console error
@@ -116,8 +141,14 @@ const CreateMeasurement = () => {
       const estimateDetails = estimate?.estimateDetails || [];
       const sorCategoryArray = [];
       const nonSorCategoryArray = [];
-      sorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "SOR"));
-      nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "NON-SOR"));
+      if (props?.isUpdate) {
+        sorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "SOR", props?.data?.[0]));
+        nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "NON-SOR", props?.data?.[0]));
+      } else {
+        sorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "SOR"));
+        nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "NON-SOR"));
+      }
+
       if (sorCategoryArray && nonSorCategoryArray) {
         setState({ SOR: sorCategoryArray, NONSOR: nonSorCategoryArray });
         setCreateState(true)
@@ -133,8 +164,11 @@ const CreateMeasurement = () => {
   // else render form and data
   return (
     <div>
+
       <Header className="works-header-view" style={{}}>{t("MB_MEASUREMENT_BOOK")}</Header>
-      <ContractDetailsCard contract={contract} /> {/* Display contract details */}
+
+      <ContractDetailsCard contract={contract} isUpdate={props?.isUpdate} /> {/* Display contract details */}
+
       <FormComposerV2
         label={t("MB_SUBMIT_BAR")}
         config={CreateConfig({ defaultValue: contract }).CreateConfig[0]?.form?.map((config) => {
@@ -149,7 +183,17 @@ const CreateMeasurement = () => {
         onFormValueChange={onFormValueChange}
       />
       {showErrorToast && <Toast error={true} label={errorMessage} isDleteBtn={true} onClose={closeToast} />}
-
+      <ActionBar>
+        {displayMenu ?
+          <Menu
+            // localeKeyPrefix={""}
+            options={actionMB}
+            optionKey={"name"}
+            t={t}
+            onSelect={onActionSelect}
+          /> : null}
+        <SubmitBar label={t("ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+      </ActionBar>
     </div>
   );
 };

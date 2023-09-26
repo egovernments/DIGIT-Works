@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import _ from "lodash";
+import { Amount } from "@egovernments/digit-ui-react-components";
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
@@ -25,7 +26,7 @@ const businessServiceMap = {
   "works.purchase":"EXPENSE.PURCHASE",
   "works.supervision":"EXPENSE.SUPERVISION",
   revisedWO:"CONTRACT-REVISION",
-  measurment : "MB"
+  measurement : "MB"
 };
 
 const inboxModuleNameMap = {
@@ -145,6 +146,31 @@ export const UICustomizations = {
         workflow,
       };
     }
+    if (businessService === businessServiceMap?.measurement) {
+      const workflow = {
+        comment: data.comments,
+        documents: data?.documents?.map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        }),
+        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        action: action.action,
+      };
+      //filtering out the data
+      Object.keys(workflow).forEach((key, index) => {
+        if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
+      });
+      // ap[0] = {...ap[0]wor:{}}
+      applicationDetails[0] = {...applicationDetails[0],"workflow" : workflow}
+      return {
+        measurements: applicationDetails
+      };
+    }
   },
   enableModalSubmit:(businessService,action,setModalSubmit,data)=>{
     if(businessService === businessServiceMap?.["muster roll"] && action.action==="APPROVE"){
@@ -191,7 +217,7 @@ export const UICustomizations = {
       return businessServiceMap?.["revisedWO"];
     }
     else if (moduleCode?.includes("measurement")) {
-      return businessServiceMap?.measurment;
+      return businessServiceMap?.measurement;
     }
     else {
       return businessServiceMap;
@@ -694,6 +720,7 @@ export const UICustomizations = {
       }
     },
   },
+
   InboxMeasurementConfig: {
     preProcess: (data) => {
       //set tenantId
@@ -709,7 +736,7 @@ export const UICustomizations = {
       if (assignee?.code === "ASSIGNED_TO_ME") {
         data.body.inbox.moduleSearchCriteria.assignee = Digit.UserService.getUser().info.uuid;
       }
-      
+
       let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
       delete data.body.inbox.moduleSearchCriteria.ward;
       ward = ward?.map((row) => row?.code);
@@ -748,7 +775,7 @@ export const UICustomizations = {
           return <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount>
          case "COMMON_SLA_DAYS":
           return value > 0 ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>;
-        
+
          default:
           return t("ES_COMMON_NA");
       }
@@ -768,7 +795,7 @@ export const UICustomizations = {
       });
       return link;
     },
-  },
+  },     
  
   WMSSearchMeasurementConfig: {
 
@@ -780,20 +807,27 @@ export const UICustomizations = {
       
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      console.log(searchResult[0], "sss")
       // console.log(key,value);
       // console.log(row,"qwertyuiop");
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
+      const state = searchResult[0]?.ProcessInstance?.state?.state;
+      const contractNumber = searchResult[0]?.businessObject?.referenceId;
+      const measurementNumber = searchResult[0]?.businessObject?.measurementNumber;
+      const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+
       switch (key) {
-        case "MB_REFERENCE_NUMBER-2":
+        case "MB__NUMBER":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/measurement/view?tenantId=${row?.ProcessInstance.tenantId}&workOrderNumber=${value}&mbNumber=${row?.ProcessInstance.businessId}`}>
-                {value ? value : t("ES_COMMON_NA")}
-              </Link>
+              {Digit.Utils.statusBasedNavigation(state, contractNumber, measurementNumber, tenantId, value)}
             </span>
           );
+
+          case "MB_AMOUNT":
+            return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>;
 
         case "MASTERS_SOCIAL_CATEGORY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
