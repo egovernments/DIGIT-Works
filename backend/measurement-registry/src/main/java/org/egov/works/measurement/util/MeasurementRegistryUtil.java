@@ -15,89 +15,17 @@ import java.util.*;
 
 @Component
 public class MeasurementRegistryUtil {
-    @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private Configuration configuration;
+
     @Autowired
     private ErrorConfiguration errorConfigs;
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-
     /**
-     * Helper function to enrich a measurement
-     * @param request
+     * Calculates the cumulative value based on the latest measurement and curr measurement details
+     * @param latestMeasurement recent measurement in Measurement Book for the given contract Number
+     * @param currMeasurement current measurement received as a part of create measurement request
      */
-    public void enrichMeasurement(MeasurementRequest request){
-
-        String tenantId = request.getMeasurements().get(0).getTenantId(); // each measurement should have same tenantId otherwise this will fail
-        List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), request.getMeasurements().size());
-        List<Measurement> measurements = request.getMeasurements();
-
-        for (int i = 0; i < measurements.size(); i++) {
-            Measurement measurement = measurements.get(i);
-
-            // enrich UUID
-            measurement.setId(UUID.randomUUID());
-            // enrich the Audit details
-            measurement.setAuditDetails(AuditDetails.builder()
-                    .createdBy(request.getRequestInfo().getUserInfo().getUuid())
-                    .createdTime(System.currentTimeMillis())
-                    .lastModifiedTime(System.currentTimeMillis())
-                    .build());
-
-            // enrich measures in a measurement
-            enrichMeasures(measurement);
-            // enrich IdGen
-            measurement.setMeasurementNumber(measurementNumberList.get(i));
-            // enrich Cumulative value
-            try {
-                enrichCumulativeValue(measurement);
-            }
-            catch (Exception e){
-                throw errorConfigs.cumulativeEnrichmentError;
-            }
-        }
-    }
-
-    /**
-     * Helper function to enriches a measure
-     * @param measurement
-     */
-    public void enrichMeasures(Measurement measurement){
-        List<Measure> measureList = measurement.getMeasures();
-        if(measurement.getDocuments()!=null){
-            for(Document document:measurement.getDocuments()){
-                document.setId(UUID.randomUUID().toString());
-            }
-        }
-        for (Measure measure : measureList) {
-            measure.setId(UUID.randomUUID());
-            measure.setReferenceId(measurement.getId().toString());
-            measure.setAuditDetails(measurement.getAuditDetails());
-            measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
-        }
-    }
-
-    public void enrichCumulativeValue(Measurement measurement){
-        MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
-                .referenceId(Collections.singletonList(measurement.getReferenceId()))
-                .tenantId(measurement.getTenantId())
-                .build();
-        Pagination pagination= Pagination.builder().offSet(0).build();
-        MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
-        List<Measurement> measurementList = searchMeasurements(measurementCriteria,measurementSearchRequest);
-        if(!measurementList.isEmpty()){
-            Measurement latestMeasurement = measurementList.get(0);
-            calculateCumulativeValue(latestMeasurement,measurement);
-        }
-        else{
-            for(Measure measure : measurement.getMeasures()){
-                measure.setCumulativeValue(measure.getCurrentValue());
-            }
-        }
-    }
     public void calculateCumulativeValue(Measurement latestMeasurement,Measurement currMeasurement){
         Map<String, BigDecimal> targetIdtoCumulativeMap = new HashMap<>();
         for(Measure measure:latestMeasurement.getMeasures()){
@@ -108,6 +36,12 @@ public class MeasurementRegistryUtil {
         }
     }
 
+    /**
+     * Search for measurement ...
+     * @param searchCriteria
+     * @param measurementSearchRequest
+     * @return
+     */
     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
 
         handleNullPagination(measurementSearchRequest);
@@ -118,6 +52,10 @@ public class MeasurementRegistryUtil {
         return measurements;
     }
 
+    /**
+     *
+     * @param body
+     */
     private void handleNullPagination(MeasurementSearchRequest body){
         if (body.getPagination() == null) {
             body.setPagination(new Pagination());
@@ -127,34 +65,11 @@ public class MeasurementRegistryUtil {
         }
     }
 
-    public  void handleCumulativeUpdate(MeasurementRequest measurementRequest){
-        for(Measurement measurement:measurementRequest.getMeasurements()){
-            try {
-                enrichCumulativeValueOnUpdate(measurement);
-            }
-            catch (Exception  e){
-                throw errorConfigs.cumulativeEnrichmentError;
-            }
-        }
-    }
-    public void enrichCumulativeValueOnUpdate(Measurement measurement){
-        MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
-                .referenceId(Collections.singletonList(measurement.getReferenceId()))
-                .tenantId(measurement.getTenantId())
-                .build();
-        Pagination pagination= Pagination.builder().offSet(0).build();
-        MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().criteria(measurementCriteria).pagination(pagination).build();
-        List<Measurement> measurementList =searchMeasurements(measurementCriteria,measurementSearchRequest);
-        if(!measurementList.isEmpty()){
-            Measurement latestMeasurement = measurementList.get(0);
-            calculateCumulativeValueOnUpdate(latestMeasurement,measurement);
-        }
-        else{
-            for(Measure measure : measurement.getMeasures()){
-                measure.setCumulativeValue(measure.getCurrentValue());
-            }
-        }
-    }
+    /**
+     * re-calculate the cumulative value in case of update cumulative value request
+     * @param latestMeasurement
+     * @param currMeasurement
+     */
     public void calculateCumulativeValueOnUpdate(Measurement latestMeasurement,Measurement currMeasurement){
         Map<String,BigDecimal> targetIdtoCumulativeMap = new HashMap<>();
         for(Measure measure:latestMeasurement.getMeasures()){
@@ -165,6 +80,12 @@ public class MeasurementRegistryUtil {
         }
     }
 
+    /**
+     *
+     * @param measurements
+     * @param measurementRegistrationRequest
+     * @return
+     */
     public MeasurementResponse makeUpdateResponse(List<Measurement> measurements,MeasurementRequest measurementRegistrationRequest) {
         MeasurementResponse response = new MeasurementResponse();
         response.setResponseInfo(ResponseInfo.builder()
@@ -177,4 +98,19 @@ public class MeasurementRegistryUtil {
         return response;
     }
 
+    /**
+     * Method to return auditDetails for create/update flows
+     *
+     * @param by
+     * @param isCreate
+     * @return AuditDetails
+     */
+    public AuditDetails getAuditDetails(String by, Measurement measurement, Boolean isCreate) {
+        Long time = System.currentTimeMillis();
+        if(isCreate)
+            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
+        else
+            return AuditDetails.builder().createdBy(measurement.getAuditDetails().getCreatedBy()).lastModifiedBy(by)
+                    .createdTime(measurement.getAuditDetails().getCreatedTime()).lastModifiedTime(time).build();
+    }
 }

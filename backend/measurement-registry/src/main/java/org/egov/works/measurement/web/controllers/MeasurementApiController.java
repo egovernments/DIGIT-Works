@@ -29,23 +29,12 @@ import javax.servlet.http.HttpServletRequest;
 public class MeasurementApiController {
 
     @Autowired
-    private MeasurementRegistry measurementRegistry; // Import MeasurementRegistry if not imported already
-
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
-    private final MeasurementRegistry service;
-
-    public MeasurementApiController(ObjectMapper objectMapper, HttpServletRequest request, MeasurementRegistry service) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-        this.service = service;
-    }
+    private MeasurementRegistry measurementRegistry;
 
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
-        String accept = request.getHeader("Accept");
-        return service.createMeasurement(body);
+        MeasurementResponse measurementResponse = measurementRegistry.createMeasurement(body);
+        return new ResponseEntity<>(measurementResponse,HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
@@ -64,7 +53,7 @@ public class MeasurementApiController {
 
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<MeasurementResponse> measurementV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementRequest body) {
-        MeasurementResponse measurementResponse= service.updateMeasurement(body);
+        MeasurementResponse measurementResponse= measurementRegistry.updateMeasurement(body);
         return new ResponseEntity<>(measurementResponse, HttpStatus.ACCEPTED);
     }
 }

@@ -51,25 +51,27 @@ public class MeasurementRegistry {
     private MeasurementValidator measurementValidator;
     @Autowired
     private MeasurementRegistryUtil measurementRegistryUtil;
+    @Autowired
+    private EnrichmentService enrichmentService;
 
     /**
      * Handles measurement create
      * @param request
      * @return
      */
-    public ResponseEntity<MeasurementResponse> createMeasurement(MeasurementRequest request){
+    public MeasurementResponse createMeasurement(MeasurementRequest request){
 
-        //  validate tenant id
+        // validate tenant id
         measurementValidator.validateTenantId(request);
         // validate documents ids if present
         measurementValidator.validateDocumentIds(request.getMeasurements());
         // enrich measurements
-        measurementRegistryUtil.enrichMeasurement(request);
-        // create a response
-        MeasurementResponse response = MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
+        enrichmentService.enrichMeasurement(request);
         // push to kafka topic
         producer.push(configuration.getCreateMeasurementTopic(),request);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+
+        return  MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
+
     }
 
     /**
@@ -88,7 +90,7 @@ public class MeasurementRegistry {
         measurementValidator.validateExistingDataAndEnrich(measurementRegistrationRequest);
 
         //Updating Cumulative Value
-        measurementRegistryUtil.handleCumulativeUpdate(measurementRegistrationRequest);
+        enrichmentService.handleCumulativeUpdate(measurementRegistrationRequest);
 
         // Create the MeasurementResponse object
         MeasurementResponse response = measurementRegistryUtil.makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
