@@ -1,11 +1,13 @@
-import { Loader, FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
+import { Loader, FormComposerV2, Header, Toast, ActionBar, Menu, SubmitBar } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { CreateConfig } from "../../configs/MeasurementCreateConfig";
 import ContractDetailsCard from "../../components/ContractCardDetails";
+import { transformEstimateData } from "../../utils/transformEstimateData";
+import { transformData } from "../../utils/transformData";
 import _ from "lodash";
-const CreateMeasurement = ({ update }) => {
+const CreateMeasurement = ({ props }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -14,7 +16,10 @@ const CreateMeasurement = ({ update }) => {
   const [createState, setState] = useState(sessionFormData || {});
   const [creatStateSet, setCreateState] = useState(false)
   const [isEstimateEnabled, setIsEstimateEnabled] = useState(false);
-  console.log(update, "pppppppppppp")
+  const [showErrorToast, setShowErrorToast] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [displayMenu, setDisplayMenu] = useState(false);
+
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
@@ -27,6 +32,7 @@ const CreateMeasurement = ({ update }) => {
       cacheTime: 0
     }
   })
+
   // When contract data is available, enable estimate search
   useEffect(() => {
     if (contract) {
@@ -41,98 +47,51 @@ const CreateMeasurement = ({ update }) => {
       enabled: isEstimateEnabled,
     }
   })
-  // targetId for measure object
-  const contractLineItemId = contract?.lineItems[0]?.id;
-  //function to create measure object of transform data
-  const createMeasurement = (item, type) => {
-    return {
-      referenceId: null,
-      targetId: contractLineItemId || "",
-      length: 200,
-      breadth: 200,
-      height: 200,
-      numItems: 1,
-      currentValue: 0,
-      cumulativeValue: 0,
-      isActive: true,
-      comments: null,
-      additionalDetails: {
-        mbAmount: item.amountDetail[0]?.amount || 0,
-        type: type,
-      },
-    };
-  };
-  // transform the data according requestbody
-  const transformData = (data) => {
-    const transformedData = {
-      measurements: [
-        {
-          tenantId: "pg.citya",
-          physicalRefNumber: null,
-          referenceId: contractNumber || "",
-          entryDate: 0,
-          documents: [{
-            "documentType": data.uploadedDocs.img_measurement_book[0][1].file.type,
-            "fileStore": data.uploadedDocs.img_measurement_book[0][1].fileStoreId.fileStoreId,
-            "documentUid": data.uploadedDocs.img_measurement_book[0][0],
-            "additionalDetails": {}
-          }],
-          measures: [],
-          isActive: true,
-          additionalDetails: {
-            sorAmount: data.sumSor || 0,
-            nonSorAmount: data.sumNonSor || 0,
-            totalAmount: (data.sumSor ? data.sumSor : 0) + (data.sumNonSor ? data.sumNonSor : 0),
-          },
-          "wfStatus": "DRAFTED",
-          "workflow": {
-            "action": "SAVE_AS_DRAFT",
-            "assignes": [],
-            "comments": "string",
-            "verificationDocuments": [
-              {
-                "documentType": "string",
-                "fileStore": "be14ceb8-01ba-485b-a6e2-489e5474a576",
-                "documentUid": "string",
-                "additionalDetails": {}
-              }
-            ]
-          }
-        },
-      ],
-    };
-    // Process SOR data
-    if (data.SOR && Array.isArray(data.SOR)) {
-      data.SOR.forEach((sorItem) => {
-        transformedData.measurements[0].measures.push(createMeasurement(sorItem, "SOR"));
-      });
+
+  const actionMB = [
+    {
+      "name": "SUBMIT"
+    },
+    {
+      "name": "SAVE_AS_DRAFT"
     }
-    // Process NONSOR data
-    if (data.NONSOR && Array.isArray(data.NONSOR)) {
-      data.NONSOR.forEach((nonsorItem) => {
-        transformedData.measurements[0].measures.push(createMeasurement(nonsorItem, "NONSOR"));
-      });
+  ]
+
+  function onActionSelect(action) {
+    if (action?.name === "SUBMIT") {
+      handleCreateMeasurement(createState);
     }
-    return transformedData;
-  };
+    if (action?.name === "SAVE_AS_DRAFT") {
+      handleCreateMeasurement(createState);
+    }
+  }
+
+
   // Define the request criteria for creating a measurement
   const reqCriteriaUpdate = {
-    url: `/measurement-service/v1/_create`,
+    url: props?.isUpdate ? `/measurement-service/v1/_update` : `/measurement-service/v1/_create`,
     params: {},
     body: {},
     config: {
       enabled: false,
     },
   };
+
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);
+
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
-
+    if (props?.isUpdate) {
+      data.id = props?.data?.[0].id;
+      data.measurementNumber = props?.data?.[0].measurementNumber;
+    }
     // Create the measurement payload with transformed data
     const measurements = transformData(data);
     //call the createMutation for MB and route to response page on onSuccess or console error
     const onError = (resp) => {
-      console.log(resp);
+      setErrorMessage(resp?.response?.data?.Errors?.[0]?.message);
+      setShowErrorToast(true);
+
     };
     const onSuccess = (resp) => {
       history.push(`/${window.contextPath}/employee/measurement/response?mbreference=${resp.measurements[0].measurementNumber}`)
@@ -151,6 +110,20 @@ const CreateMeasurement = ({ update }) => {
       }
     );
   };
+
+
+  const closeToast = () => {
+    setShowErrorToast(false);
+  }
+  //remove Toast from 3s
+  useEffect(() => {
+    if (showErrorToast) {
+      setTimeout(() => {
+        closeToast();
+      }, 3000)
+    }
+  }, [showErrorToast])
+
   useEffect(() => {
     if (!_.isEqual(sessionFormData, createState)) {
       setSessionFormData({ ...createState });
@@ -168,17 +141,22 @@ const CreateMeasurement = ({ update }) => {
       const estimateDetails = estimate?.estimateDetails || [];
       const sorCategoryArray = [];
       const nonSorCategoryArray = [];
-      estimateDetails.reduce((_, currentItem) => {
-        if (currentItem.category === 'SOR') {
-          sorCategoryArray.push(currentItem);
-        } else if (currentItem.category === 'NON-SOR') {
-          nonSorCategoryArray.push(currentItem);
-        }
-      }, null);
-      setState({ SOR: sorCategoryArray, NONSOR: nonSorCategoryArray });
-      setCreateState(true)
+      if (props?.isUpdate) {
+        sorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "SOR", props?.data?.[0]));
+        nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "NON-SOR", props?.data?.[0]));
+      } else {
+        sorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "SOR"));
+        nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "NON-SOR"));
+      }
+
+      if (sorCategoryArray && nonSorCategoryArray) {
+        setState({ SOR: sorCategoryArray, NONSOR: nonSorCategoryArray });
+        setCreateState(true)
+      }
+
     }
   }, [estimate]);
+
   // if data is still loading return loader
   if (isContractLoading || isEstimateLoading || !contract || !estimate || !creatStateSet) {
     return <Loader />
@@ -187,9 +165,9 @@ const CreateMeasurement = ({ update }) => {
   return (
     <div>
       <Header className="works-header-view" style={{}}>Measurement Book</Header>
-      <ContractDetailsCard contract={contract} /> {/* Display contract details */}
+      <ContractDetailsCard contract={contract} isUpdate={props?.isUpdate} /> {/* Display contract details */}
       <FormComposerV2
-        label={t("Submit Bar")}
+        label={t("MB_SUBMIT_BAR")}
         config={CreateConfig({ defaultValue: contract }).CreateConfig[0]?.form?.map((config) => {
           return {
             ...config,
@@ -201,6 +179,18 @@ const CreateMeasurement = ({ update }) => {
         fieldStyle={{ marginRight: 0 }}
         onFormValueChange={onFormValueChange}
       />
+      {showErrorToast && <Toast error={true} label={errorMessage} isDleteBtn={true} onClose={closeToast} />}
+      <ActionBar>
+        {displayMenu ?
+          <Menu
+            // localeKeyPrefix={""}
+            options={actionMB}
+            optionKey={"name"}
+            t={t}
+            onSelect={onActionSelect}
+          /> : null}
+        <SubmitBar label={t("ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+      </ActionBar>
     </div>
   );
 };

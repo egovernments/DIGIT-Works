@@ -1,7 +1,7 @@
 .measurement-table-input {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -49,14 +49,15 @@
   box-shadow: none;
 }
 
-.view-utilization-btn {
+.outline-btn {
   background-color: #ffffff;
   color: #f37f12;
   font-weight: bold;
   outline: #f37f12;
   margin: 10px;
   box-shadow: none;
-  padding: 8px;
+  padding: 8px 35px 8px 35px;
+  border-radius: 8px;
 }
 
 .view-utilization-card {
@@ -64,4 +65,51 @@
   flex-direction: row;
   justify-content: space-between;
   border: #cc7b2f;
+}
+
+$fill-color: #f47738;
+
+.addIcon {
+  fill: $fill-color;
+  margin: auto;
+  display: inline;
+  margin-top: -2px;
+  width: 20px;
+  height: 20px;
+}
+
+.view-only-card-container {
+  text-align: right;
+  margin: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-only-card {
+  border: 1px solid black;
+  padding: 20px;
+  background-color: white;
+  width: fit-content;
+  font-weight: bold;
+  display: flex;
+}
+
+.contract-card {
+  background-color: #ffffff;
+  margin: 15px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+}
+
+.key-value-container {
+  display: grid;
+  grid-template-columns: 15% 85%;
+  margin-bottom: 10px;
+}
+
+.contract-card-label {
+  font-weight: bold;
+  margin-right: 10px;
 }

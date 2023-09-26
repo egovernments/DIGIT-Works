@@ -1,12 +1,15 @@
 import { Button, Card, Toast, Amount } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
 
+
 {/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
-const MeasureCard = ({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate }) => {
+const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
+
+
   const { t } = useTranslation();
   const history = useHistory();
   const [total, setTotal] = useState(consumedQty);
@@ -32,20 +35,32 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty, setShowMeasureCard,
         let findIndex = tableState.findIndex((row, index) => {
           return index + 1 === id;
         });
-        if (type === "number") tableState[findIndex].currentNumber = value;
-        if (type === "length") tableState[findIndex].currentLength = value;
-        if (type === "width") tableState[findIndex].currentWidth = value;
-        if (type === "height") tableState[findIndex].currentHeight = value;
+        switch (type) {
+          case "number":
+            tableState[findIndex].number = value;
+            break;
+          case "length":
+            tableState[findIndex].length = value;
+            break;
+          case "width":
+            tableState[findIndex].width = value;
+            break;
+          case "height":
+            tableState[findIndex].height = value;
+            break;
+          default:
+
+        }
         const element = tableState[findIndex];
         const calculatedValue =
-          (validate(element.currentNumber)) *
-          (validate(element.currentLength)) *
-          (validate(element.currentWidth)) *
-          (validate(element.currentHeight));
+          (validate(element.number)) *
+          (validate(element.length)) *
+          (validate(element.width)) *
+          (validate(element.height));
 
-        tableState[findIndex].totalValue = calculatedValue;
+        tableState[findIndex].noOfunit = calculatedValue;
         tableState[findIndex].rowAmount = unitRate * calculatedValue;
-        setTotal(tableState.reduce((acc, curr) => acc + validate(curr.totalValue), 0));
+        setTotal(tableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
 
 
         return { ...state, tableState };
@@ -108,7 +123,8 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty, setShowMeasureCard,
   };
 
   return (
-    <Card>
+    <Fragment>
+
 
       <table className="table reports-table sub-work-table" >
         <thead>
@@ -119,26 +135,39 @@ const MeasureCard = ({ columns, consumedQty, setConsumedQty, setShowMeasureCard,
           <tr>
             <td colSpan={"4"}>
               <div style={{ display: "flex", flexDirection: "row" }}>
-                <Button label={"Clear"} onButtonClick={() => {
-                  dispatch({ type: "CLEAR_STATE" });
-                }} />
-                <Button label={"Done"} onButtonClick={() => {
-                  tableData[tableKey][tableIndex].additionalDetails.measurement = state.tableState;
-                  setValue("measurements", tableData);
-                  setInitialState(state);
-                  setConsumedQty(total);
-                  setShowMeasureCard(false);
-                }} />
+                {isView ? (
+                  <Button
+                     className={"outline-btn"}
+                  label={t("MB_CLOSE")}
+                    onButtonClick={() => {
+                      setShowMeasureCard(false);
+                    }}
+                  />
+                ) : (<>
+                  <Button className={"outline-btn"} label={t("MB_CLEAR")} onButtonClick={() => {
+                    dispatch({ type: "CLEAR_STATE" });
+                  }} />
+                  <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
+                    tableData[tableKey][tableIndex].measures = state.tableState;
+                    tableData[tableKey][tableIndex].amount = tableData[tableKey][tableIndex].measures?.[0]?.rowAmount
+                    setValue("measurements", tableData);
+
+                    setInitialState(state);
+                    setConsumedQty(total);
+                    setShowMeasureCard(false);
+                  }} />
+
+                </>)}
               </div>
             </td>
             <td colSpan={"4"}>
-              SubTotal: {total}
+              {t("MB_SUBTOTAL")}: {total}
             </td>
           </tr>
         </tbody>
       </table>
-    </Card>
+    </Fragment>
   );
-};
+});
 
 export default MeasureCard;

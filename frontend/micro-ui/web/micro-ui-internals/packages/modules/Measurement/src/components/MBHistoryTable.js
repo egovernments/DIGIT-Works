@@ -1,28 +1,22 @@
-
-import { Card, Header, Button } from "@egovernments/digit-ui-react-components";
+import { Card, Header, Button, Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const CustomCollapsibleTable = ({ children, isTableCollapsed }) => {
-  return (
-    <div className={`custom-collapsible-table ${isTableCollapsed ? 'collapsed' : ''}`}>
-      {children}
-    </div>
-  );
+  return <div className={`custom-collapsible-table ${isTableCollapsed ? "collapsed" : ""}`}>{children}</div>;
 };
 
-
-
-const MeasurementHistory = ({ contractNumber }) => {
+const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
-
+  const history = useHistory();
   const [isTableCollapsed, setIsTableCollapsed] = useState(false);
 
   const toggleTableCollapse = () => {
-    setIsTableCollapsed(prevState => !prevState);
+    setIsTableCollapsed((prevState) => !prevState);
   };
 
   const requestCriteria = {
@@ -30,59 +24,33 @@ const MeasurementHistory = ({ contractNumber }) => {
 
     body: {
       criteria: {
-        tenantId : tenantId,
+        tenantId: tenantId,
         referenceId: [contractNumber],
-        ids: ["70380648-45c2-4407-bf91-27ede3c481e5"],
+        // ids: ["70380648-45c2-4407-bf91-27ede3c481e5"],
       },
       pagination: {
-        "limit": 10,
-        "offSet": 0,
-        "sortBy": "string",
-        "order": "DESC"
-    }
+        limit: 10,
+        offSet: 0,
+        sortBy: "createdTime",
+        order: "DESC",
+      },
     },
   };
 
-  var dummyResponse = {
-    responseInfo: null,
-    measurements: [
-      {
-        id: "1a39840f-6b30-4d19-9d1b-e5c88bd88d55",
-        tenantId: "tenant1",
-        measurementNumber: "mbNumber1",
-        physicalRefNumber: "phyRef1",
-        referenceId: "6470d652-7684-44dd-a5d4-d1cc14e451b2",
-        entryDate: 1631606400,
-        measures: [
-          {
-            id: null,
-            referenceId: "6470d652-7684-44dd-a5d4-d1cc14e451b2",
-            targetId: null,
-            length: 10.5,
-            breadth: 5.2,
-            height: 3.0,
-            numItems: 100,
-            currentValue: null,
-            cumulativeValue: null,
-            isActive: null,
-            comments: null,
-            documents: null,
-            auditDetails: null,
-            additionalDetails: null,
-          },
-        ],
-        isActive: true,
-        auditDetails: {
-          createdBy: "user1",
-          lastModifiedBy: "user1",
-          createdTime: 1631606400,
-          lastModifiedTime: 1631606400,
-        },
-        additionalDetails: '{"key": "value1"}',
-      },
-    ],
-  };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
+  //extracting the numeric part from the measurement number
+  const extractNumericPart = (mbNumber) => {
+    const parts = mbNumber.split("/");
+    if (parts.length === 3 && parts[2]) {
+      const numericPart = parts[2].split("-");
+      if (numericPart.length === 2) {
+        return parseInt(numericPart[1]);
+      }
+    }
+    return 0; // Return 0 if the format is not as expected
+  };
+
   const columns = [
     { label: t("MB_SNO"), key: "sno" },
     { label: t("MB_REFERENCE_NUMBER"), key: "mbref" },
@@ -93,51 +61,74 @@ const MeasurementHistory = ({ contractNumber }) => {
     { label: t("MB_ONLY_AMOUNT"), key: "amount" },
   ];
 
-  const rows = [
-    {
-      sno: 1,
-      mbref: dummyResponse?.measurements[0]?.measurementNumber,
-      musterid: "M123",
-      mbDate: Digit.Utils.pt.convertDateToEpoch(dummyResponse?.measurements[0]?.entryDate),
-      period: "September",
-      status: "Paid",
+  const filteredArray = data?.measurements.filter((item) => item.measurementNumber !== measurementNumber);
+
+  const sortedRows = (filteredArray || [])
+    .sort((a, b) => {
+      const numericA = extractNumericPart(a.measurementNumber);
+      const numericB = extractNumericPart(b.measurementNumber);
+      return numericA - numericB; // Sort in ascending order
+    })
+    .reverse()
+    .map((item, index) => ({
+      sno: index + 1,
+      mbref: item?.measurementNumber,
+      musterid: t("NA"),
+      mbDate: item?.entryDate,
+      period: t("NA"),
+      status: item?.wfStatus,
       amount: 1000,
-    },
-  ];
+    }));
+
+  if (isLoading) {
+    return <Loader></Loader>;
+  }
 
   return (
-
-    <Card className = "override-card">
+    <Card className="override-card">
       <Header className="works-header-view">{t("MB_HISTORY")}</Header>
-      <CustomCollapsibleTable
-        isTableCollapsed={isTableCollapsed}
-      >
-
-      <table className="table reports-table sub-work-table">
-        <thead>
-          <tr>
-            {columns.map((column, index) => (
-              <th key={index}>{column.label}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((column, columnIndex) => (
-                <td key={columnIndex}>{row[column.key]}</td>
+      <CustomCollapsibleTable isTableCollapsed={isTableCollapsed}>
+        <table className="table reports-table sub-work-table">
+          <thead>
+            <tr>
+              {columns.map((column, index) => (
+                <th key={index}>{column.label}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sortedRows.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {columns.map((column, columnIndex) => (
+                  <td key={columnIndex}>
+                    {column.key === "mbref" ? (
+                      <Link
+                        to={{
+                          pathname: window.location.pathname,
 
+                          search: `?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${row.mbref}`,
+                        }}
+                        style={{ color: "#f37f12" }}
+                      >
+                        {row[column.key]}
+                      </Link>
+                    ) : (
+                      row[column.key]
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </CustomCollapsibleTable>
+
       <Button 
       className={"collapse-button"}
       onButtonClick={toggleTableCollapse}
-      label={isTableCollapsed ? 'Show MB History' : 'Hide MB History'}>
+      label={isTableCollapsed ? t('MB_SHOW_HISTORY') : t('MB_HIDE_HISTORY')}>
       </Button>
+
     </Card>
   );
 };

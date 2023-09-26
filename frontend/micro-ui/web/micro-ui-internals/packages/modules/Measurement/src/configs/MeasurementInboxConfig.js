@@ -83,7 +83,6 @@ const InboxMeasurementConfig = () => {
         label: "",
         children: {},
         show: true,
-
       },
       links: {
         uiConfig: {
@@ -220,7 +219,6 @@ const InboxMeasurementConfig = () => {
               jsonPath: "businessObject.serviceSla",
               additionalCustomization: true,
             },
-
           ],
           enableGlobalSearch: false,
           enableColumnSort: true,

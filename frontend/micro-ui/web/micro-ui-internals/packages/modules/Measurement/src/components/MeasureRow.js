@@ -1,4 +1,4 @@
-import { Card, TextInput ,Amount} from "@egovernments/digit-ui-react-components";
+import { Card, TextInput, Amount } from "@egovernments/digit-ui-react-components";
 import React, { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -11,12 +11,12 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
 
   return (
     <tr key={index}>
-      <td>{index + 1}</td>
-      <td>{state.tableState[index].isDeduction? "YES": "NO"}</td>
+      <td>{state.tableState[index].sNo}</td>
+      <td>{state.tableState[index].isDeduction ? "MB_YES" : "MB_NO"}</td>
       <td>{state.tableState[index].description}</td>
       <td>
         <TextInput
-          value={state.tableState[index].currentNumber} 
+          value={state.tableState[index].number}
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -27,7 +27,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].currentLength} 
+          value={state.tableState[index].length}
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -38,7 +38,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].currentWidth} 
+          value={state.tableState[index].width}
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -49,7 +49,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
       </td>
       <td>
         <TextInput
-          value={state.tableState[index].currentHeight} 
+          value={state.tableState[index].height}
           onChange={(newValue) => {
             dispatch({
               type: "UPDATE_ROW",
@@ -58,7 +58,7 @@ const MeasureRow = ({ value, index, state, dispatch }) => {
           }}
         />
       </td>
-      <td>{state.tableState[index].totalValue}</td>
+      <td>{state.tableState[index].noOfunit}</td>
     </tr>
   );
 };
