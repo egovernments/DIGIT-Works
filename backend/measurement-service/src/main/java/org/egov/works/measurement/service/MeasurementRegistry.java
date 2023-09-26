@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.ErrorConfiguration;
+import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.util.*;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
@@ -53,6 +54,8 @@ public class MeasurementRegistry {
     private MeasurementValidator measurementValidator;
     @Autowired
     private MeasurementRegistryUtil measurementRegistryUtil;
+    @Autowired
+    private MeasurementEnrichment measurementEnrichment;
 
     /**
      * Handles measurement create
@@ -66,7 +69,7 @@ public class MeasurementRegistry {
         // validate documents ids if present
         serviceValidator.validateDocumentIds(request.getMeasurements());
         // enrich measurements
-        measurementRegistryUtil.enrichMeasurement(request);
+        measurementEnrichment.enrichMeasurement(request);
         // create a response
         MeasurementResponse response = MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
         // push to kafka topic
@@ -78,8 +81,7 @@ public class MeasurementRegistry {
      * Handles search measurements
      */
      public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
-
-         handleNullPagination(measurementSearchRequest);
+         measurementRegistryUtil.handleNullPagination(measurementSearchRequest);
         if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
             throw errorConfigs.tenantIdRequired;
         }
