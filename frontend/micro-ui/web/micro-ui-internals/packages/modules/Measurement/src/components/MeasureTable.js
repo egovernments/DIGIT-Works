@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
- 
+
   const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
   const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
   const data = props.config.key === "SOR" ? sorData : nonsorData;
@@ -81,9 +81,9 @@ const MeasureTable = (props) => {
       useEffect(() => {
         let updatedData = tablesState?.map(tableRow => {
 
-          const currentMBEntry = tableRow?.measures[0]?.noOfunit;
+          const currentMBEntry = tableRow?.measures.reduce((total, item) => total + item.noOfunit, 0);
 
-          const amount = currentMBEntry * tableRow?.unitRate;
+          const amount = (currentMBEntry * tableRow?.unitRate).toFixed(2);
 
           return {
             ...tableRow,
@@ -91,8 +91,8 @@ const MeasureTable = (props) => {
             amount,
           };
         });
-        let sum = updatedData.reduce((acc, row) => acc + row.amount, 0);
-
+        let sum = updatedData.reduce((acc, row) => acc + parseFloat(row.amount), 0);
+        sum = parseFloat(sum.toFixed(2));
         // Update the state with the new data
         setTablesState(updatedData);
         setTotalMBAmount(sum);
@@ -105,12 +105,12 @@ const MeasureTable = (props) => {
             <td>{index + 1}</td>
             <td>{row.description}</td>
             <td>{row.uom}</td>
-            <td><Amount customStyle={{ textAlign: 'right' }} value={Math.round(row.unitRate)} t={t}></Amount></td>
-            <td>{Math.round(row.approvedQuantity)}</td>
-            <td>{Math.round(row.consumedQ)}</td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={row.unitRate.toFixed(2)} t={t} roundOff={false}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={row.approvedQuantity.toFixed(2)} t={t} roundOff={false}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={row.consumedQ.toFixed(2)} t={t} roundOff={false}></Amount></td>
             <td>
               <div className="measurement-table-input">
-                <TextInput style={{ width: "80%", marginTop : "12px" }} value={consumedQty} onChange={() => {}} disable={initialState.length > 0 ? "true" : "false"} />
+                <TextInput style={{ width: "80%", marginTop: "12px" }} value={consumedQty} onChange={() => { }} disable={initialState.length > 0 ? "true" : "false"} />
                 <Button
                   className={"plus-button"}
                   onButtonClick={() => {
@@ -123,7 +123,7 @@ const MeasureTable = (props) => {
               </div>
             </td>
 
-            <td><Amount customStyle={{ textAlign: 'right' }} value={row.amount} t={t}></Amount></td>
+            <td><Amount customStyle={{ textAlign: 'right' }} value={row.amount} t={t} roundOff={false}></Amount></td>
 
 
           </tr>
@@ -148,14 +148,14 @@ const MeasureTable = (props) => {
                   setInitialState={setInitialState}
                   setShowMeasureCard={setShowMeasureCard}
                   initialState={initialState}
-                  unitRate={row.unitRate} 
-                  register={props.isView ? () => {} : register}
-                  setValue={props.isView ? () => {} : setValue}
+                  unitRate={row.unitRate}
+                  register={props.isView ? () => { } : register}
+                  setValue={props.isView ? () => { } : setValue}
 
                   tableData={props.data}
                   tableKey={tableKey}
-                  tableIndex={index} 
-                  isView = {props?.isView}/>
+                  tableIndex={index}
+                  isView={props?.isView} />
 
               </td>
             </tr>
@@ -181,7 +181,7 @@ const MeasureTable = (props) => {
         <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
 
           <span style={{ fontWeight: "bold" }}>Total {props.config.key} MB Amount(For Current Entry): </span>
-          <span style={{ marginLeft: "3px" }}><Amount customStyle={{ textAlign: 'right' }} value={totalMBAmount} t={t}></Amount></span>
+          <span style={{ marginLeft: "3px" }}><Amount customStyle={{ textAlign: 'right' }} value={totalMBAmount.toFixed(2)} t={t} roundOff={false}></Amount></span>
 
         </div>
       </div>

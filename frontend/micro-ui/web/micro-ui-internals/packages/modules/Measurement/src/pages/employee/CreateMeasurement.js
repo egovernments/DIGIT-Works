@@ -124,6 +124,8 @@ const CreateMeasurement = ({ props }) => {
     }
   }, [showErrorToast])
 
+
+
   useEffect(() => {
     if (!_.isEqual(sessionFormData, createState)) {
       setSessionFormData({ ...createState });
@@ -161,6 +163,7 @@ const CreateMeasurement = ({ props }) => {
   if (isContractLoading || isEstimateLoading || !contract || !estimate || !creatStateSet) {
     return <Loader />
   }
+
   // else render form and data
   return (
     <div>

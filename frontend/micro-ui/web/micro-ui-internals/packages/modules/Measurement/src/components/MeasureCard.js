@@ -64,7 +64,6 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
 
         return { ...state, tableState };
-
       case "CLEAR_STATE":
         return { ...state, tableState: initialState.tableState };
 
@@ -137,8 +136,8 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
               <div style={{ display: "flex", flexDirection: "row" }}>
                 {isView ? (
                   <Button
-                     className={"outline-btn"}
-                  label={t("MB_CLOSE")}
+                    className={"outline-btn"}
+                    label={t("MB_CLOSE")}
                     onButtonClick={() => {
                       setShowMeasureCard(false);
                     }}
@@ -149,7 +148,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
                   }} />
                   <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
                     tableData[tableKey][tableIndex].measures = state.tableState;
-                    tableData[tableKey][tableIndex].amount = tableData[tableKey][tableIndex].measures?.[0]?.rowAmount
+                    tableData[tableKey][tableIndex].amount = parseFloat(tableData[tableKey][tableIndex].measures.reduce((total, item) => total + item.rowAmount, 0)).toFixed(2);
                     setValue("measurements", tableData);
 
                     setInitialState(state);
