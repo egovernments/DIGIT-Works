@@ -106,4 +106,16 @@ public class Configuration {
 
     @Value("${egov.workflow.moduleName}")
     private String wfModuleName;
+
+    @Value("${egov.measurement.registry.host}")
+    public String mbRegistryHost;
+
+    @Value("${egov.measurement.registry.create.path}")
+    public String mbRegistryCreate;
+
+    @Value("${egov.measurement.registry.update.path}")
+    public String mbRegistryUpdate;
+
+    @Value("${egov.measurement.registry.search.path}")
+    public String mbRegistrySearch;
 }
