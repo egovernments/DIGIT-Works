@@ -754,22 +754,21 @@ export const UICustomizations = {
         return data;
       },
         additionalCustomizations: (row, key, column, value, t, searchResult) => {
-          console.log(searchResult[0], "sss")
-          const state = searchResult[0]?.ProcessInstance?.state?.state;
-          const contractNumber = searchResult[0]?.businessObject?.referenceId;
-          const measurementNumber = searchResult[0]?.businessObject?.measurementNumber;
+
           const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
           switch (key) {
             case "MB_REFERENCE_NUMBER":
+              const state = row?.ProcessInstance?.state?.state;
+              const contractNumber = row?.businessObject?.referenceId
               return (
                 <span className="link">
-                  {Digit.Utils.statusBasedNavigation(state, contractNumber, measurementNumber, tenantId, value)}
+                  {Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)}
                 </span>
               );
             case "MB_ASSIGNEE":
               return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
             case "MB_WORKFLOW_STATE":
-              return <span>{t(`WF_EST_${value}`)}</span>;
+              return <span>{t(`WF_MB_${value}`)}</span>;
             case "MB_AMOUNT":
               return <Amount customStyle={{ textAlign: 'right' }} value={Math.round(value)} t={t}></Amount>
             case "MB_SLA_DAYS_REMAINING":
@@ -809,16 +808,16 @@ export const UICustomizations = {
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-      const state = searchResult[0]?.ProcessInstance?.state?.state;
-      const contractNumber = searchResult[0]?.businessObject?.referenceId;
-      const measurementNumber = searchResult[0]?.businessObject?.measurementNumber;
+
       const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
 
       switch (key) {
-        case "MB_NUMBER":
+        case "MB__NUMBER":
+          const state = row?.ProcessInstance?.state?.state;
+          const contractNumber = row?.businessObject?.referenceId
           return (
             <span className="link">
-              {Digit.Utils.statusBasedNavigation(state, contractNumber, measurementNumber, tenantId, value)}
+              {Digit.Utils.statusBasedNavigation(state , contractNumber, value, tenantId, value)}
             </span>
           );
             case "MB_AMOUNT":
