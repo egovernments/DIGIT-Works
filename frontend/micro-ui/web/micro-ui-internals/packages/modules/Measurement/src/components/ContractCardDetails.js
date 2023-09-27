@@ -30,12 +30,12 @@ const ContractDetailsCard = ({ contract, isUpdate }) => {
 
     // Create an object for key-value pairs
     const keyValuePairs = {
-        "Work Order Number:": contractNumber,
-        "Project Id:": projectID,
-        "Project Sanction Date:": "NA", // did not find the value yet
-        "Project Name:": projectName,
-        "Project Description:": projectDesc,
-        "Project Location:": `${Pward ? Pward + ", " : ""}${city}`,
+       "MB_WORK_ORDER_NUMBER": contractNumber,
+        "MB_PROJECT_ID": projectID,
+        "MB_PROJECT_DATE": "NA", // did not find the value yet
+        "MB_PROJECT_NAME": projectName,
+        "MB_PROJECT_DESC": projectDesc,
+        "MB_LOCATION": `${Pward ? Pward + ", " : ""}${city}`
     };
 
     return (
@@ -43,7 +43,7 @@ const ContractDetailsCard = ({ contract, isUpdate }) => {
             <div className="contract-details-card contract-card">
                 {Object.entries(keyValuePairs).map(([key, value]) => (
                     <div key={key} className="key-value-container">
-                        <span className="contract-card-label">{key}</span>
+                        <span className="contract-card-label">{t(key)}</span>
                         <span>{value}</span>
                     </div>
                 ))}

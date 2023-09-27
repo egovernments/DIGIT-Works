@@ -17,7 +17,7 @@ const ViewOnlyCard = (props) => {
     return (
         <div className="view-only-card-container">
             <div className="view-only-card">
-                <span>Total Amount:</span>
+                <span>{t("MB_AMOUNT_TOTAL")}:</span>
                 <Amount customStyle={{ textAlign: 'right' }} value={total} t={t} roundOff={false}></Amount>
             </div>
         </div>
