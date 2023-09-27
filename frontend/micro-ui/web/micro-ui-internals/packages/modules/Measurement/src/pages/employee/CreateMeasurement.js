@@ -15,39 +15,52 @@ const CreateMeasurement = ({ props }) => {
   const [sessionFormData, setSessionFormData, clearSessionFormData] = MeasurementSession;
   const [createState, setState] = useState(sessionFormData || {});
   const [creatStateSet, setCreateState] = useState(false)
-  const [isEstimateEnabled, setIsEstimateEnabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [displayMenu, setDisplayMenu] = useState(false);
+  const [contractData, setContractData] = useState(undefined);
+  const [estimateData, setEstimateData] = useState(undefined);
 
   // get contractNumber from the url
   const searchparams = new URLSearchParams(location.search);
   const contractNumber = searchparams.get("workOrderNumber");
-  //fetching contract data
-  const { isLoading: isContractLoading, data: contract } = Digit.Hooks.contracts.useContractSearch({
-    tenantId,
-    filters: { contractNumber, tenantId },
-    config: {
-      enabled: true,
-      cacheTime: 0
-    }
-  })
 
-  // When contract data is available, enable estimate search
+
+  // use this for call create or update
+  const reqCriteria = {
+    url: props?.isUpdate ? `/measurement-service/v1/_update` : `/measurement-service/v1/_create`,
+    params: {},
+    body: {},
+    config: {
+      enabled: false,
+    },
+  };
+
+  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteria);
+
+  // for BFF service
+  const requestCriteria = {
+    url: "/mukta-services/measurement/_search",
+    body: {
+      contractNumber: contractNumber,
+      tenantId: tenantId,
+    },
+  };
+
+  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
+  // fetch the required data........
   useEffect(() => {
-    if (contract) {
-      setIsEstimateEnabled(true);
+    const fetchRequiredData = () => {
+      if (data) {
+        setContractData(data?.contract);
+        setEstimateData(data?.estimate)
+      }
     }
-  }, [contract]);
-  //fetching estimate data
-  const { isLoading: isEstimateLoading, data: estimate, isError: isEstimateError } = Digit.Hooks.estimates.useEstimateSearch({
-    tenantId,
-    filters: { ids: contract?.lineItems[0].estimateId },
-    config: {
-      enabled: isEstimateEnabled,
-    }
-  })
+    fetchRequiredData()
+  }, [data])
 
+  // action to be performed....
   const actionMB = [
     {
       "name": "SUBMIT"
@@ -59,25 +72,15 @@ const CreateMeasurement = ({ props }) => {
 
   function onActionSelect(action) {
     if (action?.name === "SUBMIT") {
+      createState.workflowAction = "SUBMIT";
       handleCreateMeasurement(createState);
     }
     if (action?.name === "SAVE_AS_DRAFT") {
+      createState.workflowAction = "SAVE_AS_DRAFT";
       handleCreateMeasurement(createState);
     }
   }
 
-
-  // Define the request criteria for creating a measurement
-  const reqCriteriaUpdate = {
-    url: props?.isUpdate ? `/measurement-service/v1/_update` : `/measurement-service/v1/_create`,
-    params: {},
-    body: {},
-    config: {
-      enabled: false,
-    },
-  };
-
-  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCriteriaUpdate);
 
   // Handle form submission
   const handleCreateMeasurement = async (data) => {
@@ -87,11 +90,10 @@ const CreateMeasurement = ({ props }) => {
     }
     // Create the measurement payload with transformed data
     const measurements = transformData(data);
-    //call the createMutation for MB and route to response page on onSuccess or console error
+    //call the createMutation for MB and route to response page on onSuccess or show error
     const onError = (resp) => {
       setErrorMessage(resp?.response?.data?.Errors?.[0]?.message);
       setShowErrorToast(true);
-
     };
     const onSuccess = (resp) => {
       history.push(`/${window.contextPath}/employee/measurement/response?mbreference=${resp.measurements[0].measurementNumber}`)
@@ -115,7 +117,7 @@ const CreateMeasurement = ({ props }) => {
   const closeToast = () => {
     setShowErrorToast(false);
   }
-  //remove Toast from 3s
+  //remove Toast after 3s
   useEffect(() => {
     if (showErrorToast) {
       setTimeout(() => {
@@ -138,17 +140,17 @@ const CreateMeasurement = ({ props }) => {
   }
   // after fetching the estimate data get sor and nonsor details
   useEffect(() => {
-    if (estimate) {
+    if (estimateData) {
       // get estimateDetails from the estimate data and get SOR and NONSOR data seperate
-      const estimateDetails = estimate?.estimateDetails || [];
+      const estimateDetails = estimateData?.estimateDetails || [];
       const sorCategoryArray = [];
       const nonSorCategoryArray = [];
       if (props?.isUpdate) {
-        sorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "SOR", props?.data?.[0]));
-        nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "NON-SOR", props?.data?.[0]));
+        sorCategoryArray.push(...transformEstimateData(estimateDetails, contractData, "SOR", props?.data?.[0]));
+        nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contractData, "NON-SOR", props?.data?.[0]));
       } else {
-        sorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "SOR"));
-        nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contract, "NON-SOR"));
+        sorCategoryArray.push(...transformEstimateData(estimateDetails, contractData, "SOR"));
+        nonSorCategoryArray.push(...transformEstimateData(estimateDetails, contractData, "NON-SOR"));
       }
 
       if (sorCategoryArray && nonSorCategoryArray) {
@@ -157,10 +159,10 @@ const CreateMeasurement = ({ props }) => {
       }
 
     }
-  }, [estimate]);
+  }, [estimateData]);
 
   // if data is still loading return loader
-  if (isContractLoading || isEstimateLoading || !contract || !estimate || !creatStateSet) {
+  if (isLoading || !contractData || !estimateData || !creatStateSet) {
     return <Loader />
   }
 
@@ -168,10 +170,10 @@ const CreateMeasurement = ({ props }) => {
   return (
     <div>
       <Header className="works-header-view" style={{}}>Measurement Book</Header>
-      <ContractDetailsCard contract={contract} isUpdate={props?.isUpdate} /> {/* Display contract details */}
+      <ContractDetailsCard contract={contractData} isUpdate={props?.isUpdate} /> {/* Display contract details */}
       <FormComposerV2
         label={t("MB_SUBMIT_BAR")}
-        config={CreateConfig({ defaultValue: contract }).CreateConfig[0]?.form?.map((config) => {
+        config={CreateConfig({ defaultValue: contractData }).CreateConfig[0]?.form?.map((config) => {
           return {
             ...config,
             body: config.body.filter((a) => !a.hideInEmployee),
