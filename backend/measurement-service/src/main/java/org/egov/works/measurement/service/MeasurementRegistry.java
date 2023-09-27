@@ -60,6 +60,7 @@ public class MeasurementRegistry {
             measurementService.setDocuments(measurement.getDocuments());
             measurementService.setIsActive(measurement.getIsActive());
             measurementService.setAuditDetails(measurement.getAuditDetails());
+            measurementService.setAdditionalDetails(measurement.getAdditionalDetails());
 
             // If an existing measurement service exists, set its workflow status
             org.egov.works.measurement.web.models.MeasurementService existingMeasurementService = orderedExistingMeasurementService.get(i);
