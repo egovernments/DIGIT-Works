@@ -14,6 +14,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
   const { t } = useTranslation();
   const history = useHistory();
   const [total, setTotal] = useState(consumedQty);
+  const isEstimate = false;
 
   const validate = (value) => {
     if (value === null || value === undefined || value === "" || value === "0") {
@@ -49,6 +50,12 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
           case "height":
             tableState[findIndex].height = value;
             break;
+          case "isDeduction":
+            tableState[findIndex].isDeduction = value;
+            break;
+          case "description":
+            tableState[findIndex].description = value;
+            break;
           default:
 
         }
@@ -65,18 +72,17 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
         return { ...state, tableState };
       case "CLEAR_STATE":
-        const clearedTableState = state.tableState.map(item => ({
-          ...item,
-          height: 0,
-          length: 0,
-          number: 0,
-          width: 0,
-          rowAmount: 0
-        }));
-        return {
-          ...state,
-          tableState: clearedTableState
-        };
+        const clearedTableState = state.tableState.map((item) => ({
+        ...item,
+        height: "0",
+        width: "0",
+        length: "0",
+        number: "0",
+        noOfunit: 0,
+        rowAmount: 0,
+      }));
+      setTotal(clearedTableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
+      return { ...state, tableState: clearedTableState };
 
       default:
         return state;
@@ -128,7 +134,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
   const renderBody = () => {
     return state?.tableState?.map((value, index) => {
-      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView={isView} />;
+      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView = {isView} isEstimate={isEstimate} />;
     });
   };
 
@@ -154,6 +160,25 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
                     }}
                   />
                 ) : (<>
+                  {isEstimate && <Button className={"outline-btn"} label={t("MB_ADD_ROW")} onButtonClick={() => {
+                    dispatch({
+                      type: "ADD_ROW",
+                      state: {
+                        sNo: state.tableState.length + 1,
+                        targetId: "",
+                        isDeduction: "",
+                        description: "",
+                        id: null,
+                        height: 0,
+                        width: 0,
+                        length: 0,
+                        number: 0,
+                        noOfunit: 0,
+                        rowAmount: 0,
+                        consumedRowQuantity: 0,
+                      },
+                    })
+                  }} />}
                   <Button className={"outline-btn"} label={t("MB_CLEAR")} onButtonClick={() => {
                     dispatch({ type: "CLEAR_STATE" });
                   }} />
@@ -161,7 +186,6 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
                     tableData[tableKey][tableIndex].measures = state.tableState;
                     tableData[tableKey][tableIndex].amount = parseFloat(tableData[tableKey][tableIndex].measures.reduce((total, item) => total + item.rowAmount, 0)).toFixed(2);
                     setValue("measurements", tableData);
-
                     setInitialState(state);
                     setConsumedQty(total);
                     setShowMeasureCard(false);
