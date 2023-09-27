@@ -25,11 +25,11 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
 
     @Override
     public ArrayList<Measurement> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<String, Measurement> measurementMap = new LinkedHashMap<>();
         Map<String,Document>documentMap = new HashMap<>();
         Set<String> measuresIds=new HashSet<>();
+        Map<String, Measurement> measurementMap = new LinkedHashMap<>();
 
-        System.out.println("Records : " + rs.getFetchSize());
+        // Iterating over resultSet
         while (rs.next()) {
             String uuid = rs.getString("id");
             Measurement measurement = measurementMap.get(uuid);
@@ -68,6 +68,29 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 measurementMap.put(uuid, measurement);
             }
 
+            Document document = new Document();
+            document.setId(rs.getString("dcid"));
+
+            if(document.getId()!=null & documentMap.get(document.getId())==null) {
+
+                document.setDocumentType(rs.getString("documentType"));
+                document.setFileStore(rs.getString("filestore"));
+                document.setDocumentUid(rs.getString("documentuuid"));
+                document.setId(rs.getString("dcid"));
+                documentMap.put(document.getId(), document);
+                String additionalDetailsString = rs.getString("dcadditionalDetails");
+                JsonNode additionalDetailsJson = null;
+                try {
+                    additionalDetailsJson = objectMapper.readTree(additionalDetailsString);
+                } catch (IOException e) {
+                    // Handle the JSON parsing error
+                    e.printStackTrace();
+                }
+                // Set the parsed JSON object to the measurement or document
+                document.setAdditionalDetails(additionalDetailsJson);
+
+                measurement.getDocuments().add(document);
+            }
             // Created a Measure object and add it to the Measurement
             Measure measure = new Measure();
             if(!measuresIds.contains(rs.getString("mmid"))){
@@ -83,6 +106,13 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 measure.setTargetId(rs.getString("targetId"));
                 measure.setIsActive(rs.getBoolean("mdisActive"));
 
+                AuditDetails auditDetails = new AuditDetails();
+                auditDetails.setCreatedBy(rs.getString("createdby"));
+                auditDetails.setCreatedTime(rs.getLong("createdtime"));
+                auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
+                auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
+                measure.setAuditDetails(auditDetails);
+
                 String additionalDetailsString = rs.getString("mdadditionalDetails");
                 JsonNode additionalDetailsJson = null;
                 try {
@@ -94,40 +124,8 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
 
                 // Set the parsed JSON object to the measurement or document
                 measure.setAdditionalDetails(additionalDetailsJson);
-                AuditDetails auditDetails = new AuditDetails();
-                auditDetails.setCreatedBy(rs.getString("createdby"));
-                auditDetails.setCreatedTime(rs.getLong("createdtime"));
-                auditDetails.setLastModifiedBy(rs.getString("lastmodifiedby"));
-                auditDetails.setLastModifiedTime(rs.getLong("lastmodifiedtime"));
-                measure.setAuditDetails(auditDetails);
+
                 measurement.getMeasures().add(measure);
-            }
-
-            Document document = new Document();
-            document.setId(rs.getString("dcid"));
-
-            if(document.getId()!=null & documentMap.get(document.getId())==null) {
-
-                document.setDocumentType(rs.getString("documentType"));
-                document.setFileStore(rs.getString("filestore"));
-                document.setDocumentUid(rs.getString("documentuuid"));
-
-                String additionalDetailsString = rs.getString("dcadditionalDetails");
-                JsonNode additionalDetailsJson = null;
-                try {
-                    additionalDetailsJson = objectMapper.readTree(additionalDetailsString);
-                } catch (IOException e) {
-                    // Handle the JSON parsing error
-                    e.printStackTrace();
-                }
-
-                // Set the parsed JSON object to the measurement or document
-                document.setAdditionalDetails(additionalDetailsJson);
-
-                document.setId(rs.getString("dcid"));
-                documentMap.put(document.getId(), document);
-
-                measurement.getDocuments().add(document);
             }
         }
         return new ArrayList<>(measurementMap.values());
