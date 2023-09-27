@@ -8,13 +8,13 @@ import cloneDeep from 'lodash/cloneDeep';
 
 
 {/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
-const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView }) => {
+const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView, isEstimates }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const { t } = useTranslation();
   const history = useHistory();
   const [total, setTotal] = useState(consumedQty);
-  const isEstimate = false;
+  const isEstimate = isEstimates;
 
   const validate = (value) => {
     if (value === null || value === undefined || value === "" || value === "0") {
@@ -73,16 +73,16 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
         return { ...state, tableState };
       case "CLEAR_STATE":
         const clearedTableState = state.tableState.map((item) => ({
-        ...item,
-        height: "0",
-        width: "0",
-        length: "0",
-        number: "0",
-        noOfunit: 0,
-        rowAmount: 0,
-      }));
-      setTotal(clearedTableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
-      return { ...state, tableState: clearedTableState };
+          ...item,
+          height: "0",
+          width: "0",
+          length: "0",
+          number: "0",
+          noOfunit: 0,
+          rowAmount: 0,
+        }));
+        setTotal(clearedTableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
+        return { ...state, tableState: clearedTableState };
 
       default:
         return state;
@@ -134,7 +134,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
   const renderBody = () => {
     return state?.tableState?.map((value, index) => {
-      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView = {isView} isEstimate={isEstimate} />;
+      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView={isView} isEstimate={isEstimate} />;
     });
   };
 

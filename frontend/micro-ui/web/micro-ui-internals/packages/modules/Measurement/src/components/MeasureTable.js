@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
-
+  console.log(props?.props?.isEstimate);
   const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
   const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
   const data = props.config.key === "SOR" ? sorData : nonsorData;
@@ -50,16 +50,25 @@ const MeasureTable = (props) => {
     return obj;
   };
 
-  columns = [
-    t("WORKS_SNO"),
-    t("MB_DESCRIPTION"),
-    t("MB_UNIT"),
-    t("MB_RATE"),
-    t("MB_APPROVER_QUANT"),
-    t("MB_CONSUMED_QUANT"),
-    t("MB_CURRENT_MB_ENTRY"),
-    t("MB_AMOUNT_CURRENT_ENTRY"),
-  ];
+  columns = props?.props?.isEstimate ?
+    [
+      t("WORKS_SNO"),
+      t("MB_DESCRIPTION"),
+      t("MB_UNIT"),
+      t("MB_RATE"),
+      t("MB_CURRENT_MB_ENTRY"),
+      t("MB_AMOUNT_CURRENT_ENTRY"),
+    ]
+    : [
+      t("WORKS_SNO"),
+      t("MB_DESCRIPTION"),
+      t("MB_UNIT"),
+      t("MB_RATE"),
+      t("MB_APPROVER_QUANT"),
+      t("MB_CONSUMED_QUANT"),
+      t("MB_CURRENT_MB_ENTRY"),
+      t("MB_AMOUNT_CURRENT_ENTRY"),
+    ];
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return (
@@ -104,11 +113,15 @@ const MeasureTable = (props) => {
         <>
           <tr key={index}>
             <td>{index + 1}</td>
-            <td>{row.description}</td>
+            {props?.props?.isEstimate ? <TextInput style={{ width: "80%", marginTop: "27px", marginLeft: "35px" }} /> : <td>{row.description}</td>}
             <td>{row.uom}</td>
             <td><Amount customStyle={{ textAlign: 'right' }} value={row.unitRate.toFixed(2)} t={t} roundOff={false}></Amount></td>
-            <td><Amount customStyle={{ textAlign: 'right' }} value={row.approvedQuantity.toFixed(2)} t={t} roundOff={false}></Amount></td>
-            <td><Amount customStyle={{ textAlign: 'right' }} value={row.consumedQ.toFixed(2)} t={t} roundOff={false}></Amount></td>
+            {!props?.props?.isEstimate && (
+              <>
+                <td><Amount customStyle={{ textAlign: 'right' }} value={row.approvedQuantity.toFixed(2)} t={t} roundOff={false}></Amount></td>
+                <td><Amount customStyle={{ textAlign: 'right' }} value={row.consumedQ.toFixed(2)} t={t} roundOff={false}></Amount></td>
+              </>
+            )}
             <td>
               <div className="measurement-table-input">
                 <TextInput style={{ width: "80%", marginTop: "12px" }} value={consumedQty} onChange={() => { }} disable={initialState.length > 0 ? "true" : "false"} />
@@ -153,6 +166,7 @@ const MeasureTable = (props) => {
                   tableData={props.data}
                   tableKey={tableKey}
                   tableIndex={index}
+                  isEstimates={props?.props?.isEstimate}
                   isView={props?.isView} />
 
               </td>
@@ -171,8 +185,8 @@ const MeasureTable = (props) => {
           <tr>{renderHeader()}</tr>
         </thead>
         <tbody>
-        {renderBody()}
-        
+          {renderBody()}
+
         </tbody>
 
       </table>
