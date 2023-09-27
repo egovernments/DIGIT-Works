@@ -48,7 +48,7 @@ export default app;
 import express from 'express';
 import * as bodyParser from 'body-parser';
 import config from './config';
-import { cacheMiddleware, requestMiddleware } from './middlewares';
+import { requestMiddleware } from './middlewares';
 import { errorLogger, errorResponder, invalidPathHandler } from './utils';
 
 class App {
@@ -68,7 +68,7 @@ class App {
     this.app.use(bodyParser.json());
     this.app.use(requestMiddleware);
 
-    this.app.use(cacheMiddleware);
+    // this.app.use(cacheMiddleware);
     // Attach the first Error handling Middleware
     // function defined above (which logs the error)
     this.app.use(errorLogger);
