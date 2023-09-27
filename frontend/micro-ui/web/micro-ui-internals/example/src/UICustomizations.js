@@ -756,6 +756,7 @@ export const UICustomizations = {
         additionalCustomizations: (row, key, column, value, t, searchResult) => {
 
           const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+         
           switch (key) {
             case "MB_REFERENCE_NUMBER":
               const state = row?.ProcessInstance?.state?.state;
@@ -768,7 +769,7 @@ export const UICustomizations = {
             case "MB_ASSIGNEE":
               return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
             case "MB_WORKFLOW_STATE":
-              return <span>{t(`WF_MB_${value}`)}</span>;
+              return <span>{t(value)}</span>;
             case "MB_AMOUNT":
               return <Amount customStyle={{ textAlign: 'right' }} value={Math.round(value)} t={t}></Amount>
             case "MB_SLA_DAYS_REMAINING":
@@ -798,7 +799,29 @@ export const UICustomizations = {
     preProcess: (data) => {
     const mbNumber=data?.body?.inbox?.measurementNumber || null;
     const refId= data?.body?.Individual?.referenceId || null;
+    const projectname=data?.body?.inbox?.moduleSearchCriteria?.Projectname;
+    let boundary="";
+    if(data?.body?.inbox?.moduleSearchCriteria?.wardCode)  boundary=data?.body?.inbox?.moduleSearchCriteria?.wardCode[0]?.code;
     
+
+    if(projectname){
+    data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), projectName: projectname };
+    var newInbox= data.body.inbox;
+    var newModuleSearchCriteria = { tenantId: "pg.citya",}
+    var body = {...data.body, newInbox}
+    newInbox.moduleSearchCriteria = newModuleSearchCriteria;
+    var newData = {...data,body};
+    }
+  
+    if(boundary){
+      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), boundary: boundary };
+      var newInbox= data.body.inbox;
+      var newModuleSearchCriteria = { tenantId: "pg.citya",}
+      var body = {...data.body, newInbox}
+      newInbox.moduleSearchCriteria = newModuleSearchCriteria;
+      var newData = {...data,body};
+    }
+
       return data;
       
     },
@@ -812,7 +835,7 @@ export const UICustomizations = {
       const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
 
       switch (key) {
-        case "MB__NUMBER":
+        case "MB_NUMBER":
           const state = row?.ProcessInstance?.state?.state;
           const contractNumber = row?.businessObject?.referenceId
           return (
@@ -822,7 +845,8 @@ export const UICustomizations = {
           );
             case "MB_AMOUNT":
               return value ? <span style={{ whiteSpace: "nowrap" }}>{value}</span> : t("ES_COMMON_NA");
-
+              case "MB_STATUS":
+                return <span>{t(value)}</span>;
         case "MASTERS_SOCIAL_CATEGORY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
 

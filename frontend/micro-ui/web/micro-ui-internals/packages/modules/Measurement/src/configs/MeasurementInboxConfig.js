@@ -57,7 +57,9 @@ const InboxMeasurementConfig = () => {
               type: "text",
               isMandatory: false,
               disable: false,
-              populators: { name: "ProjectId", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;""'']{1,50}$/i, maxlength: 140 } },
+              populators: { name: "ProjectId", validation: { 
+                // pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;""'']{1,50}$/i, 
+                maxlength: 140 } },
             },
             {
               label: "MB_PROJECT_TYPE",
@@ -176,7 +178,7 @@ const InboxMeasurementConfig = () => {
               disable: false,
               populators: {
                 name: "status",
-                labelPrefix: "WF_MB_",
+                labelPrefix: "",
                 businessService: "MB",
               },
             },
@@ -201,7 +203,7 @@ const InboxMeasurementConfig = () => {
             {
               label: "MB_ASSIGNEE",
               jsonPath: "ProcessInstance.assignes",
-              // additionalCustomization: true,
+              additionalCustomization: true,
             },
             {
               label: "MB_WORKFLOW_STATE",

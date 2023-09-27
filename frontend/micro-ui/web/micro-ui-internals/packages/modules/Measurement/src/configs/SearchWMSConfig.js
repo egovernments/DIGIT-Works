@@ -22,7 +22,7 @@ const SearchMeasurementConfig = () => {
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
         searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
-
+        
       },
       sections: {
         search: {
@@ -35,7 +35,9 @@ const SearchMeasurementConfig = () => {
             defaultValues: {
               wardCode: "",
               MBNumber: "",
+              measurementNumber: "",
               Projectname: "",
+              referenceId: "",
               status: "",
               MBReference: "",
               createdFrom: "",
@@ -189,7 +191,7 @@ const SearchMeasurementConfig = () => {
               {
                 label: "MB_STATUS",
                 jsonPath: "ProcessInstance.state.applicationStatus",
-                //additionalCustomization: true,
+                additionalCustomization: true,
               },
               {
                 label: "MB_AMOUNT",
