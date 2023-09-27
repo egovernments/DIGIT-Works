@@ -821,10 +821,6 @@ export const UICustomizations = {
               {Digit.Utils.statusBasedNavigation(state, contractNumber, measurementNumber, tenantId, value)}
             </span>
           );
-
-          case "MB__AMOUNT":
-            return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>;
-           
             case "MB_AMOUNT":
               return value ? <span style={{ whiteSpace: "nowrap" }}>{value}</span> : t("ES_COMMON_NA");
 
