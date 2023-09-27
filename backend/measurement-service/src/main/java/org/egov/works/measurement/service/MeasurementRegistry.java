@@ -42,37 +42,51 @@ public class MeasurementRegistry {
         return result;
     }
 
+    //Create a MeasurementService object from a Measurement object
+    private org.egov.works.measurement.web.models.MeasurementService createMeasurementServiceFromMeasurement(Measurement measurement) {
+        org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+
+        // Set properties of the measurement service based on the measurement object
+        measurementService.setId(measurement.getId());
+        measurementService.setTenantId(measurement.getTenantId());
+        measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
+        measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
+        measurementService.setReferenceId(measurement.getReferenceId());
+        measurementService.setEntryDate(measurement.getEntryDate());
+        measurementService.setMeasures(measurement.getMeasures());
+        measurementService.setDocuments(measurement.getDocuments());
+        measurementService.setIsActive(measurement.getIsActive());
+        measurementService.setAuditDetails(measurement.getAuditDetails());
+        measurementService.setAdditionalDetails(measurement.getAdditionalDetails());
+
+        return measurementService;
+    }
+
+    //Apply the workflow status from an existing MeasurementService object
+    private void applyWorkflowStatus(org.egov.works.measurement.web.models.MeasurementService measurementService, org.egov.works.measurement.web.models.MeasurementService existingMeasurementService) {
+        if (existingMeasurementService != null) {
+            measurementService.setWfStatus(existingMeasurementService.getWfStatus());
+        }
+    }
+
+    // Main function that uses the above two parts
     private List<org.egov.works.measurement.web.models.MeasurementService> createMeasurementServices(List<Measurement> measurements, List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService) {
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
 
         for (int i = 0; i < measurements.size(); i++) {
             Measurement measurement = measurements.get(i);
-            org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+            org.egov.works.measurement.web.models.MeasurementService measurementService = createMeasurementServiceFromMeasurement(measurement);
 
-            // Set properties of the measurement service based on the measurement object
-            measurementService.setId(measurement.getId());
-            measurementService.setTenantId(measurement.getTenantId());
-            measurementService.setMeasurementNumber(measurement.getMeasurementNumber());
-            measurementService.setPhysicalRefNumber(measurement.getPhysicalRefNumber());
-            measurementService.setReferenceId(measurement.getReferenceId());
-            measurementService.setEntryDate(measurement.getEntryDate());
-            measurementService.setMeasures(measurement.getMeasures());
-            measurementService.setDocuments(measurement.getDocuments());
-            measurementService.setIsActive(measurement.getIsActive());
-            measurementService.setAuditDetails(measurement.getAuditDetails());
-            measurementService.setAdditionalDetails(measurement.getAdditionalDetails());
-
-            // If an existing measurement service exists, set its workflow status
+            // Apply the workflow status from an existing measurement service
             org.egov.works.measurement.web.models.MeasurementService existingMeasurementService = orderedExistingMeasurementService.get(i);
-            if (existingMeasurementService != null) {
-                measurementService.setWfStatus(existingMeasurementService.getWfStatus());
-            }
+            applyWorkflowStatus(measurementService, existingMeasurementService);
 
             measurementServices.add(measurementService);
         }
 
         return measurementServices;
     }
+
 
     public  List<String> getMbNumbers(List<Measurement> measurements){
         List<String> mbNumbers=new ArrayList<>();
