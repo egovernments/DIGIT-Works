@@ -33,8 +33,9 @@ import '../../widgets/loaders.dart' as shg_loader;
 
 class ViewWorkDetailsPage extends StatefulWidget {
   final String? contractNumber;
+  final String? wfStatus;
   const ViewWorkDetailsPage(
-      {super.key, @queryParam this.contractNumber = 'contractNumber'});
+      {super.key, @queryParam this.contractNumber = 'contractNumber',  @queryParam this.wfStatus = 'wfStatus'});
   @override
   State<StatefulWidget> createState() {
     return _ViewWorkDetailsPage();
@@ -64,7 +65,9 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
     fileStoreList;
     attachedFiles = [];
     context.read<SearchIndividualWorkBloc>().add(
-          IndividualWorkSearchEvent(contractNumber: widget.contractNumber),
+          IndividualWorkSearchEvent(contractNumber: widget.contractNumber, body:{
+            "wfStatus": [widget.wfStatus]
+          }),
         );
     context.read<AcceptWorkOrderBloc>().add(
           const WorkOrderDisposeEvent(),

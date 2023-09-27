@@ -141,15 +141,21 @@ class _$AppRouter extends RootStackRouter {
       final queryParams = routeData.queryParams;
       final args = routeData.argsAs<ViewWorkDetailsRouteArgs>(
           orElse: () => ViewWorkDetailsRouteArgs(
-                  contractNumber: queryParams.optString(
-                'contractNumber',
-                'contractNumber',
-              )));
+                contractNumber: queryParams.optString(
+                  'contractNumber',
+                  'contractNumber',
+                ),
+                wfStatus: queryParams.optString(
+                  'wfStatus',
+                  'wfStatus',
+                ),
+              ));
       return MaterialPageX<dynamic>(
         routeData: routeData,
         child: ViewWorkDetailsPage(
           key: args.key,
           contractNumber: args.contractNumber,
+          wfStatus: args.wfStatus,
         ),
       );
     },
@@ -621,14 +627,19 @@ class ViewWorkDetailsRoute extends PageRouteInfo<ViewWorkDetailsRouteArgs> {
   ViewWorkDetailsRoute({
     Key? key,
     String? contractNumber = 'contractNumber',
+    String? wfStatus = 'wfStatus',
   }) : super(
           ViewWorkDetailsRoute.name,
           path: 'view-work-order',
           args: ViewWorkDetailsRouteArgs(
             key: key,
             contractNumber: contractNumber,
+            wfStatus: wfStatus,
           ),
-          rawQueryParams: {'contractNumber': contractNumber},
+          rawQueryParams: {
+            'contractNumber': contractNumber,
+            'wfStatus': wfStatus,
+          },
         );
 
   static const String name = 'ViewWorkDetailsRoute';
@@ -638,15 +649,18 @@ class ViewWorkDetailsRouteArgs {
   const ViewWorkDetailsRouteArgs({
     this.key,
     this.contractNumber = 'contractNumber',
+    this.wfStatus = 'wfStatus',
   });
 
   final Key? key;
 
   final String? contractNumber;
 
+  final String? wfStatus;
+
   @override
   String toString() {
-    return 'ViewWorkDetailsRouteArgs{key: $key, contractNumber: $contractNumber}';
+    return 'ViewWorkDetailsRouteArgs{key: $key, contractNumber: $contractNumber, wfStatus: $wfStatus}';
   }
 }
 

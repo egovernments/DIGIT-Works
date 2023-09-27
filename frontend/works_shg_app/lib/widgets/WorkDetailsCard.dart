@@ -245,7 +245,7 @@ class WorkDetailsCard extends StatelessWidget {
             child: ButtonLink(
               AppLocalizations.of(context).translate(i18.common.viewDetails),
               () => context.router.push(ViewWorkDetailsRoute(
-                  contractNumber: contractNumber.toString())),
+                  contractNumber: contractNumber.toString(), wfStatus: payload!['wfStatus'].toString())),
               style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
