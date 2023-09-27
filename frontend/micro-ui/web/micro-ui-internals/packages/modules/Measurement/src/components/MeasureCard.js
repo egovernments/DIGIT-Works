@@ -48,6 +48,12 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
           case "height":
             tableState[findIndex].height = value;
             break;
+          case "isDeduction":
+            tableState[findIndex].isDeduction = value;
+            break;
+          case "description":
+            tableState[findIndex].description = value;
+            break;
           default:
 
         }
@@ -143,6 +149,25 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
                     }}
                   />
                 ) : (<>
+                  <Button className={"outline-btn"} label={t("MB_ADD_ROW")} onButtonClick={() => {
+                    dispatch({
+                      type: "MB_ADD_ROW",
+                      state: {
+                        sNo: state.tableState.length + 1,
+                        targetId: "",
+                        isDeduction: "",
+                        description: "",
+                        id: null,
+                        height: 0,
+                        width: 0,
+                        length: 0,
+                        number: 0,
+                        noOfunit: 0,
+                        rowAmount: 0,
+                        consumedRowQuantity: 0,
+                      },
+                    })
+                  }} />
                   <Button className={"outline-btn"} label={t("MB_CLEAR")} onButtonClick={() => {
                     dispatch({ type: "CLEAR_STATE" });
                   }} />
@@ -150,7 +175,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
                     tableData[tableKey][tableIndex].measures = state.tableState;
                     tableData[tableKey][tableIndex].amount = parseFloat(tableData[tableKey][tableIndex].measures.reduce((total, item) => total + item.rowAmount, 0)).toFixed(2);
                     setValue("measurements", tableData);
-
+                    console.log(state);
                     setInitialState(state);
                     setConsumedQty(total);
                     setShowMeasureCard(false);

@@ -22,8 +22,8 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
         const measures = convertedObject[key].map((e, index) => ({
             sNo: index + 1,
             targetId: transformedContract?.lineItemsObject[e.id]?.contractLineItemId,
-            isDeduction: e.additionalDetails.isDeduction,
-            description: e.description,
+            isDeduction: "",
+            description: "",
             id: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.id : null,
             height: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.height : 0,
             width: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.breadth : 0,
