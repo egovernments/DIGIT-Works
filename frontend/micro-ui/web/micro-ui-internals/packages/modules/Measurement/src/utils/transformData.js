@@ -40,7 +40,7 @@ const getMeasurementFromMeasures = (item, type) => {
             id: measure?.id,
             targetId: measure?.targetId,
             length: measure?.length,
-            width: measure?.width,
+            breadth: measure?.width,
             height: measure?.height,
             numItems: measure?.number,
             currentValue: measure?.noOfunit,
@@ -90,7 +90,7 @@ export const transformData = (data) => {
                 },
                 "wfStatus": null,
                 "workflow": {
-                    "action": data?.id ? "SUBMIT" : "SAVE_AS_DRAFT",
+                    "action": data?.workflowAction,
                 },
             },
         ],
