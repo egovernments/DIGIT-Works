@@ -77,7 +77,7 @@ const httpRequest = async (
       ":: CODE :: " +
       responseStatus
     );
-    if (responseStatus === 200 || responseStatus === 201) {
+    if (responseStatus === 200 || responseStatus === 201 || responseStatus === 202) {
       if (headers && headers.cachekey) {
         cacheResponse(response.data, headers.cachekey)
       }

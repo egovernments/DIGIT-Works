@@ -53,7 +53,7 @@ class MeasurementController {
                 const payload = {
                     contract: contractResponse?.contracts?.[0],
                     estimate: estimateResponse?.estimates?.[0],
-                    allMeasurements: measurementResponse.measurements,
+                    allMeasurements: measurementResponse?.measurements,
                     measurement: uniqueMeasurementResponse?.measurements?.[0] || [],
                 };
 
