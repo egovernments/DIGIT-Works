@@ -20,24 +20,18 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
   };
 
   const requestCriteria = {
-    url: "/measurement-service/v1/_search",
+    url : "/mukta-services/measurement/_search",
 
     body: {
-      criteria: {
-        tenantId: tenantId,
-        referenceId: [contractNumber],
-        // ids: ["70380648-45c2-4407-bf91-27ede3c481e5"],
-      },
-      pagination: {
-        limit: 10,
-        offSet: 0,
-        sortBy: "createdTime",
-        order: "DESC",
-      },
-    },
-  };
+      "contractNumber" : contractNumber,
+      "tenantId" : tenantId
+    }
 
-  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+  }
+
+
+  const {isLoading, data} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
 
   //extracting the numeric part from the measurement number
   const extractNumericPart = (mbNumber) => {
@@ -61,7 +55,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
     { label: t("MB_ONLY_AMOUNT"), key: "amount" },
   ];
 
-  const filteredArray = data?.measurements.filter((item) => item.measurementNumber !== measurementNumber);
+  const filteredArray = data?.allMeasurements.filter((item) => item.measurementNumber !== measurementNumber);
 
   const sortedRows = (filteredArray || [])
     .sort((a, b) => {
