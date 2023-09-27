@@ -29,7 +29,7 @@ const MeasurementCard = () => {
 
       {
         label: t("MB_CREATE"),
-        link: `/${window?.contextPath}/employee/measurement/create`,
+        link: `/${window?.contextPath}/employee/measurement/search`,
       },
       {
         label: t("MB_INBOX"),

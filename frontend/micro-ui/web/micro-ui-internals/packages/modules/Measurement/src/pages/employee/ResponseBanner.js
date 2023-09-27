@@ -44,7 +44,7 @@ const MeasurementServiceResponse = () => {
 
     const goToHome = () => {
         history.push({
-            pathname: "/digit-ui/employee",
+            pathname: `/${window?.contextPath}/employee`
 
         });
     };

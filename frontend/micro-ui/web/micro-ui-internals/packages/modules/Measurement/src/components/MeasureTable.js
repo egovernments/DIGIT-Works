@@ -180,7 +180,9 @@ const MeasureTable = (props) => {
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
 
-          <span style={{ fontWeight: "bold" }}>Total {props.config.key} MB Amount(For Current Entry): </span>
+          {/* <span style={{ fontWeight: "bold" }}>`{t("MB_TOTAL")} ${props.config.key} {t("MB_TOTAL_AMOUNT")}`</span> */}
+          <span style={{ fontWeight: "bold" }}>{t("MB_TOTAL")}  {props.config.key} {t("MB_TOTAL_AMOUNT")} :</span>
+
           <span style={{ marginLeft: "3px" }}><Amount customStyle={{ textAlign: 'right' }} value={totalMBAmount.toFixed(2)} t={t} roundOff={false}></Amount></span>
 
         </div>
