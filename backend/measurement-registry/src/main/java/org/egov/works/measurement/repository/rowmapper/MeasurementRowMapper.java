@@ -29,7 +29,6 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
         Map<String,Document>documentMap = new HashMap<>();
         Set<String> measuresIds=new HashSet<>();
 
-        System.out.println("Records : " + rs.getFetchSize());
         while (rs.next()) {
             String uuid = rs.getString("id");
             Measurement measurement = measurementMap.get(uuid);
