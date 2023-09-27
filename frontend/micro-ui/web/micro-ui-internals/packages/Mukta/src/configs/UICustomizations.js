@@ -437,9 +437,9 @@ export const UICustomizations = {
       if (key === "ES_COMMON_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+            <div class="textoverflow" style={{ "--max-width": `${column.maxLength}ch`, wordBreak: "break-all" }}>
               {String(value ? value : t("ES_COMMON_NA"))}
-            </span>
+            </div>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
               {row?.businessObject?.project?.description || t("ES_COMMON_NA")}
