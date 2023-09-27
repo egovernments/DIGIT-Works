@@ -74,6 +74,17 @@ public class MeasurementService {
     }
 
     /**
+     * Handles search MeasurementRegistry
+     */
+    public MeasurementServiceResponse searchMeasurementService(MeasurementSearchRequest body) {
+        ResponseEntity<MeasurementResponse> responseEntity = measurementRegistryUtil.searchMeasurements(body);
+        MeasurementResponse measurementResponse = responseEntity.getBody();
+        MeasurementServiceResponse measurementServiceResponse = measurementRegistry.makeSearchResponse(body);
+        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = measurementRegistry.changeToMeasurementService(measurementResponse.getMeasurements());
+        measurementServiceResponse.setMeasurements(measurementServices);
+        return measurementServiceResponse;
+    }
+    /**
      * Handles update MeasurementRegistry
      *
      * @param measurementServiceRequest
@@ -104,13 +115,6 @@ public class MeasurementService {
 
         return response;
     }
-    public MeasurementServiceResponse searchMeasurementService(MeasurementSearchRequest body) {
-        ResponseEntity<MeasurementResponse> responseEntity = measurementRegistryUtil.searchMeasurements(body);
-        MeasurementResponse measurementResponse = responseEntity.getBody();
-        MeasurementServiceResponse measurementServiceResponse = measurementRegistry.makeSearchResponse(body);
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = measurementRegistry.changeToMeasurementService(measurementResponse.getMeasurements());
-        measurementServiceResponse.setMeasurements(measurementServices);
-        return measurementServiceResponse;
-    }
+
 
 }

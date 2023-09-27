@@ -21,17 +21,7 @@ import java.util.*;
 @Component
 public class MeasurementRegistryUtil {
     @Autowired
-    private IdgenUtil idgenUtil;
-    @Autowired
-    private Configuration configuration;
-    @Autowired
-    private ErrorConfiguration errorConfigs;
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-    @Autowired
     private MeasurementServiceUtil measurementServiceUtil;
-    @Autowired
-    private MeasurementRegistry measurementRegistryUtil;
     @Autowired
     private RestTemplate restTemplate;
     @Value("${egov.mbRegistry.host}")
@@ -61,5 +51,4 @@ public class MeasurementRegistryUtil {
         ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(url, body, MeasurementResponse.class);
         return responseEntity;
     }
-
 }

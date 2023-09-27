@@ -45,7 +45,11 @@ public class MeasurementserviceApiController {
         return new ResponseEntity<MeasurementServiceResponse>(measurementServiceResponse,HttpStatus.ACCEPTED);
     }
 
-
+    @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
+    public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
+        MeasurementServiceResponse measurementServiceResponse=msService.searchMeasurementService(body);
+        return new ResponseEntity<>(measurementServiceResponse, HttpStatus.ACCEPTED);
+    }
 
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body){
@@ -53,10 +57,6 @@ public class MeasurementserviceApiController {
         return new ResponseEntity<>(measurementServiceResponse, HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
-    public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
-        MeasurementServiceResponse measurementServiceResponse=msService.searchMeasurementService(body);
-        return new ResponseEntity<>(measurementServiceResponse, HttpStatus.ACCEPTED);
-    }
+
 
 }
