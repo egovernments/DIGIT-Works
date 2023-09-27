@@ -104,6 +104,13 @@ public class MeasurementServiceValidator {
         if(existingMeasurementService.size()!=measurementServiceRequest.getMeasurements().size()){
             throw errorConfigs.measurementServiceDataNotExist;
         }
+
+        // if wfStatus is rejected then throw error
+        for(MeasurementService measurementService:existingMeasurementService){
+            if(measurementService.getWfStatus().equals("REJECTED")){
+                 throw errorConfigs.rejectedError(measurementService.getMeasurementNumber());
+            }
+        }
         // Create a map to associate mbNumbers with corresponding MeasurementRegistry objects
         for (MeasurementService existingService : existingMeasurementService) {
             mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);

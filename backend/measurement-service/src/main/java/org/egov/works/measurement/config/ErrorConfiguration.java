@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.UUID;
 
 
 @Component
@@ -35,6 +36,9 @@ public class ErrorConfiguration {
 
     public CustomException apiRequestFailed(HttpResponse response){
         return new CustomException("","API request failed with status code: " + response.getStatusLine().getStatusCode());
+    }
+    public CustomException rejectedError(String measurementNumber){
+        return new CustomException("","Measurement with measurementNumber "+measurementNumber+" is rejected.");
     }
     public CustomException apiRequestFailedIOexception(IOException e){
         return new CustomException("","API request failed: " + e.getMessage());

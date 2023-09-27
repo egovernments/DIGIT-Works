@@ -18,7 +18,7 @@ import java.util.Collections;
 @Setter
 @Getter
 public class ErrorConfiguration {
-    public  CustomException measurementDataNotExist=new CustomException("","Measurement data does not exist");
+    public  CustomException measurementDataNotExist=new CustomException("","Measurement ID not present in the database");
     public  CustomException measurementServiceDataNotExist=new CustomException("","MeasurementRegistry data does not exist");
     public  CustomException measuresDataNotExist=new CustomException("","Measures data does not exist");
     public  CustomException cumulativeEnrichmentError=new CustomException("","Error during Cumulative enrichment");
