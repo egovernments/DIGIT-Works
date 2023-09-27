@@ -64,7 +64,9 @@ public class EstimateServiceValidator {
         Set<String> sorIds = new HashSet<String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
+            if(estimateDetail.getSorId()!=null){
             sorIds.add(estimateDetail.getSorId());
+            }
         }
 
         Object mdmsDataV2 =mdmsUtils.mdmsCallV2(request , rootTenantId,sorIds);
