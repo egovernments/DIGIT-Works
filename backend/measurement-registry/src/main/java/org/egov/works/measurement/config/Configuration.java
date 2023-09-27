@@ -88,20 +88,6 @@ public class Configuration {
     @Value("${measurement.idgen.format}")
     private String idFormat;
 
-    // contract service
-    @Value("${egov.contract.host}")
-    private String contractHost;
-
-    @Value("${egov.contract.path}")
-    private String contractPath;
-
-    // estimate service
-    @Value("${egov.estimate.host}")
-    private String estimateHost;
-
-    @Value("${egov.estimate.path}")
-    private String estimatePath;
-
     @Value("${egov.workflow.bussinessServiceCode}")
     private String bussinessServiceCode;
 

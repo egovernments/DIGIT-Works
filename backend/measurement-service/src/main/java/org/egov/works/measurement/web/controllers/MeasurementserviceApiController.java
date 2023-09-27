@@ -45,8 +45,6 @@ public class MeasurementserviceApiController {
         return new ResponseEntity<MeasurementServiceResponse>(measurementServiceResponse,HttpStatus.ACCEPTED);
     }
 
-
-
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body){
         MeasurementServiceResponse measurementServiceResponse= msService.updateMeasurementService(body);
