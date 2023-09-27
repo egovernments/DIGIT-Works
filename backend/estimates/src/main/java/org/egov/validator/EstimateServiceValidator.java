@@ -16,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.egov.util.EstimateServiceConstant.*;
@@ -50,6 +48,7 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
+        List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
@@ -62,12 +61,65 @@ public class EstimateServiceValidator {
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
 
+        Set<String> sorIds = new HashSet<String>();
+        for(int i=0;i<estimateDetails.size();i++){
+            EstimateDetail estimateDetail = estimateDetails.get(i);
+            sorIds.add(estimateDetail.getSorId());
+        }
+
+        Object mdmsDataV2 =mdmsUtils.mdmsCallV2(request , rootTenantId,sorIds);
+        validateMDMSDataV2(estimate,mdmsDataV2,sorIds);
+
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
+
+        validateNoOfUnit(estimateDetails);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
+
+    /**
+     * validate the no of units in estimate details
+     */
+    public void validateNoOfUnit(List<EstimateDetail> estimateDetails){
+        for(int i=0;i<estimateDetails.size();i++){
+            EstimateDetail estimateDetail = estimateDetails.get(i);
+
+            if(estimateDetail.getNoOfunit()==null){
+                continue;
+            }
+            else{
+                BigDecimal total =new BigDecimal(1);
+                BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
+                boolean allNull =true;
+                if(estimateDetail.getLength()!=null){
+                    total =total.multiply(estimateDetail.getLength());
+                    allNull =false;
+                }
+                if(estimateDetail.getWidth()!=null){
+                    total =total.multiply(estimateDetail.getWidth());
+                    allNull = false;
+                }
+                if(estimateDetail.getHeight()!=null){
+                    total =total.multiply(estimateDetail.getHeight());
+                    allNull =false;
+                }
+                if(estimateDetail.getQuantity()!=null){
+                    total =total.multiply(estimateDetail.getQuantity());
+                    allNull = false;
+                }
+                double totalNew = total.doubleValue();
+                if(totalNew==estimateDetail.getNoOfunit() || allNull){
+                    continue;
+                }
+                else{
+                    throw new CustomException("NO_OF_UNIT", "noOfUnit value is not correct");
+                }
+            }
+        }
+    }
+
 
     private void validateProjectId(EstimateRequest estimateRequest, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateProjectId");
@@ -166,6 +218,25 @@ public class EstimateServiceValidator {
         if (requestInfo.getUserInfo() != null && StringUtils.isBlank(requestInfo.getUserInfo().getUuid())) {
             throw new CustomException("USERINFO_UUID", "UUID is mandatory");
         }
+    }
+
+    private void validateMDMSDataV2(Estimate estimate ,Object mdmsData, Set<String>sorIds ){
+
+        int sorIdsSizeInput = sorIds.size();
+
+        final  String jsonPathForTestSor = "$.mdms[*].id";
+        List<Object> sorIdRes = null;
+        try {
+            sorIdRes = JsonPath.read(mdmsData,jsonPathForTestSor);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
+        }
+        int sorIdsSizeRes = sorIdRes.size();
+        if(sorIdsSizeInput!=sorIdsSizeRes){
+            throw new CustomException("SORID","sorId is not in mdms");
+        }
+
     }
 
     private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap, boolean isCreate) {
@@ -380,6 +451,7 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
+        List<EstimateDetail>estimateDetails=estimate.getEstimateDetails();
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
@@ -411,6 +483,7 @@ public class EstimateServiceValidator {
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
         validateProjectId(request, errorMap);
+        validateNoOfUnit(estimateDetails);
 
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
