@@ -54,13 +54,6 @@ public class MeasurementQueryBuilder {
             "WHERE offset_ > ? AND offset_ <= ?";
 
 
-    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
-        if (preparedStmtList.isEmpty()) {
-            query.append(" WHERE ");
-        } else {
-            query.append(" AND ");
-        }
-    }
     public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList, MeasurementSearchRequest measurementSearchRequest) {
         StringBuilder query = new StringBuilder(BASE_MEASUREMENT_QUERY);
 
@@ -103,6 +96,13 @@ public class MeasurementQueryBuilder {
         }
 
         return addPaginationWrapper(query, measurementSearchRequest.getPagination(), preparedStmtList);
+    }
+    private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
+        if (preparedStmtList.isEmpty()) {
+            query.append(" WHERE ");
+        } else {
+            query.append(" AND ");
+        }
     }
 
     public String addPaginationWrapper(StringBuilder query, Pagination pagination, List<Object> preparedStmtList) {
