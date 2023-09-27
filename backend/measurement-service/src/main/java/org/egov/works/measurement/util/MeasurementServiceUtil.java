@@ -4,6 +4,7 @@ import digit.models.coremodels.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.service.WorkflowService;
 import org.egov.works.measurement.web.models.*;
@@ -29,6 +30,8 @@ public class MeasurementServiceUtil {
     private WorkflowService workflowService;
     @Autowired
     private MeasurementServiceUtil measurementServiceUtil;
+    @Autowired
+    private MeasurementEnrichment measurementEnrichment;
     public List<Measurement> convertToMeasurementList(List<MeasurementService> measurementServices) {
         List<Measurement> measurements = new ArrayList<>();
 
@@ -77,21 +80,15 @@ public class MeasurementServiceUtil {
 
     public void updateWorkflow(MeasurementServiceRequest measurementServiceRequest){
         List<String> wfStatusList = workflowService.updateWorkflowStatuses(measurementServiceRequest);
-        measurementServiceUtil.enrichMeasurementServiceUpdate(measurementServiceRequest,wfStatusList);
+        measurementEnrichment.enrichMeasurementServiceUpdate(measurementServiceRequest,wfStatusList);
     }
 
     public void updateWorkflowDuringCreate(MeasurementServiceRequest body){
         List<String> wfStatusList = workflowService.updateWorkflowStatuses(body);
-        measurementServiceUtil.enrichWf(body,wfStatusList);
+        measurementEnrichment.enrichWf(body,wfStatusList);
     }
 
-    public void enrichMeasurementServiceUpdate(MeasurementServiceRequest body , List<String> wfStatusList){
-        List<MeasurementService> measurementServiceList = body.getMeasurements();
-        for(int i=0;i<measurementServiceList.size();i++){
-            measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich the workFlow Status
-            measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
-        }
-    }
+
 
     public MeasurementRequest makeMeasurementUpdateRequest(MeasurementServiceRequest measurementServiceRequest) {
         MeasurementRequest measurementRequest = new MeasurementRequest();
@@ -118,14 +115,6 @@ public class MeasurementServiceUtil {
         response.setMeasurements(measurementServiceRequest.getMeasurements());
 
         return response;
-    }
-
-    public void enrichWf(MeasurementServiceRequest measurementServiceRequest , List<String> wfStatusList){
-        List<MeasurementService> measurementServiceList = measurementServiceRequest.getMeasurements();
-        for(int i=0;i<measurementServiceList.size();i++){
-            measurementServiceList.get(i).setWfStatus(wfStatusList.get(i));                              // enrich wf status
-            measurementServiceList.get(i).setWorkflow(measurementServiceList.get(i).getWorkflow());      // enrich the Workflow
-        }
     }
 
 }

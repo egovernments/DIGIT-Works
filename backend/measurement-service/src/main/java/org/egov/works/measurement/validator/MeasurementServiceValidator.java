@@ -91,50 +91,6 @@ public class MeasurementServiceValidator {
         });
     }
 
-    public void validateExistingDataAndEnrich(MeasurementRequest measurementRegistrationRequest) {
-        List<Measurement> measurementExisting = new ArrayList<>();
-        MeasurementCriteria criteria=new MeasurementCriteria();
-        Pagination pagination=new Pagination();
-        MeasurementSearchRequest searchRequest=MeasurementSearchRequest.builder().requestInfo(measurementRegistrationRequest.getRequestInfo()).criteria(criteria).pagination(pagination).build();
-
-        for (Measurement measurement : measurementRegistrationRequest.getMeasurements()) {
-            // Validate the measurement
-            criteria.setIds(Collections.singletonList(measurement.getId().toString()));
-            criteria.setTenantId(measurement.getTenantId());
-            searchRequest.setCriteria(criteria);
-
-            //Getting list every time because tenantId may vary
-            List<Measurement> existingMeasurementList= measurementRegistryUtil.searchMeasurements(searchRequest).getBody().getMeasurements();
-            if (existingMeasurementList.isEmpty()) {
-                throw errorConfigs.measurementDataNotExist;
-            }
-            measurementExisting.add(existingMeasurementList.get(0));
-            validateMeasureRequest(existingMeasurementList.get(0),measurement);
-        }
-
-        //setting totalValue
-        for(Measurement measurement:measurementRegistrationRequest.getMeasurements() ){
-            for(Measure measure:measurement.getMeasures()){
-                measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
-            }
-        }
-
-        // Perform the measurement update
-        setAuditDetails(measurementExisting, measurementRegistrationRequest);
-    }
-
-    public void validateMeasureRequest(Measurement existingMeasurement,Measurement measurement){
-        Set<UUID> measuresIds=new HashSet<>();
-        for(Measure measure:existingMeasurement.getMeasures()){
-            measuresIds.add(measure.getId());
-        }
-        for(Measure measure:measurement.getMeasures()){
-            if(!measuresIds.contains(measure.getId())){
-                throw errorConfigs.measuresDataNotExist;
-            }
-        }
-    }
-
     public void validateExistingServiceDataAndEnrich(MeasurementServiceRequest measurementServiceRequest) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         List<String> mbNumbers = new ArrayList<>();
@@ -191,22 +147,6 @@ public class MeasurementServiceValidator {
         }
 
         return orderedExistingMeasurementService;
-    }
-
-
-
-
-    public void setAuditDetails(List<Measurement> measurementExisting,MeasurementRequest measurementRequest){
-        List<Measurement> measurements=measurementRequest.getMeasurements();
-        for(int i=0;i<measurements.size();i++){
-            measurements.get(i).setAuditDetails(measurementExisting.get(i).getAuditDetails());
-            measurements.get(i).getAuditDetails().setLastModifiedBy(measurementRequest.getRequestInfo().getUserInfo().getUuid());
-            measurements.get(i).getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-            for(Measure measure:measurements.get(i).getMeasures()){
-                measure.setAuditDetails(measurements.get(i).getAuditDetails());
-            }
-        }
-        measurementRequest.setMeasurements(measurements);
     }
 
     public void setServiceAuditDetails(List<MeasurementService> measurementServiceExisting,MeasurementServiceRequest measurementServiceRequest){
