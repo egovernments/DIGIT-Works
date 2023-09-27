@@ -172,13 +172,13 @@ const InboxMeasurementConfig = () => {
               }
             },
             {
-              label: "MB_WORKFLOW_STATE",
+              label: "MB_WORKFLOW_STATUS",
               type: "workflowstatesfilter",
               isMandatory: false,
               disable: false,
               populators: {
                 name: "status",
-                labelPrefix: "",
+                labelPrefix: "MB_WF",
                 businessService: "MB",
               },
             },
