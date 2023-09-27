@@ -104,6 +104,13 @@ config:
       - work-dir: "backend/measurement-service/src/main/resources/db"
         image-name: "measurement-service-db"
 
+  - name: "builds/digit-works/backend/measurement-registry"
+    build:
+      - work-dir: "backend/measurement-registry"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "measurement-registry"
+      - work-dir: "backend/measurement-registry/src/main/resources/db"
+        image-name: "measurement-registry-db"
         
 
 # utilities
