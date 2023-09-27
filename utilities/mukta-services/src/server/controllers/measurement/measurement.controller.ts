@@ -51,10 +51,10 @@ class MeasurementController {
 
                 // Prepare the payload based on the responses
                 const payload = {
-                    contracts: contractResponse.contracts,
-                    estimates: estimateResponse.estimates,
-                    measurements: measurementResponse.measurements,
-                    uniqueMeasurements: uniqueMeasurementResponse?.measurements || [],
+                    contract: contractResponse?.contracts?.[0],
+                    estimate: estimateResponse?.estimates?.[0],
+                    allMeasurements: measurementResponse.measurements,
+                    measurement: uniqueMeasurementResponse?.measurements?.[0] || [],
                 };
 
                 // Convert the payload according to the configuration

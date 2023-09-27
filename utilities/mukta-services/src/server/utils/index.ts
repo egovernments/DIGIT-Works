@@ -145,8 +145,10 @@ const convertObjectForMeasurment = (obj: any, config: any) => {
 
   config.forEach((configObj: any) => {
     const { path, jsonPath } = configObj;
-    const jsonPathValue = jp.query(obj, jsonPath);
-
+    let jsonPathValue = jp.query(obj, jsonPath);
+    if (jsonPathValue.length === 1) {
+      jsonPathValue = jsonPathValue[0];
+    }
     // Assign jsonPathValue to the corresponding property in resultBody
     assignValueAtPath(resultBody, path, jsonPathValue);
   });
