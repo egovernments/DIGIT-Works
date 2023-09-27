@@ -3,12 +3,13 @@ import React, { useEffect, useReducer, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./MeasureRow";
+import cloneDeep from 'lodash/cloneDeep';
+
 
 
 {/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
 const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
 
   const { t } = useTranslation();
   const history = useHistory();
@@ -62,10 +63,20 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
         tableState[findIndex].rowAmount = unitRate * calculatedValue;
         setTotal(tableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
 
-
         return { ...state, tableState };
       case "CLEAR_STATE":
-        return { ...state, tableState: initialState.tableState };
+        const clearedTableState = state.tableState.map(item => ({
+          ...item,
+          height: 0,
+          length: 0,
+          number: 0,
+          width: 0,
+          rowAmount: 0
+        }));
+        return {
+          ...state,
+          tableState: clearedTableState
+        };
 
       default:
         return state;
@@ -117,7 +128,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
   const renderBody = () => {
     return state?.tableState?.map((value, index) => {
-      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView = {isView}/>;
+      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView={isView} />;
     });
   };
 

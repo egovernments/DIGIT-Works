@@ -27,7 +27,7 @@ const businessServiceMap = {
   "works.supervision":"EXPENSE.SUPERVISION",
   revisedWO:"CONTRACT-REVISION",
   measurement : "MB"
-};
+};    
 
 const inboxModuleNameMap = {
   "mukta-estimate": "estimate-service",
@@ -754,7 +754,7 @@ export const UICustomizations = {
         return data;
       },
         additionalCustomizations: (row, key, column, value, t, searchResult) => {
-          // console.log(searchResult[0], "sss")
+
           const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
           switch (key) {
             case "MB_REFERENCE_NUMBER":
@@ -820,9 +820,8 @@ export const UICustomizations = {
               {Digit.Utils.statusBasedNavigation(state , contractNumber, value, tenantId, value)}
             </span>
           );
-
-          case "MB_AMOUNT":
-            return <Amount customStyle={{ textAlign: 'right'}} value={value} t={t}></Amount>;
+            case "MB_AMOUNT":
+              return value ? <span style={{ whiteSpace: "nowrap" }}>{value}</span> : t("ES_COMMON_NA");
 
         case "MASTERS_SOCIAL_CATEGORY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
@@ -859,6 +858,33 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
+    },
+    populateReqCriteria: () => {
+      
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+     
+
+      return {
+        url: "/egov-workflow-v2/egov-wf/businessservice/_search",
+        params: { tenantId, businessServices: Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement") },
+        body: {
+         
+        },
+        config: {
+          enabled: true,
+          select: (data) => {
+            const states =  data?.BusinessServices?.[0]?.states?.filter(state=> state.state)?.map(state=> {
+              return {
+                // "i18nKey":`${Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("MB")}${state?.state}`,
+                "i18nKey":state?.state,
+
+                "wfStatus":state?.state
+              }
+            })
+            return states  
+          },
+        },
+      };
     },
   },
 

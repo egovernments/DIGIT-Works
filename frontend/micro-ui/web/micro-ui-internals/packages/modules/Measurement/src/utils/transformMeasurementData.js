@@ -31,9 +31,9 @@ export const transformMeasurementData = async (mbNumber) => {
 
             return transformedData;
         } else {
-            console.error("Invalid or empty measurement data response.");
+            console.error(t("MB_ERROR_INV_EMP"));
         }
     } catch (error) {
-        console.error("Error fetching and transforming measurement data:", error);
+        console.error(t("MB_ERROR_FET_TRANF") , error);
     }
 };

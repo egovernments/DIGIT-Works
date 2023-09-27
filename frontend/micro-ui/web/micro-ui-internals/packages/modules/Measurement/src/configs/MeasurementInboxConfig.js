@@ -73,7 +73,7 @@ const InboxMeasurementConfig = () => {
                 mdmsConfig: {
                   masterName: "ProjectType",
                   moduleName: "works",
-                  localePrefix: "",
+                  localePrefix: "COMMON_MASTERS",
                 },
               },
             },
@@ -93,7 +93,7 @@ const InboxMeasurementConfig = () => {
             // },
             {
               text: "MB_SEARCH_MB",
-              url: "/employee/measurement/searchplain",
+              url: "/employee/measurement/search",
               roles: ["MB_CREATOR", "MB_VERIFIER", "MB_APPROVER", "MB_VIEWER"],
             },
             {
