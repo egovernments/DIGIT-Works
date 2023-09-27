@@ -89,24 +89,41 @@ const SearchMeasurementConfig = () => {
                 },
               },
            
+              // {
+              //   label: "MB_STATUS",
+              //   type: "apidropdown",
+              //   isMandatory: false,
+              //   disable: false,
+              //   populators: {
+              //     name: "status",
+              //     optionsKey: "i18nKey",
+              //     optionsCustomStyle: {
+              //       top: "2.3rem",
+              //     },
+              //     mdmsConfig: {
+              //       masterName: "commonUiConfig",
+              //       moduleName: "SearchBillWMSConfig",
+              //       localePrefix: "MASTERS",
+              //     },
+              //   },
+              // },
               {
                 label: "MB_STATUS",
-                type: "dropdown",
+                type: "apidropdown",
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "status",
-                  optionsKey: "code",
                   optionsCustomStyle: {
                     top: "2.3rem",
                   },
-                  mdmsConfig: {
-                    masterName: "SocialCategory",
-                    moduleName: "common-masters",
-                    localePrefix: "MASTERS",
-                  },
-                },
-              },
+                  name: "status",
+                  optionsKey: "i18nKey",
+                  allowMultiSelect: false,
+                  masterName: "commonUiConfig",
+                  moduleName: "WMSSearchMeasurementConfig", //update this based on 
+                  customfn: "populateReqCriteria",
+                }
+            },
               {
                 label: "CREATED_FROM_DATE",
                 type: "date",
@@ -151,7 +168,7 @@ const SearchMeasurementConfig = () => {
           uiConfig: {
             columns: [
               {
-                 label: "MB__NUMBER",
+                 label: "MB_NUMBER",
                  jsonPath: "ProcessInstance.businessId",
                  additionalCustomization: true,
               },
