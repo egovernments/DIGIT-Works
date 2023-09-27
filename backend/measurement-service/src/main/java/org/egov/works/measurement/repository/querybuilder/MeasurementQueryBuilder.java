@@ -61,21 +61,6 @@ public class MeasurementQueryBuilder {
             query.append(" AND ");
         }
     }
-
-    public String addPaginationWrapper(StringBuilder query, Pagination pagination, List<Object> preparedStmtList) {
-        String paginatedQuery = addOrderByClause(pagination);
-
-        int limit = null != pagination.getLimit() ? pagination.getLimit() : config.getDefaultLimit();
-        int offset = null != pagination.getOffSet() ? pagination.getOffSet() : config.getDefaultOffset();
-
-        String finalQuery = paginatedQuery.replace("{}", query);
-
-        preparedStmtList.add(offset);
-        preparedStmtList.add(limit + offset);
-
-        return finalQuery;
-    }
-
     public String getMeasurementSearchQuery(MeasurementCriteria criteria, List<Object> preparedStmtList, MeasurementSearchRequest measurementSearchRequest) {
         StringBuilder query = new StringBuilder(BASE_MEASUREMENT_QUERY);
 
@@ -120,6 +105,26 @@ public class MeasurementQueryBuilder {
         return addPaginationWrapper(query, measurementSearchRequest.getPagination(), preparedStmtList);
     }
 
+    public String addPaginationWrapper(StringBuilder query, Pagination pagination, List<Object> preparedStmtList) {
+        String paginatedQuery = addOrderByClause(pagination);
+
+        int limit = null != pagination.getLimit() ? pagination.getLimit() : config.getDefaultLimit();
+        int offset = null != pagination.getOffSet() ? pagination.getOffSet() : config.getDefaultOffset();
+
+        String finalQuery = paginatedQuery.replace("{}", query);
+
+        preparedStmtList.add(offset);
+        preparedStmtList.add(limit + offset);
+
+        return finalQuery;
+    }
+
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
+        ids.forEach(id -> {
+            preparedStmtList.add(id);
+        });
+    }
+
     private String addOrderByClause(Pagination pagination) {
 
         String paginationWrapper = WRAPPER_QUERY;
@@ -140,12 +145,6 @@ public class MeasurementQueryBuilder {
         }
 
         return paginationWrapper;
-    }
-
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
     }
 
     private String createQuery(List<String> ids) {
