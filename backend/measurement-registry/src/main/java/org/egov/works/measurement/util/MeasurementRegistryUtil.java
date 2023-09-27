@@ -1,18 +1,24 @@
 package org.egov.works.measurement.util;
 
-import digit.models.coremodels.AuditDetails;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.web.models.*;
-import digit.models.coremodels.Document;
+import org.egov.works.measurement.web.models.Measure;
+import org.egov.works.measurement.web.models.Measurement;
+import org.egov.works.measurement.web.models.MeasurementCriteria;
+import org.egov.works.measurement.web.models.MeasurementRequest;
+import org.egov.works.measurement.web.models.MeasurementResponse;
+import org.egov.works.measurement.web.models.MeasurementSearchRequest;
+import org.egov.works.measurement.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.util.*;
 
 @Component
 public class MeasurementRegistryUtil {

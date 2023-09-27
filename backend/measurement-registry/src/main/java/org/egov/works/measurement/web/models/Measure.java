@@ -1,7 +1,6 @@
 package org.egov.works.measurement.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -9,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;

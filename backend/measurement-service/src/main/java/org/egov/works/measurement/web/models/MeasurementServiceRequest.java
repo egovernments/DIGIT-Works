@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.works.measurement.web.models.MeasurementService;
+import org.egov.works.measurement.web.models.MeasurementSvcObject;
 //import org.egov.works.measurement.web.models.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
@@ -36,10 +36,10 @@ public class MeasurementServiceRequest   {
 
     @JsonProperty("measurements")
     @Valid
-    private List<MeasurementService> measurements = null;
+    private List<MeasurementSvcObject> measurements = null;
 
 
-    public MeasurementServiceRequest addMeasurementsItem(MeasurementService measurementsItem) {
+    public MeasurementServiceRequest addMeasurementsItem(MeasurementSvcObject measurementsItem) {
         if (this.measurements == null) {
             this.measurements = new ArrayList<>();
         }

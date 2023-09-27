@@ -1,21 +1,20 @@
 package org.egov.works.measurement.repository.rowmapper;
 
-import org.egov.works.measurement.web.models.Measurement;
-import org.egov.works.measurement.web.models.MeasurementService;
-import org.springframework.jdbc.core.RowMapper;
-import digit.models.coremodels.AuditDetails;
-import org.springframework.stereotype.Component;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.works.measurement.web.models.MeasurementSvcObject;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+
 @Component
-public class MeasurementServiceRowMapper implements RowMapper<MeasurementService> {
+public class MeasurementServiceRowMapper implements RowMapper<MeasurementSvcObject> {
 
     @Override
-    public MeasurementService mapRow(ResultSet rs, int rowNum) throws SQLException {
-        MeasurementService measurementService = new MeasurementService();
+    public MeasurementSvcObject mapRow(ResultSet rs, int rowNum) throws SQLException {
+        MeasurementSvcObject measurementService = new MeasurementSvcObject();
         measurementService.setId(UUID.fromString(rs.getString("id")));
         measurementService.setTenantId(rs.getString("tenantId"));
         measurementService.setMeasurementNumber(rs.getString("mbNumber"));

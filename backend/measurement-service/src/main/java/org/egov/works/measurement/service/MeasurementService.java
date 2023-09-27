@@ -57,7 +57,7 @@ public class MeasurementService {
         ResponseEntity<MeasurementResponse> measurementResponse = measurementRegistryUtil.createMeasurements(body);
 
         // Convert back into Measurement Service
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServiceList = measurementServiceUtil.convertToMeasurementServiceList(body, Objects.requireNonNull(measurementResponse.getBody()).getMeasurements());
+        List<org.egov.works.measurement.web.models.MeasurementSvcObject> measurementServiceList = measurementServiceUtil.convertToMeasurementServiceList(body, Objects.requireNonNull(measurementResponse.getBody()).getMeasurements());
         body.setMeasurements(measurementServiceList);
 
         //  update WF
@@ -108,7 +108,7 @@ public class MeasurementService {
         ResponseEntity<MeasurementResponse> responseEntity = measurementRegistryUtil.searchMeasurements(body);
         MeasurementResponse measurementResponse = responseEntity.getBody();
         MeasurementServiceResponse measurementServiceResponse = measurementRegistry.makeSearchResponse(body);
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = measurementRegistry.changeToMeasurementService(measurementResponse.getMeasurements());
+        List<org.egov.works.measurement.web.models.MeasurementSvcObject> measurementServices = measurementRegistry.changeToMeasurementService(measurementResponse.getMeasurements());
         measurementServiceResponse.setMeasurements(measurementServices);
         return measurementServiceResponse;
     }

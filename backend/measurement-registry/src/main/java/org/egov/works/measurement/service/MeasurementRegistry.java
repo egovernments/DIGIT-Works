@@ -1,35 +1,28 @@
 package org.egov.works.measurement.service;
 
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.egov.common.contract.response.ResponseInfo;
-import org.egov.works.measurement.config.ErrorConfiguration;
-import org.egov.works.measurement.kafka.Producer;
-import org.egov.works.measurement.util.*;
-//import org.egov.works.measurement.validator.MeasurementServiceValidator;
-import org.egov.works.measurement.validator.MeasurementValidator;
-import org.egov.works.measurement.web.models.Measurement;
-import org.egov.works.measurement.web.models.MeasurementRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Service;
-import org.egov.works.measurement.web.models.Pagination;
-
-import java.util.*;
-
-import org.egov.works.measurement.config.Configuration;
-
-import org.egov.works.measurement.web.models.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.egov.common.contract.response.ResponseInfo;
+import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.ErrorConfiguration;
+import org.egov.works.measurement.kafka.Producer;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
+import org.egov.works.measurement.util.MeasurementRegistryUtil;
+import org.egov.works.measurement.util.ResponseInfoFactory;
+import org.egov.works.measurement.validator.MeasurementValidator;
+import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
+import org.egov.works.measurement.web.models.MeasurementRequest;
+import org.egov.works.measurement.web.models.MeasurementResponse;
+import org.egov.works.measurement.web.models.MeasurementSearchRequest;
+import org.egov.works.measurement.web.models.Pagination;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service

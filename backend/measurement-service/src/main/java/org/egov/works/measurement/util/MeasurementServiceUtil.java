@@ -32,10 +32,10 @@ public class MeasurementServiceUtil {
     private MeasurementServiceUtil measurementServiceUtil;
     @Autowired
     private MeasurementEnrichment measurementEnrichment;
-    public List<Measurement> convertToMeasurementList(List<MeasurementService> measurementServices) {
+    public List<Measurement> convertToMeasurementList(List<MeasurementSvcObject> measurementServices) {
         List<Measurement> measurements = new ArrayList<>();
 
-        for (MeasurementService measurementService : measurementServices) {
+        for (MeasurementSvcObject measurementService : measurementServices) {
             Measurement measurement = new Measurement();
 
             // Set the common properties
@@ -61,11 +61,11 @@ public class MeasurementServiceUtil {
         return measurements;
     }
 
-    public List<MeasurementService> convertToMeasurementServiceList(MeasurementServiceRequest measurementServiceRequest, List<Measurement> measurements) {
-        List<MeasurementService> measurementServiceList = new ArrayList<>();
+    public List<MeasurementSvcObject> convertToMeasurementServiceList(MeasurementServiceRequest measurementServiceRequest, List<Measurement> measurements) {
+        List<MeasurementSvcObject> measurementServiceList = new ArrayList<>();
 
         for(int i=0;i<measurements.size();i++){
-            MeasurementService measurementService = new MeasurementService();
+            MeasurementSvcObject measurementService = new MeasurementSvcObject();
             BeanUtils.copyProperties(measurements.get(i), measurementService); // Copy common properties
 
             // Set wfStatus and workflow to null

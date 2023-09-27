@@ -1,28 +1,40 @@
 package org.egov.works.measurement.validator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.MdmsUtil;
-import digit.models.coremodels.Document;
-import org.egov.works.measurement.web.models.*;
+import org.egov.works.measurement.web.models.Measure;
+import org.egov.works.measurement.web.models.Measurement;
+import org.egov.works.measurement.web.models.MeasurementCriteria;
+import org.egov.works.measurement.web.models.MeasurementRequest;
+import org.egov.works.measurement.web.models.MeasurementSearchRequest;
+import org.egov.works.measurement.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 
 @Component
 @Slf4j
@@ -58,12 +70,13 @@ public class MeasurementValidator {
                 }
             }
         catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+        	//TODO: Why are we catching and throwing again without any sort of value add?
+            throw new RuntimeException(e);
             }
         List<Measurement> measurementList = measurementRequest.getMeasurements();
         for(int i=0;i<measurementList.size();i++){
             if(!validTenantSet.contains(measurementList.get(i).getTenantId())){
-                 throw new CustomException("",measurementList.get(i).getTenantId().toString()+" Tenant Id is Not found");
+                 throw new CustomException("",measurementList.get(i).getTenantId()+" Tenant Id is Not found");
             }
         }
     }
@@ -144,6 +157,8 @@ public class MeasurementValidator {
         }
     }
 
+    //TODO: We use Spring RestTemplate to make interservice calls, no need to construct 
+    //HTTP client etc..Please check another service as a reference.
     private String makeApiRequest(List<String> documentIds) {
         // API URL with query parameters
         HttpGet httpGet = buildHttpGetRequest(documentIds);

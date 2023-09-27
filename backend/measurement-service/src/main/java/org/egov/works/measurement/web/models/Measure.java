@@ -1,27 +1,25 @@
 package org.egov.works.measurement.web.models;
 
-import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import digit.models.coremodels.AuditDetails;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.egov.works.measurement.web.models.Document;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entity captures dimensions for a work item measurement
