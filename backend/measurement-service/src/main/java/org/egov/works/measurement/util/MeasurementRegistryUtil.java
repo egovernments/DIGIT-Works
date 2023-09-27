@@ -40,15 +40,16 @@ public class MeasurementRegistryUtil {
         ResponseEntity<MeasurementResponse> measurementResponse = restTemplate.postForEntity(url, measurementRegistryRequest, MeasurementResponse.class);
         return measurementResponse;
     }
+    public ResponseEntity<MeasurementResponse> searchMeasurements(MeasurementSearchRequest body){
+        String url = mbRegistryHost+mbRegistrySearch;                                                                           // setting up url to call registry
+        ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(url, body, MeasurementResponse.class);
+        return responseEntity;
+    }
     public ResponseEntity<MeasurementResponse> updateMeasurements(MeasurementServiceRequest body){
         String url = mbRegistryHost+mbRegistryUpdate;
         MeasurementRequest measurementRequest = measurementServiceUtil.makeMeasurementUpdateRequest(body);
         ResponseEntity<MeasurementResponse> measurementResponse = restTemplate.postForEntity(url, measurementRequest, MeasurementResponse.class);
         return measurementResponse;
     }
-    public ResponseEntity<MeasurementResponse> searchMeasurements(MeasurementSearchRequest body){
-        String url = mbRegistryHost+mbRegistrySearch;
-        ResponseEntity<MeasurementResponse> responseEntity = restTemplate.postForEntity(url, body, MeasurementResponse.class);
-        return responseEntity;
-    }
+
 }

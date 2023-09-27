@@ -42,6 +42,38 @@ public class MeasurementRegistry {
         return result;
     }
 
+    /**
+     * enriching response for measurement-service
+     * @param measurementSearchRequest
+     * @return
+     */
+    public MeasurementServiceResponse makeSearchResponse(MeasurementSearchRequest measurementSearchRequest) {
+        MeasurementServiceResponse response = new MeasurementServiceResponse();
+        response.setResponseInfo(ResponseInfo.builder()
+                .apiId(measurementSearchRequest.getRequestInfo().getApiId())
+                .msgId(measurementSearchRequest.getRequestInfo().getMsgId())
+                .ts(measurementSearchRequest.getRequestInfo().getTs())
+                .status("successful")
+                .build());
+        return response;
+    }
+
+    public Map<String, org.egov.works.measurement.web.models.MeasurementService> getMbNumberToServiceMap(List<org.egov.works.measurement.web.models.MeasurementService> measurementServices){
+        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = new HashMap<>();
+        for (org.egov.works.measurement.web.models.MeasurementService existingService : measurementServices) {
+            mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
+        }
+        return mbNumberToServiceMap;
+    }
+    public  List<String> getMbNumbers(List<Measurement> measurements){
+        List<String> mbNumbers=new ArrayList<>();
+        for(Measurement measurement:measurements){
+            mbNumbers.add(measurement.getMeasurementNumber());
+        }
+        return mbNumbers;
+    }
+
+
     private List<org.egov.works.measurement.web.models.MeasurementService> createMeasurementServices(List<Measurement> measurements, List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService) {
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
 
@@ -73,32 +105,4 @@ public class MeasurementRegistry {
 
         return measurementServices;
     }
-
-    public  List<String> getMbNumbers(List<Measurement> measurements){
-        List<String> mbNumbers=new ArrayList<>();
-        for(Measurement measurement:measurements){
-            mbNumbers.add(measurement.getMeasurementNumber());
-        }
-        return mbNumbers;
-    }
-
-    public Map<String, org.egov.works.measurement.web.models.MeasurementService> getMbNumberToServiceMap(List<org.egov.works.measurement.web.models.MeasurementService> measurementServices){
-        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = new HashMap<>();
-        for (org.egov.works.measurement.web.models.MeasurementService existingService : measurementServices) {
-            mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
-        }
-        return mbNumberToServiceMap;
-    }
-
-    public MeasurementServiceResponse makeSearchResponse(MeasurementSearchRequest measurementSearchRequest) {
-        MeasurementServiceResponse response = new MeasurementServiceResponse();
-        response.setResponseInfo(ResponseInfo.builder()
-                .apiId(measurementSearchRequest.getRequestInfo().getApiId())
-                .msgId(measurementSearchRequest.getRequestInfo().getMsgId())
-                .ts(measurementSearchRequest.getRequestInfo().getTs())
-                .status("successful")
-                .build());
-        return response;
-    }
-
 }
