@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Fragment } from "react";
 
-const MeasureRow = ({ value, index, state, dispatch, isView }) => {
+const MeasureRow = ({ value, index, state, dispatch, isView, isEstimate }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -14,7 +14,7 @@ const MeasureRow = ({ value, index, state, dispatch, isView }) => {
     <tr key={index}>
       <td>{state.tableState[index].sNo}</td>
       {
-        isView? <>
+        !isEstimate? <>
         <td>{state.tableState[index].isDeduction ? t("MB_YES") : t("MB_NO")}</td>
         <td>{state.tableState[index].description}</td>
         </>: 

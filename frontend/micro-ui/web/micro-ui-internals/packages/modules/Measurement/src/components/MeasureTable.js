@@ -79,6 +79,7 @@ const MeasureTable = (props) => {
       const [initialState, setInitialState] = useState({ tableState: row?.measures });
 
       useEffect(() => {
+        tablesState[index].measures = initialState?.tableState;
         let updatedData = tablesState?.map(tableRow => {
 
           const currentMBEntry = tableRow?.measures.reduce((total, item) => total + item.noOfunit, 0);
@@ -132,8 +133,6 @@ const MeasureTable = (props) => {
               <td colSpan={"1"}></td>
               <td colSpan={"7"}>
                 <MeasureCard columns={[
-
-
                   t("WORKS_SNO"),
                   t("MB_IS_DEDUCTION"),
                   t("MB_DESCRIPTION"),
@@ -172,8 +171,9 @@ const MeasureTable = (props) => {
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>
-        <tbody>{renderBody()}
-
+        <tbody>
+        {renderBody()}
+        
         </tbody>
 
       </table>
