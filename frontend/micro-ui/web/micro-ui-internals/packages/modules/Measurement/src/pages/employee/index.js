@@ -48,6 +48,12 @@ const MeasurementBreadCrumbs = ({ location }) => {
       show: location.pathname.includes("/measurement/update") ? true : false,
       isBack: fromScreen && true,
     },
+    {
+      path: `/${window.contextPath}/employee/measurement/view`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MB_VIEW_MEASUREMENT_BOOK")}` : t("MB_VIEW_MEASUREMENT_BOOK"),
+      show: location.pathname.includes("/measurement/view") ? true : false,
+      isBack: fromScreen && true,
+    },
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
 };
