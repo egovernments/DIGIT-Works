@@ -46,8 +46,6 @@ public class ServiceRequestRepository {
     public ArrayList<Measurement> getMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getMeasurementSearchQuery(searchCriteria, preparedStmtList, measurementSearchRequest);
-        System.out.println("Query  ::::::::::: " + query);
-        System.out.println("preparedStmtList  ::::::::::: " + preparedStmtList);
         ArrayList<Measurement> measurementsList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
         return measurementsList;
     }

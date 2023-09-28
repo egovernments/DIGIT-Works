@@ -25,19 +25,16 @@ public class ContractUtil {
 
     private final ErrorConfiguration errorConfigs;
 
-    private final MeasurementServiceUtil measurementServiceUtil;
-
     private final MeasurementRegistryUtil measurementRegistryUtil;
 
     private final ServiceRequestRepository serviceRequestRepository;
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public ContractUtil(RestTemplate restTemplate, Configuration configuration, ErrorConfiguration errorConfigs, MeasurementServiceUtil measurementServiceUtil, MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository, JdbcTemplate jdbcTemplate) {
+    public ContractUtil(RestTemplate restTemplate, Configuration configuration, ErrorConfiguration errorConfigs, MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository, JdbcTemplate jdbcTemplate) {
         this.restTemplate = restTemplate;
         this.configuration = configuration;
         this.errorConfigs=errorConfigs;
-        this.measurementServiceUtil=measurementServiceUtil;
         this.measurementRegistryUtil=measurementRegistryUtil;
         this.serviceRequestRepository = serviceRequestRepository;
         this.jdbcTemplate = jdbcTemplate;
