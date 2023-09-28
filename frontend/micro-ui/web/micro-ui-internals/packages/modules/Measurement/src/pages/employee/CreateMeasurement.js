@@ -192,7 +192,7 @@ const CreateMeasurement = ({ props }) => {
       <ActionBar>
         {displayMenu ?
           <Menu
-            // localeKeyPrefix={""}
+            localeKeyPrefix={"WF"}
             options={actionMB}
             optionKey={"name"}
             t={t}

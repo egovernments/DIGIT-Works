@@ -52,6 +52,7 @@ export const CreateConfig = ({ defaultValue }) => {
             // "head": "Worksite Photos",
             "body": [
               {
+                
                 "type": "documentUpload",
                 "withoutLabel": true,
                 "module": "Measurement",
@@ -59,7 +60,7 @@ export const CreateConfig = ({ defaultValue }) => {
                 "name": "uploadedDocs",
                 "key": "documentDetails",
                 "customClass": "my doc",
-                "localePrefix": "MEASUREMENT_DOC"
+                "localePrefix": "MB_MEASUREMENT_DOC"
 
               }
 
