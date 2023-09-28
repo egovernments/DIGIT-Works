@@ -484,6 +484,15 @@ public class EstimateServiceValidator {
 
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
+        
+        Set<String> sorIds = new HashSet<String>();
+        for(int i=0;i<estimateDetails.size();i++){
+            EstimateDetail estimateDetail = estimateDetails.get(i);
+            sorIds.add(estimateDetail.getSorId());
+        }
+
+        Object mdmsDataV2 =mdmsUtils.mdmsCallV2(request , rootTenantId,sorIds);
+        validateMDMSDataV2(estimate,mdmsDataV2,sorIds);
         validateProjectId(request, errorMap);
         validateNoOfUnit(estimateDetails);
 
