@@ -36,6 +36,7 @@ public class MeasurementServiceRequest   {
 
     @JsonProperty("measurements")
     @Valid
+    @Size(message = "Measurements are mandatory" , min = 1)
     private List<MeasurementService> measurements = null;
 
 

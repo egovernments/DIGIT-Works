@@ -35,7 +35,7 @@ public class MeasurementRequest {
 
     @JsonProperty("measurements")
     @Valid
-    @Size(min = 1)
+    @Size(message = "At least one measurement is required" , min = 1)
     private List<Measurement> measurements = null;
 
 

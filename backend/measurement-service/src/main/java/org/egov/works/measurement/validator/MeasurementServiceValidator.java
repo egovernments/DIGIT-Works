@@ -3,6 +3,7 @@ package org.egov.works.measurement.validator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Criteria;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
@@ -82,7 +83,8 @@ public class MeasurementServiceValidator {
             // validate contracts
             Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
             if (!isValidContract) {
-                throw errorConfigs.invalidEstimateID;
+//                throw errorConfigs.invalidEstimateID;
+                throw new CustomException("","Invalid Contract Number");
             }
         });
     }

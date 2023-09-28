@@ -2,6 +2,7 @@ package org.egov.works.measurement.util;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
@@ -55,7 +56,6 @@ public class ContractUtil {
         ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId()).contractNumber(measurement.getReferenceId()).build();
         String searchContractUrl = configuration.getContractHost() + configuration.getContractPath();
         ContractResponse response = restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody();
-//        System.out.println(response.toString());
         return response;
     }
 
@@ -98,7 +98,8 @@ public class ContractUtil {
 
             if (!isTargetIdPresent) {
                 isTargetIdsPresent = false;
-                throw errorConfigs.noActiveContractId;
+                throw new CustomException("",measure.getTargetId() + " is not a valid id for the given Contract " + measurement.getReferenceId());
+//                throw errorConfigs.noActiveContractId;
             } else {
                 lineItemIdsList.add(measure.getTargetId());
                 if(!estimateIdsSet.contains(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0))) estimateIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0)); // take only unique ids
@@ -111,7 +112,8 @@ public class ContractUtil {
         }
 
         // check exact match of targetIs in Contract Active line Items
-        // isAllTargetIdsPresent(targetIdSet,lineItemsToEstimateIdMap);
+        List<String> validReqLineItems = filterValidReqLineItems(response , requestInfo , measurement.getTenantId(),lineItemsToEstimateIdMap);
+        isAllRequiredLineItemsPresent(validReqLineItems,targetIdSet);
 
         // Estimate Validation
         EstimateResponse estimateResponse = getEstimate(requestInfo, measurement.getTenantId(), estimateIdsList);  // assume a single estimate id for now
@@ -136,7 +138,13 @@ public class ContractUtil {
 
         return isValidContract && isValidEntryDate && isTargetIdsPresent;
     }
-
+    public void isAllRequiredLineItemsPresent(List<String> reqLineItems,Set<String> receivedLineItems){
+        for(String id:reqLineItems){
+            if(!receivedLineItems.contains(id)){
+                throw new CustomException("", id + " line items is not provided, it is required");
+            }
+        }
+    }
     public void validateByReferenceId(MeasurementServiceRequest measurementServiceRequest){
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().requestInfo(measurementServiceRequest.getRequestInfo()).build();
         MeasurementCriteria criteria=MeasurementCriteria.builder().tenantId(measurementServiceRequest.getMeasurements().get(0).getTenantId()).build();
@@ -155,7 +163,52 @@ public class ContractUtil {
             }
         }
     }
+    public List<String> filterValidReqLineItems(ContractResponse contractResponse, RequestInfo requestInfo, String tenantId, Map<String, ArrayList<String>> lineItemsToEstimateIdMap){
 
+        Contract latestContract = contractResponse.getContracts().get(0);
+        List<String> estimateIds = new ArrayList<>();
+        List<String> idsList = new ArrayList<>();
+
+        Map<String,String> lineItemIdToCategory = new HashMap<>();
+
+        // filter unique estimate Ids
+        for(int i=0;i<latestContract.getLineItems().size();i++){
+            LineItems currLineItem = latestContract.getLineItems().get(i);
+            if(!estimateIds.contains(currLineItem.getEstimateId())) estimateIds.add(currLineItem.getEstimateId());
+        }
+
+        EstimateResponse estimateResponse = getEstimate(requestInfo,tenantId,estimateIds);
+        List<Estimate> estimateList =  estimateResponse.getEstimates();
+        Map<String,Map<String,String>> estimateToValidReqLineItemsMap = new HashMap<>(); // think of a better name
+
+        for(int i=0;i<estimateList.size();i++){
+
+            String estimateId = estimateList.get(i).getId();
+            List<EstimateDetail> estimateDetails = estimateList.get(i).getEstimateDetails();
+            Map<String,String> currMap = new HashMap<>();
+
+            for(int j=0;j<estimateDetails.size();j++){
+                String estimateLineItemId = estimateDetails.get(j).getId();
+                String estimateCategory = estimateDetails.get(j).getCategory();
+                currMap.put(estimateLineItemId,estimateCategory);
+            }
+            estimateToValidReqLineItemsMap.put(estimateId,currMap);
+        }
+
+        List<LineItems> lineItemsList = latestContract.getLineItems();
+        for(int i=0;i<lineItemsList.size();i++){
+            String Id = lineItemsList.get(i).getId();
+            if(lineItemsToEstimateIdMap.containsKey(Id)){
+                String estimateId = lineItemsToEstimateIdMap.get(Id).get(0);
+                String estimateLineItemId = lineItemsToEstimateIdMap.get(Id).get(1);
+                if(Objects.equals(estimateToValidReqLineItemsMap.get(estimateId).get(estimateLineItemId), "SOR") || Objects.equals(estimateToValidReqLineItemsMap.get(estimateId).get(estimateLineItemId), "NON-SOR")){
+                    if(!idsList.contains(Id))idsList.add(Id);
+                }
+            }
+        }
+
+        return idsList;
+    }
     /**
      * Checks given req for all line items ids
      * in the corresponding contract
@@ -174,7 +227,6 @@ public class ContractUtil {
 
     /**
      * Generate a set of ACTIVE line Items from a particular Contract Response
-     *
      * @param response
      * @return
      */
