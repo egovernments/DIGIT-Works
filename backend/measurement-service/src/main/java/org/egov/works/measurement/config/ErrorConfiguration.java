@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.http.HttpResponse;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.measurement.web.models.Measurement;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -33,6 +34,9 @@ public class ErrorConfiguration {
     public CustomException noValidEstimate=new CustomException("","No valid Estimate found");
     public CustomException idsAndMbNumberMismatch=new CustomException("","Id and Measurement Number is not matching");
     public CustomException invalidEstimateID=new CustomException("","Estimate Ids are invalid");
+    public CustomException notValidReferenceId(String referenceId){
+        return new CustomException("","Measurement data with contract number " + referenceId+" is already there in progress state.");
+    }
 
     public CustomException apiRequestFailed(HttpResponse response){
         return new CustomException("","API request failed with status code: " + response.getStatusLine().getStatusCode());

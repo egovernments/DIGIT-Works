@@ -82,7 +82,7 @@ public class MeasurementService {
         measurementServiceValidator.validateExistingServiceDataAndEnrich(measurementServiceRequest);
 
         // Validate contracts for each measurement
-        measurementServiceValidator.validateContracts(measurementServiceRequest);
+        measurementServiceValidator.validateContractsOnUpdate(measurementServiceRequest);
 
         //Update Measurement via Measurement Registry update api
         ResponseEntity<MeasurementResponse> measurementResponse = measurementRegistryUtil.updateMeasurements(measurementServiceRequest);

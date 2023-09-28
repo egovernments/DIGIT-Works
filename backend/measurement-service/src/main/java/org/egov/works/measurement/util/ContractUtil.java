@@ -4,8 +4,11 @@ import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
+import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,11 +24,22 @@ public class ContractUtil {
 
     private final ErrorConfiguration errorConfigs;
 
+    private final MeasurementServiceUtil measurementServiceUtil;
+
+    private final MeasurementRegistryUtil measurementRegistryUtil;
+
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final JdbcTemplate jdbcTemplate;
+
     @Autowired
-    public ContractUtil(RestTemplate restTemplate, Configuration configuration, ErrorConfiguration errorConfigs) {
+    public ContractUtil(RestTemplate restTemplate, Configuration configuration, ErrorConfiguration errorConfigs, MeasurementServiceUtil measurementServiceUtil, MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository, JdbcTemplate jdbcTemplate) {
         this.restTemplate = restTemplate;
         this.configuration = configuration;
         this.errorConfigs=errorConfigs;
+        this.measurementServiceUtil=measurementServiceUtil;
+        this.measurementRegistryUtil=measurementRegistryUtil;
+        this.serviceRequestRepository = serviceRequestRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     /**
@@ -94,7 +108,6 @@ public class ContractUtil {
                 dimensionList.add(measure.getLength()); dimensionList.add(measure.getBreadth()); dimensionList.add(measure.getHeight());  // L B H
                 lineItemsToDimentionsMap.put(measure.getTargetId() , dimensionList);
             }
-
         }
 
         // check exact match of targetIs in Contract Active line Items
@@ -122,6 +135,25 @@ public class ContractUtil {
         System.out.println(estimateResponse.getEstimates().get(0).getId());
 
         return isValidContract && isValidEntryDate && isTargetIdsPresent;
+    }
+
+    public void validateByReferenceId(MeasurementServiceRequest measurementServiceRequest){
+        MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().requestInfo(measurementServiceRequest.getRequestInfo()).build();
+        MeasurementCriteria criteria=MeasurementCriteria.builder().tenantId(measurementServiceRequest.getMeasurements().get(0).getTenantId()).build();
+        Pagination pagination = Pagination.builder().limit(1).offSet(0).sortBy("createdTime").order(Pagination.OrderEnum.DESC).build();
+        measurementSearchRequest.setPagination(pagination);
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate=new NamedParameterJdbcTemplate(jdbcTemplate);
+        for(MeasurementService measurementService:measurementServiceRequest.getMeasurements()){
+            criteria.setReferenceId(Collections.singletonList(measurementService.getReferenceId()));
+            measurementSearchRequest.setCriteria(criteria);
+            List<Measurement> measurements=measurementRegistryUtil.searchMeasurements(measurementSearchRequest).getBody().getMeasurements();
+            if(!measurements.isEmpty()){
+                List<MeasurementService> measurementServices=serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate,Collections.singletonList(measurements.get(0).getMeasurementNumber()));
+                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals("REJECTED")||measurementServices.get(0).getWfStatus().equals("APPROVED"))){
+                    throw errorConfigs.notValidReferenceId(measurements.get(0).getReferenceId());
+                }
+            }
+        }
     }
 
     /**

@@ -71,7 +71,16 @@ public class MeasurementServiceValidator {
         measurementServiceRequest.getMeasurements().forEach(measurement -> {
             // validate contracts
             Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
-
+            contractUtil.validateByReferenceId(measurementServiceRequest);
+            if (!isValidContract) {
+                throw errorConfigs.invalidEstimateID;
+            }
+        });
+    }
+    public void validateContractsOnUpdate(MeasurementServiceRequest measurementServiceRequest) {
+        measurementServiceRequest.getMeasurements().forEach(measurement -> {
+            // validate contracts
+            Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
             if (!isValidContract) {
                 throw errorConfigs.invalidEstimateID;
             }
