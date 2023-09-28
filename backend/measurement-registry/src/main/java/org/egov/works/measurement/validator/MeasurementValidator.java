@@ -5,11 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
@@ -19,7 +14,11 @@ import digit.models.coremodels.Document;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.*;
@@ -145,48 +144,32 @@ public class MeasurementValidator {
     }
 
     private String makeApiRequest(List<String> documentIds) {
-        // API URL with query parameters
-        HttpGet httpGet = buildHttpGetRequest(documentIds);
+        String baseUrl = configuration.getBaseFilestoreUrl();
+        String endpoint = configuration.getBaseFilestoreEndpoint();
 
-        // Create an HttpClient
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-
-        try {
-            // Execute the request
-            HttpResponse response = httpClient.execute(httpGet);
-
-            // Check the response status code
-            if (response.getStatusLine().getStatusCode() == 200) {
-                // Read and return the response content as a string
-                return EntityUtils.toString(response.getEntity());
-            } else {
-                // Handle non-200 status codes (e.g., by throwing an exception)
-                throw errorConfigs.apiRequestFailed(response);
-            }
-        } catch (IOException e) {
-            // Handle exceptions (e.g., by logging or rethrowing)
-            e.printStackTrace();
-            throw errorConfigs.apiRequestFailedIOexception(e);
-        } finally {
-            try {
-                // Close the HttpClient
-                httpClient.close();
-            } catch (IOException e) {
-                // Handle closing exception (if needed)
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private HttpGet buildHttpGetRequest(List<String> documentIds) {
-        String apiUrl = configuration.getBaseFilestoreUrl() + configuration.getBaseFilestoreEndpoint()+"?tenantId=pg.citya";
+        // Build the URL with query parameters
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + endpoint)
+                .queryParam("tenantId", "pg.citya");
 
         for (String documentId : documentIds) {
-            apiUrl += "&fileStoreIds=" + documentId;
+            builder.queryParam("fileStoreIds", documentId);
         }
 
-        HttpGet httpGet = new HttpGet(apiUrl);
-        return httpGet;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                null,
+                String.class
+        );
+
+        if (responseEntity.getStatusCodeValue() == 200) {
+            // Read and return the response content as a string
+            return responseEntity.getBody();
+        } else {
+            // Handle non-200 status codes (e.g., by throwing an exception)
+            throw errorConfigs.apiRequestFailed(responseEntity);
+        }
     }
 
     private List<String> extractDocumentIds(List<Measurement> measurements) {

@@ -47,9 +47,6 @@ public class MeasurementService {
      * @return
      */
     public MeasurementServiceResponse handleCreateMeasurementService(MeasurementServiceRequest body) {
-
-        // Validate document IDs from the measurement service request
-        measurementServiceValidator.validateDocumentIds(body.getMeasurements());
         // validate contracts
         measurementServiceValidator.validateContracts(body);
 

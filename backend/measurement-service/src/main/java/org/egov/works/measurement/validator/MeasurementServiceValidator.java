@@ -2,11 +2,6 @@ package org.egov.works.measurement.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
@@ -61,23 +56,6 @@ public class MeasurementServiceValidator {
 
     @Value("${egov.filestore.endpoint}")
     private String baseFilestoreEndpoint;
-
-
-    public <T extends Measurement> void validateDocumentIds(List<T> measurements) {
-        List<String> documentIds = extractDocumentIds(measurements);
-
-        if(!documentIds.isEmpty()){
-            // Make an API request to validate document IDs
-            String responseJson = makeApiRequest(documentIds);
-
-            // Check if document IDs match the response
-            boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
-
-            if (!documentIdsMatch) {
-                throw errorConfigs.invalidDocuments;
-            }
-        }
-    }
 
 
     public void validateContracts(MeasurementServiceRequest measurementServiceRequest) {
@@ -186,80 +164,6 @@ public class MeasurementServiceValidator {
             e.printStackTrace();
             return false; // Error occurred while parsing the response
         }
-    }
-
-
-    private String makeApiRequest(List<String> documentIds) {
-        // API URL with query parameters
-        HttpGet httpGet = buildHttpGetRequest(documentIds);
-
-        // Create an HttpClient
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-
-        try {
-            // Execute the request
-            HttpResponse response = httpClient.execute(httpGet);
-
-            // Check the response status code
-            if (response.getStatusLine().getStatusCode() == 200) {
-                // Read and return the response content as a string
-                return EntityUtils.toString(response.getEntity());
-            } else {
-                // Handle non-200 status codes (e.g., by throwing an exception)
-                throw errorConfigs.apiRequestFailed(response);
-            }
-        } catch (IOException e) {
-            // Handle exceptions (e.g., by logging or rethrowing)
-            e.printStackTrace();
-            throw errorConfigs.apiRequestFailedIOexception(e);
-        } finally {
-            try {
-                // Close the HttpClient
-                httpClient.close();
-            } catch (IOException e) {
-                // Handle closing exception (if needed)
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private <T extends Measurement> List<String> extractDocumentIds(List<T> measurements) {
-        List<String> documentIds = new ArrayList<>();
-        for (T measurement : measurements) {
-            if(measurement instanceof  MeasurementService){
-                MeasurementService ms = (MeasurementService) measurement;
-                if(ms.getDocuments()!=null){
-                    for(Document document:ms.getDocuments()){
-                        documentIds.add(document.getFileStore());
-                    }
-                }
-                if (ms.getWorkflow() != null & ms.getWorkflow().getVerificationDocuments()!=null) {
-                    for (digit.models.coremodels.Document document : ms.getWorkflow().getVerificationDocuments()) {
-                        documentIds.add(document.getFileStore());
-                    }
-                }
-            }
-            else{
-                Measurement ms = measurement;
-                if(ms.getDocuments()!=null){
-                    for(Document document:ms.getDocuments()){
-                        documentIds.add(document.getFileStore());
-                    }
-                }
-            }
-        }
-        return documentIds;
-    }
-
-    private HttpGet buildHttpGetRequest(List<String> documentIds) {
-        String apiUrl = baseFilestoreUrl + baseFilestoreEndpoint+"?tenantId=pg.citya";
-
-        for (String documentId : documentIds) {
-            apiUrl += "&fileStoreIds=" + documentId;
-        }
-
-        HttpGet httpGet = new HttpGet(apiUrl);
-        return httpGet;
     }
 
 }
