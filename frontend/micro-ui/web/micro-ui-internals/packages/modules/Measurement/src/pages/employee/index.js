@@ -25,9 +25,28 @@ const MeasurementBreadCrumbs = ({ location }) => {
       show: true,
     },
     {
-      path: `/${window?.contextPath}/employee`,
-      content: t(location.pathname.split("/").pop()),
-      show: true,
+      path: `/${window.contextPath}/employee/measurement/search`,
+      content:  t("MB_SEARCH_MEASUREMENT"),
+      show: location.pathname.includes("/measurement/search") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/measurement/create`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MB_MEASUREMENT_BOOK")}` : t("MB_MEASUREMENT_BOOK"),
+      show: location.pathname.includes("/measurement/create") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/measurement/inbox`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MB_INBOX")}` : t("MB_INBOX"),
+      show: location.pathname.includes("/measurement/inbox") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
+      path: `/${window.contextPath}/employee/measurement/update`,
+      content: fromScreen ? `${t(fromScreen)} / ${t("MB_MEASUREMENT_BOOK")}` : t("MB_MEASUREMENT_BOOK"),
+      show: location.pathname.includes("/measurement/update") ? true : false,
+      isBack: fromScreen && true,
     },
   ];
   return <BreadCrumb crumbs={crumbs} spanStyle={{ maxWidth: "min-content" }} />;
