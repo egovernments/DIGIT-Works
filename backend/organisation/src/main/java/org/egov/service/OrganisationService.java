@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.OrganisationRepository;
 import org.egov.config.Configuration;
 import org.egov.kafka.Producer;
+import org.egov.util.EncryptionDecryptionUtil;
 import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import java.util.List;
 @Service
 @Slf4j
 public class OrganisationService {
+
+    public static final String ORGANISATION_ENCRYPT_KEY = "OrganisationEncrypt";
 
     @Autowired
     private OrganisationServiceValidator organisationServiceValidator;
@@ -41,6 +44,8 @@ public class OrganisationService {
 
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private EncryptionService encryptionService;
 
 
     /**
@@ -54,12 +59,15 @@ public class OrganisationService {
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
         //userService.createUser(orgRequest);
         individualService.createIndividual(orgRequest);
+
+        encryptionService.encryptDetails(orgRequest,ORGANISATION_ENCRYPT_KEY);
         producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
         try {
             notificationService.sendNotification(orgRequest, true);
         }catch (Exception e){
             log.error("Exception while sending notification: " + e);
         }
+//        encryptionDecryptionUtil.decryptContacts()
         return orgRequest;
     }
 
