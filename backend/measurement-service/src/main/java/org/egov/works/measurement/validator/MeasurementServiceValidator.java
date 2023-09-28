@@ -7,6 +7,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.egov.common.contract.models.Document;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
@@ -15,7 +16,6 @@ import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.MeasurementRegistryUtil;
 import org.egov.works.measurement.web.models.*;
-import digit.models.coremodels.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -94,48 +94,48 @@ public class MeasurementServiceValidator {
     public void validateExistingServiceDataAndEnrich(MeasurementServiceRequest measurementServiceRequest) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         List<String> mbNumbers = new ArrayList<>();
-        Map<String, MeasurementService> mbNumberToServiceMap = new HashMap<>();
+        Map<String, MeasurementSvcObject> mbNumberToServiceMap = new HashMap<>();
 
-        for (MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {
+        for (MeasurementSvcObject measurementService : measurementServiceRequest.getMeasurements()) {
             mbNumbers.add(measurementService.getMeasurementNumber());
         }
 
-        List<MeasurementService> existingMeasurementService = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
+        List<MeasurementSvcObject> existingMeasurementService = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
         if(existingMeasurementService.size()!=measurementServiceRequest.getMeasurements().size()){
             throw errorConfigs.measurementServiceDataNotExist;
         }
 
         // if wfStatus is rejected then throw error
-        for(MeasurementService measurementService:existingMeasurementService){
+        for(MeasurementSvcObject measurementService:existingMeasurementService){
             if(measurementService.getWfStatus().equals("REJECTED")){
                  throw errorConfigs.rejectedError(measurementService.getMeasurementNumber());
             }
         }
         // Create a map to associate mbNumbers with corresponding MeasurementRegistry objects
-        for (MeasurementService existingService : existingMeasurementService) {
+        for (MeasurementSvcObject existingService : existingMeasurementService) {
             mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
         }
 
-        List<MeasurementService> orderedExistingMeasurementService = createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap); //ordering measurementServices
+        List<MeasurementSvcObject> orderedExistingMeasurementService = createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap); //ordering measurementServices
         matchIdsAndMbNumber(orderedExistingMeasurementService,measurementServiceRequest.getMeasurements()); // Match ids and measurement Numbers
         setServiceAuditDetails(orderedExistingMeasurementService, measurementServiceRequest); // Set audit details for orderedExistingMeasurementService
     }
 
-    public void matchIdsAndMbNumber(List<MeasurementService> orderedExistingMeasurementService, List<MeasurementService> measurementServices) {
+    public void matchIdsAndMbNumber(List<MeasurementSvcObject> orderedExistingMeasurementService, List<MeasurementSvcObject> measurementServices) {
         List<UUID> existingIds = orderedExistingMeasurementService.stream()
-                .map(MeasurementService::getId)
+                .map(MeasurementSvcObject::getId)
                 .collect(Collectors.toList());
 
         List<String> existingMeasurementNumbers = orderedExistingMeasurementService.stream()
-                .map(MeasurementService::getMeasurementNumber)
+                .map(MeasurementSvcObject::getMeasurementNumber)
                 .collect(Collectors.toList());
 
         List<UUID> newIds = measurementServices.stream()
-                .map(MeasurementService::getId)
+                .map(MeasurementSvcObject::getId)
                 .collect(Collectors.toList());
 
         List<String> newMeasurementNumbers = measurementServices.stream()
-                .map(MeasurementService::getMeasurementNumber)
+                .map(MeasurementSvcObject::getMeasurementNumber)
                 .collect(Collectors.toList());
 
         if (!existingIds.equals(newIds) || !existingMeasurementNumbers.equals(newMeasurementNumbers)) {
@@ -144,20 +144,20 @@ public class MeasurementServiceValidator {
     }
 
 
-    public List<MeasurementService> createOrderedMeasurementServiceList(List<String> mbNumbers, Map<String, MeasurementService> mbNumberToServiceMap) {
-        List<MeasurementService> orderedExistingMeasurementService = new ArrayList<>();
+    public List<MeasurementSvcObject> createOrderedMeasurementServiceList(List<String> mbNumbers, Map<String, MeasurementSvcObject> mbNumberToServiceMap) {
+        List<MeasurementSvcObject> orderedExistingMeasurementService = new ArrayList<>();
 
         // Populate orderedExistingMeasurementService to match the order of mbNumbers
         for (String mbNumber : mbNumbers) {
-            MeasurementService existingService = mbNumberToServiceMap.get(mbNumber);
+            MeasurementSvcObject existingService = mbNumberToServiceMap.get(mbNumber);
             orderedExistingMeasurementService.add(existingService);
         }
 
         return orderedExistingMeasurementService;
     }
 
-    public void setServiceAuditDetails(List<MeasurementService> measurementServiceExisting,MeasurementServiceRequest measurementServiceRequest){
-        List<MeasurementService> measurementServices=measurementServiceRequest.getMeasurements();
+    public void setServiceAuditDetails(List<MeasurementSvcObject> measurementServiceExisting,MeasurementServiceRequest measurementServiceRequest){
+        List<MeasurementSvcObject> measurementServices=measurementServiceRequest.getMeasurements();
         for(int i=0;i<measurementServiceExisting.size();i++){
             measurementServices.get(i).setAuditDetails(measurementServiceExisting.get(i).getAuditDetails());
             measurementServices.get(i).getAuditDetails().setLastModifiedBy(measurementServiceRequest.getRequestInfo().getUserInfo().getUuid());
@@ -226,15 +226,15 @@ public class MeasurementServiceValidator {
     private <T extends Measurement> List<String> extractDocumentIds(List<T> measurements) {
         List<String> documentIds = new ArrayList<>();
         for (T measurement : measurements) {
-            if(measurement instanceof  MeasurementService){
-                MeasurementService ms = (MeasurementService) measurement;
+            if(measurement instanceof  MeasurementSvcObject){
+                MeasurementSvcObject ms = (MeasurementSvcObject) measurement;
                 if(ms.getDocuments()!=null){
                     for(Document document:ms.getDocuments()){
                         documentIds.add(document.getFileStore());
                     }
                 }
-                if (ms.getWorkflow() != null & ms.getWorkflow().getVerificationDocuments()!=null) {
-                    for (digit.models.coremodels.Document document : ms.getWorkflow().getVerificationDocuments()) {
+                if (ms.getWorkflow() != null & ms.getWorkflow().getDocuments()!=null) {
+                    for (Document document : ms.getWorkflow().getDocuments()) {
                         documentIds.add(document.getFileStore());
                     }
                 }

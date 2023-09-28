@@ -29,22 +29,22 @@ public class MeasurementRegistry {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    public List<org.egov.works.measurement.web.models.MeasurementService> changeToMeasurementService(List<Measurement> measurements) {
+    public List<org.egov.works.measurement.web.models.MeasurementSvcObject> changeToMeasurementService(List<Measurement> measurements) {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         List<String> mbNumbers = getMbNumbers(measurements);
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
-        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = getMbNumberToServiceMap(measurementServices);
-        List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService = serviceValidator.createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap);
+        List<org.egov.works.measurement.web.models.MeasurementSvcObject> measurementServices = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
+        Map<String, org.egov.works.measurement.web.models.MeasurementSvcObject> mbNumberToServiceMap = getMbNumberToServiceMap(measurementServices);
+        List<org.egov.works.measurement.web.models.MeasurementSvcObject> orderedExistingMeasurementService = serviceValidator.createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap);
 
         // Create measurement services for each measurement
-        List<org.egov.works.measurement.web.models.MeasurementService> result = createMeasurementServices(measurements, orderedExistingMeasurementService);
+        List<org.egov.works.measurement.web.models.MeasurementSvcObject> result = createMeasurementServices(measurements, orderedExistingMeasurementService);
 
         return result;
     }
 
-    //Create a MeasurementService object from a Measurement object
-    private org.egov.works.measurement.web.models.MeasurementService createMeasurementServiceFromMeasurement(Measurement measurement) {
-        org.egov.works.measurement.web.models.MeasurementService measurementService = new org.egov.works.measurement.web.models.MeasurementService();
+    //Create a MeasurementSvcObject object from a Measurement object
+    private MeasurementSvcObject createMeasurementServiceFromMeasurement(Measurement measurement) {
+        MeasurementSvcObject measurementService = new MeasurementSvcObject();
 
         // Set properties of the measurement service based on the measurement object
         measurementService.setId(measurement.getId());
@@ -62,23 +62,23 @@ public class MeasurementRegistry {
         return measurementService;
     }
 
-    //Apply the workflow status from an existing MeasurementService object
-    private void applyWorkflowStatus(org.egov.works.measurement.web.models.MeasurementService measurementService, org.egov.works.measurement.web.models.MeasurementService existingMeasurementService) {
+    //Apply the workflow status from an existing MeasurementSvcObject object
+    private void applyWorkflowStatus(org.egov.works.measurement.web.models.MeasurementSvcObject measurementService, org.egov.works.measurement.web.models.MeasurementSvcObject existingMeasurementService) {
         if (existingMeasurementService != null) {
             measurementService.setWfStatus(existingMeasurementService.getWfStatus());
         }
     }
 
     // Main function that uses the above two parts
-    private List<org.egov.works.measurement.web.models.MeasurementService> createMeasurementServices(List<Measurement> measurements, List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService) {
-        List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
+    private List<org.egov.works.measurement.web.models.MeasurementSvcObject> createMeasurementServices(List<Measurement> measurements, List<org.egov.works.measurement.web.models.MeasurementSvcObject> orderedExistingMeasurementService) {
+        List<org.egov.works.measurement.web.models.MeasurementSvcObject> measurementServices = new ArrayList<>();
 
         for (int i = 0; i < measurements.size(); i++) {
             Measurement measurement = measurements.get(i);
-            org.egov.works.measurement.web.models.MeasurementService measurementService = createMeasurementServiceFromMeasurement(measurement);
+            org.egov.works.measurement.web.models.MeasurementSvcObject measurementService = createMeasurementServiceFromMeasurement(measurement);
 
             // Apply the workflow status from an existing measurement service
-            org.egov.works.measurement.web.models.MeasurementService existingMeasurementService = orderedExistingMeasurementService.get(i);
+            org.egov.works.measurement.web.models.MeasurementSvcObject existingMeasurementService = orderedExistingMeasurementService.get(i);
             applyWorkflowStatus(measurementService, existingMeasurementService);
 
             measurementServices.add(measurementService);
@@ -96,9 +96,9 @@ public class MeasurementRegistry {
         return mbNumbers;
     }
 
-    public Map<String, org.egov.works.measurement.web.models.MeasurementService> getMbNumberToServiceMap(List<org.egov.works.measurement.web.models.MeasurementService> measurementServices){
-        Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap = new HashMap<>();
-        for (org.egov.works.measurement.web.models.MeasurementService existingService : measurementServices) {
+    public Map<String, org.egov.works.measurement.web.models.MeasurementSvcObject> getMbNumberToServiceMap(List<org.egov.works.measurement.web.models.MeasurementSvcObject> measurementServices){
+        Map<String, org.egov.works.measurement.web.models.MeasurementSvcObject> mbNumberToServiceMap = new HashMap<>();
+        for (org.egov.works.measurement.web.models.MeasurementSvcObject existingService : measurementServices) {
             mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
         }
         return mbNumberToServiceMap;
