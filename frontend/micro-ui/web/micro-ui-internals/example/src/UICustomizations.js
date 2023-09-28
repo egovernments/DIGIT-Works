@@ -734,21 +734,6 @@ export const UICustomizations = {
         ...(moduleSearchCriteria?.ward?.length > 0 && { ward: moduleSearchCriteria.ward?.map(e => e?.code) }),
         ...(statusValues.length > 0 && { status: statusValues })
       }
-
-        // let status;
-        // if (states.length > 0) status = states;
-        // }
-        // // //cloning locality and workflow states to format them
-        // // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
-        // let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
-        // // delete data.body.inbox.moduleSearchCriteria.locality;
-        // delete data.body.inbox.moduleSearchCriteria.state;
-        // // locality = locality?.map((row) => row?.code);
-        // states = Object.keys(states)?.filter((key) => states[key]);
-        // // //adding formatted data to these keys
-        // // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
-        // if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
-        // //adding tenantId to moduleSearchCriteria
         data.body.inbox.moduleSearchCriteria = { ...moduleSearchCriteria };
         data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
         return data;
@@ -763,7 +748,7 @@ export const UICustomizations = {
               const contractNumber = row?.businessObject?.referenceId
               return (
                 <span className="link">
-                  {Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)}
+                  {/* {Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)} */}
                 </span>
               );
             case "MB_ASSIGNEE":

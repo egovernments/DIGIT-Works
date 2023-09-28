@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export const statusBasedNavigation = ( status, contractNumber, measurementNumber, tenantId, value ) => {
