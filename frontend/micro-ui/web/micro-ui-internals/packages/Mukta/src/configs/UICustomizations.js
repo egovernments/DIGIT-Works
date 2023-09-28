@@ -437,7 +437,7 @@ export const UICustomizations = {
       if (key === "ES_COMMON_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <div class="textoverflow" style={{ "--max-width": `${column.maxLength}ch`, wordBreak: "break-all" }}>
+            <div class="textoverflow" style={{ "--max-width": column.maxLength ? `${column.maxLength}ch` : `30ch`, wordBreak: "break-all" }}>
               {String(value ? value : t("ES_COMMON_NA"))}
             </div>
             {/* check condtion - if length greater than 20 */}
@@ -590,9 +590,9 @@ export const UICustomizations = {
        { let currentProject = searchResult?.filter((result) => result?.id === row?.id)[0];
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>         
+            <div class="textoverflow" style={{ "--max-width": column.maxLength ? `${column.maxLength}ch` : `30ch`, wordBreak: "break-all" }}>       
               {String(t(value))}
-            </span>
+            </div>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
               {currentProject?.description}
@@ -724,9 +724,9 @@ export const UICustomizations = {
        { let currentProject = searchResult?.filter((result) => result?.businessObject?.id === row?.businessObject?.id)[0];
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column?.maxLength}ch` }}>         
+            <div class="textoverflow" style={{ "--max-width": column.maxLength ? `${column.maxLength}ch` : `30ch`, wordBreak: "break-all" }}>        
               {String(t(value))}
-            </span>
+            </div>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
               {currentProject?.businessObject?.description}
@@ -837,9 +837,9 @@ export const UICustomizations = {
       if (key === "ES_COMMON_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+            <div class="textoverflow" style={{ "--max-width": column.maxLength ? `${column.maxLength}ch` : `30ch`, wordBreak: "break-all" }}>
               {String(t(value))}
-            </span>
+            </div>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
               {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
@@ -1044,9 +1044,9 @@ export const UICustomizations = {
       case "WORKS_PROJECT_NAME":
           return (
             <div class="tooltip">
-              <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              <div class="textoverflow" style={{ "--max-width": column.maxLength ? `${column.maxLength}ch` : `30ch`, wordBreak: "break-all" }}>
                 {String(t(value))}
-              </span>
+              </div>
               {/* check condtion - if length greater than 20 */}
               <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
                 {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
@@ -1519,9 +1519,9 @@ export const UICustomizations = {
       if (key === "WORKS_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+            <div class="textoverflow" style={{ "--max-width": column.maxLength ? `${column.maxLength}ch` : `30ch`, wordBreak: "break-all" }}>
               {String(value ? value : t("ES_COMMON_NA"))}
-            </span>
+            </div>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
               {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
@@ -1713,9 +1713,9 @@ export const UICustomizations = {
       if (key === "WORKS_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              <div class="textoverflow" style={{ "--max-width": column.maxLength ? `${column.maxLength}ch` : `30ch`, wordBreak: "break-all" }}>
               {String(value ? value : t("ES_COMMON_NA"))}
-            </span>
+            </div>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
               {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
@@ -2067,9 +2067,9 @@ export const UICustomizations = {
       if (key === "WORKS_PROJECT_NAME") {
         return (
           <div class="tooltip">
-            <span class="textoverflow" style={{ "--max-width": `${column.maxLength}ch` }}>
+              <div class="textoverflow" style={{ "--max-width": column.maxLength ? `${column.maxLength}ch` : `30ch`, wordBreak: "break-all" }}>
               {String(value ? value : t("ES_COMMON_NA"))}
-            </span>
+            </div>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "nowrap" }}>
               {row?.businessObject?.additionalDetails?.projectDesc || t("ES_COMMON_NA")}
