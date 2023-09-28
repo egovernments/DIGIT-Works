@@ -76,7 +76,6 @@ public class WorkflowUtil {
             workflow.setAssignes(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
         }
         State state = callWorkFlow(workflowRequest);
-
         return state.getApplicationStatus();
     }
 

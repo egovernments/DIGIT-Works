@@ -1,14 +1,17 @@
 package org.egov.works.measurement.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Criteria;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.service.MeasurementRegistry;
+import org.egov.works.measurement.service.WorkflowService;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.MeasurementRegistryUtil;
+import org.egov.works.measurement.util.MeasurementServiceUtil;
 import org.egov.works.measurement.web.models.*;
 import digit.models.coremodels.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,9 @@ public class MeasurementServiceValidator {
     private Configuration configuration;
 
     @Autowired
+    private WorkflowService workflowService;
+
+    @Autowired
     private MeasurementRowMapper rowMapper;
 
     @Autowired
@@ -49,6 +55,9 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private MeasurementRegistryUtil measurementRegistryUtil;
+
+    @Autowired
+    private MeasurementServiceUtil measurementServiceUtil;
 
 
     @Value("${egov.filestore.host}")
@@ -79,25 +88,58 @@ public class MeasurementServiceValidator {
         }
 
         List<MeasurementService> existingMeasurementService = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
+        enrichMeasurementServiceWithMeasurement(existingMeasurementService,measurementServiceRequest);
         if(existingMeasurementService.size()!=measurementServiceRequest.getMeasurements().size()){
             throw errorConfigs.measurementServiceDataNotExist;
         }
 
         // if wfStatus is rejected then throw error
-        for(MeasurementService measurementService:existingMeasurementService){
-            if(measurementService.getWfStatus().equals("REJECTED")){
-                 throw errorConfigs.rejectedError(measurementService.getMeasurementNumber());
-            }
-        }
+        checkDataRejected(existingMeasurementService);
+
         // Create a map to associate mbNumbers with corresponding MeasurementRegistry objects
         for (MeasurementService existingService : existingMeasurementService) {
             mbNumberToServiceMap.put(existingService.getMeasurementNumber(), existingService);
         }
-
+        workflowService.changeDataAccordingToWfActions(measurementServiceRequest,mbNumberToServiceMap); // Changing update data according to workflow actions
         List<MeasurementService> orderedExistingMeasurementService = createOrderedMeasurementServiceList(mbNumbers, mbNumberToServiceMap); //ordering measurementServices
         matchIdsAndMbNumber(orderedExistingMeasurementService,measurementServiceRequest.getMeasurements()); // Match ids and measurement Numbers
         setServiceAuditDetails(orderedExistingMeasurementService, measurementServiceRequest); // Set audit details for orderedExistingMeasurementService
     }
+
+    public void enrichMeasurementServiceWithMeasurement(List<MeasurementService> existingMeasurementServices,MeasurementServiceRequest measurementServiceRequest){
+        MeasurementCriteria criteria=MeasurementCriteria.builder().ids(new ArrayList<>()).tenantId(existingMeasurementServices.get(0).getTenantId()).build();
+        for(MeasurementService measurementService:existingMeasurementServices){
+            criteria.getIds().add(measurementService.getId().toString());
+        }
+        MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().requestInfo(measurementServiceRequest.getRequestInfo()).criteria(criteria).build();
+        List<Measurement> existingMeasurements=measurementRegistryUtil.searchMeasurements(measurementSearchRequest).getBody().getMeasurements();
+        //Create a map that stores existingMeasurements as it is attached with existingMeasurementServices measurementNumber
+        Map<String, Measurement> measurementMap = new HashMap<>();
+
+        // Populate the map
+        for (Measurement existingMeasurement : existingMeasurements) {
+            measurementMap.put(existingMeasurement.getMeasurementNumber(), existingMeasurement);
+        }
+        List<Measurement> orderedExistingMeasurements=new ArrayList<>();
+        for(MeasurementService measurementService:existingMeasurementServices){
+            orderedExistingMeasurements.add(measurementMap.get(measurementService.getMeasurementNumber()));
+        }
+        List<MeasurementService> measurementServices=measurementServiceUtil.convertToMeasurementServiceList(measurementServiceRequest,orderedExistingMeasurements);
+        // Ordering existing MeasurementServices
+        for(int i=0;i<existingMeasurements.size();i++){
+            measurementServices.get(i).setWfStatus(existingMeasurementServices.get(i).getWfStatus());
+            existingMeasurementServices.set(i,measurementServices.get(i));
+        }
+    }
+
+    public void checkDataRejected(List<MeasurementService> existingMeasurementService){
+        for(MeasurementService measurementService:existingMeasurementService){
+            if(measurementService.getWfStatus().equals("REJECTED")){
+                throw errorConfigs.rejectedError(measurementService.getMeasurementNumber());
+            }
+        }
+    }
+
 
     public void matchIdsAndMbNumber(List<MeasurementService> orderedExistingMeasurementService, List<MeasurementService> measurementServices) {
         List<UUID> existingIds = orderedExistingMeasurementService.stream()

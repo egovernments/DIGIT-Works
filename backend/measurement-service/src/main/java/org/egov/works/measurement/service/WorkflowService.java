@@ -5,14 +5,12 @@ import digit.models.coremodels.Workflow;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.util.WorkflowUtil;
+import org.egov.works.measurement.web.models.MeasurementService;
 import org.egov.works.measurement.web.models.MeasurementServiceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -38,5 +36,23 @@ public class WorkflowService {
             processInstanceList.add(currProcessInstance);
         }
         return workflowUtil.getWorkflow(processInstanceList);
+    }
+
+    public void changeDataAccordingToWfActions(MeasurementServiceRequest measurementServiceRequest,Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap){
+        Set<String> actionSets=new HashSet<>();
+        actionSets.add("SAVE_AS_DRAFT");
+        actionSets.add("SUBMIT");
+        actionSets.add("EDIT/RE-SUBMIT");
+        for(int i=0;i<measurementServiceRequest.getMeasurements().size();i++){
+            if(!actionSets.contains(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction())){
+                MeasurementService existingCurrentMeasurementService=mbNumberToServiceMap.get(measurementServiceRequest.getMeasurements().get(i).getMeasurementNumber());
+                Workflow workflow=measurementServiceRequest.getMeasurements().get(i).getWorkflow();
+                measurementServiceRequest.getMeasurements().set(i,existingCurrentMeasurementService);
+                measurementServiceRequest.getMeasurements().get(i).setWorkflow(workflow);
+            }
+            if(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction().equals("REJECT")){
+                measurementServiceRequest.getMeasurements().get(i).setIsActive(false);
+            }
+        }
     }
 }
