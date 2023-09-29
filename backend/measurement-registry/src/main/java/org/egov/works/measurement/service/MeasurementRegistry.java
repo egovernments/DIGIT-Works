@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.ErrorConfiguration;
-import org.egov.works.measurement.kafka.Producer;
+import org.egov.works.measurement.kafka.MBRegistryProducer;
 import org.egov.works.measurement.util.*;
 //import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.validator.MeasurementValidator;
@@ -13,19 +13,13 @@ import org.egov.works.measurement.web.models.Measurement;
 import org.egov.works.measurement.web.models.MeasurementRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.egov.works.measurement.web.models.Pagination;
 
-import java.util.*;
-
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBRegistryConfiguration;
 
 import org.egov.works.measurement.web.models.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.works.measurement.repository.ServiceRequestRepository;
@@ -36,9 +30,9 @@ import org.egov.works.measurement.web.models.MeasurementCriteria;
 @Slf4j
 public class MeasurementRegistry {
     @Autowired
-    private Producer producer;
+    private MBRegistryProducer MBRegistryProducer;
     @Autowired
-    private Configuration configuration;
+    private MBRegistryConfiguration MBRegistryConfiguration;
     @Autowired
     private ErrorConfiguration errorConfigs;
     @Autowired
@@ -68,7 +62,7 @@ public class MeasurementRegistry {
         // enrich measurements
         enrichmentService.enrichMeasurement(request);
         // push to kafka topic
-        producer.push(configuration.getCreateMeasurementTopic(),request);
+        MBRegistryProducer.push(MBRegistryConfiguration.getCreateMeasurementTopic(),request);
 
         return  MeasurementResponse.builder().responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true)).measurements(request.getMeasurements()).build();
 
@@ -95,8 +89,8 @@ public class MeasurementRegistry {
         // Create the MeasurementResponse object
         MeasurementResponse response = measurementRegistryUtil.makeUpdateResponse(measurementRegistrationRequest.getMeasurements(),measurementRegistrationRequest);
 
-        // Push the response to the producer
-        producer.push(configuration.getUpdateTopic(), response);
+        // Push the response to the MBRegistryProducer
+        MBRegistryProducer.push(MBRegistryConfiguration.getUpdateTopic(), response);
 
         return response;
     }

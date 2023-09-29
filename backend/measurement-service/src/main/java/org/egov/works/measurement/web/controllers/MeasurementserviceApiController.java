@@ -15,9 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.*;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
@@ -36,24 +33,24 @@ public class MeasurementserviceApiController {
     @Autowired
     private MeasurementRegistry service;
     @Autowired
-    private MeasurementService msService;
+    private MeasurementService measurementService;
 
 
     @RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body) {
-        MeasurementServiceResponse measurementServiceResponse = msService.handleCreateMeasurementService(body);
+        MeasurementServiceResponse measurementServiceResponse = measurementService.handleCreateMeasurementService(body);
         return new ResponseEntity<MeasurementServiceResponse>(measurementServiceResponse,HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementServiceRequest body){
-        MeasurementServiceResponse measurementServiceResponse= msService.updateMeasurementService(body);
+        MeasurementServiceResponse measurementServiceResponse= measurementService.updateMeasurementService(body);
         return new ResponseEntity<>(measurementServiceResponse, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<MeasurementServiceResponse> measurementserviceV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody MeasurementSearchRequest body) {
-        MeasurementServiceResponse measurementServiceResponse=msService.searchMeasurementService(body);
+        MeasurementServiceResponse measurementServiceResponse= measurementService.searchMeasurementService(body);
         return new ResponseEntity<>(measurementServiceResponse, HttpStatus.ACCEPTED);
     }
 

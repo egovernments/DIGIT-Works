@@ -2,8 +2,7 @@ package org.egov.works.measurement.util;
 
 import digit.models.coremodels.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
@@ -21,7 +20,7 @@ import java.util.*;
 @Component
 public class ContractUtil {
     private final RestTemplate restTemplate;
-    private final Configuration configuration;
+    private final MBServiceConfiguration MBServiceConfiguration;
 
     private final ErrorConfiguration errorConfigs;
 
@@ -31,9 +30,9 @@ public class ContractUtil {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public ContractUtil(RestTemplate restTemplate, Configuration configuration, ErrorConfiguration errorConfigs, MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository, JdbcTemplate jdbcTemplate) {
+    public ContractUtil(RestTemplate restTemplate, MBServiceConfiguration MBServiceConfiguration, ErrorConfiguration errorConfigs, MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository, JdbcTemplate jdbcTemplate) {
         this.restTemplate = restTemplate;
-        this.configuration = configuration;
+        this.MBServiceConfiguration = MBServiceConfiguration;
         this.errorConfigs=errorConfigs;
         this.measurementRegistryUtil=measurementRegistryUtil;
         this.serviceRequestRepository = serviceRequestRepository;
@@ -51,7 +50,7 @@ public class ContractUtil {
 
     public ContractResponse getContracts(Measurement measurement, RequestInfo requestInfo) {
         ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId()).contractNumber(measurement.getReferenceId()).build();
-        String searchContractUrl = configuration.getContractHost() + configuration.getContractPath();
+        String searchContractUrl = MBServiceConfiguration.getContractHost() + MBServiceConfiguration.getContractPath();
         ContractResponse response = restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody();
         return response;
     }
@@ -154,7 +153,7 @@ public class ContractUtil {
             List<Measurement> measurements=measurementRegistryUtil.searchMeasurements(measurementSearchRequest).getBody().getMeasurements();
             if(!measurements.isEmpty()){
                 List<MeasurementService> measurementServices=serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate,Collections.singletonList(measurements.get(0).getMeasurementNumber()));
-                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals(configuration.rejectedStatus)||measurementServices.get(0).getWfStatus().equals(configuration.approvedStatus))){
+                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals(MBServiceConfiguration.rejectedStatus)||measurementServices.get(0).getWfStatus().equals(MBServiceConfiguration.approvedStatus))){
                     throw errorConfigs.notValidReferenceId(measurements.get(0).getReferenceId());
                 }
             }
@@ -248,7 +247,7 @@ public class ContractUtil {
 
     public EstimateResponse getEstimate(RequestInfo requestInfo, String tenantId, List<String> estimateIdsList) {
 
-        String estimateSearchUrl = configuration.getEstimateHost()+configuration.getEstimatePath();
+        String estimateSearchUrl = MBServiceConfiguration.getEstimateHost()+ MBServiceConfiguration.getEstimatePath();
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(estimateSearchUrl);
         builder.queryParam("tenantId",tenantId);
         builder.queryParam("ids",estimateIdsList);

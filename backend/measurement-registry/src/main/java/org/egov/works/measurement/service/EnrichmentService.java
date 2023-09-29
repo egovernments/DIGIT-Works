@@ -1,6 +1,6 @@
 package org.egov.works.measurement.service;
 
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.MeasurementRegistryUtil;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class EnrichmentService {
 
     @Autowired
-    private Configuration configuration;
+    private MBRegistryConfiguration MBRegistryConfiguration;
     @Autowired
     private IdgenUtil idgenUtil;
     @Autowired
@@ -32,7 +32,7 @@ public class EnrichmentService {
     public void enrichMeasurement(MeasurementRequest request){
 
         String tenantId = request.getMeasurements().get(0).getTenantId();
-        List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, configuration.getIdName(), configuration.getIdFormat(), request.getMeasurements().size());
+        List<String> measurementNumberList = idgenUtil.getIdList(request.getRequestInfo(), tenantId, MBRegistryConfiguration.getIdName(), MBRegistryConfiguration.getIdFormat(), request.getMeasurements().size());
         List<Measurement> measurements = request.getMeasurements();
 
         for (int i = 0; i < measurements.size(); i++) {

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class Producer {
+public class MBServiceProducer {
 
     @Autowired
     private CustomKafkaTemplate<String, Object> kafkaTemplate;

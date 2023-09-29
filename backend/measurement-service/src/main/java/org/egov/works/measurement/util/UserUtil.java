@@ -1,7 +1,7 @@
 package org.egov.works.measurement.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 
 import static org.egov.works.measurement.config.ServiceConstants.*;
 
@@ -9,7 +9,6 @@ import digit.models.coremodels.user.Role;
 import digit.models.coremodels.user.User;
 import digit.models.coremodels.user.enums.UserType;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import digit.models.coremodels.UserDetailResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,7 @@ public class UserUtil {
     private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private Configuration configs;
+    private MBServiceConfiguration configs;
 
 
     @Autowired

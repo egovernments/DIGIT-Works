@@ -6,14 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.MdmsUtil;
 import digit.models.coremodels.Document;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -35,7 +34,7 @@ public class MeasurementValidator {
     @Autowired
     private ErrorConfiguration errorConfigs;
     @Autowired
-    private Configuration configuration;
+    private MBRegistryConfiguration MBRegistryConfiguration;
     @Autowired
     private MeasurementRegistry measurementRegistry;
 
@@ -45,9 +44,9 @@ public class MeasurementValidator {
      */
     public void validateTenantId(MeasurementRequest measurementRequest){
         Set<String> validTenantSet = new HashSet<>();
-        List<String> masterList = Collections.singletonList(configuration.getMdmsMasterName());
-        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(),configuration.getMdmsTenantId(),configuration.getMdmsModuleName(),masterList);
-        String node = response.get(configuration.getMdmsModuleName()).get(configuration.getMdmsMasterName()).toString();
+        List<String> masterList = Collections.singletonList(MBRegistryConfiguration.getMdmsMasterName());
+        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(), MBRegistryConfiguration.getMdmsTenantId(), MBRegistryConfiguration.getMdmsModuleName(),masterList);
+        String node = response.get(MBRegistryConfiguration.getMdmsModuleName()).get(MBRegistryConfiguration.getMdmsMasterName()).toString();
         try {
                 JsonNode currNode = objectMapper.readTree(node);
                 for (JsonNode tenantNode : currNode) {
@@ -144,8 +143,8 @@ public class MeasurementValidator {
     }
 
     private String makeApiRequest(List<String> documentIds) {
-        String baseUrl = configuration.getBaseFilestoreUrl();
-        String endpoint = configuration.getBaseFilestoreEndpoint();
+        String baseUrl = MBRegistryConfiguration.getBaseFilestoreUrl();
+        String endpoint = MBRegistryConfiguration.getBaseFilestoreEndpoint();
 
         // Build the URL with query parameters
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + endpoint)

@@ -69,7 +69,7 @@ public class MeasurementRegistry {
         }
     }
 
-    // Main function that uses the above two parts
+    // MBServiceApplication function that uses the above two parts
     private List<org.egov.works.measurement.web.models.MeasurementService> createMeasurementServices(List<Measurement> measurements, List<org.egov.works.measurement.web.models.MeasurementService> orderedExistingMeasurementService) {
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = new ArrayList<>();
 

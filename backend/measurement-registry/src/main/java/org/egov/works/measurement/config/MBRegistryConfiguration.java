@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Configuration {
+public class MBRegistryConfiguration {
 
     @Bean
     public Pagination pagination() {

@@ -2,15 +2,13 @@ package org.egov.works.measurement.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.works.measurement.config.Configuration;
-import org.egov.works.measurement.kafka.Producer;
+import org.egov.works.measurement.config.MBServiceConfiguration;
+import org.egov.works.measurement.kafka.MBServiceProducer;
 import org.egov.works.measurement.util.*;
 import org.egov.works.measurement.validator.MeasurementServiceValidator;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,9 +28,9 @@ public class MeasurementService {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
     @Autowired
-    private Producer producer;
+    private MBServiceProducer MBServiceProducer;
     @Autowired
-    private Configuration configuration;
+    private MBServiceConfiguration MBServiceConfiguration;
     @Autowired
     private MeasurementRegistry measurementRegistry;
     @Autowired
@@ -65,7 +63,7 @@ public class MeasurementService {
         MeasurementServiceResponse measurementServiceResponse = MeasurementServiceResponse.builder().responseInfo(responseInfo).measurements(body.getMeasurements()).build();
 
         // push to kafka
-        producer.push(configuration.getMeasurementServiceCreateTopic(), body);
+        MBServiceProducer.push(MBServiceConfiguration.getMeasurementServiceCreateTopic(), body);
         return measurementServiceResponse;
 
     }
@@ -97,7 +95,7 @@ public class MeasurementService {
         MeasurementServiceResponse response = measurementServiceUtil.makeUpdateResponseService(measurementServiceRequest);
 
         // Push the response to the service update topic
-        producer.push(configuration.getServiceUpdateTopic(), response);
+        MBServiceProducer.push(MBServiceConfiguration.getServiceUpdateTopic(), response);
 
         return response;
     }

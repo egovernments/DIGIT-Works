@@ -1,8 +1,8 @@
 package org.egov.works.measurement.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.config.Configuration;
 import digit.models.coremodels.IdGenerationRequest;
 import digit.models.coremodels.IdGenerationResponse;
 import digit.models.coremodels.IdRequest;
@@ -29,7 +29,7 @@ public class IdgenUtil {
     private ServiceRequestRepository restRepo;
 
     @Autowired
-    private Configuration configs;
+    private MBServiceConfiguration configs;
 
     public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
         List<IdRequest> reqList = new ArrayList<>();

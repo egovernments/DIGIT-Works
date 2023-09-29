@@ -3,11 +3,9 @@ package org.egov.works.measurement.util;
 import digit.models.coremodels.AuditDetails;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
-import digit.models.coremodels.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

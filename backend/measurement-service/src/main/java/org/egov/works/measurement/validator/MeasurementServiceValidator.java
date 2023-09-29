@@ -1,10 +1,8 @@
 package org.egov.works.measurement.validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.Criteria;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.tracer.model.CustomException;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.service.MeasurementRegistry;
@@ -13,7 +11,6 @@ import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.MeasurementRegistryUtil;
 import org.egov.works.measurement.util.MeasurementServiceUtil;
 import org.egov.works.measurement.web.models.*;
-import digit.models.coremodels.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,7 +32,7 @@ public class MeasurementServiceValidator {
     private ContractUtil contractUtil;
 
     @Autowired
-    private Configuration configuration;
+    private MBServiceConfiguration MBServiceConfiguration;
 
     @Autowired
     private WorkflowService workflowService;
@@ -140,7 +137,7 @@ public class MeasurementServiceValidator {
 
     public void checkDataRejected(List<MeasurementService> existingMeasurementService){
         for(MeasurementService measurementService:existingMeasurementService){
-            if(measurementService.getWfStatus().equals(configuration.rejectedStatus)){
+            if(measurementService.getWfStatus().equals(MBServiceConfiguration.rejectedStatus)){
                 throw errorConfigs.rejectedError(measurementService.getMeasurementNumber());
             }
         }

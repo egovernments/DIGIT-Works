@@ -1,7 +1,7 @@
 package org.egov.works.measurement.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 
 import static org.egov.works.measurement.config.ServiceConstants.*;
 
@@ -27,7 +27,7 @@ public class WorkflowUtil {
     private ObjectMapper mapper;
 
     @Autowired
-    private Configuration configs;
+    private MBServiceConfiguration configs;
 
 
     /**

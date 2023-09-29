@@ -2,7 +2,7 @@ package org.egov.works.measurement.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.web.models.ContractCriteria;
 import org.egov.works.measurement.web.models.ContractResponse;
 import org.egov.works.measurement.web.models.Measurement;
@@ -21,16 +21,16 @@ import java.util.List;
 
 
 @Component
-public class Consumer {
+public class MBServiceConsumer {
     @Autowired
     private ObjectMapper mapper;
 
     @Autowired
     RestTemplate restTemplate;
     @Autowired
-    Producer producer;
+    MBServiceProducer MBServiceProducer;
     @Autowired
-    Configuration configuration;
+    MBServiceConfiguration MBServiceConfiguration;
 
 
     @KafkaListener(topics = {"${measurement-service.kafka.create.topic}","${measurement-service.kafka.update.topic}"})
@@ -47,7 +47,7 @@ public class Consumer {
             //function to fetch the contract response
             ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId()).contractNumber(referenceId).build();
 
-            String searchContractUrl = configuration.getContractHost() + configuration.getContractPath();
+            String searchContractUrl = MBServiceConfiguration.getContractHost() + MBServiceConfiguration.getContractPath();
 
             ContractResponse contractResponse = restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody(); // inside try Catch
             //merging the contract response with the measurement response
@@ -60,6 +60,6 @@ public class Consumer {
         }
 
         //pushing into new topic after enriching
-        producer.push(configuration.getEnrichMeasurementTopic(), accumulatedDataList);
+        MBServiceProducer.push(MBServiceConfiguration.getEnrichMeasurementTopic(), accumulatedDataList);
     }
 }

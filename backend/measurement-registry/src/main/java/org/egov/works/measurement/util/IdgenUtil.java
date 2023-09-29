@@ -7,7 +7,7 @@ import digit.models.coremodels.IdRequest;
 import digit.models.coremodels.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class IdgenUtil {
     private ServiceRequestRepository restRepo;
 
     @Autowired
-    private Configuration configs;
+    private MBRegistryConfiguration configs;
 
     public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
         List<IdRequest> reqList = new ArrayList<>();

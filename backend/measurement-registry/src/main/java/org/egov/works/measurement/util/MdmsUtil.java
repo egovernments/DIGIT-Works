@@ -1,7 +1,7 @@
 package org.egov.works.measurement.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBRegistryConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
@@ -29,7 +29,7 @@ public class MdmsUtil {
     private ObjectMapper mapper;
 
     @Autowired
-    private Configuration configs;
+    private MBRegistryConfiguration configs;
 
 
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,

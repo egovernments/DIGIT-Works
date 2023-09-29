@@ -3,7 +3,7 @@ package org.egov.works.measurement.service;
 import digit.models.coremodels.ProcessInstance;
 import digit.models.coremodels.Workflow;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.util.WorkflowUtil;
 import org.egov.works.measurement.web.models.MeasurementService;
 import org.egov.works.measurement.web.models.MeasurementServiceRequest;
@@ -20,7 +20,7 @@ public class WorkflowService {
     private WorkflowUtil workflowUtil;
 
     @Autowired
-    private Configuration config;
+    private MBServiceConfiguration config;
     public List<String> updateWorkflowStatuses(MeasurementServiceRequest measurementServiceRequest) {
         List<String> wfStatusList = new ArrayList<>();
         for (org.egov.works.measurement.web.models.MeasurementService measurementService : measurementServiceRequest.getMeasurements()) {

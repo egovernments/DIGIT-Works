@@ -3,7 +3,7 @@ package org.egov.works.measurement.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
 import org.egov.works.measurement.web.models.MeasurementSearchRequest;
 import org.egov.works.measurement.web.models.Pagination;
@@ -24,7 +24,7 @@ public class MeasurementQueryBuilder {
     private Pagination pagination;
 
     @Autowired
-    private Configuration config;
+    private MBRegistryConfiguration config;
 
 
     private static final String BASE_MEASUREMENT_QUERY = "SELECT m.id as id, m.tenantId as tenantId, m.mbNumber as mbNumber,m.referenceId as referenceId, m.phyRefNumber as phyRefNumber,  " +

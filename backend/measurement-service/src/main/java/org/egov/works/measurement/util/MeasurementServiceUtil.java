@@ -1,21 +1,17 @@
 package org.egov.works.measurement.util;
 
-import digit.models.coremodels.Document;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.works.measurement.config.Configuration;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.enrichment.MeasurementEnrichment;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.service.WorkflowService;
 import org.egov.works.measurement.web.models.*;
-import digit.models.coremodels.AuditDetails;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class MeasurementServiceUtil {
@@ -25,7 +21,7 @@ public class MeasurementServiceUtil {
     @Autowired
     private IdgenUtil idgenUtil;
     @Autowired
-    private Configuration configuration;
+    private MBServiceConfiguration MBServiceConfiguration;
     @Autowired
     private WorkflowService workflowService;
     @Autowired

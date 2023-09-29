@@ -1,16 +1,11 @@
 package org.egov.works.measurement.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-
-import org.egov.works.measurement.config.Configuration;
-
-import static org.egov.works.measurement.config.ServiceConstants.*;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 
 @Slf4j
 @Component
@@ -20,7 +15,7 @@ public class UrlShortenerUtil {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Configuration configs;
+    private MBServiceConfiguration configs;
 
 
 //    public String getShortenedUrl(String url) {
