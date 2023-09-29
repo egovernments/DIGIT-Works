@@ -1,4 +1,4 @@
-import { Header, Card, Loader, Button, WorkflowActions } from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, Button, WorkflowActions, CardText, CardHeader, CardSubHeader } from "@egovernments/digit-ui-react-components";
 import { transformEstimateData } from "../../utils/transformEstimateData";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -83,7 +83,12 @@ const ViewMeasurement = () => {
       />
 
       <MeasurementHistory contractNumber={workOrderNumber} measurementNumber={mbNumber} />
-      <MeasureTable {...tableData} isView={true} measureData={measures} />
+      <Card className="override-card" >
+        <CardSubHeader>{t("MB_SORS")}</CardSubHeader>
+        <MeasureTable {...tableData} isView={true} measureData={measures} /> 
+        </Card>
+        <Card className="override-card" >
+        <CardSubHeader>{t("MB_NONSOR")}</CardSubHeader>
       <MeasureTable
         {...tableData}
         config={{
@@ -92,7 +97,7 @@ const ViewMeasurement = () => {
         isView={true}
         measureData={measures}
       />
-
+      </Card>
       <ApplicationDetails
         applicationDetails={imageDetails}
         isLoading={isLoading}
