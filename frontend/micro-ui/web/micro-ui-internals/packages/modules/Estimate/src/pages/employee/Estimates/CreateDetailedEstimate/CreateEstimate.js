@@ -180,8 +180,15 @@ const CreateEstimate = () => {
     }
     //to use local config
     estimateFormConfig = createEstimateConfig()
-
-    const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", {});
+    const sorCategoryArray = [];
+    const nonSorCategoryArray = [];
+    sorCategoryArray.push(transformEstimateData());
+    nonSorCategoryArray.push(transformEstimateData());
+    const sorAndNonSorData = {
+        SOR: sorCategoryArray,
+        NONSOR: nonSorCategoryArray,
+    }
+    const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", sorAndNonSorData);
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;
 
     const initialDefaultValues = editEstimateUtil(estimate, uom, overheads)
@@ -201,17 +208,7 @@ const CreateEstimate = () => {
 
 
 
-    // useEffect(() => {
-    //         const sorCategoryArray = [];
-    // const nonSorCategoryArray = [];
-    // sorCategoryArray.push(transformEstimateData());
-    // nonSorCategoryArray.push(transformEstimateData());
-    // const sorAndNonSorData = {
-    //     SOR: sorCategoryArray,
-    //     NONSOR: nonSorCategoryArray,
-    // }
-    //     setSessionFormData({ ...sessionFormData, ...sorAndNonSorData, })
-    // }, [])
+
 
 
 
