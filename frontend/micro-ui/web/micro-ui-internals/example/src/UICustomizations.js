@@ -784,35 +784,16 @@ export const UICustomizations = {
     preProcess: (data) => {
     const mbNumber=data?.body?.inbox?.measurementNumber || null;
     const refId= data?.body?.Individual?.referenceId || null;
-    const projectname=data?.body?.inbox?.moduleSearchCriteria?.Projectname;
-    let boundary="";
-    if(data?.body?.inbox?.moduleSearchCriteria?.wardCode)  boundary=data?.body?.inbox?.moduleSearchCriteria?.wardCode[0]?.code;
     
-
-    if(projectname){
-    data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), projectName: projectname };
-    var newInbox= data.body.inbox;
-    var newModuleSearchCriteria = { tenantId: "pg.citya",}
-    var body = {...data.body, newInbox}
-    newInbox.moduleSearchCriteria = newModuleSearchCriteria;
-    var newData = {...data,body};
-    }
+    // data?.body?.inbox?.moduleSearchCriteria?.createdFrom="";
   
-    if(boundary){
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), boundary: boundary };
-      var newInbox= data.body.inbox;
-      var newModuleSearchCriteria = { tenantId: "pg.citya",}
-      var body = {...data.body, newInbox}
-      newInbox.moduleSearchCriteria = newModuleSearchCriteria;
-      var newData = {...data,body};
-    }
-
       return data;
       
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       // console.log(key,value);
       // console.log(row,"qwertyuiop");
+    
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result

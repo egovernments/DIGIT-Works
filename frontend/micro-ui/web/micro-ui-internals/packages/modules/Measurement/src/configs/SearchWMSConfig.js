@@ -33,10 +33,10 @@ const SearchMeasurementConfig = () => {
             secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
             minReqFields: 1,
             defaultValues: {
-              wardCode: "",
+              ward: "",
               MBNumber: "",
               measurementNumber: "",
-              Projectname: "",
+              projectName: "",
               referenceId: "",
               status: "",
               MBReference: "",
@@ -53,7 +53,7 @@ const SearchMeasurementConfig = () => {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                    name: "wardCode",
+                    name: "ward",
                     type: "ward",
                   optionsKey: "i18nKey",
                     defaultText: "COMMON_SELECT_WARD",
@@ -66,7 +66,7 @@ const SearchMeasurementConfig = () => {
                 type: "text",
                 isMandatory: false,
                 disable: false,
-                populators: { name: "Projectname", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
+                populators: { name: "projectName", validation: { pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i, maxlength: 140 } },
               },
               {
                 label: "MB_NUMBER",
