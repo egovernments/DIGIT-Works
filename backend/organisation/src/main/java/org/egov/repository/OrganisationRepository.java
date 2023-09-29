@@ -3,6 +3,7 @@ package org.egov.repository;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.repository.querybuilder.*;
 import org.egov.repository.rowmapper.*;
+import org.egov.service.EncryptionService;
 import org.egov.web.models.Document;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.web.models.*;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 @Repository
 @Slf4j
 public class OrganisationRepository {
+
+    public static final String ORGANISATION_ENCRYPT_KEY = "OrganisationEncrypt";
 
     @Autowired
     private OrganisationFunctionQueryBuilder organisationFunctionQueryBuilder;
@@ -50,6 +53,7 @@ public class OrganisationRepository {
     private ContactDetailsOrgIdsRowMapper contactDetailsOrgIdsRowMapper;
 
 
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -82,7 +86,7 @@ public class OrganisationRepository {
         //Fetch addresses based on organisation Ids
         List<Address> addresses = getAddressBasedOnOrganisationIds(organisationIds);
 
-        //Fetch addresses based on organisation Ids
+        //Fetch contact details based on organisation Ids
         List<ContactDetails> contactDetails = getContactDetailsBasedOnOrganisationIds(organisationIds);
 
         Set<String> functionIds = organisations.stream()
@@ -99,6 +103,7 @@ public class OrganisationRepository {
         List<Identifier> identifiers = getIdentifiersBasedOnOrganisationIds(organisationIds);
 
         log.info("Fetched organisation details for search request");
+
         //Construct Organisation Objects with fetched organisations, addresses, contactDetails, jurisdictions, identifiers and documents using Organisation id
         return buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers);
     }
@@ -163,11 +168,11 @@ public class OrganisationRepository {
         if (orgIdsFromIdentifierSearch.isEmpty() && isIdentifierSearchCriteriaPresent) {
             return;
         }
-        // If boundaryCode present in request, but the search result is empty, then return empty list
+        // If contactMobileNumber present in request, but the search result is empty, then return empty list
         if (orgIdsFromContactMobileNumberSearch.isEmpty() && isContactMobileNumberSearchCriteriaPresent) {
             return;
         }
-        // If contactMobileNumber present in request, but the search result is empty, then return empty list
+        // If boundaryCode present in request, but the search result is empty, then return empty list
         if (orgIdsFromBoundarySearch.isEmpty() && isBoundarySearchCriteriaPresent) {
             return;
         }
