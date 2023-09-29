@@ -19,7 +19,7 @@ export const createEstimateConfig = () => {
                 ]
             },
             {
-                "head": "WORKS_NON_SOR",
+                "head": "SOR",
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
@@ -32,6 +32,13 @@ export const createEstimateConfig = () => {
                         },
                         key: "SOR",
                     },
+                ]
+            },
+            {
+                "head": "NON SOR",
+                "subHead": "",
+                "navLink": "Work Details",
+                "body": [
                     {
                         type: "component",
                         component: "MeasureTable",
@@ -41,27 +48,10 @@ export const createEstimateConfig = () => {
                         },
                         key: "NONSOR",
                     },
-                    // {
-                    //     "type": "component",
-                    //     "component": "NonSORTable",
-                    //     "withoutLabel": true,
-                    //     "key": "nonSORDetails",
-                    //     "populators": {
-                    //         "rate": {
-                    //             "max": 5000000,
-                    //             "error": "ESTIMATE_LINE_ITEM_RATE_LIMIT",
-                    //         },
-
-                    //         "quantity": {
-                    //             "max": 999999,
-                    //             "error": "ESTIMATE_LINE_ITEM_QTY_LIMIT"
-                    //         }
-                    //     }
-                    // }
                 ]
             },
             {
-                "head": "WORKS_OVERHEADS",
+                "head": "Other Charges",
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
