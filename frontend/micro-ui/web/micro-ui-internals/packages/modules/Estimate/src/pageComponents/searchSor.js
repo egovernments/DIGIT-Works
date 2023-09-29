@@ -5,16 +5,24 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import EstimateDropdown from './EstimateDropdown';
 import SearchBar from './SearchBar';
 
-const searchSor = ({props}) => {
+const searchSor = (props) => {
+    console.log(props);
     const { t } = useTranslation();
     const history = useHistory();
     const tenantId = Digit.ULBService.getCurrentTenantId()
     const [stateData, setStateData] = useState({});
     const [selectedSOR, setSelectedSOR] = useState(null);
-    const {ref} = props;
+    const {ref,register,setValue} = props;
 
+    register("searchSor", stateData);
     useEffect(() => {
-        console.log(selectedSOR)
+        if(selectedSOR){
+            setStateData({
+                ...stateData,
+                selectedSor: selectedSOR
+            })
+            setValue("searchSor", stateData);
+        }
     }
     ,[selectedSOR]);
 
