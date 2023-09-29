@@ -6,14 +6,13 @@ import EstimateDropdown from './EstimateDropdown';
 import SearchBar from './SearchBar';
 
 const searchSor = (props) => {
-    console.log(props);
+    console.log("props", props)
     const { t } = useTranslation();
     const history = useHistory();
     const tenantId = Digit.ULBService.getCurrentTenantId()
     const [stateData, setStateData] = useState({});
     const [selectedSOR, setSelectedSOR] = useState(null);
-    const {ref,register,setValue} = props;
-
+    const {ref,register,setValue, formData} = props;
     register("searchSor", stateData);
     useEffect(() => {
         if(selectedSOR){
@@ -22,6 +21,7 @@ const searchSor = (props) => {
                 selectedSor: selectedSOR
             })
             setValue("searchSor", stateData);
+            formData.searchSor = stateData;
         }
     }
     ,[selectedSOR]);
