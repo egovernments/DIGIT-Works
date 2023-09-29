@@ -198,20 +198,20 @@ const CreateEstimate = () => {
             setSessionFormData(initialDefaultValues)
         }
     }, [estimate, uom, overheads])
-    const sorCategoryArray = [];
-    const nonSorCategoryArray = [];
-    sorCategoryArray.push(transformEstimateData());
-    nonSorCategoryArray.push(transformEstimateData());
-    const sorAndNonSorData = {
-        SOR: sorCategoryArray,
-        NONSOR: nonSorCategoryArray,
-
-    }
 
 
-    useEffect(() => {
-        setSessionFormData({ ...sessionFormData, ...sorAndNonSorData, })
-    }, [])
+
+    // useEffect(() => {
+    //         const sorCategoryArray = [];
+    // const nonSorCategoryArray = [];
+    // sorCategoryArray.push(transformEstimateData());
+    // nonSorCategoryArray.push(transformEstimateData());
+    // const sorAndNonSorData = {
+    //     SOR: sorCategoryArray,
+    //     NONSOR: nonSorCategoryArray,
+    // }
+    //     setSessionFormData({ ...sessionFormData, ...sorAndNonSorData, })
+    // }, [])
 
 
 

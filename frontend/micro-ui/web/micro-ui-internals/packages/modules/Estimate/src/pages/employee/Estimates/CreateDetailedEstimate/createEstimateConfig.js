@@ -23,14 +23,14 @@ export const createEstimateConfig = () => {
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
+               
+                    
                     {
                         type: "component",
-                        component: "MeasureTable",
+                        component: "searchSor",
                         withoutLabel: true,
-                        customProps: {
-                            isEstimate: true
-                        },
-                        key: "SOR",
+                        key: "searchSor",
+                        
                     },
                 ]
             },
@@ -46,8 +46,27 @@ export const createEstimateConfig = () => {
                         customProps: {
                             isEstimate: true
                         },
-                        key: "NONSOR",
+                        key: "SOR",
                     },
+                    
+                    // {
+                    //     "type": "component",
+                    //     "component": "NonSORTable",
+                    //     "withoutLabel": true,
+                    //     "key": "nonSORDetails",
+                    //     "populators": {
+                    //         "rate": {
+                    //             "max": 5000000,
+                    //             "error": "ESTIMATE_LINE_ITEM_RATE_LIMIT",
+                    //         },
+
+                    //         "quantity": {
+                    //             "max": 999999,
+                    //             "error": "ESTIMATE_LINE_ITEM_QTY_LIMIT"
+                    //         }
+                    //     }
+                    // }
+
                 ]
             },
             {
