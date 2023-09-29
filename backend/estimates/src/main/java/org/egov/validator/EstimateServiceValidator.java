@@ -6,9 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.EstimateRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MDMSUtils;
@@ -36,8 +34,6 @@ public class EstimateServiceValidator {
 
     @Autowired
     private ProjectUtil projectUtil;
-    @Autowired
-    private EstimateServiceConfiguration config;
 
     /**
      * validate the create estimate request for all the mandatory
@@ -64,18 +60,18 @@ public class EstimateServiceValidator {
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
-        validateProjectId(request, errorMap);
-        Set<String> uniqueIdentifiers = new HashSet<String>();
+
+        Set<String> sorIds = new HashSet<String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
-            uniqueIdentifiers.add(estimateDetail.getSorId());
+            sorIds.add(estimateDetail.getSorId());
         }
 
-        Object mdmsDataV2ForSor =mdmsUtils.mdmsCallV2(request ,rootTenantId,uniqueIdentifiers,config.getSorSearchSchemaCode());
-        validateMDMSDataV2ForSor(estimate,mdmsDataV2ForSor,uniqueIdentifiers, errorMap);
-        Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request,rootTenantId,uniqueIdentifiers,config.getRateSearchSchenaCode());
-        validateMDMSDataV2ForRates(estimate,mdmsDataV2ForRate,uniqueIdentifiers,errorMap);
+        Object mdmsDataV2 =mdmsUtils.mdmsCallV2(request , rootTenantId,sorIds);
+        validateMDMSDataV2(estimate,mdmsDataV2,sorIds);
+
+        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
+        validateProjectId(request, errorMap);
 
         validateNoOfUnit(estimateDetails);
 
@@ -87,7 +83,6 @@ public class EstimateServiceValidator {
      * validate the no of units in estimate details
      */
     public void validateNoOfUnit(List<EstimateDetail> estimateDetails){
-        log.info("EstimateServiceValidator::validateNoOfUnit");
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
 
@@ -225,14 +220,11 @@ public class EstimateServiceValidator {
         }
     }
 
-    /**
-     * validate the mdms data for sorid in mdmsv2
-     */
-    private void validateMDMSDataV2ForSor(Estimate estimate ,Object mdmsData, Set<String>uniqueIdentifiers,Map<String, String> errorMap ){
-        log.info("EstimateServiceValidator::validateMDMSDataV2");
-        int uniqueIdentifiersSizeInput = uniqueIdentifiers.size();
+    private void validateMDMSDataV2(Estimate estimate ,Object mdmsData, Set<String>sorIds ){
 
-        final  String jsonPathForTestSor = "$.mdms[*].uniqueIdentifier";
+        int sorIdsSizeInput = sorIds.size();
+
+        final  String jsonPathForTestSor = "$.mdms[*].id";
         List<Object> sorIdRes = null;
         try {
             sorIdRes = JsonPath.read(mdmsData,jsonPathForTestSor);
@@ -240,58 +232,22 @@ public class EstimateServiceValidator {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
         }
-        int uniqueIdentifiersSizeRes = sorIdRes.size();
-        if(uniqueIdentifiersSizeInput!=uniqueIdentifiersSizeRes){
-            errorMap.put("INVALId_SOR_ID", "The sor id is not present in MDMS");
+        int sorIdsSizeRes = sorIdRes.size();
+        if(sorIdsSizeInput!=sorIdsSizeRes){
             throw new CustomException("SORID","sorId is not in mdms");
-
         }
-    }
-
-    /**
-     * validate the mdms data for sorid in mdmsv2
-     */
-    private void validateMDMSDataV2ForRates(Estimate estimate ,Object mdmsData, Set<String>ratesId,Map<String, String> errorMap){
-        log.info("EstimateServiceValidator::validateMDMSDataV2ForRates");
-        int ratesIdInputSize = ratesId.size();
-
-        final  String jsonPathForTestSor = "$.mdms[*].uniqueIdentifier";
-        final  String jsonPathForRatesActive = "$.mdms[*].isActive";
-        List<Object> ratesRes = null;
-        List<Object> isActiveValues =null;
-        try {
-            ratesRes = JsonPath.read(mdmsData,jsonPathForTestSor);
-            isActiveValues= JsonPath.read(mdmsData,jsonPathForRatesActive);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
-        }
-        int ratesIdOutputSize = ratesRes.size();
-        if(ratesIdInputSize!=ratesIdOutputSize){
-            errorMap.put("INVALID_RATES_ID", "The rates id is not present in MDMS");
-            throw new CustomException("RATES","rates is not in mdms");
-
-        }
-        for (Object item : isActiveValues) {
-            String active = String.valueOf(item);
-            if ("false".equals(active)) {
-                errorMap.put("RATE_INACTIVE", "The rates is inactive");
-                throw new CustomException("RATES_ACTIVE","rates is not active");
-            }
-        }
-
 
     }
 
     private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap, boolean isCreate) {
         log.info("EstimateServiceValidator::validateMDMSData");
-        List<String> requniqueIdentifiers = new ArrayList<>();
+        List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
         // List<String> reqEstimateDetailNames = new ArrayList<>();
         Map<String, List<String>> reqEstimateDetailNameMap = new HashMap<>();
         Map<String, List<String>> overheadAmountTypeMap = new HashMap<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
-            requniqueIdentifiers = estimate.getEstimateDetails().stream()
+            reqSorIds = estimate.getEstimateDetails().stream()
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getSorId()))
                     .map(EstimateDetail::getSorId)
                     .collect(Collectors.toList());
@@ -343,7 +299,7 @@ public class EstimateServiceValidator {
         }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
-        final String jsonPathForuniqueIdentifiers = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
+        final String jsonPathForSorIds = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
         final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
         final String jsonPathForOverHead = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
 
@@ -355,7 +311,7 @@ public class EstimateServiceValidator {
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
-            // sorIdRes = JsonPath.read(mdmsData, jsonPathForuniqueIdentifiers);
+            // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
             categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
             overHeadRes = JsonPath.read(mdmsDataForOverHead, jsonPathForOverHead);
         } catch (Exception e) {
@@ -369,11 +325,11 @@ public class EstimateServiceValidator {
         if (CollectionUtils.isEmpty(tenantRes))
             errorMap.put("INVALID_TENANT_ID", "The tenant: " + estimate.getTenantId() + " is not present in MDMS");
 
-        //TODO - Configure uniqueIdentifiers in MDMS
-//        if (!CollectionUtils.isEmpty(sorIdRes) && !CollectionUtils.isEmpty(requniqueIdentifiers)) {
-//            requniqueIdentifiers.removeAll(sorIdRes);
-//            if (!CollectionUtils.isEmpty(requniqueIdentifiers)) {
-//                errorMap.put("SOR_IDS", "The uniqueIdentifiers: " + requniqueIdentifiers + " is not present in MDMS");
+        //TODO - Configure sorids in MDMS
+//        if (!CollectionUtils.isEmpty(sorIdRes) && !CollectionUtils.isEmpty(reqSorIds)) {
+//            reqSorIds.removeAll(sorIdRes);
+//            if (!CollectionUtils.isEmpty(reqSorIds)) {
+//                errorMap.put("SOR_IDS", "The sorIds: " + reqSorIds + " is not present in MDMS");
 //            }
 //        }
 
@@ -526,19 +482,6 @@ public class EstimateServiceValidator {
 
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
-
-        Set<String> uniqueIdentifiers = new HashSet<String>();
-        for(int i=0;i<estimateDetails.size();i++){
-            EstimateDetail estimateDetail = estimateDetails.get(i);
-            uniqueIdentifiers.add(estimateDetail.getSorId());
-        }
-
-        Object mdmsDataV2ForSor =mdmsUtils.mdmsCallV2(request , rootTenantId,uniqueIdentifiers,config.getSorSearchSchemaCode());
-        validateMDMSDataV2ForSor(estimate,mdmsDataV2ForSor,uniqueIdentifiers, errorMap);
-
-        Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request,rootTenantId,uniqueIdentifiers,config.getRateSearchSchenaCode());
-        validateMDMSDataV2ForRates(estimate,mdmsDataV2ForRate,uniqueIdentifiers,errorMap);
-
         validateProjectId(request, errorMap);
         validateNoOfUnit(estimateDetails);
 
