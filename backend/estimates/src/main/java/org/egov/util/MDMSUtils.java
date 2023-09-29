@@ -29,7 +29,6 @@ public class MDMSUtils {
     public static final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
     public static final String codeFilter = "$.*.code";
     public static final String activeCodeFilter = "$.[?(@.active==true)].code";
-    public static  final String sorTestSchemaCode = "SOR_TESTING.SOR2";
 
     @Autowired
     private EstimateServiceConfiguration config;
@@ -52,9 +51,17 @@ public class MDMSUtils {
         return result;
     }
 
-    public Object mdmsCallV2(EstimateRequest request, String tenantId, Set<String> sorIds){
+    /**
+     * Calls MDMS v2 service to fetch works master data
+     *
+     * @param request
+     * @param tenantId
+     * @return
+     */
+    public Object mdmsCallV2(EstimateRequest request, String tenantId, Set<String> sorIds,String schemaCode){
+        log.info("MDMSUtils::mDMSCallV2");
         RequestInfo requestInfo =request.getRequestInfo();
-        org.egov.web.models.MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestV2(requestInfo,tenantId,request, sorIds);
+        org.egov.web.models.MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestV2(requestInfo,tenantId,request, sorIds,schemaCode);
         StringBuilder uri = getMdmsSearchUrl2();
 
         Object result = serviceRequestRepository.fetchResult(uri,mdmsCriteriaReq);
@@ -119,8 +126,14 @@ public class MDMSUtils {
         return mdmsCriteriaReq;
     }
 
-    public org.egov.web.models.MdmsCriteriaReq getMDMSRequestV2(RequestInfo requestInfo , String  tenantId , EstimateRequest request,Set<String>sorIds){
-        org.egov.web.models.MdmsCriteria mdmsCriteria = org.egov.web.models.MdmsCriteria.builder().tenantId(tenantId).ids(sorIds).schemaCode(sorTestSchemaCode).build();
+    /**
+     * Returns mdms v2 search criteria based on the tenantId and mdms search criteria
+     * @return
+     */
+
+    public org.egov.web.models.MdmsCriteriaReq getMDMSRequestV2(RequestInfo requestInfo , String  tenantId , EstimateRequest request,Set<String>sorIds, String schemaCode){
+        log.info("MDMSUtils::getMDMSRequestV2");
+        org.egov.web.models.MdmsCriteria mdmsCriteria = org.egov.web.models.MdmsCriteria.builder().tenantId(tenantId).uniqueIdentifiers(sorIds).schemaCode(schemaCode).build();
         org.egov.web.models.MdmsCriteriaReq mdmsCriteriaReq = org.egov.web.models.MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo).build();
         return mdmsCriteriaReq;
     }
