@@ -2419,14 +2419,31 @@ export const UICustomizations = {
   },
 
   WMSSearchMeasurementConfig: {
+
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || ( createdFrom!== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+
     preProcess: (data) => {
 
-      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.createdFrom, "daystart");
-      delete data?.body?.inbox?.moduleSearchCriteria?.createdFrom;
-      if(createdFromDate) data.body.inbox.moduleSearchCriteria.createdFrom = createdFromDate
-      const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.createdTo);
-      delete data?.body?.inbox?.moduleSearchCriteria?.createdTo;
-      if(createdToDate) data.body.inbox.moduleSearchCriteria.createdTo = createdToDate
+      let moduleSearchCriteria = data?.body?.inbox?.moduleSearchCriteria;
+
+      moduleSearchCriteria = {
+        ...(moduleSearchCriteria?.measurementNumber && { measurementNumber: moduleSearchCriteria?.measurementNumber?.trim() }),
+        ...(moduleSearchCriteria?.projectName && { projectName : moduleSearchCriteria?.projectName}),
+        ...(moduleSearchCriteria?.status && {status : moduleSearchCriteria?.status}),
+        ...(moduleSearchCriteria?.ward && {ward : moduleSearchCriteria?.ward}),
+        ...(moduleSearchCriteria?.referenceId && {referenceId : moduleSearchCriteria?.referenceId}),
+        ...(moduleSearchCriteria?.createdFrom && {createdFrom : Digit.Utils.pt.convertDateToEpoch(moduleSearchCriteria?.createdFrom)}),
+        ...(moduleSearchCriteria?.createdTo && {createdTo : Digit.Utils.pt.convertDateToEpoch(moduleSearchCriteria?.createdTo)})
+      }
+      data.body.inbox.moduleSearchCriteria = { ...moduleSearchCriteria };
+      data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
       return data;
     },
