@@ -87,6 +87,7 @@ public class OrganisationService {
         }catch (Exception e){
             log.error("Exception while sending notification: " + e);
         }
+        encryptionService.encryptDetails(orgRequest,ORGANISATION_ENCRYPT_KEY);
         producer.push(configuration.getOrgKafkaUpdateTopic(), orgRequest);
         return orgRequest;
     }
@@ -99,7 +100,9 @@ public class OrganisationService {
     public List<Organisation> searchOrganisation(OrgSearchRequest orgSearchRequest) {
         log.info("OrganisationService::searchOrganisationWithoutWorkFlow");
         organisationServiceValidator.validateSearchOrganisationRequest(orgSearchRequest);
+        encryptionService.encryptDetails(orgSearchRequest,ORGANISATION_ENCRYPT_KEY);
         List<Organisation> organisations = organisationRepository.getOrganisations(orgSearchRequest);
+        encryptionService.decrypt(organisations,ORGANISATION_ENCRYPT_KEY,orgSearchRequest);
         return organisations;
     }
 
