@@ -23,6 +23,15 @@ export const createEstimateConfig = () => {
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
+               
+                    
+                    {
+                        type: "component",
+                        component: "searchSor",
+                        withoutLabel: true,
+                        key: "searchSor",
+                        
+                    },
                     {
                         type: "component",
                         component: "MeasureTable",
@@ -32,15 +41,7 @@ export const createEstimateConfig = () => {
                         },
                         key: "SOR",
                     },
-                    {
-                        type: "component",
-                        component: "MeasureTable",
-                        withoutLabel: true,
-                        customProps: {
-                            isEstimate: true
-                        },
-                        key: "NONSOR",
-                    },
+                    
                     // {
                     //     "type": "component",
                     //     "component": "NonSORTable",
