@@ -170,7 +170,7 @@ const CreateMeasurement = ({ props }) => {
   return (
     <div>
 
-      <Header className="works-header-view" styles={{marginLeft : "20px"}}>{t("MB_MEASUREMENT_BOOK")}</Header>
+      <Header className="works-header-view modify-header">{t("MB_MEASUREMENT_BOOK")}</Header>
      
 
       <ContractDetailsCard contract={contractData} isUpdate={props?.isUpdate} /> {/* Display contract details */}
