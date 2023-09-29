@@ -166,7 +166,7 @@ const MeasureTable = (props) => {
   return (
     // <Card className="override-card">
     <React.Fragment>
-      <table className="table reports-table sub-work-table">
+      <table className="table reports-table sub-work-table measurement-table-custom">
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>

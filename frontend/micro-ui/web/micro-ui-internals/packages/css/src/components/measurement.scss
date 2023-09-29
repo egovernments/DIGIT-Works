@@ -17,6 +17,7 @@
   text-decoration: none;
   display: inline-block;
   cursor: pointer;
+  box-shadow: none;
 }
 .override-card {
   margin-left: 0px !important;
@@ -97,7 +98,7 @@ $fill-color: #f47738;
 .contract-card {
   background-color: #ffffff;
   margin: 15px;
-  padding: 20px;
+  padding: 20px 20px 15px 20px;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
@@ -112,4 +113,24 @@ $fill-color: #f47738;
 .contract-card-label {
   font-weight: bold;
   margin-right: 10px;
+}
+
+.employeeCard .card-section-header {
+  margin-bottom: 0px;
+}
+
+.measurement-table-custom {
+  padding: 16px 18px !important;
+}
+
+.table {
+  thead {
+    th {
+      padding: 17px 18px;
+    }
+  }
+}
+
+.modified-bread-crumb {
+  margin-left: 10px;
 }
