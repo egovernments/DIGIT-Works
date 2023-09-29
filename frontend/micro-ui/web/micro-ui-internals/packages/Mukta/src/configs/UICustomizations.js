@@ -2420,29 +2420,13 @@ export const UICustomizations = {
 
   WMSSearchMeasurementConfig: {
     preProcess: (data) => {
-      const mbNumber = data?.body?.inbox?.measurementNumber || null;
-      const refId = data?.body?.Individual?.referenceId || null;
-      const projectname = data?.body?.inbox?.moduleSearchCriteria?.Projectname;
-      let boundary = "";
-      if (data?.body?.inbox?.moduleSearchCriteria?.wardCode) boundary = data?.body?.inbox?.moduleSearchCriteria?.wardCode[0]?.code;
 
-      if (projectname) {
-        data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), projectName: projectname };
-        var newInbox = data.body.inbox;
-        var newModuleSearchCriteria = { tenantId: "pg.citya" };
-        var body = { ...data.body, newInbox };
-        newInbox.moduleSearchCriteria = newModuleSearchCriteria;
-        var newData = { ...data, body };
-      }
-
-      if (boundary) {
-        data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId(), boundary: boundary };
-        var newInbox = data.body.inbox;
-        var newModuleSearchCriteria = { tenantId: "pg.citya" };
-        var body = { ...data.body, newInbox };
-        newInbox.moduleSearchCriteria = newModuleSearchCriteria;
-        var newData = { ...data, body };
-      }
+      const createdFromDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.createdFrom, "daystart");
+      delete data?.body?.inbox?.moduleSearchCriteria?.createdFrom;
+      if(createdFromDate) data.body.inbox.moduleSearchCriteria.createdFrom = createdFromDate
+      const createdToDate = Digit.Utils.pt.convertDateToEpoch(data?.body?.inbox?.moduleSearchCriteria?.createdTo);
+      delete data?.body?.inbox?.moduleSearchCriteria?.createdTo;
+      if(createdToDate) data.body.inbox.moduleSearchCriteria.createdTo = createdToDate
 
       return data;
     },
