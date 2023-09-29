@@ -43,9 +43,6 @@ export const createEstimateConfig = () => {
                         type: "component",
                         component: "MeasureTable",
                         withoutLabel: true,
-                        customProps: {
-                            isEstimate: true
-                        },
                         key: "SOR",
                     },
                     

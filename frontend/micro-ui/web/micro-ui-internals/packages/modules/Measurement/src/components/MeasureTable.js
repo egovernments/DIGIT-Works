@@ -7,8 +7,6 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
-console.log(props?.props?.isEstimate);
-
   const sorData = props?.data?.SOR?.length > 0 ? props?.data?.SOR : null;
   const nonsorData = props?.data?.NONSOR?.length > 0 ? props.data.NONSOR : null;
   const data = props?.config?.key === "SOR" ? sorData : nonsorData;

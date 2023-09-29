@@ -4,28 +4,43 @@ import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import EstimateDropdown from './EstimateDropdown';
 import SearchBar from './SearchBar';
+import { transform } from 'lodash';
 
 const searchSor = (props) => {
-    console.log("props", props)
+    // console.log("props", props);
     const { t } = useTranslation();
     const history = useHistory();
     const tenantId = Digit.ULBService.getCurrentTenantId()
     const [stateData, setStateData] = useState({});
     const [selectedSOR, setSelectedSOR] = useState(null);
     const {ref,register,setValue, formData} = props;
+
     register("searchSor", stateData);
     useEffect(() => {
-        if(selectedSOR){
-            setStateData({
+        // console.log("selectedSOR", selectedSOR);
+        setStateData({
                 ...stateData,
                 selectedSor: selectedSOR
-            })
-            setValue("searchSor", stateData);
-            formData.searchSor = stateData;
-        }
+            });
+        setValue("searchSor", stateData);
     }
     ,[selectedSOR]);
 
+
+    const transformSOR = (sor) => {
+        const transformedSOR = {
+            sNo: 1,
+            description: sor?.description,
+            uom: sor?.uom,
+            approvedQuantity: sor?.quantity,
+            consumedQ: sor?.quantity,
+            rate: sor?.rate,
+            amount: sor?.rate,
+            measures: sor?.measures,
+            targetId: sor?.id,
+        }
+        return transformedSOR;
+    }
   return (
     <div ref={ref}>
         <EstimateDropdown
@@ -51,6 +66,12 @@ const searchSor = (props) => {
         />
 
         <SearchBar selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
+        <Button label="Add" onButtonClick={() => {
+            // console.log("stateData", stateData);
+            const sor = transformSOR(stateData?.selectedSor);
+            formData.SOR.push(sor);
+            console.log("formData", formData);
+        }} />
     </div>
   )
 }
