@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import _ from "lodash";
 import { Amount } from "@egovernments/digit-ui-react-components";
@@ -781,11 +782,19 @@ export const UICustomizations = {
  
   WMSSearchMeasurementConfig: {
 
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || ( createdFrom!== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+
     preProcess: (data) => {
     const mbNumber=data?.body?.inbox?.measurementNumber || null;
     const refId= data?.body?.Individual?.referenceId || null;
-    
-    // data?.body?.inbox?.moduleSearchCriteria?.createdFrom="";
+
   
       return data;
       
