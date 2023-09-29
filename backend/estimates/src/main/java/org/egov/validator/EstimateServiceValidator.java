@@ -287,13 +287,13 @@ public class EstimateServiceValidator {
 
     private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap, boolean isCreate) {
         log.info("EstimateServiceValidator::validateMDMSData");
-        List<String> requniqueIdentifiers = new ArrayList<>();
+        List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
         // List<String> reqEstimateDetailNames = new ArrayList<>();
         Map<String, List<String>> reqEstimateDetailNameMap = new HashMap<>();
         Map<String, List<String>> overheadAmountTypeMap = new HashMap<>();
         if (estimate.getEstimateDetails() != null && !estimate.getEstimateDetails().isEmpty()) {
-            requniqueIdentifiers = estimate.getEstimateDetails().stream()
+            reqSorIds = estimate.getEstimateDetails().stream()
                     .filter(estimateDetail -> StringUtils.isNotBlank(estimateDetail.getSorId()))
                     .map(EstimateDetail::getSorId)
                     .collect(Collectors.toList());
@@ -345,7 +345,7 @@ public class EstimateServiceValidator {
         }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
-        final String jsonPathForuniqueIdentifiers = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
+        final String jsonPathForSorIds  = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
         final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
         final String jsonPathForOverHead = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
 
@@ -357,7 +357,7 @@ public class EstimateServiceValidator {
         try {
             deptRes = JsonPath.read(mdmsData, jsonPathForWorksDepartment);
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
-            // sorIdRes = JsonPath.read(mdmsData, jsonPathForuniqueIdentifiers);
+            // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
             categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
             overHeadRes = JsonPath.read(mdmsDataForOverHead, jsonPathForOverHead);
         } catch (Exception e) {
@@ -371,11 +371,11 @@ public class EstimateServiceValidator {
         if (CollectionUtils.isEmpty(tenantRes))
             errorMap.put("INVALID_TENANT_ID", "The tenant: " + estimate.getTenantId() + " is not present in MDMS");
 
-        //TODO - Configure uniqueIdentifiers in MDMS
-//        if (!CollectionUtils.isEmpty(sorIdRes) && !CollectionUtils.isEmpty(requniqueIdentifiers)) {
-//            requniqueIdentifiers.removeAll(sorIdRes);
-//            if (!CollectionUtils.isEmpty(requniqueIdentifiers)) {
-//                errorMap.put("SOR_IDS", "The uniqueIdentifiers: " + requniqueIdentifiers + " is not present in MDMS");
+        //TODO - Configure sorids in MDMS
+//        if (!CollectionUtils.isEmpty(sorIdRes) && !CollectionUtils.isEmpty(reqSorIds)) {
+//            .removeAll(sorIdRes);
+//            if (!CollectionUtils.isEmpty(reqSorIds)) {
+//                errorMap.put("SOR_IDS", "The sorids: " + reqSorIds + " is not present in MDMS");
 //            }
 //        }
 
