@@ -5,14 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.ServiceCallException;
-import org.egov.works.measurement.repository.querybuilder.MeasurementQueryBuilder;
-import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
-import org.egov.works.measurement.web.models.Measurement;
-import org.egov.works.measurement.web.models.*;
-import org.egov.works.measurement.web.models.MeasurementCriteria;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -29,26 +23,11 @@ import static org.egov.works.measurement.config.ServiceConstants.*;
 public class ServiceRequestRepository {
 
     private ObjectMapper mapper;
-    @Autowired
-    private MeasurementQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     private RestTemplate restTemplate;
 
-    @Autowired
-    private MeasurementRowMapper rowMapper;
+    private String getMeasurementServiceSql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber IN (:mbNumbers)";
 
-    private String getMBSsql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber IN (:mbNumbers)";
-
-
-    public ArrayList<Measurement> getMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getMeasurementSearchQuery(searchCriteria, preparedStmtList, measurementSearchRequest);
-        ArrayList<Measurement> measurementsList = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-        return measurementsList;
-    }
 
     @Autowired
     public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
@@ -80,7 +59,7 @@ public class ServiceRequestRepository {
         }
 
         try {
-            return jdbcTemplate.query(getMBSsql, params, new MeasurementServiceRowMapper());
+            return jdbcTemplate.query(getMeasurementServiceSql, params, new MeasurementServiceRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return Collections.emptyList(); // No MeasurementServices found
         }

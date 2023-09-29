@@ -31,8 +31,6 @@ public class MeasurementRegistryUtil {
     @Autowired
     private MeasurementServiceUtil measurementServiceUtil;
     @Autowired
-    private MeasurementRegistry measurementRegistryUtil;
-    @Autowired
     private RestTemplate restTemplate;
 
     public ResponseEntity<MeasurementResponse> createMeasurements(MeasurementServiceRequest body){

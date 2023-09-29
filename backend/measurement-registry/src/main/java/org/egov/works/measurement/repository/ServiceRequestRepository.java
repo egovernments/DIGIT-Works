@@ -39,8 +39,6 @@ public class ServiceRequestRepository {
     @Autowired
     private MeasurementRowMapper rowMapper;
 
-    private String getMBSsql = "SELECT * FROM eg_mbs_measurements WHERE mbNumber IN (:mbNumbers)";
-
 
     public ArrayList<Measurement> getMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
         List<Object> preparedStmtList = new ArrayList<>();

@@ -7,7 +7,6 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.Configuration;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.service.WorkflowService;
 import org.egov.works.measurement.util.ContractUtil;
@@ -40,9 +39,6 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private WorkflowService workflowService;
-
-    @Autowired
-    private MeasurementRowMapper rowMapper;
 
     @Autowired
     private ErrorConfiguration errorConfigs;
@@ -83,7 +79,7 @@ public class MeasurementServiceValidator {
             // validate contracts
             Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
             if (!isValidContract) {
-                throw new CustomException("","Invalid Contract Number");
+                throw errorConfigs.invalidContract;
             }
         });
     }
@@ -144,7 +140,7 @@ public class MeasurementServiceValidator {
 
     public void checkDataRejected(List<MeasurementService> existingMeasurementService){
         for(MeasurementService measurementService:existingMeasurementService){
-            if(measurementService.getWfStatus().equals("REJECTED")){
+            if(measurementService.getWfStatus().equals(configuration.rejectedStatus)){
                 throw errorConfigs.rejectedError(measurementService.getMeasurementNumber());
             }
         }

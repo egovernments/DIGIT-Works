@@ -102,11 +102,19 @@ public class MeasurementService {
         return response;
     }
     public MeasurementServiceResponse searchMeasurementService(MeasurementSearchRequest body) {
+        // Perform the search for measurements via Measurement Registry search API
         ResponseEntity<MeasurementResponse> responseEntity = measurementRegistryUtil.searchMeasurements(body);
         MeasurementResponse measurementResponse = responseEntity.getBody();
+
+        // Convert the MeasurementResponse into a MeasurementServiceResponse
         MeasurementServiceResponse measurementServiceResponse = measurementRegistry.makeSearchResponse(body);
+
+        // Convert the measurements from Measurement objects to MeasurementService objects
         List<org.egov.works.measurement.web.models.MeasurementService> measurementServices = measurementRegistry.changeToMeasurementService(measurementResponse.getMeasurements());
+
+        // Set the converted measurement services in the response
         measurementServiceResponse.setMeasurements(measurementServices);
+
         return measurementServiceResponse;
     }
 

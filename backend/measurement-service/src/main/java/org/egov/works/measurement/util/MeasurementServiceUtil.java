@@ -29,8 +29,6 @@ public class MeasurementServiceUtil {
     @Autowired
     private WorkflowService workflowService;
     @Autowired
-    private MeasurementServiceUtil measurementServiceUtil;
-    @Autowired
     private MeasurementEnrichment measurementEnrichment;
     public List<Measurement> convertToMeasurementList(List<MeasurementService> measurementServices) {
         List<Measurement> measurements = new ArrayList<>();

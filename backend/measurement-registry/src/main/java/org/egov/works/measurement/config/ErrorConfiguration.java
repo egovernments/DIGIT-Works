@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.http.HttpResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

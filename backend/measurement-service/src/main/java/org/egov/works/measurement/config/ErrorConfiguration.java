@@ -10,9 +10,9 @@ import org.egov.works.measurement.web.models.Measurement;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.UUID;
-
 
 @Component
 @NoArgsConstructor
@@ -20,33 +20,47 @@ import java.util.UUID;
 @Setter
 @Getter
 public class ErrorConfiguration {
-    public  CustomException measurementDataNotExist=new CustomException("","Measurement data does not exist");
-    public  CustomException measurementServiceDataNotExist=new CustomException("","MeasurementRegistry data does not exist");
-    public  CustomException measuresDataNotExist=new CustomException("","Measures data does not exist");
-    public  CustomException cumulativeEnrichmentError=new CustomException("","Error during Cumulative enrichment");
+    public CustomException measurementDataNotExist = new CustomException("", Configuration.MEASUREMENT_DATA_NOT_EXIST);
+    public CustomException measurementServiceDataNotExist = new CustomException("", Configuration.MEASUREMENT_SERVICE_DATA_NOT_EXIST);
+    public CustomException measuresDataNotExist = new CustomException("", Configuration.MEASURES_DATA_NOT_EXIST);
+    public CustomException cumulativeEnrichmentError = new CustomException("", Configuration.CUMULATIVE_ENRICHMENT_ERROR);
+    public CustomException noActiveContractId = new CustomException(Collections.singletonMap("", Configuration.NO_ACTIVE_CONTRACT_ID));
+    public CustomException duplicateTargetIds = new CustomException("", Configuration.DUPLICATE_TARGET_IDS);
+    public CustomException incompleteMeasures = new CustomException("", Configuration.INCOMPLETE_MEASURES);
+    public CustomException invalidDocuments = new CustomException("", Configuration.INVALID_DOCUMENTS);
+    public CustomException noValidEstimate = new CustomException("", Configuration.NO_VALID_ESTIMATE);
+    public CustomException idsAndMbNumberMismatch = new CustomException("", Configuration.IDS_AND_MB_NUMBER_MISMATCH);
+    public CustomException invalidEstimateID = new CustomException("", Configuration.INVALID_ESTIMATE_ID);
+    public CustomException invalidContract=new CustomException("",Configuration.INVALID_CONTRACT);
 
-    public CustomException noActiveContractId=new CustomException(Collections.singletonMap("", "No active contract with the given contract id"));
-    public CustomException duplicateTargetIds=new CustomException("","Duplicate Target Ids received, its should be unique");
-
-    public CustomException incompleteMeasures=new CustomException("","Incomplete Measures, some active line items are missed for the given contract");
-
-    public CustomException invalidDocuments=new CustomException("","Document IDs are invalid");
-    public CustomException noValidEstimate=new CustomException("","No valid Estimate found");
-    public CustomException idsAndMbNumberMismatch=new CustomException("","Id and Measurement Number is not matching");
-    public CustomException invalidEstimateID=new CustomException("","Estimate Ids are invalid");
-    public CustomException notValidReferenceId(String referenceId){
-        return new CustomException("","Measurement data with contract number " + referenceId+" is already there in progress state.");
+    public CustomException notValidReferenceId(String referenceId) {
+        String errorMessage = MessageFormat.format(Configuration.NOT_VALID_REFERENCE_ID, referenceId);
+        return new CustomException("", errorMessage);
     }
 
-    public CustomException apiRequestFailed(HttpResponse response){
-        return new CustomException("","API request failed with status code: " + response.getStatusLine().getStatusCode());
+    public CustomException apiRequestFailed(HttpResponse response) {
+        String errorMessage = MessageFormat.format(Configuration.API_REQUEST_FAILED, response.getStatusLine().getStatusCode());
+        return new CustomException("", errorMessage);
     }
-    public CustomException rejectedError(String measurementNumber){
-        return new CustomException("","Measurement with measurementNumber "+measurementNumber+" is rejected.");
-    }
-    public CustomException apiRequestFailedIOexception(IOException e){
-        return new CustomException("","API request failed: " + e.getMessage());
-    }
-    public IllegalArgumentException tenantIdRequired= new IllegalArgumentException("TenantId is required.");
 
+    public CustomException rejectedError(String measurementNumber) {
+        String errorMessage = MessageFormat.format(Configuration.REJECTED_ERROR, measurementNumber);
+        return new CustomException("", errorMessage);
+    }
+
+    public CustomException apiRequestFailedIOexception(IOException e) {
+        String errorMessage = MessageFormat.format(Configuration.API_REQUEST_FAILED_IOEXCEPTION, e.getMessage());
+        return new CustomException("", errorMessage);
+    }
+
+    public IllegalArgumentException tenantIdRequired = new IllegalArgumentException(Configuration.TENANT_ID_REQUIRED);
+    public CustomException lineItemsNotProvided(String id) {
+        String errorMessage = MessageFormat.format(Configuration.LINE_ITEMS_NOT_PROVIDED, id);
+        return new CustomException("", errorMessage);
+    }
+
+    public CustomException invalidTargetIdForContract(String targetId, String referenceId) {
+        String errorMessage = MessageFormat.format(Configuration.INVALID_TARGET_ID_FOR_CONTRACT, targetId, referenceId);
+        return new CustomException("", errorMessage);
+    }
 }

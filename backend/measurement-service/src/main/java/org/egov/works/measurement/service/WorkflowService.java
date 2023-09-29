@@ -39,18 +39,16 @@ public class WorkflowService {
     }
 
     public void changeDataAccordingToWfActions(MeasurementServiceRequest measurementServiceRequest,Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap){
-        Set<String> actionSets=new HashSet<>();
-        actionSets.add("SAVE_AS_DRAFT");
-        actionSets.add("SUBMIT");
-        actionSets.add("EDIT/RE-SUBMIT");
+        Set<String> actionSets=config.actionSets;
         for(int i=0;i<measurementServiceRequest.getMeasurements().size();i++){
             if(!actionSets.contains(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction())){
-                MeasurementService existingCurrentMeasurementService=mbNumberToServiceMap.get(measurementServiceRequest.getMeasurements().get(i).getMeasurementNumber());
-                Workflow workflow=measurementServiceRequest.getMeasurements().get(i).getWorkflow();
-                measurementServiceRequest.getMeasurements().set(i,existingCurrentMeasurementService);
-                measurementServiceRequest.getMeasurements().get(i).setWorkflow(workflow);
+                MeasurementService existingCurrentMeasurementService = mbNumberToServiceMap.get(measurementServiceRequest.getMeasurements().get(i).getMeasurementNumber()); // Get existing MeasurementService
+                Workflow workflow = measurementServiceRequest.getMeasurements().get(i).getWorkflow(); // Get workflow
+                measurementServiceRequest.getMeasurements().set(i, existingCurrentMeasurementService); // Replace current measurement service
+                measurementServiceRequest.getMeasurements().get(i).setWorkflow(workflow); // Set workflow
+
             }
-            if(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction().equals("REJECT")){
+            if(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction().equals(config.rejectedStatus)){
                 measurementServiceRequest.getMeasurements().get(i).setIsActive(false);
             }
         }

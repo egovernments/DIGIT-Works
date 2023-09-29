@@ -95,7 +95,7 @@ public class ContractUtil {
 
             if (!isTargetIdPresent) {
                 isTargetIdsPresent = false;
-                throw new CustomException("",measure.getTargetId() + " is not a valid id for the given Contract " + measurement.getReferenceId());
+                throw errorConfigs.invalidTargetIdForContract(measure.getTargetId(),measurement.getReferenceId());
 //                throw errorConfigs.noActiveContractId;
             } else {
                 lineItemIdsList.add(measure.getTargetId());
@@ -138,7 +138,7 @@ public class ContractUtil {
     public void isAllRequiredLineItemsPresent(List<String> reqLineItems,Set<String> receivedLineItems){
         for(String id:reqLineItems){
             if(!receivedLineItems.contains(id)){
-                throw new CustomException("", id + " line items is not provided, it is required");
+                throw errorConfigs.lineItemsNotProvided(id);
             }
         }
     }
@@ -154,7 +154,7 @@ public class ContractUtil {
             List<Measurement> measurements=measurementRegistryUtil.searchMeasurements(measurementSearchRequest).getBody().getMeasurements();
             if(!measurements.isEmpty()){
                 List<MeasurementService> measurementServices=serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate,Collections.singletonList(measurements.get(0).getMeasurementNumber()));
-                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals("REJECTED")||measurementServices.get(0).getWfStatus().equals("APPROVED"))){
+                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals(configuration.rejectedStatus)||measurementServices.get(0).getWfStatus().equals(configuration.approvedStatus))){
                     throw errorConfigs.notValidReferenceId(measurements.get(0).getReferenceId());
                 }
             }
