@@ -8,9 +8,9 @@ import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
 
-  const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
-  const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
-  const data = props.config.key === "SOR" ? sorData : nonsorData;
+  const sorData = props?.data?.SOR?.length > 0 ? props?.data?.SOR : null;
+  const nonsorData = props?.data?.NONSOR?.length > 0 ? props.data.NONSOR : null;
+  const data = props?.config?.key === "SOR" ? sorData : nonsorData;
   const [tablesState, setTablesState] = useState(data);
   const tableKey = props.config.key;
   const { t } = useTranslation();
@@ -50,7 +50,7 @@ const MeasureTable = (props) => {
     return obj;
   };
 
-  columns = [
+  let columns = [
     t("WORKS_SNO"),
     t("MB_DESCRIPTION"),
     t("MB_UNIT"),

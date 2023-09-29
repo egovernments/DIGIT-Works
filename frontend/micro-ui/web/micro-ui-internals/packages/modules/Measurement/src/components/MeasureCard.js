@@ -117,22 +117,22 @@ return true;
     let obj = {};
     switch (index) {
       case 1:
-        obj = { width: "1rem" };
+        obj = { width: "0.5rem" };
         break;
       case 2:
-        obj = { width: "30%" };
+        obj = { width: "0.5rem" };
         break;
       case 3:
-        obj = { width: "27rem" };
+        obj = { width: "23rem" };
         break;
       case 4:
-        obj = { width: "27rem" };
+        obj = { width: "3rem" };
         break;
       case 5:
-        obj = { width: "3%" };
+        obj = { width: "3rem" };
         break;
       default:
-        obj = { width: "92rem" };
+        obj = { width: "3rem" };
         break;
     }
     return obj;
