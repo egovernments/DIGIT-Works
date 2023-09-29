@@ -1,11 +1,10 @@
 package org.egov.works.measurement.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import org.egov.works.measurement.config.MBServiceConfiguration;
 
 @Slf4j
 @Component

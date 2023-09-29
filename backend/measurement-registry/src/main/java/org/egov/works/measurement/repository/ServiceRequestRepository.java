@@ -8,20 +8,20 @@ import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.measurement.repository.querybuilder.MeasurementQueryBuilder;
 import org.egov.works.measurement.repository.rowmapper.MeasurementRowMapper;
 import org.egov.works.measurement.web.models.Measurement;
-import org.egov.works.measurement.web.models.*;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.egov.works.measurement.web.models.MeasurementSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import static org.egov.works.measurement.config.ServiceConstants.*;
+import static org.egov.works.measurement.config.ServiceConstants.EXTERNAL_SERVICE_EXCEPTION;
+import static org.egov.works.measurement.config.ServiceConstants.SEARCHER_SERVICE_EXCEPTION;
 
 @Repository
 @Slf4j

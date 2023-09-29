@@ -1,9 +1,8 @@
 package org.egov.works.measurement.repository.rowmapper;
 
-import org.egov.works.measurement.web.models.Measurement;
+import digit.models.coremodels.AuditDetails;
 import org.egov.works.measurement.web.models.MeasurementService;
 import org.springframework.jdbc.core.RowMapper;
-import digit.models.coremodels.AuditDetails;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;

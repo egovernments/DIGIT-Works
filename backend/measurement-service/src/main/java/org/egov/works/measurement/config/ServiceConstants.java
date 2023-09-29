@@ -18,19 +18,6 @@ public class ServiceConstants {
     public static final String RES_MSG_ID = "uief87324";
     public static final String SUCCESSFUL = "successful";
     public static final String FAILED = "failed";
-
-    public static final String URL = "url";
-    public static final String URL_SHORTENING_ERROR_CODE = "URL_SHORTENING_ERROR";
-    public static final String URL_SHORTENING_ERROR_MESSAGE = "Unable to shorten url: ";
-
-    public static final String DOB_FORMAT_Y_M_D = "yyyy-MM-dd";
-    public static final String DOB_FORMAT_D_M_Y = "dd/MM/yyyy";
-    public static final String ILLEGAL_ARGUMENT_EXCEPTION_CODE = "IllegalArgumentException";
-    public static final String OBJECTMAPPER_UNABLE_TO_CONVERT = "ObjectMapper not able to convertValue in userCall";
-    public static final String DOB_FORMAT_D_M_Y_H_M_S = "dd-MM-yyyy HH:mm:ss";
-    public static final String CREATED_DATE = "createdDate";
-    public static final String LAST_MODIFIED_DATE = "lastModifiedDate";
-    public static final String DOB = "dob";
     public static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
     public static final String INVALID_DATE_FORMAT_CODE = "INVALID_DATE_FORMAT";
     public static final String INVALID_DATE_FORMAT_MESSAGE = "Failed to parse date format in user";

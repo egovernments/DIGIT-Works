@@ -5,25 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.ErrorConfiguration;
+import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.kafka.MBRegistryProducer;
-import org.egov.works.measurement.util.*;
-//import org.egov.works.measurement.validator.MeasurementServiceValidator;
+import org.egov.works.measurement.repository.ServiceRequestRepository;
+import org.egov.works.measurement.util.MeasurementRegistryUtil;
+import org.egov.works.measurement.util.ResponseInfoFactory;
 import org.egov.works.measurement.validator.MeasurementValidator;
-import org.egov.works.measurement.web.models.Measurement;
-import org.egov.works.measurement.web.models.MeasurementRequest;
+import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.egov.works.measurement.web.models.Pagination;
-
-import org.egov.works.measurement.config.MBRegistryConfiguration;
-
-import org.egov.works.measurement.web.models.*;
 
 import java.util.List;
-
-import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.web.models.MeasurementCriteria;
 
 
 @Service

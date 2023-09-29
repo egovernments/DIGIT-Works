@@ -6,17 +6,20 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.ServiceCallException;
 import org.egov.works.measurement.repository.rowmapper.MeasurementServiceRowMapper;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import static org.egov.works.measurement.config.ServiceConstants.*;
+import static org.egov.works.measurement.config.ServiceConstants.EXTERNAL_SERVICE_EXCEPTION;
+import static org.egov.works.measurement.config.ServiceConstants.SEARCHER_SERVICE_EXCEPTION;
 
 @Repository
 @Slf4j
