@@ -71,6 +71,11 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
         setTotal(tableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
 
         return { ...state, tableState };
+      case "REMOVE_ROW":
+        const { id: rowIdToRemove } = action;
+        const updatedTableState = state.tableState.filter((row, index) => index + 1 !== rowIdToRemove);
+        setTotal(updatedTableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
+        return { ...state, tableState: updatedTableState };
       case "CLEAR_STATE":
         const clearedTableState = state.tableState.map((item) => ({
           ...item,
@@ -91,7 +96,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
   const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
-    register("measurements", tableData);
+    register("table", tableData);
   }, [])
 
   const getStyles = (index) => {
@@ -185,7 +190,7 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
                   <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
                     tableData[tableKey][tableIndex].measures = state.tableState;
                     tableData[tableKey][tableIndex].amount = parseFloat(tableData[tableKey][tableIndex].measures.reduce((total, item) => total + item.rowAmount, 0)).toFixed(2);
-                    setValue("measurements", tableData);
+                    setValue("table", tableData);
                     setInitialState(state);
                     setConsumedQty(total);
                     setShowMeasureCard(false);

@@ -19,7 +19,7 @@ export const createEstimateConfig = () => {
                 ]
             },
             {
-                "head": "WORKS_NON_SOR",
+                "head": "SOR",
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
@@ -32,6 +32,13 @@ export const createEstimateConfig = () => {
                         key: "searchSor",
                         
                     },
+                ]
+            },
+            {
+                "head": "NON SOR",
+                "subHead": "",
+                "navLink": "Work Details",
+                "body": [
                     {
                         type: "component",
                         component: "MeasureTable",
@@ -59,10 +66,11 @@ export const createEstimateConfig = () => {
                     //         }
                     //     }
                     // }
+
                 ]
             },
             {
-                "head": "WORKS_OVERHEADS",
+                "head": "Other Charges",
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
