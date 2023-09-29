@@ -45,6 +45,16 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
     return 0; // Return 0 if the format is not as expected
   };
 
+  function formatStatus(status) {
+    if (!status) return '';
+  
+    // Convert to lowercase and capitalize the first letter
+    const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  
+    // Replace underscores with spaces
+    return formattedStatus.replace(/_/g, ' ');
+  }
+
   const columns = [
     { label: t("MB_SNO"), key: "sno" },
     { label: t("MB_REFERENCE_NUMBER"), key: "mbref" },
@@ -70,7 +80,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
       musterid: t("NA"),
       mbDate: Digit.Utils.pt.convertEpochToDate(item?.entryDate),
       period: t("NA"),
-      status: item?.wfStatus,
+      status: formatStatus(item?.wfStatus),
       amount: 1000,
     }));
 
