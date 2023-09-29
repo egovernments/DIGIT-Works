@@ -23,8 +23,7 @@ const SearchBar = (props) => {
                 masterDetails: [
                     {
                         name: "SOR2",
-
-                        filter: `[?(@.description=~/.*${cr}.*/i)]`
+                        filter:`$[?(@.description=~/.*${cr}.*/i && @.sorType == 'Material')]` 
                     }
                 ]
             }
