@@ -7,11 +7,13 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
-  console.log(props?.props?.isEstimate);
-  const sorData = props.data.SOR?.length > 0 ? props.data.SOR : null;
-  const nonsorData = props.data.NONSOR?.length > 0 ? props.data.NONSOR : null;
-  const data = props.config.key === "SOR" ? sorData : nonsorData;
+console.log(props?.props?.isEstimate);
+
+  const sorData = props?.data?.SOR?.length > 0 ? props?.data?.SOR : null;
+  const nonsorData = props?.data?.NONSOR?.length > 0 ? props.data.NONSOR : null;
+  const data = props?.config?.key === "SOR" ? sorData : nonsorData;
   const [table, setTable] = useState(props.data);
+
   const [tablesState, setTablesState] = useState(data);
   const tableKey = props.config.key;
   const { t } = useTranslation();
@@ -51,26 +53,26 @@ const MeasureTable = (props) => {
     return obj;
   };
 
-  columns = props?.props?.isEstimate ?
-    [
-      t("WORKS_SNO"),
-      t("MB_DESCRIPTION"),
-      t("MB_UNIT"),
-      t("MB_RATE"),
-      t("MB_CURRENT_MB_ENTRY"),
-      t("MB_AMOUNT_CURRENT_ENTRY"),
-      t(""),
-    ]
-    : [
-      t("WORKS_SNO"),
-      t("MB_DESCRIPTION"),
-      t("MB_UNIT"),
-      t("MB_RATE"),
-      t("MB_APPROVER_QUANT"),
-      t("MB_CONSUMED_QUANT"),
-      t("MB_CURRENT_MB_ENTRY"),
-      t("MB_AMOUNT_CURRENT_ENTRY"),
-    ];
+  let columns = props?.props?.isEstimate ?
+  [
+    t("WORKS_SNO"),
+    t("MB_DESCRIPTION"),
+    t("MB_UNIT"),
+    t("MB_RATE"),
+    t("MB_CURRENT_MB_ENTRY"),
+    t("MB_AMOUNT_CURRENT_ENTRY"),
+    t(""),
+  ]
+  : [
+    t("WORKS_SNO"),
+    t("MB_DESCRIPTION"),
+    t("MB_UNIT"),
+    t("MB_RATE"),
+    t("MB_APPROVER_QUANT"),
+    t("MB_CONSUMED_QUANT"),
+    t("MB_CURRENT_MB_ENTRY"),
+    t("MB_AMOUNT_CURRENT_ENTRY"),
+  ];
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return (
@@ -256,7 +258,7 @@ const MeasureTable = (props) => {
   return (
     // <Card className="override-card">
     <React.Fragment>
-      <table className="table reports-table sub-work-table">
+      <table className="table reports-table sub-work-table measurement-table-custom">
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>

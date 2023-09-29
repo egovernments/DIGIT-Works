@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import _ from "lodash";
 import { Amount } from "@egovernments/digit-ui-react-components";
@@ -734,42 +735,27 @@ export const UICustomizations = {
         ...(moduleSearchCriteria?.ward?.length > 0 && { ward: moduleSearchCriteria.ward?.map(e => e?.code) }),
         ...(statusValues.length > 0 && { status: statusValues })
       }
-
-        // let status;
-        // if (states.length > 0) status = states;
-        // }
-        // // //cloning locality and workflow states to format them
-        // // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
-        // let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
-        // // delete data.body.inbox.moduleSearchCriteria.locality;
-        // delete data.body.inbox.moduleSearchCriteria.state;
-        // // locality = locality?.map((row) => row?.code);
-        // states = Object.keys(states)?.filter((key) => states[key]);
-        // // //adding formatted data to these keys
-        // // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
-        // if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;
-        // //adding tenantId to moduleSearchCriteria
         data.body.inbox.moduleSearchCriteria = { ...moduleSearchCriteria };
         data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
         return data;
       },
         additionalCustomizations: (row, key, column, value, t, searchResult) => {
-          console.log(searchResult[0], "sss")
-          const state = searchResult[0]?.ProcessInstance?.state?.state;
-          const contractNumber = searchResult[0]?.businessObject?.referenceId;
-          const measurementNumber = searchResult[0]?.businessObject?.measurementNumber;
+
           const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
+         
           switch (key) {
             case "MB_REFERENCE_NUMBER":
+              const state = row?.ProcessInstance?.state?.state;
+              const contractNumber = row?.businessObject?.referenceId
               return (
                 <span className="link">
-                  {Digit.Utils.statusBasedNavigation(state, contractNumber, measurementNumber, tenantId, value)}
+                  {/* {Digit.Utils.statusBasedNavigation(state, contractNumber, value, tenantId, value)} */}
                 </span>
               );
             case "MB_ASSIGNEE":
               return value ? <span>{value?.[0]?.name}</span> : <span>{t("NA")}</span>;
             case "MB_WORKFLOW_STATE":
-              return <span>{t(`WF_EST_${value}`)}</span>;
+              return <span>{t(value)}</span>;
             case "MB_AMOUNT":
               return <Amount customStyle={{ textAlign: 'right' }} value={Math.round(value)} t={t}></Amount>
             case "MB_SLA_DAYS_REMAINING":
@@ -796,34 +782,46 @@ export const UICustomizations = {
  
   WMSSearchMeasurementConfig: {
 
+    customValidationCheck: (data) => {
+      //checking both to and from date are present
+      const { createdFrom, createdTo } = data;
+      if ((createdFrom === "" && createdTo !== "") || ( createdFrom!== "" && createdTo === ""))
+        return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
+
+      return false;
+    },
+
     preProcess: (data) => {
     const mbNumber=data?.body?.inbox?.measurementNumber || null;
     const refId= data?.body?.Individual?.referenceId || null;
-    
+
+  
       return data;
       
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       // console.log(key,value);
       // console.log(row,"qwertyuiop");
+    
       //here we can add multiple conditions
       //like if a cell is link then we return link
       //first we can identify which column it belongs to then we can return relevant result
-      const state = searchResult[0]?.ProcessInstance?.state?.state;
-      const contractNumber = searchResult[0]?.businessObject?.referenceId;
-      const measurementNumber = searchResult[0]?.businessObject?.measurementNumber;
+
       const tenantId = searchResult[0]?.ProcessInstance?.tenantId;
 
       switch (key) {
         case "MB_NUMBER":
+          const state = row?.ProcessInstance?.state?.state;
+          const contractNumber = row?.businessObject?.referenceId
           return (
             <span className="link">
-              {Digit.Utils.statusBasedNavigation(state, contractNumber, measurementNumber, tenantId, value)}
+              {Digit.Utils.statusBasedNavigation(state , contractNumber, value, tenantId, value)}
             </span>
           );
             case "MB_AMOUNT":
               return value ? <span style={{ whiteSpace: "nowrap" }}>{value}</span> : t("ES_COMMON_NA");
-
+              case "MB_STATUS":
+                return <span>{t(value)}</span>;
         case "MASTERS_SOCIAL_CATEGORY":
           return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
 

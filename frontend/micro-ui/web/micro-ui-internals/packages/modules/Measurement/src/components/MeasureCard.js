@@ -17,14 +17,27 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
   const isEstimate = isEstimates;
 
   const validate = (value) => {
-    if (value === null || value === undefined || value === "" || value === "0") {
+    if (value === null || value === undefined || value === "" || value === 0 || value ==="0") {
       return 1;
     } else {
       return value;
     }
   }
 
+  const initialValue = (element) => {
+   if(element.number !== "" && element.number!=="0" && element.number!== 0)
+   return false;
+   if(element.width !== "" && element.width!=="0" && element.width!== 0)
+   return false;
+   if(element.length !== "" && element.length!=="0" && element.length!== 0)
+   return false;
+   if(element.height !== "" && element.height!=="0" && element.height!== 0)
+   return false;
+return true;
+  }
+
   const reducer = (state, action) => {
+  
     switch (action.type) {
       case "ADD_ROW":
         const { state: newRow } = action;
@@ -60,16 +73,21 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
 
         }
         const element = tableState[findIndex];
-        const calculatedValue =
+        let calculatedValue =
           (validate(element.number)) *
           (validate(element.length)) *
           (validate(element.width)) *
           (validate(element.height));
-
+          const initialValueState=initialValue(element);
+     if(initialValueState){
+      calculatedValue=0;
+     
+     }
         tableState[findIndex].noOfunit = calculatedValue;
         tableState[findIndex].rowAmount = unitRate * calculatedValue;
         setTotal(tableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
-
+         if(initialValueState)
+         setTotal(0);
         return { ...state, tableState };
       case "REMOVE_ROW":
         const { id: rowIdToRemove } = action;
@@ -78,16 +96,17 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
         return { ...state, tableState: updatedTableState };
       case "CLEAR_STATE":
         const clearedTableState = state.tableState.map((item) => ({
-          ...item,
-          height: "0",
-          width: "0",
-          length: "0",
-          number: "0",
-          noOfunit: 0,
-          rowAmount: 0,
-        }));
-        setTotal(clearedTableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
-        return { ...state, tableState: clearedTableState };
+        ...item,
+        height: 0,
+        width: 0,
+        length: 0,
+        number: 0,
+        noOfunit: 0,
+        rowAmount: 0,
+      }));
+      // setTotal(clearedTableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
+      setTotal(0);
+      return { ...state, tableState: clearedTableState };
 
       default:
         return state;
@@ -103,22 +122,22 @@ const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowM
     let obj = {};
     switch (index) {
       case 1:
-        obj = { width: "1rem" };
+        obj = { width: "0.5rem" };
         break;
       case 2:
-        obj = { width: "30%" };
+        obj = { width: "0.5rem" };
         break;
       case 3:
-        obj = { width: "27rem" };
+        obj = { width: "23rem" };
         break;
       case 4:
-        obj = { width: "27rem" };
+        obj = { width: "3rem" };
         break;
       case 5:
-        obj = { width: "3%" };
+        obj = { width: "3rem" };
         break;
       default:
-        obj = { width: "92rem" };
+        obj = { width: "3rem" };
         break;
     }
     return obj;

@@ -1,4 +1,4 @@
-import { Header, Card, Loader, Button, WorkflowActions } from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, Button, WorkflowActions, CardText, CardHeader, CardSubHeader } from "@egovernments/digit-ui-react-components";
 import { transformEstimateData } from "../../utils/transformEstimateData";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,25 +17,14 @@ const ViewMeasurement = () => {
   const [sorCategoryArray, setSorCategoryArray] = useState([]);
   const [nonSorCategoryArray, setNonSorCategoryArray] = useState([]);
 
-  const pagination = {
-    pagination: {
-      limit: 10,
-      offSet: 0,
-      sortBy: "createdTime",
-      order: "DESC",
-    },
-  };
 
-  const criteria = {
-    criteria: {
-      tenantId: tenantId,
-      referenceId: [workOrderNumber],
-      measurementNumber: mbNumber,
-    },
-    ...pagination,
-  };
+  const body = {
+      "contractNumber" : workOrderNumber,
+      "tenantId" : tenantId,
+      "measurementNumber" : mbNumber
+  }
 
-  let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.measurement.useViewMeasurement(tenantId, criteria);
+  let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.measurement.useViewMeasurement(tenantId, body);
 
   const projectDetails = { applicationDetails: [applicationDetails?.applicationDetails?.applicationDetails[0]] };
   const imageDetails = { applicationDetails: [applicationDetails?.applicationDetails?.applicationDetails[2]] };
@@ -75,7 +64,7 @@ const ViewMeasurement = () => {
   if (isLoading) {
     return <Loader />;
   }
-  if (loading || sorCategoryArray.length === 0 || nonSorCategoryArray.length === 0) {
+  if (loading || sorCategoryArray.length === 0 || (!nonSorCategoryArray || nonSorCategoryArray.length === 0)) {
     return <Loader />;
   }
 
@@ -94,7 +83,12 @@ const ViewMeasurement = () => {
       />
 
       <MeasurementHistory contractNumber={workOrderNumber} measurementNumber={mbNumber} />
-      <MeasureTable {...tableData} isView={true} measureData={measures} />
+      <Card className="override-card" >
+        <CardSubHeader>{t("MB_SORS")}</CardSubHeader>
+        <MeasureTable {...tableData} isView={true} measureData={measures} /> 
+        </Card>
+        <Card className="override-card" >
+        <CardSubHeader>{t("MB_NONSOR")}</CardSubHeader>
       <MeasureTable
         {...tableData}
         config={{
@@ -103,7 +97,7 @@ const ViewMeasurement = () => {
         isView={true}
         measureData={measures}
       />
-
+      </Card>
       <ApplicationDetails
         applicationDetails={imageDetails}
         isLoading={isLoading}

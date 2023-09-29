@@ -1,7 +1,5 @@
-import { ContractService } from "../../elements/Contracts";
-import { WorksService } from "../../elements/Works";
 import { getThumbnails } from "../../../utils/thumbnail";
-import { MeasurementService } from "../../elements/Measurement";
+import { CustomService } from "../../elements/CustomService";
 
 const combine = (docs, estimateDocs) => {
   let allDocuments = [];
@@ -21,7 +19,6 @@ const combine = (docs, estimateDocs) => {
 const transformViewDataToApplicationDetails = async (t, data, workflowDetails, revisedWONumber) => {
   //if revisedWONumber is defined then it's a time extension screen(use TE object here)
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  console.log(data.contracts);
   const isTimeExtAlreadyInWorkflow = data.contracts.some(
     (element) =>
       element.businessService === Digit?.Customizations?.["commonUiConfig"]?.businessServiceMap?.revisedWO && element.status === "INWORKFLOW"
@@ -42,12 +39,13 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   }
 
   let measurements = data?.measurements;
-  const fileStoreIds = measurements[0]?.documents.map((item) => item.id);
+  const fileStoreIds = measurements[0]?.documents.map((item) => item.fileStore);
 
   let thumbnails = "";
   try {
     thumbnails = await getThumbnails(
-      ["8f158603-26a7-4c3a-8433-64b9ed20db60", "10ca8e0f-6d2e-4918-b628-b8bda860f061", "611d55d1-9a43-4037-ab9a-fae24466a4a6"],
+      // ["8f158603-26a7-4c3a-8433-64b9ed20db60", "10ca8e0f-6d2e-4918-b628-b8bda860f061", "611d55d1-9a43-4037-ab9a-fae24466a4a6"],
+      fileStoreIds,
       tenantId
     );
   } catch (error) {
@@ -55,7 +53,6 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
   }
 
   let estimateDetails = data?.estimate;
-
 
   const contractDetails = {
     title: " ",
@@ -159,24 +156,19 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, r
 export const View = {
   fetchMeasurementDetails: async (t, tenantId, data, searchParams, revisedWONumber) => {
     try {
-      const measurementResponse = await MeasurementService.search(data, tenantId);
 
-      const payload = {
-        contractNumber: measurementResponse?.measurements[0]?.referenceId,
-        tenantId: tenantId,
-      };
-      const contractDetails = await ContractService.search(tenantId, payload, searchParams);
+      const url = "/mukta-services/measurement/_search"
 
-      const estimateId = contractDetails?.contracts[0]?.lineItems[0]?.estimateId;
-
-      const filters = { ids: estimateId };
-
-      const estimateResponse = await WorksService.estimateSearch({ tenantId, filters });
+      const allData = await CustomService.getResponse({
+        url, 
+        params : {tenantId}, 
+        body : {...data} 
+      });
 
       const response = {
-        measurements : measurementResponse.measurements,
-        contracts: contractDetails.contracts,
-        estimate: estimateResponse.estimates,
+        measurements: [allData.measurement],
+        contracts: [allData.contract],
+        estimate: [allData.estimate],
       };
 
       return transformViewDataToApplicationDetails(t, response, undefined, revisedWONumber);
