@@ -45,7 +45,6 @@ const SearchBar = (props) => {
   useEffect(() => {
     if(inputValue.length > 2){
         fetchData(inputValue);
-        console.log(suggestions)
     }else{
         setSuggestions([]);
     }
