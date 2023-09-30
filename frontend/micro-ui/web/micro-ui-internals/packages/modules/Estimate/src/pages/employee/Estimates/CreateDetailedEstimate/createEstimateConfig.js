@@ -56,7 +56,7 @@ export const createEstimateConfig = () => {
                 "body": [
                     {
                         type: "component",
-                        component: "MeasureTable",
+                        component: "NewMeasureTable",
                         withoutLabel: true,
                         customProps: {
                             isEstimate: true

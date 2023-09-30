@@ -14,7 +14,7 @@ export const CreateConfig = ({ defaultValue }) => {
             body: [
               {
                 type: "component",
-                component: "MeasureTable",
+                component: "NewMeasureTable",
                 withoutLabel: true,
                 key: "SOR",
               },

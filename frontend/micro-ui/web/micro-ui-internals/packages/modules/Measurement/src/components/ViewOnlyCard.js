@@ -7,9 +7,9 @@ const ViewOnlyCard = (props) => {
     // Extract the "SOR" and "NONSOR" arrays from the props
     const [total, setTotal] = useState(0);
     const { SOR, NONSOR } = props.data;
-
+console.log(SOR,"OTHER c");
     // Calculate the sum of "amount" values in both arrays
-    const totalAmount = SOR.reduce((acc, item) => acc + parseFloat(item?.amount), 0) + NONSOR.reduce((acc, item) => acc + parseFloat(item?.amount), 0);
+    const totalAmount = SOR?.reduce((acc, item) => acc + parseFloat(item?.amount), 0) + NONSOR?.reduce((acc, item) => acc + parseFloat(item?.amount), 0);
 
     useEffect(() => {
         setTotal(totalAmount)

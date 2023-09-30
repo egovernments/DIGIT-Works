@@ -6,6 +6,8 @@ import ViewMeasurement from "./ViewMeasurement";
 import SearchMeasurement from "./SearchMeasurement";
 import InboxMeasurement from "./InboxMeasurement";
 import CreateMeasurement from "./CreateMeasurement";
+import CreateMeasurementNew from "./CreateMeasurementNew";
+
 import SearchPlain from "./SearchPlain";
 
 import ResponseBanner from "./ResponseBanner"
@@ -65,6 +67,8 @@ const App = ({ path }) => {
     <Switch>
       <React.Fragment>
         <MeasurementBreadCrumbs location={location} />
+        <PrivateRoute path={`${path}/createNew`} component={() => <CreateMeasurementNew {...{ path }} />} />
+
         <PrivateRoute path={`${path}/create`} component={() => <CreateMeasurement {...{ path }} />} />
         <PrivateRoute path={`${path}/search`} component={() => <SearchMeasurement {...{ path }} />} />
         <PrivateRoute path={`${path}/inbox`} component={() => <InboxMeasurement {...{ path }} />} />

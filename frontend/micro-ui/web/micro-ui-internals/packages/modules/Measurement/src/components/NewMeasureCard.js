@@ -2,13 +2,13 @@ import { Button, Card, Toast, Amount } from "@egovernments/digit-ui-react-compon
 import React, { useEffect, useReducer, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import MeasureRow from "./MeasureRow";
+import MeasureRow from "./NewMeasureRow";
 import cloneDeep from 'lodash/cloneDeep';
 
 
 
 {/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
-const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView, isEstimates }) => {
+const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty,  initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView, isEstimates }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const { t } = useTranslation();
@@ -115,7 +115,7 @@ return true;
 
   const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
-    register("table", tableData);
+    // register("table", tableData);
   }, [])
 
   const getStyles = (index) => {
@@ -180,7 +180,7 @@ return true;
                     className={"outline-btn"}
                     label={t("MB_CLOSE")}
                     onButtonClick={() => {
-                      setShowMeasureCard(false);
+                      // setShowMeasureCard(false);
                     }}
                   />
                 ) : (<>
@@ -207,12 +207,14 @@ return true;
                     dispatch({ type: "CLEAR_STATE" });
                   }} />
                   <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
-                    tableData[tableKey][tableIndex].measures = state.tableState;
-                    tableData[tableKey][tableIndex].amount = parseFloat(tableData[tableKey][tableIndex].measures.reduce((total, item) => total + item.rowAmount, 0)).toFixed(2);
-                    // setValue("table", tableData);
-                    setInitialState(state);
-                    setConsumedQty(total);
-                    setShowMeasureCard(false);
+                    tableData[tableIndex].measures = state.tableState;
+                    tableData[tableIndex].amount = parseFloat(tableData[tableIndex].measures.reduce((total, item) => total + item.rowAmount, 0)).toFixed(2);
+                    tableData[tableIndex].showMeasure=false;
+                    tableData[tableIndex].currentMBEntry=total;
+                    setValue(tableKey, tableData);
+                    // setInitialState(state);
+                    // setConsumedQty(total);
+                    // setShowMeasureCard(false);
                   }} />
 
                 </>)}
