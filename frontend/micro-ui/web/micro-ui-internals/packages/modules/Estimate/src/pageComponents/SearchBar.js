@@ -9,8 +9,7 @@ const SearchBar = (props) => {
     const tenantId = Digit.ULBService.getCurrentTenantId()
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const {selectedSOR, setSelectedSOR} = props;
-
+  const {selectedSOR, setSelectedSOR,stateData} = props;
   const fetchData = async (cr) => {
          const requestCriteria = {
             url: '/mdms-v2/v1/_search',
@@ -19,11 +18,11 @@ const SearchBar = (props) => {
                     tenantId: tenantId,
                     moduleDetails: [
             {
-                moduleName: "WORKS_SOR",
+                moduleName: "WORKS-SOR",
                 masterDetails: [
                     {
-                        name: "SOR2",
-                        filter:`$[?(@.description=~/.*${cr}.*/i && @.sorType == 'Material')]` 
+                        name: "SOR",
+                        filter:`$[?(@.description=~/.*${cr}.*/i && @.sorType == '${stateData?.SORType}')]` 
                     }
                 ]
             }
@@ -32,9 +31,9 @@ const SearchBar = (props) => {
             },
         };
         try {
-            const data  = await Digit.CustomService.getResponse(requestCriteria);
-            if(data?.mdmsRes?.WORKS_SOR?.SOR2?.length > 0){
-                setSuggestions(data?.mdmsRes?.WORKS_SOR?.SOR2)
+            const data  =stateData?.SORType&&await Digit.CustomService.getResponse(requestCriteria);
+            if(data?.mdmsRes?.["WORKS-SOR"]?.SOR?.length > 0){
+                setSuggestions(data?.mdmsRes?.["WORKS-SOR"]?.SOR)
             }
         } catch (error) {
             // Handle any errors here

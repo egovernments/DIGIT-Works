@@ -7,13 +7,13 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
-  const sorData = props?.data?.SOR?.length > 0 ? props?.data?.SOR : null;
-  const nonsorData = props?.data?.NONSOR?.length > 0 ? props.data.NONSOR : null;
-  const data = props?.config?.key === "SOR" ? sorData : nonsorData;
-  const [table, setTable] = useState(props.data);
 
+  const tableKey=props?.config?.key|| "SOR";
+  const {watch}=props;
+  const stateData= watch&&watch?.( tableKey);
+  const data = stateData ||( props?.data?.[tableKey]?.length > 0 ? props?.data?.[tableKey] : null);
+  const [table, setTable] = useState(props.data);
   const [tablesState, setTablesState] = useState(data);
-  const tableKey = props.config.key;
   const { t } = useTranslation();
   const history = useHistory();
   const [totalMBAmount, setTotalMBAmount] = useState(0);
@@ -24,7 +24,6 @@ const MeasureTable = (props) => {
     register("sumSor", 0);
     register("sumNonSor", 0);
   }
-
 
   const getStyles = (index) => {
     let obj = {};
@@ -280,5 +279,6 @@ const MeasureTable = (props) => {
     // </Card>
   );
 };
+
 
 export default MeasureTable;

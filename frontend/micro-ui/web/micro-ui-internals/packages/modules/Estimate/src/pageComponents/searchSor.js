@@ -47,25 +47,25 @@ const searchSor = (props) => {
             label="SOR Type"
             stateData={stateData}
             setStateData={setStateData}
-            schemaCode={"WORKS_SOR.Type"}
+            schemaCode={"WORKS-SOR.Type"}
             type = "SORType"
         />
         <EstimateDropdown
             label="SOR Sub Type"
             stateData={stateData}
             setStateData={setStateData}
-            schemaCode={"WORKS_SOR.SubType"}
+            schemaCode={"WORKS-SOR.SubType"}
             type="SORSubType"
         />
         <EstimateDropdown
             label="SOR Variant"
             stateData={stateData}
             setStateData={setStateData}
-            schemaCode={"WORKS_SOR.Variant"}
+            schemaCode={"WORKS-SOR.Variant"}
             type="SORVariant"
         />
 
-        <SearchBar selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
+        <SearchBar stateData={stateData} selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
         <Button label="Add" onButtonClick={() => {
             // console.log("stateData", stateData);
             const sor = transformSOR(stateData?.selectedSor);

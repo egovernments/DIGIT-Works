@@ -17,6 +17,7 @@ const EstimateDropdown = (props) => {
                 offset: 0
             },
         },
+        changeQueryName:props?.schemaCode
     };
     const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 

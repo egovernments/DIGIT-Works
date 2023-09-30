@@ -23,7 +23,6 @@ export const createEstimateConfig = () => {
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
-               
                     
                     {
                         type: "component",
