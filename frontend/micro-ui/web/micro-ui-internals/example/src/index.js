@@ -17,6 +17,7 @@ import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initMastersComponents } from "@egovernments/digit-ui-module-masters";
 import { initProjectComponents } from  "@egovernments/digit-ui-module-project";
 import "@egovernments/digit-ui-works-css/example/index.css";
+import { initMeasurementComponents } from "@egovernments/digit-ui-module-measurement";
 import {initMuktaCustomisations} from "@egovernments/digit-ui-customisation-mukta";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
@@ -37,7 +38,8 @@ const enabledModules = [
   "Estimate",
   "Project",
   "Mukta",
-  "DSS"
+  "DSS",
+  "Measurement"
   // "Engagement"
 ];
 
@@ -82,6 +84,7 @@ const initDigitUI = () => {
   initAttendenceMgmtComponents();
   initHRMSComponents();
   initContractsComponents();
+  initMeasurementComponents();
   initExpenditureComponents();
   initMastersComponents();
   initProjectComponents();
