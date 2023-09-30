@@ -41,6 +41,11 @@ const MeasurementCard = () => {
         roles: ["EMPLOYEE"],
       },
       {
+        label: t("ACTION_TEST_CREATE_DETAILED_ESTIMATE"),
+        link: `/${window?.contextPath}/employee/estimate/create-detailed-estimate?tenantId=pg.citya&projectNumber=PJ/2023-24/09/002506`,
+        roles: ["EMPLOYEE"],
+      },
+      {
         label: t("MB_SEARCH"),
         link: `/${window?.contextPath}/employee/measurement/search`,
       },

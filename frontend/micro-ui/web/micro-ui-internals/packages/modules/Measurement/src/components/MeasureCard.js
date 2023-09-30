@@ -8,13 +8,13 @@ import cloneDeep from 'lodash/cloneDeep';
 
 
 {/* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */ }
-const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView }) => {
+const MeasureCard = React.memo(({ columns, consumedQty, setConsumedQty, setShowMeasureCard, initialState = {}, setInitialState, register, setValue, tableData, tableKey, tableIndex, unitRate, isView, isEstimates }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const { t } = useTranslation();
   const history = useHistory();
   const [total, setTotal] = useState(consumedQty);
-  const isEstimate = false;
+  const isEstimate = isEstimates;
 
   const validate = (value) => {
     if (value === null || value === undefined || value === "" || value === 0 || value ==="0") {
@@ -89,6 +89,11 @@ return true;
          if(initialValueState)
          setTotal(0);
         return { ...state, tableState };
+      case "REMOVE_ROW":
+        const { id: rowIdToRemove } = action;
+        const updatedTableState = state.tableState.filter((row, index) => index + 1 !== rowIdToRemove);
+        setTotal(updatedTableState.reduce((acc, curr) => acc + validate(curr.noOfunit), 0));
+        return { ...state, tableState: updatedTableState };
       case "CLEAR_STATE":
         const clearedTableState = state.tableState.map((item) => ({
         ...item,
@@ -110,7 +115,7 @@ return true;
 
   const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
-    register("measurements", tableData);
+    register("table", tableData);
   }, [])
 
   const getStyles = (index) => {
@@ -153,7 +158,7 @@ return true;
 
   const renderBody = () => {
     return state?.tableState?.map((value, index) => {
-      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView = {isView} isEstimate={isEstimate} />;
+      return <MeasureRow value={value} index={index} key={index} state={state} dispatch={dispatch} isView={isView} isEstimate={isEstimate} />;
     });
   };
 
@@ -204,7 +209,7 @@ return true;
                   <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
                     tableData[tableKey][tableIndex].measures = state.tableState;
                     tableData[tableKey][tableIndex].amount = parseFloat(tableData[tableKey][tableIndex].measures.reduce((total, item) => total + item.rowAmount, 0)).toFixed(2);
-                    setValue("measurements", tableData);
+                    setValue("table", tableData);
                     setInitialState(state);
                     setConsumedQty(total);
                     setShowMeasureCard(false);
