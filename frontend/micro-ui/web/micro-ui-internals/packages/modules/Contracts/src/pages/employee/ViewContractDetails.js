@@ -214,7 +214,6 @@ const ViewContractDetails = () => {
                                         {/* //added temp logic to enable measurement option */}
                     {data?.applicationData?.wfStatus === "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension && !(queryStrings?.isTimeExtension === "true") ?
                         <ActionBar>
-
                             {showActions ? <Menu
                                 localeKeyPrefix={`WF_CONTRACT_ACTION`}
                                 options={actionsMenu}
