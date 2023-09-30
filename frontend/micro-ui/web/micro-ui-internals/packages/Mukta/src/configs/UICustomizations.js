@@ -3,7 +3,6 @@ import _ from "lodash";
 import React from "react";
 import { Amount, LinkLabel } from "@egovernments/digit-ui-react-components";
 
-
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares
@@ -13,118 +12,119 @@ const businessServiceMap = {
   estimate: "ESTIMATE",
   contract: "CONTRACT",
   "muster roll": "MR",
-  "works.wages":"EXPENSE.WAGES",
-  "works.purchase":"EXPENSE.PURCHASE",
-  "works.supervision":"EXPENSE.SUPERVISION",
-  revisedWO:"CONTRACT-REVISION"
+  "works.wages": "EXPENSE.WAGES",
+  "works.purchase": "EXPENSE.PURCHASE",
+  "works.supervision": "EXPENSE.SUPERVISION",
+  revisedWO: "CONTRACT-REVISION",
 };
 
 const getBillType = (businessService) => {
-  switch(businessService) {
+  switch (businessService) {
     case "EXPENSE.WAGES":
-      return 'wage'
+      return "wage";
     case "EXPENSE.PURCHASE":
-      return 'purchase'
+      return "purchase";
     case "EXPENSE.SUPERVISION":
-      return 'supervision'
+      return "supervision";
     default:
-      return 'wage';
+      return "wage";
   }
-}
-const PAYMENT_UPDATE_STATUS="SUCCESSFUL";
-
+};
+const PAYMENT_UPDATE_STATUS = "SUCCESSFUL";
 
 const getCreatePaymentPayload = (data) => {
-  let payment = {}
-  payment.tenantId = Digit.ULBService.getCurrentTenantId()
-  payment.netPayableAmount = 0
-  payment.netPaidAmount = 0
-  payment.additionalDetails = {}
+  let payment = {};
+  payment.tenantId = Digit.ULBService.getCurrentTenantId();
+  payment.netPayableAmount = 0;
+  payment.netPaidAmount = 0;
+  payment.additionalDetails = {};
   //payment.status = 'INITIATED'
 
-  payment.bills = []
-  
-  data?.forEach(item => {
-    const bill = item
-    let billObj = {}
-    billObj.billId = bill?.id
-    billObj.tenantId = bill?.tenantId
-    billObj.totalAmount = bill?.totalAmount
-    /* temp fix for now  before jit integration*/
-    billObj.totalPaidAmount = bill?.totalAmount
-    //billObj.status = 'INITIATED'
-    payment.netPayableAmount=payment.netPayableAmount+bill?.totalAmount;
-    billObj.billDetails = []
-    if(bill?.billDetails?.length > 0) {
-      bill?.billDetails?.forEach(detail => {
-        let billDetailObj = {}
-        billDetailObj.billDetailId = detail?.id //billId
-        billDetailObj.totalAmount = detail?.totalAmount
-    /* temp fix for now  before jit integration*/
+  payment.bills = [];
 
-        billDetailObj.totalPaidAmount = detail?.totalAmount
+  data?.forEach((item) => {
+    const bill = item;
+    let billObj = {};
+    billObj.billId = bill?.id;
+    billObj.tenantId = bill?.tenantId;
+    billObj.totalAmount = bill?.totalAmount;
+    /* temp fix for now  before jit integration*/
+    billObj.totalPaidAmount = bill?.totalAmount;
+    //billObj.status = 'INITIATED'
+    payment.netPayableAmount = payment.netPayableAmount + bill?.totalAmount;
+    billObj.billDetails = [];
+    if (bill?.billDetails?.length > 0) {
+      bill?.billDetails?.forEach((detail) => {
+        let billDetailObj = {};
+        billDetailObj.billDetailId = detail?.id; //billId
+        billDetailObj.totalAmount = detail?.totalAmount;
+        /* temp fix for now  before jit integration*/
+
+        billDetailObj.totalPaidAmount = detail?.totalAmount;
         //billDetailObj.status = 'INITIATED'
-        billDetailObj.payableLineItems = detail?.payableLineItems?.filter((row => row.status==="ACTIVE"))?.map(item => (
-          {
+        billDetailObj.payableLineItems = detail?.payableLineItems
+          ?.filter((row) => row.status === "ACTIVE")
+          ?.map((item) => ({
             lineItemId: item?.id,
             tenantId: item?.tenantId,
             paidAmount: item?.amount,
             //status: 'INITIATED'
-          }
-        ))
-        billDetailObj.additionalDetails = {}
-        billObj.billDetails.push(billDetailObj)
-      })
+          }));
+        billDetailObj.additionalDetails = {};
+        billObj.billDetails.push(billDetailObj);
+      });
     }
-    payment.bills.push(billObj)
-  })
-  payment.netPaidAmount=payment.netPayableAmount;
-  let payload = {payment}
-  
-  return payload
-}
-const getUpdatePaymentPayload = (payment={}) =>{
-  if(payment?.status){
-    payment.status=PAYMENT_UPDATE_STATUS;
-  }
-  if(payment?.bills){
-    payment.bills=payment?.bills?.map(bill=>{
-      if(bill?.status){
-        bill.status=PAYMENT_UPDATE_STATUS;
-      }
-      bill.billDetails= bill.billDetails?.map(billDetail=>{
-        if(billDetail?.status){
-          billDetail.status=PAYMENT_UPDATE_STATUS;
-        }
-        return {...billDetail}
-      })
-      return {...bill}
-    })
-  }
-  return {payment};
-}
+    payment.bills.push(billObj);
+  });
+  payment.netPaidAmount = payment.netPayableAmount;
+  let payload = { payment };
 
-const RetryComponent = ({row,t})=> <LinkLabel
-  onClick={async () => {
-    try {
-      const pdfRegenerateResponse =
-        row?.paymentId &&
-        (await Digit.ExpenseService.regeneratePDF(
-          {
-            Criteria: {
-              paymentId: row?.paymentId,
+  return payload;
+};
+const getUpdatePaymentPayload = (payment = {}) => {
+  if (payment?.status) {
+    payment.status = PAYMENT_UPDATE_STATUS;
+  }
+  if (payment?.bills) {
+    payment.bills = payment?.bills?.map((bill) => {
+      if (bill?.status) {
+        bill.status = PAYMENT_UPDATE_STATUS;
+      }
+      bill.billDetails = bill.billDetails?.map((billDetail) => {
+        if (billDetail?.status) {
+          billDetail.status = PAYMENT_UPDATE_STATUS;
+        }
+        return { ...billDetail };
+      });
+      return { ...bill };
+    });
+  }
+  return { payment };
+};
+
+const RetryComponent = ({ row, t }) => (
+  <LinkLabel
+    onClick={async () => {
+      try {
+        const pdfRegenerateResponse =
+          row?.paymentId &&
+          (await Digit.ExpenseService.regeneratePDF(
+            {
+              Criteria: {
+                paymentId: row?.paymentId,
+              },
             },
-          },
-          row?.tenantId
-        ));
-      console.info(pdfRegenerateResponse);
-    } catch (error) {
-      console.error(error, "downloaderror");
-    }
-  }}
->
-  {t("CS_COMMON_RETRY")}
-</LinkLabel>;
+            row?.tenantId
+          ));
+        console.info(pdfRegenerateResponse);
+      } catch (error) {
+        console.error(error, "downloaderror");
+      }
+    }}
+  >
+    {t("CS_COMMON_RETRY")}
+  </LinkLabel>
+);
 
 export const UICustomizations = {
   EstimateInboxConfig: {
@@ -983,15 +983,14 @@ export const UICustomizations = {
     },
   },
   SearchContractConfig: {
-    preProcess: (data,defaultValues) => {
-      const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom,'daystart');
-      const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo,'dayend');
+    preProcess: (data, defaultValues) => {
+      const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom, "daystart");
+      const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo, "dayend");
       let workOrderNumber, revisedWorkOrderNumber;
-      if(data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.includes("WO"))
-         workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
-      else
-        revisedWorkOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
-      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
+      if (data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.includes("WO"))
+        workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
+      else revisedWorkOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
+      const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus;
       const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
       const projectName = data.body.inbox?.moduleSearchCriteria?.projectName?.trim();
       const ward = data.body.inbox?.moduleSearchCriteria?.ward?.[0]?.code;
