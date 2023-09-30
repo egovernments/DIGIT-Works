@@ -31,12 +31,6 @@ const MeasurementBreadCrumbs = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
-      path: `/${window.contextPath}/employee/measurement/view`,
-      content:  t("MB_MEASUREMENT_BOOK"),
-      show: location.pathname.includes("/measurement/view") ? true : false,
-      isBack: fromScreen && true,
-    },
-    {
       path: `/${window.contextPath}/employee/measurement/create`,
       content: fromScreen ? `${t(fromScreen)} / ${t("MB_MEASUREMENT_BOOK")}` : t("MB_MEASUREMENT_BOOK"),
       show: location.pathname.includes("/measurement/create") ? true : false,
