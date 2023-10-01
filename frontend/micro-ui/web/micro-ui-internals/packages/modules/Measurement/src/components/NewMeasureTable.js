@@ -13,7 +13,6 @@ const MeasureTable = (props) => {
   const {watch}=props;
   const stateData= watch&&watch?.( tableKey);
   const data = stateData ||( props?.data?.[tableKey]?.length > 0 ? props?.data?.[tableKey] : null);
-  const [showMeasureCard, setShowMeasureCard] = useState(false);
 
   const { fields, append, remove } =props?.arrayProps ||{};
   console.log(stateData,data,'stateData',fields, append, remove );
