@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Fragment } from "react";
 
-const MeasureInputAtom = ({ id, row, isView = false, fieldKey, value, dispatch }) => (
+const MeasureInputAtom = ({ id, row, mode, disable = false, fieldKey, value, dispatch }) => (
   <td>
     <TextInput
       value={value}
@@ -14,17 +14,17 @@ const MeasureInputAtom = ({ id, row, isView = false, fieldKey, value, dispatch }
           state: { id: id, value: newValue.target.value, row: row, type: fieldKey },
         });
       }}
-      disable={isView}
+      disable={disable}
     />
   </td>
 );
 
-const MeasureRow = ({ value, index, rowState, dispatch, isView, isEstimate }) => {
+const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
   const { t } = useTranslation();
   return (
     <tr key={index}>
       <td>{rowState?.sNo}</td>
-      {!isEstimate ? (
+      {mode != "CREATEALL" ? (
         <>
           <td>{rowState?.isDeduction ? t("MB_YES") : t("MB_NO")}</td>
           <td>{rowState?.description}</td>
@@ -55,12 +55,12 @@ const MeasureRow = ({ value, index, rowState, dispatch, isView, isEstimate }) =>
         </>
       )}
 
-      <MeasureInputAtom dispatch={dispatch} row={value} isView={isView} fieldKey={"number"} id={index + 1} value={rowState?.["number"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} isView={isView} fieldKey={"length"} id={index + 1} value={rowState?.["length"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} isView={isView} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} isView={isView} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode == "VIEW"} fieldKey={"number"} id={index + 1} value={rowState?.["number"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode == "VIEW"} fieldKey={"length"} id={index + 1} value={rowState?.["length"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode == "VIEW"} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode == "VIEW"} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} />
       <td>{rowState?.noOfunit}</td>
-      {isEstimate && (
+      {mode == "CREATEALL" && (
         <td>
           <span
             className="icon-wrapper"

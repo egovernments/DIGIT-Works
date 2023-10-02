@@ -5,9 +5,8 @@ import { useTranslation } from "react-i18next";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
-  const { register, setValue, arrayProps = {},config={} } = props;
-  const tableKey = config?.key || "SOR";
-
+  const { register, setValue, arrayProps = {}, config = {} } = props;
+  const { key: tableKey, mode } = config;
   const { fields, append, remove } = arrayProps || {};
   const options = {
     masterName: "uom",
@@ -31,17 +30,13 @@ const MeasureTable = (props) => {
         const optionsData = _.get(data, `${options?.moduleName}.${options?.masterName}`, []);
         return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.localePrefix}_${opt.code}` }));
       },
-      enabled: props?.props?.isEstimate,
+      enabled: mode == "CREATEALL",
     }
   );
 
   const { t } = useTranslation();
   const sum = parseFloat(fields.reduce((acc, row) => acc + parseFloat(row?.amount), 0)?.toFixed?.(2)) || 0;
 
-  if (!props?.isView) {
-    // register("sumSor", 0);
-    // register("sumNonSor", 0);
-  }
   // register(tableKey)
 
   useEffect(() => {
@@ -73,18 +68,19 @@ const MeasureTable = (props) => {
     return obj;
   };
 
-  let columns = props?.props?.isEstimate
-    ? [t("WORKS_SNO"), t("MB_DESCRIPTION"), t("MB_UNIT"), t("MB_RATE"), t("MB_CURRENT_MB_ENTRY"), t("MB_AMOUNT_CURRENT_ENTRY"), t("")]
-    : [
-        t("WORKS_SNO"),
-        t("MB_DESCRIPTION"),
-        t("MB_UNIT"),
-        t("MB_RATE"),
-        t("MB_APPROVER_QUANT"),
-        t("MB_CONSUMED_QUANT"),
-        t("MB_CURRENT_MB_ENTRY"),
-        t("MB_AMOUNT_CURRENT_ENTRY"),
-      ];
+  let columns =
+    mode == "CREATEALL"
+      ? [t("WORKS_SNO"), t("MB_DESCRIPTION"), t("MB_UNIT"), t("MB_RATE"), t("MB_CURRENT_MB_ENTRY"), t("MB_AMOUNT_CURRENT_ENTRY"), t("")]
+      : [
+          t("WORKS_SNO"),
+          t("MB_DESCRIPTION"),
+          t("MB_UNIT"),
+          t("MB_RATE"),
+          t("MB_APPROVER_QUANT"),
+          t("MB_CONSUMED_QUANT"),
+          t("MB_CURRENT_MB_ENTRY"),
+          t("MB_AMOUNT_CURRENT_ENTRY"),
+        ];
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return (
@@ -118,7 +114,7 @@ const MeasureTable = (props) => {
         <>
           <tr key={index}>
             <td>{index + 1}</td>
-            {props?.props?.isEstimate ? (
+            {mode == "CREATEALL" ? (
               <TextInput
                 style={{ width: "80%", marginTop: "27px", marginLeft: "35px" }}
                 //  {...register(`SOR.${index}.description`)}
@@ -129,7 +125,7 @@ const MeasureTable = (props) => {
             ) : (
               <td>{row.description}</td>
             )}
-            {props?.props?.isEstimate ? (
+            {mode == "CREATEALL" ? (
               <td>
                 <Dropdown
                   // inputRef={register()}
@@ -145,7 +141,7 @@ const MeasureTable = (props) => {
             ) : (
               <td>{row.uom}</td>
             )}
-            {props?.props?.isEstimate ? (
+            {mode == "CREATEALL" ? (
               <TextInput
                 style={{ width: "80%", marginTop: "20px", marginLeft: "20px" }}
                 // onChange={(e) => handleInputChange("unitRate", e.target.value, index)}
@@ -156,7 +152,7 @@ const MeasureTable = (props) => {
                 <Amount customStyle={{ textAlign: "right" }} value={row?.unitRate?.toFixed?.(2)} t={t} roundOff={false}></Amount>
               </td>
             )}
-            {!props?.props?.isEstimate && (
+            {mode != "CREATEALL" && (
               <>
                 <td>
                   <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2)} t={t} roundOff={false}></Amount>
@@ -211,7 +207,7 @@ const MeasureTable = (props) => {
             <td>
               <Amount customStyle={{ textAlign: "right" }} value={row.amount} t={t} roundOff={false}></Amount>
             </td>
-            {props?.props?.isEstimate && (
+            {mode == "CREATEALL" && (
               <td>
                 <span className="icon-wrapper" onClick={() => removeRow(row)}>
                   <DeleteIcon fill={"#B1B4B6"} />
@@ -222,7 +218,7 @@ const MeasureTable = (props) => {
           {row?.showMeasure && !initialState.length > 0 && (
             <tr>
               <td colSpan={"1"}></td>
-              <td colSpan={props?.props?.isEstimate ? 5 : 7}>
+              <td colSpan={mode == "CREATEALL" ? 5 : 7}>
                 <MeasureCard
                   columns={[
                     t("WORKS_SNO"),
@@ -241,8 +237,7 @@ const MeasureTable = (props) => {
                   tableKey={tableKey}
                   tableData={fields}
                   tableIndex={index}
-                  isEstimates={props?.props?.isEstimate}
-                  isView={props?.isView}
+                  mode={mode}
                 />
               </td>
             </tr>
@@ -261,7 +256,7 @@ const MeasureTable = (props) => {
         </thead>
         <tbody>{renderBody()}</tbody>
       </table>
-    {/*  <button
+      {/*  <button
         onClick={() => {
           append({
             amount: 0,

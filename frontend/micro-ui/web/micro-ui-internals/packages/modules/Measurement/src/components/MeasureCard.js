@@ -45,9 +45,8 @@ const initialValue = (element) => {
 {
   /* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */
 }
-const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tableData, tableKey, tableIndex, unitRate, isView, isEstimates }) => {
+const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tableData, tableKey, tableIndex, unitRate, mode }) => {
   const { t } = useTranslation();
-  const isEstimate = isEstimates;
   useEffect(() => {
     register(`${tableKey}table`, tableData);
   }, []);
@@ -111,9 +110,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
 
   const renderBody = () => {
     return state?.map((value, index) => {
-      return (
-        <MeasureRow value={value} index={index} key={index} rowState={state?.[index]} dispatch={dispatch} isView={isView} isEstimate={isEstimate} />
-      );
+      return <MeasureRow value={value} index={index} key={index} rowState={state?.[index]} dispatch={dispatch} mode={mode} />;
     });
   };
   const total = state?.reduce?.((acc, curr) => acc + validate(curr?.noOfunit), 0) || 0;
@@ -128,7 +125,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
           <tr>
             <td colSpan={"4"}>
               <div style={{ display: "flex", flexDirection: "row" }}>
-                {isView ? (
+                {mode == "VIEW" ? (
                   <Button
                     className={"outline-btn"}
                     label={t("MB_CLOSE")}
@@ -139,7 +136,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                   />
                 ) : (
                   <>
-                    {isEstimate && (
+                    {mode == "CREATEALL" && (
                       <Button
                         className={"outline-btn"}
                         label={t("MB_ADD_ROW")}

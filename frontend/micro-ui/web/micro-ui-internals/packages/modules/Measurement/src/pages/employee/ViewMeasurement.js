@@ -1,4 +1,4 @@
-import { Header, Card, Loader, Button, WorkflowActions, CardText, CardHeader, CardSubHeader } from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, WorkflowActions, CardSubHeader } from "@egovernments/digit-ui-react-components";
 import { transformEstimateData } from "../../utils/transformEstimateData";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,16 +41,6 @@ const ViewMeasurement = () => {
     processArrays();
   }, [data]);
 
-  const tableData = {
-    data: {
-      ...viewData,
-    },
-    config: {
-      key: "SOR",
-    },
-    arrayProps: { fields: [] },
-  };
-
   if (loading || isLoading) {
     return <Loader />;
   }
@@ -72,26 +62,26 @@ const ViewMeasurement = () => {
       <Card className="override-card">
         <CardSubHeader>{t("MB_SORS")}</CardSubHeader>
         <MeasureTable
-          {...tableData}
+          config={{
+            key: "SOR",
+            mode: "VIEW",
+          }}
           register={() => {}}
-          setValue={(key, value) => setViewData((old) => ({ ...old, [key]: value }))}
+          setValue={(key, value) => setViewData((old) => ({ ...old, SOR: value }))}
           arrayProps={{ fields: viewData?.SOR }}
-          isView={true}
-          measureData={measures}
+          mode="VIEW"
         />
       </Card>
       <Card className="override-card">
         <CardSubHeader>{t("MB_NONSOR")}</CardSubHeader>
         <MeasureTable
-          {...tableData}
           config={{
             key: "NONSOR",
+            mode: "VIEW",
           }}
           register={() => {}}
-          setValue={(key, value) => setViewData((old) => ({ ...old, [key]: value }))}
+          setValue={(key, value) => setViewData((old) => ({ ...old, NONSOR: value }))}
           arrayProps={{ fields: viewData?.NONSOR }}
-          isView={true}
-          measureData={measures}
         />
       </Card>
       <ApplicationDetails
