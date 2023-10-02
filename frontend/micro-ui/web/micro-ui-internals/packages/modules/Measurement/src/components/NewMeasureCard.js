@@ -1,7 +1,6 @@
 import { Button } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useReducer, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureRow from "./NewMeasureRow";
 
 const getStyles = (index) => {
@@ -46,185 +45,160 @@ const initialValue = (element) => {
 {
   /* <Amount customStyle={{ textAlign: 'right'}} value={Math.round(value)} t={t}></Amount> */
 }
-const MeasureCard = React.memo(
-  ({
-    columns,
-    consumedQty,
-    setConsumedQty,
-    initialState = {},
-    setInitialState,
-    register,
-    setValue,
-    tableData,
-    tableKey,
-    tableIndex,
-    unitRate,
-    isView,
-    isEstimates,
-  }) => {
+const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tableData, tableKey, tableIndex, unitRate, isView, isEstimates }) => {
+  const { t } = useTranslation();
+  const isEstimate = isEstimates;
+  useEffect(() => {
+    register(`${tableKey}table`, tableData);
+  }, []);
 
-    const { t } = useTranslation();
-    const isEstimate = isEstimates;
+  const reducer = (state, action) => {
+    // console.log(state, action, "reducer");
+    switch (action.type) {
+      case "ADD_ROW":
+        const { state: newRow } = action;
+        return [...state, newRow];
+      case "UPDATE_ROW":
+        const {
+          state: { id, value, row, type },
+        } = action;
+        let findIndex = state.findIndex((row, index) => {
+          return index + 1 === id;
+        });
+        state[findIndex][type] = value;
 
-    const reducer = (state, action) => {
-      console.log(state, action, "reducer");
-      switch (action.type) {
-        case "ADD_ROW":
-          const { state: newRow } = action;
-          return { ...state, tableState: [...state.tableState, newRow] };
-        case "UPDATE_ROW":
-          const {
-            state: { id, value, row, type },
-          } = action;
-          const { tableState } = state;
-          let findIndex = tableState.findIndex((row, index) => {
-            return index + 1 === id;
-          });  
-          tableState[findIndex][type] = value;
+        const element = state[findIndex];
+        let calculatedValue = validate(element.number) * validate(element.length) * validate(element.width) * validate(element.height);
+        if (initialValue(element)) {
+          calculatedValue = 0;
+        }
+        state[findIndex].noOfunit = calculatedValue || 0;
+        state[findIndex].rowAmount = unitRate * calculatedValue || 0;
+        return [...state];
+      case "REMOVE_ROW":
+        const { id: rowIdToRemove } = action;
+        const updatedTableState = state.filter((row, index) => index + 1 !== rowIdToRemove);
+        return [...updatedTableState];
+      case "CLEAR_STATE":
+        const clearedTableState = state.map((item) => ({
+          ...item,
+          height: 0,
+          width: 0,
+          length: 0,
+          number: 0,
+          noOfunit: 0,
+          rowAmount: 0,
+        }));
+        return [...clearedTableState];
 
-          const element = tableState[findIndex];
-          let calculatedValue = validate(element.number) * validate(element.length) * validate(element.width) * validate(element.height);
-          const initialValueState = initialValue(element);
-          if (initialValueState) {
-            calculatedValue = 0;
-          }
-          tableState[findIndex].noOfunit = calculatedValue;
-          tableState[findIndex].rowAmount = unitRate * calculatedValue;
-          return { ...state, tableState };
-        case "REMOVE_ROW":
-          const { id: rowIdToRemove } = action;
-          const updatedTableState = state.tableState.filter((row, index) => index + 1 !== rowIdToRemove);
-          return { ...state, tableState: updatedTableState };
-        case "CLEAR_STATE":
-          const clearedTableState = state.tableState.map((item) => ({
-            ...item,
-            height: 0,
-            width: 0,
-            length: 0,
-            number: 0,
-            noOfunit: 0,
-            rowAmount: 0,
-          }));
-          return { ...state, tableState: clearedTableState };
+      default:
+        return state;
+    }
+  };
 
-        default:
-          return state;
-      }
-    };
+  const [state, dispatch] = useReducer(reducer, fields);
 
-    const [state, dispatch] = useReducer(reducer, initialState);
-    useEffect(() => {
-      // register("table", tableData);
-    }, []);
+  const renderHeader = () => {
+    return columns?.map((key, index) => {
+      return (
+        <th key={index} style={getStyles(index + 1)}>
+          {" "}
+          {key}{" "}
+        </th>
+      );
+    });
+  };
 
-    const renderHeader = () => {
-      return columns?.map((key, index) => {
-        return (
-          <th key={index} style={getStyles(index + 1)}>
-            {" "}
-            {key}{" "}
-          </th>
-        );
-      });
-    };
-
-    const renderBody = () => {
-      return state?.tableState?.map((value, index) => {
-        return (
-          <MeasureRow
-            value={value}
-            index={index}
-            key={index}
-            rowState={state?.tableState?.[index]}
-            dispatch={dispatch}
-            isView={isView}
-            isEstimate={isEstimate}
-          />
-        );
-      });
-    };
-    const total = state?.tableState?.reduce?.((acc, curr) => acc + validate(curr?.noOfunit), 0) || 0;
-    return (
-      <Fragment>
-        <table className="table reports-table sub-work-table">
-          <thead>
-            <tr>{renderHeader()}</tr>
-          </thead>
-          <tbody>
-            {renderBody()}
-            <tr>
-              <td colSpan={"4"}>
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  {isView ? (
+  const renderBody = () => {
+    return state?.map((value, index) => {
+      return (
+        <MeasureRow value={value} index={index} key={index} rowState={state?.[index]} dispatch={dispatch} isView={isView} isEstimate={isEstimate} />
+      );
+    });
+  };
+  const total = state?.reduce?.((acc, curr) => acc + validate(curr?.noOfunit), 0) || 0;
+  return (
+    <Fragment>
+      <table className="table reports-table sub-work-table">
+        <thead>
+          <tr>{renderHeader()}</tr>
+        </thead>
+        <tbody>
+          {renderBody()}
+          <tr>
+            <td colSpan={"4"}>
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                {isView ? (
+                  <Button
+                    className={"outline-btn"}
+                    label={t("MB_CLOSE")}
+                    onButtonClick={() => {
+                      console.log("close");
+                      tableData[tableIndex].showMeasure = false;
+                      setValue(tableData);
+                      // setShowMeasureCard(false);
+                    }}
+                  />
+                ) : (
+                  <>
+                    {isEstimate && (
+                      <Button
+                        className={"outline-btn"}
+                        label={t("MB_ADD_ROW")}
+                        onButtonClick={() => {
+                          dispatch({
+                            type: "ADD_ROW",
+                            state: {
+                              sNo: state.length + 1,
+                              targetId: "",
+                              isDeduction: "",
+                              description: "",
+                              id: null,
+                              height: 0,
+                              width: 0,
+                              length: 0,
+                              number: 0,
+                              noOfunit: 0,
+                              rowAmount: 0,
+                              consumedRowQuantity: 0,
+                            },
+                          });
+                        }}
+                      />
+                    )}
                     <Button
                       className={"outline-btn"}
-                      label={t("MB_CLOSE")}
+                      label={t("MB_CLEAR")}
                       onButtonClick={() => {
+                        dispatch({ type: "CLEAR_STATE" });
+                      }}
+                    />
+                    <Button
+                      className={"outline-btn"}
+                      label={t("MB_DONE")}
+                      onButtonClick={() => {
+                        const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => total + item.noOfunit, 0);
+                        tableData[tableIndex].measures = state;
+                        tableData[tableIndex].amount = parseFloat(totalQuantity * unitRate).toFixed(2);
+                        tableData[tableIndex].showMeasure = false;
+                        tableData[tableIndex].currentMBEntry = totalQuantity;
+                        setValue(tableData);
+                        // setConsumedQty(total);
                         // setShowMeasureCard(false);
                       }}
                     />
-                  ) : (
-                    <>
-                      {isEstimate && (
-                        <Button
-                          className={"outline-btn"}
-                          label={t("MB_ADD_ROW")}
-                          onButtonClick={() => {
-                            dispatch({
-                              type: "ADD_ROW",
-                              state: {
-                                sNo: state.tableState.length + 1,
-                                targetId: "",
-                                isDeduction: "",
-                                description: "",
-                                id: null,
-                                height: 0,
-                                width: 0,
-                                length: 0,
-                                number: 0,
-                                noOfunit: 0,
-                                rowAmount: 0,
-                                consumedRowQuantity: 0,
-                              },
-                            });
-                          }}
-                        />
-                      )}
-                      <Button
-                        className={"outline-btn"}
-                        label={t("MB_CLEAR")}
-                        onButtonClick={() => {
-                          dispatch({ type: "CLEAR_STATE" });
-                        }}
-                      />
-                      <Button
-                        className={"outline-btn"}
-                        label={t("MB_DONE")}
-                        onButtonClick={() => {
-                          const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => total + item.noOfunit, 0);
-                          tableData[tableIndex].measures = state.tableState;
-                          tableData[tableIndex].amount = parseFloat(totalQuantity * tableData?.[tableIndex]?.unitRate).toFixed(2);
-                          tableData[tableIndex].showMeasure = false;
-                          tableData[tableIndex].currentMBEntry = totalQuantity;
-                          setValue(tableKey, tableData);
-                          // setInitialState(state);
-                          // setConsumedQty(total);
-                          // setShowMeasureCard(false);
-                        }}
-                      />
-                    </>
-                  )}
-                </div>
-              </td>
-              <td colSpan={"4"}>
-                {t("MB_SUBTOTAL")}: {total}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </Fragment>
-    );
-  }
-);
+                  </>
+                )}
+              </div>
+            </td>
+            <td colSpan={"4"}>
+              {t("MB_SUBTOTAL")}: {total}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </Fragment>
+  );
+});
 
 export default MeasureCard;

@@ -2,33 +2,26 @@ import { Header, Card, Loader, Button, WorkflowActions, CardText, CardHeader, Ca
 import { transformEstimateData } from "../../utils/transformEstimateData";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
 import MeasurementHistory from "../../components/MBHistoryTable";
-import MeasureTable from "../../components/MeasureTable";
+import MeasureTable from "../../components/NewMeasureTable";
 
 const ViewMeasurement = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const businessService = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { workOrderNumber, mbNumber } = Digit.Hooks.useQueryParams();
-  const [loading, setLoading] = useState(true); 
-  const [sorCategoryArray, setSorCategoryArray] = useState([]);
-  const [nonSorCategoryArray, setNonSorCategoryArray] = useState([]);
-
-
+  const [loading, setLoading] = useState(true);
+  const [viewData, setViewData] = useState({ SOR: [], NONSOR: [] });
   const body = {
-      "contractNumber" : workOrderNumber,
-      "tenantId" : tenantId,
-      "measurementNumber" : mbNumber
-  }
-
+    contractNumber: workOrderNumber,
+    tenantId: tenantId,
+    measurementNumber: mbNumber,
+  };
   let { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.measurement.useViewMeasurement(tenantId, body);
 
   const projectDetails = { applicationDetails: [applicationDetails?.applicationDetails?.applicationDetails[0]] };
   const imageDetails = { applicationDetails: [applicationDetails?.applicationDetails?.applicationDetails[2]] };
-
 
   const measures = applicationDetails?.applicationData?.measurements[0];
   const data = applicationDetails?.applicationData;
@@ -38,36 +31,29 @@ const ViewMeasurement = () => {
   useEffect(() => {
     const processArrays = () => {
       if (data) {
-        const sorData = transformEstimateData(estimateDetails, data?.contracts[0], "SOR", measures);
-        const nonSorData = transformEstimateData(estimateDetails, data?.contracts[0], "NON-SOR", measures);
-
-        setSorCategoryArray(sorData);
-        setNonSorCategoryArray(nonSorData);
+        setViewData({
+          SOR: transformEstimateData(estimateDetails, data?.contracts[0], "SOR", measures),
+          NONSOR: transformEstimateData(estimateDetails, data?.contracts[0], "NON-SOR", measures),
+        });
         setLoading(false);
       }
     };
-
     processArrays();
   }, [data]);
 
-
   const tableData = {
     data: {
-      SOR: sorCategoryArray,
-      NONSOR: nonSorCategoryArray,
+      ...viewData,
     },
     config: {
       key: "SOR",
     },
-  };  
+    arrayProps: { fields: [] },
+  };
 
-  if (isLoading) {
+  if (loading || isLoading) {
     return <Loader />;
   }
-  if (loading || sorCategoryArray.length === 0 || (!nonSorCategoryArray || nonSorCategoryArray.length === 0)) {
-    return <Loader />;
-  }
-
   return (
     <React.Fragment>
       <Header className="works-header-view">{t("MB_VIEW_MEASUREMENT_BOOK")}</Header>
@@ -83,20 +69,30 @@ const ViewMeasurement = () => {
       />
 
       <MeasurementHistory contractNumber={workOrderNumber} measurementNumber={mbNumber} />
-      <Card className="override-card" >
+      <Card className="override-card">
         <CardSubHeader>{t("MB_SORS")}</CardSubHeader>
-        <MeasureTable {...tableData} isView={true} measureData={measures} /> 
-        </Card>
-        <Card className="override-card" >
+        <MeasureTable
+          {...tableData}
+          register={() => {}}
+          setValue={(key, value) => setViewData((old) => ({ ...old, [key]: value }))}
+          arrayProps={{ fields: viewData?.SOR }}
+          isView={true}
+          measureData={measures}
+        />
+      </Card>
+      <Card className="override-card">
         <CardSubHeader>{t("MB_NONSOR")}</CardSubHeader>
-      <MeasureTable
-        {...tableData}
-        config={{
-          key: "NONSOR",
-        }}
-        isView={true}
-        measureData={measures}
-      />
+        <MeasureTable
+          {...tableData}
+          config={{
+            key: "NONSOR",
+          }}
+          register={() => {}}
+          setValue={(key, value) => setViewData((old) => ({ ...old, [key]: value }))}
+          arrayProps={{ fields: viewData?.NONSOR }}
+          isView={true}
+          measureData={measures}
+        />
       </Card>
       <ApplicationDetails
         applicationDetails={imageDetails}

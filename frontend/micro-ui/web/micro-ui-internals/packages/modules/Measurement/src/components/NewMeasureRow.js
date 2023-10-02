@@ -21,7 +21,6 @@ const MeasureInputAtom = ({ id, row, isView = false, fieldKey, value, dispatch }
 
 const MeasureRow = ({ value, index, rowState, dispatch, isView, isEstimate }) => {
   const { t } = useTranslation();
-
   return (
     <tr key={index}>
       <td>{rowState?.sNo}</td>
@@ -51,43 +50,15 @@ const MeasureRow = ({ value, index, rowState, dispatch, isView, isEstimate }) =>
             fieldKey={"description"}
             id={index + 1}
             key={"description"}
-            state={rowState?.["description"]}
+            value={rowState?.["description"]}
           />
         </>
       )}
 
-      <MeasureInputAtom
-        dispatch={dispatch}
-        row={value}
-        isView={isView}
-        fieldKey={"number"}
-        id={index + 1}
-        state={rowState?.["number"]}
-      />
-      <MeasureInputAtom
-        dispatch={dispatch}
-        row={value}
-        isView={isView}
-        fieldKey={"length"}
-        id={index + 1}
-        state={rowState?.["length"]}
-      />
-      <MeasureInputAtom
-        dispatch={dispatch}
-        row={value}
-        isView={isView}
-        fieldKey={"width"}
-        id={index + 1}
-        state={rowState?.["width"]}
-      />
-      <MeasureInputAtom
-        dispatch={dispatch}
-        row={value}
-        isView={isView}
-        fieldKey={"height"}
-        id={index + 1}
-        state={rowState?.["height"]}
-      />
+      <MeasureInputAtom dispatch={dispatch} row={value} isView={isView} fieldKey={"number"} id={index + 1} value={rowState?.["number"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} isView={isView} fieldKey={"length"} id={index + 1} value={rowState?.["length"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} isView={isView} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} isView={isView} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} />
       <td>{rowState?.noOfunit}</td>
       {isEstimate && (
         <td>

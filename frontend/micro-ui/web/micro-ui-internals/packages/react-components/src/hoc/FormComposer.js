@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, Fragment, useCallback } from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import BreakLine from "../atoms/BreakLine";
 import Card from "../atoms/Card";
 import CardLabel from "../atoms/CardLabel";
@@ -28,6 +28,7 @@ import CheckBox from "../atoms/CheckBox";
 import MultiSelectDropdown from "../atoms/MultiSelectDropdown";
 import Paragraph from "../atoms/Paragraph";
 import InputTextAmount from "../atoms/InputTextAmount";
+import WrapperComponent from "../atoms/WrapperComponent";
 
 const wrapperStyles = {
   // "display":"flex",
@@ -137,11 +138,6 @@ export const FormComposer = (props) => {
     const customValidation = config?.populators?.validation?.customValidation;
     const customRules = customValidation ? { validate: customValidation } : {};
     const customProps = config?.customProps;
-    /* added field array, it is available in when type is component can be accessed through prop called arrayProps */
-    const { ...arrayProps } = useFieldArray({
-      control: control,
-      name: config?.key,
-    });
 
 
     switch (type) {
@@ -396,7 +392,7 @@ export const FormComposer = (props) => {
         return (
           <Controller
             render={(props) => (
-              <Component
+              <WrapperComponent
                 userType={"employee"}
                 t={t}
                 setValue={setValue}
@@ -417,7 +413,7 @@ export const FormComposer = (props) => {
                 getValues={getValues}
                 watch={watch}
                 unregister={unregister}
-                arrayProps={arrayProps}
+                component={Component}
               />
             )}
             name={config.key}

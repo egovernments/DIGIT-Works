@@ -209,7 +209,7 @@ return true;
                   <Button className={"outline-btn"} label={t("MB_DONE")} onButtonClick={() => {
                     tableData[tableKey][tableIndex].measures = state.tableState;
                     tableData[tableKey][tableIndex].amount = parseFloat(tableData[tableKey][tableIndex].measures.reduce((total, item) => total + item.rowAmount, 0)).toFixed(2);
-                    // setValue("table", tableData);
+                    setValue("table", tableData);
                     setInitialState(state);
                     setConsumedQty(total);
                     setShowMeasureCard(false);
