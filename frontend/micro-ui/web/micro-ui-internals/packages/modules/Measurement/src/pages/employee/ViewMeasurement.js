@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
 import MeasurementHistory from "../../components/MBHistoryTable";
-import MeasureTable from "../../components/NewMeasureTable";
+import MeasureTable from "../../components/MeasureTable";
 
 const ViewMeasurement = () => {
   const { t } = useTranslation();

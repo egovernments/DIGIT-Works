@@ -5,10 +5,6 @@ import EmployeeApp from "./pages/employee/";
 import MeasurementCard from "./components/MeasurementCard";
 import MeasureTable from "./components/MeasureTable";
 import MeasureCard from "./components/MeasureCard";
-import NewMeasureTable from "./components/NewMeasureTable";
-import NewMeasureCard from "./components/NewMeasureCard";
-import NewMeasureRow from "./components/NewMeasureRow";
-
 import MeasureRow from "./components/MeasureRow";
 import ViewOnlyCard from "./components/ViewOnlyCard";
 
@@ -37,9 +33,6 @@ const componentsToRegister = {
     MeasurementCard,
     MeasurementModule,
     MeasureCard,
-    NewMeasureTable,
-    NewMeasureCard,
-    NewMeasureRow,
     MeasureTable,
     MeasureRow,
     ViewOnlyCard,

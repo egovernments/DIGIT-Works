@@ -1,30 +1,53 @@
+import { AddIcon, TextInput, Amount, Button, Dropdown, Loader, DeleteIcon } from "@egovernments/digit-ui-react-components";
 
-import { AddIcon, Card, TextInput, Amount, Button, Dropdown, Loader, DeleteIcon } from "@egovernments/digit-ui-react-components";
-
-import React, { useState, Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import MeasureCard from "./MeasureCard";
 
 const MeasureTable = (props) => {
+  const { register, setValue, arrayProps = {},config={} } = props;
+  const tableKey = config?.key || "SOR";
 
-  const tableKey=props?.config?.key|| "SOR";
-  const {watch}=props;
-  const stateData= watch&&watch?.( tableKey);
-  const data = stateData ||( props?.data?.[tableKey]?.length > 0 ? props?.data?.[tableKey] : null);
-  const [table, setTable] = useState(props.data);
-  const [tablesState, setTablesState] = useState(data);
+  const { fields, append, remove } = arrayProps || {};
+  const options = {
+    masterName: "uom",
+    moduleName: "common-masters",
+    localePrefix: "ES_COMMON_UOM",
+  };
+  const setFormValue = useCallback(
+    (value) => {
+      setValue(tableKey, value);
+      setValue(`${tableKey}table`, value);
+    },
+    [setValue, tableKey]
+  );
+
+  const { isLoading, data: UOMData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    options?.moduleName,
+    [{ name: options?.masterName }],
+    {
+      select: (data) => {
+        const optionsData = _.get(data, `${options?.moduleName}.${options?.masterName}`, []);
+        return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.localePrefix}_${opt.code}` }));
+      },
+      enabled: props?.props?.isEstimate,
+    }
+  );
+
   const { t } = useTranslation();
-  const history = useHistory();
-  const [totalMBAmount, setTotalMBAmount] = useState(0);
-  const { register, setValue } = props;
-
+  const sum = parseFloat(fields.reduce((acc, row) => acc + parseFloat(row?.amount), 0)?.toFixed?.(2)) || 0;
 
   if (!props?.isView) {
-    register("sumSor", 0);
-    register("sumNonSor", 0);
+    // register("sumSor", 0);
+    // register("sumNonSor", 0);
   }
+  // register(tableKey)
 
+  useEffect(() => {
+    // console.log("tableKey, fields",tableKey, fields)
+    register(tableKey, fields);
+  }, []);
   const getStyles = (index) => {
     let obj = {};
     switch (index) {
@@ -50,26 +73,18 @@ const MeasureTable = (props) => {
     return obj;
   };
 
-  let columns = props?.props?.isEstimate ?
-  [
-    t("WORKS_SNO"),
-    t("MB_DESCRIPTION"),
-    t("MB_UNIT"),
-    t("MB_RATE"),
-    t("MB_CURRENT_MB_ENTRY"),
-    t("MB_AMOUNT_CURRENT_ENTRY"),
-    t(""),
-  ]
-  : [
-    t("WORKS_SNO"),
-    t("MB_DESCRIPTION"),
-    t("MB_UNIT"),
-    t("MB_RATE"),
-    t("MB_APPROVER_QUANT"),
-    t("MB_CONSUMED_QUANT"),
-    t("MB_CURRENT_MB_ENTRY"),
-    t("MB_AMOUNT_CURRENT_ENTRY"),
-  ];
+  let columns = props?.props?.isEstimate
+    ? [t("WORKS_SNO"), t("MB_DESCRIPTION"), t("MB_UNIT"), t("MB_RATE"), t("MB_CURRENT_MB_ENTRY"), t("MB_AMOUNT_CURRENT_ENTRY"), t("")]
+    : [
+        t("WORKS_SNO"),
+        t("MB_DESCRIPTION"),
+        t("MB_UNIT"),
+        t("MB_RATE"),
+        t("MB_APPROVER_QUANT"),
+        t("MB_CONSUMED_QUANT"),
+        t("MB_CURRENT_MB_ENTRY"),
+        t("MB_AMOUNT_CURRENT_ENTRY"),
+      ];
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return (
@@ -81,169 +96,154 @@ const MeasureTable = (props) => {
     });
   };
 
-
   const renderBody = () => {
-    return tablesState?.map((row, index) => {
-      const [consumedQty, setConsumedQty] = useState(row.currentMBEntry);
-      const [showMeasureCard, setShowMeasureCard] = useState(false);
-      const [initialState, setInitialState] = useState({ tableState: row?.measures });
+    // Update the state with the new data
+    return fields?.map((row, index) => {
+      // console.log(row,'row');
+      // const [consumedQty, setConsumedQty] = useState(row.currentMBEntry);
+      // const [initialState, setInitialState] = useState({ tableState: row?.measures });
 
-      useEffect(() => {
-        tablesState[index].measures = initialState?.tableState;
-        let updatedData = tablesState?.map(tableRow => {
+      const consumedQty = row.currentMBEntry;
 
-          const currentMBEntry = tableRow?.measures.reduce((total, item) => total + item.noOfunit, 0);
+      const initialState = { tableState: row?.measures };
+      const setConsumedQty = (val) => (consumedQty = val);
 
-          const amount = (currentMBEntry * tableRow?.unitRate).toFixed(2);
+      const setInitialState = (val) => (initialState = val);
 
-          return {
-            ...tableRow,
-            currentMBEntry,
-            amount,
-          };
-        });
-        let sum = updatedData.reduce((acc, row) => acc + parseFloat(row.amount), 0);
-        sum = parseFloat(sum.toFixed(2));
-        // Update the state with the new data
-        setTablesState(updatedData);
-        setTotalMBAmount(sum);
-      }, [initialState]);
-
-
-      const handleInputChange = (field, value, rowIndex) => {
-        // Create a copy of tablesState to avoid mutation
-        const newTablesState = [...tablesState];
-
-        // Find the index of the row you want to update (you can pass the rowIndex as an argument)
-        const updatedRow = newTablesState[rowIndex];
-
-        // Update the specific field in the row
-        switch (field) {
-          case "description":
-            updatedRow.description = value;
-            break;
-          case "uom":
-            updatedRow.uom = value;
-            break;
-          case "unitRate":
-            updatedRow.unitRate = value;
-            break;
-          default:
-            break;
-        }
-
-        // Update the state with the modified tablesState
-        setTablesState(newTablesState);
-
-        // Update the table state with the new data
-        const newTable = { ...table };
-        newTable[tableKey] = newTablesState;
-        setTable(newTable);
-      };
-
-
-      const options = {
-        masterName: "uom",
-        moduleName: "common-masters",
-        localePrefix: "ES_COMMON_UOM",
-      }
-
-      const { isLoading, data } = Digit.Hooks.useCustomMDMS(
-        Digit.ULBService.getStateId(),
-        options?.moduleName,
-        [{ name: options?.masterName }],
-        {
-          select: (data) => {
-            const optionsData = _.get(data, `${options?.moduleName}.${options?.masterName}`, []);
-            return optionsData.filter((opt) => opt?.active).map((opt) => ({ ...opt, name: `${options?.localePrefix}_${opt.code}` }));
-          },
-          enabled: props?.props?.isEstimate,
-        }
-      );
-      const optionsData = data?.map(obj => ({ code: obj?.code, name: obj?.name }));
+      const optionsData = UOMData?.map((obj) => ({ code: obj?.code, name: obj?.name }));
       if (isLoading) {
-        return <Loader />
+        return <Loader />;
       }
       return (
         <>
           <tr key={index}>
             <td>{index + 1}</td>
-            {props?.props?.isEstimate ? <TextInput style={{ width: "80%", marginTop: "27px", marginLeft: "35px" }} onChange={(e) => handleInputChange("description", e.target.value, index)}
-              value={row.description} /> : <td>{row.description}</td>}
-            {props?.props?.isEstimate ?
-              <td><Dropdown
-                inputRef={register()}
-                option={optionsData}
-                selected={row.uom}
-                optionKey="name"
-                t={t}
-                select={(selectedOption) => handleInputChange("uom", selectedOption, index)}
-                onBlur={props?.onBlur}
-                optionCardStyles={{ maxHeight: "15rem" }}
-                style={{ marginBottom: "0px" }}
-              /></td>
-              :
-              <td>{row.uom}</td>}
-            {props?.props?.isEstimate ? <TextInput style={{ width: "80%", marginTop: "20px", marginLeft: "20px" }} onChange={(e) => handleInputChange("unitRate", e.target.value, index)}
-              value={row.unitRate}
-            /> : <td><Amount customStyle={{ textAlign: 'right' }} value={row.unitRate.toFixed(2)} t={t} roundOff={false}></Amount></td>}
+            {props?.props?.isEstimate ? (
+              <TextInput
+                style={{ width: "80%", marginTop: "27px", marginLeft: "35px" }}
+                //  {...register(`SOR.${index}.description`)}
+
+                // onChange={(e) => handleInputChange("description", e.target.value, index)}
+                value={row.description}
+              />
+            ) : (
+              <td>{row.description}</td>
+            )}
+            {props?.props?.isEstimate ? (
+              <td>
+                <Dropdown
+                  // inputRef={register()}
+                  option={optionsData}
+                  selected={row.uom}
+                  optionKey="name"
+                  t={t}
+                  // select={(selectedOption) => handleInputChange("uom", selectedOption, index)}
+                  optionCardStyles={{ maxHeight: "15rem" }}
+                  style={{ marginBottom: "0px" }}
+                />
+              </td>
+            ) : (
+              <td>{row.uom}</td>
+            )}
+            {props?.props?.isEstimate ? (
+              <TextInput
+                style={{ width: "80%", marginTop: "20px", marginLeft: "20px" }}
+                // onChange={(e) => handleInputChange("unitRate", e.target.value, index)}
+                value={row.unitRate}
+              />
+            ) : (
+              <td>
+                <Amount customStyle={{ textAlign: "right" }} value={row?.unitRate?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+              </td>
+            )}
             {!props?.props?.isEstimate && (
               <>
-                <td><Amount customStyle={{ textAlign: 'right' }} value={row.approvedQuantity.toFixed(2)} t={t} roundOff={false}></Amount></td>
-                <td><Amount customStyle={{ textAlign: 'right' }} value={row.consumedQ.toFixed(2)} t={t} roundOff={false}></Amount></td>
+                <td>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+                </td>
+                <td>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.consumedQ?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+                </td>
               </>
             )}
             <td>
-              <div className="measurement-table-input">
-                <TextInput style={{ width: "80%", marginTop: "12px" }} value={consumedQty} onChange={() => { }} disable={initialState.length > 0 ? "true" : "false"} />
+              <span className="measurement-table-input">
+                <TextInput
+                  style={{ width: "80%", marginTop: "12px" }}
+                  key={row?.id} // important to include key with field's id
+                  // {...register(`${tableKey}.${index}.currentMBEntry`)}
+                  value={consumedQty}
+                  onChange={() => {}}
+                  disable={initialState.length > 0 ? "true" : "false"}
+                />
                 <Button
                   className={"plus-button"}
                   onButtonClick={() => {
-                    setShowMeasureCard(!showMeasureCard);
+                    const measure = {
+                      sNo: 0,
+                      targetId: 0,
+                      isDeduction: false,
+                      description: "",
+                      id: "",
+                      height: 0,
+                      width: 0,
+                      length: 0,
+                      number: 0,
+                      noOfunit: 0,
+                      rowAmount: 0,
+                      consumedRowQuantity: 0,
+                    };
+                    const measures = fields?.[index]?.measures?.length > 0 ? fields?.[index]?.measures : [measure];
+                    fields[index] = { ...fields[index], showMeasure: true, measures: measures };
+                    // console.log(fields,"fieldsfields")
+                    // setValue(tableKey, fields);
+                    setFormValue(fields);
+                    // setValue(tableKey,data)
+                    // setShowMeasureCard(!showMeasureCard);
                   }}
                   label={"+"}
                 >
                   <AddIcon className="addIcon" />
                 </Button>
-              </div>
+              </span>
             </td>
 
-            <td><Amount customStyle={{ textAlign: 'right' }} value={row.amount} t={t} roundOff={false}></Amount></td>
-            {props?.props?.isEstimate && <td>
-              <span className="icon-wrapper" onClick={() => removeRow(row)}>
-                <DeleteIcon fill={"#B1B4B6"} />
-              </span>
-            </td>}
-
+            <td>
+              <Amount customStyle={{ textAlign: "right" }} value={row.amount} t={t} roundOff={false}></Amount>
+            </td>
+            {props?.props?.isEstimate && (
+              <td>
+                <span className="icon-wrapper" onClick={() => removeRow(row)}>
+                  <DeleteIcon fill={"#B1B4B6"} />
+                </span>
+              </td>
+            )}
           </tr>
-          {showMeasureCard && !initialState.length > 0 && (
+          {row?.showMeasure && !initialState.length > 0 && (
             <tr>
               <td colSpan={"1"}></td>
               <td colSpan={props?.props?.isEstimate ? 5 : 7}>
-                <MeasureCard columns={[
-                  t("WORKS_SNO"),
-                  t("MB_IS_DEDUCTION"),
-                  t("MB_DESCRIPTION"),
-                  t("MB_ONLY_NUMBER"),
-                  t("MB_LENGTH"),
-                  t("MB_WIDTH"),
-                  t("MB_HEIGHT"),
-                  t("MB_QUANTITY"),
-
-                ]} consumedQty={consumedQty}
-                  setConsumedQty={setConsumedQty}
-                  setInitialState={setInitialState}
-                  setShowMeasureCard={setShowMeasureCard}
-                  initialState={initialState}
+                <MeasureCard
+                  columns={[
+                    t("WORKS_SNO"),
+                    t("MB_IS_DEDUCTION"),
+                    t("MB_DESCRIPTION"),
+                    t("MB_ONLY_NUMBER"),
+                    t("MB_LENGTH"),
+                    t("MB_WIDTH"),
+                    t("MB_HEIGHT"),
+                    t("MB_QUANTITY"),
+                  ]}
                   unitRate={row.unitRate}
-                  register={props.isView ? () => { } : register}
-                  setValue={props.isView ? () => { } : setValue}
-                  tableData={table}
+                  fields={row?.measures || []}
+                  register={register}
+                  setValue={setFormValue}
                   tableKey={tableKey}
+                  tableData={fields}
                   tableIndex={index}
                   isEstimates={props?.props?.isEstimate}
-                  isView={props?.isView} />
-
+                  isView={props?.isView}
+                />
               </td>
             </tr>
           )}
@@ -259,26 +259,83 @@ const MeasureTable = (props) => {
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>
-        <tbody>
-          {renderBody()}
-
-        </tbody>
-
+        <tbody>{renderBody()}</tbody>
       </table>
+    {/*  <button
+        onClick={() => {
+          append({
+            amount: 0,
+            consumedQ: 0,
+            sNo: 2,
+            currentMBEntry: 0,
+            uom: null,
+            description: "test",
+            unitRate: "",
+            contractNumber: "",
+            targetId: "id",
+            approvedQuantity: "",
+            measures: [],
+          });
+        }}
+      >
+        add
+      </button>
+      <button
+        onClick={() => {
+          remove(1);
+        }}
+      >
+        remove
+      </button>
+      <button
+        onClick={() => {
+          fields[2] = {
+            ...fields[2],
+            approvedQuantity: "4",
+            description: "testupdate",
+            sNo: 2,
+            currentMBEntry: 3,
+            measures: [
+              {
+                sNo: 1,
+                targetId: 0,
+                isDeduction: false,
+                description: "test sub",
+                id: "s",
+                height: 0,
+                width: 2,
+                length: 23,
+                number: 4,
+                noOfunit: 5,
+                rowAmount: 6,
+                consumedRowQuantity: 0,
+              },
+            ],
+          };
+          // console.log(fields, "fieldsfields");
+          // setValue(tableKey, fields);
+          setFormValue(fields);
+        }}
+      >
+        update
+      </button>
+      */}
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
-
           {/* <span style={{ fontWeight: "bold" }}>`{t("MB_TOTAL")} ${props.config.key} {t("MB_TOTAL_AMOUNT")}`</span> */}
-          <span style={{ fontWeight: "bold" }}>{t("MB_TOTAL")}  {props.config.key} {t("MB_TOTAL_AMOUNT")} :</span>
+          <span style={{ fontWeight: "bold" }}>
+            {t("MB_TOTAL")} {props.config.key} {t("MB_TOTAL_AMOUNT")} :
+          </span>
 
-          <span style={{ marginLeft: "3px" }}><Amount customStyle={{ textAlign: 'right' }} value={totalMBAmount.toFixed(2)} t={t} roundOff={false}></Amount></span>
-
+          <span style={{ marginLeft: "3px" }}>
+            <Amount customStyle={{ textAlign: "right" }} value={sum?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+          </span>
         </div>
       </div>
     </React.Fragment>
     // </Card>
   );
 };
-
+//think more update table should have option to update whole table state similarly card should update back the parent state
 
 export default MeasureTable;
