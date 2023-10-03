@@ -10,7 +10,7 @@ import EstimateInbox from "./EstimateInbox";
 import ViewEstimate from "./ViewEstimate";
 import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
 
-import NewView from "./NewView";
+import NewView from "./ViewDetailedEstimate";
 
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
