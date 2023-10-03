@@ -20,7 +20,6 @@ const MeasureTable = (props) => {
     },
     [setValue, tableKey]
   );
-
   const { isLoading, data: UOMData } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
     options?.moduleName,
@@ -42,6 +41,7 @@ const MeasureTable = (props) => {
   useEffect(() => {
     // console.log("tableKey, fields",tableKey, fields)
     register(tableKey, fields);
+    register(`${tableKey}table`, fields);
   }, []);
   const getStyles = (index) => {
     let obj = {};
@@ -94,8 +94,16 @@ const MeasureTable = (props) => {
 
   const renderBody = () => {
     // Update the state with the new data
+    const handleInputChange = useCallback(
+      (key, value, index) => {
+        const field = fields[index] || {};
+        field[key] = value;
+        fields[index] = { ...field };
+        setFormValue(fields);
+      },
+      [setValue, tableKey]
+    );
     return fields?.map((row, index) => {
-
       const consumedQty = row.currentMBEntry;
       const initialState = { tableState: row?.measures };
       const optionsData = UOMData?.map((obj) => ({ code: obj?.code, name: obj?.name }));
@@ -107,42 +115,44 @@ const MeasureTable = (props) => {
           <tr key={index}>
             <td>{index + 1}</td>
             {mode == "CREATEALL" ? (
-              <TextInput
-                style={{ width: "80%", marginTop: "27px", marginLeft: "35px" }}
-                //  {...register(`SOR.${index}.description`)}
+              <>
+                <td>
+                  <TextInput
+                    style={{ width: "80%", marginTop: "27px", marginLeft: "35px" }}
+                    //  {...register(`SOR.${index}.description`)}
 
-                // onChange={(e) => handleInputChange("description", e.target.value, index)}
-                value={row.description}
-              />
+                    onChange={(e) => handleInputChange("description", e.target.value, index)}
+                    value={row.description}
+                  />
+                </td>
+                <td>
+                  <Dropdown
+                    // inputRef={register()}
+                    option={optionsData}
+                    selected={row.uom}
+                    optionKey="name"
+                    t={t}
+                    select={(selectedOption) => handleInputChange("uom", selectedOption, index)}
+                    optionCardStyles={{ maxHeight: "15rem" }}
+                    style={{ marginBottom: "0px" }}
+                  />
+                </td>
+                <td>
+                  <TextInput
+                    style={{ width: "80%", marginTop: "20px", marginLeft: "20px" }}
+                    onChange={(e) => handleInputChange("unitRate", e.target.value, index)}
+                    value={row.unitRate}
+                  />
+                </td>
+              </>
             ) : (
-              <td>{row.description}</td>
-            )}
-            {mode == "CREATEALL" ? (
-              <td>
-                <Dropdown
-                  // inputRef={register()}
-                  option={optionsData}
-                  selected={row.uom}
-                  optionKey="name"
-                  t={t}
-                  // select={(selectedOption) => handleInputChange("uom", selectedOption, index)}
-                  optionCardStyles={{ maxHeight: "15rem" }}
-                  style={{ marginBottom: "0px" }}
-                />
-              </td>
-            ) : (
-              <td>{row.uom}</td>
-            )}
-            {mode == "CREATEALL" ? (
-              <TextInput
-                style={{ width: "80%", marginTop: "20px", marginLeft: "20px" }}
-                // onChange={(e) => handleInputChange("unitRate", e.target.value, index)}
-                value={row.unitRate}
-              />
-            ) : (
-              <td>
-                <Amount customStyle={{ textAlign: "right" }} value={row?.unitRate?.toFixed?.(2)} t={t} roundOff={false}></Amount>
-              </td>
+              <>
+                <td>{row.description}</td>
+                <td>{row.uom}</td>
+                <td>
+                  <Amount customStyle={{ textAlign: "right" }} value={row?.unitRate?.toFixed?.(2)} t={t} roundOff={false}></Amount>
+                </td>
+              </>
             )}
             {mode != "CREATEALL" && (
               <>
@@ -184,7 +194,6 @@ const MeasureTable = (props) => {
                     const measures = fields?.[index]?.measures?.length > 0 ? fields?.[index]?.measures : [measure];
                     fields[index] = { ...fields[index], showMeasure: true, measures: measures };
                     setFormValue(fields);
-                  
                   }}
                   label={"+"}
                 >
@@ -198,7 +207,7 @@ const MeasureTable = (props) => {
             </td>
             {mode == "CREATEALL" && (
               <td>
-                <span className="icon-wrapper" onClick={() =>           remove(index)}>
+                <span className="icon-wrapper" onClick={() => remove(index)}>
                   <DeleteIcon fill={"#B1B4B6"} />
                 </span>
               </td>
@@ -242,29 +251,36 @@ const MeasureTable = (props) => {
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>
-        <tbody>{renderBody()}
-        <tr>
-         {mode == "CREATEALL" && tableKey=="NONSOR"&& <td colSpan={6} style={{ textAlign: "center" }} onClick={() => {
-          append({
-            amount: 0,
-            consumedQ: 0,
-            sNo: fields?.length+1,
-            currentMBEntry: 0,
-            uom: null,
-            description: "",
-            unitRate: "",
-            contractNumber: "",
-            targetId: "",
-            approvedQuantity: "",
-            measures: [],
-          });
-        }}>
-            <span>
-              <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px" }} />
-              <label style={{ marginLeft: "10px", fontWeight: "600", color: " #F47738" }}>{t("WORKS_ADD_SOR")}</label>
-            </span>
-          </td>}
-        </tr>
+        <tbody>
+          {renderBody()}
+          <tr>
+            {mode == "CREATEALL" && tableKey == "NONSOR" && (
+              <td
+                colSpan={6}
+                style={{ textAlign: "center" }}
+                onClick={() => {
+                  append({
+                    amount: 0,
+                    consumedQ: 0,
+                    sNo: fields?.length + 1,
+                    currentMBEntry: 0,
+                    uom: null,
+                    description: "",
+                    unitRate: "",
+                    contractNumber: "",
+                    targetId: "",
+                    approvedQuantity: "",
+                    measures: [],
+                  });
+                }}
+              >
+                <span>
+                  <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px" }} />
+                  <label style={{ marginLeft: "10px", fontWeight: "600", color: " #F47738" }}>{t("WORKS_ADD_SOR")}</label>
+                </span>
+              </td>
+            )}
+          </tr>
         </tbody>
       </table>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
