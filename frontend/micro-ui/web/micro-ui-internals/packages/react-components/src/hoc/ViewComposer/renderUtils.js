@@ -9,17 +9,18 @@ import WorkflowActions from "../../atoms/WorkflowActions";
 import { Link } from "react-router-dom";
 
 export const RenderDataSection = ({ section }) => {
+  const { t } = useTranslation();
   return (
     <>
       {section.cardHeader && <CardSubHeader style={section?.cardHeader?.inlineStyles}>{section.cardHeader.value}</CardSubHeader>}
       <StatusTable style={section?.inlineStyles}>
-        {section.sectionHeader && <CardSectionHeader style={section?.sectionHeader?.inlineStyles}>{section.sectionHeader.value}</CardSectionHeader>}
+        {section.sectionHeader && <CardSectionHeader style={section?.sectionHeader?.inlineStyles}>{t(section.sectionHeader.value)}</CardSectionHeader>}
         {section.values.map((row, rowIdx) => {
           const displayValue = row?.value !== undefined && row?.value !== null ? row.value : 'NA';
           return (
             <Row
               key={row.key}
-              label={row.key}
+              label={t(row.key)}
               text={row?.isLink ? <div>
                 <Link to={row?.to}>
                   <span className="link" style={{ color: "#F47738" }}>
