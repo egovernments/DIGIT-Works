@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY ${WORK_DIR}/package.json ${WORK_DIR}/yarn.lock
 
-RUN yarn
+RUN yarn install
 
 # CMD ["npm", "install" "-f"]
 # CMD ["npm", "audit" "fix"]
