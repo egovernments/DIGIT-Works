@@ -19,18 +19,18 @@ export const createEstimateConfig = () => {
                 ]
             },
             {
-                "head": "SOR",
+                "head": "",
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
                     
-                    {
-                        type: "component",
-                        component: "searchSor",
-                        withoutLabel: true,
-                        key: "searchSor",
+                    // {
+                    //     type: "component",
+                    //     component: "searchSor",
+                    //     withoutLabel: true,
+                    //     key: "searchSor",
                         
-                    },
+                    // },
                 ]
             },
             {
@@ -43,6 +43,11 @@ export const createEstimateConfig = () => {
                         component: "MeasureTable",
                         withoutLabel: true,
                         key: "SOR",
+                        customProps: {
+                           mode:"createall"
+                        },
+                        
+                        mode:"CREATEALL"
                     },
                     
                 
@@ -59,13 +64,12 @@ export const createEstimateConfig = () => {
                         component: "MeasureTable",
                         withoutLabel: true,
                         customProps: {
-                            isEstimate: true
-                        },
+                            mode:"createall"
+                         },
                         key: "NONSOR",
-                    },
-                    
+                        mode:"CREATEALL"
+                    },     
                 
-
                 ]
             },
             {

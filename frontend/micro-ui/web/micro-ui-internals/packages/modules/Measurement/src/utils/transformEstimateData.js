@@ -45,6 +45,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
             contractNumber: transformedContract?.contractNumber,
             targetId: transformedContract?.lineItemsObject[convertedObject[key][0].id]?.contractLineItemId,
             approvedQuantity: convertedObject[key].reduce((acc, curr) => acc + curr.noOfunit, 0),
+            showMeasure:false,
             measures,
         }
     })
@@ -88,4 +89,33 @@ export const transformMeasureObject = (measurement = {}) => {
 
 }
 
+
+export const getDefaultValues=(contract,estimate,allMeasurements=[],measurement={})=>{
+
+    const SOR=transformEstimateData(estimate?.estimateDetails, contract, "SOR", measurement);
+    const NONSOR=transformEstimateData(estimate?.estimateDetails, contract, "NON-SOR", measurement);
+
+    // extract details from contract 
+    const {
+        contractNumber,
+        issueDate,
+        additionalDetails: {
+            projectId: projectID,
+            projectName: projectName,
+            projectDesc: projectDesc,
+            locality: projectLoc,
+            ward: projectWard,
+        },
+    } = contract;
+    const headerLocale = Digit.Utils.locale.getTransformedLocale(Digit.ULBService.getCurrentTenantId())
+    const Pward = projectWard ? `${headerLocale}_ADMIN_${projectWard}` : "";
+    // const city = projectLoc ? t(`${Digit.Utils.locale.getTransformedLocale(projectLoc)}`) : "";
+    const city = projectLoc ? `${headerLocale}_ADMIN_${projectLoc}` : "";
+
+   
+    const projectLocation =  `${Pward ? Pward + ", " : ""}${city}`
+    const contractDetails={contractNumber,projectID,projectName,projectDesc,projectLocation,sanctionDate:Digit.DateUtils.ConvertEpochToDate(issueDate)};
+
+    return {SOR,NONSOR,contractDetails}
+}
 

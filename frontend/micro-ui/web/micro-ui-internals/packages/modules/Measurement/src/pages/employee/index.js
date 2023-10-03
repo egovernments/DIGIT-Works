@@ -65,6 +65,7 @@ const App = ({ path }) => {
     <Switch>
       <React.Fragment>
         <MeasurementBreadCrumbs location={location} />
+
         <PrivateRoute path={`${path}/create`} component={() => <CreateMeasurement {...{ path }} />} />
         <PrivateRoute path={`${path}/search`} component={() => <SearchMeasurement {...{ path }} />} />
         <PrivateRoute path={`${path}/inbox`} component={() => <InboxMeasurement {...{ path }} />} />

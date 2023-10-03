@@ -202,7 +202,7 @@ const CreateEstimate = () => {
 
     useEffect(() => {
         if (uom && estimate && overheads && isEdit) {
-            setSessionFormData(initialDefaultValues)
+            // setSessionFormData(initialDefaultValues)
         }
     }, [estimate, uom, overheads])
 
@@ -220,7 +220,7 @@ const CreateEstimate = () => {
             // else{
             //     setSessionFormData({ ...sessionFormData, ...formData });
             // }
-            setSessionFormData({ ...sessionFormData, ...formData });
+            // setSessionFormData({ ...sessionFormData, ...formData });
         }
 
     }
