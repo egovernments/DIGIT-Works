@@ -1479,12 +1479,12 @@ export const MdmsService = {
       useCache: true,
       params: { tenantId: stateCode },
     }),
-  call: (tenantId, details) => {
+  call: (tenantId, details,v2=false) => {
     return new Promise((resolve, reject) =>
       debouncedCall(
         {
           serviceName: "mdmsCall",
-          url: Urls.MDMS,
+          url: v2?Urls.MDMSv2:Urls.MDMS,
           data: getCriteria(tenantId, details),
           useCache: true,
           params: { tenantId },
@@ -1494,13 +1494,13 @@ export const MdmsService = {
       )
     );
   },
-  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode) => {
+  getDataByCriteria: async (tenantId, mdmsDetails, moduleCode,v2=false) => {
     const key = `MDMS.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
     const inStoreValue = PersistantStorage.get(key);
     if (inStoreValue) {
       return inStoreValue;
     }
-    const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
+    const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details,v2);
     const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
@@ -1638,8 +1638,8 @@ export const MdmsService = {
   getMultipleTypes: (tenantId, moduleCode, types) => {
     return MdmsService.getDataByCriteria(tenantId, getMultipleTypes(tenantId, moduleCode, types), moduleCode);
   },
-  getMultipleTypesWithFilter: (tenantId, moduleCode, types) => {
-    return MdmsService.getDataByCriteria(tenantId, getMultipleTypesWithFilter(moduleCode, types), moduleCode);
+  getMultipleTypesWithFilter: (tenantId, moduleCode, types,v2) => {
+    return MdmsService.getDataByCriteria(tenantId, getMultipleTypesWithFilter(moduleCode, types), moduleCode,v2);
   },
   getFSTPPlantInfo: (tenantId, moduleCode, types) => {
     return MdmsService.getDataByCriteria(tenantId, getFSTPPlantCriteria(tenantId, moduleCode, types), moduleCode);

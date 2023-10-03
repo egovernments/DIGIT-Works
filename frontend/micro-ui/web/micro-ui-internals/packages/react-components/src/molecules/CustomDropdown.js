@@ -67,17 +67,22 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
   if (config?.mdmsConfig?.filter) {
     master["filter"] = config?.mdmsConfig?.filter;
   }
+  const v2=config?.mdmsConfig?.v2;
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), config?.mdmsConfig?.moduleName, [master], {
     select: config?.mdmsConfig?.select
       ? Digit.Utils.createFunction(config?.mdmsConfig?.select)
       : (data) => {
           const optionsData = _.get(data, `${config?.mdmsConfig?.moduleName}.${config?.mdmsConfig?.masterName}`, []);
+          console.log(optionsData,
+            "optionsData");
           return optionsData
             .filter((opt) => opt?.active)
             .map((opt) => ({ ...opt, name: `${config?.mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
         },
     enabled: config?.mdmsConfig ? true : false,
-  });
+  },v2);
+  console.log(data,
+    "data");
   if (isLoading) {
     return <Loader />;
   }
