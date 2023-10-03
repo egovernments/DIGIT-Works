@@ -46,6 +46,8 @@ export const createEstimateConfig = () => {
                         customProps: {
                            mode:"createall"
                         },
+                        
+                        mode:"CREATEALL"
                     },
                     
                 
@@ -65,10 +67,9 @@ export const createEstimateConfig = () => {
                             mode:"createall"
                          },
                         key: "NONSOR",
-                    },
-                    
+                        mode:"CREATEALL"
+                    },     
                 
-
                 ]
             },
             {

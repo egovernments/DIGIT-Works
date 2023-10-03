@@ -95,17 +95,9 @@ const MeasureTable = (props) => {
   const renderBody = () => {
     // Update the state with the new data
     return fields?.map((row, index) => {
-      // console.log(row,'row');
-      // const [consumedQty, setConsumedQty] = useState(row.currentMBEntry);
-      // const [initialState, setInitialState] = useState({ tableState: row?.measures });
 
       const consumedQty = row.currentMBEntry;
-
       const initialState = { tableState: row?.measures };
-      const setConsumedQty = (val) => (consumedQty = val);
-
-      const setInitialState = (val) => (initialState = val);
-
       const optionsData = UOMData?.map((obj) => ({ code: obj?.code, name: obj?.name }));
       if (isLoading) {
         return <Loader />;
@@ -191,11 +183,8 @@ const MeasureTable = (props) => {
                     };
                     const measures = fields?.[index]?.measures?.length > 0 ? fields?.[index]?.measures : [measure];
                     fields[index] = { ...fields[index], showMeasure: true, measures: measures };
-                    // console.log(fields,"fieldsfields")
-                    // setValue(tableKey, fields);
                     setFormValue(fields);
-                    // setValue(tableKey,data)
-                    // setShowMeasureCard(!showMeasureCard);
+                  
                   }}
                   label={"+"}
                 >
@@ -209,7 +198,7 @@ const MeasureTable = (props) => {
             </td>
             {mode == "CREATEALL" && (
               <td>
-                <span className="icon-wrapper" onClick={() => removeRow(row)}>
+                <span className="icon-wrapper" onClick={() =>           remove(index)}>
                   <DeleteIcon fill={"#B1B4B6"} />
                 </span>
               </td>
@@ -248,87 +237,48 @@ const MeasureTable = (props) => {
   };
 
   return (
-    // <Card className="override-card">
     <React.Fragment>
       <table className="table reports-table sub-work-table measurement-table-custom">
         <thead>
           <tr>{renderHeader()}</tr>
         </thead>
-        <tbody>{renderBody()}</tbody>
-      </table>
-      {/*  <button
-        onClick={() => {
+        <tbody>{renderBody()}
+        <tr>
+         {mode == "CREATEALL" && tableKey=="NONSOR"&& <td colSpan={6} style={{ textAlign: "center" }} onClick={() => {
           append({
             amount: 0,
             consumedQ: 0,
-            sNo: 2,
+            sNo: fields?.length+1,
             currentMBEntry: 0,
             uom: null,
-            description: "test",
+            description: "",
             unitRate: "",
             contractNumber: "",
-            targetId: "id",
+            targetId: "",
             approvedQuantity: "",
             measures: [],
           });
-        }}
-      >
-        add
-      </button>
-      <button
-        onClick={() => {
-          remove(1);
-        }}
-      >
-        remove
-      </button>
-      <button
-        onClick={() => {
-          fields[2] = {
-            ...fields[2],
-            approvedQuantity: "4",
-            description: "testupdate",
-            sNo: 2,
-            currentMBEntry: 3,
-            measures: [
-              {
-                sNo: 1,
-                targetId: 0,
-                isDeduction: false,
-                description: "test sub",
-                id: "s",
-                height: 0,
-                width: 2,
-                length: 23,
-                number: 4,
-                noOfunit: 5,
-                rowAmount: 6,
-                consumedRowQuantity: 0,
-              },
-            ],
-          };
-          // console.log(fields, "fieldsfields");
-          // setValue(tableKey, fields);
-          setFormValue(fields);
-        }}
-      >
-        update
-      </button>
-      */}
+        }}>
+            <span>
+              <AddIcon fill={"#F47738"} styles={{ margin: "auto", display: "inline", marginTop: "-2px" }} />
+              <label style={{ marginLeft: "10px", fontWeight: "600", color: " #F47738" }}>{t("WORKS_ADD_SOR")}</label>
+            </span>
+          </td>}
+        </tr>
+        </tbody>
+      </table>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
           {/* <span style={{ fontWeight: "bold" }}>`{t("MB_TOTAL")} ${props.config.key} {t("MB_TOTAL_AMOUNT")}`</span> */}
           <span style={{ fontWeight: "bold" }}>
             {t("MB_TOTAL")} {props.config.key} {t("MB_TOTAL_AMOUNT")} :
           </span>
-
           <span style={{ marginLeft: "3px" }}>
             <Amount customStyle={{ textAlign: "right" }} value={sum?.toFixed?.(2)} t={t} roundOff={false}></Amount>
           </span>
         </div>
       </div>
     </React.Fragment>
-    // </Card>
   );
 };
 //think more update table should have option to update whole table state similarly card should update back the parent state
