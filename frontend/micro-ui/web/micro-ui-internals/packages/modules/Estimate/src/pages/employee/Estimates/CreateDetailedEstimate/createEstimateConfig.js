@@ -23,14 +23,34 @@ export const createEstimateConfig = () => {
                 "subHead": "",
                 "navLink": "Work Details",
                 "body": [
-                    
                     // {
-                    //     type: "component",
-                    //     component: "searchSor",
-                    //     withoutLabel: true,
-                    //     key: "searchSor",
+                    //     label: "WORKS_PROJECT_TYPE",
+                    //     type: "dropdown",
+                    //     isMandatory: false,
+                    //     disable: false,
+                    //     key: "projectType",
+
+                    //     populators: {
+                    //       name: "projectType",
+                    //       optionsKey: "name",
+                    //       optionsCustomStyle: {
+                    //         top: "2.3rem",
+                    //       },
+                    //       mdmsConfig: {
+                    //         masterName: "Type",
+                    //         moduleName: "WORKS-SOR",
+                    //         localePrefix: "COMMON_MASTERS",
+                    //         v2:true
+                    //       },
+                    //     },
+                    //   },
+                    {
+                        type: "component",
+                        component: "searchSor",
+                        withoutLabel: true,
+                        key: "searchSor",
                         
-                    // },
+                    },
                 ]
             },
             {
@@ -46,7 +66,7 @@ export const createEstimateConfig = () => {
                         customProps: {
                            mode:"createall"
                         },
-                        
+                        useFieldArray:true,
                         mode:"CREATEALL"
                     },
                     
@@ -66,6 +86,7 @@ export const createEstimateConfig = () => {
                         customProps: {
                             mode:"createall"
                          },
+                        useFieldArray:true,
                         key: "NONSOR",
                         mode:"CREATEALL"
                     },     

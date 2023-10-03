@@ -15,7 +15,9 @@ const searchSor = (props) => {
     const [selectedSOR, setSelectedSOR] = useState(null);
     const {ref,register,setValue, formData} = props;
 
-    register("searchSor", stateData);
+    useEffect(()=>{
+        register("searchSor", stateData);
+    },[])
     useEffect(() => {
         // console.log("selectedSOR", selectedSOR);
         setStateData({
@@ -42,7 +44,7 @@ const searchSor = (props) => {
         return transformedSOR;
     }
   return (
-    <div ref={ref}>
+    <div >
         <EstimateDropdown
             label="SOR Type"
             stateData={stateData}
@@ -65,13 +67,13 @@ const searchSor = (props) => {
             type="SORVariant"
         />
 
-        <SearchBar stateData={stateData} selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
+        {/* <SearchBar stateData={stateData} selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
         <Button label="Add" onButtonClick={() => {
             // console.log("stateData", stateData);
             const sor = transformSOR(stateData?.selectedSor);
             formData.SOR.push(sor);
             console.log("formData", formData);
-        }} />
+        }} /> */}
     </div>
   )
 }
