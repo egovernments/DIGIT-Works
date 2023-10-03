@@ -6,7 +6,8 @@ WORKDIR /app
 
 COPY ${WORK_DIR}/package.json ${WORK_DIR}/yarn.lock
 
-RUN npm install -g yarn
+RUN apk --no-cache add npm && \
+    npm install -g yarn
 
 RUN yarn install
 
