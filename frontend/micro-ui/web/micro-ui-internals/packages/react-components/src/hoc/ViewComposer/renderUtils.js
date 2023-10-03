@@ -15,6 +15,7 @@ export const RenderDataSection = ({ section }) => {
       <StatusTable style={section?.inlineStyles}>
         {section.sectionHeader && <CardSectionHeader style={section?.sectionHeader?.inlineStyles}>{section.sectionHeader.value}</CardSectionHeader>}
         {section.values.map((row, rowIdx) => {
+          const displayValue = row?.value !== undefined && row?.value !== null ? row.value : 'NA';
           return (
             <Row
               key={row.key}
@@ -22,10 +23,10 @@ export const RenderDataSection = ({ section }) => {
               text={row?.isLink ? <div>
                 <Link to={row?.to}>
                   <span className="link" style={{ color: "#F47738" }}>
-                    {row?.value}
+                    {displayValue}
                   </span>
                 </Link>
-              </div> :row.value}
+              </div> : displayValue}
               last={rowIdx === section.values?.length - 1}
               caption={row.caption}
               className="border-none"
