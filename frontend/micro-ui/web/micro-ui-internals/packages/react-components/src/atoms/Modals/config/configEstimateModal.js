@@ -406,6 +406,51 @@ const configEstimateModal = (
                     show:true,
                     allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
                 }
+            },
+            "SENT_BACK" : {
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
+                }
+            },
+            "REJECT" : {
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
+                }
+            },
+            "APPROVE" : {
+                comments:{
+                    isMandatory:false,
+                    show:true,
+                },
+                assignee:{
+                    isMandatory:false,
+                    show:false
+                },
+                upload:{
+                    isMandatory:false,
+                    show:true,
+                    allowedFileTypes:/(.*?)(pdf|vnd.openxmlformats-officedocument.wordprocessingml.document|msword|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet|csv|jpeg)$/i
+                }
             }
         }
     }
