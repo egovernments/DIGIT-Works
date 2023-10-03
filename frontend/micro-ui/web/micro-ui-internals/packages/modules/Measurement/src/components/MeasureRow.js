@@ -7,7 +7,7 @@ const MeasureInputAtom = ({ id, row, mode, disable = false, fieldKey, value, dis
   <td>
     <TextInput
       value={value}
-      type="number"
+      type={fieldKey=="description"?"text":"number"}
       onChange={(newValue) => {
         dispatch({
           type: "UPDATE_ROW",

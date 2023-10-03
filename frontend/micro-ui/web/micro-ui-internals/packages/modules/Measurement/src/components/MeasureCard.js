@@ -1,5 +1,5 @@
 import { Button } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useReducer, Fragment } from "react";
+import React, { useReducer, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import MeasureRow from "./MeasureRow";
 
@@ -47,9 +47,6 @@ const initialValue = (element) => {
 }
 const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tableData, tableKey, tableIndex, unitRate, mode }) => {
   const { t } = useTranslation();
-  useEffect(() => {
-    register(`${tableKey}table`, tableData);
-  }, []);
 
   const reducer = (state, action) => {
     // console.log(state, action, "reducer");
