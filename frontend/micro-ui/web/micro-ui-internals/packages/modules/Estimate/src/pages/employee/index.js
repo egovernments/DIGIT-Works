@@ -11,7 +11,7 @@ import ViewEstimate from "./ViewEstimate";
 import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
 import CreateDetailedEstimate from "./Estimates/CreateDetailedEstimate/CreateEstimate";
 
-import NewView from "./NewView";
+import NewView from "./ViewDetailedEstimate";
 
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
