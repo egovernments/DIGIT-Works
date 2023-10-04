@@ -113,6 +113,35 @@ public class MBServiceConfiguration {
     @Value("${egov.measurement.registry.search.path}")
     public String mbRegistrySearch;
 
+    //HRMS
+    @Value("${egov.hrms.host}")
+    private String hrmsHost;
+
+    @Value("${egov.hrms.search.endpoint}")
+    private String hrmsEndPoint;
+
+    //Works -Project management system Config
+    @Value("${works.project.service.host}")
+    private String worksProjectServiceHost;
+
+    @Value("${works.project.service.path}")
+    private String worksProjectServicePath;
+    //localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.localization.statelevel}")
+    private Boolean isLocalizationStateLevel;
+
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotifTopic;
+
     public String rejectedStatus = "REJECTED";
     public String approvedStatus = "APPROVED";
     public String draftAction="SAVE_AS_DRAFT";

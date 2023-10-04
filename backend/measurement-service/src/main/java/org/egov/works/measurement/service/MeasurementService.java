@@ -43,6 +43,8 @@ public class MeasurementService {
     private MeasurementServiceUtil measurementServiceUtil;
     @Autowired
     private MeasurementRegistryUtil measurementRegistryUtil;
+    @Autowired
+    private NotificationService notificationService;
 
     /**
      * Handles create MeasurementRegistry
@@ -96,6 +98,13 @@ public class MeasurementService {
 
         // Update & enrich workflow statuses for each measurement service
         measurementServiceUtil.updateWorkflow(measurementServiceRequest);
+
+        //Send notification
+        try {
+            notificationService.sendNotification(measurementServiceRequest);
+        }catch (Exception e) {
+            log.error("Exception while sending notification: " + e);
+        }
 
         // Create a MeasurementServiceResponse
         MeasurementServiceResponse response = measurementServiceUtil.makeUpdateResponseService(measurementServiceRequest);
