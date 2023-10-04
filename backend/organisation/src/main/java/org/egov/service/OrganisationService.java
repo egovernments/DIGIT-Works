@@ -18,14 +18,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class OrganisationService {
-
     public static final String ORGANISATION_ENCRYPT_KEY = "Organisation";
-
-//    public static final String ORGANISATION_DECRYPT_KEY = "OrganisationDecrypt";
-
     @Autowired
     private OrganisationServiceValidator organisationServiceValidator;
-
     @Autowired
     private OrganisationRepository organisationRepository;
 
@@ -69,7 +64,7 @@ public class OrganisationService {
         }catch (Exception e){
             log.error("Exception while sending notification: " + e);
         }
-//        encryptionDecryptionUtil.decryptContacts()
+//        encryptionService.decrypt(orgRequest.getOrganisations(),ORGANISATION_ENCRYPT_KEY,orgRequest);
         return orgRequest;
     }
 
