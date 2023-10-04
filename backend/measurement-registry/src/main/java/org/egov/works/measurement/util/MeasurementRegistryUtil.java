@@ -1,7 +1,7 @@
 package org.egov.works.measurement.util;
 
-import digit.models.coremodels.AuditDetails;
 import org.apache.commons.lang.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
