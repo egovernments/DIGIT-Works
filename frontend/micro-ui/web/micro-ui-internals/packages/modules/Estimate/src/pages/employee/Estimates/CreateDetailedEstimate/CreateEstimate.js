@@ -227,6 +227,7 @@ const CreateEstimate = () => {
 
 
     const onFormSubmit = async (_data) => {
+        // console.log(_data, "data");
         _data = Digit.Utils.trimStringsInObject(_data)
         //added this totalEst amount logic here because setValues in pageComponents don't work
         //after setting the value, in consequent renders value changes to undefined
@@ -242,7 +243,7 @@ const CreateEstimate = () => {
             amountOverheads = amountOverheads ? amountOverheads : 0
             return amountOverheads + parseFloat(acc)
         }, 0)
-        totalOverHeads = totalOverHeads ? totalOverHeads : 0
+        totalOverHeads = totalOverHeads ? totalOverHeads : 100
         _data.totalEstimateAmount = totalNonSor + totalOverHeads
 
         let totalLabourAndMaterial = parseInt(_data.analysis.labour) + parseInt(_data.analysis.material)

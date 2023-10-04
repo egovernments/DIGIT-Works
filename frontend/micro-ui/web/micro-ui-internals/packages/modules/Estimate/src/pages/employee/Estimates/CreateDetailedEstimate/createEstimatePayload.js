@@ -1,27 +1,59 @@
 
-const fetchEstimateDetails = (data) => {
-    
-    let sornonSORData = data?.nonSORTablev1?.filter(row=> row && row.estimatedAmount!=="0")?.map(row => {
-        
-        return {
-            "sorId": 45,
-            "category": "NON-SOR",
-            "name": row?.description,
-            "description": row?.description,
-            "unitRate": row?.rate,
-            "noOfunit": row?.estimatedQuantity,
-            "uom": row?.uom?.code,
-            // "uomValue": 10, //not sure what is this field//try removing this field
-            "amountDetail": [
-                {
-                    "type": "EstimatedAmount",
-                    "amount": row?.estimatedAmount,
-                    "additionalDetails":{}
-                }
-            ],
+function transformMeasure(measure, parentData) {
+  return {
+    sorId: parentData?.sNo,
+    category: "NON-SOR",
+    name: measure.description,
+    unitRate: parentData?.unitRate,
+    noOfunit: parentData?.currentMBEntry,
+    uom: parentData?.uom ? parentData?.uom.code : undefined,
+    height: measure?.height,
+    isDeduction: measure?.isDeduction,
+    length: measure?.length,
+    quantity: measure?.noOfunit,
+    uomValue: measure?.noOfunit,
+    width: measure?.width,
+    description: measure.description,
+    additionalInfoFromParent: parentData.additionalInfo, // Include data from parent object
+    amountDetail: [
+      {
+        type: "EstimatedAmount",
+        amount: measure.estimatedAmount,
+        additionalDetails: {},
+      },
+    ],
+  };
+}
 
-        }
-    })
+const fetchEstimateDetails = (data) => {
+    // let sornonSORData = data?.nonSORTablev1?.filter(row=> row && row.estimatedAmount!=="0")?.map(row => {
+        
+    //     return {
+    //         "sorId": 45,
+    //         "category": "NON-SOR",
+    //         "name": row?.description,
+    //         "description": row?.description,
+    //         "unitRate": row?.rate,
+    //         "noOfunit": row?.estimatedQuantity,
+    //         "uom": row?.uom?.code,
+    //         // "uomValue": 10, //not sure what is this field//try removing this field
+    //         "amountDetail": [
+    //             {
+    //                 "type": "EstimatedAmount",
+    //                 "amount": row?.estimatedAmount,
+    //                 "additionalDetails":{}
+    //             }
+    //         ],
+
+    //     }
+    // })
+
+    let sornonSORData = data?.NONSORtable[0].measures?.map((measure) => {
+        return transformMeasure(measure, data.NONSORtable[0]);
+    });
+
+    console.log(sornonSORData, "sornonSORData");
+
     let overHeadsData = data?.overheadDetails?.filter(row => row && row.amount!=="0")?.map(row => {
         return {
             "category": "OVERHEAD",
