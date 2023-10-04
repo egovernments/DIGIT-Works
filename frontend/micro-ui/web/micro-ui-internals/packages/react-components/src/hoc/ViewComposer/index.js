@@ -3,6 +3,8 @@ import Card from "../../atoms/Card";
 import { Loader } from "../../atoms/Loader";
 import { RenderDataSection, RenderDocumentsSection, RenderWfActions, RenderWfHistorySection } from "./renderUtils";
 import HorizontalNav from "../../atoms/HorizontalNav";
+import CardSectionHeader from "../../atoms/CardSectionHeader";
+import { useTranslation } from "react-i18next";
 
 // format of data expected by this component
 
@@ -106,6 +108,7 @@ import HorizontalNav from "../../atoms/HorizontalNav";
 // }
 
 const renderCardSectionJSX = (section) => {
+  const { t } = useTranslation();
   const { type } = section;
   switch (type) {
     case "DATA":
@@ -118,7 +121,14 @@ const renderCardSectionJSX = (section) => {
       return <RenderWfActions section={section} />;
     case "COMPONENT":
       const Component = Digit.ComponentRegistryService.getComponent(section.component) ;
-      return <Component {...section.props} />
+      return (
+        <>
+          {section?.cardHeader && section?.cardHeader?.value && (
+            <CardSectionHeader style={section?.cardHeader?.inlineStyles}>{t(section.cardHeader.value)}</CardSectionHeader>
+          )}
+          <Component {...section.props} />
+        </>
+      );
     default:
       return <div>Section Not Found</div>;
   }

@@ -12,7 +12,7 @@ export const RenderDataSection = ({ section }) => {
   const { t } = useTranslation();
   return (
     <>
-      {section.cardHeader && <CardSubHeader style={section?.cardHeader?.inlineStyles}>{section.cardHeader.value}</CardSubHeader>}
+      {section.cardHeader && <CardSubHeader style={section?.cardHeader?.inlineStyles}>{t(section.cardHeader.value)}</CardSubHeader>}
       <StatusTable style={section?.inlineStyles}>
         {section.sectionHeader && <CardSectionHeader style={section?.sectionHeader?.inlineStyles}>{t(section.sectionHeader.value)}</CardSectionHeader>}
         {section.values.map((row, rowIdx) => {
