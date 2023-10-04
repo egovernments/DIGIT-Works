@@ -1,12 +1,12 @@
 import { Card, StatusTable, Row, Header, HorizontalNav, ActionBar, SubmitBar, WorkflowModal, FormComposer, Loader, Toast, ViewDetailsCard } from '@egovernments/digit-ui-react-components'
-import React,{Fragment,useEffect,useState} from 'react'
+import React,{Fragment,useEffect,useState,useCallback} from 'react'
 import { useTranslation } from 'react-i18next'
 import getModalConfig from './config'
 import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
 import { useHistory,useLocation } from "react-router-dom";
 import { editEstimateUtil } from './editEstimateUtil'
-
+import { debounce } from "debounce";
 
 const configNavItems = [
     {
@@ -255,6 +255,7 @@ const CreateEstimate = () => {
         setShowModal(true);
     };
     const onModalSubmit = async (_data) => {
+        console.log("i was clicked");
         _data = Digit.Utils.trimStringsInObject(_data)
         const completeFormData = {
             ..._data,
@@ -342,6 +343,8 @@ const CreateEstimate = () => {
         }
     }
 
+    const debouncedOnModalSub = useCallback(debounce(onModalSubmit,300,true),[])
+
     // const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
     //     Digit.ULBService.getCurrentTenantId(),
     //     "common-masters",
@@ -407,7 +410,7 @@ const CreateEstimate = () => {
     <Fragment>
           {showModal && <WorkflowModal
               closeModal={() => setShowModal(false)}
-              onSubmit={onModalSubmit}
+              onSubmit={debouncedOnModalSub}
               config={config}
           />
           }

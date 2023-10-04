@@ -1,11 +1,12 @@
 import { FormComposer, Header, Toast, WorkflowModal } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState,useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useHistory } from "react-router-dom";
 import { createBillPayload } from "../../../utils/createBillUtils";
 import { updateBillPayload } from "../../../utils/updateBillPayload";
 import getModalConfig from "./config";
+import { debounce } from "debounce";
 
 const navConfig =  [
     {
@@ -147,6 +148,7 @@ const CreatePurchaseBillForm = ({
 
 
     const onModalSubmit = async (_data) => {
+        console.log("I was clicked");
         _data = Digit.Utils.trimStringsInObject(_data)
         //here make complete data in combination with _data and inputFormData and create payload accordingly
         //also test edit flow with this change
@@ -187,6 +189,12 @@ const CreatePurchaseBillForm = ({
         }
     }
 
+    const debouncedOnModalSub = useCallback(
+        (data)=> debounce(()=>onModalSubmit(data),2000,true),
+        [],
+      )
+    
+    
     const onFormSubmit = async(data) => {
         data = Digit.Utils.trimStringsInObject(data)
         setInputFormData((prevState) => data)
@@ -222,7 +230,7 @@ const CreatePurchaseBillForm = ({
         <React.Fragment>
                 {showModal && <WorkflowModal
                     closeModal={() => setShowModal(false)}
-                    onSubmit={onModalSubmit}
+                    onSubmit={debouncedOnModalSub}
                     config={config}
                 />
                 }
