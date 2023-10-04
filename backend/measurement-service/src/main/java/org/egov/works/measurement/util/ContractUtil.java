@@ -25,7 +25,7 @@ public class ContractUtil {
     public ContractUtil(RestTemplate restTemplate, Configuration configuration, ErrorConfiguration errorConfigs) {
         this.restTemplate = restTemplate;
         this.configuration = configuration;
-        this.errorConfigs=errorConfigs;
+        this.errorConfigs = errorConfigs;
     }
 
     /**
@@ -45,40 +45,14 @@ public class ContractUtil {
         return response;
     }
 
-    /**
-     * Validate the Contract
-     *
-     * @param measurement
-     * @param requestInfo
-     * @return
-     */
-    public Boolean validContract(Measurement measurement, RequestInfo requestInfo) {
-        Map<String, ArrayList<String>> lineItemsToEstimateIdMap = new HashMap<>();
-        List<String> lineItemIdsList = new ArrayList<>();
-        List<String> estimateIdsList = new ArrayList<>();
-        Set<String> estimateIdsSet = new HashSet<>();
-        List<String> estimateLineItemIdsList = new ArrayList<>();
-        Map<String,ArrayList<BigDecimal>> lineItemsToDimentionsMap = new HashMap<>();
+    public void validateForTargetIdsToBeActiveAndPresentInContractAndEstimate(RequestInfo requestInfo, Measurement measurement, boolean isTargetIdsPresent, Map<String, ArrayList<String>> lineItemsToEstimateIdMap, List<String> estimateIdsList, List<String> estimateLineItemIdsList, Map<String, ArrayList<BigDecimal>> lineItemsToDimentionsMap, List<String> lineItemIdsList) {
         Set<String> targetIdSet = new HashSet<>();
-        ContractResponse response = getContracts(measurement, requestInfo);
-
-        // check if there is a reference id
-        boolean isValidContract = !response.getContracts().isEmpty();
-
-        // return if no contract is present
-        if (!isValidContract) return false;
-
-        boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(response.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(response.getContracts().get(0).getEndDate()) <= 0));
-        boolean isTargetIdsPresent = true;
-
-        lineItemsToEstimateIdMap = getValidLineItemsId(response); // get set of active line items
-
+        Set<String> estimateIdsSet = new HashSet<>();
         for (Measure measure : measurement.getMeasures()) {
 
-            if(targetIdSet.contains(measure.getTargetId())){
+            if (targetIdSet.contains(measure.getTargetId())) {
                 throw errorConfigs.duplicateTargetIds;
-            }
-            else targetIdSet.add(measure.getTargetId());  // create a set of received target Ids
+            } else targetIdSet.add(measure.getTargetId());  // create a set of received target Ids
 
             boolean isTargetIdPresent = lineItemsToEstimateIdMap.containsKey(measure.getTargetId());  // checks id of line item
 
@@ -87,54 +61,82 @@ public class ContractUtil {
                 throw errorConfigs.noActiveContractId;
             } else {
                 lineItemIdsList.add(measure.getTargetId());
-                if(!estimateIdsSet.contains(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0))) estimateIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0)); // take only unique ids
+                if (!estimateIdsSet.contains(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0)))
+                    estimateIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0)); // take only unique ids
                 estimateIdsSet.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0));     // add estimateId to estimateId set
                 estimateLineItemIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(1));
                 ArrayList<BigDecimal> dimensionList = new ArrayList<>();
-                dimensionList.add(measure.getLength()); dimensionList.add(measure.getBreadth()); dimensionList.add(measure.getHeight());  // L B H
-                lineItemsToDimentionsMap.put(measure.getTargetId() , dimensionList);
+                dimensionList.add(measure.getLength());
+                dimensionList.add(measure.getBreadth());
+                dimensionList.add(measure.getHeight());  // L B H
+                lineItemsToDimentionsMap.put(measure.getTargetId(), dimensionList);
             }
 
         }
+        //validation of estimatedLineItemId from Contract Response to be present in EstimateDetail and for valid dimension as estimated
+        validateEstimateLineItemIdAndDimension(requestInfo, measurement, estimateIdsList, estimateLineItemIdsList, lineItemsToDimentionsMap, lineItemIdsList);
+    }
 
-        // check exact match of targetIs in Contract Active line Items
-        // isAllTargetIdsPresent(targetIdSet,lineItemsToEstimateIdMap);
-
-        // Estimate Validation
+    public void validateEstimateLineItemIdAndDimension(RequestInfo requestInfo, Measurement measurement, List<String> estimateIdsList, List<String> estimateLineItemIdsList, Map<String, ArrayList<BigDecimal>> lineItemsToDimentionsMap, List<String> lineItemIdsList) {
         EstimateResponse estimateResponse = getEstimate(requestInfo, measurement.getTenantId(), estimateIdsList);  // assume a single estimate id for now
         boolean validDimensions = true;
-        for(int i=0;i<estimateIdsList.size();i++){
+        for (int i = 0; i < estimateIdsList.size(); i++) {
             boolean isValidEstimate = false;
             for (EstimateDetail estimateDetail : estimateResponse.getEstimates().get(0).getEstimateDetails()) {
                 if (Objects.equals(estimateDetail.getId(), estimateLineItemIdsList.get(i))) {
-                    boolean isValidDimension = validateDimensions(estimateDetail,lineItemsToDimentionsMap.get(lineItemIdsList.get(i)));
-                    if(isValidDimension){
+                    boolean isValidDimension = validateDimensions(estimateDetail, lineItemsToDimentionsMap.get(lineItemIdsList.get(i)));
+                    if (isValidDimension) {
                         isValidEstimate = true;
                         break;
                     }
                 }
             }
-            if(!isValidEstimate){
+            if (!isValidEstimate) {
                 validDimensions = false;
                 throw errorConfigs.noValidEstimate;
             }
         }
-        System.out.println(estimateResponse.getEstimates().get(0).getId());
+    }
 
+    /**
+     * Validate the Contract
+     *
+     * @param measurement
+     * @param requestInfo
+     * @return
+     */
+    public Boolean validContract(Measurement measurement, RequestInfo requestInfo) {
+
+        Map<String, ArrayList<String>> lineItemsToEstimateIdMap = new HashMap<>();
+        boolean isTargetIdsPresent = true;
+        List<String> estimateIdsList = new ArrayList<>();
+        List<String> estimateLineItemIdsList = new ArrayList<>();
+        Map<String, ArrayList<BigDecimal>> lineItemsToDimentionsMap = new HashMap<>();
+        List<String> lineItemIdsList = new ArrayList<>();
+        ContractResponse response = getContracts(measurement, requestInfo);
+        // check if there is a reference id
+        boolean isValidContract = !response.getContracts().isEmpty();
+        // return if no contract is present
+        if (!isValidContract) return false;
+        boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(response.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(response.getContracts().get(0).getEndDate()) <= 0));
+        lineItemsToEstimateIdMap = getValidLineItemsId(response); // get set of active line items
+        //validate whether targetIds of lineItems present in Contract Response and its status is active and also same estimateLineItemId in EstimateDetail Response of Estimate Service
+        validateForTargetIdsToBeActiveAndPresentInContractAndEstimate(requestInfo, measurement, isTargetIdsPresent, lineItemsToEstimateIdMap, estimateIdsList, estimateLineItemIdsList, lineItemsToDimentionsMap, lineItemIdsList);
         return isValidContract && isValidEntryDate && isTargetIdsPresent;
     }
 
     /**
      * Checks given req for all line items ids
      * in the corresponding contract
+     *
      * @param measuresTargetIdSet
      * @param lineItemsToEstimateIdMap
      */
-    public void isAllTargetIdsPresent(Set<String> measuresTargetIdSet, Map<String, ArrayList<String>> lineItemsToEstimateIdMap ){
+    public void isAllTargetIdsPresent(Set<String> measuresTargetIdSet, Map<String, ArrayList<String>> lineItemsToEstimateIdMap) {
 
         for (Map.Entry<String, ArrayList<String>> entry : lineItemsToEstimateIdMap.entrySet()) {
             String key = entry.getKey();
-            if(!measuresTargetIdSet.contains(key)){
+            if (!measuresTargetIdSet.contains(key)) {
                 throw errorConfigs.incompleteMeasures;
             }
         }
@@ -167,10 +169,10 @@ public class ContractUtil {
 
     public EstimateResponse getEstimate(RequestInfo requestInfo, String tenantId, List<String> estimateIdsList) {
 
-        String estimateSearchUrl = configuration.getEstimateHost()+configuration.getEstimatePath();
+        String estimateSearchUrl = configuration.getEstimateHost() + configuration.getEstimatePath();
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(estimateSearchUrl);
-        builder.queryParam("tenantId",tenantId);
-        builder.queryParam("ids",estimateIdsList);
+        builder.queryParam("tenantId", tenantId);
+        builder.queryParam("ids", estimateIdsList);
 
         String preparedUrl = builder.toUriString();
 
@@ -181,7 +183,7 @@ public class ContractUtil {
         return estimateResponse;
     }
 
-    public boolean validateDimensions(EstimateDetail estimateDetail,ArrayList<BigDecimal> dimensions)  {
+    public boolean validateDimensions(EstimateDetail estimateDetail, ArrayList<BigDecimal> dimensions) {
         try {
             // FIXME: How to access the measurement object ??
 //            estimateDetail.getAdditionalDetails().getClass().getField("measurement");
