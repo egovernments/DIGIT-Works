@@ -11,7 +11,7 @@ import ViewEstimate from "./ViewEstimate";
 import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
 import CreateDetailedEstimate from "./Estimates/CreateDetailedEstimate/CreateEstimate";
 
-import NewView from "./ViewDetailedEstimate";
+import ViewDetailedEstimate from "./ViewDetailedEstimate";
 
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -115,7 +115,7 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/search-estimate-plain`} component={() => <EstimateSearchPlain {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
                     {/* <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewEstimate {...{ path }} />} /> */}
-                    <PrivateRoute path={`${path}/estimate-details`} component={() => <NewView {...{ path }} />} />
+                    <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewDetailedEstimate {...{ path }} />} />
 
                     <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
 
