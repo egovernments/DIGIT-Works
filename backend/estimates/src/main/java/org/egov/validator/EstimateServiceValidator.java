@@ -251,7 +251,7 @@ public class EstimateServiceValidator {
     }
 
     /**
-     * validate the mdms data for sorid in mdmsv2
+     * validate the mdms data for rates in mdmsv2
      */
     private void validateMDMSDataV2ForRates(Estimate estimate ,Object mdmsData, Set<String>ratesId,Map<String, String> errorMap){
         log.info("EstimateServiceValidator::validateMDMSDataV2ForRates");
