@@ -19,7 +19,9 @@ import java.util.List;
 @Slf4j
 public class OrganisationService {
 
-    public static final String ORGANISATION_ENCRYPT_KEY = "OrganisationEncrypt";
+    public static final String ORGANISATION_ENCRYPT_KEY = "Organisation";
+
+//    public static final String ORGANISATION_DECRYPT_KEY = "OrganisationDecrypt";
 
     @Autowired
     private OrganisationServiceValidator organisationServiceValidator;
