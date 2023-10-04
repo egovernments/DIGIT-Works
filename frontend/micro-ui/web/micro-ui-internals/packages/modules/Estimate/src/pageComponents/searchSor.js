@@ -1,79 +1,109 @@
-import { Button, CustomDropdown, Dropdown } from '@egovernments/digit-ui-react-components';
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import EstimateDropdown from './EstimateDropdown';
-import SearchBar from './SearchBar';
-import { transform } from 'lodash';
+import { Button } from "@egovernments/digit-ui-react-components";
+import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import EstimateDropdown from "./EstimateDropdown";
+import SearchBar from "./SearchBar";
+
+const fetchData = async (sorid, state, setState) => {
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  const requestCriteria = {
+    url: "/mdms-v2/v1/_search",
+    body: {
+      MdmsCriteria: {
+        tenantId: tenantId,
+        moduleDetails: [
+          {
+            moduleName: "WORKS-SOR",
+            masterDetails: [
+              {
+                name: "Rates",
+                filter: `[?(@.sorId=='${sorid}')]`,
+              },
+            ],
+          },
+        ],
+      },
+    },
+  };
+  try {
+    const data = await Digit.CustomService.getResponse(requestCriteria);
+    if (data?.mdmsRes?.["WORKS-SOR"]?.Rates?.length > 0) {
+      const Rates = data?.mdmsRes?.["WORKS-SOR"]?.Rates;
+      state?.forEach((element) => {
+        if (element?.sorId == sorid) {
+          element.unitRate = Rates?.[0]?.rate || 0;
+        }
+      });
+      setState(state);
+    }
+  } catch (error) {
+    // Handle any errors here
+    console.error(error);
+  }
+};
 
 const searchSor = (props) => {
-    // console.log("props", props);
-    const { t } = useTranslation();
-    const history = useHistory();
-    const tenantId = Digit.ULBService.getCurrentTenantId()
-    const [stateData, setStateData] = useState({});
-    const [selectedSOR, setSelectedSOR] = useState(null);
-    const {ref,register,setValue, formData} = props;
-
+  const { t } = useTranslation();
+  const [stateData, setStateData] = useState({});
+  const [selectedSOR, setSelectedSOR] = useState(null);
+  const { register, setValue, watch } = props;
+  let formData = watch("SOR");
+  useEffect(() => {
     register("searchSor", stateData);
-    useEffect(() => {
-        // console.log("selectedSOR", selectedSOR);
-        setStateData({
-                ...stateData,
-                selectedSor: selectedSOR
-            });
-        setValue("searchSor", stateData);
-    }
-    ,[selectedSOR]);
+  }, []);
+  useEffect(() => {
+    setStateData({
+      ...stateData,
+      selectedSor: selectedSOR,
+    });
+    setValue("searchSor", stateData);
+  }, [selectedSOR]);
+  const setFormValue = useCallback(
+    (value) => {
+      setValue("SOR", value);
+      setValue(`SORtable`, value);
+    },
+    [setValue]
+  );
 
-
-    const transformSOR = (sor) => {
-        const transformedSOR = {
-            sNo: 1,
-            description: sor?.description,
-            uom: sor?.uom,
-            approvedQuantity: sor?.quantity,
-            consumedQ: sor?.quantity,
-            rate: sor?.rate,
-            amount: sor?.rate,
-            measures: sor?.measures,
-            targetId: sor?.id,
-        }
-        return transformedSOR;
-    }
+  const transformSOR = (sor) => {
+    const transformedSOR = {
+      sNo: 1,
+      description: sor?.description,
+      uom: sor?.uom,
+      approvedQuantity: sor?.quantity,
+      consumedQ: 0,
+      currentMBEntry: 0,
+      amount: 0,
+      measures: [],
+      targetId: null,
+      sorId: sor?.id,
+    };
+    return transformedSOR;
+  };
   return (
-    <div ref={ref}>
-        <EstimateDropdown
-            label="SOR Type"
-            stateData={stateData}
-            setStateData={setStateData}
-            schemaCode={"WORKS-SOR.Type"}
-            type = "SORType"
-        />
-        <EstimateDropdown
-            label="SOR Sub Type"
-            stateData={stateData}
-            setStateData={setStateData}
-            schemaCode={"WORKS-SOR.SubType"}
-            type="SORSubType"
-        />
-        <EstimateDropdown
-            label="SOR Variant"
-            stateData={stateData}
-            setStateData={setStateData}
-            schemaCode={"WORKS-SOR.Variant"}
-            type="SORVariant"
-        />
+    <div>
+      <EstimateDropdown label="SOR Type" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Type"} type="SORType" />
+      <EstimateDropdown label="SOR Sub Type" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.SubType"} type="SORSubType" />
+      <EstimateDropdown label="SOR Variant" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Variant"} type="SORVariant" />
 
-        <SearchBar stateData={stateData} selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
-        <Button label="Add" onButtonClick={() => {
-            // console.log("stateData", stateData);
-            const sor = transformSOR(stateData?.selectedSor);
-            formData.SOR.push(sor);
-            console.log("formData", formData);
-        }} />
+      <SearchBar stateData={stateData} selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
+      <Button
+        label="Add"
+        onButtonClick={() => {
+          const sor = transformSOR(stateData?.selectedSor);
+          if (formData?.length == 0 || (formData?.length == 1 && !formData?.[0]?.description)) {
+            formData = [sor];
+          } else {
+            formData?.push(sor);
+          }
+          fetchData(stateData?.selectedSor?.id, formData, setFormValue);
+          setFormValue(formData);
+        }}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default searchSor
+export default searchSor;

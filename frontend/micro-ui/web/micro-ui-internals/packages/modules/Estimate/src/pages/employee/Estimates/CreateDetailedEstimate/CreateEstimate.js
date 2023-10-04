@@ -187,6 +187,7 @@ const CreateEstimate = () => {
     const sorAndNonSorData = {
         SOR: sorCategoryArray,
         NONSOR: nonSorCategoryArray,
+        projectType:{}
     }
     const EstimateSession = Digit.Hooks.useSessionStorage("NEW_ESTIMATE_CREATE", sorAndNonSorData);
     const [sessionFormData, setSessionFormData, clearSessionFormData] = EstimateSession;

@@ -1,51 +1,51 @@
-import { TextInput } from '@egovernments/digit-ui-react-components';
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { TextInput } from "@egovernments/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SearchBar = (props) => {
-    const { t } = useTranslation();
-    const history = useHistory();
-    const tenantId = Digit.ULBService.getCurrentTenantId()
-  const [inputValue, setInputValue] = useState('');
+  const { t } = useTranslation();
+  const history = useHistory();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const {selectedSOR, setSelectedSOR,stateData} = props;
+  const { selectedSOR, setSelectedSOR, stateData } = props;
   const fetchData = async (cr) => {
-         const requestCriteria = {
-            url: '/mdms-v2/v1/_search',
-            body: {
-                MdmsCriteria: {
-                    tenantId: tenantId,
-                    moduleDetails: [
+    const requestCriteria = {
+      url: "/mdms-v2/v1/_search",
+      body: {
+        MdmsCriteria: {
+          tenantId: tenantId,
+          moduleDetails: [
             {
-                moduleName: "WORKS-SOR",
-                masterDetails: [
-                    {
-                        name: "SOR",
-                        filter:`$[?(@.description=~/.*${cr}.*/i && @.sorType == '${stateData?.SORType}')]` 
-                    }
-                ]
-            }
-        ]
+              moduleName: "WORKS-SOR",
+              masterDetails: [
+                {
+                  name: "SOR",
+                  filter: `$[?(@.description=~/.*${cr}.*/i && @.sorType == '${stateData?.SORType}')]`,
                 },
+              ],
             },
-        };
-        try {
-            const data  =stateData?.SORType&&await Digit.CustomService.getResponse(requestCriteria);
-            if(data?.mdmsRes?.["WORKS-SOR"]?.SOR?.length > 0){
-                setSuggestions(data?.mdmsRes?.["WORKS-SOR"]?.SOR)
-            }
-        } catch (error) {
-            // Handle any errors here
-            console.error(error);
-        }
-};
+          ],
+        },
+      },
+    };
+    try {
+      const data = stateData?.SORType && (await Digit.CustomService.getResponse(requestCriteria));
+      if (data?.mdmsRes?.["WORKS-SOR"]?.SOR?.length > 0) {
+        setSuggestions(data?.mdmsRes?.["WORKS-SOR"]?.SOR);
+      }
+    } catch (error) {
+      // Handle any errors here
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    if(inputValue.length > 2){
-        fetchData(inputValue);
-    }else{
-        setSuggestions([]);
+    if (inputValue.length > 2) {
+      fetchData(inputValue);
+    } else {
+      setSuggestions([]);
     }
   }, [inputValue]);
 
@@ -60,29 +60,27 @@ const SearchBar = (props) => {
   };
 
   return (
-    <div className={"search-bar-sor"} style={{position: "relative", width: "300px", margin: "20px"}}>
-      <TextInput
-        type="text"
-        name={"Search"}
-        placeholder="Search..."
-        value={inputValue}
-        onChange={handleInputChange}
-      />
-      <ul className="suggestions-sor" style={{listStyle: "none",
-      padding: 0,
-    margin: 0,
-    position: "absolute",
-    width: "100%",
-    backgroundColor: "#fff",
-    border: "1px solid #ccc",
-    borderRadius: "0 0 4px 4px",
-    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)"
-    }}>
+    <div className={"search-bar-sor"} style={{ position: "relative", width: "300px", margin: "20px" }}>
+      <TextInput type="text" name={"Search"} placeholder="Search..." value={inputValue} onChange={handleInputChange} />
+      <ul
+        className="suggestions-sor"
+        style={{
+          listStyle: "none",
+          padding: 0,
+          margin: 0,
+          position: "absolute",
+          width: "100%",
+          backgroundColor: "#fff",
+          border: "1px solid #ccc",
+          borderRadius: "0 0 4px 4px",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+        }}
+      >
         {suggestions.map((option) => (
           <li
             key={option.id}
             onClick={() => handleSelectOption(option)}
-            style={{padding: "10px", cursor: "pointer", transition: "background-color 0.2s ease-in-out" }}
+            style={{ padding: "10px", cursor: "pointer", transition: "background-color 0.2s ease-in-out" }}
           >
             {option.description}
           </li>

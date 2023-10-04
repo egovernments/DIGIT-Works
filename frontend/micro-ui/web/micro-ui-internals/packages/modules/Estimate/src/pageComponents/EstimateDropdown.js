@@ -13,7 +13,7 @@ const EstimateDropdown = (props) => {
                 tenantId: tenantId,
                 filters: {},
                 schemaCode: props?.schemaCode,
-                limit: 10,
+                limit: 50,
                 offset: 0
             },
         },

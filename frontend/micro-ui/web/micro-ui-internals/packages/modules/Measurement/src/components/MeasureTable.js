@@ -114,11 +114,11 @@ const MeasureTable = (props) => {
         <>
           <tr key={index}>
             <td>{index + 1}</td>
-            {mode == "CREATEALL" ? (
+            {mode == "CREATEALL" && tableKey!="SOR" ? (
               <>
-                <td>
+                <td style={{margin:"0px",padding:"8px"}}>
                   <TextInput
-                    style={{ width: "80%", marginTop: "27px", marginLeft: "35px" }}
+                    style={{ width: "100%", marginTop: "20px"  }}
                     //  {...register(`SOR.${index}.description`)}
 
                     onChange={(e) => handleInputChange("description", e.target.value, index)}
@@ -129,10 +129,10 @@ const MeasureTable = (props) => {
                   <Dropdown
                     // inputRef={register()}
                     option={optionsData}
-                    selected={row.uom}
+                    selected={optionsData?.filter(e=>e.code==row.uom)?.[0]||{code:null}}
                     optionKey="name"
                     t={t}
-                    select={(selectedOption) => handleInputChange("uom", selectedOption, index)}
+                    select={(selectedOption) => handleInputChange("uom", selectedOption?.code, index)}
                     optionCardStyles={{ maxHeight: "15rem" }}
                     style={{ marginBottom: "0px" }}
                   />
