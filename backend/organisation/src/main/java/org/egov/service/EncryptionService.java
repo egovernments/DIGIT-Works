@@ -19,7 +19,7 @@ public class EncryptionService {
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
     public OrgRequest encryptDetails(OrgRequest orgRequest,String key){
         List<Organisation> organisationList = orgRequest.getOrganisations();
-        String stateLevelTenantId = orgRequest.getRequestInfo().getUserInfo().getTenantId();
+        String stateLevelTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
         for(Organisation organisation: organisationList){
             if (!CollectionUtils.isEmpty(organisation.getContactDetails())) {
                 List<ContactDetails> encryptedContactDetails = (List<ContactDetails>) encryptionDecryptionUtil
