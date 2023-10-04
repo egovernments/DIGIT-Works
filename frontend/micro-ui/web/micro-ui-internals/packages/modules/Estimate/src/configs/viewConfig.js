@@ -1,4 +1,9 @@
-export const data = (projectDetails, estimateDetails) => {
+import React, { useState, useEffect } from "react";
+import { transformEstimateObjects } from "../../util/estimateConversion";
+
+export const data = (projectDetails, estimateDetails, overheadDetails) => {
+  const [viewData, setViewData] = useState({ SOR: [], NONSOR: [] });
+
   const documents = estimateDetails?.additionalDetails?.documents
     .filter((item) => item.fileStoreId) // Remove items without fileStoreId
     .map((item) => ({
@@ -7,8 +12,21 @@ export const data = (projectDetails, estimateDetails) => {
       documentUid: item.documentUid || "NA",
       fileStoreId: item.fileStoreId || "NA",
     }));
-    const headerLocale = Digit.Utils.locale.getTransformedLocale("pg.citya");
-    const geoLocationValue = (estimateDetails?.address?.latitude && estimateDetails?.address?.longitude) ? `${latitude}, ${longitude}` : 'NA';
+
+  const headerLocale = Digit.Utils.locale.getTransformedLocale(estimateDetails?.tenantId);
+  const geoLocationValue = estimateDetails?.address?.latitude && estimateDetails?.address?.longitude ? `${latitude}, ${longitude}` : "NA";
+
+  useEffect(() => {
+    const processArrays = () => {
+      if (estimateDetails) {
+        setViewData({
+          SOR: transformEstimateObjects(estimateDetails?.estimateDetails, "SOR"),
+          NONSOR: transformEstimateObjects(estimateDetails?.estimateDetails, "NON-SOR"),
+        });
+      }
+    };
+    processArrays();
+  }, [estimateDetails]);
 
   return {
     cards: [
@@ -48,60 +66,77 @@ export const data = (projectDetails, estimateDetails) => {
       {
         navigationKey: "card1",
         sections: [
-          // {
-          //     type : "COMPONENT",
-          //     component : "MeasureTable"
-          // },
           {
-            type: "DATA",
-            sectionHeader: { value: "Section 1", inlineStyles: {} },
-            cardHeader: { value: "SOR", inlineStyles: {} },
-            values: [
-              {
-                key: "key 1",
-                value: "value 1",
+            type: "COMPONENT",
+            cardHeader: { value: "MB_SORS", inlineStyles: {} },
+            component: "MeasureTable",
+            props: {
+              config: {
+                key: "SOR",
+                mode: "VIEW",
               },
-              {
-                key: "key 2",
-                value: "value 2",
+              arrayProps: {
+                fields: viewData?.SOR,
               },
-              {
-                key: "key 3",
-                value: "value 3",
-              },
-            ],
-          },
+              register: () => {},
+              setValue: (key, value) => setViewData((old) => ({ ...old, SOR: value })),
+            },
+          }
+        ],
+      },
+      {
+        navigationKey: "card1",
+        sections: [
           {
-            type: "DATA",
-            sectionHeader: { value: "Section 2", inlineStyles: { marginTop: "2rem" } },
-            values: [
-              {
-                key: "key 1",
-                value: "value 1",
+            type: "COMPONENT",
+            cardHeader: { value: "MB_NONSOR", inlineStyles: {} },
+            component: "MeasureTable",
+            props: {
+              config: {
+                key: "NONSOR",
+                mode: "VIEW",
               },
-              {
-                key: "key 2",
-                value: "value 2",
+              arrayProps: {
+                fields: viewData?.NONSOR,
               },
-              {
-                key: "key 3",
-                value: "value 3",
-              },
-            ],
-          },
+              register: () => {},
+              setValue: (key, value) => setViewData((old) => ({ ...old, NONSOR: value })),
+            },
+          }
+        ],
+      },
+      {
+        navigationKey: "card1",
+        sections: [
+          {
+            type: "COMPONENT",
+            cardHeader: { value: "ES_OTHER_CHARGES", inlineStyles: {} },
+            component: "OverheadDetailsTable",
+            props: {data : overheadDetails}
+          }
+        ],
+      },
+      {
+        navigationKey: "card1",
+        sections: [
           {
             type: "DOCUMENTS",
             documents: [
               {
                 title: "WORKS_RELEVANT_DOCUMENTS",
                 BS: "Works",
-                values: documents
+                values: documents,
               },
             ],
             inlineStyles: {
               marginTop: "1rem",
             },
-          },
+          }
+        ],
+      },
+      {
+        navigationKey: "card1",
+        sections: [
           {
             type: "WFHISTORY",
             businessService: "ESTIMATE",
@@ -161,7 +196,7 @@ export const data = (projectDetails, estimateDetails) => {
               },
               {
                 key: "WORKS_WARD",
-                value: `${headerLocale}_ADMIN_${projectDetails?.address?.boundary}`
+                value: `${headerLocale}_ADMIN_${projectDetails?.address?.boundary}`,
               },
               {
                 key: "WORKS_LOCALITY",
