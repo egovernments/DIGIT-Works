@@ -142,11 +142,11 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
             businessService: "ESTIMATE",
             applicationNo: estimateDetails?.estimateNumber,
             tenantId: estimateDetails?.tenantId,
-            timelineStatusPrefix: "TEST",
+            timelineStatusPrefix: "WF_ESTIMATE_",
           },
           {
             type: "WFACTIONS",
-            forcedActionPrefix: "TEST",
+            forcedActionPrefix: "WF_ESTIMATE_ACTION",
             businessService: "ESTIMATE",
             applicationNo: estimateDetails?.estimateNumber,
             tenantId: estimateDetails?.tenantId,
