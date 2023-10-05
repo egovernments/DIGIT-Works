@@ -232,8 +232,8 @@ const CreateEstimate = () => {
         //added this totalEst amount logic here because setValues in pageComponents don't work
         //after setting the value, in consequent renders value changes to undefined
         //check TotalEstAmount.js
-        let totalNonSor = _data?.nonSORTablev1?.reduce((acc, row) => {
-            let amountNonSor = parseFloat(row?.estimatedAmount)
+        let totalNonSor = _data?.NONSORtable?.reduce((acc, row) => {
+            let amountNonSor = parseFloat(row?.amount)
             amountNonSor = amountNonSor ? amountNonSor : 0
             return amountNonSor + parseFloat(acc)
         }, 0)
@@ -243,10 +243,11 @@ const CreateEstimate = () => {
             amountOverheads = amountOverheads ? amountOverheads : 0
             return amountOverheads + parseFloat(acc)
         }, 0)
-        totalOverHeads = totalOverHeads ? totalOverHeads : 0
+        totalOverHeads = totalOverHeads ? totalOverHeads : 100
         _data.totalEstimateAmount = totalNonSor + totalOverHeads
 
         let totalLabourAndMaterial = parseInt(_data.analysis.labour) + parseInt(_data.analysis.material)
+        // debugger;
         //here check totalEst amount should be less than material+labour
         if (_data.totalEstimateAmount < totalLabourAndMaterial) {
             setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" })
@@ -280,6 +281,7 @@ const CreateEstimate = () => {
 
 
         const payload = createEstimatePayload(completeFormData, projectData, isEdit, estimate)
+        console.log(payload, "payload");
         setShowModal(false);
 
         //make a util for updateEstimatePayload since there are some deviations 

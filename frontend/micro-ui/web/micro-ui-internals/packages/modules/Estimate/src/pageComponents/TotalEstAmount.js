@@ -17,7 +17,8 @@ const TotalEstAmount = ({formData,setValue,t,...props}) => {
             amountOverheads = amountOverheads ? amountOverheads : 0
             return amountOverheads + parseFloat(acc)
         }, 0)
-        totalOverHeads = totalOverHeads ? totalOverHeads : 0
+        totalOverHeads = totalOverHeads ? totalOverHeads : 100
+
         return totalNonSor + totalOverHeads
     }, [formData])
 

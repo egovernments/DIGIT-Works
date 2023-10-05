@@ -1,27 +1,58 @@
 
-const fetchEstimateDetails = (data) => {
-    
-    let sornonSORData = data?.nonSORTablev1?.filter(row=> row && row.estimatedAmount!=="0")?.map(row => {
-        
-        return {
-            "sorId": 45,
-            "category": "NON-SOR",
-            "name": row?.description,
-            "description": row?.description,
-            "unitRate": row?.rate,
-            "noOfunit": row?.estimatedQuantity,
-            "uom": row?.uom?.code,
-            // "uomValue": 10, //not sure what is this field//try removing this field
-            "amountDetail": [
-                {
-                    "type": "EstimatedAmount",
-                    "amount": row?.estimatedAmount,
-                    "additionalDetails":{}
-                }
-            ],
+function transformMeasure(measure, parentData) {
+  return {
+    // sorId: parentData?.sNo,
+    category: "NON-SOR",
+    name: measure.description,
+    unitRate: parentData?.unitRate,
+    noOfunit: parentData?.currentMBEntry,
+    uom: parentData?.uom,
+    height: parseInt(measure?.height),
+    isDeduction: measure?.isDeduction === "MB_YES"? true : false,
+    length: measure?.length,
+    quantity: measure?.noOfunit,
+    uomValue: measure?.noOfunit,
+    width: measure?.width,
+    description: measure.description,
+    additionalInfoFromParent: parentData.additionalInfo, // Include data from parent object
+    amountDetail: [
+      {
+        type: "EstimatedAmount",
+        amount: parentData?.unitRate * parentData?.currentMBEntry,
+        additionalDetails: {},
+      },
+    ],
+  };
+}
 
-        }
-    })
+const fetchEstimateDetails = (data) => {
+    // let sornonSORData = data?.nonSORTablev1?.filter(row=> row && row.estimatedAmount!=="0")?.map(row => {
+        
+    //     return {
+    //         "sorId": 45,
+    //         "category": "NON-SOR",
+    //         "name": row?.description,
+    //         "description": row?.description,
+    //         "unitRate": row?.rate,
+    //         "noOfunit": row?.estimatedQuantity,
+    //         "uom": row?.uom?.code,
+    //         // "uomValue": 10, //not sure what is this field//try removing this field
+    //         "amountDetail": [
+    //             {
+    //                 "type": "EstimatedAmount",
+    //                 "amount": row?.estimatedAmount,
+    //                 "additionalDetails":{}
+    //             }
+    //         ],
+
+    //     }
+    // })
+
+    let sornonSORData = data?.NONSORtable[0].measures?.map((measure) => {
+        return transformMeasure(measure, data.NONSORtable[0]);
+    });
+
+
     let overHeadsData = data?.overheadDetails?.filter(row => row && row.amount!=="0")?.map(row => {
         return {
             "category": "OVERHEAD",
@@ -123,15 +154,18 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
         
         let filteredFormData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
         const tenantId = Digit.ULBService.getCurrentTenantId()
+        console.log(projectData,"projectData");
         let payload = {
             estimate:{
                 "id":estimate.id,
                 "estimateNumber":estimate.estimateNumber,
                 "tenantId": tenantId,
-                "projectId": projectData?.projectDetails?.searchedProject?.basicDetails?.uuid,
+                // "projectId": projectData?.projectDetails?.searchedProject?.basicDetails?.uuid,
+                "projectId": "4bf36cd5-f10a-4a46-bdfc-aa364e67546f",
                 "status": "ACTIVE",
                 "wfStatus": "CREATED",
-                "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
+                // "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
+                "name": "Testing",
                 "description": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
                 "executingDepartment": "WRK",//hardcoded since we are not capturing it anymore and it is required at BE side
                 // "executingDepartment": filteredFormData?.selectedDept?.code,
@@ -176,10 +210,13 @@ export const createEstimatePayload = (data,projectData,isEdit,estimate) => {
         let payload = {
             estimate:{
                 "tenantId": tenantId,
-                "projectId": projectData?.projectDetails?.searchedProject?.basicDetails?.uuid,
+                // "projectId": projectData?.projectDetails?.searchedProject?.basicDetails?.uuid,
+                "projectId": "4bf36cd5-f10a-4a46-bdfc-aa364e67546f",
                 "status": "ACTIVE",
                 "wfStatus": "CREATED",
-                "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
+                "name": "Testing",
+
+                // "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
                 "description": projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
                 "executingDepartment": "WRK",//hardcoded since we are not capturing it anymore and it is required at BE side
                 // "executingDepartment": filteredFormData?.selectedDept?.code,
