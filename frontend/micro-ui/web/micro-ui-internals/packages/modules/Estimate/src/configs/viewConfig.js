@@ -73,7 +73,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
             props: {
               config: {
                 key: "SOR",
-                mode: "VIEW",
+                mode: "VIEWES",
               },
               arrayProps: {
                 fields: viewData?.SOR,
@@ -94,7 +94,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
             props: {
               config: {
                 key: "NONSOR",
-                mode: "VIEW",
+                mode: "VIEWES",
               },
               arrayProps: {
                 fields: viewData?.NONSOR,

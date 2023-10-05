@@ -122,7 +122,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
           <tr>
             <td colSpan={"4"}>
               <div style={{ display: "flex", flexDirection: "row" }}>
-                {mode == "VIEW" ? (
+                {mode == "VIEW" || mode == "VIEWES" ? (
                   <Button
                     className={"outline-btn"}
                     label={t("MB_CLOSE")}
