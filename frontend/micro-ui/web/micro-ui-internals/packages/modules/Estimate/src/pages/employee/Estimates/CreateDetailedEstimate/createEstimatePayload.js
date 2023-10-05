@@ -1,3 +1,7 @@
+const convertNumberFields=(text="")=>{
+    return parseFloat(text)==0?null:parseFloat(text);
+
+}
 const transformLineItems = (SorData = []) => {
   const lineItems = [];
   SorData?.map((row) => {
@@ -15,14 +19,14 @@ function transformMeasure(measure, parentData) {
     category: parentData?.category,
     name: parentData?.description,
     unitRate: parentData?.unitRate,
-    noOfunit: parseFloat(measure?.noOfunit),
+    noOfunit: convertNumberFields(measure?.noOfunit),
     uom: parentData?.uom,
-    height: parseFloat(measure?.height),
+    height: convertNumberFields(measure?.height),
     isDeduction: measure?.isDeduction,
-    length: parseFloat(measure?.length),
-    quantity: parseFloat(measure?.number),
+    length: convertNumberFields(measure?.length),
+    quantity: convertNumberFields(measure?.number),
     uomValue: null,
-    width: parseFloat(measure?.width),
+    width: convertNumberFields(measure?.width),
     description: measure.description,
     additionalDetails: parentData.additionalInfo, // Include data from parent object
     amountDetail: [
