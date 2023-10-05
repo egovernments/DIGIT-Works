@@ -1,0 +1,30 @@
+.loginFormStyleEmployee {
+    .loginCardClassName {
+      
+      .card-label {
+        margin-bottom: 4px !important;
+        margin-top: 16px !important;
+      }
+      .field .field-container .text-input input {
+        margin: 0 !important;
+      }
+      .primary-label-btn {
+        margin: 10px auto 0 auto !important;
+      }
+    }
+    .primary-label-btn {
+      margin: 10px auto 0 auto !important;
+    }
+    .employee-card-sub-header {
+      display: none !important;
+    }
+    .loginCardClassName div:nth-child(7) {
+      margin-top: -10px !important;
+    }
+    .loginCardClassName div:nth-child(7) h2 {
+      display: none !important;
+    }
+    .bannerHeader {
+      margin-bottom: 10px !important;
+    }
+  }
