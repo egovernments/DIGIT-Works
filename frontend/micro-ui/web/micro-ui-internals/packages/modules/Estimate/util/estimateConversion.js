@@ -13,7 +13,6 @@ export const transformEstimateObjects = (lineItems, type) => {
         }
         return acc;
     }, {});
-
     return Object.keys(convertedObject).map((key, index) => {
         const measures = convertedObject[key].map((e, index) => ({
             sNo: index + 1,
@@ -25,12 +24,11 @@ export const transformEstimateObjects = (lineItems, type) => {
             length: e?.length,
             number: e?.number,
             noOfunit: e?.noOfunit,
-            rowAmount: 0,
+            rowAmount: e?.amountDetail[0]?.amount,
             consumedRowQuantity: 0
         }));
-
         return {
-            amount: measures.reduce((acc, curr) => acc + curr.unitRate, 0),
+            amount: measures?.reduce((acc, curr) => acc + curr?.rowAmount, 0),
             consumedQ : measures?.reduce((acc, curr) => acc + curr?.consumedRowQuantity, 0),
             sNo: index + 1,
             currentMBEntry:measures?.reduce((acc, curr) => acc + curr?.noOfunit, 0),
