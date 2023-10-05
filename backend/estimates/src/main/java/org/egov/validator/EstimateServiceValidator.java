@@ -101,19 +101,19 @@ public class EstimateServiceValidator {
                 BigDecimal total =new BigDecimal(1);
                 BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
                 boolean allNull =true;
-                if(estimateDetail.getLength()!=null){
+                if(estimateDetail.getLength()!=null && estimateDetail.getLength().signum() != 0){
                     total =total.multiply(estimateDetail.getLength());
                     allNull =false;
                 }
-                if(estimateDetail.getWidth()!=null){
+                if(estimateDetail.getWidth()!=null && estimateDetail.getWidth().signum() != 0){
                     total =total.multiply(estimateDetail.getWidth());
                     allNull = false;
                 }
-                if(estimateDetail.getHeight()!=null){
+                if(estimateDetail.getHeight()!=null && estimateDetail.getHeight().signum() != 0){
                     total =total.multiply(estimateDetail.getHeight());
                     allNull =false;
                 }
-                if(estimateDetail.getQuantity()!=null){
+                if(estimateDetail.getQuantity()!=null && estimateDetail.getQuantity().signum() != 0){
                     total =total.multiply(estimateDetail.getQuantity());
                     allNull = false;
                 }
