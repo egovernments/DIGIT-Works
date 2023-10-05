@@ -16,7 +16,7 @@ import ViewLabourAnalysis from "./components/ViewLabourAnalysis"
 import searchSor from "./pageComponents/searchSor";
 import EstimateDropdown from "./pageComponents/EstimateDropdown";
 import SearchBar from "./pageComponents/SearchBar";
-import SubWorkTableDetails from "../../templates/ApplicationDetails/components/SubWorkTableDetails";
+import OverheadDetailsTable from "./components/OverheadDetailsTable";
 
 const EstimateModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -52,7 +52,7 @@ const componentsToRegister = {
     searchSor,
     EstimateDropdown,
     SearchBar,
-    OverheadDetailsTable : SubWorkTableDetails
+    OverheadDetailsTable
 };
 
 export const initEstimateComponents = () => {
