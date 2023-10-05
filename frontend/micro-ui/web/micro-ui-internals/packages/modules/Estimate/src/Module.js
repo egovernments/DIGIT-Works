@@ -22,7 +22,7 @@ const EstimateModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
     const language = Digit.StoreData.getCurrentLanguage();
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const moduleCode = ["Estimate","common-masters","workflow",tenantId];
+    const moduleCode = ["Estimate","common-masters","workflow","mdms",tenantId];
     const { isLoading, data: store } = Digit.Services.useStore({
         stateCode,
         moduleCode,
