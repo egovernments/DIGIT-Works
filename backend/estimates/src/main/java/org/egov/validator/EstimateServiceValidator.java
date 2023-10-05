@@ -73,11 +73,12 @@ public class EstimateServiceValidator {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
             }
         }
-
-        Object mdmsDataV2ForSor =mdmsUtils.mdmsCallV2(request ,rootTenantId,uniqueIdentifiers,config.getSorSearchSchemaCode());
-        validateMDMSDataV2ForSor(estimate,mdmsDataV2ForSor,uniqueIdentifiers, errorMap);
-        Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request,rootTenantId,uniqueIdentifiers,config.getRateSearchSchenaCode());
-        validateMDMSDataV2ForRates(estimate,mdmsDataV2ForRate,uniqueIdentifiers,errorMap);
+        if (uniqueIdentifiers.size() != 0) {
+            Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2(request, rootTenantId, uniqueIdentifiers, config.getSorSearchSchemaCode());
+            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
+            Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request, rootTenantId, uniqueIdentifiers, config.getRateSearchSchenaCode());
+            validateMDMSDataV2ForRates(estimate, mdmsDataV2ForRate, uniqueIdentifiers, errorMap);
+        }
 
         validateNoOfUnit(estimateDetails);
 
