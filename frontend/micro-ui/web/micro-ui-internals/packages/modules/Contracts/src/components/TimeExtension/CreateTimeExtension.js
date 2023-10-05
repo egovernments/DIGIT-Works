@@ -53,7 +53,6 @@ const CreateTimeExtension = ({isEdit,revisedWONumber,...props}) => {
         selectedApprover,
         setSelectedApprover,
         approverLoading,
-        isEdit,
       })
     );
   }, [approvers]);

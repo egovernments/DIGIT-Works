@@ -53,6 +53,7 @@ public class EnrichmentService {
         Estimate estimate = request.getEstimate();
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
         Address address = estimate.getAddress();
+        enrichNoOfUnit(estimateDetails);
 
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, true);
         estimate.setAuditDetails(auditDetails);
@@ -158,6 +159,7 @@ public class EnrichmentService {
 
         //upsert line item and amount detail
         List<EstimateDetail> lineItemsFromReq = estimate.getEstimateDetails();
+        enrichNoOfUnit(lineItemsFromReq);
         //check ids are there in the request or not, if not then its a new record that has to be inserted
         for (EstimateDetail lineItem : lineItemsFromReq) {
             if (StringUtils.isBlank(lineItem.getId())) {
@@ -210,5 +212,36 @@ public class EnrichmentService {
 
         }
         return rolePresent;
+    }
+
+    public void enrichNoOfUnit(List<EstimateDetail> estimateDetails){
+        for(int i =0;i<estimateDetails.size();i++){
+            EstimateDetail estimateDetail = estimateDetails.get(i);
+            if(estimateDetail.getNoOfunit()==null){
+                BigDecimal total =new BigDecimal(1);
+                boolean allNull =true;
+                if(estimateDetail.getLength()!=null){
+                    total =total.multiply(estimateDetail.getLength());
+                    allNull=false;
+                }
+                if(estimateDetail.getWidth()!=null){
+                    total =total.multiply(estimateDetail.getWidth());
+                    allNull=false;
+                }
+                if(estimateDetail.getHeight()!=null){
+                    total =total.multiply(estimateDetail.getHeight());
+                    allNull=false;
+                }
+                if(estimateDetail.getQuantity()!=null){
+                    total =total.multiply(estimateDetail.getQuantity());
+                    allNull=false;
+                }
+                if(allNull){
+                    continue;
+                }
+                double totalNew = total.doubleValue();
+                estimateDetail.setNoOfunit(totalNew);
+            }
+        }
     }
 }

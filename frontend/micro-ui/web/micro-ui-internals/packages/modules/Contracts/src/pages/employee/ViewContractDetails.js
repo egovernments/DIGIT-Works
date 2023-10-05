@@ -125,9 +125,7 @@ const ViewContractDetails = () => {
         }
 
         if (option?.action === "TIME_EXTENSTION") {
-            window.location.href = `${window.location.href}&isTimeExtension=${true}`
-           // window.location.replace(`${window.location.href}&isTimeExtension=${true}`);
-           // setShowTimeExtension(true)
+            setShowTimeExtension(true)
            //goto create time extenstion screen (basically view WO screen with two extra fields for time extension)
         }
 
@@ -167,9 +165,8 @@ const ViewContractDetails = () => {
 
     const handleEditTimeExtension = () => {
         //here set showTimeExtension to true 
-        window.location.href = `${window.location.href}&isEditTimeExtension=${true}&isTimeExtension=${true}`
-        //setShowTimeExtension(true)
-        //setEditTimeExtension(true)
+        setShowTimeExtension(true)
+        setEditTimeExtension(true)
     }
 
     if(isProjectLoading || isContractLoading) 
@@ -178,8 +175,8 @@ const ViewContractDetails = () => {
       <React.Fragment>
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-            <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{showTimeExtension || queryStrings?.isTimeExtension === "true" ? ( revisedWONumber ? t("UPDATE_TE") : t("CREATE_TE")) : revisedWONumber ? t("VIEW_TE") : t("WORKS_VIEW_WORK_ORDER")}</Header>
-            {(data?.applicationData?.wfStatus === "APPROVED" || data?.applicationData?.wfStatus === "PENDING_FOR_ACCEPTANCE" || data?.applicationData?.wfStatus === "ACCEPTED") && !(queryStrings?.isTimeExtension === "true") && !(revisedWONumber) && 
+            <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{showTimeExtension ? t("CREATE_TE") : revisedWONumber ? t("VIEW_TE") : t("WORKS_VIEW_WORK_ORDER")}</Header>
+            {(data?.applicationData?.wfStatus === "APPROVED" || data?.applicationData?.wfStatus === "PENDING_FOR_ACCEPTANCE" || data?.applicationData?.wfStatus === "ACCEPTED") && 
                <MultiLink
                  onHeadClick={() => HandleDownloadPdf()}
                  downloadBtnClassName={"employee-download-btn-className"}
@@ -192,11 +189,11 @@ const ViewContractDetails = () => {
             !data?.isNoDataFound && 
                 <>
                     <HorizontalNav showNav={true} configNavItems={configNavItems} activeLink={activeLink} setActiveLink={setActiveLink} inFormComposer={false}>
-                        {activeLink === "Work_Order" && !showTimeExtension && !(queryStrings?.isTimeExtension === "true") && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading} revisedWONumber={revisedWONumber}/>}
-                        {activeLink === "Work_Order" && (showTimeExtension || queryStrings?.isTimeExtension === "true") && <CreateTimeExtension fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading} revisedWONumber={revisedWONumber} isEdit={revisedWONumber ? true : false}/> }
+                        {activeLink === "Work_Order" && !showTimeExtension && <ContractDetails fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading} revisedWONumber={revisedWONumber}/>}
+                        {activeLink === "Work_Order" && showTimeExtension && <CreateTimeExtension fromUrl={false} tenantId={tenantId} contractNumber={payload?.contractNumber} data={data} isLoading={isContractLoading} revisedWONumber={revisedWONumber} isEdit={revisedWONumber ? true : false}/> }
                         {activeLink === "Terms_and_Conditions" && <TermsAndConditions data={data?.applicationData?.additionalDetails?.termsAndConditions}/>}
                     </HorizontalNav>
-                    {!editTimeExtension && !(queryStrings?.isEditTimeExtension === "true") && <WorkflowActions
+                    {!editTimeExtension && <WorkflowActions
                         forcedActionPrefix={`WF_${businessService}_ACTION`}
                         businessService={businessService}
                         applicationNo={revisedWONumber ? revisedWONumber :queryStrings?.workOrderNumber}
@@ -206,7 +203,7 @@ const ViewContractDetails = () => {
                         moduleCode="Contract"
                         editCallback = {handleEditTimeExtension}
                     />}
-                    {data?.applicationData?.wfStatus === "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension && !(queryStrings?.isTimeExtension === "true") ?
+                    {data?.applicationData?.wfStatus === "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension ?
                         <ActionBar>
 
                             {showActions ? <Menu

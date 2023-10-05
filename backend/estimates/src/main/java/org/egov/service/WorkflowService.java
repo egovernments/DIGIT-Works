@@ -9,6 +9,7 @@ import org.egov.common.contract.request.User;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.EstimateServiceConstant;
 import org.egov.web.models.Estimate;
 import org.egov.web.models.EstimateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +66,11 @@ public class WorkflowService {
         ProcessInstance processInstance = getProcessInstanceForEstimate(estimateRequest);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(estimateRequest.getRequestInfo(), Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
-        estimateRequest.getEstimate().setWfStatus(state.getState());        
+        estimateRequest.getEstimate().setWfStatus(state.getState());
         estimateRequest.getEstimate().setStatus(Estimate.StatusEnum.fromValue(state.getApplicationStatus()));
         return state.getApplicationStatus();
     }
+
 
 
     public void validateAssignee(EstimateRequest estimateRequest) {
@@ -170,6 +172,28 @@ public class WorkflowService {
         Estimate estimate = request.getEstimate();
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
+        if(workflow.getAction().equals(EstimateServiceConstant.ACTION_SENDBACK) && CollectionUtils.isEmpty(workflow.getAssignees())) {
+            String assignee = null;
+            Boolean statusFound = false;
+            List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
+            String nextState = getNextStateValueForProcessInstance(processInstanceList.get(0));
+            for(ProcessInstance processInstance: processInstanceList){
+                if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState)) && (statusFound != true)) {
+                    statusFound = true;
+                    if(processInstance.getAssignes() != null){
+                        List<String> uuids = new ArrayList<>();
+                        assignee = processInstance.getAssignes().get(0).getUuid();
+                        uuids.add(assignee);
+                        workflow.setAssignees(uuids);
+                    }
+                }
+            }
+        }
+        if(workflow.getAction().equals(EstimateServiceConstant.ACTION_SENDBACKTOORIGINATOR) && CollectionUtils.isEmpty(workflow.getAssignees())){
+            List<String> uuids = new ArrayList<>();
+            uuids.add(estimate.getAuditDetails().getCreatedBy());
+            workflow.setAssignees(uuids);
+        }
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(estimate.getEstimateNumber());
         processInstance.setAction(request.getWorkflow().getAction());
@@ -178,6 +202,7 @@ public class WorkflowService {
         processInstance.setBusinessService(serviceConfiguration.getEstimateWFBusinessService());
         /* processInstance.setDocuments(request.getWorkflow().getVerificationDocuments());*/
         processInstance.setComment(workflow.getComment());
+
 
         if (!CollectionUtils.isEmpty(workflow.getAssignees())) {
             List<User> users = new ArrayList<>();
@@ -196,6 +221,16 @@ public class WorkflowService {
         return processInstance;
     }
 
+    private String getNextStateValueForProcessInstance(ProcessInstance processInstance){
+            List<Action> actions = processInstance.getState().getActions();
+            String nextState = null;
+            for(Action action: actions) {
+                if (action.getAction().equals("SENDBACK")) {
+                     nextState = action.getNextState();
+                }
+            }
+            return nextState;
+    }
     /*
      * @param processInstances
      */
@@ -240,6 +275,15 @@ public class WorkflowService {
         return response.getProcessInstances().get(0).getState();
     }
 
+    private List<ProcessInstance> callWorkFlowForAssignees(EstimateRequest estimateRequest) {
+        log.info("WorkflowService::callWorkFlow");
+        ProcessInstanceResponse response = null;
+        StringBuilder url = getprocessInstanceHistorySearchURL(estimateRequest.getEstimate().getTenantId(), estimateRequest.getEstimate().getEstimateNumber(), true);
+        Object optional = repository.fetchResult(url, estimateRequest);
+        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+        //return response.getProcessInstances().get(1).getAssignes().get(0).getUuid();
+        return response.getProcessInstances();
+    }
 
     public StringBuilder getprocessInstanceSearchURL(String tenantId, String estimateNumber) {
         log.info("WorkflowService::getprocessInstanceSearchURL");
@@ -249,6 +293,19 @@ public class WorkflowService {
         url.append(tenantId);
         url.append("&businessIds=");
         url.append(estimateNumber);
+        return url;
+    }
+
+    public StringBuilder getprocessInstanceHistorySearchURL(String tenantId, String estimateNumber, boolean history) {
+        log.info("WorkflowService::getprocessInstanceSearchURL");
+        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
+        url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
+        url.append("?tenantId=");
+        url.append(tenantId);
+        url.append("&businessIds=");
+        url.append(estimateNumber);
+        url.append("&history=");
+        url.append(history);
         return url;
     }
 

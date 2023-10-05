@@ -30,6 +30,19 @@ public class EstimateServiceConfiguration {
     private String mdmsHost;
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+
+    //MDMS V2
+    @Value("${egov.mdms.host.v2}")
+    private String mdmsHostV2;
+    @Value("${egov.mdms.search.endpoint.v2}")
+    private String mdmsEndPointV2;
+
+    //Schema Code
+    @Value("${estimate.sorSearch.schemacode}")
+    private String sorSearchSchemaCode;
+
+    @Value("${estimate.rateSearch.schemacode}")
+    private  String rateSearchSchenaCode;
     //Topic
     @Value("${estimate.kafka.create.topic}")
     private String saveEstimateTopic;
