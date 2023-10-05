@@ -143,7 +143,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                             state: {
                               sNo: state.length + 1,
                               targetId: "",
-                              isDeduction: "",
+                              isDeduction: false,
                               description: "",
                               id: null,
                               height: 0,

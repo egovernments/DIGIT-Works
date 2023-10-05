@@ -7,7 +7,7 @@ const MeasureInputAtom = ({ id, row, mode, disable = false, fieldKey, value, dis
   <td>
     <TextInput
       value={value}
-      type={fieldKey=="description"?"text":"number"}
+      type={fieldKey == "description" ? "text" : "number"}
       onChange={(newValue) => {
         dispatch({
           type: "UPDATE_ROW",
@@ -21,6 +21,10 @@ const MeasureInputAtom = ({ id, row, mode, disable = false, fieldKey, value, dis
 
 const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
   const { t } = useTranslation();
+  const options = [
+    { label: t("MB_YES"), code: true },
+    { label: t("MB_NO"), code: false },
+  ];
   return (
     <tr key={index}>
       <td>{rowState?.sNo}</td>
@@ -37,11 +41,12 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
               select={(e) => {
                 dispatch({
                   type: "UPDATE_ROW",
-                  state: { id: index + 1, value: e, row: value, type: "isDeduction" },
+                  state: { id: index + 1, value: e?.code, row: value, type: "isDeduction" },
                 });
               }}
-              option={[t("MB_YES"), t("MB_NO")]}
-              selected={rowState?.isDeduction}
+              optionKey={"label"}
+              option={options}
+              selected={options?.filter((row) => row?.code == rowState?.isDeduction)?.[0]}
             />
           </td>
           <MeasureInputAtom
