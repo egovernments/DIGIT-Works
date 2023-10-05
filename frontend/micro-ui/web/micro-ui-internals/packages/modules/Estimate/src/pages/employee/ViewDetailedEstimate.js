@@ -46,12 +46,8 @@ const ViewDetailedEstimate = () => {
   const totalAmountOverheads = overheads?.reduce((acc, row) => row?.amountDetail?.[0]?.amount + acc, 0);
   tableRowsOverheads?.push(["", "", t("RT_TOTAL"), Digit.Utils.dss.formatterWithoutRound(totalAmountOverheads, "number")]);
   const overheadItems = {
-    title: "WORKS_OVERHEADS",
-    asSectionHeader: true,
-    isTable: true,
     headers: tableHeaderOverheads,
     tableRows: tableRowsOverheads,
-    state: detailedEstimate?.estimates[0],
     tableStyles: {
       rowStyle: {},
       cellStyle: [{}, { width: "50vw", whiteSpace: "break-spaces", wordBreak: "break-all" }, { textAlign: "left" }, { textAlign: "right" }],
