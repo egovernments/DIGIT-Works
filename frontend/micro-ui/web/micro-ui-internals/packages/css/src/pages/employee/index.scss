@@ -549,3 +549,34 @@
   width: 48%;
   max-width: 48%;
 }
+
+.loginFormStyleEmployee {
+  .loginCardSubHeaderClassName {
+    text-align: center !important;
+  }
+  .loginCardClassName {
+    margin: auto !important; 
+    min-width: 408px !important;
+  }
+  .buttonClassName {
+    max-width: 100% !important;
+    width: 100% !important
+  }
+  .field .field-container .text-input input {
+    margin-bottom: 5px !important;
+  }
+  .bannerHeader {
+    margin-bottom: 0px !important;
+  }
+
+  .primary-label-btn {
+    margin: 20px auto 0 auto !important;
+  }
+  .submit-bar, .submit-bar-disabled {
+    width: 100% !important;
+  }
+}
+
+.optionsClassName {
+  right: -3rem !important
+}
