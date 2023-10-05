@@ -66,12 +66,23 @@ const searchSor = (props) => {
     },
     [setValue]
   );
-
+  const buttonClick = () => {
+    const sor = transformSOR(stateData?.selectedSor);
+    if (formData?.length == 0 || (formData?.length == 1 && !formData?.[0]?.description)) {
+      formData = [sor];
+    } else {
+      formData?.push(sor);
+    }
+    fetchData(stateData?.selectedSor?.id, formData, setFormValue);
+    setFormValue(formData);
+    setSelectedSOR(null);
+  };
   const transformSOR = (sor) => {
     const transformedSOR = {
       sNo: 1,
       description: sor?.description,
       uom: sor?.uom,
+      category: "SOR",
       approvedQuantity: sor?.quantity,
       consumedQ: 0,
       currentMBEntry: 0,
@@ -84,24 +95,12 @@ const searchSor = (props) => {
   };
   return (
     <div>
-      <EstimateDropdown label="SOR Type" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Type"} type="SORType" />
+      <EstimateDropdown label="SOR Type*" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Type"} type="SORType" />
       <EstimateDropdown label="SOR Sub Type" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.SubType"} type="SORSubType" />
       <EstimateDropdown label="SOR Variant" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Variant"} type="SORVariant" />
 
       <SearchBar stateData={stateData} selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
-      <Button
-        label="Add"
-        onButtonClick={() => {
-          const sor = transformSOR(stateData?.selectedSor);
-          if (formData?.length == 0 || (formData?.length == 1 && !formData?.[0]?.description)) {
-            formData = [sor];
-          } else {
-            formData?.push(sor);
-          }
-          fetchData(stateData?.selectedSor?.id, formData, setFormValue);
-          setFormValue(formData);
-        }}
-      />
+      <Button label="Add" onButtonClick={buttonClick} />
     </div>
   );
 };

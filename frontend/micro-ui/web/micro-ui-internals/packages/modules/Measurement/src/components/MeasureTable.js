@@ -271,6 +271,7 @@ const MeasureTable = (props) => {
                   append({
                     amount: 0,
                     consumedQ: 0,
+                    category:"NON-SOR",
                     sNo: fields?.length + 1,
                     currentMBEntry: 0,
                     uom: null,
