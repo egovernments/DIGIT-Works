@@ -58,27 +58,27 @@ public class EstimateServiceValidator {
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow, errorMap);
 
-        String rootTenantId = estimate.getTenantId();
+//        String rootTenantId = estimate.getTenantId();
         //split the tenantId
-        rootTenantId = rootTenantId.split("\\.")[0];
+//        rootTenantId = rootTenantId.split("\\.")[0];
 
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
-        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
-        validateProjectId(request, errorMap);
-        Set<String> uniqueIdentifiers = new HashSet<String>();
-        for(int i=0;i<estimateDetails.size();i++){
-            EstimateDetail estimateDetail = estimateDetails.get(i);
-            if(estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
-                uniqueIdentifiers.add(estimateDetail.getSorId());
-            }
-        }
-        if (uniqueIdentifiers.size() != 0) {
-            Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2(request, rootTenantId, uniqueIdentifiers, config.getSorSearchSchemaCode());
-            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
-            Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request, rootTenantId, uniqueIdentifiers, config.getRateSearchSchenaCode());
-            validateMDMSDataV2ForRates(estimate, mdmsDataV2ForRate, uniqueIdentifiers, errorMap);
-        }
+//        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+//        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
+//        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
+//        validateProjectId(request, errorMap);
+//        Set<String> uniqueIdentifiers = new HashSet<String>();
+//        for(int i=0;i<estimateDetails.size();i++){
+//            EstimateDetail estimateDetail = estimateDetails.get(i);
+//            if(estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
+//                uniqueIdentifiers.add(estimateDetail.getSorId());
+//            }
+//        }
+//        if (uniqueIdentifiers.size() != 0) {
+//            Object mdmsDataV2ForSor = mdmsUtils.mDMSCall(request, rootTenantId);
+//            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
+//            Object mdmsDataV2ForRate = mdmsUtils.mDMSCall(request, rootTenantId);
+//            validateMDMSDataV2ForRates(estimate, mdmsDataV2ForRate, uniqueIdentifiers, errorMap);
+//        }
 
         validateNoOfUnit(estimateDetails);
 
@@ -235,7 +235,7 @@ public class EstimateServiceValidator {
         log.info("EstimateServiceValidator::validateMDMSDataV2");
         int uniqueIdentifiersSizeInput = uniqueIdentifiers.size();
 
-        final  String jsonPathForTestSor = "$.mdms[*].uniqueIdentifier";
+        final  String jsonPathForTestSor = "$.mdmsRes.WORKS-SOR.SOR[*].id";
         List<Object> sorIdRes = null;
         try {
             sorIdRes = JsonPath.read(mdmsData,jsonPathForTestSor);
@@ -371,14 +371,6 @@ public class EstimateServiceValidator {
 
         if (CollectionUtils.isEmpty(tenantRes))
             errorMap.put("INVALID_TENANT_ID", "The tenant: " + estimate.getTenantId() + " is not present in MDMS");
-
-        //TODO - Configure sorids in MDMS
-//        if (!CollectionUtils.isEmpty(sorIdRes) && !CollectionUtils.isEmpty(reqSorIds)) {
-//            .removeAll(sorIdRes);
-//            if (!CollectionUtils.isEmpty(reqSorIds)) {
-//                errorMap.put("SOR_IDS", "The sorids: " + reqSorIds + " is not present in MDMS");
-//            }
-//        }
 
         //estimate detail - category
         if (!CollectionUtils.isEmpty(categoryRes) && !CollectionUtils.isEmpty(reqEstimateDetailCategories)) {
