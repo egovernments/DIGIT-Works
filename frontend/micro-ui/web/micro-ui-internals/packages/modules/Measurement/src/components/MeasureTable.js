@@ -68,19 +68,28 @@ const MeasureTable = (props) => {
     return obj;
   };
 
-  let columns =
-    mode == "CREATEALL"
-      ? [t("WORKS_SNO"), t("MB_DESCRIPTION"), t("MB_UNIT"), t("MB_RATE"), t("MB_CURRENT_MB_ENTRY"), t("MB_AMOUNT_CURRENT_ENTRY"), t("")]
-      : [
-          t("WORKS_SNO"),
-          t("MB_DESCRIPTION"),
-          t("MB_UNIT"),
-          t("MB_RATE"),
-          t("MB_APPROVER_QUANT"),
-          t("MB_CONSUMED_QUANT"),
-          t("MB_CURRENT_MB_ENTRY"),
-          t("MB_AMOUNT_CURRENT_ENTRY"),
-        ];
+  const getColumns = (mode, t) => {
+    if (mode === "CREATEALL") {
+      return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
+    } else if (mode === "VIEWES") {
+      return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
+    } else {
+      return [
+        t("WORKS_SNO"),
+        t("MB_DESCRIPTION"),
+        t("MB_UNIT"),
+        t("MB_RATE"),
+        t("MB_APPROVER_QUANT"),
+        t("MB_CONSUMED_QUANT"),
+        t("MB_CURRENT_MB_ENTRY"),
+        t("MB_AMOUNT_CURRENT_ENTRY"),
+      ];
+    }
+  };
+  
+
+  let columns = getColumns(mode, t);
+
   const renderHeader = () => {
     return columns?.map((key, index) => {
       return (
@@ -154,7 +163,7 @@ const MeasureTable = (props) => {
                 </td>
               </>
             )}
-            {mode != "CREATEALL" && (
+            {mode != "CREATEALL"  && mode != "VIEWES"  && (
               <>
                 <td>
                   <Amount customStyle={{ textAlign: "right" }} value={row?.approvedQuantity?.toFixed?.(2)} t={t} roundOff={false}></Amount>

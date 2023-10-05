@@ -10,6 +10,9 @@ import EstimateInbox from "./EstimateInbox";
 import ViewEstimate from "./ViewEstimate";
 import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
 import CreateDetailedEstimate from "./Estimates/CreateDetailedEstimate/CreateEstimate";
+
+import ViewDetailedEstimate from "./ViewDetailedEstimate";
+
 const EstimateBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
 
@@ -50,6 +53,12 @@ const EstimateBreadCrumbs = ({ location }) => {
             // path: `/${window.contextPath}/employee/estimate/inbox`,
             content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
             show: location.pathname.includes("/estimate/estimate-details") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
+            // path: `/${window.contextPath}/employee/estimate/inbox`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
+            show: location.pathname.includes("/estimate/view-estimate") ? true : false,
             isBack: fromScreen && true,
         },
         {
@@ -111,7 +120,9 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
                     <PrivateRoute path={`${path}/search-estimate-plain`} component={() => <EstimateSearchPlain {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
-                    <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewDetailedEstimate {...{ path }} />} />
+
                     <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
 
                 </div>

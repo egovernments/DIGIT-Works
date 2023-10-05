@@ -55,10 +55,10 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
         </>
       )}
 
-      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode == "VIEW"} fieldKey={"number"} id={index + 1} value={rowState?.["number"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode == "VIEW"} fieldKey={"length"} id={index + 1} value={rowState?.["length"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode == "VIEW"} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode == "VIEW"} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"number"} id={index + 1} value={rowState?.["number"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"length"} id={index + 1} value={rowState?.["length"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} />
       <td>{rowState?.noOfunit}</td>
       {mode == "CREATEALL" && (
         <td>
