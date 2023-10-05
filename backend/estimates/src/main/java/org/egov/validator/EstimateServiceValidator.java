@@ -513,28 +513,28 @@ public class EstimateServiceValidator {
                 throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
             }
         }
-        String rootTenantId = estimate.getTenantId();
-        //split the tenantId
-        rootTenantId = rootTenantId.split("\\.")[0];
+//        String rootTenantId = estimate.getTenantId();
+//        //split the tenantId
+//        rootTenantId = rootTenantId.split("\\.")[0];
+//
+//        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+//
+//        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
+//        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
+//
+//        Set<String> uniqueIdentifiers = new HashSet<String>();
+//        for(int i=0;i<estimateDetails.size();i++){
+//            EstimateDetail estimateDetail = estimateDetails.get(i);
+//            if(estimateDetail.getSorId()!=null) {
+//                uniqueIdentifiers.add(estimateDetail.getSorId());
+//            }
+//        }
 
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
-
-        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
-
-        Set<String> uniqueIdentifiers = new HashSet<String>();
-        for(int i=0;i<estimateDetails.size();i++){
-            EstimateDetail estimateDetail = estimateDetails.get(i);
-            if(estimateDetail.getSorId()!=null) {
-                uniqueIdentifiers.add(estimateDetail.getSorId());
-            }
-        }
-
-        Object mdmsDataV2ForSor =mdmsUtils.mdmsCallV2(request , rootTenantId,uniqueIdentifiers,config.getSorSearchSchemaCode());
-        validateMDMSDataV2ForSor(estimate,mdmsDataV2ForSor,uniqueIdentifiers, errorMap);
-
-        Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request,rootTenantId,uniqueIdentifiers,config.getRateSearchSchenaCode());
-        validateMDMSDataV2ForRates(estimate,mdmsDataV2ForRate,uniqueIdentifiers,errorMap);
+//        Object mdmsDataV2ForSor =mdmsUtils.mdmsCallV2(request , rootTenantId,uniqueIdentifiers,config.getSorSearchSchemaCode());
+//        validateMDMSDataV2ForSor(estimate,mdmsDataV2ForSor,uniqueIdentifiers, errorMap);
+//
+//        Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request,rootTenantId,uniqueIdentifiers,config.getRateSearchSchenaCode());
+//        validateMDMSDataV2ForRates(estimate,mdmsDataV2ForRate,uniqueIdentifiers,errorMap);
 
         validateProjectId(request, errorMap);
         validateNoOfUnit(estimateDetails);
