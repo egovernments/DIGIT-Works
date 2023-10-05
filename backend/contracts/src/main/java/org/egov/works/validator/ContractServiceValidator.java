@@ -632,6 +632,10 @@ public class ContractServiceValidator {
             log.error("Tenant is mandatory");
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
+        if (contractCriteria.getFromDate() != null && contractCriteria.getToDate() != null &&
+                contractCriteria.getFromDate().compareTo(contractCriteria.getToDate()) > 0) {
+            throw new CustomException("FROM_GREATER_THAN_TO_DATE", "From date is greater than to date");
+        }
     }
 
     /**
@@ -661,7 +665,7 @@ public class ContractServiceValidator {
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
         // Validate if at least one muster-roll is created and approved
-        //validateMusterRollForTimeExtension(contractRequest);
+        validateMusterRollForTimeExtension(contractRequest);
         // Validate if previous time extension request is in workflow
         validateDuplicateTimeExtensionRequest (contractRequest);
         // Validate if extended end date is not before active contract end date
@@ -696,7 +700,7 @@ public class ContractServiceValidator {
         // Validate if org is same as previous contract
         validateOrganisation(contractRequest, contractsFromDB);
         // Validate if at least one muster-roll is created and approved
-        //validateMusterRollForTimeExtension(contractRequest);
+        validateMusterRollForTimeExtension(contractRequest);
         // Validate Supplement Number
         validateSupplementNumber (contractRequest);
         // Validate if extended end date is not before active contract end date

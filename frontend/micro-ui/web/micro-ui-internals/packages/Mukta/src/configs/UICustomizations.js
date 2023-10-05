@@ -974,11 +974,7 @@ export const UICustomizations = {
     preProcess: (data,defaultValues) => {
       const startDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdFrom,'daystart');
       const endDate = Digit.Utils.pt.convertDateToEpoch(data.body.inbox?.moduleSearchCriteria?.createdTo,'dayend');
-      let workOrderNumber, revisedWorkOrderNumber;
-      if(data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.includes("WO"))
-         workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
-      else
-        revisedWorkOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
+      const workOrderNumber = data.body.inbox?.moduleSearchCriteria?.workOrderNumber?.trim();
       const status = data?.body?.inbox?.moduleSearchCriteria?.status?.[0]?.wfStatus
       const projectType = data.body.inbox?.moduleSearchCriteria?.projectType?.code;
       const projectName = data.body.inbox?.moduleSearchCriteria?.projectName?.trim();
@@ -992,7 +988,6 @@ export const UICustomizations = {
           tenantId: Digit.ULBService.getCurrentTenantId(),
           ward,
           workOrderNumber,
-          revisedWorkOrderNumber,
           projectType,
           projectName,
           startDate,

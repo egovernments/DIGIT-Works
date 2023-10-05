@@ -109,6 +109,11 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
                 .noOfunit(rs.getDouble("no_of_unit"))
                 //.totalAmount(rs.getDouble("total_amount"))
                 .uomValue(rs.getDouble("uom_value"))
+                .length(rs.getBigDecimal("length"))
+                .width(rs.getBigDecimal("width"))
+                .height(rs.getBigDecimal("height"))
+                .isDeduction(rs.getBoolean("is_deduction"))
+                .quantity(rs.getBigDecimal("quantity"))
                 .uom(rs.getString("uom"))
                 .isActive(rs.getBoolean("estDetailActive"))
                 .build();

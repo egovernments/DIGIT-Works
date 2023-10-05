@@ -2,7 +2,6 @@ package org.egov.works.enrichment;
 
 
 import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.ProcessInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,7 +12,6 @@ import org.egov.works.config.ContractServiceConfiguration;
 import org.egov.works.kafka.Producer;
 import org.egov.works.repository.ContractRepository;
 import org.egov.works.service.ContractService;
-import org.egov.works.service.WorkflowService;
 import org.egov.works.util.*;
 import org.egov.works.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +64,6 @@ public class ContractEnrichment {
 
     @Autowired
     private Producer producer;
-
-    @Autowired
-    private WorkflowService workflowService;
 
     public void enrichContractOnCreate(ContractRequest contractRequest){
         Object mdmsForEnrichment = fetchMDMSDataForEnrichment(contractRequest);
@@ -169,8 +164,6 @@ public class ContractEnrichment {
                     ContractRequest contractRequestFromDB = ContractRequest.builder()
                             .requestInfo(contractRequest.getRequestInfo())
                             .contract(contractFromDB).build();
-                    ProcessInstance processInstance = workflowService.getProcessInstance(contractRequestFromDB);
-                    contractRequestFromDB.getContract().setProcessInstance(processInstance);
                     markContractAndDocumentsStatus(contractRequestFromDB, Status.INACTIVE);
                     markLineItemsAndAmountBreakupsStatus(contractRequestFromDB, Status.INACTIVE);
                     producer.push(config.getUpdateContractTopic(), contractRequestFromDB);

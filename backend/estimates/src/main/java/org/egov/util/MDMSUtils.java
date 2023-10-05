@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static org.egov.util.EstimateServiceConstant.*;
 
@@ -47,6 +48,23 @@ public class MDMSUtils {
         RequestInfo requestInfo = request.getRequestInfo();
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId, request);
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
+        return result;
+    }
+
+    /**
+     * Calls MDMS v2 service to fetch works master data
+     *
+     * @param request
+     * @param tenantId
+     * @return
+     */
+    public Object mdmsCallV2(EstimateRequest request, String tenantId, Set<String> sorIds,String schemaCode){
+        log.info("MDMSUtils::mDMSCallV2");
+        RequestInfo requestInfo =request.getRequestInfo();
+        org.egov.web.models.MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestV2(requestInfo,tenantId,request, sorIds,schemaCode);
+        StringBuilder uri = getMdmsSearchUrl2();
+
+        Object result = serviceRequestRepository.fetchResult(uri,mdmsCriteriaReq);
         return result;
     }
 
@@ -105,6 +123,18 @@ public class MDMSUtils {
                 .requestInfo(requestInfo).build();
 
         log.info("MDMSUtils::search MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
+        return mdmsCriteriaReq;
+    }
+
+    /**
+     * Returns mdms v2 search criteria based on the tenantId and mdms search criteria
+     * @return
+     */
+
+    public org.egov.web.models.MdmsCriteriaReq getMDMSRequestV2(RequestInfo requestInfo , String  tenantId , EstimateRequest request,Set<String>sorIds, String schemaCode){
+        log.info("MDMSUtils::getMDMSRequestV2");
+        org.egov.web.models.MdmsCriteria mdmsCriteria = org.egov.web.models.MdmsCriteria.builder().tenantId(tenantId).uniqueIdentifiers(sorIds).schemaCode(schemaCode).build();
+        org.egov.web.models.MdmsCriteriaReq mdmsCriteriaReq = org.egov.web.models.MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo).build();
         return mdmsCriteriaReq;
     }
 
@@ -195,6 +225,15 @@ public class MDMSUtils {
      */
     public StringBuilder getMdmsSearchUrl() {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+    }
+
+    /**
+     * Returns the url for mdms search v2 endpoint
+     *
+     * @return url for mdms search v2 endpoint
+     */
+    public StringBuilder getMdmsSearchUrl2() {
+        return new StringBuilder().append(config.getMdmsHostV2()).append(config.getMdmsEndPointV2());
     }
 
 }
