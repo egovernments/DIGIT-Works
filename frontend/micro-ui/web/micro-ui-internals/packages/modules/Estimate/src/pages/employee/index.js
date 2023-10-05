@@ -56,6 +56,12 @@ const EstimateBreadCrumbs = ({ location }) => {
             isBack: fromScreen && true,
         },
         {
+            // path: `/${window.contextPath}/employee/estimate/inbox`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("ESTIMATE_VIEW_ESTIMATE")}` : t("ESTIMATE_VIEW_ESTIMATE"),
+            show: location.pathname.includes("/estimate/view-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
             path: `/${window.contextPath}/employee/estimate/inbox`,
             content: fromScreen ? `${t(fromScreen)} / ${t("ACTION_TEST_ESTIMATE_INBOX")}` : t("ACTION_TEST_ESTIMATE_INBOX"),
             show: location.pathname.includes("/estimate/inbox") ? true : false,
@@ -114,7 +120,7 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/search-estimate`} component={() => <EstimateSearch {...{ path }} />} />
                     <PrivateRoute path={`${path}/search-estimate-plain`} component={() => <EstimateSearchPlain {...{ path }} />} />
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
-                    {/* <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewEstimate {...{ path }} />} /> */}
+                    <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
                     <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewDetailedEstimate {...{ path }} />} />
 
                     <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
