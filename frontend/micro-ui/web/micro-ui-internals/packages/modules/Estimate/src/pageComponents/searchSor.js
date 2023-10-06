@@ -98,9 +98,17 @@ const searchSor = (props) => {
       <EstimateDropdown label="SOR Type*" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Type"} type="SORType" />
       <EstimateDropdown label="SOR Sub Type" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.SubType"} type="SORSubType" />
       <EstimateDropdown label="SOR Variant" stateData={stateData} setStateData={setStateData} schemaCode={"WORKS-SOR.Variant"} type="SORVariant" />
-
+      <div className="search-sor-container">
+      <span className="search-sor-label">Search SOR</span>
+      <div className="search-sor-button"> 
       <SearchBar stateData={stateData} selectedSOR={selectedSOR} setSelectedSOR={setSelectedSOR} />
-      <Button label="Add" onButtonClick={buttonClick} />
+      <Button
+        label="Add"
+        onButtonClick={buttonClick}
+        className={"add-sor-button"}
+      />
+      </div>
+      </div>
     </div>
   );
 };

@@ -21,6 +21,7 @@ const EstimateDropdown = (props) => {
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
+
   if (isLoading) {
     return <Loader />;
   }
@@ -29,8 +30,8 @@ const EstimateDropdown = (props) => {
     .map((item) => ({ code: item.data.code, label: Digit.Utils.locale.getTransformedLocale(`${props?.schemaCode}.${item.data.code}`) }));
 
   return (
-    <div>
-      <div>{props?.label}</div>
+    <div className="sor-dropdowns">
+      <div className="sor-label">{props?.label}</div>
       <Dropdown
         t={t}
         optionKey={"label"}
@@ -42,6 +43,7 @@ const EstimateDropdown = (props) => {
         }}
         option={filteredCodes}
         selected={filteredCodes?.filter((e) => e.code == props?.stateData[props?.type])?.[0] || { code: null }}
+        className = "dropdown-width"
       />
     </div>
   );
