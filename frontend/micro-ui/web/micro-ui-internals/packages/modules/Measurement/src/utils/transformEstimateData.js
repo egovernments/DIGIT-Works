@@ -5,10 +5,11 @@ output is array of object of type which is passed
 */
 
 
-export const transformEstimateData = (lineItems, contract, type, measurement = {}) => {
+export const transformEstimateData = (lineItems, contract, type, measurement = {},allMeasurements=[]) => {
+    /* logic to be updated according to business usecase*/
+    const lastMeasuredObject=allMeasurements?.filter(e=>e.isActive)?.[0]||{};
     const transformedContract = transformContractObject(contract)
     const isMeasurement = measurement && Object.keys(measurement)?.length > 0
-    // const isMeasurement = true;
     const convertedObject = lineItems.filter(e => e.category === type).reduce((acc, curr) => {
         if (acc[curr.sorId]) {
             acc[curr.sorId].push(curr);
@@ -17,7 +18,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
         }
         return acc;
     }, {});
-    const transformMeasurementData = isMeasurement ? transformMeasureObject(measurement) : undefined;
+    const transformMeasurementData = isMeasurement ? transformMeasureObject(measurement) : transformMeasureObject(lastMeasuredObject);
     return Object.keys(convertedObject).map((key, index) => {
         const measures = convertedObject[key].map((e, index) => ({
             sNo: index + 1,
@@ -31,7 +32,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
             number: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.numItems : 0,
             noOfunit: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.currentValue : 0,
             rowAmount: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.additionalDetails?.mbAmount : 0,
-            consumedRowQuantity: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.cumulativeValue : 0,
+            consumedRowQuantity: transformMeasurementData?.lineItemsObject?.[transformedContract?.lineItemsObject?.[e?.id]?.contractLineItemId]?.cumulativeValue || 0,
         }))
         return {
 
@@ -76,15 +77,10 @@ export const transformContractObject = (contract = {}) => {
 
 export const transformMeasureObject = (measurement = {}) => {
     return {
-        // contractNumber: contract?.contractNumber,
-        // lineItems: contract?.lineItems,
-        // estimateId: contract?.lineItems?.[0]?.estimateId,
         lineItemsObject: measurement?.measures.reduce((acc, curr) => {
             acc[curr?.targetId] = curr;
-
             return acc;
         }, {})
-
     }
 
 }
@@ -92,8 +88,8 @@ export const transformMeasureObject = (measurement = {}) => {
 
 export const getDefaultValues=(contract,estimate,allMeasurements=[],measurement={})=>{
 
-    const SOR=transformEstimateData(estimate?.estimateDetails, contract, "SOR", measurement);
-    const NONSOR=transformEstimateData(estimate?.estimateDetails, contract, "NON-SOR", measurement);
+    const SOR=transformEstimateData(estimate?.estimateDetails, contract, "SOR", measurement,allMeasurements);
+    const NONSOR=transformEstimateData(estimate?.estimateDetails, contract, "NON-SOR", measurement,allMeasurements);
 
     // extract details from contract 
     const {

@@ -184,7 +184,7 @@ const ViewContractDetails = () => {
         <div className={"employee-main-application-details"}>
           <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
             <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px"}}>{showTimeExtension || queryStrings?.isTimeExtension === "true" ? ( revisedWONumber ? t("UPDATE_TE") : t("CREATE_TE")) : revisedWONumber ? t("VIEW_TE") : t("WORKS_VIEW_WORK_ORDER")}</Header>
-            {(data?.applicationData?.wfStatus === "APPROVED" || data?.applicationData?.wfStatus === "PENDING_FOR_ACCEPTANCE" || data?.applicationData?.wfStatus === "ACCEPTED") && 
+            {(data?.applicationData?.wfStatus === "APPROVED" || data?.applicationData?.wfStatus === "PENDING_FOR_ACCEPTANCE" || data?.applicationData?.wfStatus === "ACCEPTED") && !(queryStrings?.isTimeExtension === "true") && !(revisedWONumber) && 
                <MultiLink
                  onHeadClick={() => HandleDownloadPdf()}
                  downloadBtnClassName={"employee-download-btn-className"}
@@ -211,7 +211,6 @@ const ViewContractDetails = () => {
                         moduleCode="Contract"
                         editCallback = {handleEditTimeExtension}
                     />}
-                                        {/* //added temp logic to enable measurement option */}
                     {data?.applicationData?.wfStatus === "ACCEPTED" && actionsMenu?.length>0 && !showTimeExtension && !(queryStrings?.isTimeExtension === "true") ?
                         <ActionBar>
                             {showActions ? <Menu

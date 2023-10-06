@@ -104,7 +104,15 @@ config:
       - work-dir: "backend/measurement-service/src/main/resources/db"
         image-name: "measurement-service-db"     
 
-# utilities
+  - name: "builds/digit-works/backend/measurement-registry"
+    build:
+      - work-dir: "backend/measurement-registry"
+        dockerfile: "build/maven/Dockerfile"
+        image-name: "measurement-registry"
+      - work-dir: "backend/measurement-registry/src/main/resources/db"
+        image-name: "measurement-registry-db"
+
+  # utilities
   - name: "builds/digit-works/utilities/egov-pdf"
     build:
       - work-dir: "utilities/egov-pdf"
@@ -116,7 +124,7 @@ config:
   - name: "builds/digit-works/utilities/mukta-services"
     build:
       - work-dir: "utilities/mukta-services"
-        image-name: "mukta-services"  
+        image-name: "mukta-services"
 
 # frontend
   - name: builds/digit-works/frontend/micro-ui/works-ui
