@@ -19,7 +19,7 @@ const CreateMeasurement = ({ props }) => {
   const history = useHistory();
   const MeasurementSession = Digit.Hooks.useSessionStorage("MEASUREMENT_CREATE", {});
   // const [sessionFormData, setSessionFormData, clearSessionFormData] = MeasurementSession;
-  const [createState, setState] = useState({ SOR: [], NONSOR: [], accessors: undefined });
+  const [createState, setState] = useState({ SOR: [], NONSOR: [], accessors: undefined, period: {} });
   const [defaultState, setDefaultState] = useState({ SOR: [], NONSOR: [] });
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -61,8 +61,14 @@ const CreateMeasurement = ({ props }) => {
   useEffect(() => {
     const fetchRequiredData = () => {
       if (data) {
-        const defaultValues = getDefaultValues(data?.contract, data?.estimate, data?.allMeasurements, {});
-        setState({ SOR: defaultValues?.SOR, NONSOR: defaultValues?.NONSOR, ...defaultValues?.contractDetails });
+        const defaultValues = getDefaultValues(data, t);
+        setState({
+          SOR: defaultValues?.SOR,
+          NONSOR: defaultValues?.NONSOR,
+          ...defaultValues?.contractDetails,
+          period: data?.period,
+          musterRollNumber: data?.musterRollNumber,
+        });
         setDefaultState({
           SOR: defaultValues?.SOR,
           NONSOR: defaultValues?.NONSOR,
@@ -73,6 +79,10 @@ const CreateMeasurement = ({ props }) => {
         createState?.accessors?.setValue?.("SOR", defaultValues?.SOR);
         createState?.accessors?.setValue?.("NONSOR", defaultValues?.NONSOR);
         createState?.accessors?.setValue?.("contract", data?.contract);
+        if (data?.period?.type == "error") {
+          setErrorMessage(data?.period?.message);
+          setShowErrorToast(true);
+        }
       }
     };
     fetchRequiredData();
@@ -89,6 +99,11 @@ const CreateMeasurement = ({ props }) => {
   ];
 
   function onActionSelect(action) {
+    if (createState?.period?.type == "error") {
+      setErrorMessage(createState?.period?.message);
+      setShowErrorToast(true);
+      return null;
+    }
     if (action?.name === "SUBMIT") {
       createState.workflowAction = "SUBMIT";
       handleCreateMeasurement(createState);
