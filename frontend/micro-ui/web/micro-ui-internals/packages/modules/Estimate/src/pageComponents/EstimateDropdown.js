@@ -29,8 +29,8 @@ const EstimateDropdown = (props) => {
     .map(item => item.data.code);
   
     return (
-        <div>
-            <div>
+        <div className="sor-dropdowns">
+            <div className="sor-label">
                 {props?.label}
             </div>
             <Dropdown t = {t} select={(e) => {
@@ -43,7 +43,9 @@ const EstimateDropdown = (props) => {
                 filteredCodes
             } selected={
                 props?.stateData[props?.type]
-            } />
+            } 
+            className = "dropdown-width"
+            />
         </div>
   )
 }
