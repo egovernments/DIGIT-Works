@@ -1,8 +1,7 @@
-import config from "../config";
+import config, { getErrorCodes } from "../config";
 
 var url = require("url");
-const { httpRequest } = require("./request");
-
+import { httpRequest } from "./request";
 
 
 const search_user = async (uuid: string, tenantId: string, requestinfo: any) => {
@@ -16,20 +15,28 @@ const search_user = async (uuid: string, tenantId: string, requestinfo: any) => 
   );
 }
 
-const search_muster = async (musterRollNumber: string, tenantId: string, requestinfo: any) => {
-  if (musterRollNumber) {
-    musterRollNumber = musterRollNumber.trim();
-  }
-  var params = {
-    tenantId: tenantId,
-    musterRollNumber: musterRollNumber,
-  };
-  return await httpRequest(
+/*
+  This asynchronous function searches for muster rolls based on the provided parameters.
+*/
+const search_muster = async (params: any, requestinfo: any) => {
+  // Send an HTTP request to the muster search endpoint using the provided parameters and request information.
+  const musterResponse = await httpRequest(
     url.resolve(config.host.muster, config.paths.mus_search),
     requestinfo,
     params
   );
+
+  // Check if there are muster rolls in the response.
+  if (musterResponse?.musterRolls?.length > 0) {
+    // If muster rolls are found, return them.
+    return musterResponse?.musterRolls?.[0];
+  }
+
+  // If no muster rolls are found, return an error code.
+  return getErrorCodes("WORKS", "NO_MUSTER_ROLL_FOUND");
 }
+
+
 
 const search_individual = async (individualIds: Array<string>, tenantId: string, requestinfo: any) => {
   // currently single property pdfs supported
@@ -94,8 +101,12 @@ const search_mdms = async (tenantId: string, module: string, master: string, req
   };
   return await httpRequest(
     url.resolve(config.host.mdms, config.paths.mdms_search),
-    requestBody
-  );
+    requestBody,
+    null,
+    "post",
+    "",
+    { cachekey: `${tenantId}-${module}-${master}` }
+  ).then((response: { MdmsRes: any; })=>response.MdmsRes[module][master]);
 }
 
 const create_pdf = async (tenantId: string, key: string, data: string, requestinfo: any) => {
@@ -123,48 +134,77 @@ const create_pdf_and_upload = async (tenantId: string, key: string, data: any, r
 }
 
 
-const search_contract = async (tenantId: string, requestBody: any, cacheKey: any) => {
-  return await httpRequest(
+/*
+  This asynchronous function searches for contracts based on the provided parameters.
+*/
+const search_contract = async (params: any, requestinfo: any, cachekey: any) => {
+  // Send an HTTP request to the contract search endpoint using the provided parameters and request information.
+  const contractResponse = await httpRequest(
     url.resolve(config.host.contract, config.paths.contract_search),
-    requestBody,
-    {
-      tenantId: tenantId,
-    },
+    requestinfo,
+    params,
     "post",
     "",
-    { cachekey: cacheKey }
+    { cachekey }
   );
-}
 
-const search_estimate = async (tenantId: string, ids: string, requestBody: any, cacheKey: string) => {
-  return await httpRequest(
-    url.resolve(config.host.estimate, config.paths.estimate_search),
-    requestBody,
-    {
-      tenantId: tenantId,
-      ids: ids
-    },
-    "post",
-    "",
-    { cachekey: cacheKey }
-  );
-}
-
-const search_measurement = async (requestBody: any, tenantId: string, measurementNumber: any, referenceId: any) => {
-  const body = {
-    RequestInfo: requestBody.RequestInfo,
-    criteria: {
-      tenantId: tenantId,
-      measurementNumber: measurementNumber,
-      referenceId: referenceId ? [referenceId] : null
-    }
+  // Check if there are contracts in the response.
+  if (contractResponse?.contracts?.length > 0) {
+    // If contracts are found, return the first one.
+    return contractResponse?.contracts?.[0];
   }
-  return await httpRequest(
-    url.resolve(config.host.measurement, config.paths.measurement_search),
-    body,
-  );
+
+  // If no contracts are found, return an error code.
+  return getErrorCodes("WORKS", "NO_CONTRACT_FOUND");
 }
 
+/*
+  This asynchronous function searches for estimates based on the provided parameters.
+*/
+const search_estimate = async (params: any, requestinfo: any, cachekey: any) => {
+  // Send an HTTP request to the estimate search endpoint using the provided parameters and request information.
+  const estimateResponse = await httpRequest(
+    url.resolve(config.host.estimate, config.paths.estimate_search),
+    requestinfo,
+    params,
+    "post",
+    "",
+    { cachekey }
+  );
+  
+  // Check if there are estimates in the response.
+  if (estimateResponse?.estimates?.length > 0) {
+    // If estimates are found, return the first one.
+    return estimateResponse?.estimates?.[0];
+  }
+
+  // If no estimates are found, return an error code.
+  return getErrorCodes("WORKS", "NO_ESTIMATE_FOUND");
+}
+
+/*
+  This asynchronous function searches for measurements based on the provided parameters.
+*/
+const search_measurement = async (requestinfo: any, cachekey: any, allResponse: boolean = false) => {
+  // Send an HTTP request to the measurement search endpoint using the provided parameters and request information.
+  const musterResponse = await httpRequest(
+    url.resolve(config.host.measurement, config.paths.measurement_search),
+    requestinfo,
+    null,
+    "post",
+    "",
+    { cachekey }
+  );
+  
+  // Check if there are measurements in the response.
+  if (musterResponse?.measurements?.length > 0) {
+    // If measurements are found, return either all of them or just the first one based on the 'allResponse' parameter.
+    return allResponse ? musterResponse?.measurements : musterResponse?.measurements?.[0];
+  }
+
+  // If no measurements are found, return an error code.
+  return getErrorCodes("WORKS", "NO_MEASUREMENT_ROLL_FOUND");
+}
 
 export {
   create_pdf,

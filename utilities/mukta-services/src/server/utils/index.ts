@@ -11,8 +11,10 @@ const jp = require('jsonpath');
   checkperiod: (default: 600) The period in seconds, as a number, used for the automatic
    delete check interval. 0 = no periodic check.
 
+   30 mins caching
 */
-const appCache = new NodeCache({ stdTTL: 100, checkperiod: 300 });
+
+const appCache = new NodeCache({ stdTTL: 1800000, checkperiod: 300 });
 
 /* 
 Send The Error Response back to client with proper response code 
@@ -80,6 +82,7 @@ const getCachedResponse = (key: string) => {
   if (key != null) {
     const data = appCache.get(key);
     if (data) {
+      logger.info("CACHE STATUS :: " + JSON.stringify(appCache.getStats()));
       logger.info("RETURNS THE CACHED RESPONSE FOR :: " + key);
       return data;
     }
@@ -120,10 +123,10 @@ const errorLogger = (error: Error, request: any, response: any, next: NextFuncti
 /*
 Error handling Middleware function reads the error message and sends back a response in JSON format
 */
-const errorResponder = (error: any, request: any, response: Response, next: NextFunction) => {
+const errorResponder = (error: any, request: any, response: Response, next: any=null) => {
   response.header("Content-Type", "application/json");
   const status = 500;
-  response.status(status).send(getErrorResponse("INTERNAL_SERVER_ERROR", error.message));
+  response.status(status).send(getErrorResponse("INTERNAL_SERVER_ERROR", error?.message));
 };
 
 // Convert the object to the format required for measurement
@@ -158,12 +161,11 @@ const convertObjectForMeasurment = (obj: any, config: any) => {
 
 
 // Extract estimateIds from all contracts
-const extractEstimateIds = (contractResponse: any): any[] => {
+const extractEstimateIds = (contract: any): any[] => {
   const allEstimateIds = new Set();
-  for (const contract of contractResponse.contracts) {
     const contractEstimateIds = contract.lineItems.map((item: { estimateId: any; }) => item.estimateId);
     contractEstimateIds.forEach((id: any) => allEstimateIds.add(id));
-  }
+  
   return Array.from(allEstimateIds);
 }
 
