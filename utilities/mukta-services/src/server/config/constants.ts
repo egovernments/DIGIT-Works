@@ -1,3 +1,5 @@
+import Error from "./error.interface"
+
 export const CONSTANTS:any={
     ERROR_CODES:{
    
@@ -12,7 +14,7 @@ export const CONSTANTS:any={
 
 }
 
-export const getErrorCodes = (module:string,key:string)=>{
+export const getErrorCodes = (module:string,key:string):Error=>{
     return {
         code:key,
         notFound:true,
