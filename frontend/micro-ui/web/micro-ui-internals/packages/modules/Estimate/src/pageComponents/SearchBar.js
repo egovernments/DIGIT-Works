@@ -60,27 +60,15 @@ const SearchBar = (props) => {
   };
 
   return (
-    <div className={"search-bar-sor"} style={{ position: "relative", width: "300px", margin: "20px" }}>
-      <TextInput type="text" name={"Search"} placeholder="Search..." value={inputValue} onChange={handleInputChange} />
+    <div className={"search-bar-sor"}>
+      <TextInput type="text" name={"Search"} placeholder="Search..." value={inputValue} onChange={handleInputChange} customClass="search-sor-input"/>
       <ul
         className="suggestions-sor"
-        style={{
-          listStyle: "none",
-          padding: 0,
-          margin: 0,
-          position: "absolute",
-          width: "100%",
-          backgroundColor: "#fff",
-          border: "1px solid #ccc",
-          borderRadius: "0 0 4px 4px",
-          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-        }}
       >
         {suggestions.map((option) => (
           <li
             key={option.id}
             onClick={() => handleSelectOption(option)}
-            style={{ padding: "10px", cursor: "pointer", transition: "background-color 0.2s ease-in-out" }}
           >
             {option.description}
           </li>
