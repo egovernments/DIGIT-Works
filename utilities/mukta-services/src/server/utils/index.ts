@@ -53,15 +53,16 @@ const getErrorResponse = (
 /* 
 Send The Response back to client with proper response code and response info
 */
-const sendResponse = (res: Response, response: any, req: Request, code: number) => {
-  if (code != 304) {
-    appCache.set(req.headers.cachekey, { ...response });
+const sendResponse = (response: Response, responseBody: any, req: Request, code: number=200) => {
+ /* if (code != 304) {
+    appCache.set(req.headers.cachekey, { ...responseBody });
   } else {
     logger.info("CACHED RESPONSE FOR :: " + req.headers.cachekey);
   }
-  res.status(200).send({
+  */
+  response.status(code).send({
     ...getResponseInfo(code),
-    ...response,
+    ...responseBody,
   });
 };
 
@@ -95,8 +96,8 @@ Response Object
 */
 const getResponseInfo = (code: Number) => ({
   ResponseInfo: {
-    apiId: "bff-0.0.1",
-    ver: "1",
+    apiId: "mukta-services",
+    ver: "0.0.1",
     ts: new Date().getTime(),
     status: "successful",
     desc: code == 304 ? "cached-response" : "new-response",

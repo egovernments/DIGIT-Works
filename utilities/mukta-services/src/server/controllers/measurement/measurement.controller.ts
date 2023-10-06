@@ -10,6 +10,7 @@ import {
   convertObjectForMeasurment,
   errorResponder,
   extractEstimateIds,
+  sendResponse,
 } from "../../utils/index";
 
 class MeasurementController {
@@ -113,19 +114,19 @@ class MeasurementController {
       const defaultRequestInfo = { RequestInfo };
 
       // Search for MDMS data
-      const config = await search_mdms(
-        tenantId.split(".")[0],
-        "commonUiConfig",
-        "MeasurementBFFConfig",
-        mdmsRequestBody
-      );
+    //   const config = await search_mdms(
+    //     tenantId.split(".")[0],
+    //     "works",
+    //     "MeasurementBFFConfig",
+    //     mdmsRequestBody
+    //   );
 
-      const periodResponse = await search_mdms(
-        tenantId.split(".")[0],
-        "works",
-        "MeasurementCriteria",
-        mdmsRequestBody
-      );
+    //   const periodResponse = await search_mdms(
+    //     tenantId.split(".")[0],
+    //     "works",
+    //     "MeasurementCriteria",
+    //     mdmsRequestBody
+    //   );
 
       // Define an array of promises for parallel execution
       const promises = [
@@ -147,6 +148,18 @@ class MeasurementController {
           null,
           true
         ),
+        search_mdms(
+            tenantId.split(".")[0],
+            "works",
+            "MeasurementBFFConfig",
+            mdmsRequestBody
+          ),
+          search_mdms(
+            tenantId.split(".")[0],
+            "works",
+            "MeasurementCriteria",
+            mdmsRequestBody
+          )
       ];
 
       if (measurementNumber) {
@@ -167,7 +180,7 @@ class MeasurementController {
       }
 
       // Execute promises in parallel
-      const [contractResponse, measurementResponse, uniqueMeasurementResponse] =
+      const [contractResponse, measurementResponse, config,periodResponse, uniqueMeasurementResponse] =
         await Promise.all(promises);
 
       if (contractResponse !== null && !contractResponse?.notFound) {
@@ -181,27 +194,29 @@ class MeasurementController {
         // Extract estimate IDs from the contract response
         const allEstimateIds = extractEstimateIds(contractResponse);
         const estimateIds = allEstimateIds.join(",");
+        const nextPromises = [
+            search_estimate(
+                {
+                  tenantId,
+                  ids: estimateIds,
+                },
+                defaultRequestInfo,
+                estimateIds
+              )]
+              if(true){
+                nextPromises.push(search_muster(
+                    {
+                      tenantId,
+                      fromDate: period?.startDate,
+                      referenceId: contractNumber,
+                    },
+                    mdmsRequestBody
+                  ));
+              }
 
-        // Retrieve estimate information
-        const estimateResponse = await search_estimate(
-          {
-            tenantId,
-            ids: estimateIds,
-          },
-          defaultRequestInfo,
-          estimateIds
-        );
 
-        // Search for muster rolls
-        const musterResponse = await search_muster(
-          {
-            tenantId,
-            fromDate: period?.startDate,
-            referenceId: contractNumber,
-          },
-          mdmsRequestBody
-        );
-
+                const [estimateResponse, musterResponse] = await Promise.all(nextPromises);
+  
         // Prepare the payload based on the responses
         const payload = {
           contract: contractResponse,
@@ -209,13 +224,14 @@ class MeasurementController {
           allMeasurements: measurementResponse,
           measurement: uniqueMeasurementResponse || [],
           musterRoll: musterResponse,
+          period:periodResponse
         };
 
         // Convert the payload according to the configuration
         const finalResponse = convertObjectForMeasurment(payload, config);
 
         // Send the final response
-        return response.json({ ...finalResponse, period, musterResponse });
+        return sendResponse(response,{ ...finalResponse },request);
       } else {
         // Handle the case where contractResponse is null
         return errorResponder(
