@@ -33,6 +33,10 @@ const ViewDetailedEstimate = () => {
     },
   });
 
+  const HandleDownloadPdf = () => {
+    Digit.Utils.downloadEgovPDF("estimate/estimates", { estimateNumber, tenantId }, `Estimate-${estimateNumber}.pdf`);
+  };
+
   const overheads = detailedEstimate?.estimates[0]?.estimateDetails?.filter((row) => row?.category?.includes("OVERHEAD") && row?.isActive);
   const tableHeaderOverheads = [t("WORKS_SNO"), t("WORKS_OVERHEAD"), t("WORKS_PERCENTAGE"), t("WORKS_AMOUNT")];
   const tableRowsOverheads = overheads?.map((row, index) => {
@@ -59,7 +63,13 @@ const ViewDetailedEstimate = () => {
   if (isProjectLoading || isDetailedEstimateLoading) return <Loader />;
 
   return (
-    <div>
+    <div className={"employee-main-application-details"}>
+      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+        <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px" }}>
+          {t("ESTIMATE_VIEW_ESTIMATE")}
+        </Header>
+        <MultiLink onHeadClick={() => HandleDownloadPdf()} downloadBtnClassName={"employee-download-btn-className"} label={t("CS_COMMON_DOWNLOAD")} />
+      </div>
       <ViewComposer data={config} isLoading={false} />
     </div>
   );
