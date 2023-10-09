@@ -81,7 +81,7 @@ const MeasurementHistory = ({ contractNumber, measurementNumber }) => {
       mbDate: Digit.Utils.pt.convertEpochToDate(item?.entryDate),
       period: t("NA"),
       status: formatStatus(item?.wfStatus),
-      amount: 1000,
+      amount: item?.additionalDetails?.totalAmount,
     }));
 
   if (isLoading) {
