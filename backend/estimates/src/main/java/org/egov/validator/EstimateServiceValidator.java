@@ -237,7 +237,7 @@ public class EstimateServiceValidator {
         log.info("EstimateServiceValidator::validateMDMSDataV2");
         int uniqueIdentifiersSizeInput = uniqueIdentifiers.size();
 
-        final  String jsonPathForTestSor = "$.mdmsRes.WORKS-SOR.SOR[*].id";
+        final  String jsonPathForTestSor = "$.MdmsRes.WORKS-SOR.SOR[*].id";
         List<Object> sorIdRes = null;
         try {
             sorIdRes = JsonPath.read(mdmsData,jsonPathForTestSor);
@@ -262,7 +262,7 @@ public class EstimateServiceValidator {
         } else {
             validatingDate = estimate.getAuditDetails().getCreatedTime();
         }
-        final  String jsonPathForRates = "$.mdmsRes.WORKS-SOR.Rates";
+        final  String jsonPathForRates = "$.MdmsRes.WORKS-SOR.Rates";
         try {
             mdmsRates = JsonPath.read(mdmsData, jsonPathForRates);
         }catch (Exception e) {
