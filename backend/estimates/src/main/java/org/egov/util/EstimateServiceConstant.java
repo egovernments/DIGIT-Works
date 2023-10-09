@@ -10,7 +10,8 @@ public class EstimateServiceConstant {
     //Masters
     public static final String MASTER_DEPARTMENT = "Department";
     public static final String MASTER_TENANTS = "tenants";
-    public static final String MASTER_SOR_ID = "SorId";
+    public static final String MASTER_RATES_ID = "Rates";
+    public static final String MASTER_SOR_ID = "SOR";
     public static final String MASTER_CATEGORY = "Category";
     public static final String MASTER_OVERHEAD = "Overheads";
 

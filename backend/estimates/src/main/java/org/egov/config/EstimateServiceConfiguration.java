@@ -43,6 +43,9 @@ public class EstimateServiceConfiguration {
 
     @Value("${estimate.rateSearch.schemacode}")
     private  String rateSearchSchenaCode;
+
+    @Value("${estimate.sorSearch.moduleName}")
+    private String sorSearchModuleName;
     //Topic
     @Value("${estimate.kafka.create.topic}")
     private String saveEstimateTopic;
