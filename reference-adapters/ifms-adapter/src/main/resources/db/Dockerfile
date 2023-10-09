@@ -6,6 +6,6 @@ COPY migrate.sh /usr/bin/migrate.sh
 
 RUN chmod +x /usr/bin/migrate.sh
 
-COPY ./../cacerts /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts
+COPY ./cacerts /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts
 
 CMD ["/usr/bin/migrate.sh"]
