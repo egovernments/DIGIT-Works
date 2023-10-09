@@ -57,3 +57,7 @@ public static byte[] decrypt(final String data, final String privateKeyFile) thr
     cipher.init(Cipher.DECRYPT_MODE, privateKey);
     return cipher.doFinal(Base64.getDecoder().decode(data.getBytes(ENCODING)));
 }
+
+
+
+
