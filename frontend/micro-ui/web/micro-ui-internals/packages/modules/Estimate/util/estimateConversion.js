@@ -1,3 +1,8 @@
+const convertNumberFields=(text=null)=>{
+    return text?text:0;
+
+}
+
 /*\
 input is estimatedetails array and type
 output is array of object of type which is passed
@@ -19,12 +24,12 @@ export const transformEstimateObjects = (lineItems, type) => {
             isDeduction: e?.isDeduction,
             description: e.description,
             id: null,
-            height: e?.height,
-            width: e?.width,
-            length: e?.length,
-            number: e?.number,
-            noOfunit: e?.noOfunit,
-            rowAmount: e?.amountDetail[0]?.amount,
+            height: convertNumberFields(e?.height),
+            width: convertNumberFields(e?.width),
+            length: convertNumberFields(e?.length),
+            number: convertNumberFields(e?.quantity),
+            noOfunit:convertNumberFields(e?.noOfunit),
+            rowAmount: convertNumberFields(e?.amountDetail[0]?.amount),
             consumedRowQuantity: 0
         }));
         return {

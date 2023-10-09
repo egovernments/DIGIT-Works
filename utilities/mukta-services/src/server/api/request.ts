@@ -48,19 +48,29 @@ Used to Make API call through axios library
 const httpRequest = async (
   _url: string,
   _requestBody: any,
-  _params: any,
+  _params: any={},
   _method: string = "post",
   responseType: string = "",
   headers: any = defaultheader
 ) => {
   try {
-
     if (headers && headers.cachekey && cacheEnabled) {
       const cacheData = getCachedResponse(headers.cachekey);
       if (cacheData) {
         return cacheData;
       }
+      logger.info(
+        "NO CACHE FOUND :: REQUEST :: " +
+        JSON.stringify(headers.cachekey)
+      );
     }
+    logger.info(
+      "INTER-SERVICE :: REQUEST :: " +
+      getServiceName(_url) +
+      " CRITERIA :: " +
+      JSON.stringify(_params)
+    );
+    logger.debug(JSON.stringify(_requestBody))
     const response = await Axios({
       method: _method,
       url: _url,
@@ -105,4 +115,4 @@ const httpRequest = async (
   }
 };
 
-module.exports = { httpRequest };
+export { httpRequest };
