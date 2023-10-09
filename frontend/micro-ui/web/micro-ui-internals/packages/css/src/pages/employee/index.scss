@@ -572,11 +572,16 @@
   .primary-label-btn {
     margin: 20px auto 0 auto !important;
   }
-  .submit-bar, .submit-bar-disabled {
+  .submit-bar,
+  .submit-bar-disabled {
     width: 100% !important;
+  }
+
+  .employee-select-wrap .options-card {
+    max-height: 150px !important;
   }
 }
 
-.optionsClassName {
+.topbar .left .employee-select-wrap .options-card {
   right: -3rem !important
 }
