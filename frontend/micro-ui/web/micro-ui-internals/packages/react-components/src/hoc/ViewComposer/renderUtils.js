@@ -7,6 +7,7 @@ import { PDFSvg } from "../../atoms/svgindex";
 import WorkflowTimeline from "../../atoms/WorkflowTimeline";
 import WorkflowActions from "../../atoms/WorkflowActions";
 import { Link } from "react-router-dom";
+import Photos from "../../../../modules/templates/ApplicationDetails/components/Photos";
 
 export const RenderDataSection = ({ section }) => {
   const { t } = useTranslation();
@@ -142,3 +143,19 @@ export const RenderWfActions = ({ section }) => {
     />
   );
 };
+
+export const RenderPhotos = ({section}) => {
+  const { t } = useTranslation();
+  function OpenImage(imageSource, index, thumbnailsToShow) {
+    window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
+  }
+
+  return (
+    <>
+    {section?.cardHeader && section?.cardHeader?.value && (
+      <CardSectionHeader style={section?.cardHeader?.inlineStyles}>{t(section.cardHeader.value)}</CardSectionHeader>
+    )}
+    <Photos data = {section?.photo} OpenImage={OpenImage} />
+    </>
+  )
+}
