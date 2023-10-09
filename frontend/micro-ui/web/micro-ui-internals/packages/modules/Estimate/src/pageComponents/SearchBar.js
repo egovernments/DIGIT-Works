@@ -76,6 +76,7 @@ const SearchBar = (props) => {
   return (
     <div className={"search-bar-sor"}>
       <TextInput type="text" name={"Search"} placeholder="Type any SOR description..." value={inputValue} onChange={handleInputChange} customClass="search-sor-input"/>
+      {suggestions?.length > 0 && (
       <ul
         className="suggestions-sor"
       >
@@ -88,7 +89,7 @@ const SearchBar = (props) => {
           </li>
         ))}
       </ul>
-
+      )}
     </div>
   );
 };
