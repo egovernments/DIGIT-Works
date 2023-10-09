@@ -67,6 +67,7 @@ public class EstimateServiceValidator {
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
+
         Set<String> uniqueIdentifiers = new HashSet<String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
@@ -76,6 +77,7 @@ public class EstimateServiceValidator {
         }
         if (uniqueIdentifiers.size() != 0) {
             Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2(request, rootTenantId, uniqueIdentifiers, false);
+
             validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request, rootTenantId, uniqueIdentifiers, true);
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
@@ -601,12 +603,13 @@ public class EstimateServiceValidator {
             }
         }
 
-        Object mdmsDataV2ForSor =mdmsUtils.mdmsCallV2(request , rootTenantId,uniqueIdentifiers, false);
-        validateMDMSDataV2ForSor(estimate,mdmsDataV2ForSor,uniqueIdentifiers, errorMap);
+        if (uniqueIdentifiers.size() != 0) {
+            Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2(request, rootTenantId, uniqueIdentifiers, false);
+            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
 
-        Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request,rootTenantId,uniqueIdentifiers, true);
-        validateDateAndRates(estimate,mdmsDataV2ForRate, errorMap);
-
+            Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2(request, rootTenantId, uniqueIdentifiers, true);
+            validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
+        }
         validateProjectId(request, errorMap);
         validateNoOfUnit(estimateDetails);
 
