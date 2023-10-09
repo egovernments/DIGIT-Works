@@ -13,6 +13,7 @@ import preProcessMDMSConfigInboxSearch from "./preProcessMDMSConfigInboxSearch";
 import Urls from "../services/atoms/urls";
 import { getLoggedInUserDetails } from "./user";
 import { statusBasedNavigation } from "./statusBasedNavigation";
+import { getThumbnails } from "./thumbnail";
 
 const GetParamFromUrl = (key, fallback, search) => {
   if (typeof window !== "undefined") {
@@ -364,5 +365,6 @@ export default {
   createFunction,
   configUpdater,
   trimStringsInObject,
-  statusBasedNavigation
+  statusBasedNavigation,
+  getThumbnails
 };

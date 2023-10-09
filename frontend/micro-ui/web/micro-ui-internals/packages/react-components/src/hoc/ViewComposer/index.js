@@ -1,7 +1,7 @@
 import React, { Fragment,useState } from "react";
 import Card from "../../atoms/Card";
 import { Loader } from "../../atoms/Loader";
-import { RenderDataSection, RenderDocumentsSection, RenderWfActions, RenderWfHistorySection } from "./renderUtils";
+import { RenderDataSection, RenderDocumentsSection, RenderPhotos, RenderWfActions, RenderWfHistorySection } from "./renderUtils";
 import HorizontalNav from "../../atoms/HorizontalNav";
 import CardSectionHeader from "../../atoms/CardSectionHeader";
 import { useTranslation } from "react-i18next";
@@ -119,6 +119,8 @@ const renderCardSectionJSX = (section) => {
       return <RenderWfHistorySection section={section} />;
     case "WFACTIONS":
       return <RenderWfActions section={section} />;
+    case "IMAGE":
+      return <RenderPhotos section={section}/>
     case "COMPONENT":
       const Component = Digit.ComponentRegistryService.getComponent(section.component) ;
       return (
