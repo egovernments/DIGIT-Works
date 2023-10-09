@@ -1,13 +1,17 @@
 package org.egov.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.config.Configuration;
 import org.egov.web.models.ContactDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.ParameterResolutionDelegate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +27,8 @@ public class OrganisationMigrationUtil {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
+    @Autowired
+    private Configuration config;
 
     public void migrate(RequestInfo requestInfo) {
         String contactDetailsQuery = "SELECT id, tenant_id, org_id, contact_name, contact_mobile_number, contact_email, individual_id FROM eg_org_contact_detail WHERE individual_id IS NULL;";
@@ -109,5 +115,56 @@ public class OrganisationMigrationUtil {
         }
         log.info("Ending migration....");
         }
+    public void migrate2(RequestInfo requestInfo) {
+        String contactDetailsQuery = "SELECT id, tenant_id, org_id, contact_name, contact_mobile_number, contact_email, individual_id FROM eg_org_contact_detail;";
+        List<Map<String, Object>> orgContactDetails = jdbcTemplate.queryForList(contactDetailsQuery);
+        for (Map<String, Object> orgContactDetail : orgContactDetails) {
+
+
+            String contact_mobile_number = (String) orgContactDetail.get("contact_mobile_number");
+            String tenant_id = (String) orgContactDetail.get("tenant_id");
+            String contact_name = (String) orgContactDetail.get("contact_name");
+            String contact_email = (String) orgContactDetail.get("contact_email");
+            if (tenant_id.contains("."))
+                tenant_id = tenant_id.split("\\.")[0];
+            Map<String, String> encryptRequestMap = new HashMap<>();
+            encryptRequestMap.put("contact_mobile_number", contact_mobile_number);
+            encryptRequestMap.put("contact_name", contact_name);
+            encryptRequestMap.put("contact_email", contact_email);
+            encryptRequestMap.put("tenant_id", tenant_id);
+            log.info("Calling for encryption");
+
+            Map<String, String> encryptedValues = encryptionDecryptionUtil(encryptRequestMap);
+//          Write update query
+            String updateQuery = "Update contact_name, contact_mobile_number, contact_email FROM eg_org_contact_detail;";
     }
 }
+    private Map<String, String> encryptionDecryptionUtil(Map<String, String> encryptionDecryptionMap) {
+        JsonNode request = null;
+        StringBuilder uri = new StringBuilder();
+        Map<String,Object> encryptionRequestMap = new HashMap<>();
+        Map<String, List<Object>> requestMap = new HashMap<>();
+
+        log.info("Encrypting mobile number");
+        uri.append(config.getEncryptionHost()).append(config.getEncryptionEndpoint());
+        encryptionRequestMap.put("tenantId",encryptionDecryptionMap.get("tenant_id"));
+        encryptionRequestMap.put("type","Normal");
+        encryptionRequestMap.put("value",encryptionDecryptionMap);
+
+        requestMap.put("encryptionRequests", Collections.singletonList(encryptionRequestMap));
+
+
+        Object response = fetchResult(uri, requestMap);
+        log.info("Got response from encryption service");
+        JsonNode responseMap = mapper.valueToTree(response);
+        JsonNode encryptedOrDecryptedValue = null;
+        if (responseMap.isArray()) {
+            encryptedOrDecryptedValue = responseMap.get(0);
+        }else {
+            encryptedOrDecryptedValue = responseMap;
+        }
+        Map<String,String> encryptedOrDecryptedMap = mapper.convertValue(encryptedOrDecryptedValue, Map.class);
+        log.info("Successfully mapped encryption service");
+        return encryptedOrDecryptedMap;
+}
+
