@@ -28,8 +28,8 @@ const fetchData = async (sorid, state, setState) => {
   };
   try {
     const data = await Digit.CustomService.getResponse(requestCriteria);
-    if (data?.mdmsRes?.["WORKS-SOR"]?.Rates?.length > 0) {
-      const Rates = data?.mdmsRes?.["WORKS-SOR"]?.Rates;
+    if (data?.MdmsRes?.["WORKS-SOR"]?.Rates?.length > 0) {
+      const Rates = data?.MdmsRes?.["WORKS-SOR"]?.Rates;
       state?.forEach((element) => {
         if (element?.sorId == sorid) {
           element.unitRate = Rates?.[0]?.rate || 0;

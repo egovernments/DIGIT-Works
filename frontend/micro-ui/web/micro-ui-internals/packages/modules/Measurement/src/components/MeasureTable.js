@@ -253,6 +253,12 @@ const MeasureTable = (props) => {
       );
     });
   };
+  if(!fields||fields?.length==0)
+  {
+    return <div>
+      No Data Found
+    </div>
+  }
 
   return (
     <React.Fragment>
@@ -295,7 +301,6 @@ const MeasureTable = (props) => {
       </table>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", margin: "20px" }}>
         <div style={{ display: "flex", flexDirection: "row", fontSize: "1.2rem" }}>
-          {/* <span style={{ fontWeight: "bold" }}>`{t("MB_TOTAL")} ${props.config.key} {t("MB_TOTAL_AMOUNT")}`</span> */}
           <span style={{ fontWeight: "bold" }}>
             {t("MB_TOTAL")} {props.config.key} {t("MB_TOTAL_AMOUNT")} :
           </span>
@@ -307,6 +312,5 @@ const MeasureTable = (props) => {
     </React.Fragment>
   );
 };
-//think more update table should have option to update whole table state similarly card should update back the parent state
 
 export default MeasureTable;

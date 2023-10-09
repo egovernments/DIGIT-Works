@@ -169,6 +169,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                       className={"outline-btn"}
                       label={t("MB_DONE")}
                       onButtonClick={() => {
+                        // check for deduction and set accordingly
                         const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => total + item.noOfunit, 0);
                         tableData[tableIndex].measures = state;
                         tableData[tableIndex].amount = parseFloat(totalQuantity * unitRate).toFixed(2);
