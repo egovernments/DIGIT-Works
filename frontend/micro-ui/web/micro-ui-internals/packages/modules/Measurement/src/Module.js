@@ -7,6 +7,7 @@ import MeasureTable from "./components/MeasureTable";
 import MeasureCard from "./components/MeasureCard";
 import MeasureRow from "./components/MeasureRow";
 import ViewOnlyCard from "./components/ViewOnlyCard";
+import MeasurementHistory from "./components/MBHistoryTable";
 
 const MeasurementModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
@@ -36,6 +37,7 @@ const componentsToRegister = {
     MeasureTable,
     MeasureRow,
     ViewOnlyCard,
+    MeasurementHistory
 };
 
 export const initMeasurementComponents = () => {

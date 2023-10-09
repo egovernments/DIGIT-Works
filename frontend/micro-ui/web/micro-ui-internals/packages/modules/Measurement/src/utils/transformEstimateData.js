@@ -77,7 +77,7 @@ export const transformContractObject = (contract = {}) => {
 
 export const transformMeasureObject = (measurement = {}) => {
     return {
-        lineItemsObject: measurement?.measures.reduce((acc, curr) => {
+        lineItemsObject: measurement?.measures?.reduce((acc, curr) => {
             acc[curr?.targetId] = curr;
             return acc;
         }, {})
