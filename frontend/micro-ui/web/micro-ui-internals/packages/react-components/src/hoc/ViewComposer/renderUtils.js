@@ -7,7 +7,7 @@ import { PDFSvg } from "../../atoms/svgindex";
 import WorkflowTimeline from "../../atoms/WorkflowTimeline";
 import WorkflowActions from "../../atoms/WorkflowActions";
 import { Link } from "react-router-dom";
-import Photos from "../../../../modules/templates/ApplicationDetails/components/Photos";
+import Photos from "../../atoms/Photos";
 
 export const RenderDataSection = ({ section }) => {
   const { t } = useTranslation();

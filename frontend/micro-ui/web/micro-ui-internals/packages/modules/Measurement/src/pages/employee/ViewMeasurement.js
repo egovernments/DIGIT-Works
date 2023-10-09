@@ -2,7 +2,6 @@ import { Header, Card, Loader, ViewComposer } from "@egovernments/digit-ui-react
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { data } from "../../configs/ViewMeasurementConfig";
-import { getThumbnails } from "../../../../../libraries/src/utils/thumbnail";
 
 const ViewMeasurement = () => {
   const { t } = useTranslation();
@@ -35,7 +34,7 @@ const ViewMeasurement = () => {
         const fileStoreIds = allData?.measurement?.documents.map((item) => item.fileStore);
 
         try {
-          thumbnails = getThumbnails(fileStoreIds, tenantId);
+          thumbnails = Digit.Utils.getThumbnails(fileStoreIds, tenantId);
         } catch (error) {
           console.log(error);
         }

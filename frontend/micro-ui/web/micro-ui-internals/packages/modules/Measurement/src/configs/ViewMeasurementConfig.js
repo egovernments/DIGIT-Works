@@ -99,17 +99,6 @@ export const data = (contract, estimateDetails, measurement, thumbnails) => {
         ],
       },
       {
-        sections : [
-            {
-                type: "IMAGE",
-                cardHeader: { value: "MB_WORKSITE_PHOTOS", inlineStyles: {} },
-                photo : { 
-                    thumbnailsToShow : thumbnails
-                }
-            }
-        ]
-      },
-      {
         sections: [
           {
             type: "COMPONENT",
@@ -128,6 +117,17 @@ export const data = (contract, estimateDetails, measurement, thumbnails) => {
             },
           }
         ],
+      },
+      {
+        sections : [
+            {
+                type: "IMAGE",
+                cardHeader: { value: "MB_WORKSITE_PHOTOS", inlineStyles: {} },
+                photo : { 
+                    thumbnailsToShow : thumbnails
+                }
+            }
+        ]
       },
       {
         sections: [
