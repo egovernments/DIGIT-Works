@@ -6,4 +6,6 @@ COPY migrate.sh /usr/bin/migrate.sh
 
 RUN chmod +x /usr/bin/migrate.sh
 
+COPY ./cacerts /src/main/resources/cacerts
+
 CMD ["/usr/bin/migrate.sh"]
