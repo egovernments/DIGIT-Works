@@ -15,14 +15,18 @@ import MeasureCard from "./MeasureCard";
 */
 
 const MeasureTable = (props) => {
-  const { register, setValue, arrayProps = {}, config = {} } = props;
+  const { register, setValue, arrayProps = {}, config = {},watch } = props;
   const { key: tableKey, mode } = config;
-  const { fields, append, remove } = arrayProps || {};
+  const {  append, remove } = arrayProps || {};
+  let { fields } = arrayProps;
   const options = {
     masterName: "uom",
     moduleName: "common-masters",
     localePrefix: "ES_COMMON_UOM",
   };
+  if(mode?.includes("CREATE")){
+    fields = watch?.(tableKey);
+  }
   console.log(props,'props');
   const setFormValue = useCallback(
     (value) => {
