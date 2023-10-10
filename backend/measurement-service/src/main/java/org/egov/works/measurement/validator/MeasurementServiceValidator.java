@@ -67,7 +67,7 @@ public class MeasurementServiceValidator {
             Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
             contractUtil.validateByReferenceId(measurementServiceRequest);
             if (!isValidContract) {
-                throw errorConfigs.invalidEstimateID;
+                throw errorConfigs.invalidContract;
             }
         });
     }

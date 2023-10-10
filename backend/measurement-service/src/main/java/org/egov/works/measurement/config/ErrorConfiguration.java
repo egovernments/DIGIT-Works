@@ -29,7 +29,7 @@ public class ErrorConfiguration {
     public CustomException noValidEstimate = new CustomException("", MBServiceConfiguration.NO_VALID_ESTIMATE);
     public CustomException idsAndMbNumberMismatch = new CustomException("", MBServiceConfiguration.IDS_AND_MB_NUMBER_MISMATCH);
     public CustomException invalidEstimateID = new CustomException("", MBServiceConfiguration.INVALID_ESTIMATE_ID);
-    public CustomException invalidContract=new CustomException("", MBServiceConfiguration.INVALID_CONTRACT);
+    public CustomException invalidContract = new CustomException("INVALID_CONTRACT", MBServiceConfiguration.INVALID_CONTRACT);
 
     public CustomException notValidReferenceId(String referenceId) {
         String errorMessage = MessageFormat.format(MBServiceConfiguration.NOT_VALID_REFERENCE_ID, referenceId);
