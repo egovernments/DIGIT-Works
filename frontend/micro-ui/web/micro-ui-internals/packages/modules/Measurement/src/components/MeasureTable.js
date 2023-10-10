@@ -17,8 +17,7 @@ import MeasureCard from "./MeasureCard";
 const MeasureTable = (props) => {
   const { register, setValue, arrayProps = {}, config = {},watch } = props;
   const { key: tableKey, mode } = config;
-  const {  append, remove } = arrayProps || {};
-  let { fields } = arrayProps;
+  let { fields, append, remove } = arrayProps || {};
   const options = {
     masterName: "uom",
     moduleName: "common-masters",
@@ -26,8 +25,13 @@ const MeasureTable = (props) => {
   };
   if(mode?.includes("CREATE")){
     fields = watch?.(tableKey);
+    append = (val)=>{
+      setFormValue([...fields,val]);
+    }
+    remove = (index)=>{
+      setFormValue([...fields.filter((e,ind)=>ind!=index)]);
+    }  
   }
-  console.log(props,'props');
   const setFormValue = useCallback(
     (value) => {
       setValue(tableKey, value);
