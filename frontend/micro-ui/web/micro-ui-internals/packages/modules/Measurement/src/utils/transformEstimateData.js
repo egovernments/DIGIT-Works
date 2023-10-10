@@ -39,16 +39,16 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
     })
   });
     return {
-      amount: isMeasurement ? measures?.reduce((acc, curr) => acc + curr?.rowAmount, 0) : 0,
-      consumedQ: isMeasurement ? measures?.reduce((acc, curr) => acc + curr?.consumedRowQuantity, 0) : 0,
+      amount: isMeasurement ? measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0) : 0,
+      consumedQ: isMeasurement ? measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0) : 0,
       sNo: index + 1,
-      currentMBEntry: isMeasurement ? measures?.reduce((acc, curr) => acc + curr?.noOfunit, 0) : 0,
+      currentMBEntry: isMeasurement ? measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0) : 0,
       uom: transformedEstimateObject[key]?.[0]?.uom,
       description: transformedEstimateObject[key]?.[0]?.name,
       unitRate: transformedEstimateObject[key]?.[0]?.unitRate,
       contractNumber: transformedContract?.contractNumber,
       targetId: transformedContract?.lineItemsObject[transformedEstimateObject[key][0].id]?.contractLineItemId,
-      approvedQuantity: transformedEstimateObject[key].reduce((acc, curr) => acc + curr.noOfunit, 0),
+      approvedQuantity: transformedEstimateObject[key].reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr.noOfunit, 0),
       showMeasure: false,
       measures,
     };

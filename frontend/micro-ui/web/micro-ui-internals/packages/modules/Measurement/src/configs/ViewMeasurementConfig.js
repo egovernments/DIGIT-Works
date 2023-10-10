@@ -144,7 +144,7 @@ export const data = (contract, estimateDetails, measurement, thumbnails) => {
             businessService: "MB",
             applicationNo: measurement?.measurementNumber,
             tenantId: measurement?.tenantId,
-            applicationDetails: measurement,
+            applicationDetails: [measurement],
             url: Digit.Utils.Urls.measurement.update,
             moduleCode: "MB",
             editApplicationNumber: undefined,
