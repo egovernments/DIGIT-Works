@@ -253,12 +253,6 @@ const MeasureTable = (props) => {
       );
     });
   };
-  if(!fields||fields?.length==0)
-  {
-    return <div>
-      No Data Found
-    </div>
-  }
 
   return (
     <React.Fragment>
