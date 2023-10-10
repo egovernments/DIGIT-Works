@@ -1,5 +1,5 @@
-import { Button } from "@egovernments/digit-ui-react-components";
-import React, { useReducer, Fragment } from "react";
+import { Button, CardLabelError } from "@egovernments/digit-ui-react-components";
+import React, { useReducer, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MeasureRow from "./MeasureRow";
 
@@ -47,6 +47,7 @@ const initialValue = (element) => {
 }
 const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tableData, tableKey, tableIndex, unitRate, mode }) => {
   const { t } = useTranslation();
+  const [error, setError] = useState(false)
 
   const reducer = (state, action) => {
     // console.log(state, action, "reducer");
@@ -76,6 +77,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
         const updatedTableState = state.filter((row, index) => index + 1 !== rowIdToRemove);
         return [...updatedTableState];
       case "CLEAR_STATE":
+        setError(false);
         const clearedTableState = state.map((item) => ({
           ...item,
           height: 0,
@@ -110,7 +112,8 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
       return <MeasureRow value={value} index={index} key={index} rowState={state?.[index]} dispatch={dispatch} mode={mode} />;
     });
   };
-  const total = state?.reduce?.((acc, curr) => acc + validate(curr?.noOfunit), 0) || 0;
+
+  const total = state?.reduce?.((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit :  acc + curr?.noOfunit, 0) || 0;
   return (
     <Fragment>
       <table className="table reports-table sub-work-table">
@@ -121,6 +124,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
           {renderBody()}
           <tr>
             <td colSpan={"4"}>
+            {error && <CardLabelError style={{width:"100%"}}>{t("MB_APPROVED_QTY_VALIDATION")}</CardLabelError>}
               <div style={{ display: "flex", flexDirection: "row" }}>
                 {mode.includes("VIEW") ? (
                   <Button
@@ -170,12 +174,17 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                       label={t("MB_DONE")}
                       onButtonClick={() => {
                         // check for deduction and set accordingly
-                        const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => total + item.noOfunit, 0);
+                        const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => item?.isDeduction == true ? total - item.noOfunit :  total + item.noOfunit, 0);
                         tableData[tableIndex].measures = state;
                         tableData[tableIndex].amount = parseFloat(totalQuantity * unitRate).toFixed(2);
                         tableData[tableIndex].showMeasure = false;
-                        tableData[tableIndex].currentMBEntry = totalQuantity;
-                        setValue(tableData);
+                        if(mode === "CREATE" && (totalQuantity < 0 || totalQuantity > tableData[tableIndex]?.approvedQuantity - tableData[tableIndex]?.consumedQ))
+                        setError(true);
+                        else
+                        {
+                          tableData[tableIndex].currentMBEntry = totalQuantity;
+                          setValue(tableData);
+                        }                  
                         // setConsumedQty(total);
                         // setShowMeasureCard(false);
                       }}
