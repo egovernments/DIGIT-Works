@@ -23,6 +23,7 @@ const MeasureTable = (props) => {
     moduleName: "common-masters",
     localePrefix: "ES_COMMON_UOM",
   };
+  console.log(props,'props');
   const setFormValue = useCallback(
     (value) => {
       setValue(tableKey, value);
