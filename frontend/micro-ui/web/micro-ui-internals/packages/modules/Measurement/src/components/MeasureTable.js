@@ -4,6 +4,16 @@ import React, { Fragment, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import MeasureCard from "./MeasureCard";
 
+/*
+4 different modes this component been used 
+1. CREATE -> measurement create and update
+2. VIEW -> view of measurement
+3. CREATEALL -> Detailed Estimate create
+4. VIEWES -> view of detailed estimate
+
+
+*/
+
 const MeasureTable = (props) => {
   const { register, setValue, arrayProps = {}, config = {} } = props;
   const { key: tableKey, mode } = config;
