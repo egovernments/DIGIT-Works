@@ -1,0 +1,140 @@
+.measurement-table-input {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.plus-button {
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  background-color: #ff9100;
+  color: #ffffff;
+  font-size: 20px;
+  text-align: center;
+  line-height: 5px;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  box-shadow: none;
+}
+.override-card {
+  margin-left: 0px !important;
+}
+
+.custom-collapsible-table {
+  overflow: hidden; /* Hide the overflow when collapsed */
+  transition: max-height 0.3s ease-out; /* Add a smooth transition */
+
+  &.collapsed {
+    max-height: 0; /* Collapse the content by setting max-height to 0 */
+  }
+  padding: 10px;
+  margin-bottom: 10px;
+
+  button {
+    background-color: #dbd3d3;
+    color: #cc7b2f;
+    margin-top: 10px;
+  }
+}
+
+.collapse-button {
+  background-color: #ffffff;
+  color: #f37f12;
+  margin-top: 10px;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.outline-btn {
+  background-color: #ffffff;
+  color: #f37f12;
+  font-weight: bold;
+  outline: #f37f12;
+  margin: 10px;
+  box-shadow: none;
+  padding: 8px 35px 8px 35px;
+  border-radius: 8px;
+}
+
+.view-utilization-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: #cc7b2f;
+}
+
+$fill-color: #f47738;
+
+.addIcon {
+  fill: $fill-color;
+  margin: auto;
+  display: inline;
+  margin-top: -2px;
+  width: 20px;
+  height: 20px;
+}
+
+.view-only-card-container {
+  text-align: right;
+  margin: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-only-card {
+  border: 1px solid black;
+  padding: 20px;
+  background-color: white;
+  width: fit-content;
+  font-weight: bold;
+  display: flex;
+}
+
+.contract-card {
+  background-color: #ffffff;
+  margin: 15px;
+  padding: 20px 20px 15px 20px;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+}
+
+.key-value-container {
+  display: grid;
+  grid-template-columns: 15% 85%;
+  margin-bottom: 10px;
+}
+
+.contract-card-label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.employeeCard .card-section-header {
+  margin-bottom: 0px;
+}
+
+.measurement-table-custom {
+  padding: 16px 18px !important;
+}
+
+.table {
+  thead {
+    th {
+      padding: 17px 18px;
+    }
+  }
+}
+
+.modified-bread-crumb {
+  margin-left: 10px;
+}
+
+.modify-header{
+  margin-left : 20px
+}

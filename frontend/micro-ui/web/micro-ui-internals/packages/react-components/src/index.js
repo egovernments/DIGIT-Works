@@ -220,6 +220,7 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
+import ViewComposer from "./hoc/ViewComposer";
 import { FormComposer as FormComposerV2 } from "./hoc/FormComposer";
 import RenderFormFields from "./molecules/RenderFormFields";
 import Modal from "./hoc/Modal";
@@ -455,6 +456,7 @@ export {
   ResultsTable,
   InboxSearchLinks,
   UploadFileComposer,
+  ViewComposer,
   // Icons
   FilterIcon,
   FilterSvg,

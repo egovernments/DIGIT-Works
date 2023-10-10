@@ -10,8 +10,8 @@ msg() {
 # yarn build
 # sleep 5
 
-# msg "Building and publishing css"
-# cd "$BASEDIR/packages/css" && yarn publish --access public
+msg "Building and publishing css"
+cd "$BASEDIR/packages/css" && yarn publish --access public
 
 # msg "Building and publishing libraries"
 # cd "$BASEDIR/packages/libraries" && yarn publish --access public
