@@ -22,7 +22,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
   const transformMeasurementData = isMeasurement ? transformMeasureObject(measurement) : transformMeasureObject(lastMeasuredObject);
   return Object.keys(transformedEstimateObject).map((key, index) => {
     const measures = transformedEstimateObject[key].map((estimate, index) =>{
-     const measuredObject= isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[estimate.id]?.contractLineItemId];
+     const measuredObject= isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[estimate.id]?.contractLineItemId]:{};
     return ({
       sNo: index + 1,
       targetId: transformedContract?.lineItemsObject[estimate.id]?.contractLineItemId,
