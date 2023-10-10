@@ -9,7 +9,7 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
   const lastMeasuredObject = allMeasurements?.filter?.((e) => e?.isActive)?.[0] || {};
   const transformedContract = transformContractObject(contract);
   const isMeasurement = measurement && Object.keys(measurement)?.length > 0;
-  const convertedObject = lineItems
+  const transformedEstimateObject = lineItems
     .filter((e) => e.category === type)
     .reduce((acc, curr) => {
       if (acc[curr.sorId]) {
@@ -20,37 +20,35 @@ export const transformEstimateData = (lineItems, contract, type, measurement = {
       return acc;
     }, {});
   const transformMeasurementData = isMeasurement ? transformMeasureObject(measurement) : transformMeasureObject(lastMeasuredObject);
-  return Object.keys(convertedObject).map((key, index) => {
-    const measures = convertedObject[key].map((e, index) => ({
+  return Object.keys(transformedEstimateObject).map((key, index) => {
+    const measures = transformedEstimateObject[key].map((estimate, index) =>{
+     const measuredObject= isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[estimate.id]?.contractLineItemId];
+    return ({
       sNo: index + 1,
-      targetId: transformedContract?.lineItemsObject[e.id]?.contractLineItemId,
-      isDeduction: e?.additionalDetails?.isDeduction,
-      description: e?.description,
-      id: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.id : null,
-      height: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.height : 0,
-      width: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.breadth : 0,
-      length: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.length : 0,
-      number: isMeasurement ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.numItems : 0,
-      noOfunit: isMeasurement
-        ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.currentValue
-        : 0,
-      rowAmount: isMeasurement
-        ? transformMeasurementData?.lineItemsObject[transformedContract?.lineItemsObject[e.id]?.contractLineItemId]?.additionalDetails?.mbAmount
-        : 0,
-      consumedRowQuantity:
-        transformMeasurementData?.lineItemsObject?.[transformedContract?.lineItemsObject?.[e?.id]?.contractLineItemId]?.cumulativeValue || 0,
-    }));
+      targetId: transformedContract?.lineItemsObject[estimate.id]?.contractLineItemId,
+      isDeduction: estimate?.isDeduction,
+      description: estimate?.description,
+      id: isMeasurement ? measuredObject?.id : null,
+      height: isMeasurement ? measuredObject?.height : 0,
+      width: isMeasurement ? measuredObject?.breadth : 0,
+      length: isMeasurement ? measuredObject?.length : 0,
+      number: isMeasurement ? measuredObject?.numItems : 0,
+      noOfunit: isMeasurement ? measuredObject?.currentValue    : 0,
+      rowAmount: isMeasurement ? measuredObject?.additionalDetails?.mbAmount        : 0,
+      consumedRowQuantity: transformMeasurementData?.lineItemsObject?.[transformedContract?.lineItemsObject?.[estimate?.id]?.contractLineItemId]?.cumulativeValue || 0,
+    })
+  });
     return {
       amount: isMeasurement ? measures?.reduce((acc, curr) => acc + curr?.rowAmount, 0) : 0,
       consumedQ: isMeasurement ? measures?.reduce((acc, curr) => acc + curr?.consumedRowQuantity, 0) : 0,
       sNo: index + 1,
       currentMBEntry: isMeasurement ? measures?.reduce((acc, curr) => acc + curr?.noOfunit, 0) : 0,
-      uom: convertedObject[key]?.[0]?.uom,
-      description: convertedObject[key]?.[0]?.name,
-      unitRate: convertedObject[key]?.[0]?.unitRate,
+      uom: transformedEstimateObject[key]?.[0]?.uom,
+      description: transformedEstimateObject[key]?.[0]?.name,
+      unitRate: transformedEstimateObject[key]?.[0]?.unitRate,
       contractNumber: transformedContract?.contractNumber,
-      targetId: transformedContract?.lineItemsObject[convertedObject[key][0].id]?.contractLineItemId,
-      approvedQuantity: convertedObject[key].reduce((acc, curr) => acc + curr.noOfunit, 0),
+      targetId: transformedContract?.lineItemsObject[transformedEstimateObject[key][0].id]?.contractLineItemId,
+      approvedQuantity: transformedEstimateObject[key].reduce((acc, curr) => acc + curr.noOfunit, 0),
       showMeasure: false,
       measures,
     };

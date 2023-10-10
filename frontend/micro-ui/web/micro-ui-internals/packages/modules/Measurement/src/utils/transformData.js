@@ -64,34 +64,30 @@ output is measurements[{
 
 export const transformData = (data) => {
   console.log(data, "formdata");
-  const transformedData = {
-    measurements: [
-      {
-        id: data?.id ? data?.id : null,
-        measurementNumber: data?.measurementNumber ? data?.measurementNumber : null,
-        tenantId: "pg.citya",
-        physicalRefNumber: null,
-        referenceId: data.SOR?.[0]?.contractNumber || data.NONSOR?.[0]?.contractNumber,
-        entryDate: 0,
-        documents: processDocuments(data.uploadedDocs),
-        measures: [],
-        isActive: true,
-        additionalDetails: {
-          sorAmount: data.sumSor || 0,
-          nonSorAmount: data.sumNonSor || 0,
-          totalAmount: (data.sumSor ? data.sumSor : 0) + (data.sumNonSor ? data.sumNonSor : 0),
-          startDate: data?.period?.startDate,
-          endDate: data?.period?.endDate,
-          musterRollNumber: data?.musterRollNumber,
-        },
-        wfStatus: null,
-        workflow: {
-          action: data?.workflowAction,
-        },
-      },
-    ],
-  };
 
+const measurement= {
+  id: data?.id ? data?.id : null,
+  measurementNumber: data?.measurementNumber ? data?.measurementNumber : null,
+  tenantId: "pg.citya",
+  physicalRefNumber: null,
+  referenceId: data.SOR?.[0]?.contractNumber || data.NONSOR?.[0]?.contractNumber,
+  entryDate: 0,
+  documents: processDocuments(data.uploadedDocs),
+  measures: [],
+  isActive: true,
+  additionalDetails: {
+    sorAmount: data.sumSor || 0,
+    nonSorAmount: data.sumNonSor || 0,
+    totalAmount: (data.sumSor ? data.sumSor : 0) + (data.sumNonSor ? data.sumNonSor : 0),
+    startDate: data?.period?.startDate,
+    endDate: data?.period?.endDate,
+    musterRollNumber: data?.musterRollNumber,
+  },
+  wfStatus: null,
+  workflow: {
+    action: data?.workflowAction,
+  },
+}
   let sumSor = 0;
   let sumNonSor = 0;
 
@@ -99,7 +95,7 @@ export const transformData = (data) => {
   if (data.SOR && Array.isArray(data.SOR)) {
     data.SOR.forEach((sorItem) => {
       // sumSor += sorItem.measures?.[0]?.rowAmount;
-      transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(sorItem, "SOR"));
+      measurement.measures.push(...getMeasurementFromMeasures(sorItem, "SOR"));
       sorItem.measures.forEach((measure) => {
         if (measure.rowAmount) {
           sumSor += measure.rowAmount;
@@ -112,7 +108,7 @@ export const transformData = (data) => {
   if (data.NONSOR && Array.isArray(data.NONSOR)) {
     data.NONSOR.forEach((nonsorItem) => {
       sumNonSor += nonsorItem.measures?.[0]?.rowAmount;
-      transformedData.measurements[0].measures.push(...getMeasurementFromMeasures(nonsorItem, "NONSOR"));
+      measurement.measures.push(...getMeasurementFromMeasures(nonsorItem, "NONSOR"));
       nonsorItem.measures?.forEach((measure) => {
         if (measure.rowAmount) {
           sumNonSor += measure.rowAmount;
@@ -122,9 +118,18 @@ export const transformData = (data) => {
   }
 
   // update the additional details
-  transformedData.measurements[0].additionalDetails.sorAmount = sumSor;
-  transformedData.measurements[0].additionalDetails.nonSorAmount = sumNonSor;
-  transformedData.measurements[0].additionalDetails.totalAmount = sumSor + sumNonSor;
+  measurement.additionalDetails={
+    ...measurement.additionalDetails,
+    ...{sorAmount : sumSor, nonSorAmount : sumNonSor,totalAmount : sumSor + sumNonSor}
+  }
+
+  /* added as a temporary fix that sends entrydate */
+  measurement.entryDate=measurement.additionalDetails.startDate;
+  const transformedData = {
+    measurements: [
+     measurement
+    ],
+  };
 
   return transformedData;
 };
