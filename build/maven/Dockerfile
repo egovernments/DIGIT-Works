@@ -26,6 +26,6 @@ COPY --from=build /app/target/*.jar /app/start.sh /opt/egov/
 
 RUN chmod +x /opt/egov/start.sh
 
-COPY ./src/main/resources/db/cacerts /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts
+COPY build/maven/cacerts /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts
 
 CMD ["/opt/egov/start.sh"]
