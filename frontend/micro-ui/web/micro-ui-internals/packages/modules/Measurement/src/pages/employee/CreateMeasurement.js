@@ -183,7 +183,7 @@ const CreateMeasurement = ({ props }) => {
       <Header className="works-header-view modify-header">{t("MB_MEASUREMENT_BOOK")}</Header>
       <FormComposerV2
         label={t("MB_SUBMIT_BAR")}
-        config={CreateConfig({ defaultValue: defaultState?.contract }).CreateConfig[0]?.form?.map((config) => {
+        config={CreateConfig({ defaultValue: defaultState?.contract, measurement : props?.data[0] }).CreateConfig[0]?.form?.filter((a) => (!a.hasOwnProperty('forOnlyUpdate') || props?.isUpdate)).map((config) => {
           return {
             ...config,
             body: config.body.filter((a) => !a.hideInEmployee),
