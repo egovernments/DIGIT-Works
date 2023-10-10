@@ -1,4 +1,4 @@
-export const CreateConfig = ({ defaultValue }) => {
+export const CreateConfig = ({ defaultValue, measurement }) => {
   return {
     CreateConfig: [
       {
@@ -112,6 +112,23 @@ export const CreateConfig = ({ defaultValue }) => {
                   name: "measurementPeriod",
                   customClass: "",
                 },
+              },
+            ],
+          },
+          {
+            subHead: "",
+            forOnlyUpdate : "",
+            body: [
+              {
+                type: "component",
+                component: "MeasurementHistory",
+                withoutLabel: true,
+                key: "MeasurementHistory",
+                useFieldArray: true,
+                "customProps" : {
+                  "contractNumber" : defaultValue?.contractNumber,
+                  "measurementNumber" : measurement?.measurementNumber
+                }
               },
             ],
           },
