@@ -5,9 +5,12 @@ ARG WORK_DIR
 ENV npm_config_cache=/tmp
 WORKDIR /app
 
-COPY ${WORK_DIR}/package.json ${WORK_DIR}/yarn.lock .
+COPY ${WORK_DIR}/package.json ${WORK_DIR}/yarn.lock
 
-RUN yarn
+RUN apk --no-cache add npm && \
+    npm install -g yarn
+
+RUN yarn install
 
 # CMD ["npm", "install" "-f"]
 # CMD ["npm", "audit" "fix"]
