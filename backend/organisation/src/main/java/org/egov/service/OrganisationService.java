@@ -11,7 +11,9 @@ import org.egov.validator.OrganisationServiceValidator;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -56,15 +58,46 @@ public class OrganisationService {
         organisationEnrichmentService.enrichCreateOrgRegistryWithoutWorkFlow(orgRequest);
         //userService.createUser(orgRequest);
         individualService.createIndividual(orgRequest);
+        OrgRequest clonedOrgRequest = new OrgRequest();
 
-        encryptionService.encryptDetails(orgRequest,ORGANISATION_ENCRYPT_KEY);
-        producer.push(configuration.getOrgKafkaCreateTopic(), orgRequest);
+        clonedOrgRequest.setOrganisations(orgRequest.getOrganisations());
+        clonedOrgRequest.setRequestInfo(orgRequest.getRequestInfo());
+
+        List<Organisation> organisationList = orgRequest.getOrganisations();
+        List<Organisation> clonedOrganisations = new ArrayList<>();
+        for(Organisation organisation: organisationList){
+            Organisation clonedOrg = new Organisation();
+            List<ContactDetails> contactDetailsList = organisation.getContactDetails();
+            List<ContactDetails> CopyContactDetails = new ArrayList<>();
+            for(ContactDetails originalContact: contactDetailsList){
+                ContactDetails clonedContact = new ContactDetails();
+                clonedContact.setContactName(originalContact.getContactName());
+                clonedContact.setContactMobileNumber(originalContact.getContactMobileNumber());
+                clonedContact.setId(originalContact.getId());
+                clonedContact.setContactEmail(originalContact.getContactEmail());
+
+                CopyContactDetails.add(clonedContact);
+            }
+
+            clonedOrganisations.add(clonedOrg);
+            clonedOrgRequest.getOrganisations().get(0).setContactDetails(CopyContactDetails);
+        }
+
+        clonedOrgRequest.setOrganisations(clonedOrganisations);
+
+
+//        OrgRequest orgRequest1 = new OrgRequest();
+//        orgRequest1.setOrganisations(orgRequest.getOrganisations());
+//        orgRequest1.setRequestInfo(orgRequest.getRequestInfo());
+
+//        OrgRequest orgRequest1 = OrgRequest.builder().organisations(orgRequest.getOrganisations()).requestInfo(orgRequest.getRequestInfo()).build();
+        encryptionService.encryptDetails(clonedOrgRequest,ORGANISATION_ENCRYPT_KEY);
+        producer.push(configuration.getOrgKafkaCreateTopic(), clonedOrgRequest);
         try {
             notificationService.sendNotification(orgRequest, true);
-        }catch (Exception e){
+        }catch (Exception e) {
             log.error("Exception while sending notification: " + e);
         }
-//        encryptionService.decrypt(orgRequest.getOrganisations(),ORGANISATION_ENCRYPT_KEY,orgRequest);
         return orgRequest;
     }
 
@@ -112,3 +145,6 @@ public class OrganisationService {
         return organisationRepository.getOrganisationsCount(orgSearchRequest);
     }
 }
+
+
+
