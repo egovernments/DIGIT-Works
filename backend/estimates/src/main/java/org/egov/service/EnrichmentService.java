@@ -62,7 +62,7 @@ public class EnrichmentService {
         BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
         estimate.setProposalDate(proposalDate);
 
-        String rootTenantId = estimate.getTenantId().split("\\.")[0];
+        String rootTenantId = estimate.getTenantId();
 
         List<String> estimateNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenEstimateNumberName(), config.getIdgenEstimateNumberFormat(), 1);

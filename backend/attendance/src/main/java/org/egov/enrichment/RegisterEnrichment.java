@@ -42,7 +42,7 @@ public class RegisterEnrichment {
         RequestInfo requestInfo = attendanceRegisterRequest.getRequestInfo();
         List<AttendanceRegister> attendanceRegisters = attendanceRegisterRequest.getAttendanceRegister();
 
-        String rootTenantId = attendanceRegisters.get(0).getTenantId().split("\\.")[0];
+        String rootTenantId = attendanceRegisters.get(0).getTenantId();
 
         //Get Register Numbers from IdGen Service for number of registers present in AttendanceRegisters
         List<String> registerNumbers = getIdList(requestInfo, rootTenantId

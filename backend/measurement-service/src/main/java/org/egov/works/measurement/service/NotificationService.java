@@ -59,7 +59,7 @@ public class NotificationService {
 
 
     public String getMessage(MeasurementServiceRequest request, String msgCode) {
-        String rootTenantId = request.getMeasurements().get(0).getTenantId().split("\\.")[0];
+        String rootTenantId = request.getMeasurements().get(0).getTenantId();
         RequestInfo requestInfo = request.getRequestInfo();
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)

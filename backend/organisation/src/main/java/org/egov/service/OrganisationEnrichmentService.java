@@ -41,7 +41,7 @@ public class OrganisationEnrichmentService {
 
         //set the audit details
         organisationUtil.setAuditDetailsForOrganisation(requestInfo.getUserInfo().getUuid(), organisationList, Boolean.TRUE);
-        String rootTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
+        String rootTenantId = organisationList.get(0).getTenantId();
 
         //idgen to get the list of organisation application Numbers
         List<String> orgApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getOrgApplicationNumberName()
@@ -172,7 +172,7 @@ public class OrganisationEnrichmentService {
         //set the audit details for organisation
         organisationUtil.setAuditDetailsForOrganisation(requestInfo.getUserInfo().getUuid(), organisationList, Boolean.FALSE);
 
-        String rootTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
+        String rootTenantId = organisationList.get(0).getTenantId();
 
         for (Organisation organisation : organisationList) {
             List<Function> functionList = organisation.getFunctions();

@@ -68,7 +68,7 @@ public class CalculationService {
 
         //fetch MDMS data for muster - attendance hours and skill level
         MusterRoll musterRoll = musterRollRequest.getMusterRoll();
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
+        String rootTenantId = musterRoll.getTenantId();
         Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
 
 

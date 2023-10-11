@@ -100,29 +100,29 @@ public class OrganisationServiceValidator {
 
     private void validateMDMSData(List<Organisation> organisationList, RequestInfo requestInfo, String tenantId, Map<String, String> errorMap) {
         log.info("OrganisationServiceValidator::validateMDMSData");
-        String rootTenantId = tenantId.split("\\.")[0];
+//        String rootTenantId = tenantId;
 
         //get the organisation related MDMS data
         //tenant -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForTenant = mdmsUtil.getTenantMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object tenantMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForTenant, rootTenantId);
+        MdmsCriteriaReq mdmsCriteriaReqForTenant = mdmsUtil.getTenantMDMSRequest(requestInfo, tenantId, organisationList);
+        Object tenantMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForTenant, tenantId);
 
         //Org type -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgType = mdmsUtil.getOrgTypeMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object orgTypeMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgType, rootTenantId);
+        MdmsCriteriaReq mdmsCriteriaReqForOrgType = mdmsUtil.getOrgTypeMDMSRequest(requestInfo, tenantId, organisationList);
+        Object orgTypeMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgType, tenantId);
 
         //Org Fun Category -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgFunCategory = mdmsUtil.getOrgFunCategoryMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object orgFunCategoryMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunCategory, rootTenantId);
+        MdmsCriteriaReq mdmsCriteriaReqForOrgFunCategory = mdmsUtil.getOrgFunCategoryMDMSRequest(requestInfo, tenantId, organisationList);
+        Object orgFunCategoryMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunCategory, tenantId);
 
         //Org Tax Identifier -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgTaxIdentifier = mdmsUtil.getOrgTaxIdentifierMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object orgTaxIdentifierMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgTaxIdentifier, rootTenantId);
+        MdmsCriteriaReq mdmsCriteriaReqForOrgTaxIdentifier = mdmsUtil.getOrgTaxIdentifierMDMSRequest(requestInfo, tenantId, organisationList);
+        Object orgTaxIdentifierMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgTaxIdentifier, tenantId);
 
 
         //Org Function Class -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgFunctionClass = mdmsUtil.getOrgFunctionMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object orgFunctionClassMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunctionClass, rootTenantId);
+        MdmsCriteriaReq mdmsCriteriaReqForOrgFunctionClass = mdmsUtil.getOrgFunctionMDMSRequest(requestInfo, tenantId, organisationList);
+        Object orgFunctionClassMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunctionClass, tenantId);
 
 
         Set<String> orgTypeReqSet = new HashSet<>();
