@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.egov.works.util.ContractServiceConstants.CONTRACT_REVISION_BUSINESS_SERVICE;
+
 @Service
 @Slf4j
 public class WorkflowService {
@@ -59,7 +61,13 @@ public class WorkflowService {
         Workflow workflow = request.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setBusinessId(contract.getContractNumber());
+        if (request.getContract().getBusinessService() != null && request.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+            processInstance.setBusinessId(contract.getSupplementNumber());
+        }
+        else {
+            processInstance.setBusinessId(contract.getContractNumber());
+        }
+
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getContractWFModuleName());
         processInstance.setTenantId(contract.getTenantId());
@@ -109,7 +117,11 @@ public class WorkflowService {
      */
     public BusinessService getBusinessService(ContractRequest contractRequest) {
         String tenantId = contractRequest.getContract().getTenantId();
-        StringBuilder url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractWFBusinessService());
+        StringBuilder url;
+        if (contractRequest.getContract().getBusinessService() != null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE))
+            url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractRevisionWFBusinessService());
+        else
+            url = getSearchURLWithParams(tenantId, serviceConfiguration.getContractWFBusinessService());
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Object result = repository.fetchResult(url, requestInfo);
         BusinessServiceResponse response = null;
@@ -150,7 +162,12 @@ public class WorkflowService {
      */
     public ProcessInstance getProcessInstance(ContractRequest contractRequest) {
         String tenantId = contractRequest.getContract().getTenantId();
-        String businessId = contractRequest.getContract().getContractNumber();
+        String businessId = null;
+        if (contractRequest.getContract().getBusinessService()!=null && contractRequest.getContract().getBusinessService().equalsIgnoreCase(CONTRACT_REVISION_BUSINESS_SERVICE)) {
+            businessId = contractRequest.getContract().getSupplementNumber();
+        }else {
+            businessId = contractRequest.getContract().getContractNumber();
+        }
         StringBuilder url = getProcessSearchURLWithParams(tenantId, businessId);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(contractRequest.getRequestInfo()).build();
         Object result = repository.fetchResult(url, requestInfoWrapper);

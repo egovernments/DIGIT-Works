@@ -231,6 +231,11 @@ class _HomePage extends State<HomePage> {
           localeLoad();
           context.router.push(const RegisterIndividualRoute());
         };
+      case Constants.homeMyServiceRequests:
+        return () {
+          localeLoad();
+          context.router.push(const MyServiceRequestsRoute());
+        };
       default:
         return null;
     }

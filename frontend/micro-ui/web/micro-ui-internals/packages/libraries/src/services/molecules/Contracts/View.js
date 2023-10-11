@@ -13,9 +13,34 @@ const combine = (docs, estimateDocs) => {
     return allDocuments;
 }
 
-const transformViewDataToApplicationDetails = async (t, data, workflowDetails, tenantId) => {
+const transformViewDataToApplicationDetails = async (t, data, workflowDetails, revisedWONumber) => {
+    //if revisedWONumber is defined then it's a time extension screen(use TE object here)
+    const isTimeExtAlreadyInWorkflow = data.contracts.some(element => element.businessService===
+        Digit?.Customizations?.["commonUiConfig"]?.businessServiceMap?.revisedWO && element.status==="INWORKFLOW")
+    
+    let contract
+    
+    // let contract = data.contracts.filter(element => element.supplementNumber=== null)?.[0]
+    if(data.contracts.length === 1) contract = data.contracts[0]
+    else {
+        //this condition is added because to show work order when there are multiple object in response array
+        // if(revisedWONumber)
+        contract = data.contracts.filter(element => element.supplementNumber && (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]
+        contract = contract ? {...contract, wfStatus:"ACCEPTED"} : {}
+        // else
+        // contract = data.contracts.filter(element => (element.status==="ACTIVE" || element.status==="INWORKFLOW"))?.[0]   
+    }
+    
+    if(revisedWONumber){
+        contract = data?.contracts?.filter(row => row?.supplementNumber===revisedWONumber)?.[0]
+    }
+    //Added this condition if from the response array not able to find contract then takes the original contract (usecase : of rejected TE)
+    if(Object.keys(contract)?.length <= 0)
+    {   
+        contract = data?.contracts?.filter((row) => row?.supplementNumber == null && row?.status === "ACTIVE")?.[0];
+    }
 
-    const contract = data.contracts?.[0]
+
     const contractDetails = {
         title: " ",
         asSectionHeader: false,
@@ -29,6 +54,22 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
             { title: "COMMON_WORK_ORDER_AMT_RS", value: `₹ ${Digit.Utils.dss.formatterWithoutRound(contract?.totalContractedAmount, 'number')}` || t("NA")},
         ]
     }
+    if(contract.startDate){
+        contractDetails.values.push({ title: "WORKS_START_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.startDate)  || t("NA")})
+    }
+    if(contract.endDate && contract?.additionalDetails?.timeExt && revisedWONumber){
+        contractDetails.values.push({ title: "WORKS_ORIGINAL_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate - (Number(contract?.additionalDetails?.timeExt)*24*60*60*1000))  || t("NA")})
+    }
+    if(contract.endDate){
+        contractDetails.values.push({ title: contract?.additionalDetails?.timeExt && revisedWONumber ? "WORKS_EXTENDED_END_DATE":"WORKS_ORIGINAL_END_DATE", value: Digit.DateUtils.ConvertEpochToDate(contract.endDate)  || t("NA")})
+    }
+    if(contract.additionalDetails.timeExt && revisedWONumber){
+        contractDetails.values.push({ title: "EXTENSION_REQ", value: contract?.additionalDetails?.timeExt  || t("NA")})
+    }
+    if(contract.additionalDetails.timeExtReason && revisedWONumber){
+        contractDetails.values.push({ title: "EXTENSION_REASON", value: contract?.additionalDetails?.timeExtReason  || t("NA")})
+    }
+
     const allDocuments = combine(contract?.documents, contract?.additionalDetails?.estimateDocs);
     let documentDetails = {
         title: "",
@@ -72,22 +113,25 @@ const transformViewDataToApplicationDetails = async (t, data, workflowDetails, t
         }
     });
 
-    const applicationDetails = { applicationDetails: [contractDetails, documentDetails] };    
+    const applicationDetails = revisedWONumber ? { applicationDetails: [contractDetails] } : { applicationDetails: [contractDetails, documentDetails] };    
 
   return {
     applicationDetails,
     applicationData: contract,
     processInstancesDetails: workflowDetails?.ProcessInstances,
     workflowDetails,
-    isNoDataFound : data?.contracts?.length === 0 ? true : false
+    isNoDataFound : data?.contracts?.length === 0 ? true : false,
+    additionalDetails:{
+        isTimeExtAlreadyInWorkflow
+    }
   }
 } 
 
 export const View = {
-    fetchContractDetails: async (t, tenantId, data, searchParams) => {
+    fetchContractDetails: async (t, tenantId, data, searchParams,revisedWONumber) => {
     try {
         const response = await ContractService.search(tenantId, data, searchParams);
-        return transformViewDataToApplicationDetails(t, response)
+        return transformViewDataToApplicationDetails(t, response,undefined,revisedWONumber)
         } catch (error) {
             throw new Error(error?.response?.data?.Errors[0].message);
         }  

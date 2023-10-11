@@ -4,7 +4,7 @@
     <artifactId>expense-calculator</artifactId>
     <packaging>jar</packaging>
     <name>expense-calculator</name>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <properties>
     <java.version>1.8</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>

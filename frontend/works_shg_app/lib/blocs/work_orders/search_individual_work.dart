@@ -41,6 +41,7 @@ class SearchIndividualWorkBloc
             await MyWorksRepository(client.init()).searchMyWorks(
                 url: Urls.workServices.myWorks,
                 body: {
+                  ...?event.body,
                   "tenantId": GlobalVariables
                       .organisationListModel!.organisations!.first.tenantId,
                   "orgIds": [],
@@ -73,8 +74,10 @@ class SearchIndividualWorkBloc
 
 @freezed
 class SearchIndividualWorkEvent with _$SearchIndividualWorkEvent {
-  const factory SearchIndividualWorkEvent.search(
-      {@Default('') String? contractNumber}) = IndividualWorkSearchEvent;
+  const factory SearchIndividualWorkEvent.search({
+    @Default('') String? contractNumber,
+    Map? body,
+  }) = IndividualWorkSearchEvent;
   const factory SearchIndividualWorkEvent.dispose() = DisposeIndividualContract;
 }
 
