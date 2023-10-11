@@ -193,7 +193,7 @@ public class NotificationService {
      * @return
      */
     public String getMessage(EstimateRequest request, String msgCode) {
-        String rootTenantId = request.getEstimate().getTenantId().split("\\.")[0];
+        String rootTenantId = request.getEstimate().getTenantId();
         RequestInfo requestInfo = request.getRequestInfo();
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
