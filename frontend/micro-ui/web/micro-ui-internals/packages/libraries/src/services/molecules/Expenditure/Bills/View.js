@@ -106,7 +106,7 @@ const transformViewDataToApplicationDetails = async (t, data, tenantId) => {
       return item.payableLineItems.filter((item) => item.headCode === "LC");
     })
     ?.reduce((acc, item) => {
-      return item?.[0]?.amount ? item?.[0]?.amount : 0 + acc;
+      return (item?.[0]?.amount ? item?.[0]?.amount : 0) + acc;
     }, 0);
 
   const billAmount = {
