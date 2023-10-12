@@ -95,8 +95,10 @@ public class MeasurementRegistry {
     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
 
         handleNullPagination(measurementSearchRequest);
-        if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
-            throw errorConfigs.tenantIdRequired;
+        if (searchCriteria == null) {
+            throw errorConfigs.searchCriteriaMandatory;
+        } else if (StringUtils.isEmpty(searchCriteria.getTenantId())) {
+            throw errorConfigs.tenantIdMandatory;
         }
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;
