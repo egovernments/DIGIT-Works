@@ -54,20 +54,19 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
-        List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow, errorMap);
 
         String rootTenantId = estimate.getTenantId();
-//        split the tenantId
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
         validateProjectId(request, errorMap);
 
+        List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
         Set<String> uniqueIdentifiers = new HashSet<String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
@@ -190,7 +189,7 @@ public class EstimateServiceValidator {
             errorMap.put("PROJECT_ID", "ProjectId is mandatory");
         }
         if (estimate.getAddress() == null) {
-            throw new CustomException("ADDRESS", "Address is mandatory");
+            errorMap.put("ADDRESS", "Address is mandatory");
         }
 
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
@@ -250,9 +249,8 @@ public class EstimateServiceValidator {
         int uniqueIdentifiersSizeRes = sorIdRes.size();
         if(uniqueIdentifiersSizeInput!=uniqueIdentifiersSizeRes){
             errorMap.put("INVALId_SOR_ID", "The sor id is not present in MDMS");
-            throw new CustomException("SORID","sorId is not in mdms");
-
         }
+
     }
 
     private void validateDateAndRates (Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
