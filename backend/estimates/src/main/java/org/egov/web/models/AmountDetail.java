@@ -2,7 +2,11 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.egov.tracer.model.CustomException;
 import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * AmountDetail
@@ -24,6 +28,8 @@ public class AmountDetail {
     private String type = null;
 
     @JsonProperty("amount")
+    @Valid
+    @NotNull
     private Double amount = null;
 
     @JsonProperty("isActive")
@@ -32,6 +38,6 @@ public class AmountDetail {
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 
-
+   
 }
 
