@@ -28,6 +28,7 @@ public class EstimateRequest {
     private RequestInfo requestInfo = null;
 
     @JsonProperty("estimate")
+    @Valid
     private Estimate estimate = null;
 
     @JsonProperty("workflow")

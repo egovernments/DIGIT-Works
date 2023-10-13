@@ -205,12 +205,11 @@ public class EstimateServiceValidator {
                     errorMap.put("ESTIMATE.DETAIL.AMOUNT.DETAILS", "Amount details are mandatory");
                 } else {
                     for (AmountDetail amountDetail : estimateDetail.getAmountDetail()) {
-                        if (amountDetail.getAmount() == null) {
+                        if (amountDetail.getAmount() == null || amountDetail.getAmount().isNaN()) {
                             errorMap.put("ESTIMATE.DETAIL.AMOUNT.DETAILS.AMOUNT", "Estimate amount detail's amount is mandatory");
                         }
                     }
                 }
-
             }
         }
 
