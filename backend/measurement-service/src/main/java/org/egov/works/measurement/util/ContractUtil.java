@@ -78,6 +78,9 @@ public class ContractUtil {
         // return if no contract is present
         if (!isValidContract) return false;
 
+        if (!response.getContracts().get(0).getWfStatus().equalsIgnoreCase("ACCEPTED"))
+            throw errorConfigs.contractNotAccepted;
+
         boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(response.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(response.getContracts().get(0).getEndDate()) <= 0));
         boolean isTargetIdsPresent = true;
 

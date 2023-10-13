@@ -30,6 +30,7 @@ public class ErrorConfiguration {
     public CustomException idsAndMbNumberMismatch = new CustomException("IDS_AND_MB_NUMBER_MISMATCH", MBServiceConfiguration.IDS_AND_MB_NUMBER_MISMATCH);
     public CustomException invalidEstimateID = new CustomException("INVALID_ESTIMATE_ID", MBServiceConfiguration.INVALID_ESTIMATE_ID);
     public CustomException invalidContract = new CustomException("INVALID_CONTRACT", MBServiceConfiguration.INVALID_CONTRACT);
+    public CustomException contractNotAccepted = new CustomException("contractNotAccepted", "Contract not in accepted state");
 
     public CustomException notValidReferenceId(String referenceId) {
         String errorMessage = MessageFormat.format(MBServiceConfiguration.NOT_VALID_REFERENCE_ID, referenceId);
