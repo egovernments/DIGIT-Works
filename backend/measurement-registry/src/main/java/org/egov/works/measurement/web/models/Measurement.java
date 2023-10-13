@@ -35,6 +35,7 @@ public class Measurement {
 
     @JsonProperty("tenantId")
     @Size(min = 2, max = 64)
+    @NotNull
     private String tenantId = null;
 
     @JsonProperty("measurementNumber")
