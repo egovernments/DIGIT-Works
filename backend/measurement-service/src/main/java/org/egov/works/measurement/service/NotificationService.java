@@ -33,6 +33,8 @@ public class NotificationService {
             localisationCode = APPROVE_LOCALISATION_CODE;
         } else if (request.getMeasurements().get(0).getWorkflow().getAction().equalsIgnoreCase("REJECT")) {
             localisationCode = REJECT_LOCALISATION_CODE;
+        } else {
+            return;
         }
         String message = getMessage(request, localisationCode);
 
@@ -40,11 +42,11 @@ public class NotificationService {
             log.info("message not configured for this case");
             return;
         }
-        String projectId = notificationUtil.getProjectId(request.getRequestInfo(), request.getMeasurements().get(0).getTenantId(),
+        String projectNumber = notificationUtil.getProjectNumber(request.getRequestInfo(), request.getMeasurements().get(0).getTenantId(),
                 request.getMeasurements().get(0).getReferenceId());
         String mobileNumber = notificationUtil.getEmployeeMobileNumber(request.getRequestInfo(), request.getMeasurements().get(0).getTenantId()
         , request.getMeasurements().get(0).getAuditDetails().getCreatedBy());
-        message = getCustomMessage(message, request.getMeasurements().get(0).getMeasurementNumber(),projectId);
+        message = getCustomMessage(message, request.getMeasurements().get(0).getMeasurementNumber(),projectNumber);
         SMSRequest smsRequest = SMSRequest.builder().message(message).mobileNumber(mobileNumber).build();
 
         log.info("Sending notification for action in measurement book state");
@@ -52,8 +54,8 @@ public class NotificationService {
     }
 
 
-    private String getCustomMessage(String message, String measurementNumber, String projectId) {
-        message = message.replace("{refno}", measurementNumber).replace("{projectid}", projectId);
+    private String getCustomMessage(String message, String measurementNumber, String projectNumber) {
+        message = message.replace("{refno}", measurementNumber).replace("{projectid}", projectNumber);
         return message;
     }
 
