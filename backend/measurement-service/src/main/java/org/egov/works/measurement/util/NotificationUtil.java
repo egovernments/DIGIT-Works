@@ -11,11 +11,10 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.config.ServiceConstants;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.web.models.Estimate;
+import org.egov.works.measurement.web.models.ContractResponse;
 import org.egov.works.measurement.web.models.EstimateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
@@ -31,47 +30,55 @@ import static org.egov.works.measurement.config.ServiceConstants.PROJECT_NUMBER_
 public class NotificationUtil {
 
     @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
     private  MBServiceConfiguration config;
     @Autowired
     private ServiceRequestRepository restRepo;
     @Autowired
     private ObjectMapper mapper;
 
-    public String getProjectId(RequestInfo requestInfo, String tenantId, String referenceId) {
-        Estimate estimate = getEstimate(requestInfo, tenantId, referenceId).getEstimates().get(0);
-        String projectId = estimate.getProjectId();
-        String projectNumber = getProjectNumber(requestInfo, tenantId, projectId);
-
-        return projectNumber;
+    public String getProjectNumber(RequestInfo requestInfo, String tenantId, String referenceId) {
+        String estimateId = getEstimateId(requestInfo, tenantId, referenceId);
+        String projectId = getProjectId(requestInfo, tenantId, estimateId);
+        return getProjectDetails(requestInfo, tenantId, projectId);
     }
-    private EstimateResponse getEstimate(RequestInfo requestInfo, String tenantId,String referenceId) {
 
+    private String getEstimateId(RequestInfo requestInfo, String tenantId, String contractNumber) {
+        StringBuilder contractSearchUri = new StringBuilder(config.getContractHost()).append(config.getContractPath());
+        ObjectNode contractSearchReq = mapper.createObjectNode();
+
+        contractSearchReq.putPOJO("RequestInfo", requestInfo);
+        contractSearchReq.put("tenantId", tenantId);
+        contractSearchReq.put("contractNumber", contractNumber);
+
+        Object response = restRepo.fetchResult(contractSearchUri, contractSearchReq);
+        ContractResponse contractResponse;
+        try {
+            contractResponse = mapper.convertValue(response, ContractResponse.class);
+        } catch (Exception e) {
+            throw new CustomException("CONVERSION_ERROR", "Cannot convert response");
+        }
+        return contractResponse.getContracts().get(0).getLineItems().get(0).getEstimateId();
+
+    }
+    private String getProjectId(RequestInfo requestInfo, String tenantId, String estimateId) {
         String estimateSearchUri = config.getEstimateHost()+config.getEstimatePath();
         UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(estimateSearchUri);
         uri.queryParam("tenantId", tenantId);
-        uri.queryParam("referenceNumber", referenceId);
+        uri.queryParam("ids", estimateId);
+        StringBuilder url = new StringBuilder(uri.toUriString());
 
-        String url = uri.toUriString();
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-        EstimateResponse estimateResponse = restTemplate.postForObject(url, requestInfoWrapper, EstimateResponse.class);
-        return estimateResponse;
-    }
-
-    private String getProjectNumber (RequestInfo requestInfo, String tenantId, String projectId) {
-        Object projectRes = getProjectDetails(requestInfo, tenantId, projectId);
-
-        List<String> projectNumber = new ArrayList<>();
+        Object response = restRepo.fetchResult(url, requestInfoWrapper);
+        EstimateResponse estimateResponse;
         try {
-            projectNumber = JsonPath.read(projectRes, PROJECT_NUMBER_CODE);
+            estimateResponse = mapper.convertValue(response, EstimateResponse.class);
         } catch (Exception e) {
-            throw new CustomException("PARSING_ERROR", "Failed to parse project response");
+            throw new CustomException("CONVERSION_ERROR", "Cannot convert response");
         }
-        return projectNumber.get(0);
+        return estimateResponse.getEstimates().get(0).getProjectId();
     }
 
-    public Object getProjectDetails(RequestInfo requestInfo, String tenantId, String projectId) {
+    private String getProjectDetails(RequestInfo requestInfo, String tenantId, String projectId) {
         log.info("ProjectUtil::getProjectDetails");
         String projectSearchUri = config.getWorksProjectServiceHost()+config.getWorksProjectServicePath();
         UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(projectSearchUri);
@@ -96,7 +103,13 @@ public class NotificationUtil {
         log.info("ProjectUtil::search project request -> {}",projectSearchReqNode);
         Object projectRes = restRepo.fetchResult(url, projectSearchReqNode);
 
-        return projectRes;
+        List<String> projectNumber = new ArrayList<>();
+        try {
+            projectNumber = JsonPath.read(projectRes, PROJECT_NUMBER_CODE);
+        } catch (Exception e) {
+            throw new CustomException("PARSING_ERROR", "Failed to parse project response");
+        }
+        return projectNumber.get(0);
     }
 
     public String getEmployeeMobileNumber(RequestInfo requestInfo, String tenantId, String uuid) {
