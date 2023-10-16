@@ -40,7 +40,6 @@ public class Measurement {
     private UUID id = null;
 
     @JsonProperty("tenantId")
-    @NotNull
     @Size(min = 2, max = 64)
     private String tenantId = null;
 
