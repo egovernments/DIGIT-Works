@@ -60,7 +60,7 @@ public class MDMSUtils {
      * @param tenantId
      * @return
      */
-    public Object mdmsCallV2(EstimateRequest request, String tenantId, Set<String> sorIds, boolean isRate){
+    public Object mdmsCallV2ForSor(EstimateRequest request, String tenantId, Set<String> sorIds, boolean isRate){
         log.info("MDMSUtils::mDMSCallV2");
         RequestInfo requestInfo =request.getRequestInfo();
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestV2(requestInfo,tenantId,request, sorIds, isRate);
@@ -69,6 +69,16 @@ public class MDMSUtils {
     }
 
 
+    public Object mdmsCallV2(EstimateRequest request, String tenantId, String masterName,String moduleName){
+        log.info("MDMSUtils::mDMSCallV2");
+        RequestInfo requestInfo =request.getRequestInfo();
+        MasterDetail masterDetail = MasterDetail.builder().name(masterName).build();
+        ModuleDetail moduleDetail = ModuleDetail.builder().masterDetails(Collections.singletonList(masterDetail)).moduleName(moduleName).build();
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(moduleDetail)).tenantId(tenantId).build();
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
+        return result;
+    }
     /**
      * Calls MDMS service to fetch overhead category
      *
