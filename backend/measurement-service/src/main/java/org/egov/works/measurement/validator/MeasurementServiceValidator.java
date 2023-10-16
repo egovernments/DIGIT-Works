@@ -50,9 +50,6 @@ public class MeasurementServiceValidator {
 
 
     @Autowired
-    private MeasurementRegistry measurementRegistry;
-
-    @Autowired
     private MeasurementRegistryUtil measurementRegistryUtil;
 
     @Autowired
