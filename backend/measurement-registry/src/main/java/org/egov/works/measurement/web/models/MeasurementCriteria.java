@@ -36,6 +36,11 @@ public class MeasurementCriteria {
     @NotNull
     private String tenantId = null;
 
+    @JsonProperty("fromDate")
+    private Long fromDate = null;
+
+    @JsonProperty("toDate")
+    private Long toDate = null;
 
     public MeasurementCriteria addReferenceIdItem(String referenceIdItem) {
         if (this.referenceId == null) {
