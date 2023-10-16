@@ -1,13 +1,18 @@
 package org.egov.works.measurement.validator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.service.WorkflowService;
 import org.egov.works.measurement.util.ContractUtil;
+import org.egov.works.measurement.util.MdmsUtil;
 import org.egov.works.measurement.util.MeasurementRegistryUtil;
 import org.egov.works.measurement.util.MeasurementServiceUtil;
 import org.egov.works.measurement.web.models.*;
@@ -52,6 +57,10 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private MeasurementServiceUtil measurementServiceUtil;
+    @Autowired
+    private MdmsUtil mdmsUtil;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     @Value("${egov.filestore.host}")
@@ -61,6 +70,29 @@ public class MeasurementServiceValidator {
     private String baseFilestoreEndpoint;
 
 
+    public void validateTenantId(MeasurementServiceRequest measurementRequest){
+        Set<String> validTenantSet = new HashSet<>();
+        List<String> masterList = Collections.singletonList(MBServiceConfiguration.getMdmsMasterName());
+        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(), MBServiceConfiguration.getMdmsTenantId(), MBServiceConfiguration.getMdmsModuleName(),masterList);
+        String node = response.get(MBServiceConfiguration.getMdmsModuleName()).get(MBServiceConfiguration.getMdmsMasterName()).toString();
+        try {
+            JsonNode currNode = objectMapper.readTree(node);
+            for (JsonNode tenantNode : currNode) {
+                // Assuming each item in the array has a "code" field
+                String tenantId = tenantNode.get("code").asText();
+                validTenantSet.add(tenantId);
+            }
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        List<MeasurementService> measurementList = measurementRequest.getMeasurements();
+        for(int i=0;i<measurementList.size();i++){
+            if(!validTenantSet.contains(measurementList.get(i).getTenantId())){
+                throw new CustomException("TENANT_ID_NOT_FOUND",measurementList.get(i).getTenantId().toString()+" Tenant Id is Not found");
+            }
+        }
+    }
     public void validateContracts(MeasurementServiceRequest measurementServiceRequest) {
         measurementServiceRequest.getMeasurements().forEach(measurement -> {
             // validate contracts
