@@ -128,7 +128,7 @@ public class EstimateServiceValidatorTest {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.getEstimate().setAddress(null);
         CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("Address is mandatory"));
+        assertTrue(exception.getMessage().contentEquals("{ADDRESS=Address is mandatory}"));
     }
 
     @Test
