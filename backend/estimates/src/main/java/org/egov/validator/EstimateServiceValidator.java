@@ -70,18 +70,16 @@ public class EstimateServiceValidator {
 
         List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
         Set<String> uniqueIdentifiers = new HashSet<String>();
-        HashMap<String,String> sorIdUOMMap = new HashMap<String,String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
             if(estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
-                sorIdUOMMap.put(estimateDetail.getSorId(),estimateDetail.getUom());
             }
         }
         if (uniqueIdentifiers.size() != 0) {
             Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, false);
 
-            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers,sorIdUOMMap, errorMap);
+            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
 //            validateMDMSDataV2ForRates(estimate, mdmsDataV2ForRate, uniqueIdentifiers, errorMap);
@@ -264,7 +262,7 @@ public class EstimateServiceValidator {
     /**
      * validate the mdms data for sorId in mdmsv2
      */
-    private void validateMDMSDataV2ForSor(Estimate estimate ,Object mdmsData, Set<String>uniqueIdentifiers,HashMap<String,String> sorIdUOMMap, Map<String, String> errorMap ){
+    private void validateMDMSDataV2ForSor(Estimate estimate ,Object mdmsData, Set<String>uniqueIdentifiers, Map<String, String> errorMap ){
         log.info("EstimateServiceValidator::validateMDMSDataV2");
         int uniqueIdentifiersSizeInput = uniqueIdentifiers.size();
 
@@ -283,25 +281,19 @@ public class EstimateServiceValidator {
         if(uniqueIdentifiersSizeInput!=uniqueIdentifiersSizeRes){
             errorMap.put("INVALId_SOR_ID", "The sor id is not present in MDMS");
         }
-        for(int i=0;i<uniqueIdentifiersSizeInput;i++){
-            String sorIdInput = uniqueIdentifiers.toArray()[i].toString();
-            String uomInput = sorIdUOMMap.get(sorIdInput);
-            boolean isSorIdPresent = false;
-            for(int j=0;j<uniqueIdentifiersSizeRes;j++){
-                String sorIdResString = sorIdRes.get(j).toString();
-                String uomResString = uomRes.get(j).toString();
-                if(sorIdInput.equalsIgnoreCase(sorIdResString)){
-                    isSorIdPresent = true;
-                    if(!uomInput.equalsIgnoreCase(uomResString)){
-                        errorMap.put("INVALID_UOM", "Invalid UOM");
-                    }
-                    break;
+
+        Map<String,String> sorIdUomMap = new HashMap<>();
+        for(int i=0;i<sorIdRes.size();i++){
+            sorIdUomMap.put(sorIdRes.get(i).toString(),uomRes.get(i).toString());
+        }
+
+        estimate.getEstimateDetails().forEach(estimateDetail -> {
+            if(estimateDetail.getCategory().equalsIgnoreCase(MASTER_SOR_ID)){
+                if(!estimateDetail.getUom().equals(sorIdUomMap.get(estimateDetail.getSorId()))){
+                    errorMap.put("INVALID_UOM", "Invalid UOM");
                 }
             }
-            if(!isSorIdPresent){
-                errorMap.put("INVALId_SOR_ID", "The sor id is not present in MDMS");
-            }
-        }
+        });
     }
 
     private void validateDateAndRates (Estimate estimate, Object mdmsData, Map<String, String> errorMap) {
@@ -661,18 +653,16 @@ public class EstimateServiceValidator {
         validateMDMSDataForUOM(estimate, mdmsDataForUOM, errorMap);
 
         Set<String> uniqueIdentifiers = new HashSet<String>();
-        HashMap<String,String> sorIdUOMMap = new HashMap<String,String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
             if(estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
-                sorIdUOMMap.put(estimateDetail.getSorId(),estimateDetail.getUom());
             }
         }
 
         if (uniqueIdentifiers.size() != 0) {
             Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, false);
-            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers,sorIdUOMMap, errorMap);
+            validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
 
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
