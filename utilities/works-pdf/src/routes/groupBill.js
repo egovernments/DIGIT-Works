@@ -4,6 +4,7 @@ var config = require("../config");
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 var logger = require("../logger").logger;
 const { pool, search_payment_details, exec_query_eg_payments_excel, create_eg_payments_excel, reset_eg_payments_excel } = require("../api");
+const { createAuditLogs } = require("../utils/auditLogs");
 var producer = require("../producer").producer;
 
 function renderError(res, errorMessage, errorCode) {
@@ -98,8 +99,22 @@ router.post(
         var userId = requestinfo?.userInfo?.uuid;
         if (result.rowCount < 1) {
           await create_eg_payments_excel(paymentId, paymentNumber, tenantId, userId);
+          await createAuditLogs(req.body, "CREATE", {
+            paymentId, 
+            paymentNumber, 
+            "tenantId": tenantId, 
+            "status": "INPROGRESS",
+            "lastmodifiedby": userId,
+            "lastmodifiedtime": new Date().getTime()
+        })
         } else {
           await reset_eg_payments_excel(paymentId, userId);
+          await createAuditLogs(req.body, "UPDATE", {
+            paymentId,  
+            "status": "INPROGRESS",
+            "lastmodifiedby": userId,
+            "lastmodifiedtime": new Date().getTime()
+        })
         }
       } catch (err) {
         logger.error(err.stack || err);
