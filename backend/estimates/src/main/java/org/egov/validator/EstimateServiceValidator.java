@@ -642,6 +642,9 @@ public class EstimateServiceValidator {
             if (!estimateFromDB.getProjectId().equals(estimate.getProjectId())) {
                 throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
             }
+            if (ObjectUtils.isEmpty(estimate.getAuditDetails())) {
+                estimate.setAuditDetails(estimateFromDB.getAuditDetails());
+            }
         }
         String rootTenantId = estimate.getTenantId();
         //split the tenantId
