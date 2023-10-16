@@ -74,33 +74,30 @@ public class MeasurementQueryBuilder {
         }
 
         if (!CollectionUtils.isEmpty(criteria.getIds())) {
-            if (tenantIdProvided || !ObjectUtils.isEmpty(criteria.getMeasurementNumber()) || !CollectionUtils.isEmpty(criteria.getReferenceId())) {
-                query.append(" AND ");
-            } else {
-                addClauseIfRequired(query, preparedStmtList);
-            }
+            addClauseIfRequired(query, preparedStmtList);
             query.append(" m.id IN (").append(createQuery(criteria.getIds())).append(")");
             addToPreparedStatement(preparedStmtList, criteria.getIds());
         }
 
         if (!CollectionUtils.isEmpty(criteria.getReferenceId())) {
-            if (tenantIdProvided || !ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
-                query.append(" AND ");
-            } else {
-                addClauseIfRequired(query, preparedStmtList);
-            }
+            addClauseIfRequired(query, preparedStmtList);
             query.append(" m.referenceId IN (").append(createQuery(criteria.getReferenceId())).append(")");
             addToPreparedStatement(preparedStmtList, criteria.getReferenceId());
         }
 
         if (!ObjectUtils.isEmpty(criteria.getMeasurementNumber())) {
-            if (tenantIdProvided) {
-                query.append(" AND ");
-            } else {
-                addClauseIfRequired(query, preparedStmtList);
-            }
+            addClauseIfRequired(query, preparedStmtList);
             query.append(" m.mbNumber = ? ");
             preparedStmtList.add(criteria.getMeasurementNumber());
+        }
+        if (!ObjectUtils.isEmpty(criteria.getFromDate())) {
+            if (criteria.getToDate() == null || ObjectUtils.isEmpty(criteria.getToDate())) {
+                criteria.setToDate(System.currentTimeMillis());
+            }
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" m.createdtime BETWEEN ? AND ? ");
+            preparedStmtList.add(criteria.getFromDate());
+            preparedStmtList.add(criteria.getToDate());
         }
 
         return addPaginationWrapper(query, measurementSearchRequest.getPagination(), preparedStmtList);
