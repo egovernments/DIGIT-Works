@@ -27,7 +27,7 @@
     "@egovernments/digit-ui-module-hrms": "1.5.26",
     "@egovernments/digit-ui-module-masters": "0.2.24",
     "@egovernments/digit-ui-module-project": "0.2.9",
-    "@egovernments/digit-ui-react-components": "^1.5.36",
+    "@egovernments/digit-ui-react-components": "^1.5.33",
     "babel-loader": "8.1.0",
     "clean-webpack-plugin": "4.0.0",
     "react": "17.0.2",
