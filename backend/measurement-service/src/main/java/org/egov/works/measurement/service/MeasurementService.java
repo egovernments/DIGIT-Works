@@ -53,6 +53,8 @@ public class MeasurementService {
      * @return
      */
     public MeasurementServiceResponse handleCreateMeasurementService(MeasurementServiceRequest body) {
+        // validate tenants
+        measurementServiceValidator.validateTenantId(body);
         // validate contracts
         measurementServiceValidator.validateContracts(body);
 
