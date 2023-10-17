@@ -1,8 +1,8 @@
 package org.egov.works.measurement.service;
 
-import digit.models.coremodels.ProcessInstance;
-import digit.models.coremodels.Workflow;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.Workflow;
+import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.util.WorkflowUtil;
 import org.egov.works.measurement.web.models.MeasurementService;

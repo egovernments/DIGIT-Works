@@ -1,10 +1,10 @@
 package org.egov.works.measurement.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
-import digit.models.coremodels.Document;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
