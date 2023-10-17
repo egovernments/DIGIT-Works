@@ -91,7 +91,7 @@ public class MDMSUtils {
         ModuleDetail estimateDepartmentModuleDetail = getDepartmentModuleRequestData(request);
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
         ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request);
-        ModuleDetail estimateCategoryModuleDetail = getCategoryModuleRequestData(request);
+        ModuleDetail estimateCategoryModuleDetail = getWorksMasterMDMSDetails(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(estimateTenantModuleDetail);
@@ -125,20 +125,23 @@ public class MDMSUtils {
         return estimateOverHeadModuleDetail;
     }
 
-    private ModuleDetail getCategoryModuleRequestData(EstimateRequest request) {
-        log.info("MDMSUtils::getCategoryModuleRequestData");
+    private ModuleDetail getWorksMasterMDMSDetails(EstimateRequest request) {
+        log.info("MDMSUtils::getWorksMasterMDMSDetails");
 
-        List<MasterDetail> estimateCategoryMasterDetails = new ArrayList<>();
+        List<MasterDetail> worksMasterDetails = new ArrayList<>();
 
         MasterDetail categoryMasterDetails = MasterDetail.builder().name(MASTER_CATEGORY)
                 .filter(ACTIVE_FILTER_CODE).build();
+        MasterDetail overheadMasterDetails = MasterDetail.builder().name(MASTER_OVERHEAD)
+                .filter(ACTIVE_FILTER_CODE).build();
 
-        estimateCategoryMasterDetails.add(categoryMasterDetails);
+        worksMasterDetails.add(categoryMasterDetails);
+        worksMasterDetails.add(overheadMasterDetails);
 
-        ModuleDetail estimateCategoryModuleDetail = ModuleDetail.builder().masterDetails(estimateCategoryMasterDetails)
+        ModuleDetail worksMasterDetail = ModuleDetail.builder().masterDetails(worksMasterDetails)
                 .moduleName(MDMS_WORKS_MODULE_NAME).build();
 
-        return estimateCategoryModuleDetail;
+        return worksMasterDetail;
     }
 
 
