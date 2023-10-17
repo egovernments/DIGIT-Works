@@ -61,7 +61,7 @@ public class MeasurementValidator {
         List<Measurement> measurementList = measurementRequest.getMeasurements();
         for(int i=0;i<measurementList.size();i++){
             if(!validTenantSet.contains(measurementList.get(i).getTenantId())){
-                 throw new CustomException("TENANT_ID_NOT_FOUND",measurementList.get(i).getTenantId().toString()+" Tenant Id is Not found");
+                 throw new CustomException("TENANT_ID_NOT_FOUND",measurementList.get(i).getTenantId()+" Tenant Id is Not found");
             }
         }
     }
