@@ -9,6 +9,7 @@ import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -72,6 +73,18 @@ public class EnrichmentService {
             measure.setId(UUID.randomUUID().toString());
             measure.setReferenceId(measurement.getId());
             measure.setAuditDetails(measurement.getAuditDetails());
+            if (measure.getLength() == null || measure.getLength() == BigDecimal.valueOf(0)) {
+                measure.setLength(BigDecimal.valueOf(1));
+            }
+            if (measure.getHeight() == null || measure.getHeight() == BigDecimal.valueOf(0)) {
+                measure.setHeight(BigDecimal.valueOf(1));
+            }
+            if (measure.getBreadth() == null || measure.getBreadth() == BigDecimal.valueOf(0)) {
+                measure.setBreadth(BigDecimal.valueOf(1));
+            }
+            if (measure.getNumItems() == null || measure.getNumItems() == BigDecimal.valueOf(0)) {
+                measure.setNumItems(BigDecimal.valueOf(1));
+            }
             measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
         }
     }
