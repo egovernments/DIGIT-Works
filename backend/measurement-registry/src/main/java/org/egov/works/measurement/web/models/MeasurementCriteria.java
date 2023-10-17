@@ -43,7 +43,7 @@ public class MeasurementCriteria {
     private Long toDate = null;
 
     @JsonProperty("isActive")
-    private Boolean isActive = true;
+    private Boolean isActive = null;
 
     public MeasurementCriteria addReferenceIdItem(String referenceIdItem) {
         if (this.referenceId == null) {
