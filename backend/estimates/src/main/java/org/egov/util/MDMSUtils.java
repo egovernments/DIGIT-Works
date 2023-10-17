@@ -26,11 +26,11 @@ public class MDMSUtils {
     public static final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
     public static final String codeFilter = "$.*.code";
     public static final String activeCodeFilter = "$.[?(@.active==true)].code";
-    private static final String sorFilterCode = "[?(@.id=='";
-    private static final String sorAdditionalFilter = "'||@.id=='";
+    private static final String sorFilterCode = "@.id=='%s'";
+    private static final String orAdditionalFilter = " || ";
+    private static final String filterStart = "[?(";
     private static final String filterEnd = ")]";
-    private static final String ratesFilterCode = "[?(@.sorId=='";
-    private static final String ratesAdditionalFilter = "'||@.sorId=='";
+    private static final String ratesFilterCode = "@.sorId=='%s'";
 
     @Autowired
     private EstimateServiceConfiguration config;
@@ -185,26 +185,29 @@ public class MDMSUtils {
         List<MasterDetail> estimateSorIdMasterDetails = new ArrayList<>();
         MasterDetail departmentMasterDetails;
         if (isRate){
-            StringBuilder ratesStringBuilder = new StringBuilder(ratesFilterCode);
+            StringBuilder ratesStringBuilder = new StringBuilder();
             Iterator ratesIterator = sorIds.iterator();
             while (ratesIterator.hasNext()) {
-                ratesStringBuilder.append(ratesIterator.next());
-                ratesStringBuilder.append(ratesAdditionalFilter);
+                String sorIdRateFilter = String.format(ratesFilterCode, ratesIterator.next());
+                ratesStringBuilder.append(sorIdRateFilter);
+                if(ratesIterator.hasNext()){
+                    ratesStringBuilder.append(orAdditionalFilter);
+                }
             }
-            String ratesFilter = ratesStringBuilder.substring(0, ratesStringBuilder.length() - 12);
-            ratesFilter = ratesFilter + filterEnd;
+            String ratesFilter =  filterStart + ratesStringBuilder + filterEnd;
             departmentMasterDetails = MasterDetail.builder().name(MASTER_RATES_ID)
                     .filter(ratesFilter).build();
         }else {
-            StringBuilder sorStringBuilder = new StringBuilder(sorFilterCode);
+            StringBuilder sorStringBuilder = new StringBuilder();
             Iterator setIterator = sorIds.iterator();
             while (setIterator.hasNext()) {
-
-                sorStringBuilder.append(setIterator.next());
-                sorStringBuilder.append(sorAdditionalFilter);
+                String sorIdRateFilter = String.format(sorFilterCode, setIterator.next());
+                sorStringBuilder.append(sorIdRateFilter);
+                if(setIterator.hasNext()){
+                    sorStringBuilder.append(orAdditionalFilter);
+                }
             }
-            String sorFilter = sorStringBuilder.substring(0, sorStringBuilder.length() - 9);
-            sorFilter = sorFilter + filterEnd;
+            String sorFilter = filterStart + sorStringBuilder + filterEnd;
 
             departmentMasterDetails = MasterDetail.builder().name(MASTER_SOR_ID)
                     .filter(sorFilter).build();
