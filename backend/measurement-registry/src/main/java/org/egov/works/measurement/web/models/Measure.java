@@ -30,9 +30,9 @@ import java.util.UUID;
 @Builder
 public class Measure {
     @JsonProperty("id")
-
+    @Size(max = 64)
     @Valid
-    private UUID id = null;
+    private String id = null;
 
     @JsonProperty("referenceId")
 

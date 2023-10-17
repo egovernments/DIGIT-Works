@@ -74,7 +74,7 @@ public class MeasurementValidator {
 
         for (Measurement measurement : measurementRegistrationRequest.getMeasurements()) {
             // Validate the measurement
-            criteria.setIds(Collections.singletonList(measurement.getId().toString()));
+            criteria.setIds(Collections.singletonList(measurement.getId()));
             criteria.setTenantId(measurement.getTenantId());
 
             //Getting list every time because tenantId may vary
@@ -112,7 +112,7 @@ public class MeasurementValidator {
         }
     }
     public void validateMeasureRequest(Measurement existingMeasurement,Measurement measurement){
-        Set<UUID> measuresIds=new HashSet<>();
+        Set<String> measuresIds=new HashSet<>();
         for(Measure measure:existingMeasurement.getMeasures()){
             measuresIds.add(measure.getId());
         }

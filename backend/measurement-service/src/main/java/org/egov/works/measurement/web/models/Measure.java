@@ -32,7 +32,8 @@ public class Measure {
 
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    @Size(max = 64)
+    private String id = null;
 
     @JsonProperty("referenceId")
     @Size(min = 2, max = 64)

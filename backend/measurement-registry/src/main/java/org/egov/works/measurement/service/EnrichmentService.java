@@ -39,7 +39,7 @@ public class EnrichmentService {
             Measurement measurement = measurements.get(i);
 
             // enrich UUID
-            measurement.setId(UUID.randomUUID());
+            measurement.setId(UUID.randomUUID().toString());
             // enrich the Audit details
             measurement.setAuditDetails(measurementRegistryUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(),measurement,true));
 
@@ -69,8 +69,8 @@ public class EnrichmentService {
             }
         }
         for (Measure measure : measureList) {
-            measure.setId(UUID.randomUUID());
-            measure.setReferenceId(measurement.getId().toString());
+            measure.setId(UUID.randomUUID().toString());
+            measure.setReferenceId(measurement.getId());
             measure.setAuditDetails(measurement.getAuditDetails());
             measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
         }

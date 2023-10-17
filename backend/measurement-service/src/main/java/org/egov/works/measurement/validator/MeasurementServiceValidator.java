@@ -9,7 +9,6 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.service.WorkflowService;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.MdmsUtil;
@@ -141,7 +140,7 @@ public class MeasurementServiceValidator {
     public void enrichMeasurementServiceWithMeasurement(List<MeasurementService> existingMeasurementServices,MeasurementServiceRequest measurementServiceRequest){
         MeasurementCriteria criteria=MeasurementCriteria.builder().ids(new ArrayList<>()).tenantId(existingMeasurementServices.get(0).getTenantId()).build();
         for(MeasurementService measurementService:existingMeasurementServices){
-            criteria.getIds().add(measurementService.getId().toString());
+            criteria.getIds().add(measurementService.getId());
         }
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().requestInfo(measurementServiceRequest.getRequestInfo()).criteria(criteria).build();
         List<Measurement> existingMeasurements=measurementRegistryUtil.searchMeasurements(measurementSearchRequest).getBody().getMeasurements();
@@ -174,7 +173,7 @@ public class MeasurementServiceValidator {
 
 
     public void matchIdsAndMbNumber(List<MeasurementService> orderedExistingMeasurementService, List<MeasurementService> measurementServices) {
-        List<UUID> existingIds = orderedExistingMeasurementService.stream()
+        List<String> existingIds = orderedExistingMeasurementService.stream()
                 .map(MeasurementService::getId)
                 .collect(Collectors.toList());
 
@@ -182,7 +181,7 @@ public class MeasurementServiceValidator {
                 .map(MeasurementService::getMeasurementNumber)
                 .collect(Collectors.toList());
 
-        List<UUID> newIds = measurementServices.stream()
+        List<String> newIds = measurementServices.stream()
                 .map(MeasurementService::getId)
                 .collect(Collectors.toList());
 
