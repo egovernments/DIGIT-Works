@@ -99,6 +99,11 @@ public class MeasurementQueryBuilder {
             preparedStmtList.add(criteria.getFromDate());
             preparedStmtList.add(criteria.getToDate());
         }
+        if (!ObjectUtils.isEmpty(criteria.getIsActive())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" m.isActive = ? ");
+            preparedStmtList.add(criteria.getIsActive());
+        }
 
         return addPaginationWrapper(query, measurementSearchRequest.getPagination(), preparedStmtList);
     }
