@@ -101,7 +101,7 @@ public class MeasurementValidator {
 
         if(!documentIds.isEmpty()){
             // Make an API request to validate document IDs
-            String responseJson = makeApiRequest(documentIds);
+            String responseJson = makeApiRequest(documentIds, measurements.get(0).getTenantId());
 
             // Check if document IDs match the response
             boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
@@ -142,13 +142,13 @@ public class MeasurementValidator {
         }
     }
 
-    private String makeApiRequest(List<String> documentIds) {
+    private String makeApiRequest(List<String> documentIds, String tenantId) {
         String baseUrl = MBRegistryConfiguration.getBaseFilestoreUrl();
         String endpoint = MBRegistryConfiguration.getBaseFilestoreEndpoint();
 
         // Build the URL with query parameters
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + endpoint)
-                .queryParam("tenantId", "pg.citya");
+                .queryParam("tenantId", tenantId);
 
         for (String documentId : documentIds) {
             builder.queryParam("fileStoreIds", documentId);
