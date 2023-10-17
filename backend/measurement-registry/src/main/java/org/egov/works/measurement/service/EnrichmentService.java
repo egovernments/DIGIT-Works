@@ -83,6 +83,7 @@ public class EnrichmentService {
     public void enrichCumulativeValue(Measurement measurement){
         MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
                 .referenceId(Collections.singletonList(measurement.getReferenceId()))
+                .isActive(true)
                 .tenantId(measurement.getTenantId())
                 .build();
         Pagination pagination= Pagination.builder().offSet(0).build();
@@ -106,6 +107,7 @@ public class EnrichmentService {
     public void enrichCumulativeValueOnUpdate(Measurement measurement){
         MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
                 .referenceId(Collections.singletonList(measurement.getReferenceId()))
+                .isActive(true)
                 .tenantId(measurement.getTenantId())
                 .build();
         Pagination pagination= Pagination.builder().offSet(0).build();
