@@ -346,16 +346,24 @@ public class EstimateServiceValidator {
         JsonNode sortedJsonArray = mapper.valueToTree(jsonList);
 
         for (int i = 0; i < sortedJsonArray.size(); i++) {
-            String validFrom = sortedJsonArray.get(i).get("validFrom").asText();
-            String validTo = null;
+            Long validFrom = null;
+            Long validTo = null;
             try {
-                validTo = sortedJsonArray.get(i).get("validTo").asText();
+                String str =  sortedJsonArray.get(i).get("validFrom").asText();
+                validFrom = Long.parseLong(str);
+            }catch (Exception e) {
+                log.error("No start date for this object");
+            }
+            try {
+                String strVT = sortedJsonArray.get(i).get("validTo").asText();
+                validTo = Long.parseLong(strVT);
             }catch (Exception e) {
                 log.info("No end date for this object");
             }
-            if (validatingDate < Long.valueOf(validFrom)) {
+
+            if (validatingDate < validFrom) {
                 continue;
-            } else if (validTo != null && validatingDate > Long.valueOf(validTo)) {
+            } else if (validTo != null && validatingDate > validTo) {
                 continue;
             }
             if (sortedJsonArray.get(i).get("rate").asDouble() == estimateDetail.getUnitRate()) {
