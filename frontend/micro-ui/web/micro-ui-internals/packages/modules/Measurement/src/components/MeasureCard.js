@@ -1,4 +1,4 @@
-import { Button, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { Button, CardLabelError, CardSectionHeader, CloseSvg } from "@egovernments/digit-ui-react-components";
 import React, { useReducer, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MeasureRow from "./MeasureRow";
@@ -116,6 +116,16 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
   const total = state?.reduce?.((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit :  acc + curr?.noOfunit, 0) || 0;
   return (
     <Fragment>
+      <div>
+      <CardSectionHeader style={{fontSize:"18px"}}>{t("WORKS_MEASUREMENT_TABLE_HEADER")}</CardSectionHeader>
+      {mode.includes("VIEW") && 
+      <span className="measure-table-header" onClick={() => {
+        tableData[tableIndex].showMeasure = false;
+        setValue(tableData);
+      }}>
+      <CloseSvg />
+      </span>}
+      </div>
       <table className="table reports-table sub-work-table">
         <thead>
           <tr>{renderHeader()}</tr>
@@ -126,16 +136,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
             <td colSpan={"4"}>
             {error && <CardLabelError style={{width:"100%"}}>{t("MB_APPROVED_QTY_VALIDATION")}</CardLabelError>}
               <div style={{ display: "flex", flexDirection: "row" }}>
-                {mode.includes("VIEW") ? (
-                  <Button
-                    className={"outline-btn"}
-                    label={t("MB_CLOSE")}
-                    onButtonClick={() => {
-                      tableData[tableIndex].showMeasure = false;
-                      setValue(tableData);
-                    }}
-                  />
-                ) : (
+                { (
                   <>
                     {mode == "CREATEALL" && (
                       <Button
@@ -162,14 +163,14 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                         }}
                       />
                     )}
-                    <Button
+                    {!(mode.includes("VIEW")) && <Button
                       className={"outline-btn"}
                       label={t("MB_CLEAR")}
                       onButtonClick={() => {
                         dispatch({ type: "CLEAR_STATE" });
                       }}
-                    />
-                    <Button
+                    />}
+                    {!(mode.includes("VIEW")) && <Button
                       className={"outline-btn"}
                       label={t("MB_DONE")}
                       onButtonClick={() => {
@@ -188,13 +189,13 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                         // setConsumedQty(total);
                         // setShowMeasureCard(false);
                       }}
-                    />
+                    />}
                   </>
                 )}
               </div>
             </td>
             <td colSpan={"4"}>
-              {t("MB_SUBTOTAL")}: {total}
+              {t("MB_SUBTOTAL")}: {parseFloat(total)?.toFixed(4)}
             </td>
           </tr>
         </tbody>

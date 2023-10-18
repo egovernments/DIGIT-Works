@@ -235,7 +235,7 @@ const MeasureTable = (props) => {
             </td>
             {mode == "CREATEALL" && (
               <td>
-                <span className="icon-wrapper" onClick={() => remove(index)}>
+                <span className="icon-wrapper" onClick={() => fields?.length > 1 ? remove(index): {}}>
                   <DeleteIcon fill={"#B1B4B6"} />
                 </span>
               </td>

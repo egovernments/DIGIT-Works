@@ -379,7 +379,7 @@ const OverheadsTable = ({ control, watch, ...props }) => {
   }, [rows, sorTotal, formData]);
 
   return (
-    <table className="table reports-table sub-work-table" style={{ marginTop: "-2rem" }}>
+    <table className="table reports-table sub-work-table">
       <thead>
         <tr>{renderHeader()}</tr>
       </thead>

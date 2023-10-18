@@ -38,6 +38,12 @@ const EstimateBreadCrumbs = ({ location }) => {
             isBack: fromScreen && true,
         },
         {
+            path: `/${window.contextPath}/employee/estimate/create-detailed-estimate`,
+            content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_CREATE_DETAILED_ESTIMATE")}` : t("WORKS_CREATE_DETAILED_ESTIMATE"),
+            show: location.pathname.includes("/estimate/create-detailed-estimate") ? true : false,
+            isBack: fromScreen && true,
+        },
+        {
             path: `/${window.contextPath}/employee/estimate/search-estimate`,
             content: fromScreen ? `${t(fromScreen)} / ${t("WORKS_SEARCH_ESTIMATES")}` : t("WORKS_SEARCH_ESTIMATES"),
             show: location.pathname.includes("/estimate/search-estimate") ? true : false,
