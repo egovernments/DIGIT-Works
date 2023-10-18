@@ -288,7 +288,7 @@ public class EstimateServiceValidator {
         }
 
         estimate.getEstimateDetails().forEach(estimateDetail -> {
-            if(estimateDetail.getCategory().equalsIgnoreCase(MASTER_SOR_ID)){
+            if(estimateDetail.getCategory().equalsIgnoreCase(MDMS_SOR_MASTER_NAME)){
                 if(!estimateDetail.getUom().equals(sorIdUomMap.get(estimateDetail.getSorId()))){
                     errorMap.put("INVALID_UOM", "Invalid UOM");
                 }
@@ -346,16 +346,24 @@ public class EstimateServiceValidator {
         JsonNode sortedJsonArray = mapper.valueToTree(jsonList);
 
         for (int i = 0; i < sortedJsonArray.size(); i++) {
-            String validFrom = sortedJsonArray.get(i).get("validFrom").asText();
-            String validTo = null;
+            Long validFrom = null;
+            Long validTo = null;
             try {
-                validTo = sortedJsonArray.get(i).get("validTo").asText();
+                String str =  sortedJsonArray.get(i).get("validFrom").asText();
+                validFrom = Long.parseLong(str);
+            }catch (Exception e) {
+                log.error("No start date for this object");
+            }
+            try {
+                String strVT = sortedJsonArray.get(i).get("validTo").asText();
+                validTo = Long.parseLong(strVT);
             }catch (Exception e) {
                 log.info("No end date for this object");
             }
-            if (validatingDate < Long.valueOf(validFrom)) {
+
+            if (validatingDate < validFrom) {
                 continue;
-            } else if (validTo != null && validatingDate > Long.valueOf(validTo)) {
+            } else if (validTo != null && validatingDate > validTo) {
                 continue;
             }
             if (sortedJsonArray.get(i).get("rate").asDouble() == estimateDetail.getUnitRate()) {
@@ -470,7 +478,7 @@ public class EstimateServiceValidator {
         }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
-        final String jsonPathForSorIds  = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
+        final String jsonPathForSorIds  = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MDMS_SOR_MASTER_NAME + ".*";
         final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
         final String jsonPathForOverHead = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
 
