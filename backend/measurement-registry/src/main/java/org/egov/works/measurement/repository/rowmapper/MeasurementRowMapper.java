@@ -79,6 +79,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
                 measure.setCurrentValue(rs.getBigDecimal("mmcurrentValue"));
                 measure.setCumulativeValue(rs.getBigDecimal("mmcumulativeValue"));
                 measure.setTargetId(rs.getString("targetId"));
+                measure.setComments(rs.getString("mddescription"));
                 measure.setIsActive(rs.getBoolean("mdisActive"));
 
                 String additionalDetailsString = rs.getString("mdadditionalDetails");
