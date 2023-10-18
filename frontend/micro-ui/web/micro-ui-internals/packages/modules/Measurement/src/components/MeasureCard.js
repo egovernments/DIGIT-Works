@@ -1,4 +1,4 @@
-import { Button, CardLabelError, CardSectionHeader, CardSectionSubText, CardSubHeader, CloseSvg, Label } from "@egovernments/digit-ui-react-components";
+import { Button, CardLabelError, CardSectionHeader, CloseSvg } from "@egovernments/digit-ui-react-components";
 import React, { useReducer, Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import MeasureRow from "./MeasureRow";
