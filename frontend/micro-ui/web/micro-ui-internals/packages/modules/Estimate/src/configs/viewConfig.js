@@ -120,6 +120,17 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
         navigationKey: "card1",
         sections: [
           {
+            type: "COMPONENT",
+            cardHeader: { value: "", inlineStyles: {} },
+            component: "ViewTotalEstAmount",
+            props: {detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
+          }
+        ],
+      },
+      {
+        navigationKey: "card1",
+        sections: [
+          {
             type: "DOCUMENTS",
             documents: [
               {
