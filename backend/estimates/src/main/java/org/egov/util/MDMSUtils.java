@@ -184,34 +184,19 @@ public class MDMSUtils {
         log.info("MDMSUtils::getSorIdModuleRequestData");
         List<MasterDetail> estimateSorIdMasterDetails = new ArrayList<>();
         MasterDetail departmentMasterDetails;
-        if (isRate){
-            StringBuilder ratesStringBuilder = new StringBuilder();
-            Iterator ratesIterator = sorIds.iterator();
-            while (ratesIterator.hasNext()) {
-                String sorIdRateFilter = String.format(ratesFilterCode, ratesIterator.next());
-                ratesStringBuilder.append(sorIdRateFilter);
-                if(ratesIterator.hasNext()){
-                    ratesStringBuilder.append(orAdditionalFilter);
-                }
+        StringBuilder ratesStringBuilder = new StringBuilder();
+        Iterator ratesIterator = sorIds.iterator();
+        while (ratesIterator.hasNext()) {
+            String sorIdRateFilter = String.format(isRate? ratesFilterCode:sorFilterCode, ratesIterator.next());
+            ratesStringBuilder.append(sorIdRateFilter);
+            if(ratesIterator.hasNext()){
+                ratesStringBuilder.append(orAdditionalFilter);
             }
-            String ratesFilter =  filterStart + ratesStringBuilder + filterEnd;
-            departmentMasterDetails = MasterDetail.builder().name(MASTER_RATES_ID)
-                    .filter(ratesFilter).build();
-        }else {
-            StringBuilder sorStringBuilder = new StringBuilder();
-            Iterator setIterator = sorIds.iterator();
-            while (setIterator.hasNext()) {
-                String sorIdRateFilter = String.format(sorFilterCode, setIterator.next());
-                sorStringBuilder.append(sorIdRateFilter);
-                if(setIterator.hasNext()){
-                    sorStringBuilder.append(orAdditionalFilter);
-                }
-            }
-            String sorFilter = filterStart + sorStringBuilder + filterEnd;
-
-            departmentMasterDetails = MasterDetail.builder().name(MASTER_SOR_ID)
-                    .filter(sorFilter).build();
         }
+        String ratesFilter =  filterStart + ratesStringBuilder + filterEnd;
+        departmentMasterDetails = MasterDetail.builder().name(isRate?MDMS_RATES_MASTER_NAME:MDMS_SOR_MASTER_NAME)
+                .filter(ratesFilter).build();
+
         estimateSorIdMasterDetails.add(departmentMasterDetails);
 
         ModuleDetail estimateSorIdModuleDetail = ModuleDetail.builder().masterDetails(estimateSorIdMasterDetails)

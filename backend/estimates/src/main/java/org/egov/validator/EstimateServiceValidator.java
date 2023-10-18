@@ -288,7 +288,7 @@ public class EstimateServiceValidator {
         }
 
         estimate.getEstimateDetails().forEach(estimateDetail -> {
-            if(estimateDetail.getCategory().equalsIgnoreCase(MASTER_SOR_ID)){
+            if(estimateDetail.getCategory().equalsIgnoreCase(MDMS_SOR_MASTER_NAME)){
                 if(!estimateDetail.getUom().equals(sorIdUomMap.get(estimateDetail.getSorId()))){
                     errorMap.put("INVALID_UOM", "Invalid UOM");
                 }
@@ -478,7 +478,7 @@ public class EstimateServiceValidator {
         }
         final String jsonPathForWorksDepartment = "$.MdmsRes." + MDMS_COMMON_MASTERS_MODULE_NAME + "." + MASTER_DEPARTMENT + ".*";
         final String jsonPathForTenants = "$.MdmsRes." + MDMS_TENANT_MODULE_NAME + "." + MASTER_TENANTS + ".*";
-        final String jsonPathForSorIds  = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_SOR_ID + ".*";
+        final String jsonPathForSorIds  = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MDMS_SOR_MASTER_NAME + ".*";
         final String jsonPathForCategories = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_CATEGORY + ".*";
         final String jsonPathForOverHead = "$.MdmsRes." + MDMS_WORKS_MODULE_NAME + "." + MASTER_OVERHEAD + ".*";
 
