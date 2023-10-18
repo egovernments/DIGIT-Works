@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANTS_MASTER_NAME;
+import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANT_MODULE_NAME;
+
 @Component
 @Slf4j
 public class MeasurementValidator {
@@ -45,9 +48,9 @@ public class MeasurementValidator {
      */
     public void validateTenantId(MeasurementRequest measurementRequest){
         Set<String> validTenantSet = new HashSet<>();
-        List<String> masterList = Collections.singletonList(MBRegistryConfiguration.getMdmsMasterName());
-        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(), MBRegistryConfiguration.getMdmsTenantId(), MBRegistryConfiguration.getMdmsModuleName(),masterList);
-        String node = response.get(MBRegistryConfiguration.getMdmsModuleName()).get(MBRegistryConfiguration.getMdmsMasterName()).toString();
+        List<String> masterList = Collections.singletonList(MDMS_TENANTS_MASTER_NAME);
+        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(), MBRegistryConfiguration.getStateLevelTenantId(), MDMS_TENANT_MODULE_NAME,masterList);
+        String node = response.get(MDMS_TENANT_MODULE_NAME).get(MDMS_TENANTS_MASTER_NAME).toString();
         try {
                 JsonNode currNode = objectMapper.readTree(node);
                 for (JsonNode tenantNode : currNode) {

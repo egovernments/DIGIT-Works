@@ -39,6 +39,7 @@ public class ServiceConstants {
     public static final String REJECT_LOCALISATION_CODE = "MB_REJECT";
     public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
     public static final String PROJECT_NUMBER_CODE = "$.Project.*.projectNumber";
-
+    public static final String MDMS_TENANTS_MASTER_NAME = "tenants";
+    public static final String MDMS_TENANT_MODULE_NAME = "tenant";
 
 }

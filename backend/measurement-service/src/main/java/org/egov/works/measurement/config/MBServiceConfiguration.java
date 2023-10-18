@@ -59,14 +59,8 @@ public class MBServiceConfiguration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
 
-    @Value("${egov.mdms.tenantId}")
-    private String mdmsTenantId;
-
-    @Value("${egov.mdms.moduleName}")
-    private String mdmsModuleName;
-
-    @Value("${egov.mdms.masterName}")
-    private String mdmsMasterName;
+    @Value("${state.level.tenant.id}")
+    private String stateLevelTenantId;
 
     // Kafka topics
     @Value("${measurement.kafka.create.topic}")
