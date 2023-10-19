@@ -71,11 +71,11 @@ public class WorkflowUtil {
      * @return
      */
     public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
-        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId, businessServiceCode, workflow, wfModuleName);
-        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
         if (workflow.getAction().equals(configs.draftAction) && (workflow.getAssignes() == null ||  workflow.getAssignes().isEmpty())){
             workflow.setAssignes(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
         }
+        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId, businessServiceCode, workflow, wfModuleName);
+        ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
         State state = callWorkFlow(workflowRequest);
         return state.getApplicationStatus();
     }
