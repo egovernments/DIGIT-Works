@@ -9,7 +9,6 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
-import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.service.WorkflowService;
 import org.egov.works.measurement.util.ContractUtil;
 import org.egov.works.measurement.util.MdmsUtil;
@@ -25,6 +24,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANTS_MASTER_NAME;
+import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANT_MODULE_NAME;
 
 @Component
 @Slf4j
@@ -69,9 +71,9 @@ public class MeasurementServiceValidator {
 
     public void validateTenantId(MeasurementServiceRequest measurementRequest){
         Set<String> validTenantSet = new HashSet<>();
-        List<String> masterList = Collections.singletonList(MBServiceConfiguration.getMdmsMasterName());
-        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(), MBServiceConfiguration.getMdmsTenantId(), MBServiceConfiguration.getMdmsModuleName(),masterList);
-        String node = response.get(MBServiceConfiguration.getMdmsModuleName()).get(MBServiceConfiguration.getMdmsMasterName()).toString();
+        List<String> masterList = Collections.singletonList(MDMS_TENANTS_MASTER_NAME);
+        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(), MBServiceConfiguration.getStateLevelTenantId(), MDMS_TENANT_MODULE_NAME,masterList);
+        String node = response.get(MDMS_TENANT_MODULE_NAME).get(MDMS_TENANTS_MASTER_NAME).toString();
         try {
             JsonNode currNode = objectMapper.readTree(node);
             for (JsonNode tenantNode : currNode) {
@@ -86,7 +88,7 @@ public class MeasurementServiceValidator {
         List<MeasurementService> measurementList = measurementRequest.getMeasurements();
         for(int i=0;i<measurementList.size();i++){
             if(!validTenantSet.contains(measurementList.get(i).getTenantId())){
-                throw new CustomException("TENANT_ID_NOT_FOUND",measurementList.get(i).getTenantId().toString()+" Tenant Id is Not found");
+                throw new CustomException("TENANT_ID_NOT_FOUND",measurementList.get(i).getTenantId()+" Tenant Id is Not found");
             }
         }
     }
@@ -141,7 +143,7 @@ public class MeasurementServiceValidator {
     public void enrichMeasurementServiceWithMeasurement(List<MeasurementService> existingMeasurementServices,MeasurementServiceRequest measurementServiceRequest){
         MeasurementCriteria criteria=MeasurementCriteria.builder().ids(new ArrayList<>()).tenantId(existingMeasurementServices.get(0).getTenantId()).build();
         for(MeasurementService measurementService:existingMeasurementServices){
-            criteria.getIds().add(measurementService.getId().toString());
+            criteria.getIds().add(measurementService.getId());
         }
         MeasurementSearchRequest measurementSearchRequest=MeasurementSearchRequest.builder().requestInfo(measurementServiceRequest.getRequestInfo()).criteria(criteria).build();
         List<Measurement> existingMeasurements=measurementRegistryUtil.searchMeasurements(measurementSearchRequest).getBody().getMeasurements();
@@ -174,7 +176,7 @@ public class MeasurementServiceValidator {
 
 
     public void matchIdsAndMbNumber(List<MeasurementService> orderedExistingMeasurementService, List<MeasurementService> measurementServices) {
-        List<UUID> existingIds = orderedExistingMeasurementService.stream()
+        List<String> existingIds = orderedExistingMeasurementService.stream()
                 .map(MeasurementService::getId)
                 .collect(Collectors.toList());
 
@@ -182,7 +184,7 @@ public class MeasurementServiceValidator {
                 .map(MeasurementService::getMeasurementNumber)
                 .collect(Collectors.toList());
 
-        List<UUID> newIds = measurementServices.stream()
+        List<String> newIds = measurementServices.stream()
                 .map(MeasurementService::getId)
                 .collect(Collectors.toList());
 

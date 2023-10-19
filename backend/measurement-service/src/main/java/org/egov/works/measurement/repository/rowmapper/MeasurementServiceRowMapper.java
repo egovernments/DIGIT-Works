@@ -1,6 +1,6 @@
 package org.egov.works.measurement.repository.rowmapper;
 
-import digit.models.coremodels.AuditDetails;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.works.measurement.web.models.MeasurementService;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ public class MeasurementServiceRowMapper implements RowMapper<MeasurementService
     @Override
     public MeasurementService mapRow(ResultSet rs, int rowNum) throws SQLException {
         MeasurementService measurementService = new MeasurementService();
-        measurementService.setId(UUID.fromString(rs.getString("id")));
+        measurementService.setId(rs.getString("id"));
         measurementService.setTenantId(rs.getString("tenantId"));
         measurementService.setMeasurementNumber(rs.getString("mbNumber"));
         measurementService.setWfStatus(rs.getString("wfStatus"));

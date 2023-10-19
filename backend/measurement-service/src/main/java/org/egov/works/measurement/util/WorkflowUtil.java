@@ -1,9 +1,11 @@
 package org.egov.works.measurement.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import digit.models.coremodels.*;
+import org.egov.common.contract.models.RequestInfoWrapper;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
@@ -68,7 +70,7 @@ public class WorkflowUtil {
      * @param wfModuleName
      * @return
      */
-    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode,Workflow workflow, String wfModuleName) {
+    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
         ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId, businessServiceCode, workflow, wfModuleName);
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
         if (workflow.getAction().equals(configs.draftAction) && (workflow.getAssignes() == null ||  workflow.getAssignes().isEmpty())){
@@ -115,7 +117,7 @@ public class WorkflowUtil {
         processInstance.setModuleName(wfModuleName);
         processInstance.setTenantId(tenantId);
         processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
-        processInstance.setDocuments(workflow.getVerificationDocuments());
+        processInstance.setDocuments(workflow.getDocuments());
         processInstance.setComment(workflow.getComments());
 
         if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -154,7 +156,7 @@ public class WorkflowUtil {
                     .action(processInstance.getAction())
                     .assignes(userIds)
                     .comments(processInstance.getComment())
-                    .verificationDocuments(processInstance.getDocuments())
+                    .documents(processInstance.getDocuments())
                     .build();
 
             businessIdToWorkflow.put(processInstance.getBusinessId(), workflow);

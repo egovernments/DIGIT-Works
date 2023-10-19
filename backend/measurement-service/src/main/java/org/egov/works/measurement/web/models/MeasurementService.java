@@ -1,8 +1,8 @@
 package org.egov.works.measurement.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.Workflow;
 import lombok.*;
+import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
 /**

@@ -1,12 +1,13 @@
 package org.egov.works.measurement.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import digit.models.coremodels.AuditDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -31,7 +32,8 @@ public class Measure {
 
     @JsonProperty("id")
     @Valid
-    private UUID id = null;
+    @Size(max = 64)
+    private String id = null;
 
     @JsonProperty("referenceId")
     @Size(min = 2, max = 64)

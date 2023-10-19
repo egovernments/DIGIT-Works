@@ -9,6 +9,7 @@ import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class EnrichmentService {
             Measurement measurement = measurements.get(i);
 
             // enrich UUID
-            measurement.setId(UUID.randomUUID());
+            measurement.setId(UUID.randomUUID().toString());
             // enrich the Audit details
             measurement.setAuditDetails(measurementRegistryUtil.getAuditDetails(request.getRequestInfo().getUserInfo().getUuid(),measurement,true));
 
@@ -69,9 +70,21 @@ public class EnrichmentService {
             }
         }
         for (Measure measure : measureList) {
-            measure.setId(UUID.randomUUID());
-            measure.setReferenceId(measurement.getId().toString());
+            measure.setId(UUID.randomUUID().toString());
+            measure.setReferenceId(measurement.getId());
             measure.setAuditDetails(measurement.getAuditDetails());
+            if (measure.getLength() == null || measure.getLength() == BigDecimal.valueOf(0)) {
+                measure.setLength(BigDecimal.valueOf(1));
+            }
+            if (measure.getHeight() == null || measure.getHeight() == BigDecimal.valueOf(0)) {
+                measure.setHeight(BigDecimal.valueOf(1));
+            }
+            if (measure.getBreadth() == null || measure.getBreadth() == BigDecimal.valueOf(0)) {
+                measure.setBreadth(BigDecimal.valueOf(1));
+            }
+            if (measure.getNumItems() == null || measure.getNumItems() == BigDecimal.valueOf(0)) {
+                measure.setNumItems(BigDecimal.valueOf(1));
+            }
             measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
         }
     }
@@ -83,6 +96,7 @@ public class EnrichmentService {
     public void enrichCumulativeValue(Measurement measurement){
         MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
                 .referenceId(Collections.singletonList(measurement.getReferenceId()))
+                .isActive(true)
                 .tenantId(measurement.getTenantId())
                 .build();
         Pagination pagination= Pagination.builder().offSet(0).build();
@@ -106,6 +120,7 @@ public class EnrichmentService {
     public void enrichCumulativeValueOnUpdate(Measurement measurement){
         MeasurementCriteria measurementCriteria = MeasurementCriteria.builder()
                 .referenceId(Collections.singletonList(measurement.getReferenceId()))
+                .isActive(true)
                 .tenantId(measurement.getTenantId())
                 .build();
         Pagination pagination= Pagination.builder().offSet(0).build();

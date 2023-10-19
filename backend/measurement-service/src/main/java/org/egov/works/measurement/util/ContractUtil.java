@@ -1,6 +1,6 @@
 package org.egov.works.measurement.util;
 
-import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBServiceConfiguration;

@@ -20,7 +20,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
+
+import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANTS_MASTER_NAME;
+import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANT_MODULE_NAME;
 
 @Component
 @Slf4j
@@ -44,9 +48,9 @@ public class MeasurementValidator {
      */
     public void validateTenantId(MeasurementRequest measurementRequest){
         Set<String> validTenantSet = new HashSet<>();
-        List<String> masterList = Collections.singletonList(MBRegistryConfiguration.getMdmsMasterName());
-        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(), MBRegistryConfiguration.getMdmsTenantId(), MBRegistryConfiguration.getMdmsModuleName(),masterList);
-        String node = response.get(MBRegistryConfiguration.getMdmsModuleName()).get(MBRegistryConfiguration.getMdmsMasterName()).toString();
+        List<String> masterList = Collections.singletonList(MDMS_TENANTS_MASTER_NAME);
+        Map<String, Map<String, JSONArray>> response = mdmsUtil.fetchMdmsData(measurementRequest.getRequestInfo(), MBRegistryConfiguration.getStateLevelTenantId(), MDMS_TENANT_MODULE_NAME,masterList);
+        String node = response.get(MDMS_TENANT_MODULE_NAME).get(MDMS_TENANTS_MASTER_NAME).toString();
         try {
                 JsonNode currNode = objectMapper.readTree(node);
                 for (JsonNode tenantNode : currNode) {
@@ -61,7 +65,7 @@ public class MeasurementValidator {
         List<Measurement> measurementList = measurementRequest.getMeasurements();
         for(int i=0;i<measurementList.size();i++){
             if(!validTenantSet.contains(measurementList.get(i).getTenantId())){
-                 throw new CustomException("TENANT_ID_NOT_FOUND",measurementList.get(i).getTenantId().toString()+" Tenant Id is Not found");
+                 throw new CustomException("TENANT_ID_NOT_FOUND",measurementList.get(i).getTenantId()+" Tenant Id is Not found");
             }
         }
     }
@@ -74,7 +78,7 @@ public class MeasurementValidator {
 
         for (Measurement measurement : measurementRegistrationRequest.getMeasurements()) {
             // Validate the measurement
-            criteria.setIds(Collections.singletonList(measurement.getId().toString()));
+            criteria.setIds(Collections.singletonList(measurement.getId()));
             criteria.setTenantId(measurement.getTenantId());
 
             //Getting list every time because tenantId may vary
@@ -89,6 +93,18 @@ public class MeasurementValidator {
         //setting totalValue
         for(Measurement measurement:measurementRegistrationRequest.getMeasurements() ){
             for(Measure measure:measurement.getMeasures()){
+                if (measure.getLength() == null || measure.getLength() == BigDecimal.valueOf(0)) {
+                    measure.setLength(BigDecimal.valueOf(1));
+                }
+                if (measure.getHeight() == null || measure.getHeight() == BigDecimal.valueOf(0)) {
+                    measure.setHeight(BigDecimal.valueOf(1));
+                }
+                if (measure.getBreadth() == null || measure.getBreadth() == BigDecimal.valueOf(0)) {
+                    measure.setBreadth(BigDecimal.valueOf(1));
+                }
+                if (measure.getNumItems() == null || measure.getNumItems() == BigDecimal.valueOf(0)) {
+                    measure.setNumItems(BigDecimal.valueOf(1));
+                }
                 measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
             }
         }
@@ -101,7 +117,7 @@ public class MeasurementValidator {
 
         if(!documentIds.isEmpty()){
             // Make an API request to validate document IDs
-            String responseJson = makeApiRequest(documentIds);
+            String responseJson = makeApiRequest(documentIds, measurements.get(0).getTenantId());
 
             // Check if document IDs match the response
             boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
@@ -112,7 +128,7 @@ public class MeasurementValidator {
         }
     }
     public void validateMeasureRequest(Measurement existingMeasurement,Measurement measurement){
-        Set<UUID> measuresIds=new HashSet<>();
+        Set<String> measuresIds=new HashSet<>();
         for(Measure measure:existingMeasurement.getMeasures()){
             measuresIds.add(measure.getId());
         }
@@ -142,13 +158,13 @@ public class MeasurementValidator {
         }
     }
 
-    private String makeApiRequest(List<String> documentIds) {
+    private String makeApiRequest(List<String> documentIds, String tenantId) {
         String baseUrl = MBRegistryConfiguration.getBaseFilestoreUrl();
         String endpoint = MBRegistryConfiguration.getBaseFilestoreEndpoint();
 
         // Build the URL with query parameters
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl + endpoint)
-                .queryParam("tenantId", "pg.citya");
+                .queryParam("tenantId", tenantId);
 
         for (String documentId : documentIds) {
             builder.queryParam("fileStoreIds", documentId);
