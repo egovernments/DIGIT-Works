@@ -131,7 +131,7 @@ public class WageSeekerBillGeneratorService {
 				String individualId = individualEntry.getIndividualId();
 				// Calculate net amount to pay to wage seeker
 				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges);
-				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount));
+				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount)).setScale(0, RoundingMode.HALF_UP);
 				// BUGFIX PFM-4214 - If actual amount to pay is 0 then do not generate the payment for that individual
 				if (actualAmountToPay.compareTo(BigDecimal.ZERO) <= 0)
 					continue;

@@ -43,6 +43,8 @@ frontend/micro-ui/web/public/index.html
 # Changelog
 
 ```bash
+0.2.28 updated css for login and landing page
+0.2.25 Login page css updated
 0.2.12 added dss for Table chart
 0.2.11 added the style for dss metric chart
 0.2.10 fixed minor issues
