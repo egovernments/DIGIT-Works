@@ -3,16 +3,37 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Fragment } from "react";
 
-const MeasureInputAtom = ({ id, row, mode, disable = false, fieldKey, value, dispatch }) => (
+function has4DecimalPlaces(number, decimalPlaces) {
+
+  if(number == "" || isNaN(number))
+    return true;
+  var numStr = number.toString();
+  // Using regex to check if its accepting upto 4 decimal places
+  var regex = new RegExp(`^\\d+(\\.\\d{0,${decimalPlaces}})?$`);
+  return regex.test(numStr);
+}
+
+const MeasureInputAtom = ({ id, row, mode, disable = false, fieldKey, value, dispatch, InputDecimalValidation }) => (
   <td>
     <TextInput
       value={value}
       type={fieldKey == "description" ? "text" : "number"}
       onChange={(newValue) => {
-        dispatch({
-          type: "UPDATE_ROW",
-          state: { id: id, value: newValue.target.value, row: row, type: fieldKey },
-        });
+        if(InputDecimalValidation?.active){
+          //calling the input validation here to check if the input is under provided decimal places
+            if(has4DecimalPlaces(parseFloat(newValue.target.value), InputDecimalValidation?.noOfDecimalPlaces))
+            dispatch({
+              type: "UPDATE_ROW",
+              state: { id: id, value: newValue.target.value, row: row, type: fieldKey },
+            });
+        }
+        else
+        {
+          dispatch({
+            type: "UPDATE_ROW",
+            state: { id: id, value: newValue.target.value, row: row, type: fieldKey },
+          });
+        }
       }}
       disable={disable}
     />
@@ -25,6 +46,10 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
     { label: t("MB_YES"), code: true },
     { label: t("MB_NO"), code: false },
   ];
+  const InputDecimalValidation = {
+    active : true,
+    noOfDecimalPlaces : 4
+  }
   return (
     <tr key={index}>
       <td>{rowState?.sNo}</td>
@@ -56,20 +81,23 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
             id={index + 1}
             key={"description"}
             value={rowState?.["description"]}
+            InputDecimalValidation={InputDecimalValidation}
           />
         </>
       )}
 
-      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"number"} id={index + 1} value={rowState?.["number"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"length"} id={index + 1} value={rowState?.["length"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} />
-      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"number"} id={index + 1} value={rowState?.["number"]} InputDecimalValidation={InputDecimalValidation} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"length"} id={index + 1} value={rowState?.["length"]} InputDecimalValidation={InputDecimalValidation} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"width"} id={index + 1} value={rowState?.["width"]} InputDecimalValidation={InputDecimalValidation} />
+      <MeasureInputAtom dispatch={dispatch} row={value} disable={mode.includes("VIEW")} fieldKey={"height"} id={index + 1} value={rowState?.["height"]} InputDecimalValidation={InputDecimalValidation} />
       <td>{rowState?.noOfunit}</td>
       {mode == "CREATEALL" && (
         <td>
           <span
             className="icon-wrapper"
             onClick={(newValue) => {
+              //added this condition as user should not able to delete row if only one is present
+              if(index != 0)
               dispatch({
                 type: "REMOVE_ROW",
                 id: index + 1,

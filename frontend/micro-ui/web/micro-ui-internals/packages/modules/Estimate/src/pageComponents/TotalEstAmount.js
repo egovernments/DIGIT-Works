@@ -2,12 +2,19 @@ import { CardSectionHeader } from '@egovernments/digit-ui-react-components'
 import React,{ useEffect,useState,useMemo } from 'react'
 
 const TotalEstAmount = ({formData,setValue,t,...props}) => {
-    const formFieldNameNonSor = "nonSORTablev1"
+    const formFieldNameNonSor = "NONSORtable"
+    const formFieldNameSor = "SORtable"
     const formFieldNameOverheads = "overheadDetails"
     
     let getTotalAmount = useMemo(() => {
+        let totalSor = formData?.[formFieldNameSor]?.reduce((acc,row)=>{
+            let amountNonSor =  parseFloat(row?.amount) 
+            amountNonSor = amountNonSor ? amountNonSor : 0
+            return amountNonSor + parseFloat(acc)
+        }, 0) 
+        totalSor = totalSor ? totalSor : 0
         let totalNonSor = formData?.[formFieldNameNonSor]?.reduce((acc,row)=>{
-            let amountNonSor =  parseFloat(row?.estimatedAmount) 
+            let amountNonSor =  parseFloat(row?.amount) 
             amountNonSor = amountNonSor ? amountNonSor : 0
             return amountNonSor + parseFloat(acc)
         }, 0) 
@@ -17,14 +24,14 @@ const TotalEstAmount = ({formData,setValue,t,...props}) => {
             amountOverheads = amountOverheads ? amountOverheads : 0
             return amountOverheads + parseFloat(acc)
         }, 0)
-        totalOverHeads = totalOverHeads ? totalOverHeads : 100
+        totalOverHeads = !(Number.isNaN(totalOverHeads))  ? totalOverHeads : 100
 
-        return totalNonSor + totalOverHeads
+        return totalSor + totalNonSor + totalOverHeads
     }, [formData])
 
     
     useEffect(() => {
-        setValue("totalEstAmount", getTotalAmount)
+        setValue("totalEstimatedAmount", getTotalAmount)
     }, [getTotalAmount])
     
  

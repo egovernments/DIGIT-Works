@@ -69,7 +69,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
         if (initialValue(element)) {
           calculatedValue = 0;
         }
-        state[findIndex].noOfunit = calculatedValue || 0;
+        state[findIndex].noOfunit = calculatedValue ? calculatedValue?.toFixed(4) : 0;
         state[findIndex].rowAmount = unitRate * calculatedValue || 0;
         return [...state];
       case "REMOVE_ROW":
@@ -118,13 +118,12 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
     <Fragment>
       <div>
       <CardSectionHeader style={{fontSize:"18px"}}>{t("WORKS_MEASUREMENT_TABLE_HEADER")}</CardSectionHeader>
-      {mode.includes("VIEW") && 
       <span className="measure-table-header" onClick={() => {
         tableData[tableIndex].showMeasure = false;
         setValue(tableData);
       }}>
       <CloseSvg />
-      </span>}
+      </span>
       </div>
       <table className="table reports-table sub-work-table">
         <thead>
@@ -175,7 +174,7 @@ const MeasureCard = React.memo(({ columns, fields = [], register, setValue, tabl
                       label={t("MB_DONE")}
                       onButtonClick={() => {
                         // check for deduction and set accordingly
-                        const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => item?.isDeduction == true ? total - item.noOfunit :  total + item.noOfunit, 0);
+                        const totalQuantity = tableData[tableIndex].measures.reduce((total, item) => item?.isDeduction == true ? total - parseFloat(item.noOfunit) :  total + parseFloat(item.noOfunit), 0);
                         tableData[tableIndex].measures = state;
                         tableData[tableIndex].amount = parseFloat(totalQuantity * unitRate).toFixed(2);
                         tableData[tableIndex].showMeasure = false;

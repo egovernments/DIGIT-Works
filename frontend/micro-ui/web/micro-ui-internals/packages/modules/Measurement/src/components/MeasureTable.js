@@ -69,26 +69,24 @@ const MeasureTable = (props) => {
         obj = { width: "1rem" };
         break;
       case 2:
-        obj = { width: "30%" };
-        break;
-      case 3:
-        obj = { width: "27rem" };
+        if (tableKey === "NONSOR") obj = { width: "53%"}
         break;
       case 4:
-        obj = { width: "27rem" };
-        break;
-      case 5:
-        obj = { width: "3%" };
+        (tableKey === "NONSOR")? obj = {width : "27rem"}  : obj = { width: "30%" };
         break;
       default:
-        obj = { width: "92rem" };
+        obj = { width: "27rem" };
         break;
     }
     return obj;
   };
 
   const getColumns = (mode, t) => {
-    if (mode === "CREATEALL") {
+    if (mode === "CREATEALL" && tableKey === "SOR") {
+      return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
+    } else if (mode === "VIEWES" && tableKey === "SOR") {
+      return [t("WORKS_SNO"), t("SOR TYPE"), t("CODE"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
+    } else if (mode === "CREATEALL") {
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT"), t("")];
     } else if (mode === "VIEWES") {
       return [t("WORKS_SNO"), t("PROJECT_DESC"), t("PROJECT_UOM"), t("CS_COMMON_RATE"), t("WORKS_ESTIMATED_QUANTITY"), t("WORKS_ESTIMATED_AMOUNT")];
@@ -175,6 +173,10 @@ const MeasureTable = (props) => {
               </>
             ) : (
               <>
+                {/*added this dummy line because project creation and search is failing will check this once it works */}
+                {((mode === "VIEWES") && tableKey === "SOR") &&<td>{`${t(`${"Works_D"}`)}/ ${t(`${"SC_D"}`)}`}</td>}
+                {((mode === "CREATEALL" || mode === "VIEWES") && (row?.sorType || row?.sorSubType) && tableKey === "SOR") &&<td>{`${t(`WORKS_SOR_TYPE_${row?.sorType}`)}/ ${t(`WORKS_SOR_SUBTYPE_${row?.sorSubType}`)}`}</td>}
+                {((mode === "CREATEALL" || mode === "VIEWES") && tableKey === "SOR") && <td>{row?.sorCode}</td>}
                 <td>{row.description}</td>
                 <td>{row.uom}</td>
                 <td>
@@ -244,7 +246,7 @@ const MeasureTable = (props) => {
           {row?.showMeasure && !initialState.length > 0 && (
             <tr>
               <td colSpan={"1"}></td>
-              <td colSpan={mode == "CREATEALL" ? 5 : 7}>
+              <td colSpan={mode == "CREATEALL" && tableKey !== "SOR" ? 5 : 7}>
                 <MeasureCard
                   columns={[
                     t("WORKS_SNO"),
