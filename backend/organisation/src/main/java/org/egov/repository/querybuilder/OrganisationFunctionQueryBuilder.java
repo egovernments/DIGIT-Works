@@ -69,8 +69,8 @@ public class OrganisationFunctionQueryBuilder {
 
         if (StringUtils.isNotBlank(searchCriteria.getName())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" org.name LIKE ? ");
-            preparedStmtList.add('%' + searchCriteria.getName() + '%');
+            queryBuilder.append(" LOWER(org.name) LIKE ? ");
+            preparedStmtList.add("LOWER("+'%' + searchCriteria.getName() + '%'+")");
         }
 
         if (StringUtils.isNotBlank(searchCriteria.getApplicationNumber())) {
