@@ -117,7 +117,7 @@ public class UserUtil {
         userInfo.setRoles(Collections.singleton(role));
         userInfo.setType(userType);
         userInfo.setUsername(mobileNumber);
-        userInfo.setTenantId(getStateLevelTenant(tenantId));
+        userInfo.setTenantId(tenantId);
         userInfo.setActive(true);
     }
 
@@ -130,12 +130,8 @@ public class UserUtil {
         Role role = Role.builder().build();
         role.setCode("CITIZEN");
         role.setName("Citizen");
-        role.setTenantId(getStateLevelTenant(tenantId));
+        role.setTenantId(tenantId);
         return role;
-    }
-
-    public String getStateLevelTenant(String tenantId){
-        return tenantId.split("\\.")[0];
     }
 
 }
