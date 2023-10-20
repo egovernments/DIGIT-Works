@@ -19,9 +19,10 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
   useEffect(() => {
     const processArrays = () => {
       if (estimateDetails) {
+        //Transforming the estimate search response according to formdata 
         setViewData({
-          SOR: transformEstimateObjects(estimateDetails?.estimateDetails, "SOR"),
-          NONSOR: transformEstimateObjects(estimateDetails?.estimateDetails, "NON-SOR"),
+          SOR: transformEstimateObjects(estimateDetails, "SOR"),
+          NONSOR: transformEstimateObjects(estimateDetails, "NON-SOR"),
         });
       }
     };

@@ -194,6 +194,13 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
           tenantId: tenantId,
           ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
           locality: projectData?.projectDetails?.searchedProject?.basicDetails?.locality,
+          sorSkillData : filteredFormData?.SORtable?.map((ob) => {
+            return {
+              sorId : ob?.sorId,
+              sorType : ob?.sorType,
+              sorSubType : ob?.sorSubType
+            }
+        })
         },
       },
       workflow: {
@@ -242,6 +249,13 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
           totalEstimatedAmount: data?.totalEstimateAmount,
           tenantId: tenantId,
           projectName: projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
+          sorSkillData : filteredFormData?.SORtable?.map((ob) => {
+            return {
+              sorId : ob?.sorId,
+              sorType : ob?.sorType,
+              sorSubType : ob?.sorSubType
+            }
+        })
         },
       },
       workflow: {

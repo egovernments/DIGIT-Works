@@ -9,7 +9,8 @@ output is array of object of type which is passed
 
 */
 
-export const transformEstimateObjects = (lineItems, type) => {
+export const transformEstimateObjects = (estimateData, type) => {
+    let lineItems = estimateData?.estimateDetails;
     const convertedObject = lineItems.filter(e => e.category === type).reduce((acc, curr) => {
         if (acc[curr.sorId]) {
             acc[curr.sorId].push(curr);
@@ -42,6 +43,9 @@ export const transformEstimateObjects = (lineItems, type) => {
             unitRate: convertedObject[key]?.[0]?.unitRate,
             approvedQuantity: convertedObject[key].reduce((acc, curr) => acc + curr.noOfunit, 0),
             showMeasure:false,
+            sorCode : convertedObject[key]?.[0]?.sorId,
+            sorType: estimateData?.additionalDetails?.sorSkillData?.filter((ob) => ob?.sorId === key)?.[0]?.sorType,
+            sorSubType: estimateData?.additionalDetails?.sorSkillData?.filter((ob) => ob?.sorId === key)?.[0]?.sorSubType,
             measures,
         };
     });

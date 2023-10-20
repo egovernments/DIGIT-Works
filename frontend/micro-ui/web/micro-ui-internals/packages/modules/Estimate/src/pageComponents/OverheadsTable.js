@@ -69,8 +69,17 @@ const OverheadsTable = ({ control, watch, ...props }) => {
     setTotal(formData);
   }, [formData, rows]);
 
+  //calculating total sor and non sor amount in order to calculate amount in overheads
+  function getSorNonSorTotalAmount() {
+    let totalSor = formData?.SORtable?.reduce((acc, row) => (row?.amount ? parseFloat(row?.amount)  + acc : acc), 0);
+    totalSor = totalSor ? totalSor : 0;
+    let totalNONSor = formData?.NONSORtable?.reduce((acc, row) => (row?.amount ? parseFloat(row?.amount)  + acc : acc), 0);
+    totalNONSor = totalNONSor ? totalNONSor : 0;
+    return totalSor + totalNONSor;
+  }
+
   useEffect(() => {
-    setSorTotal(formData?.nonSORTablev1?.reduce((acc, row) => (row?.estimatedAmount ? parseFloat(row?.estimatedAmount) + acc : acc), 0));
+    setSorTotal(getSorNonSorTotalAmount());
   }, [formData]);
 
   useEffect(() => {
