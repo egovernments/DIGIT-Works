@@ -51,7 +51,7 @@ public class WorkflowService {
                 measurementServiceRequest.getMeasurements().get(i).setWorkflow(workflow); // Set workflow
 
             }
-            if(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction().equals(config.rejectAction)){
+            if(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction().equals(config.rejectedStatus)){
                 measurementServiceRequest.getMeasurements().get(i).setIsActive(false);
             }
         }

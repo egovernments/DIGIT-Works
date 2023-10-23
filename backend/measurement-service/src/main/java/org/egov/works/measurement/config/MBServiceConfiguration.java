@@ -149,7 +149,6 @@ public class MBServiceConfiguration {
     public String approvedStatus = "APPROVED";
     public String draftAction="SAVE_AS_DRAFT";
     public String submitAction="SUBMIT";
-    public String rejectAction = "REJECT";
     public String editResubmitAction="EDIT/RE-SUBMIT";
     public Set<String> actionSets = new HashSet<>(Arrays.asList(draftAction, submitAction, editResubmitAction));
 
