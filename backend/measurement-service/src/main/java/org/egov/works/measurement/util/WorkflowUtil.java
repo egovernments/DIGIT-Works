@@ -43,7 +43,7 @@ public class WorkflowUtil {
         }
 
         if (CollectionUtils.isEmpty(response.getProcessInstances())) {
-            throw new CustomException("PROCESS_INSTANCES_NOT_FOUND", "Process instances not found for this businessId ::" + businessId);
+            throw new CustomException("PROCESS_INSTANCES_NOT_FOUND", "Process instances not found for this businessId :: " + businessId);
         }
 
         return response.getProcessInstances().get(0).getState().getActions().stream().map(Action::getAction).collect(Collectors.toList());
