@@ -3,7 +3,7 @@ package org.egov.works.measurement.util;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.tracer.model.CustomException;
+import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,8 @@ import java.util.Map;
 @Component
 public class MeasurementRegistryUtil {
 
+    @Autowired
+    private ErrorConfiguration errorConfigs;
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
@@ -45,7 +47,7 @@ public class MeasurementRegistryUtil {
 
         handleNullPagination(measurementSearchRequest);
         if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
-            throw new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory.");
+            throw errorConfigs.tenantIdMandatory;
         }
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;

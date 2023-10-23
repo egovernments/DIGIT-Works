@@ -1,7 +1,7 @@
 package org.egov.works.measurement.service;
 
 import org.egov.common.contract.models.Document;
-import org.egov.tracer.model.CustomException;
+import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.util.IdgenUtil;
 import org.egov.works.measurement.util.MeasurementRegistryUtil;
@@ -21,6 +21,8 @@ public class EnrichmentService {
     private MBRegistryConfiguration MBRegistryConfiguration;
     @Autowired
     private IdgenUtil idgenUtil;
+    @Autowired
+    private ErrorConfiguration errorConfigs;
     @Autowired
     private MeasurementRegistryUtil measurementRegistryUtil;
 
@@ -51,7 +53,7 @@ public class EnrichmentService {
                 enrichCumulativeValue(measurement);
             }
             catch (Exception e){
-                throw new CustomException("CUMULATIVE_ENRICHMENT_ERROR", "Error during Cumulative enrichment");
+                throw errorConfigs.cumulativeEnrichmentError;
             }
         }
     }
@@ -145,7 +147,7 @@ public class EnrichmentService {
                 enrichCumulativeValueOnUpdate(measurement);
             }
             catch (Exception  e){
-                throw new CustomException("CUMULATIVE_ENRICHMENT_ERROR", "Error during Cumulative enrichment");
+                throw errorConfigs.cumulativeEnrichmentError;
             }
         }
     }
