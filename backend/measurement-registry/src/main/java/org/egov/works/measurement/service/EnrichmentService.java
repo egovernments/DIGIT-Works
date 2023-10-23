@@ -1,6 +1,7 @@
 package org.egov.works.measurement.service;
 
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.util.IdgenUtil;
@@ -13,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static org.egov.works.measurement.config.ErrorConfiguration.CUMULATIVE_ENRICHMENT_ERROR_CODE;
+import static org.egov.works.measurement.config.ErrorConfiguration.CUMULATIVE_ENRICHMENT_ERROR_MSG;
 
 @Component
 public class EnrichmentService {
@@ -53,7 +57,7 @@ public class EnrichmentService {
                 enrichCumulativeValue(measurement);
             }
             catch (Exception e){
-                throw errorConfigs.cumulativeEnrichmentError;
+                throw new CustomException(CUMULATIVE_ENRICHMENT_ERROR_CODE, CUMULATIVE_ENRICHMENT_ERROR_MSG);
             }
         }
     }
@@ -147,7 +151,7 @@ public class EnrichmentService {
                 enrichCumulativeValueOnUpdate(measurement);
             }
             catch (Exception  e){
-                throw errorConfigs.cumulativeEnrichmentError;
+                throw new CustomException(CUMULATIVE_ENRICHMENT_ERROR_CODE, CUMULATIVE_ENRICHMENT_ERROR_MSG);
             }
         }
     }

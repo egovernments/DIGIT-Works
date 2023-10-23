@@ -4,6 +4,7 @@ package org.egov.works.measurement.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.kafka.MBRegistryProducer;
@@ -17,6 +18,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static org.egov.works.measurement.config.ErrorConfiguration.*;
 
 
 @Service
@@ -96,9 +99,9 @@ public class MeasurementRegistry {
 
         handleNullPagination(measurementSearchRequest);
         if (searchCriteria == null) {
-            throw errorConfigs.searchCriteriaMandatory;
+            throw new CustomException(SEARCH_CRITERIA_MANDATORY_CODE, SEARCH_CRITERIA_MANDATORY_MSG);
         } else if (StringUtils.isEmpty(searchCriteria.getTenantId())) {
-            throw errorConfigs.tenantIdMandatory;
+            throw new CustomException(TENANT_ID_MANDATORY_CODE, TENANT_ID_MANDATORY_MSG);
         }
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;

@@ -3,6 +3,7 @@ package org.egov.works.measurement.util;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
@@ -13,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.egov.works.measurement.config.ErrorConfiguration.TENANT_ID_MANDATORY_CODE;
+import static org.egov.works.measurement.config.ErrorConfiguration.TENANT_ID_MANDATORY_MSG;
 
 @Component
 public class MeasurementRegistryUtil {
@@ -47,7 +51,7 @@ public class MeasurementRegistryUtil {
 
         handleNullPagination(measurementSearchRequest);
         if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
-            throw errorConfigs.tenantIdMandatory;
+            throw new CustomException(TENANT_ID_MANDATORY_CODE, TENANT_ID_MANDATORY_MSG);
         }
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
         return measurements;

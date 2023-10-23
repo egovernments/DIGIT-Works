@@ -18,28 +18,24 @@ import java.util.Collections;
 @Setter
 @Getter
 public class ErrorConfiguration {
-    public CustomException measurementDataNotExist = new CustomException("MEASUREMENT_DATA_NOT_EXIST", "Measurement ID not present in the database");
-    public CustomException measurementServiceDataNotExist = new CustomException("MEASUREMENT_SERVICE_DATA_NOT_EXIST", "MeasurementRegistry data does not exist");
-    public CustomException measuresDataNotExist = new CustomException("MEASURES_DATA_NOT_EXIST", "Measures data does not exist");
-    public CustomException cumulativeEnrichmentError = new CustomException("CUMULATIVE_ENRICHMENT_ERROR", "Error during Cumulative enrichment");
+    public static final String MEASUREMENT_DATA_NOT_EXIST_CODE = "MEASUREMENT_DATA_NOT_EXIST";
+    public static final String MEASUREMENT_DATA_NOT_EXIST_MSG = "Measurement ID not present in the database";
 
-    public CustomException noActiveContractId = new CustomException(Collections.singletonMap("NO_ACTIVE_CONTRACT_ID", "No active contract with the given contract id"));
-    public CustomException duplicateTargetIds = new CustomException("DUPLICATE_TARGET_IDS", "Duplicate Target Ids received, it should be unique");
+    public static final String MEASURES_DATA_NOT_EXIST_CODE = "MEASURES_DATA_NOT_EXIST";
+    public static final String MEASURES_DATA_NOT_EXIST_MSG = "Measures data does not exist";
 
-    public CustomException incompleteMeasures = new CustomException("INCOMPLETE_MEASURES", "Incomplete Measures, some active line items are missed for the given contract");
+    public static final String CUMULATIVE_ENRICHMENT_ERROR_CODE = "CUMULATIVE_ENRICHMENT_ERROR";
+    public static final String CUMULATIVE_ENRICHMENT_ERROR_MSG = "Error during Cumulative enrichment";
 
-    public CustomException invalidDocuments = new CustomException("INVALID_DOCUMENTS", "Document IDs are invalid");
-    public CustomException noValidEstimate = new CustomException("NO_VALID_ESTIMATE", "No valid Estimate found");
-    public CustomException idsAndMbNumberMismatch = new CustomException("IDS_AND_MB_NUMBER_MISMATCH", "Id and Measurement Number do not match");
-    public CustomException invalidEstimateID = new CustomException("INVALID_ESTIMATE_ID", "Estimate Ids are invalid");
-    public CustomException tenantIdMandatory = new CustomException("TENANT_ID_MANDATORY", "TenantId is mandatory.");
-    public CustomException searchCriteriaMandatory = new CustomException("SEARCH_CRITERIA_MANDATORY", "Search Criteria is mandatory");
+    public static final String INVALID_DOCUMENTS_CODE = "INVALID_DOCUMENTS";
+    public static final String INVALID_DOCUMENTS_MSG = "Document IDs are invalid";
 
-    public CustomException apiRequestFailed(ResponseEntity<String> response){
-        return new CustomException("API_REQUEST_FAIL","API request failed with status code: " + response);
-    }
-    public CustomException apiRequestFailedIOexception(IOException e){
-        return new CustomException("API_REQUEST_FAIL_IO_EXCEPTION","API request failed: " + e.getMessage());
-    }
+    public static final String TENANT_ID_MANDATORY_CODE = "TENANT_ID_MANDATORY";
+    public static final String TENANT_ID_MANDATORY_MSG = "TenantId is mandatory.";
 
+    public static final String SEARCH_CRITERIA_MANDATORY_CODE = "SEARCH_CRITERIA_MANDATORY";
+    public static final String SEARCH_CRITERIA_MANDATORY_MSG = "Search Criteria is mandatory";
+
+    public static final String API_REQUEST_FAIL_CODE = "API_REQUEST_FAIL";
+    public static final String API_REQUEST_FAIL_MSG = "API request failed with status code: ";
 }

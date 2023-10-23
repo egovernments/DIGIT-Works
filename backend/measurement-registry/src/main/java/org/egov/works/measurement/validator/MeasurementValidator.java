@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static org.egov.works.measurement.config.ErrorConfiguration.*;
 import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANTS_MASTER_NAME;
 import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANT_MODULE_NAME;
 
@@ -84,7 +85,7 @@ public class MeasurementValidator {
             //Getting list every time because tenantId may vary
             List<Measurement> existingMeasurementList= measurementRegistry.searchMeasurements(criteria,searchRequest);
             if (existingMeasurementList.isEmpty()) {
-                throw errorConfigs.measurementDataNotExist;
+                throw new CustomException(MEASUREMENT_DATA_NOT_EXIST_CODE, MEASUREMENT_DATA_NOT_EXIST_MSG);
             }
             measurementExisting.add(existingMeasurementList.get(0));
             validateMeasureRequest(existingMeasurementList.get(0),measurement);
@@ -123,7 +124,7 @@ public class MeasurementValidator {
             boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
 
             if (!documentIdsMatch) {
-                throw errorConfigs.invalidDocuments;
+                throw new CustomException(INVALID_DOCUMENTS_CODE, INVALID_DOCUMENTS_MSG);
             }
         }
     }
@@ -134,7 +135,7 @@ public class MeasurementValidator {
         }
         for(Measure measure:measurement.getMeasures()){
             if(!measuresIds.contains(measure.getId())){
-                throw errorConfigs.measuresDataNotExist;
+                throw new CustomException(MEASURES_DATA_NOT_EXIST_CODE, MEASURES_DATA_NOT_EXIST_MSG);
             }
         }
     }
@@ -183,7 +184,7 @@ public class MeasurementValidator {
             return responseEntity.getBody();
         } else {
             // Handle non-200 status codes (e.g., by throwing an exception)
-            throw errorConfigs.apiRequestFailed(responseEntity);
+            throw new CustomException(API_REQUEST_FAIL_CODE, API_REQUEST_FAIL_MSG + responseEntity);
         }
     }
 
