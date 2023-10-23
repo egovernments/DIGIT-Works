@@ -8,6 +8,7 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.workflow.Action;
 import org.egov.common.contract.workflow.BusinessService;
 import org.egov.tracer.model.CustomException;
+import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.service.WorkflowService;
@@ -44,6 +45,9 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private WorkflowUtil workflowUtil;
+
+    @Autowired
+    private ErrorConfiguration errorConfigs;
 
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
@@ -96,7 +100,7 @@ public class MeasurementServiceValidator {
             Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
             contractUtil.validateByReferenceId(measurementServiceRequest);
             if (!isValidContract) {
-                throw new CustomException("INVALID_CONTRACT", MBServiceConfiguration.INVALID_CONTRACT);
+                throw errorConfigs.invalidContract;
             }
         });
     }
@@ -105,7 +109,7 @@ public class MeasurementServiceValidator {
             // validate contracts
             Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
             if (!isValidContract) {
-                throw new CustomException("INVALID_CONTRACT", MBServiceConfiguration.INVALID_CONTRACT);
+                throw errorConfigs.invalidContract;
             }
         });
     }
@@ -122,7 +126,7 @@ public class MeasurementServiceValidator {
         List<MeasurementService> existingMeasurementService = serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate, mbNumbers);
         enrichMeasurementServiceWithMeasurement(existingMeasurementService,measurementServiceRequest);
         if(existingMeasurementService.size()!=measurementServiceRequest.getMeasurements().size()){
-            throw new CustomException("MEASUREMENT_SERVICE_DATA_NOT_EXIST", MBServiceConfiguration.MEASUREMENT_SERVICE_DATA_NOT_EXIST);
+            throw errorConfigs.measurementServiceDataNotExist;
         }
 
         // if wfStatus is rejected then throw error
@@ -167,7 +171,7 @@ public class MeasurementServiceValidator {
     public void checkDataRejected(List<MeasurementService> existingMeasurementService){
         for(MeasurementService measurementService:existingMeasurementService){
             if(measurementService.getWfStatus().equals(MBServiceConfiguration.rejectedStatus)){
-                throw new CustomException("REJECTED_ERROR", "Measurement is rejected for measurementNumber :: " + measurementService.getMeasurementNumber());
+                throw errorConfigs.rejectedError(measurementService.getMeasurementNumber());
             }
         }
     }
@@ -191,7 +195,7 @@ public class MeasurementServiceValidator {
                 .collect(Collectors.toList());
 
         if (!existingIds.equals(newIds) || !existingMeasurementNumbers.equals(newMeasurementNumbers)) {
-            throw new CustomException("IDS_AND_MB_NUMBER_MISMATCH", MBServiceConfiguration.IDS_AND_MB_NUMBER_MISMATCH);
+            throw errorConfigs.idsAndMbNumberMismatch;
         }
     }
 
@@ -243,7 +247,7 @@ public class MeasurementServiceValidator {
         measurementServiceRequest.getMeasurements().forEach(measurementService -> {
             List<String> allowedActions = workflowUtil.getActions(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber());
             if (!allowedActions.contains(measurementService.getWorkflow().getAction()))
-                throw new CustomException("ACTION_NOT_FOUND", "Action "+measurementService.getWorkflow().getAction()+" not found in config for the measurement number :: "+measurementService.getMeasurementNumber());
+                throw new CustomException("ACTION_NOT_FOUND", "Action "+measurementService.getWorkflow().getAction()+" not found in config for the measurement number:: "+measurementService.getMeasurementNumber());
         });
     }
     public void validateWorkflowForCreate (MeasurementServiceRequest measurementServiceRequest) {
@@ -251,7 +255,7 @@ public class MeasurementServiceValidator {
             BusinessService businessService = workflowUtil.getBusinessService(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), MBServiceConfiguration.getBussinessServiceCode());
             List<String> allowedActions = businessService.getStates().stream().filter(state -> state.getIsStartState() == true).flatMap(state -> state.getActions().stream()).map(Action::getAction).collect(Collectors.toList());
             if (!allowedActions.contains(measurementService.getWorkflow().getAction()))
-                throw new CustomException("ACTION_NOT_FOUND", "Action "+measurementService.getWorkflow().getAction()+" not found in config for the measurement number :: "+measurementService.getMeasurementNumber());
+                throw new CustomException("ACTION_NOT_FOUND", "Action "+measurementService.getWorkflow().getAction()+" not found in config for the measurement number:: "+measurementService.getMeasurementNumber());
         });
     }
 
