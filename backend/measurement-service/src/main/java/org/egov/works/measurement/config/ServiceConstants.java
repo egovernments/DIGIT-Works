@@ -32,6 +32,7 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+    public static final String BUSINESS_IDS = "&businessIds=";
     public static final String MEASUREMENT_SERVICE_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
     public static final String MEASUREMENT_SERVICE_MSGS_JSONPATH = "$.messages.*.message";
     public static final String MB_LOCALIZATION_MODULE_CODE = "rainmaker-measurement-book";

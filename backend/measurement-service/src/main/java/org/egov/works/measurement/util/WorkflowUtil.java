@@ -31,6 +31,24 @@ public class WorkflowUtil {
     private MBServiceConfiguration configs;
 
 
+    public List<String> getActions (RequestInfo requestInfo, String tenantId, String businessId) {
+        StringBuilder url = getSearchURLWithParamsForActionSearch(tenantId, businessId);
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+        Object result = repository.fetchResult(url, requestInfoWrapper);
+        ProcessInstanceResponse response = null;
+        try {
+            response = mapper.convertValue(result, ProcessInstanceResponse.class);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(PARSING_ERROR, FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH);
+        }
+
+        if (CollectionUtils.isEmpty(response.getProcessInstances())) {
+            throw new CustomException("PROCESS_INSTANCES_NOT_FOUND", "Process instances not found for this businessId ::" + businessId);
+        }
+
+        return response.getProcessInstances().get(0).getState().getActions().stream().map(Action::getAction).collect(Collectors.toList());
+    }
+
     /**
      * Searches the BussinessService corresponding to the businessServiceCode
      * Returns applicable BussinessService for the given parameters
@@ -94,6 +112,22 @@ public class WorkflowUtil {
         url.append(tenantId);
         url.append(BUSINESS_SERVICES);
         url.append(businessService);
+        return url;
+    }
+
+    /**
+     * Creates url for process search
+     * @param tenantId
+     * @param businessId
+     * @return
+     */
+    private StringBuilder getSearchURLWithParamsForActionSearch(String tenantId, String businessId) {
+        StringBuilder url = new StringBuilder(configs.getWfHost());
+        url.append(configs.getWfProcessInstanceSearchPath());
+        url.append(TENANTID);
+        url.append(tenantId);
+        url.append(BUSINESS_IDS);
+        url.append(businessId);
         return url;
     }
 

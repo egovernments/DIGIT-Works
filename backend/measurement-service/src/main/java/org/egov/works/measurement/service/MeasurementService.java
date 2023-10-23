@@ -57,7 +57,8 @@ public class MeasurementService {
         measurementServiceValidator.validateTenantId(body);
         // validate contracts
         measurementServiceValidator.validateContracts(body);
-
+        // validate workflow
+        measurementServiceValidator.validateWorkflowForCreate(body);
         //Create Measurement via Measurement Registry create api
         ResponseEntity<MeasurementResponse> measurementResponse = measurementRegistryUtil.createMeasurements(body);
 
@@ -91,7 +92,8 @@ public class MeasurementService {
 
         // Validate contracts for each measurement
         measurementServiceValidator.validateContractsOnUpdate(measurementServiceRequest);
-
+        // validate workflow
+        measurementServiceValidator.validateWorkflowForUpdate(measurementServiceRequest);
         //Update Measurement via Measurement Registry update api
         ResponseEntity<MeasurementResponse> measurementResponse = measurementRegistryUtil.updateMeasurements(measurementServiceRequest);
 

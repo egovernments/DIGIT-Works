@@ -5,15 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+import org.egov.common.contract.workflow.Action;
+import org.egov.common.contract.workflow.BusinessService;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.service.WorkflowService;
-import org.egov.works.measurement.util.ContractUtil;
-import org.egov.works.measurement.util.MdmsUtil;
-import org.egov.works.measurement.util.MeasurementRegistryUtil;
-import org.egov.works.measurement.util.MeasurementServiceUtil;
+import org.egov.works.measurement.util.*;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +42,9 @@ public class MeasurementServiceValidator {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private WorkflowUtil workflowUtil;
 
     @Autowired
     private ErrorConfiguration errorConfigs;
@@ -240,6 +242,21 @@ public class MeasurementServiceValidator {
             e.printStackTrace();
             return false; // Error occurred while parsing the response
         }
+    }
+    public void validateWorkflowForUpdate (MeasurementServiceRequest measurementServiceRequest){
+        measurementServiceRequest.getMeasurements().forEach(measurementService -> {
+            List<String> allowedActions = workflowUtil.getActions(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), measurementService.getMeasurementNumber());
+            if (!allowedActions.contains(measurementService.getWorkflow().getAction()))
+                throw new CustomException("ACTION_NOT_FOUND", "Action "+measurementService.getWorkflow().getAction()+" not found in config for the measurement number:: "+measurementService.getMeasurementNumber());
+        });
+    }
+    public void validateWorkflowForCreate (MeasurementServiceRequest measurementServiceRequest) {
+        measurementServiceRequest.getMeasurements().forEach(measurementService -> {
+            BusinessService businessService = workflowUtil.getBusinessService(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), MBServiceConfiguration.getBussinessServiceCode());
+            List<String> allowedActions = businessService.getStates().stream().filter(state -> state.getIsStartState() == true).flatMap(state -> state.getActions().stream()).map(Action::getAction).collect(Collectors.toList());
+            if (!allowedActions.contains(measurementService.getWorkflow().getAction()))
+                throw new CustomException("ACTION_NOT_FOUND", "Action "+measurementService.getWorkflow().getAction()+" not found in config for the measurement number:: "+measurementService.getMeasurementNumber());
+        });
     }
 
 }
