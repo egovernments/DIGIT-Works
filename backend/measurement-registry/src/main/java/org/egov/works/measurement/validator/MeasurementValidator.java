@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.MdmsUtil;
@@ -34,9 +33,6 @@ public class MeasurementValidator {
     private MdmsUtil mdmsUtil;
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private ErrorConfiguration errorConfigs;
     @Autowired
     private MBRegistryConfiguration MBRegistryConfiguration;
     @Autowired
@@ -84,7 +80,7 @@ public class MeasurementValidator {
             //Getting list every time because tenantId may vary
             List<Measurement> existingMeasurementList= measurementRegistry.searchMeasurements(criteria,searchRequest);
             if (existingMeasurementList.isEmpty()) {
-                throw errorConfigs.measurementDataNotExist;
+                throw new CustomException("MEASUREMENT_DATA_NOT_EXIST", "Measurement ID not present in the database");
             }
             measurementExisting.add(existingMeasurementList.get(0));
             validateMeasureRequest(existingMeasurementList.get(0),measurement);
@@ -123,7 +119,7 @@ public class MeasurementValidator {
             boolean documentIdsMatch = checkDocumentIdsMatch(documentIds, responseJson);
 
             if (!documentIdsMatch) {
-                throw errorConfigs.invalidDocuments;
+                throw new CustomException("INVALID_DOCUMENTS", "Document IDs are invalid");
             }
         }
     }
@@ -134,7 +130,7 @@ public class MeasurementValidator {
         }
         for(Measure measure:measurement.getMeasures()){
             if(!measuresIds.contains(measure.getId())){
-                throw errorConfigs.measuresDataNotExist;
+                throw new CustomException("MEASURES_DATA_NOT_EXIST", "Measures data does not exist");
             }
         }
     }
@@ -183,7 +179,7 @@ public class MeasurementValidator {
             return responseEntity.getBody();
         } else {
             // Handle non-200 status codes (e.g., by throwing an exception)
-            throw errorConfigs.apiRequestFailed(responseEntity);
+            throw new CustomException("API_REQUEST_FAIL","API request failed with status code: " + responseEntity);
         }
     }
 
