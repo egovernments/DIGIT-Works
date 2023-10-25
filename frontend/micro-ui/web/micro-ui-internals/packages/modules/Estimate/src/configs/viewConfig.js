@@ -15,6 +15,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
 
   const headerLocale = Digit.Utils.locale.getTransformedLocale(estimateDetails?.tenantId);
   const geoLocationValue = estimateDetails?.address?.latitude && estimateDetails?.address?.longitude ? `${latitude}, ${longitude}` : "NA";
+  console.log(estimateDetails,"essss")
 
   useEffect(() => {
     const processArrays = () => {
@@ -123,8 +124,14 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
           {
             type: "COMPONENT",
             cardHeader: { value: "", inlineStyles: {} },
+            component: "ViewAnalysisStatement",
+            props: {formData : {...estimateDetails, SORtable:  estimateDetails ? transformEstimateObjects(estimateDetails, "SOR") : []}}
+          },
+          {
+            type: "COMPONENT",
+            cardHeader: { value: "", inlineStyles: {} },
             component: "ViewTotalEstAmount",
-            props: {detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
+            props: {mode: "VIEWES", detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
           }
         ],
       },
