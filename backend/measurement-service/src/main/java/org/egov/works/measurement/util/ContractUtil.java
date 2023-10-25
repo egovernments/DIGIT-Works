@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.egov.works.measurement.config.ErrorConfiguration.*;
+import static org.egov.works.measurement.config.ServiceConstants.approvedStatus;
+import static org.egov.works.measurement.config.ServiceConstants.rejectedStatus;
 
 @Component
 public class ContractUtil {
@@ -155,7 +157,7 @@ public class ContractUtil {
             List<Measurement> measurements=measurementRegistryUtil.searchMeasurements(measurementSearchRequest).getBody().getMeasurements();
             if(!measurements.isEmpty()){
                 List<MeasurementService> measurementServices=serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate,Collections.singletonList(measurements.get(0).getMeasurementNumber()));
-                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals(MBServiceConfiguration.rejectedStatus)||measurementServices.get(0).getWfStatus().equals(MBServiceConfiguration.approvedStatus))){
+                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals(rejectedStatus)||measurementServices.get(0).getWfStatus().equals(approvedStatus))){
                     throw new CustomException(NOT_VALID_REFERENCE_ID_CODE, NOT_VALID_REFERENCE_ID_MSG + measurements.get(0).getReferenceId());
                 }
             }

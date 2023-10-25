@@ -91,7 +91,7 @@ public class WorkflowUtil {
      * @return
      */
     public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
-        if (workflow.getAction().equals(configs.draftAction) && (workflow.getAssignes() == null ||  workflow.getAssignes().isEmpty())){
+        if (workflow.getAction().equals(draftAction) && (workflow.getAssignes() == null ||  workflow.getAssignes().isEmpty())){
             workflow.setAssignes(Collections.singletonList(requestInfo.getUserInfo().getUuid()));
         }
         ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId, businessServiceCode, workflow, wfModuleName);

@@ -24,8 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.egov.works.measurement.config.ErrorConfiguration.*;
-import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANTS_MASTER_NAME;
-import static org.egov.works.measurement.config.ServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.works.measurement.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -160,7 +159,7 @@ public class MeasurementServiceValidator {
 
     public void checkDataRejected(List<MeasurementService> existingMeasurementService){
         for(MeasurementService measurementService:existingMeasurementService){
-            if(measurementService.getWfStatus().equals(MBServiceConfiguration.rejectedStatus)){
+            if(measurementService.getWfStatus().equals(rejectedStatus)){
                 throw new CustomException(REJECTED_ERROR_CODE, REJECTED_ERROR_MSG + measurementService.getMeasurementNumber());
             }
         }

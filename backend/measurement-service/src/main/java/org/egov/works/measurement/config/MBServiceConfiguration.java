@@ -145,35 +145,4 @@ public class MBServiceConfiguration {
     @Value("${kafka.topics.notification.sms}")
     private String smsNotifTopic;
 
-    public String rejectedStatus = "REJECTED";
-    public String approvedStatus = "APPROVED";
-    public String draftAction="SAVE_AS_DRAFT";
-    public String submitAction="SUBMIT";
-    public String rejectAction = "REJECT";
-    public String editResubmitAction="EDIT/RE-SUBMIT";
-    public Set<String> actionSets = new HashSet<>(Arrays.asList(draftAction, submitAction, editResubmitAction));
-
-    // Error messages
-    public static final String MEASUREMENT_DATA_NOT_EXIST = "Measurement data does not exist";
-    public static final String MEASUREMENT_SERVICE_DATA_NOT_EXIST = "MeasurementRegistry data does not exist";
-    public static final String MEASURES_DATA_NOT_EXIST = "Measures data does not exist";
-    public static final String CUMULATIVE_ENRICHMENT_ERROR = "Error during Cumulative enrichment";
-    public static final String NO_ACTIVE_CONTRACT_ID = "No active contract with the given contract id";
-    public static final String DUPLICATE_TARGET_IDS = "Duplicate Target Ids received, it should be unique";
-    public static final String INCOMPLETE_MEASURES = "Incomplete Measures, some active line items are missed for the given contract";
-    public static final String INVALID_DOCUMENTS = "Document IDs are invalid";
-    public static final String NO_VALID_ESTIMATE = "No valid Estimate found";
-    public static final String IDS_AND_MB_NUMBER_MISMATCH = "Id and Measurement Number do not match";
-    public static final String INVALID_ESTIMATE_ID = "Estimate Ids are invalid";
-    public static final String NOT_VALID_REFERENCE_ID = "Measurement data with contract number {0} is already there in progress state.";
-    public static final String API_REQUEST_FAILED = "API request failed with status code: {0}";
-    public static final String REJECTED_ERROR = "Measurement with measurementNumber {0} is rejected.";
-    public static final String API_REQUEST_FAILED_IOEXCEPTION = "API request failed: {0}";
-    public static final String TENANT_ID_REQUIRED = "TenantId is required.";
-    public static final String INVALID_CONTRACT="Invalid Contract Number.";
-    public static final String LINE_ITEMS_NOT_PROVIDED = "{0} line items is not provided, it is required";
-    public static final String INVALID_TARGET_ID_FOR_CONTRACT = "{0} is not a valid id for the given Contract {1}";
-
-
-    // ... (Other configuration properties)
 }

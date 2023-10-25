@@ -3,6 +3,10 @@ package org.egov.works.measurement.config;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Component
 public class ServiceConstants {
@@ -42,5 +46,12 @@ public class ServiceConstants {
     public static final String PROJECT_NUMBER_CODE = "$.Project.*.projectNumber";
     public static final String MDMS_TENANTS_MASTER_NAME = "tenants";
     public static final String MDMS_TENANT_MODULE_NAME = "tenant";
+    public static final String rejectedStatus = "REJECTED";
+    public static final String approvedStatus = "APPROVED";
+    public static final String rejectAction = "REJECT";
+    public static final String draftAction = "SAVE_AS_DRAFT";
+    public static final String submitAction = "SUBMIT";
+    public static final String editResubmitAction = "EDIT/RE-SUBMIT";
+    public static final Set<String> actionSets = new HashSet<>(Arrays.asList(draftAction, submitAction, editResubmitAction));
 
 }
