@@ -33,3 +33,16 @@ export const transformEstimateData = (category = "NON-SOR") => {
     ],
   };
 };
+
+//methods is used to calculate the labour, material, machinery charges
+export const getLabourMaterialAnalysisCost = (formData,category) => {
+
+      let SORAmount = formData?.SORtable?.reduce((tot,ob) => {
+        let amount = ob?.amountDetails?.reduce((total,item) => item?.heads?.includes(category) ? (item?.amount + total) : total,0);
+        return (tot + amount * ob?.currentMBEntry)
+    },0);
+    SORAmount = SORAmount ? SORAmount : 0;
+    return (SORAmount).toFixed(2);
+}
+
+

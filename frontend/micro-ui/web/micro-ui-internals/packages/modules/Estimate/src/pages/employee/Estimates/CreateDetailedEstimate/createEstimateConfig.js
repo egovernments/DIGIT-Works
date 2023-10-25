@@ -126,7 +126,7 @@ export const createEstimateConfig = () => {
                 "body": [
                     {
                         "type": "component",
-                        "component": "LabourAnalysis",
+                        "component": "ViewAnalysisStatement",
                         "withoutLabel": true,
                         "key": "labourMaterialAnalysis"
                     }

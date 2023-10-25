@@ -19,7 +19,7 @@ import { createEstimateConfig } from "./createEstimateConfig";
 import { createEstimatePayload } from "./createEstimatePayload";
 import { useHistory, useLocation } from "react-router-dom";
 import { editEstimateUtil } from "./editEstimateUtil";
-import { transformEstimateData } from "../../../../../util/EstimateData";
+import { transformEstimateData, getLabourMaterialAnalysisCost } from "../../../../../util/EstimateData";
 
 const configNavItems = [
   {
@@ -227,22 +227,7 @@ const CreateEstimate = () => {
     //added this totalEst amount logic here because setValues in pageComponents don't work
     //after setting the value, in consequent renders value changes to undefined
     //check TotalEstAmount.js
-    let totalNonSor = _data?.NONSORtable?.reduce((acc, row) => {
-      let amountNonSor = parseFloat(row?.amount);
-      amountNonSor = amountNonSor ? amountNonSor : 0;
-      return amountNonSor + parseFloat(acc);
-    }, 0);
-    totalNonSor = totalNonSor ? totalNonSor : 0;
-    let totalOverHeads = _data?.overheadDetails?.reduce((acc, row) => {
-      let amountOverheads = parseFloat(row?.amount);
-      amountOverheads = amountOverheads ? amountOverheads : 0;
-      return amountOverheads + parseFloat(acc);
-    }, 0);
-    totalOverHeads = totalOverHeads ? totalOverHeads : 100;
-    _data.totalEstimateAmount = totalNonSor + totalOverHeads;
-
-    let totalLabourAndMaterial = parseInt(_data.analysis.labour) + parseInt(_data.analysis.material);
-    // debugger;
+    let totalLabourAndMaterial = parseInt(getLabourMaterialAnalysisCost(_data,"LH")) + parseInt(getLabourMaterialAnalysisCost(_data,"MA")) + parseInt(getLabourMaterialAnalysisCost(_data,"MH"));
     //here check totalEst amount should be less than material+labour
     if (_data.totalEstimateAmount < totalLabourAndMaterial) {
       setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" });

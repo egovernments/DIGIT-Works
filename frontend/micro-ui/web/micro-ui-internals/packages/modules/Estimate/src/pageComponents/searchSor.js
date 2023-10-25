@@ -33,6 +33,7 @@ const fetchData = async (sorid, state, setState) => {
       state?.forEach((element) => {
         if (element?.sorId == sorid) {
           element.unitRate = Rates?.[0]?.rate || 0;
+          element.amountDetails = Rates?.[0]?.amountDetails;
         }
       });
       setState(state);

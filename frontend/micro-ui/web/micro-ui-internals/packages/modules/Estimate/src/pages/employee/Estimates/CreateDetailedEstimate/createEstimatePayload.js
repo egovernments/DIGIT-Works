@@ -1,3 +1,5 @@
+import { getLabourMaterialAnalysisCost } from "../../../../../util/EstimateData";
+
 const convertNumberFields=(text="")=>{
     return parseFloat(text)==0?null:parseFloat(text);
 
@@ -154,6 +156,15 @@ const fetchDocuments = (docs) => {
   return obj;
 };
 
+//Method is used to create labourAnalysisPayload in additional details
+const getLabourMaterialAnalysis = (data) => {
+  return {
+    labour : parseFloat(getLabourMaterialAnalysisCost(data,"LH")),
+    material : parseFloat(getLabourMaterialAnalysisCost(data,"MA")),
+    machinery : parseFloat(getLabourMaterialAnalysisCost(data,"MH"))
+  }
+}
+
 export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
   if (isEdit) {
     //here make the payload of edit estimate rather than create estimate
@@ -190,7 +201,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
             city: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.city,
           },
           projectNumber: projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
-          totalEstimatedAmount: data?.totalEstimateAmount,
+          totalEstimatedAmount: data?.totalEstimatedAmount,
           tenantId: tenantId,
           ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
           locality: projectData?.projectDetails?.searchedProject?.basicDetails?.locality,
@@ -236,7 +247,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
         estimateDetails: fetchEstimateDetails(filteredFormData),
         additionalDetails: {
           documents: fetchDocuments(data?.uploadedDocs),
-          labourMaterialAnalysis: { ...filteredFormData?.analysis },
+          labourMaterialAnalysis: getLabourMaterialAnalysis(data),
           creator: Digit.UserService.getUser()?.info?.name,
           location: {
             locality: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.boundary,
@@ -246,7 +257,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
           ward: projectData?.projectDetails?.searchedProject?.basicDetails?.ward,
           locality: projectData?.projectDetails?.searchedProject?.basicDetails?.locality,
           projectNumber: projectData?.projectDetails?.searchedProject?.basicDetails?.projectID,
-          totalEstimatedAmount: data?.totalEstimateAmount,
+          totalEstimatedAmount: data?.totalEstimatedAmount,
           tenantId: tenantId,
           projectName: projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
           sorSkillData : filteredFormData?.SORtable?.map((ob) => {

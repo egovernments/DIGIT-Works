@@ -123,8 +123,14 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
           {
             type: "COMPONENT",
             cardHeader: { value: "", inlineStyles: {} },
+            component: "ViewAnalysisStatement",
+            props: {formData : {...estimateDetails, SORtable:  estimateDetails ? transformEstimateObjects(estimateDetails, "SOR") : []}}
+          },
+          {
+            type: "COMPONENT",
+            cardHeader: { value: "", inlineStyles: {} },
             component: "ViewTotalEstAmount",
-            props: {detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
+            props: {mode: "VIEWES", detail : {...estimateDetails, value:estimateDetails?.additionalDetails?.totalEstimatedAmount} }
           }
         ],
       },
