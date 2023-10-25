@@ -13,7 +13,6 @@ import org.egov.works.measurement.util.ResponseInfoFactory;
 import org.egov.works.measurement.validator.MeasurementValidator;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +27,6 @@ public class MeasurementRegistry {
     private MBRegistryProducer MBRegistryProducer;
     @Autowired
     private MBRegistryConfiguration MBRegistryConfiguration;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
     @Autowired

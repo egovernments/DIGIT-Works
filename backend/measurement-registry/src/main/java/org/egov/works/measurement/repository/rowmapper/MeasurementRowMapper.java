@@ -105,7 +105,7 @@ public class MeasurementRowMapper implements ResultSetExtractor<ArrayList<Measur
             Document document = new Document();
             document.setId(rs.getString("dcid"));
 
-            if(document.getId()!=null & documentMap.get(document.getId())==null) {
+            if(document.getId()!=null && documentMap.get(document.getId())==null) {
 
                 document.setDocumentType(rs.getString("documentType"));
                 document.setFileStore(rs.getString("filestore"));

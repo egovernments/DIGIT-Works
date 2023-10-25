@@ -74,19 +74,23 @@ public class EnrichmentService {
             measure.setId(UUID.randomUUID().toString());
             measure.setReferenceId(measurement.getId());
             measure.setAuditDetails(measurement.getAuditDetails());
-            if (measure.getLength() == null || measure.getLength() == BigDecimal.valueOf(0)) {
-                measure.setLength(BigDecimal.valueOf(1));
-            }
-            if (measure.getHeight() == null || measure.getHeight() == BigDecimal.valueOf(0)) {
-                measure.setHeight(BigDecimal.valueOf(1));
-            }
-            if (measure.getBreadth() == null || measure.getBreadth() == BigDecimal.valueOf(0)) {
-                measure.setBreadth(BigDecimal.valueOf(1));
-            }
-            if (measure.getNumItems() == null || measure.getNumItems() == BigDecimal.valueOf(0)) {
-                measure.setNumItems(BigDecimal.valueOf(1));
-            }
+            validateDimensions(measure);
             measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
+        }
+    }
+
+    private void validateDimensions (Measure measure) {
+        if (measure.getLength() == null || measure.getLength() == BigDecimal.valueOf(0)) {
+            measure.setLength(BigDecimal.valueOf(1));
+        }
+        if (measure.getHeight() == null || measure.getHeight() == BigDecimal.valueOf(0)) {
+            measure.setHeight(BigDecimal.valueOf(1));
+        }
+        if (measure.getBreadth() == null || measure.getBreadth() == BigDecimal.valueOf(0)) {
+            measure.setBreadth(BigDecimal.valueOf(1));
+        }
+        if (measure.getNumItems() == null || measure.getNumItems() == BigDecimal.valueOf(0)) {
+            measure.setNumItems(BigDecimal.valueOf(1));
         }
     }
 
