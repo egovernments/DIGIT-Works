@@ -74,13 +74,13 @@ public class NotificationService {
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){
-//        String rootTenantId = tenantId.split("\\.")[0];
+        String rootTenantId = tenantId.split("\\.")[0];
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
-        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, tenantId,
+        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, rootTenantId,
                 locale, EXPENSE_CALCULATOR_MODULE_CODE);
-        return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
+        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
     }
 
     public String buildMessageReplaceVariables(String message, String billNumber, String amount){

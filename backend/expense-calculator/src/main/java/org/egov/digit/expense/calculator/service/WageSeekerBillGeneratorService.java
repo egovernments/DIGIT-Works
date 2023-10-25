@@ -373,8 +373,8 @@ public class WageSeekerBillGeneratorService {
 	}
 
 	private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
-//		String rootTenantId = tenantId.split("\\.")[0];
-		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, tenantId);
+		String rootTenantId = tenantId.split("\\.")[0];
+		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, rootTenantId);
 		List<Object> payerList = commonUtil.readJSONPathValue(mdmsResp, JSON_PATH_FOR_PAYER);
 		for (Object obj : payerList) {
 			Payer payer = mapper.convertValue(obj, Payer.class);
@@ -459,8 +459,8 @@ public class WageSeekerBillGeneratorService {
 	 * @return
 	 */
 	private String generateWBId(RequestInfo requestInfo, String tenantId) {
-//		String rootTenantId = tenantId.split("\\.")[0];
-		List<String> idList = idgenUtil.getIdList(requestInfo, tenantId, configs.getWageBillreferenceIdFormatKey(),
+		String rootTenantId = tenantId.split("\\.")[0];
+		List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, configs.getWageBillreferenceIdFormatKey(),
 				"", 1);
 		String generatedWBId = idList.get(0);
 		log.info("ReferenceId generated. Generated generatedUniqueId is [" + generatedWBId + "]");

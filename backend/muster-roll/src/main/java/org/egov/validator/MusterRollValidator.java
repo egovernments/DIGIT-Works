@@ -66,7 +66,7 @@ public class MusterRollValidator {
         validateEstimateMusterRoll(musterRoll, errorMap);
 
         //split the tenantId and validate tenantId
-        String rootTenantId = musterRoll.getTenantId();
+        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
         Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
 
@@ -93,7 +93,7 @@ public class MusterRollValidator {
         validateWorkFlow(workflow, errorMap);
 
         //split the tenantId and validate tenantId
-        String rootTenantId = musterRoll.getTenantId();
+        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
         Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
 
@@ -123,7 +123,7 @@ public class MusterRollValidator {
         validateUpdateMusterRoll(musterRoll, requestInfo, workflow, errorMap);
 
         //split the tenantId and validate tenantId
-        String rootTenantId = musterRoll.getTenantId();
+        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
         Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
 

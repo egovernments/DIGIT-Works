@@ -57,7 +57,7 @@ public class EstimateServiceValidator {
 
         String rootTenantId = estimate.getTenantId();
         //split the tenantId
-//        rootTenantId = rootTenantId.split("\\.")[0];
+        rootTenantId = rootTenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
@@ -401,7 +401,7 @@ public class EstimateServiceValidator {
         }
         String rootTenantId = estimate.getTenantId();
         //split the tenantId
-//        rootTenantId = rootTenantId.split("\\.")[0];
+        rootTenantId = rootTenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
 

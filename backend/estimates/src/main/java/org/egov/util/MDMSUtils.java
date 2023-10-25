@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,10 +24,10 @@ import static org.egov.util.EstimateServiceConstant.*;
 public class MDMSUtils {
 
     public static final String PLACEHOLDER_CODE = "{code}";
-    public static final String TENANT_FILTER_CODE = "$.[?(@.code =='{code}')].code";
-    public static final String FILTER_WORKS_MODULE_CODE = "$.[?(@.active==true && @.code=='{code}')]";
-    public static final String CODE_FILTER = "$.*.code";
-    public static final String ACTIVE_FILTER_CODE = "$.[?(@.active==true)].code";
+    public static final String tenantFilterCode = "$.[?(@.code =='{code}')].code";
+    public static final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
+    public static final String codeFilter = "$.*.code";
+    public static final String activeCodeFilter = "$.[?(@.active==true)].code";
 
     @Autowired
     private EstimateServiceConfiguration config;
@@ -115,7 +114,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateOverheadMasterDetails = new ArrayList<>();
 
         MasterDetail overheadMasterDetails = MasterDetail.builder().name(MASTER_OVERHEAD)
-                .filter(ACTIVE_FILTER_CODE).build();
+                .filter(activeCodeFilter).build();
 
         estimateOverheadMasterDetails.add(overheadMasterDetails);
 
@@ -131,7 +130,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateCategoryMasterDetails = new ArrayList<>();
 
         MasterDetail categoryMasterDetails = MasterDetail.builder().name(MASTER_CATEGORY)
-                .filter(ACTIVE_FILTER_CODE).build();
+                .filter(activeCodeFilter).build();
 
         estimateCategoryMasterDetails.add(categoryMasterDetails);
 
@@ -147,7 +146,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateSorIdMasterDetails = new ArrayList<>();
 
         MasterDetail departmentMasterDetails = MasterDetail.builder().name(MASTER_SOR_ID)
-                .filter(CODE_FILTER).build();
+                .filter(codeFilter).build();
 
         estimateSorIdMasterDetails.add(departmentMasterDetails);
 
@@ -163,7 +162,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateDepartmentMasterDetails = new ArrayList<>();
 
         MasterDetail departmentMasterDetails = MasterDetail.builder().name(MASTER_DEPARTMENT)
-                .filter(FILTER_WORKS_MODULE_CODE.replace(PLACEHOLDER_CODE, estimate.getExecutingDepartment())).build();
+                .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getExecutingDepartment())).build();
 
         estimateDepartmentMasterDetails.add(departmentMasterDetails);
 
@@ -179,7 +178,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateTenantMasterDetails = new ArrayList<>();
 
         MasterDetail tenantMasterDetails = MasterDetail.builder().name(MASTER_TENANTS)
-                .filter(TENANT_FILTER_CODE.replace(PLACEHOLDER_CODE, estimate.getTenantId())).build();
+                .filter(tenantFilterCode.replace(PLACEHOLDER_CODE, estimate.getTenantId())).build();
 
         estimateTenantMasterDetails.add(tenantMasterDetails);
 

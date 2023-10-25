@@ -65,7 +65,7 @@ public class NotificationService {
      * @return
      */
     public String getMessage(MusterRollRequest musterRollRequest, String msgCode){
-        String rootTenantId = musterRollRequest.getMusterRoll().getTenantId();
+        String rootTenantId = musterRollRequest.getMusterRoll().getTenantId().split("\\.")[0];
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
