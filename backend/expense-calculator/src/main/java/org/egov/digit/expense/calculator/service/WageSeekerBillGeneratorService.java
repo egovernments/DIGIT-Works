@@ -113,6 +113,7 @@ public class WageSeekerBillGeneratorService {
 			Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForCalculator(requestInfo, tenantId);
 
 			BigDecimal netPayableAmount = BigDecimal.ZERO;
+			Long musterRollCreatedTime = musterRoll.getAuditDetails().getCreatedTime();
 			// Muster roll reference id is contractNumber
 			String referenceId = musterRoll.getReferenceId();
 			if (referenceId == null) {
@@ -130,7 +131,7 @@ public class WageSeekerBillGeneratorService {
 			for (IndividualEntry individualEntry : individualEntries) {
 				String individualId = individualEntry.getIndividualId();
 				// Calculate net amount to pay to wage seeker
-				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges);
+				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges,musterRollCreatedTime);
 				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount));
 				// BUGFIX PFM-4214 - If actual amount to pay is 0 then do not generate the payment for that individual
 				if (actualAmountToPay.compareTo(BigDecimal.ZERO) <= 0)
@@ -251,6 +252,7 @@ public class WageSeekerBillGeneratorService {
 			List<IndividualEntry> individualEntries = musterRoll.getIndividualEntries();
 			String tenantId = musterRoll.getTenantId();
 			BigDecimal netPayableAmount = BigDecimal.ZERO;
+			Long musterRollCreatedTime = musterRoll.getAuditDetails().getCreatedTime();
 			if (musterRoll.getReferenceId() == null) {
 				log.error("MUSTER_ROLL_REFERENCE_ID_MISSING",
 						"Reference Id is missing for muster roll [" + musterRollNumber + "]");
@@ -262,7 +264,7 @@ public class WageSeekerBillGeneratorService {
 			for (IndividualEntry individualEntry : individualEntries) {
 				String individualId = individualEntry.getIndividualId();
 				// Calculate net amount to pay to wage seeker
-				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges);
+				Double skillAmount = getWageSeekerSkillAmount(individualEntry, labourCharges, musterRollCreatedTime);
 				
 				//Round off
 				BigDecimal actualAmountToPay = calculateAmount(individualEntry, BigDecimal.valueOf(skillAmount)).setScale(0, RoundingMode.HALF_UP);
@@ -396,22 +398,38 @@ public class WageSeekerBillGeneratorService {
 		return totalAttendance.multiply(skillAmount);
 	}
 
-	private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
+	private Double getWageSeekerSkillAmount(IndividualEntry individualEntry, List<LabourCharge> labourCharges, Long musterRollCreatedTime) {
 
 		// return new Double(150);
 		String skill = getWageSeekerSkill(individualEntry);
 		String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
+		Boolean isSkillCodePresentForDate = false;
+		Boolean isSkillCodePresent = false;
 		for (LabourCharge labourCharge : labourCharges) {
 //            if(labourCharge.getCode().equalsIgnoreCase(skill)
 //                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
 			// TODO: Removing the unit check here.
 			if (labourCharge.getCode().equalsIgnoreCase(skill)) {
-				return labourCharge.getAmount();
+				isSkillCodePresent = true;
+				if(labourCharge.getEffectiveTo() != null && labourCharge.getEffectiveFrom().longValue() <= musterRollCreatedTime && labourCharge.getEffectiveTo().longValue() >= musterRollCreatedTime) {
+					isSkillCodePresentForDate = true;
+					return labourCharge.getAmount();
+				}else if(labourCharge.getEffectiveTo() == null && labourCharge.getEffectiveFrom().longValue() <= musterRollCreatedTime && labourCharge.getActive()) {
+					isSkillCodePresentForDate = true;
+					return labourCharge.getAmount();
+				}
 			}
 		}
 
-		log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
-		throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+		if(!isSkillCodePresent){
+			log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+			throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
+		}
+		if(!isSkillCodePresentForDate){
+			log.error("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
+			throw new CustomException("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
+		}
+		return null;
 	}
 
 	private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {

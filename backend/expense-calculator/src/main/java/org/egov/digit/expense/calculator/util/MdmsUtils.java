@@ -198,7 +198,7 @@ public class MdmsUtils {
 
     private ModuleDetail getLabourChargesModuleDetails() {
         List<MasterDetail> masterDetails = new ArrayList<>();
-        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModuleAndFilter(MDMS_LABOUR_CHARGES, MDMS_COMMON_ACTIVE_FILTER);
+        MasterDetail overHeadsMasterDetail = getMasterDetailForSubModule(MDMS_LABOUR_CHARGES);
         masterDetails.add(overHeadsMasterDetail);
 
         return ModuleDetail.builder()
