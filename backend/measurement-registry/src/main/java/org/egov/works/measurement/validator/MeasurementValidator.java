@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.MdmsUtil;
@@ -35,9 +34,6 @@ public class MeasurementValidator {
     private MdmsUtil mdmsUtil;
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private ErrorConfiguration errorConfigs;
     @Autowired
     private MBRegistryConfiguration MBRegistryConfiguration;
     @Autowired
@@ -66,7 +62,7 @@ public class MeasurementValidator {
         List<Measurement> measurementList = measurementRequest.getMeasurements();
         for(int i=0;i<measurementList.size();i++){
             if(!validTenantSet.contains(measurementList.get(i).getTenantId())){
-                 throw new CustomException("TENANT_ID_NOT_FOUND",measurementList.get(i).getTenantId()+" Tenant Id is Not found");
+                 throw new CustomException(TENANT_ID_NOT_FOUND_CODE,measurementList.get(i).getTenantId() + TENANT_ID_NOT_FOUND_MSG);
             }
         }
     }

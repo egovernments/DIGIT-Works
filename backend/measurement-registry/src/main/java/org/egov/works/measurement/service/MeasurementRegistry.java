@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.tracer.model.CustomException;
-import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.kafka.MBRegistryProducer;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
@@ -29,8 +28,6 @@ public class MeasurementRegistry {
     private MBRegistryProducer MBRegistryProducer;
     @Autowired
     private MBRegistryConfiguration MBRegistryConfiguration;
-    @Autowired
-    private ErrorConfiguration errorConfigs;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired

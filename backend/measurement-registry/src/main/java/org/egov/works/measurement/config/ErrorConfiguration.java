@@ -1,22 +1,5 @@
 package org.egov.works.measurement.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.egov.tracer.model.CustomException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.Collections;
-
-
-@Component
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
 public class ErrorConfiguration {
     public static final String MEASUREMENT_DATA_NOT_EXIST_CODE = "MEASUREMENT_DATA_NOT_EXIST";
     public static final String MEASUREMENT_DATA_NOT_EXIST_MSG = "Measurement ID not present in the database";
@@ -38,4 +21,7 @@ public class ErrorConfiguration {
 
     public static final String API_REQUEST_FAIL_CODE = "API_REQUEST_FAIL";
     public static final String API_REQUEST_FAIL_MSG = "API request failed with status code: ";
+
+    public static final String TENANT_ID_NOT_FOUND_CODE = "TENANT_ID_NOT_FOUND";
+    public static final String TENANT_ID_NOT_FOUND_MSG = " Tenant Id is Not found.";
 }
