@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.works.measurement.config.ServiceConstants.actionSets;
-import static org.egov.works.measurement.config.ServiceConstants.rejectAction;
+import static org.egov.works.measurement.config.ServiceConstants.ACTION_SETS;
+import static org.egov.works.measurement.config.ServiceConstants.REJECT_ACTION;
 
 @Service
 @Slf4j
@@ -45,14 +45,14 @@ public class WorkflowService {
 
     public void changeDataAccordingToWfActions(MeasurementServiceRequest measurementServiceRequest,Map<String, org.egov.works.measurement.web.models.MeasurementService> mbNumberToServiceMap){
         for(int i=0;i<measurementServiceRequest.getMeasurements().size();i++){
-            if(!actionSets.contains(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction())){
+            if(!ACTION_SETS.contains(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction())){
                 MeasurementService existingCurrentMeasurementService = mbNumberToServiceMap.get(measurementServiceRequest.getMeasurements().get(i).getMeasurementNumber()); // Get existing MeasurementService
                 Workflow workflow = measurementServiceRequest.getMeasurements().get(i).getWorkflow(); // Get workflow
                 measurementServiceRequest.getMeasurements().set(i, existingCurrentMeasurementService); // Replace current measurement service
                 measurementServiceRequest.getMeasurements().get(i).setWorkflow(workflow); // Set workflow
 
             }
-            if(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction().equals(rejectAction)){
+            if(measurementServiceRequest.getMeasurements().get(i).getWorkflow().getAction().equals(REJECT_ACTION)){
                 measurementServiceRequest.getMeasurements().get(i).setIsActive(false);
             }
         }

@@ -18,8 +18,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.egov.works.measurement.config.ErrorConfiguration.*;
-import static org.egov.works.measurement.config.ServiceConstants.approvedStatus;
-import static org.egov.works.measurement.config.ServiceConstants.rejectedStatus;
+import static org.egov.works.measurement.config.ServiceConstants.*;
 
 @Component
 public class ContractUtil {
@@ -79,7 +78,7 @@ public class ContractUtil {
         // return if no contract is present
         if (!isValidContract) return false;
 
-        if (!response.getContracts().get(0).getWfStatus().equalsIgnoreCase("ACCEPTED"))
+        if (!response.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
             throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
 
         boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(response.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(response.getContracts().get(0).getEndDate()) <= 0));
@@ -157,7 +156,7 @@ public class ContractUtil {
             List<Measurement> measurements=measurementRegistryUtil.searchMeasurements(measurementSearchRequest).getBody().getMeasurements();
             if(!measurements.isEmpty()){
                 List<MeasurementService> measurementServices=serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate,Collections.singletonList(measurements.get(0).getMeasurementNumber()));
-                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals(rejectedStatus)||measurementServices.get(0).getWfStatus().equals(approvedStatus))){
+                if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals(REJECTED_STATUS)||measurementServices.get(0).getWfStatus().equals(APPROVED_STATUS))){
                     throw new CustomException(NOT_VALID_REFERENCE_ID_CODE, NOT_VALID_REFERENCE_ID_MSG + measurements.get(0).getReferenceId());
                 }
             }
@@ -201,7 +200,7 @@ public class ContractUtil {
             if(lineItemsToEstimateIdMap.containsKey(Id)){
                 String estimateId = lineItemsToEstimateIdMap.get(Id).get(0);
                 String estimateLineItemId = lineItemsToEstimateIdMap.get(Id).get(1);
-                if(Objects.equals(estimateToValidReqLineItemsMap.get(estimateId).get(estimateLineItemId), "SOR") || Objects.equals(estimateToValidReqLineItemsMap.get(estimateId).get(estimateLineItemId), "NON-SOR")){
+                if(Objects.equals(estimateToValidReqLineItemsMap.get(estimateId).get(estimateLineItemId), SOR_CODE) || Objects.equals(estimateToValidReqLineItemsMap.get(estimateId).get(estimateLineItemId), NON_SOR_CODE)){
                     if(!idsList.contains(Id))idsList.add(Id);
                 }
             }
@@ -236,7 +235,7 @@ public class ContractUtil {
         Map<String, ArrayList<String>> lineItemsToEstimateId = new HashMap<>();    // [estimateId , estimateLineItemId]
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
-                    if (lineItems.getStatus().toString().equals("ACTIVE")) {
+                    if (lineItems.getStatus().toString().equals(ACTIVE_STATUS)) {
                         lineItemsIdList.add(lineItems.getId());  // id  remove this
                         ArrayList<String> arr = new ArrayList<>();
                         arr.add(lineItems.getEstimateId());
@@ -270,7 +269,6 @@ public class ContractUtil {
             // FIXME: How to access the measurement object ??
 //            estimateDetail.getAdditionalDetails().getClass().getField("measurement");
         } catch (Error e) {
-            System.out.println();
         }
         return true;
     }

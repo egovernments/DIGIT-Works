@@ -14,7 +14,6 @@ import org.egov.works.measurement.service.WorkflowService;
 import org.egov.works.measurement.util.*;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -159,7 +158,7 @@ public class MeasurementServiceValidator {
 
     public void checkDataRejected(List<MeasurementService> existingMeasurementService){
         for(MeasurementService measurementService:existingMeasurementService){
-            if(measurementService.getWfStatus().equals(rejectedStatus)){
+            if(measurementService.getWfStatus().equals(REJECTED_STATUS)){
                 throw new CustomException(REJECTED_ERROR_CODE, REJECTED_ERROR_MSG + measurementService.getMeasurementNumber());
             }
         }
