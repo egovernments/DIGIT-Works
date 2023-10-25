@@ -16,6 +16,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.works.measurement.config.ErrorConfiguration.PROCESS_INSTANCES_NOT_FOUND_CODE;
+import static org.egov.works.measurement.config.ErrorConfiguration.PROCESS_INSTANCES_NOT_FOUND_MSG;
 import static org.egov.works.measurement.config.ServiceConstants.*;
 
 @Service
@@ -43,7 +45,7 @@ public class WorkflowUtil {
         }
 
         if (CollectionUtils.isEmpty(response.getProcessInstances())) {
-            throw new CustomException("PROCESS_INSTANCES_NOT_FOUND", "Process instances not found for this businessId ::" + businessId);
+            throw new CustomException(PROCESS_INSTANCES_NOT_FOUND_CODE, PROCESS_INSTANCES_NOT_FOUND_MSG + businessId);
         }
 
         return response.getProcessInstances().get(0).getState().getActions().stream().map(Action::getAction).collect(Collectors.toList());

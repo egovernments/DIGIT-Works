@@ -1,6 +1,5 @@
 package org.egov.works.measurement.util;
 
-import org.egov.works.measurement.config.ErrorConfiguration;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
@@ -17,8 +16,6 @@ public class MeasurementRegistryUtil {
     private IdgenUtil idgenUtil;
     @Autowired
     private MBServiceConfiguration MBServiceConfiguration;
-    @Autowired
-    private ErrorConfiguration errorConfigs;
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
     @Autowired

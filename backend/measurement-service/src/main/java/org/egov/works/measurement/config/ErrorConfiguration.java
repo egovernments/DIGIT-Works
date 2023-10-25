@@ -1,66 +1,53 @@
 package org.egov.works.measurement.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.apache.http.HttpResponse;
-import org.egov.tracer.model.CustomException;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Collections;
-
-@Component
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
 public class ErrorConfiguration {
-    public CustomException measurementDataNotExist = new CustomException("MEASUREMENT_DATA_NOT_EXIST", MBServiceConfiguration.MEASUREMENT_DATA_NOT_EXIST);
-    public CustomException measurementServiceDataNotExist = new CustomException("MEASUREMENT_SERVICE_DATA_NOT_EXIST", MBServiceConfiguration.MEASUREMENT_SERVICE_DATA_NOT_EXIST);
-    public CustomException measuresDataNotExist = new CustomException("MEASURES_DATA_NOT_EXIST", MBServiceConfiguration.MEASURES_DATA_NOT_EXIST);
-    public CustomException cumulativeEnrichmentError = new CustomException("CUMULATIVE_ENRICHMENT_ERROR", MBServiceConfiguration.CUMULATIVE_ENRICHMENT_ERROR);
-    public CustomException noActiveContractId = new CustomException(Collections.singletonMap("NO_ACTIVE_CONTRACT_ID", MBServiceConfiguration.NO_ACTIVE_CONTRACT_ID));
-    public CustomException duplicateTargetIds = new CustomException("DUPLICATE_TARGET_IDS", MBServiceConfiguration.DUPLICATE_TARGET_IDS);
-    public CustomException incompleteMeasures = new CustomException("INCOMPLETE_MEASURES", MBServiceConfiguration.INCOMPLETE_MEASURES);
-    public CustomException invalidDocuments = new CustomException("INVALID_DOCUMENTS", MBServiceConfiguration.INVALID_DOCUMENTS);
-    public CustomException noValidEstimate = new CustomException("NO_VALID_ESTIMATE", MBServiceConfiguration.NO_VALID_ESTIMATE);
-    public CustomException idsAndMbNumberMismatch = new CustomException("IDS_AND_MB_NUMBER_MISMATCH", MBServiceConfiguration.IDS_AND_MB_NUMBER_MISMATCH);
-    public CustomException invalidEstimateID = new CustomException("INVALID_ESTIMATE_ID", MBServiceConfiguration.INVALID_ESTIMATE_ID);
-    public CustomException invalidContract = new CustomException("INVALID_CONTRACT", MBServiceConfiguration.INVALID_CONTRACT);
-    public CustomException contractNotAccepted = new CustomException("contractNotAccepted", "Contract not in accepted state");
+    public static final String MEASUREMENT_SERVICE_DATA_NOT_EXIST_CODE = "MEASUREMENT_SERVICE_DATA_NOT_EXIST";
+    public static final String MEASUREMENT_SERVICE_DATA_NOT_EXIST_MSG = "MeasurementRegistry data does not exist";
 
-    public CustomException notValidReferenceId(String referenceId) {
-        String errorMessage = MessageFormat.format(MBServiceConfiguration.NOT_VALID_REFERENCE_ID, referenceId);
-        return new CustomException("NOT_VALID_REFERENCE_ID", errorMessage);
-    }
+    public static final String DUPLICATE_TARGET_IDS_CODE = "DUPLICATE_TARGET_IDS";
+    public static final String DUPLICATE_TARGET_IDS_MSG = "Duplicate Target Ids received, it should be unique";
 
-    public CustomException apiRequestFailed(HttpResponse response) {
-        String errorMessage = MessageFormat.format(MBServiceConfiguration.API_REQUEST_FAILED, response.getStatusLine().getStatusCode());
-        return new CustomException("API_REQUEST_FAILED", errorMessage);
-    }
+    public static final String INCOMPLETE_MEASURES_CODE = "INCOMPLETE_MEASURES";
+    public static final String INCOMPLETE_MEASURES_MSG = "Incomplete Measures, some active line items are missed for the given contract";
 
-    public CustomException rejectedError(String measurementNumber) {
-        String errorMessage = MessageFormat.format(MBServiceConfiguration.REJECTED_ERROR, measurementNumber);
-        return new CustomException("REJECTED_ERROR", errorMessage);
-    }
+    public static final String NO_VALID_ESTIMATE_CODE = "NO_VALID_ESTIMATE";
+    public static final String NO_VALID_ESTIMATE_MSG = "No valid Estimate found";
 
-    public CustomException apiRequestFailedIOexception(IOException e) {
-        String errorMessage = MessageFormat.format(MBServiceConfiguration.API_REQUEST_FAILED_IOEXCEPTION, e.getMessage());
-        return new CustomException("API_REQUEST_FAILED_IOEXCEPTION", errorMessage);
-    }
+    public static final String IDS_AND_MB_NUMBER_MISMATCH_CODE = "IDS_AND_MB_NUMBER_MISMATCH";
+    public static final String IDS_AND_MB_NUMBER_MISMATCH_MSG = "Id and Measurement Number do not match";
 
-    public IllegalArgumentException tenantIdRequired = new IllegalArgumentException(MBServiceConfiguration.TENANT_ID_REQUIRED);
+    public static final String INVALID_CONTRACT_CODE = "INVALID_CONTRACT";
+    public static final String INVALID_CONTRACT_MSG = "Invalid Contract Number.";
 
-    public CustomException lineItemsNotProvided(String id) {
-        String errorMessage = MessageFormat.format(MBServiceConfiguration.LINE_ITEMS_NOT_PROVIDED, id);
-        return new CustomException("LINE_ITEMS_NOT_PROVIDED", errorMessage);
-    }
+    public static final String CONTRACT_NOT_ACCEPTED_CODE = "CONTRACT_NOT_ACCEPTED";
+    public static final String CONTRACT_NOT_ACCEPTED_MSG = "Contract not in accepted state";
 
-    public CustomException invalidTargetIdForContract(String targetId, String referenceId) {
-        String errorMessage = MessageFormat.format(MBServiceConfiguration.INVALID_TARGET_ID_FOR_CONTRACT, targetId, referenceId);
-        return new CustomException("INVALID_TARGET_ID_FOR_CONTRACT", errorMessage);
-    }
+    public static final String NOT_VALID_REFERENCE_ID_CODE = "NOT_VALID_REFERENCE_ID";
+    public static final String NOT_VALID_REFERENCE_ID_MSG = "Measurement data is already there in progress state for contract number :: ";
+
+    public static final String REJECTED_ERROR_CODE = "REJECTED_ERROR";
+    public static final String REJECTED_ERROR_MSG = "Measurement is rejected for measurementNumber :: ";
+
+    public static final String LINE_ITEMS_NOT_PROVIDED_CODE = "LINE_ITEMS_NOT_PROVIDED";
+    public static final String LINE_ITEMS_NOT_PROVIDED_MSG = "Mandatory value line item not provided :: ";
+
+    public static final String INVALID_TARGET_ID_FOR_CONTRACT_CODE = "INVALID_TARGET_ID_FOR_CONTRACT";
+    public static final String INVALID_TARGET_ID_FOR_CONTRACT_MSG = " is not a valid id for the given Contract ";
+
+    public static final String PROCESS_INSTANCES_NOT_FOUND_CODE = "PROCESS_INSTANCES_NOT_FOUND";
+    public static final String PROCESS_INSTANCES_NOT_FOUND_MSG = "Process instances not found for this businessId ::";
+
+    public static final String CONVERSION_ERROR_CODE = "CONVERSION_ERROR";
+    public static final String CONVERSION_ERROR_MSG = "Cannot convert response";
+
+    public static final String PARSING_ERROR_CODE = "PARSING_ERROR";
+    public static final String PARSING_ERROR_MSG = "Failed to parse project response";
+
+    public static final String TENANT_ID_NOT_FOUND_CODE = "TENANT_ID_NOT_FOUND";
+    public static final String TENANT_ID_NOT_FOUND_MSG = " Tenant Id is Not found.";
+
+    public static final String ACTION_NOT_FOUND_CODE = "ACTION_NOT_FOUND";
+    public static final String ACTION_NOT_FOUND_MSG1 = "Action ";
+    public static final String ACTION_NOT_FOUND_MSG2 = " not found in config for the measurement number:: ";
+
 }

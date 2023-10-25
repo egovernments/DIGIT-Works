@@ -2,7 +2,7 @@ package org.egov.works.measurement.util;
 
 import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.works.measurement.config.ErrorConfiguration;
+import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
@@ -17,12 +17,12 @@ import java.lang.Error;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static org.egov.works.measurement.config.ErrorConfiguration.*;
+
 @Component
 public class ContractUtil {
     private final RestTemplate restTemplate;
     private final MBServiceConfiguration MBServiceConfiguration;
-
-    private final ErrorConfiguration errorConfigs;
 
     private final MeasurementRegistryUtil measurementRegistryUtil;
 
@@ -30,10 +30,9 @@ public class ContractUtil {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public ContractUtil(RestTemplate restTemplate, MBServiceConfiguration MBServiceConfiguration, ErrorConfiguration errorConfigs, MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository, JdbcTemplate jdbcTemplate) {
+    public ContractUtil(RestTemplate restTemplate, MBServiceConfiguration MBServiceConfiguration, MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository, JdbcTemplate jdbcTemplate) {
         this.restTemplate = restTemplate;
         this.MBServiceConfiguration = MBServiceConfiguration;
-        this.errorConfigs=errorConfigs;
         this.measurementRegistryUtil=measurementRegistryUtil;
         this.serviceRequestRepository = serviceRequestRepository;
         this.jdbcTemplate = jdbcTemplate;
@@ -79,7 +78,7 @@ public class ContractUtil {
         if (!isValidContract) return false;
 
         if (!response.getContracts().get(0).getWfStatus().equalsIgnoreCase("ACCEPTED"))
-            throw errorConfigs.contractNotAccepted;
+            throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
 
         boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(response.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(response.getContracts().get(0).getEndDate()) <= 0));
         boolean isTargetIdsPresent = true;
@@ -89,7 +88,7 @@ public class ContractUtil {
         for (Measure measure : measurement.getMeasures()) {
 
             if(targetIdSet.contains(measure.getTargetId())){
-                throw errorConfigs.duplicateTargetIds;
+                throw new CustomException(DUPLICATE_TARGET_IDS_CODE, DUPLICATE_TARGET_IDS_MSG);
             }
             else targetIdSet.add(measure.getTargetId());  // create a set of received target Ids
 
@@ -97,7 +96,7 @@ public class ContractUtil {
 
             if (!isTargetIdPresent) {
                 isTargetIdsPresent = false;
-                throw errorConfigs.invalidTargetIdForContract(measure.getTargetId(),measurement.getReferenceId());
+                throw new CustomException(INVALID_TARGET_ID_FOR_CONTRACT_CODE, measure.getTargetId() + INVALID_TARGET_ID_FOR_CONTRACT_MSG + measure.getReferenceId());
 //                throw errorConfigs.noActiveContractId;
             } else {
                 lineItemIdsList.add(measure.getTargetId());
@@ -130,7 +129,7 @@ public class ContractUtil {
             }
             if(!isValidEstimate){
                 validDimensions = false;
-                throw errorConfigs.noValidEstimate;
+                throw new CustomException(NO_VALID_ESTIMATE_CODE, NO_VALID_ESTIMATE_MSG);
             }
         }
         System.out.println(estimateResponse.getEstimates().get(0).getId());
@@ -140,7 +139,7 @@ public class ContractUtil {
     public void isAllRequiredLineItemsPresent(List<String> reqLineItems,Set<String> receivedLineItems){
         for(String id:reqLineItems){
             if(!receivedLineItems.contains(id)){
-                throw errorConfigs.lineItemsNotProvided(id);
+                throw new CustomException(LINE_ITEMS_NOT_PROVIDED_CODE, LINE_ITEMS_NOT_PROVIDED_MSG + id);
             }
         }
     }
@@ -157,7 +156,7 @@ public class ContractUtil {
             if(!measurements.isEmpty()){
                 List<MeasurementService> measurementServices=serviceRequestRepository.getMeasurementServicesFromMBSTable(namedParameterJdbcTemplate,Collections.singletonList(measurements.get(0).getMeasurementNumber()));
                 if(!measurementServices.isEmpty()&&!(measurementServices.get(0).getWfStatus().equals(MBServiceConfiguration.rejectedStatus)||measurementServices.get(0).getWfStatus().equals(MBServiceConfiguration.approvedStatus))){
-                    throw errorConfigs.notValidReferenceId(measurements.get(0).getReferenceId());
+                    throw new CustomException(NOT_VALID_REFERENCE_ID_CODE, NOT_VALID_REFERENCE_ID_MSG + measurements.get(0).getReferenceId());
                 }
             }
         }
@@ -219,7 +218,7 @@ public class ContractUtil {
         for (Map.Entry<String, ArrayList<String>> entry : lineItemsToEstimateIdMap.entrySet()) {
             String key = entry.getKey();
             if(!measuresTargetIdSet.contains(key)){
-                throw errorConfigs.incompleteMeasures;
+                throw new CustomException(INCOMPLETE_MEASURES_CODE, INCOMPLETE_MEASURES_MSG);
             }
         }
     }

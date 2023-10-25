@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.works.measurement.config.ErrorConfiguration.*;
 import static org.egov.works.measurement.config.ServiceConstants.HRMS_USER_MOBILE_NO;
 import static org.egov.works.measurement.config.ServiceConstants.PROJECT_NUMBER_CODE;
 
@@ -55,7 +56,7 @@ public class NotificationUtil {
         try {
             contractResponse = mapper.convertValue(response, ContractResponse.class);
         } catch (Exception e) {
-            throw new CustomException("CONVERSION_ERROR", "Cannot convert response");
+            throw new CustomException(CONVERSION_ERROR_CODE, CONVERSION_ERROR_MSG);
         }
         return contractResponse.getContracts().get(0).getLineItems().get(0).getEstimateId();
 
@@ -73,7 +74,7 @@ public class NotificationUtil {
         try {
             estimateResponse = mapper.convertValue(response, EstimateResponse.class);
         } catch (Exception e) {
-            throw new CustomException("CONVERSION_ERROR", "Cannot convert response");
+            throw new CustomException(CONVERSION_ERROR_CODE, CONVERSION_ERROR_MSG);
         }
         return estimateResponse.getEstimates().get(0).getProjectId();
     }
@@ -107,7 +108,7 @@ public class NotificationUtil {
         try {
             projectNumber = JsonPath.read(projectRes, PROJECT_NUMBER_CODE);
         } catch (Exception e) {
-            throw new CustomException("PARSING_ERROR", "Failed to parse project response");
+            throw new CustomException(PARSING_ERROR_CODE, PARSING_ERROR_MSG);
         }
         return projectNumber.get(0);
     }
@@ -120,7 +121,7 @@ public class NotificationUtil {
         try {
             mobileNumber = JsonPath.read(res, HRMS_USER_MOBILE_NO);
         } catch (Exception e) {
-            throw new CustomException("PARSING_ERROR", "Failed to parse HRMS response");
+            throw new CustomException(PARSING_ERROR_CODE, PARSING_ERROR_MSG);
         }
         return mobileNumber.get(0);
     }
