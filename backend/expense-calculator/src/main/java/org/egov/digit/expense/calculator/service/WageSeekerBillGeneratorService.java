@@ -402,9 +402,7 @@ public class WageSeekerBillGeneratorService {
 
 		// return new Double(150);
 		String skill = getWageSeekerSkill(individualEntry);
-		String wageLabourChargeUnit = configs.getWageLabourChargeUnit();
-		Boolean isSkillCodePresentForDate = false;
-		Boolean isSkillCodePresent = false;
+		boolean isSkillCodePresent = false;
 		for (LabourCharge labourCharge : labourCharges) {
 //            if(labourCharge.getCode().equalsIgnoreCase(skill)
 //                    && wageLabourChargeUnit.equalsIgnoreCase(labourCharge.getUnit())) {
@@ -412,10 +410,8 @@ public class WageSeekerBillGeneratorService {
 			if (labourCharge.getCode().equalsIgnoreCase(skill)) {
 				isSkillCodePresent = true;
 				if(labourCharge.getEffectiveTo() != null && labourCharge.getEffectiveFrom().longValue() <= musterRollCreatedTime && labourCharge.getEffectiveTo().longValue() >= musterRollCreatedTime) {
-					isSkillCodePresentForDate = true;
 					return labourCharge.getAmount();
 				}else if(labourCharge.getEffectiveTo() == null && labourCharge.getEffectiveFrom().longValue() <= musterRollCreatedTime && labourCharge.getActive()) {
-					isSkillCodePresentForDate = true;
 					return labourCharge.getAmount();
 				}
 			}
@@ -425,12 +421,9 @@ public class WageSeekerBillGeneratorService {
 			log.error("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
 			throw new CustomException("SKILL_CODE_MISSING_IN_MDMS", "Skill code " + skill + " is missing in MDMS");
 		}
-		if(!isSkillCodePresentForDate){
-			log.error("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
-			throw new CustomException("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
-		}
-		return null;
-	}
+        log.error("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
+        throw new CustomException("SKILL_CODE_IS_NOT_MATCHING_WITH_DATE_RANGE", "Skill code " + skill + " is not matching with date range");
+    }
 
 	private Integer getWageSeekerSkillCodeId(IndividualEntry individualEntry, List<LabourCharge> labourCharges) {
 		String skill = getWageSeekerSkill(individualEntry);
