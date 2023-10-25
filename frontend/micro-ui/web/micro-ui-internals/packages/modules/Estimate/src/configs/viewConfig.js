@@ -15,7 +15,6 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
 
   const headerLocale = Digit.Utils.locale.getTransformedLocale(estimateDetails?.tenantId);
   const geoLocationValue = estimateDetails?.address?.latitude && estimateDetails?.address?.longitude ? `${latitude}, ${longitude}` : "NA";
-  console.log(estimateDetails,"essss")
 
   useEffect(() => {
     const processArrays = () => {
