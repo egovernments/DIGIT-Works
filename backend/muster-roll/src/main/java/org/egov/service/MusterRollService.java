@@ -190,8 +190,8 @@ public class MusterRollService {
         log.info("MusterRollService::updateMusterRoll::update request for musterRollNumber::"+existingMusterRoll.getMusterRollNumber());
 
         //fetch MDMS data for muster - skill level
-        String rootTenantId = existingMusterRoll.getTenantId();
-        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, rootTenantId);
+        String tenantId = existingMusterRoll.getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCallMuster(musterRollRequest, tenantId);
 
         //fetch the update additionalDetails from the request and persist it for verification
         if (!isComputeAttendance) {

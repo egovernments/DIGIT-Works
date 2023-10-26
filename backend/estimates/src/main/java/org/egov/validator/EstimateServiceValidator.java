@@ -55,9 +55,9 @@ public class EstimateServiceValidator {
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow, errorMap);
 
-        String rootTenantId = estimate.getTenantId();
+        String tenantId = estimate.getTenantId();
 
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+        Object mdmsData = mdmsUtils.mDMSCall(request, tenantId);
         validateMDMSData(estimate, mdmsData, errorMap, true);
         validateProjectId(request, errorMap);
 
@@ -395,8 +395,8 @@ public class EstimateServiceValidator {
                 throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
             }
         }
-        String rootTenantId = estimate.getTenantId();
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
+        String tenantId = estimate.getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCall(request, tenantId);
         validateMDMSData(estimate, mdmsData, errorMap, false);
         validateProjectId(request, errorMap);
 

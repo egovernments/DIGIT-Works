@@ -65,14 +65,14 @@ public class NotificationService {
      * @return
      */
     public String getMessage(MusterRollRequest musterRollRequest, String msgCode){
-        String rootTenantId = musterRollRequest.getMusterRoll().getTenantId();
+        String tenantId = musterRollRequest.getMusterRoll().getTenantId();
         RequestInfo requestInfo = musterRollRequest.getRequestInfo();
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
-        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, rootTenantId,
+        Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, tenantId,
                 locale, MUSTER_ROLL_MODULE_CODE);
-        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
+        return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
     }
 
     public String buildMessageReplaceVariables(String message, String musterRollName, String amount){

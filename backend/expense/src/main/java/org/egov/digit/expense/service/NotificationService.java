@@ -72,7 +72,6 @@ public class NotificationService {
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){
-//        String rootTenantId = tenantId.split("\\.")[0];
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
