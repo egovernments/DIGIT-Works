@@ -213,8 +213,6 @@ public class AttendeeServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         String tenantId = attendeeListFromRequest.get(0).getTenantId();
-        //split the tenantId
-//        String rootTenantId = tenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
 
@@ -238,8 +236,6 @@ public class AttendeeServiceValidator {
         Map<String, String> errorMap = new HashMap<>();
 
         String tenantId = attendeeListFromRequest.get(0).getTenantId();
-        //split the tenantId
-//        String rootTenantId = tenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(requestInfo, tenantId);
 

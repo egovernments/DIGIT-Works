@@ -111,7 +111,6 @@ public class ContractEnrichment {
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Contract contract = contractRequest.getContract();
         String tenantId = contract.getTenantId();
-//        String rootTenantId = tenantId.split("\\.")[0];
         String contractType = contract.getContractType();
         Object mdmsData = mdmsUtils.fetchMDMSForEnrichment(requestInfo, tenantId, contractType);
         log.info("MDMS data fetched for enrichment. ContractId ["+contract.getId()+"]");
@@ -394,7 +393,6 @@ public class ContractEnrichment {
     private void enrichContractNumber(ContractRequest contractRequest) {
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Contract contract = contractRequest.getContract();
-//        String rootTenantId = contract.getTenantId().split("\\.")[0];
         List<String> idList = idgenUtil.getIdList(requestInfo, contract.getTenantId(), config.getIdgenContractNumberName(), "", 1);
         String generatedContractNumber = idList.get(0);
         contract.setContractNumber(generatedContractNumber);

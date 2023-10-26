@@ -342,7 +342,6 @@ public class ExpenseCalculatorService {
     }
 
     private List<LabourCharge> fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String tenantId){
-//        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch wage seeker skills MDMS");
         Object mdmsData = mdmsUtils.fetchMDMSDataForLabourCharges(requestInfo, tenantId);
         List<Object> labourChargesJson = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_LABOUR_CHARGES);
@@ -435,7 +434,6 @@ public class ExpenseCalculatorService {
     }
 
     private List<BusinessService> fetchMDMSDataForBusinessService(RequestInfo requestInfo, String tenantId){
-//        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch business service list from MDMS");
         Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmodule(requestInfo, tenantId, MDMS_BUSINESS_SERVICE);
         List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION);
@@ -449,7 +447,6 @@ public class ExpenseCalculatorService {
     }
 
     private List<Payer> fetchMDMSDataForPayers(RequestInfo requestInfo, String tenantId){
-//        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch payer list from MDMS");
         Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId, MDMS_PAYER_LIST);
         List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_PAYER);

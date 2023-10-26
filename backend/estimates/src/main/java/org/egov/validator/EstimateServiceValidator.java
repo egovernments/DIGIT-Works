@@ -56,8 +56,6 @@ public class EstimateServiceValidator {
         validateWorkFlow(workflow, errorMap);
 
         String rootTenantId = estimate.getTenantId();
-        //split the tenantId
-//        rootTenantId = rootTenantId.split("\\.")[0];
 
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, errorMap, true);
@@ -398,9 +396,6 @@ public class EstimateServiceValidator {
             }
         }
         String rootTenantId = estimate.getTenantId();
-        //split the tenantId
-//        rootTenantId = rootTenantId.split("\\.")[0];
-
         Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
         validateMDMSData(estimate, mdmsData, errorMap, false);
         validateProjectId(request, errorMap);
