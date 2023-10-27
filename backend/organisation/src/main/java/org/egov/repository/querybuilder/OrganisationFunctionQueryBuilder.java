@@ -69,7 +69,7 @@ public class OrganisationFunctionQueryBuilder {
 
         if (StringUtils.isNotBlank(searchCriteria.getName())) {
             addClauseIfRequired(preparedStmtList, queryBuilder);
-            queryBuilder.append(" org.name LIKE ? ");
+            queryBuilder.append(" LOWER(org.name) LIKE  LOWER(?"+")");
             preparedStmtList.add('%' + searchCriteria.getName() + '%');
         }
 
