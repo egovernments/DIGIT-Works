@@ -52,7 +52,7 @@ const MeasureRow = ({ value, index, rowState, dispatch, mode }) => {
   }
   return (
     <tr key={index}>
-      <td>{rowState?.sNo}</td>
+      <td>{index + 1}</td>
       {mode != "CREATEALL" ? (
         <>
           <td>{rowState?.isDeduction ? t("MB_YES") : t("MB_NO")}</td>
