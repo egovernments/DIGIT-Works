@@ -50,4 +50,15 @@ public class ErrorConfiguration {
     public static final String ACTION_NOT_FOUND_MSG1 = "Action ";
     public static final String ACTION_NOT_FOUND_MSG2 = " not found in config for the measurement number:: ";
 
+    public static final String TOTAL_VALUE_GREATER_THAN_ESTIMATE_CODE = "TOTAL_VALUE_GREATER_THAN_ESTIMATE";
+    public static final String TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG = "Total value greater than estimate quantity :: ";
+
+    public static final String INVALID_ENTRY_DATE_CODE = "INVALID_ENTRY_DATE";
+    public static final String INVALID_ENTRY_DATE_MSG = "Entry date is not within contract start and end date";
+
+    public static final String ESTIMATE_LINE_ITEM_ID_NOT_PRESENT_CODE = "ESTIMATE_LINE_ITEM_ID_NOT_PRESENT";
+    public static final String ESTIMATE_LINE_ITEM_ID_NOT_PRESENT_MSG =  "Estimate lineItem id not present for targetId :: ";
+
+    public static final String ESTIMATE_DETAILS_NOT_PRESENT_CODE = "ESTIMATE_DETAILS_NOT_PRESENT";
+    public static final String ESTIMATE_DETAILS_NOT_PRESENT_MSG = "Estimate details not present for estimateLineItemid :: ";
 }

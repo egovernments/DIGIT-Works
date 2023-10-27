@@ -7,13 +7,13 @@ import org.egov.works.measurement.config.MBServiceConfiguration;
 import org.egov.works.measurement.repository.ServiceRequestRepository;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.lang.Error;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -62,7 +62,7 @@ public class ContractUtil {
      * @param requestInfo
      * @return
      */
-    public Boolean validContract(Measurement measurement, RequestInfo requestInfo) {
+    public Boolean validContract(Measurement measurement, RequestInfo requestInfo, Boolean isUpdate) {
         Map<String, ArrayList<String>> lineItemsToEstimateIdMap = new HashMap<>();
         List<String> lineItemIdsList = new ArrayList<>();
         List<String> estimateIdsList = new ArrayList<>();
@@ -70,21 +70,21 @@ public class ContractUtil {
         List<String> estimateLineItemIdsList = new ArrayList<>();
         Map<String,ArrayList<BigDecimal>> lineItemsToDimentionsMap = new HashMap<>();
         Set<String> targetIdSet = new HashSet<>();
-        ContractResponse response = getContracts(measurement, requestInfo);
+        ContractResponse contractResponse = getContracts(measurement, requestInfo);
 
         // check if there is a reference id
-        boolean isValidContract = !response.getContracts().isEmpty();
+        boolean isValidContract = !contractResponse.getContracts().isEmpty();
 
         // return if no contract is present
         if (!isValidContract) return false;
 
-        if (!response.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
+        if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
             throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
 
-        boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(response.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(response.getContracts().get(0).getEndDate()) <= 0));
+        boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getEndDate()) <= 0));
         boolean isTargetIdsPresent = true;
 
-        lineItemsToEstimateIdMap = getValidLineItemsId(response); // get set of active line items
+        lineItemsToEstimateIdMap = getValidLineItemsId(contractResponse); // get set of active line items
 
         for (Measure measure : measurement.getMeasures()) {
 
@@ -111,31 +111,18 @@ public class ContractUtil {
         }
 
         // check exact match of targetIs in Contract Active line Items
-        List<String> validReqLineItems = filterValidReqLineItems(response , requestInfo , measurement.getTenantId(),lineItemsToEstimateIdMap);
+        List<String> validReqLineItems = filterValidReqLineItems(contractResponse , requestInfo , measurement.getTenantId(),lineItemsToEstimateIdMap);
         isAllRequiredLineItemsPresent(validReqLineItems,targetIdSet);
 
         // Estimate Validation
+        estimateIdsList.add(contractResponse.getContracts().get(0).getLineItems().get(0).getEstimateId());
         EstimateResponse estimateResponse = getEstimate(requestInfo, measurement.getTenantId(), estimateIdsList);  // assume a single estimate id for now
+        ResponseEntity<MeasurementResponse> measurementResponse = measurementRegistryUtil.searchMeasurements(MeasurementSearchRequest.builder().requestInfo(requestInfo).criteria(MeasurementCriteria.builder().referenceId(Collections.singletonList(measurement.getReferenceId())).isActive(true).tenantId(measurement.getTenantId()).build()).build());
+        validateDimensions(estimateResponse, measurement, contractResponse, measurementResponse.getBody().getMeasurements().get(0), isUpdate);
         boolean validDimensions = true;
-        for(int i=0;i<estimateIdsList.size();i++){
-            boolean isValidEstimate = false;
-            for (EstimateDetail estimateDetail : estimateResponse.getEstimates().get(0).getEstimateDetails()) {
-                if (Objects.equals(estimateDetail.getId(), estimateLineItemIdsList.get(i))) {
-                    boolean isValidDimension = validateDimensions(estimateDetail,lineItemsToDimentionsMap.get(lineItemIdsList.get(i)));
-                    if(isValidDimension){
-                        isValidEstimate = true;
-                        break;
-                    }
-                }
-            }
-            if(!isValidEstimate){
-                validDimensions = false;
-                throw new CustomException(NO_VALID_ESTIMATE_CODE, NO_VALID_ESTIMATE_MSG);
-            }
-        }
         System.out.println(estimateResponse.getEstimates().get(0).getId());
 
-        return isValidContract && isValidEntryDate && isTargetIdsPresent;
+        return isValidEntryDate;
     }
     public void isAllRequiredLineItemsPresent(List<String> reqLineItems,Set<String> receivedLineItems){
         for(String id:reqLineItems){
@@ -235,7 +222,7 @@ public class ContractUtil {
         Map<String, ArrayList<String>> lineItemsToEstimateId = new HashMap<>();    // [estimateId , estimateLineItemId]
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
-                    if (lineItems.getStatus().toString().equals(ACTIVE_STATUS)) {
+                    if (lineItems.getStatus().toString().equalsIgnoreCase(ACTIVE_STATUS)) {
                         lineItemsIdList.add(lineItems.getId());  // id  remove this
                         ArrayList<String> arr = new ArrayList<>();
                         arr.add(lineItems.getEstimateId());
@@ -264,12 +251,64 @@ public class ContractUtil {
         return estimateResponse;
     }
 
-    public boolean validateDimensions(EstimateDetail estimateDetail,ArrayList<BigDecimal> dimensions)  {
-        try {
-            // FIXME: How to access the measurement object ??
-//            estimateDetail.getAdditionalDetails().getClass().getField("measurement");
-        } catch (Error e) {
+    public void validateDimensions(EstimateResponse estimateResponse, Measurement measurement, ContractResponse contractResponse, Measurement measurementFromDB, Boolean isUpdate)  {
+
+        Map<String, String> targetIdToEstimateLineItemId = new HashMap<>();
+        Map<String, EstimateDetail> estimateLineItemIdToEstimateDetail = new HashMap<>();
+        Map<String, BigDecimal> targetIdToCumulativeValue = new HashMap<>();
+
+        for (LineItems lineItem : contractResponse.getContracts().get(0).getLineItems()) {
+            targetIdToEstimateLineItemId.put(lineItem.getId(), lineItem.getEstimateLineItemId());
         }
-        return true;
+        for (EstimateDetail detail : estimateResponse.getEstimates().get(0).getEstimateDetails()) {
+            estimateLineItemIdToEstimateDetail.put(detail.getId(), detail);
+        }
+        if (measurementFromDB != null && !measurementFromDB.getMeasures().isEmpty()) {
+            for (Measure measure : measurementFromDB.getMeasures()) {
+                BigDecimal cumulativeValue = measure.getCumulativeValue();
+                if (isUpdate)
+                    cumulativeValue = cumulativeValue.subtract(measure.getCurrentValue());
+                targetIdToCumulativeValue.put(measure.getTargetId(), cumulativeValue);
+            }
+        }
+        for (Measure measure : measurement.getMeasures()) {
+            // Get the lineItemId corresponding in targetId
+            String estimateLineItemId = targetIdToEstimateLineItemId.get(measure.getTargetId());
+            if (estimateLineItemId == null)
+                throw new CustomException(ESTIMATE_LINE_ITEM_ID_NOT_PRESENT_CODE, ESTIMATE_LINE_ITEM_ID_NOT_PRESENT_MSG + measure.getTargetId());
+            // Get the estimateDetail corresponding to estimateLineItemId
+            EstimateDetail estimateDetail = estimateLineItemIdToEstimateDetail.get(estimateLineItemId);
+            if (estimateDetail == null)
+                throw new CustomException(ESTIMATE_DETAILS_NOT_PRESENT_CODE, ESTIMATE_DETAILS_NOT_PRESENT_MSG + estimateLineItemId);
+            // Get cumulative value corresponding to targetId
+            BigDecimal prevCumulativeValue = null;
+            if (measurementFromDB != null && !measurementFromDB.getMeasures().isEmpty()) {
+                prevCumulativeValue = targetIdToCumulativeValue.get(measure.getTargetId());
+            } else {
+                prevCumulativeValue = BigDecimal.ZERO;
+            }
+            validateDimensions(measure);
+            BigDecimal currValue = measure.getBreadth().multiply(measure.getHeight()).multiply(measure.getLength()).multiply(measure.getNumItems());
+            BigDecimal totalValue = currValue.add(prevCumulativeValue);
+
+            BigDecimal maxAllowedValue = estimateDetail.getQuantity() != null ? estimateDetail.getQuantity() : BigDecimal.valueOf(estimateDetail.getNoOfunit());
+            if (totalValue.compareTo(maxAllowedValue) > 0) {
+                throw new CustomException(TOTAL_VALUE_GREATER_THAN_ESTIMATE_CODE, TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG + maxAllowedValue);
+            }
+        }
+    }
+    private void validateDimensions(Measure measure) {
+        if (measure.getLength() == null || measure.getLength().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setLength(BigDecimal.ONE);
+        }
+        if (measure.getHeight() == null || measure.getHeight().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setHeight(BigDecimal.ONE);
+        }
+        if (measure.getBreadth() == null || measure.getBreadth().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setBreadth(BigDecimal.ONE);
+        }
+        if (measure.getNumItems() == null || measure.getNumItems().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setNumItems(BigDecimal.ONE);
+        }
     }
 }

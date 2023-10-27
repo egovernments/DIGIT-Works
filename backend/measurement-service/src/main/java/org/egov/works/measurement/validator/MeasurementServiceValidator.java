@@ -85,7 +85,7 @@ public class MeasurementServiceValidator {
     public void validateContracts(MeasurementServiceRequest measurementServiceRequest) {
         measurementServiceRequest.getMeasurements().forEach(measurement -> {
             // validate contracts
-            Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
+            Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo(), false);
             contractUtil.validateByReferenceId(measurementServiceRequest);
             if (!isValidContract) {
                 throw new CustomException(INVALID_CONTRACT_CODE, INVALID_CONTRACT_MSG);
@@ -95,7 +95,7 @@ public class MeasurementServiceValidator {
     public void validateContractsOnUpdate(MeasurementServiceRequest measurementServiceRequest) {
         measurementServiceRequest.getMeasurements().forEach(measurement -> {
             // validate contracts
-            Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo());
+            Boolean isValidContract = contractUtil.validContract(measurement, measurementServiceRequest.getRequestInfo(), true);
             if (!isValidContract) {
                 throw new CustomException(INVALID_CONTRACT_CODE, INVALID_CONTRACT_MSG);
             }
