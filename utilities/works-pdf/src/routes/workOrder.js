@@ -182,11 +182,11 @@ router.post(
 
 
                 var accountantDetails = new Map();
-                var accountantRoles = ["WORK_ORDER_VIEWER", "BILL_ACCOUNTANT", "EMPLOYEE_COMMON", "BILL_VIEWER", "ORG_VIEWER", "BILL_CREATOR", "MUSTER_ROLL_VERIFIER"];
+                var accountantRoles = ["WORK_ORDER_VIEWER", "BILL_ACCOUNTANT", "EMPLOYEE_COMMON", "BILL_VIEWER", "ORG_VIEWER"];
                 for (var emp in hrms.Employees) {
                     var obj = hrms.Employees[emp];
                     var roles = obj.user.roles;
-                    let accountantRoleChecker = (accountantRoles, roles) => roles.every(v => accountantRoles.includes(v));
+                    let accountantRoleChecker = (accountantRoles, roles) => accountantRoles.every(v => roles.includes(v));
                     if (roles.length == accountantRoles.length && accountantRoleChecker) {
                         accountantDetails.set('name', obj.user.name);
                         accountantDetails.set('mobileNumber', obj.user.mobileNumber);
@@ -248,6 +248,7 @@ router.post(
                 }
 
                 contract.contracts[0].financialYear= fiscalyear;
+                contract.contracts[0].issueDate=date;
 
                 try {
                     pdfResponse = await create_pdf(
