@@ -1,4 +1,4 @@
-FROM manastanmay0809/node-builder-16:yarn
+FROM egovio/alpine-node-builder-14:yarn
 
 
 ARG WORK_DIR
