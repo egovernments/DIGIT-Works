@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.egov.works.measurement.config.ErrorConfiguration.*;
 import static org.egov.works.measurement.config.ServiceConstants.*;
@@ -253,16 +254,12 @@ public class ContractUtil {
 
     public void validateDimensions(EstimateResponse estimateResponse, Measurement measurement, ContractResponse contractResponse, Measurement measurementFromDB, Boolean isUpdate)  {
 
-        Map<String, String> targetIdToEstimateLineItemId = new HashMap<>();
-        Map<String, EstimateDetail> estimateLineItemIdToEstimateDetail = new HashMap<>();
+        Map<String, String> targetIdToEstimateLineItemId = contractResponse.getContracts().get(0).getLineItems().stream().collect(Collectors.toMap(LineItems::getId, LineItems::getEstimateLineItemId));
+
+        Map<String, EstimateDetail> estimateLineItemIdToEstimateDetail = estimateResponse.getEstimates().get(0).getEstimateDetails().stream().collect(Collectors.toMap(EstimateDetail::getId, estimateDetail -> estimateDetail));
+
         Map<String, BigDecimal> targetIdToCumulativeValue = new HashMap<>();
 
-        for (LineItems lineItem : contractResponse.getContracts().get(0).getLineItems()) {
-            targetIdToEstimateLineItemId.put(lineItem.getId(), lineItem.getEstimateLineItemId());
-        }
-        for (EstimateDetail detail : estimateResponse.getEstimates().get(0).getEstimateDetails()) {
-            estimateLineItemIdToEstimateDetail.put(detail.getId(), detail);
-        }
         if (measurementFromDB != null && !measurementFromDB.getMeasures().isEmpty()) {
             for (Measure measure : measurementFromDB.getMeasures()) {
                 BigDecimal cumulativeValue = measure.getCumulativeValue();
