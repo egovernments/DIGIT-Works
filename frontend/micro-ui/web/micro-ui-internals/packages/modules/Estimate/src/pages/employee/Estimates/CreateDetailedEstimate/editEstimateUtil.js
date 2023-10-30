@@ -1,4 +1,8 @@
+import { transformEstimateObjects } from "../../../../../util/estimateConversion"
+
 export const editEstimateUtil = (estimate,uom,overheads) => {
+    let SORtable = transformEstimateObjects(estimate, "SOR")
+    let NONSORtable = transformEstimateObjects(estimate, "NON-SOR")
     
     if(!estimate || !uom || !overheads){
         return {}
@@ -7,10 +11,20 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
     const formData = {}
     //pre populating the relevant formData
     //total estimate amount
-    formData.totalEstimatedAmount = estimate?.additionalDetails?.totalEstimatedAmount
+    formData.totalEstimatedAmount = estimate?.additionalDetails?.totalEstimatedAmount;
 
     //labour and material analysis
-    formData.analysis = estimate?.additionalDetails?.labourMaterialAnalysis
+    formData.labourMaterialAnalysis = estimate?.additionalDetails?.labourMaterialAnalysis
+
+    formData.SOR = SORtable;
+    formData.NONSOR = NONSORtable;
+    formData.SORtable = SORtable;
+    formData.NONSORtable = NONSORtable;
+
+
+    formData.accessors = {
+        SOR : SORtable
+    }
 
     //uploaded docs
     const uploadedDocs = {}
@@ -51,14 +65,14 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
             "isActive":row?.isActive,
         })
     })
-    formData["nonSORTablev1"] = LineItems
+    //formData["NONSORtable"] = LineItems
     //Overheads table
     const overHeadItems = [null]
     estimate?.estimateDetails?.filter(row=>row?.category==="OVERHEAD")?.forEach(row=>{
         let corresOverhead = overheads.filter(overheadRow=>overheadRow?.code === row?.amountDetail?.[0]?.type)?.[0]
         overHeadItems.push({
             "percentage": corresOverhead?.type==="percentage" ? `${corresOverhead?.value}` : "Lumpsum",
-            "amount": `${row?.amountDetail?.[0]?.amount}`,
+            "amount": row?.amountDetail?.[0]?.amount,
             "name":{
                 ...overheads.filter(overheadRow=>overheadRow?.code === row?.amountDetail?.[0]?.type)?.[0],
                 "name": `ES_COMMON_OVERHEADS_${row?.amountDetail?.[0]?.type}`
@@ -68,7 +82,7 @@ export const editEstimateUtil = (estimate,uom,overheads) => {
     })
     formData["overheadDetails"] = overHeadItems
 
-    
+
     
     return formData
 }

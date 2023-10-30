@@ -97,7 +97,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     //send appropriate states over
     
     if(bsEstimate === businessService && action?.action === "RE-SUBMIT"){
-        history.push(`/${window?.contextPath}/employee/estimate/create-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
+        history.push(`/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${tenantId}&projectNumber=${editApplicationNumber || applicationDetails?.additionalDetails?.projectNumber}&estimateNumber=${applicationDetails?.estimateNumber}&isEdit=true`);
         return 
     }
 

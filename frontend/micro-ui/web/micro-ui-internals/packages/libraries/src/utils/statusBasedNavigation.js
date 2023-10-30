@@ -2,14 +2,26 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-export const statusBasedNavigation = ( status, contractNumber, measurementNumber, tenantId, value ) => {
+export const statusBasedNavigation = ( status, contractOrProjectNumber, measurementOrEstimateNumber, tenantId, value, mode = "MEASUREMENT" ) => {
     const { t } = useTranslation();
+    
+    let linkTo = `/${window?.contextPath}/employee/measurement/update?tenantId=${tenantId}&workOrderNumber=${contractOrProjectNumber}&mbNumber=${measurementOrEstimateNumber}`;
 
-    let linkTo = `/${window?.contextPath}/employee/measurement/update?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${measurementNumber}`;
+        if (status !== "DRAFTED") {
+            linkTo = `/${window?.contextPath}/employee/measurement/view?tenantId=${tenantId}&workOrderNumber=${contractOrProjectNumber}&mbNumber=${measurementOrEstimateNumber}`;
+        }
 
-    if (status !== "DRAFTED") {
-        linkTo = `/${window?.contextPath}/employee/measurement/view?tenantId=${tenantId}&workOrderNumber=${contractNumber}&mbNumber=${measurementNumber}`;
+    if(mode === "ESTIMATE")
+    {
+        linkTo = `/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${tenantId}&estimateNumber=${measurementOrEstimateNumber}&projectNumber=${contractOrProjectNumber}&isEdit=${true}`;
+
+        if (status !== "DRAFT") {
+            linkTo = `/${window?.contextPath}/employee/estimate/estimate-details?tenantId=${tenantId}&estimateNumber=${measurementOrEstimateNumber}&projectNumber=${contractOrProjectNumber}`;
+        }
     }
+    
+        
+    
 
     return (
         <Link to={linkTo}>
