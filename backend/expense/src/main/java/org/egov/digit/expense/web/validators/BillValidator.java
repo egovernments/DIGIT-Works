@@ -384,8 +384,7 @@ public class BillValidator {
 	private Map<String, Map<String, JSONArray>> getMasterDataForValidation(BillRequest billRequest, Bill bill) {
 		
 		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-				bill.getTenantId());
-        
+				bill.getTenantId(), billRequest);
 		if(CollectionUtils.isEmpty(mdmsData)) {
 			throw new CustomException("EG_EXPENSE_MDMS_ERROR", "MDMS Data not found for the tenantid : " + bill.getTenantId());
 		}
