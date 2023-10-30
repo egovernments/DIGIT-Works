@@ -29,6 +29,10 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
     processArrays();
   }, [estimateDetails]);
 
+  const getRedirectionCallback = () => {
+    window.location.href = `/${window?.contextPath}/employee/estimate/update-detailed-estimate?tenantId=${estimateDetails?.tenantId}&projectNumber=${estimateDetails?.additionalDetails?.projectNumber}&estimateNumber=${estimateDetails?.estimateNumber}&isEdit=true`
+}
+
   return {
     cards: [
       {
@@ -172,6 +176,7 @@ export const data = (projectDetails, estimateDetails, overheadDetails) => {
             url: "/estimate/v1/_update",
             moduleCode: "Estimate",
             editApplicationNumber: undefined,
+            editCallback : getRedirectionCallback
           },
         ],
       },

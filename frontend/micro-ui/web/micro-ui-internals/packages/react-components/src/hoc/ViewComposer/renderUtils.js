@@ -128,6 +128,7 @@ export const RenderWfActions = ({ section }) => {
     url,
     moduleCode = "Estimate",
     editApplicationNumber,
+    editCallback,
   } = section;
 
   return (
@@ -140,6 +141,7 @@ export const RenderWfActions = ({ section }) => {
       url={url}
       moduleCode={moduleCode}
       editApplicationNumber={editApplicationNumber}
+      editCallback={editCallback}
     />
   );
 };
