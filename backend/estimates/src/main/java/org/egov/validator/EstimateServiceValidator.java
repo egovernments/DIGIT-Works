@@ -55,14 +55,10 @@ public class EstimateServiceValidator {
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow, errorMap);
 
-        String rootTenantId = estimate.getTenantId();
-        //split the tenantId
-        rootTenantId = rootTenantId.split("\\.")[0];
+        String tenantId = estimate.getTenantId();
 
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
-        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
-
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, true);
+        Object mdmsData = mdmsUtils.mDMSCall(request, tenantId);
+        validateMDMSData(estimate, mdmsData, errorMap, true);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())
@@ -168,7 +164,7 @@ public class EstimateServiceValidator {
         }
     }
 
-    private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap, boolean isCreate) {
+    private void validateMDMSData(Estimate estimate, Object mdmsData, Map<String, String> errorMap, boolean isCreate) {
         log.info("EstimateServiceValidator::validateMDMSData");
         List<String> reqSorIds = new ArrayList<>();
         List<String> reqEstimateDetailCategories = new ArrayList<>();
@@ -242,7 +238,7 @@ public class EstimateServiceValidator {
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
             // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
             categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
-            overHeadRes = JsonPath.read(mdmsDataForOverHead, jsonPathForOverHead);
+            overHeadRes = JsonPath.read(mdmsData, jsonPathForOverHead);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
@@ -399,14 +395,9 @@ public class EstimateServiceValidator {
                 throw new CustomException("INVALID_PROJECT_ID", "The project id is different than that is linked with given estimate id : " + id);
             }
         }
-        String rootTenantId = estimate.getTenantId();
-        //split the tenantId
-        rootTenantId = rootTenantId.split("\\.")[0];
-
-        Object mdmsData = mdmsUtils.mDMSCall(request, rootTenantId);
-
-        Object mdmsDataForOverHead = mdmsUtils.mDMSCallForOverHeadCategory(request, rootTenantId);
-        validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
+        String tenantId = estimate.getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCall(request, tenantId);
+        validateMDMSData(estimate, mdmsData, errorMap, false);
         validateProjectId(request, errorMap);
 
         if (!errorMap.isEmpty())

@@ -388,8 +388,7 @@ public class SupervisionBillGeneratorService {
 	}
 
 	private Party buildParty(RequestInfo requestInfo, String type, String tenantId) {
-		String rootTenantId = tenantId.split("\\.")[0];
-		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, rootTenantId);
+		Object mdmsResp = mdmsUtils.getPayersForTypeFromMDMS(requestInfo, type, tenantId);
 		List<Object> payerList = commonUtil.readJSONPathValue(mdmsResp, JSON_PATH_FOR_PAYER);
 		for (Object obj : payerList) {
 			Payer payer = mapper.convertValue(obj, Payer.class);

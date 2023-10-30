@@ -41,14 +41,14 @@ public class OrganisationEnrichmentService {
 
         //set the audit details
         organisationUtil.setAuditDetailsForOrganisation(requestInfo.getUserInfo().getUuid(), organisationList, Boolean.TRUE);
-        String rootTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
+        String tenantId = organisationList.get(0).getTenantId();
 
         //idgen to get the list of organisation application Numbers
-        List<String> orgApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getOrgApplicationNumberName()
+        List<String> orgApplicationNumbers = idgenUtil.getIdList(requestInfo, tenantId, config.getOrgApplicationNumberName()
                 , config.getOrgApplicationNumberFormat(), organisationList.size());
 
         //idgen to get the list of org Numbers
-        List<String> orgNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getOrgNumberName()
+        List<String> orgNumbers = idgenUtil.getIdList(requestInfo, tenantId, config.getOrgNumberName()
                 , config.getOrgNumberFormat(), organisationList.size());
 
         //idgen to get the list of function application Numbers
@@ -59,7 +59,7 @@ public class OrganisationEnrichmentService {
             return 0;
         }).sum();
 
-        List<String> orgFunctionApplicationNumbers = idgenUtil.getIdList(requestInfo, rootTenantId, config.getFunctionApplicationNumberName()
+        List<String> orgFunctionApplicationNumbers = idgenUtil.getIdList(requestInfo, tenantId, config.getFunctionApplicationNumberName()
                 , config.getFunctionApplicationNumberFormat(), ((int) idgenFuncApplicationNumberCount));
 
         int orgAppNumIdFormatIndex = 0;
@@ -172,7 +172,7 @@ public class OrganisationEnrichmentService {
         //set the audit details for organisation
         organisationUtil.setAuditDetailsForOrganisation(requestInfo.getUserInfo().getUuid(), organisationList, Boolean.FALSE);
 
-        String rootTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
+        String tenantId = organisationList.get(0).getTenantId();
 
         for (Organisation organisation : organisationList) {
             List<Function> functionList = organisation.getFunctions();
@@ -186,7 +186,7 @@ public class OrganisationEnrichmentService {
             upsertOrgDocument(documentList);
 
             //upsert function and its document
-            upsertFunction(requestInfo, rootTenantId, organisation, functionList);
+            upsertFunction(requestInfo, tenantId, organisation, functionList);
 
 
         }

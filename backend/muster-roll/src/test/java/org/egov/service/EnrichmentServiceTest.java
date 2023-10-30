@@ -82,7 +82,7 @@ public class EnrichmentServiceTest {
         List<IdResponse> idResponses = new ArrayList<>();
         idResponses.add(idResponse);
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
-        when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb"), eq(null), eq(""), eq(1)))
+        when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb.amritsar"), eq(null), eq(""), eq(1)))
                 .thenReturn(idGenerationResponse);
     }
 
@@ -91,7 +91,7 @@ public class EnrichmentServiceTest {
         //MOCK Idgen Response
         List<IdResponse> idResponses = new ArrayList<>();
         IdGenerationResponse idGenerationResponse = IdGenerationResponse.builder().idResponses(idResponses).build();
-        lenient().when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb"), eq(null), eq(""), eq(1)))
+        lenient().when(idGenRepository.getId(eq(MusterRollRequestBuilderTest.builder().getRequestInfo()), eq("pb.amritsar"), eq(null), eq(""), eq(1)))
                 .thenReturn(idGenerationResponse);
     }
 

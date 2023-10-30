@@ -54,7 +54,7 @@ public class Constants {
 	
 	public static final String PAYMENT_ID_FORMAT_NAME = "expense.payment.number";
 	
-	public static final List<String> MDMS_MASTER_NAMES = Collections
+	public static final List<String> EXPENSE_MDMS_MASTER_NAMES = Collections
 			.unmodifiableList(Arrays.asList(HEADCODE_MASTERNAME, BUSINESS_SERVICE_MASTERNAME));
 
 	public static final List<String> TENANT_MDMS_MASTER_NAMES = Collections

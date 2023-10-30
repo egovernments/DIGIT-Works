@@ -100,30 +100,8 @@ public class OrganisationServiceValidator {
 
     private void validateMDMSData(List<Organisation> organisationList, RequestInfo requestInfo, String tenantId, Map<String, String> errorMap) {
         log.info("OrganisationServiceValidator::validateMDMSData");
-        String rootTenantId = tenantId.split("\\.")[0];
-
-        //get the organisation related MDMS data
-        //tenant -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForTenant = mdmsUtil.getTenantMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object tenantMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForTenant, rootTenantId);
-
-        //Org type -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgType = mdmsUtil.getOrgTypeMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object orgTypeMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgType, rootTenantId);
-
-        //Org Fun Category -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgFunCategory = mdmsUtil.getOrgFunCategoryMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object orgFunCategoryMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunCategory, rootTenantId);
-
-        //Org Tax Identifier -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgTaxIdentifier = mdmsUtil.getOrgTaxIdentifierMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object orgTaxIdentifierMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgTaxIdentifier, rootTenantId);
-
-
-        //Org Function Class -MDMS data
-        MdmsCriteriaReq mdmsCriteriaReqForOrgFunctionClass = mdmsUtil.getOrgFunctionMDMSRequest(requestInfo, rootTenantId, organisationList);
-        Object orgFunctionClassMdmsData = mdmsUtil.mDMSCall(mdmsCriteriaReqForOrgFunctionClass, rootTenantId);
-
+        //Mdms Data
+        Object mdmsData = mdmsUtil.mDMSCall(requestInfo, tenantId);
 
         Set<String> orgTypeReqSet = new HashSet<>();
         Set<String> orgFuncCategoryReqSet = new HashSet<>();
@@ -166,11 +144,11 @@ public class OrganisationServiceValidator {
         List<Object> orgFuncClassRes = null;
         List<Object> orgIdentifierRes = null;
         try {
-            tenantRes = JsonPath.read(tenantMdmsData, jsonPathForTenants);
-            orgTypeRes = JsonPath.read(orgTypeMdmsData, jsonPathForOrgType);
-            orgFuncCategoryRes = JsonPath.read(orgFunCategoryMdmsData, jsonPathForOrgFuncCategory);
-            orgFuncClassRes = JsonPath.read(orgFunctionClassMdmsData, jsonPathForOrgFuncClass);
-            orgIdentifierRes = JsonPath.read(orgTaxIdentifierMdmsData, jsonPathForOrgIdentifier);
+            tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
+            orgTypeRes = JsonPath.read(mdmsData, jsonPathForOrgType);
+            orgFuncCategoryRes = JsonPath.read(mdmsData, jsonPathForOrgFuncCategory);
+            orgFuncClassRes = JsonPath.read(mdmsData, jsonPathForOrgFuncClass);
+            orgIdentifierRes = JsonPath.read(mdmsData, jsonPathForOrgIdentifier);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");

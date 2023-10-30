@@ -317,9 +317,8 @@ public class ExpenseCalculatorUtil {
     }
     
     public List<HeadCode> fetchMDMSDataForHeadCode(RequestInfo requestInfo, String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMS_HEAD_CODES);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId, MDMS_HEAD_CODES);
         List<Object> headCodeListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_HEAD_CODES);
         List<HeadCode> headCodes = new ArrayList<>();
         for(Object obj : headCodeListJson){
@@ -337,9 +336,8 @@ public class ExpenseCalculatorUtil {
         return filteredApplicableCharges;
     }
     private List<ApplicableCharge> fetchMDMSDataForApplicableCharges(RequestInfo requestInfo, String tenantId) {
-        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch head code list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId,MDMS_APPLICABLE_CHARGES);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId,MDMS_APPLICABLE_CHARGES);
         List<Object> applicableChargesListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_APPLICABLE_CHARGES);
         List<ApplicableCharge> applicableCharges = new ArrayList<>();
         for(Object obj : applicableChargesListJson){
