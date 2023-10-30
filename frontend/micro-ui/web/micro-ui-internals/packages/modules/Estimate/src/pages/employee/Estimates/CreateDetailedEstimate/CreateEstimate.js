@@ -11,6 +11,7 @@ import {
   Loader,
   Toast,
   ViewDetailsCard,
+  Menu,
 } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,11 +37,32 @@ const CreateEstimate = () => {
   const tenant = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   const [showToast, setShowToast] = useState(null);
-  const { tenantId, projectNumber, isEdit, estimateNumber } = Digit.Hooks.useQueryParams();
+  const [displayMenu, setDisplayMenu] = useState(false);
+  const [actionSelected, setActionSelected] = useState(false);
+  let { tenantId, projectNumber, isEdit, estimateNumber } = Digit.Hooks.useQueryParams();
   // const [ isFormReady,setIsFormReady ] = useState(isEdit ? false : true)
   const [isFormReady, setIsFormReady] = useState(true);
 
   const history = useHistory();
+
+  const actionMB = [
+    {
+      name: "SUBMIT",
+    },
+    {
+      name: "DRAFT",
+    },
+  ];
+
+  function onActionSelect(action) {
+    if (sessionFormData?.period?.type == "error") {
+      setShowToast({ error: true, label: sessionFormData?.period?.message });
+      return null;
+    }
+    setActionSelected(action?.name)
+      onFormSubmit(sessionFormData,action?.name);
+   
+  }
 
   // const {state} = useLocation()
 
@@ -206,17 +228,17 @@ const CreateEstimate = () => {
 
   useEffect(() => {
     if (uom && estimate && overheads && isEdit) {
-      // setSessionFormData(initialDefaultValues)
+       setSessionFormData(initialDefaultValues)
     }
   }, [estimate, uom, overheads]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (!_.isEqual(sessionFormData, formData)) {
+    if (!_.isEqual(formData, sessionFormData)) {
       // if(isEdit) {
       //     setSessionFormData({...initialDefaultValues,...formData,...sessionFormData})
       // }
       // else{
-      //     setSessionFormData({ ...sessionFormData, ...formData });
+        setSessionFormData({ ...formData });
       // }
       // setSessionFormData({ ...sessionFormData, ...formData });
     }
@@ -227,7 +249,7 @@ const CreateEstimate = () => {
     //added this totalEst amount logic here because setValues in pageComponents don't work
     //after setting the value, in consequent renders value changes to undefined
     //check TotalEstAmount.js
-    let totalLabourAndMaterial = parseInt(getLabourMaterialAnalysisCost(_data,"LH")) + parseInt(getLabourMaterialAnalysisCost(_data,"MA")) + parseInt(getLabourMaterialAnalysisCost(_data,"MH"));
+    let totalLabourAndMaterial = parseInt(getLabourMaterialAnalysisCost(_data,"LH")) + parseInt(getLabourMaterialAnalysisCost(_data,"MA")) + parseInt(getLabourMaterialAnalysisCost(_data,"MH")) || (_data?.labourMaterialAnalysis?.labour + _data?.labourMaterialAnalysis?.material + _data?.labourMaterialAnalysis?.machinery);
     //here check totalEst amount should be less than material+labour
     if (_data.totalEstimateAmount < totalLabourAndMaterial) {
       setShowToast({ warning: true, label: "ERR_ESTIMATE_AMOUNT_MISMATCH" });
@@ -250,6 +272,7 @@ const CreateEstimate = () => {
       ..._data,
       ...inputFormData,
       selectedApprover,
+      workflowAction : actionSelected,
       // selectedDept,
       // selectedDesignation
     };
@@ -408,8 +431,8 @@ const CreateEstimate = () => {
           fieldStyle={{ marginRight: 0 }}
           inline={false}
           // className="card-no-margin"
-          // defaultValues={(isEdit && estimateNumber) ? initialDefaultValues : sessionFormData}
-          defaultValues={sessionFormData}
+          defaultValues={(isEdit === "true" && estimateNumber) ? initialDefaultValues : sessionFormData}
+          //defaultValues={{...sessionFormData}}
           showWrapperContainers={false}
           isDescriptionBold={false}
           noBreakLine={true}
@@ -434,6 +457,10 @@ const CreateEstimate = () => {
           isDleteBtn={true}
         />
       )}
+      <ActionBar>
+        {displayMenu ? <Menu localeKeyPrefix={"WF"} options={actionMB} optionKey={"name"} t={t} onSelect={onActionSelect} /> : null}
+        <SubmitBar label={t("ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+      </ActionBar>
     </Fragment>
   );
 };

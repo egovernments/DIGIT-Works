@@ -10,8 +10,8 @@ output is array of object of type which is passed
 */
 
 export const transformEstimateObjects = (estimateData, type) => {
-    let lineItems = estimateData?.estimateDetails;
-    const convertedObject = lineItems.filter(e => e.category === type).reduce((acc, curr) => {
+    let lineItems = estimateData?.estimateDetails ? estimateData?.estimateDetails : estimateData;
+    const convertedObject = lineItems?.filter(e => e.category === type).reduce((acc, curr) => {
         if (acc[curr.sorId]) {
             acc[curr.sorId].push(curr);
         } else {
@@ -19,7 +19,7 @@ export const transformEstimateObjects = (estimateData, type) => {
         }
         return acc;
     }, {});
-    return Object.keys(convertedObject).map((key, index) => {
+    return convertedObject && Object.keys(convertedObject).map((key, index) => {
         const measures = convertedObject[key].map((e, index) => ({
             sNo: index + 1,
             isDeduction: e?.isDeduction,
@@ -34,14 +34,14 @@ export const transformEstimateObjects = (estimateData, type) => {
             consumedRowQuantity: 0
         }));
         return {
-            amount: measures?.reduce((acc, curr) => acc + curr?.rowAmount, 0),
-            consumedQ : measures?.reduce((acc, curr) => acc + curr?.consumedRowQuantity, 0),
+            amount: measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.rowAmount : acc + curr?.rowAmount, 0),
+            consumedQ : measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.consumedRowQuantity : acc + curr?.consumedRowQuantity, 0),
             sNo: index + 1,
-            currentMBEntry:measures?.reduce((acc, curr) => acc + curr?.noOfunit, 0),
+            currentMBEntry:measures?.reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0),
             uom: convertedObject[key]?.[0]?.uom,
             description: convertedObject[key]?.[0]?.name,
             unitRate: convertedObject[key]?.[0]?.unitRate,
-            approvedQuantity: convertedObject[key].reduce((acc, curr) => acc + curr.noOfunit, 0),
+            approvedQuantity: convertedObject[key].reduce((acc, curr) => curr.isDeduction == true ? acc - curr?.noOfunit : acc + curr?.noOfunit, 0),
             showMeasure:false,
             sorCode : convertedObject[key]?.[0]?.sorId,
             sorType: estimateData?.additionalDetails?.sorSkillData?.filter((ob) => ob?.sorId === key)?.[0]?.sorType,

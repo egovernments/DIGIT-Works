@@ -32,6 +32,12 @@ const ViewAnalysisStatement = ({watch,formState,...props}) => {
         if(category === "LH" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.labour) return formData?.additionalDetails?.labourMaterialAnalysis?.labour;
         if(category === "MA" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.material) return formData?.additionalDetails?.labourMaterialAnalysis?.material;
         if(category === "MH" && SORAmount == 0 && formData?.additionalDetails?.labourMaterialAnalysis?.machinery) return formData?.additionalDetails?.labourMaterialAnalysis?.machinery;
+        if(window.location.href.includes("update-detailed-estimate"))
+        {
+        if(category === "LH" && SORAmount == 0 && formData?.labourMaterialAnalysis?.labour) return formData?.labourMaterialAnalysis?.labour;
+        if(category === "MA" && SORAmount == 0 && formData?.labourMaterialAnalysis?.material) return formData?.labourMaterialAnalysis?.material;
+        if(category === "MH" && SORAmount == 0 && formData?.labourMaterialAnalysis?.machinery) return formData?.labourMaterialAnalysis?.machinery;
+        }
         return (SORAmount).toFixed(2);        
     }
     

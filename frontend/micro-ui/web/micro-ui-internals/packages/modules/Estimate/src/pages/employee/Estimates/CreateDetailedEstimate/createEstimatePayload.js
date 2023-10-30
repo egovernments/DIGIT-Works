@@ -90,29 +90,11 @@ const fetchEstimateDetails = (data) => {
 };
 
 const fetchEstimateDetailsEdit = (data, estimate) => {
-  let sornonSORData = data?.nonSORTablev1
-    ?.filter((row) => row && row.estimatedAmount !== "0")
-    ?.map((row) => {
-      return {
-        sorId: 45,
-        category: "NON-SOR",
-        name: row?.description,
-        description: row?.description,
-        unitRate: row?.rate,
-        noOfunit: row?.estimatedQuantity,
-        uom: row?.uom?.code,
-        isActive: true,
-        // "uomValue": 10, //not sure what is this field//try removing this field
-        amountDetail: [
-          {
-            type: "EstimatedAmount",
-            amount: row?.estimatedAmount,
-            additionalDetails: {},
-            isActive: true,
-          },
-        ],
-      };
-    });
+
+  const Sors = (data?.SORtable && transformLineItems(data?.SORtable)) || [];
+  const NonSors = (data?.NONSORtable && transformLineItems(data?.NONSORtable)) || [];
+  const detailedEstimates = [...Sors, ...NonSors];
+
   let overHeadsData = data?.overheadDetails
     ?.filter((row) => row && row.amount !== "0")
     ?.map((row) => {
@@ -120,12 +102,10 @@ const fetchEstimateDetailsEdit = (data, estimate) => {
         category: "OVERHEAD",
         name: row?.name?.code,
         description: row?.name?.description,
-        isActive: true,
         amountDetail: [
           {
             type: row?.name?.code,
             amount: row?.amount,
-            isActive: true,
           },
         ],
         additionalDetails: {
@@ -134,12 +114,7 @@ const fetchEstimateDetailsEdit = (data, estimate) => {
       };
     });
 
-  //updating existing lineItems
-  estimate?.estimateDetails?.forEach((lineItem) => {
-    (lineItem.isActive = false), (lineItem.amountDetail[0].isActive = false);
-  });
-
-  return [...sornonSORData, ...overHeadsData, ...estimate.estimateDetails];
+    return [...detailedEstimates, ...overHeadsData];
 };
 
 const fetchDocuments = (docs) => {
@@ -176,12 +151,10 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
         id: estimate.id,
         estimateNumber: estimate.estimateNumber,
         tenantId: tenantId,
-        // "projectId": projectData?.projectDetails?.searchedProject?.basicDetails?.uuid,
-        projectId: "4bf36cd5-f10a-4a46-bdfc-aa364e67546f",
+        projectId: projectData?.projectDetails?.searchedProject?.basicDetails?.uuid,
         status: "ACTIVE",
-        wfStatus: "CREATED",
-        // "name": projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
-        name: "Testing",
+        wfStatus: estimate?.wfStatus,
+        name: projectData?.projectDetails?.searchedProject?.basicDetails?.projectName,
         description: projectData?.projectDetails?.searchedProject?.basicDetails?.projectDesc,
         executingDepartment: "WRK", //hardcoded since we are not capturing it anymore and it is required at BE side
         // "executingDepartment": filteredFormData?.selectedDept?.code,
@@ -193,7 +166,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
         estimateDetails: fetchEstimateDetailsEdit(filteredFormData, estimate),
         additionalDetails: {
           documents: fetchDocuments(data?.uploadedDocs),
-          labourMaterialAnalysis: { ...filteredFormData?.analysis },
+          labourMaterialAnalysis: { ...filteredFormData?.labourMaterialAnalysis },
           creator: Digit.UserService.getUser()?.info?.name,
           location: {
             locality: projectData?.projectDetails?.searchedProject?.basicDetails?.address?.boundary,
@@ -215,7 +188,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
         },
       },
       workflow: {
-        action: "RE-SUBMIT",
+        action:  (estimate?.wfStatus === "PENDINGFORCORRECTION") ? "RE-SUBMIT" : data?.workflowAction,
         comment: filteredFormData?.comments,
         assignees: [filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid : undefined],
       },
@@ -270,7 +243,7 @@ export const createEstimatePayload = (data, projectData, isEdit, estimate) => {
         },
       },
       workflow: {
-        action: "SUBMIT",
+        action: data?.workflowAction,
         comment: filteredFormData?.comments,
         assignees: [filteredFormData?.selectedApprover?.uuid ? filteredFormData?.selectedApprover?.uuid : undefined],
       },

@@ -10,6 +10,7 @@ import EstimateInbox from "./EstimateInbox";
 import ViewEstimate from "./ViewEstimate";
 import EstimateResponse from "./Estimates/CreateEstimate/EstimateResponse";
 import CreateDetailedEstimate from "./Estimates/CreateDetailedEstimate/CreateEstimate";
+import UpdateDetailedEstimate from "./Estimates/CreateDetailedEstimate/UpdateDetailedEstimate";
 
 import ViewDetailedEstimate from "./ViewDetailedEstimate";
 
@@ -128,6 +129,7 @@ const App = ({ path }) => {
                     <PrivateRoute path={`${path}/inbox`} component={() => <EstimateInbox {...{ path }} />} />
                     <PrivateRoute path={`${path}/view-estimate`} component={() => <ViewEstimate {...{ path }} />} />
                     <PrivateRoute path={`${path}/estimate-details`} component={() => <ViewDetailedEstimate {...{ path }} />} />
+                    <PrivateRoute path={`${path}/update-detailed-estimate`} component={() => <UpdateDetailedEstimate {...{ path }} />} />
 
                     <PrivateRoute path={`${path}/response`} component={() => <EstimateResponse {...{ path }} />} />
 
