@@ -12,6 +12,7 @@ const EstimateDropdown = (props) => {
       MdmsCriteria: {
         tenantId: tenantId,
         filters: {},
+        isActive: true,
         schemaCode: props?.schemaCode,
         limit: 50,
         offset: 0,
