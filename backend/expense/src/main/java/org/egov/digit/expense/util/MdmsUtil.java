@@ -35,7 +35,6 @@ public class MdmsUtil {
 
 
 
-
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, BillRequest billRequest) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
@@ -51,40 +50,42 @@ public class MdmsUtil {
 
 		Long createdTime = billRequest.getBill().getAuditDetails() != null ? billRequest.getBill().getAuditDetails().getCreatedTime() : Instant.now().toEpochMilli();
 		Map<String, Map<String, JSONArray>> mdmsRes = filterMdmsResponseByDate(createdTime, mdmsResponse.getMdmsRes());
-		log.info(mdmsResponse.toString());
-        return mdmsResponse.getMdmsRes();
-        //log.info(ulbToCategoryListMap.toString());
+		log.info(mdmsRes.toString());
+        return mdmsRes;
     }
 	public Map<String, Map<String, JSONArray>> filterMdmsResponseByDate(Long createdTime, Map<String, Map<String, JSONArray>> mdmsRes) {
 		Map<String, Map<String, JSONArray>> filteredMdmsRes = new HashMap<>();
-		ObjectMapper objectMapper = new ObjectMapper();
 		for (Map.Entry<String, Map<String, JSONArray>> entry : mdmsRes.entrySet()) {
 			Map<String, JSONArray> moduleMap = entry.getValue();
 			Map<String, JSONArray> filteredModuleMap = new HashMap<>();
 			for (Map.Entry<String, JSONArray> moduleEntry : moduleMap.entrySet()) {
 				String moduleName = moduleEntry.getKey();
-				JSONArray moduleArray = moduleEntry.getValue();
-				JSONArray filteredModuleArray = new JSONArray();
-				for (int i = 0; i < moduleArray.size(); i++) {
-					JsonNode moduleJsonNode = objectMapper.valueToTree(moduleArray.get(i));
-					if(moduleJsonNode.has("effectiveFrom") && moduleJsonNode.has("effectiveTo")) {
-						Long effectiveFrom = moduleJsonNode.get("effectiveFrom").asLong();
-						Long effectiveTo = moduleJsonNode.get("effectiveTo").asLong();
-						Boolean isActive = moduleJsonNode.get("active").asBoolean();
-						if(moduleJsonNode.get("effectiveTo").isNull() && effectiveFrom <= createdTime && isActive) {
-							filteredModuleArray.add(moduleArray.get(i));
-						}else if(!moduleJsonNode.get("effectiveTo").isNull() && effectiveFrom <= createdTime && effectiveTo >= createdTime) {
-							filteredModuleArray.add(moduleArray.get(i));
-						}
-					} else {
-						filteredModuleArray.add(moduleArray.get(i));
-					}
-				}
+				JSONArray filteredModuleArray = filterMdmsArrayByDate(createdTime, moduleEntry.getValue());
 				filteredModuleMap.put(moduleName, filteredModuleArray);
 			}
 			filteredMdmsRes.put(entry.getKey(), filteredModuleMap);
 		}
 		return filteredMdmsRes;
+	}
+
+	private JSONArray filterMdmsArrayByDate(Long createdTime, JSONArray moduleArray) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		JSONArray filteredModuleArray = new JSONArray();
+		for (Object o : moduleArray) {
+			JsonNode moduleJsonNode = objectMapper.valueToTree(o);
+			if (moduleJsonNode.has(Constants.EFFECTIVE_FROM_FIELD_MDMS) && moduleJsonNode.has(Constants.EFFECTIVE_TO_FIELD_MDMS)) {
+				Long effectiveFrom = moduleJsonNode.get(Constants.EFFECTIVE_FROM_FIELD_MDMS).asLong();
+				Long effectiveTo = moduleJsonNode.get(Constants.EFFECTIVE_TO_FIELD_MDMS).asLong();
+				Boolean isActive = moduleJsonNode.get(Constants.ACTIVE_FIELD_MDMS).asBoolean();
+				if ((moduleJsonNode.get(Constants.EFFECTIVE_TO_FIELD_MDMS).isNull() && effectiveFrom <= createdTime && isActive) ||
+						(!moduleJsonNode.get(Constants.EFFECTIVE_TO_FIELD_MDMS).isNull() && effectiveFrom <= createdTime && effectiveTo >= createdTime)) {
+					filteredModuleArray.add(o);
+				}
+			} else {
+				filteredModuleArray.add(o);
+			}
+		}
+		return filteredModuleArray;
 	}
 	/**
 	 * prepares Master Data request
@@ -97,9 +98,9 @@ public class MdmsUtil {
 
 		// Criteria for tenant module
 		List<MasterDetail> tenantMasterDetails = new ArrayList<>();
-		Constants.TENANT_MDMS_MASTER_NAMES.forEach(name -> {
-			tenantMasterDetails.add(MasterDetail.builder().name(name).build());
-		});
+		Constants.TENANT_MDMS_MASTER_NAMES.forEach(name ->
+			tenantMasterDetails.add(MasterDetail.builder().name(name).build())
+		);
 
 		ModuleDetail tenantModuleDetail = ModuleDetail.builder()
 				.moduleName(Constants.TENANT_MODULE_NAME)
@@ -108,9 +109,9 @@ public class MdmsUtil {
 
 		// Criteria for Expense module
 		List<MasterDetail> expenseMasterDetails = new ArrayList<>();
-		Constants.EXPENSE_MDMS_MASTER_NAMES.forEach(name -> {
-			expenseMasterDetails.add(MasterDetail.builder().name(name).build());
-		});
+		Constants.EXPENSE_MDMS_MASTER_NAMES.forEach(name ->
+			expenseMasterDetails.add(MasterDetail.builder().name(name).build())
+		);
 		ModuleDetail expenseModuleDetail = ModuleDetail.builder()
 				.moduleName(Constants.EXPENSE_MODULE_NAME)
 				.masterDetails(expenseMasterDetails)
