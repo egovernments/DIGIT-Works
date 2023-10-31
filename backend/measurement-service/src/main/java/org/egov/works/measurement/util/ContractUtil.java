@@ -119,7 +119,11 @@ public class ContractUtil {
         estimateIdsList.add(contractResponse.getContracts().get(0).getLineItems().get(0).getEstimateId());
         EstimateResponse estimateResponse = getEstimate(requestInfo, measurement.getTenantId(), estimateIdsList);  // assume a single estimate id for now
         ResponseEntity<MeasurementResponse> measurementResponse = measurementRegistryUtil.searchMeasurements(MeasurementSearchRequest.builder().requestInfo(requestInfo).criteria(MeasurementCriteria.builder().referenceId(Collections.singletonList(measurement.getReferenceId())).isActive(true).tenantId(measurement.getTenantId()).build()).build());
-        validateDimensions(estimateResponse, measurement, contractResponse, measurementResponse.getBody().getMeasurements().get(0), isUpdate);
+        Measurement measurementFromDB = null;
+        if (measurementResponse.getBody().getMeasurements().size() != 0) {
+            measurementFromDB = measurementResponse.getBody().getMeasurements().get(0);
+        }
+        validateDimensions(estimateResponse, measurement, contractResponse, measurementFromDB, isUpdate);
         boolean validDimensions = true;
         System.out.println(estimateResponse.getEstimates().get(0).getId());
 
