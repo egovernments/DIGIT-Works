@@ -172,30 +172,6 @@ public class WorkflowService {
         Estimate estimate = request.getEstimate();
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
-        //Checking for workflow status and updating the assignee
-        if(workflow.getAction().equals(EstimateServiceConstant.ACTION_SENDBACK) && CollectionUtils.isEmpty(workflow.getAssignees())) {
-            String assignee = null;
-            Boolean statusFound = false;
-            List<ProcessInstance> processInstanceList = callWorkFlowForAssignees(request);
-            String nextState = getNextStateValueForProcessInstance(processInstanceList.get(0));
-            for(ProcessInstance processInstance: processInstanceList){
-                if((processInstance.getState().getUuid() != null) && (processInstance.getState().getUuid().equals(nextState)) && (statusFound != true)) {
-                    statusFound = true;
-                    if(processInstance.getAssignes() != null){
-                        List<String> uuids = new ArrayList<>();
-                        assignee = processInstance.getAssignes().get(0).getUuid();
-                        uuids.add(assignee);
-                        workflow.setAssignees(uuids);
-                    }
-                }
-            }
-        }
-        //Checking for workflow status and updating the assignee
-        if(workflow.getAction().equals(EstimateServiceConstant.ACTION_SENDBACKTOORIGINATOR) && CollectionUtils.isEmpty(workflow.getAssignees())){
-            List<String> uuids = new ArrayList<>();
-            uuids.add(estimate.getAuditDetails().getCreatedBy());
-            workflow.setAssignees(uuids);
-        }
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(estimate.getEstimateNumber());
         processInstance.setAction(request.getWorkflow().getAction());
@@ -223,21 +199,6 @@ public class WorkflowService {
         return processInstance;
     }
 
-    /**
-     * Method to get the next state value for the process instance
-     * @param processInstance
-     * @return
-     */
-    private String getNextStateValueForProcessInstance(ProcessInstance processInstance){
-            List<Action> actions = processInstance.getState().getActions();
-            String nextState = null;
-            for(Action action: actions) {
-                if (action.getAction().equals("SENDBACK")) {
-                     nextState = action.getNextState();
-                }
-            }
-            return nextState;
-    }
     /*
      * @param processInstances
      */
@@ -282,15 +243,6 @@ public class WorkflowService {
         return response.getProcessInstances().get(0).getState();
     }
 
-    private List<ProcessInstance> callWorkFlowForAssignees(EstimateRequest estimateRequest) {
-        log.info("WorkflowService::callWorkFlow");
-        ProcessInstanceResponse response = null;
-        StringBuilder url = getprocessInstanceHistorySearchURL(estimateRequest.getEstimate().getTenantId(), estimateRequest.getEstimate().getEstimateNumber(), true);
-        Object optional = repository.fetchResult(url, estimateRequest);
-        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-        //return response.getProcessInstances().get(1).getAssignes().get(0).getUuid();
-        return response.getProcessInstances();
-    }
 
     public StringBuilder getprocessInstanceSearchURL(String tenantId, String estimateNumber) {
         log.info("WorkflowService::getprocessInstanceSearchURL");
@@ -300,19 +252,6 @@ public class WorkflowService {
         url.append(tenantId);
         url.append("&businessIds=");
         url.append(estimateNumber);
-        return url;
-    }
-
-    public StringBuilder getprocessInstanceHistorySearchURL(String tenantId, String estimateNumber, boolean history) {
-        log.info("WorkflowService::getprocessInstanceSearchURL");
-        StringBuilder url = new StringBuilder(serviceConfiguration.getWfHost());
-        url.append(serviceConfiguration.getWfProcessInstanceSearchPath());
-        url.append("?tenantId=");
-        url.append(tenantId);
-        url.append("&businessIds=");
-        url.append(estimateNumber);
-        url.append("&history=");
-        url.append(history);
         return url;
     }
 
