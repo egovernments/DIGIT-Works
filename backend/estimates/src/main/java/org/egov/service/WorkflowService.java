@@ -172,6 +172,7 @@ public class WorkflowService {
         Estimate estimate = request.getEstimate();
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
+        //Checking for workflow status and updating the assignee
         if(workflow.getAction().equals(EstimateServiceConstant.ACTION_SENDBACK) && CollectionUtils.isEmpty(workflow.getAssignees())) {
             String assignee = null;
             Boolean statusFound = false;
@@ -189,6 +190,7 @@ public class WorkflowService {
                 }
             }
         }
+        //Checking for workflow status and updating the assignee
         if(workflow.getAction().equals(EstimateServiceConstant.ACTION_SENDBACKTOORIGINATOR) && CollectionUtils.isEmpty(workflow.getAssignees())){
             List<String> uuids = new ArrayList<>();
             uuids.add(estimate.getAuditDetails().getCreatedBy());
@@ -221,6 +223,11 @@ public class WorkflowService {
         return processInstance;
     }
 
+    /**
+     * Method to get the next state value for the process instance
+     * @param processInstance
+     * @return
+     */
     private String getNextStateValueForProcessInstance(ProcessInstance processInstance){
             List<Action> actions = processInstance.getState().getActions();
             String nextState = null;

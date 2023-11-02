@@ -68,7 +68,15 @@ public class MDMSUtils {
         return result;
     }
 
-
+    /**
+     * Calls MDMSV2 service to fetch works master data
+     *
+     * @param request
+     * @param tenantId
+     * @param masterName
+     * @param moduleName
+     * @return
+     */
     public Object mdmsCallV2(EstimateRequest request, String tenantId, String masterName,String moduleName){
         log.info("MDMSUtils::mDMSCallV2");
         RequestInfo requestInfo =request.getRequestInfo();
@@ -179,7 +187,13 @@ public class MDMSUtils {
         return estimateCategoryModuleDetail;
     }
 
-
+    /**
+     * Method to create SorId module with required filters for SOR and Rates for fetching master data
+     * @param request
+     * @param sorIds
+     * @param isRate
+     * @return
+     */
     private ModuleDetail getSorIdModuleRequestData(EstimateRequest request, Set<String> sorIds, Boolean isRate) {
         log.info("MDMSUtils::getSorIdModuleRequestData");
         List<MasterDetail> estimateSorIdMasterDetails = new ArrayList<>();
