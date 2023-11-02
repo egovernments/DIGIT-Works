@@ -1128,7 +1128,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
           color: const Color.fromRGBO(0, 100, 0, 1),
           index: tableDataModel.monIndex ?? 0.0,
           isNotGreyed: false,
-          onTap: (daysInRange == null || !daysInRange!.monday) || inWorkFlow
+          onTap: (daysInRange == null || !daysInRange!.monday)
               ? null
               : entryExitList!.length > 2
                   ? () => onTapButton(
@@ -1153,7 +1153,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.tueIndex ?? 0,
         isNotGreyed: false,
-        onTap:( daysInRange == null || !daysInRange!.tuesday) || inWorkFlow
+        onTap:( daysInRange == null || !daysInRange!.tuesday)
             ? null
             : entryExitList!.length > 2
                 ? () => onTapButton(
@@ -1177,7 +1177,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.wedIndex ?? 0,
         isNotGreyed: false,
-        onTap: (daysInRange == null || !daysInRange!.wednesday) || inWorkFlow
+        onTap: (daysInRange == null || !daysInRange!.wednesday)
             ? null
             : entryExitList!.length > 2
                 ? () => onTapButton(
@@ -1201,7 +1201,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.thuIndex ?? 0,
         isNotGreyed: false,
-        onTap: (daysInRange == null || !daysInRange!.thursday) || inWorkFlow
+        onTap: (daysInRange == null || !daysInRange!.thursday)
             ? null
             : entryExitList!.length > 2
                 ? () => onTapButton(
@@ -1225,7 +1225,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.friIndex ?? 0,
         isNotGreyed: false,
-        onTap: (daysInRange == null || !daysInRange!.friday) || inWorkFlow
+        onTap: (daysInRange == null || !daysInRange!.friday)
             ? null
             : entryExitList!.length > 2
                 ? () => onTapButton(
@@ -1249,7 +1249,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.satIndex ?? 0,
         isNotGreyed: false,
-        onTap: (daysInRange == null || !daysInRange!.saturday) || inWorkFlow
+        onTap: (daysInRange == null || !daysInRange!.saturday)
             ? null
             : entryExitList!.length > 2
                 ? () => onTapButton(
@@ -1273,7 +1273,7 @@ class _SHGInboxPage extends State<SHGInboxPage> {
         color: const Color.fromRGBO(0, 100, 0, 1),
         index: tableDataModel.sunIndex ?? 0,
         isNotGreyed: false,
-        onTap: (daysInRange == null || !daysInRange!.sunday) || inWorkFlow
+        onTap: (daysInRange == null || !daysInRange!.sunday)
             ? null
             : entryExitList!.length > 2
                 ? () => onTapButton(
