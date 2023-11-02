@@ -45,19 +45,11 @@ public class EstimateServiceValidatorTest {
         lenient().when(projectUtil.getProjectDetails(any(EstimateRequest.class))).thenReturn(projectResponse);
     }
 
-    @Test
-    void validateEstimateOnCreate_IfValidationSuccess() {
-//        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
-//        assertDoesNotThrow(() -> serviceValidator.validateEstimateOnCreate(estimateRequest));
-    }
-
 
     @Test
     void validateEstimateOnCreate_IfEstimateIsNull() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.setEstimate(null);
-//        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-//        assertTrue(exception.getMessage().contentEquals("Estimate is mandatory"));
     }
 
     @Test

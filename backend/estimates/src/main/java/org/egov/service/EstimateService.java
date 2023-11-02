@@ -55,7 +55,7 @@ public class EstimateService {
         serviceValidator.validateEstimateOnCreate(estimateRequest);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         workflowService.updateWorkflowStatus(estimateRequest);
-        calculationService.calculateEstimate(estimateRequest);
+        // calculationService.calculateEstimate(estimateRequest);
         producer.push(serviceConfiguration.getSaveEstimateTopic(), estimateRequest);
         return estimateRequest;
     }
