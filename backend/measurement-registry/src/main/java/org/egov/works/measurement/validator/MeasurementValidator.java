@@ -10,6 +10,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.service.MeasurementRegistry;
 import org.egov.works.measurement.util.MdmsUtil;
+import org.egov.works.measurement.util.MeasurementRegistryUtil;
 import org.egov.works.measurement.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -38,6 +39,8 @@ public class MeasurementValidator {
     private MBRegistryConfiguration MBRegistryConfiguration;
     @Autowired
     private MeasurementRegistry measurementRegistry;
+    @Autowired
+    private MeasurementRegistryUtil measurementRegistryUtil;
 
     /**
      * Validate the measurement Req for valid tenantId
@@ -90,27 +93,13 @@ public class MeasurementValidator {
         //setting totalValue
         for(Measurement measurement:measurementRegistrationRequest.getMeasurements() ){
             for(Measure measure:measurement.getMeasures()){
-                validateDimensions(measure);
+                measurementRegistryUtil.validateDimensions(measure);
                 measure.setCurrentValue(measure.getLength().multiply(measure.getHeight().multiply(measure.getBreadth().multiply(measure.getNumItems()))));
             }
         }
 
         // Perform the measurement update
         setAuditDetails(measurementExisting, measurementRegistrationRequest);
-    }
-    private void validateDimensions (Measure measure) {
-        if (measure.getLength() == null || measure.getLength() == BigDecimal.valueOf(0)) {
-            measure.setLength(BigDecimal.valueOf(1));
-        }
-        if (measure.getHeight() == null || measure.getHeight() == BigDecimal.valueOf(0)) {
-            measure.setHeight(BigDecimal.valueOf(1));
-        }
-        if (measure.getBreadth() == null || measure.getBreadth() == BigDecimal.valueOf(0)) {
-            measure.setBreadth(BigDecimal.valueOf(1));
-        }
-        if (measure.getNumItems() == null || measure.getNumItems() == BigDecimal.valueOf(0)) {
-            measure.setNumItems(BigDecimal.valueOf(1));
-        }
     }
     public void validateDocumentIds(List<Measurement> measurements) {
         List<String> documentIds = extractDocumentIds(measurements);

@@ -30,14 +30,18 @@ public class ContractUtil {
 
     private final ServiceRequestRepository serviceRequestRepository;
     private final JdbcTemplate jdbcTemplate;
+    private final MeasurementServiceUtil measurementServiceUtil;
 
     @Autowired
-    public ContractUtil(RestTemplate restTemplate, MBServiceConfiguration MBServiceConfiguration, MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository, JdbcTemplate jdbcTemplate) {
+    public ContractUtil(RestTemplate restTemplate, MBServiceConfiguration MBServiceConfiguration,
+                        MeasurementRegistryUtil measurementRegistryUtil, ServiceRequestRepository serviceRequestRepository,
+                        JdbcTemplate jdbcTemplate, MeasurementServiceUtil measurementServiceUtil) {
         this.restTemplate = restTemplate;
         this.MBServiceConfiguration = MBServiceConfiguration;
         this.measurementRegistryUtil=measurementRegistryUtil;
         this.serviceRequestRepository = serviceRequestRepository;
         this.jdbcTemplate = jdbcTemplate;
+        this.measurementServiceUtil = measurementServiceUtil;
     }
 
     /**
@@ -288,28 +292,14 @@ public class ContractUtil {
             } else {
                 prevCumulativeValue = BigDecimal.ZERO;
             }
-            validateDimensions(measure);
+            measurementServiceUtil.validateDimensions(measure);
             BigDecimal currValue = measure.getBreadth().multiply(measure.getHeight()).multiply(measure.getLength()).multiply(measure.getNumItems());
             BigDecimal totalValue = currValue.add(prevCumulativeValue);
 
             BigDecimal maxAllowedValue = estimateDetail.getQuantity() != null ? estimateDetail.getQuantity() : BigDecimal.valueOf(estimateDetail.getNoOfunit());
             if (totalValue.compareTo(maxAllowedValue) > 0) {
-                throw new CustomException(TOTAL_VALUE_GREATER_THAN_ESTIMATE_CODE, TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG + maxAllowedValue);
+                throw new CustomException(TOTAL_VALUE_GREATER_THAN_ESTIMATE_CODE, String.format(TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG, measure.getTargetId(), maxAllowedValue));
             }
-        }
-    }
-    private void validateDimensions(Measure measure) {
-        if (measure.getLength() == null || measure.getLength().compareTo(BigDecimal.ZERO) == 0) {
-            measure.setLength(BigDecimal.ONE);
-        }
-        if (measure.getHeight() == null || measure.getHeight().compareTo(BigDecimal.ZERO) == 0) {
-            measure.setHeight(BigDecimal.ONE);
-        }
-        if (measure.getBreadth() == null || measure.getBreadth().compareTo(BigDecimal.ZERO) == 0) {
-            measure.setBreadth(BigDecimal.ONE);
-        }
-        if (measure.getNumItems() == null || measure.getNumItems().compareTo(BigDecimal.ZERO) == 0) {
-            measure.setNumItems(BigDecimal.ONE);
         }
     }
 }

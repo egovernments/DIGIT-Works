@@ -115,4 +115,22 @@ public class MeasurementRegistryUtil {
             return AuditDetails.builder().createdBy(measurement.getAuditDetails().getCreatedBy()).lastModifiedBy(by)
                     .createdTime(measurement.getAuditDetails().getCreatedTime()).lastModifiedTime(time).build();
     }
+
+    public void validateDimensions(Measure measure) {
+        if (measure.getLength().compareTo(BigDecimal.ZERO) == 0 && measure.getHeight().compareTo(BigDecimal.ZERO) == 0 &&
+                measure.getBreadth().compareTo(BigDecimal.ZERO) == 0 && measure.getNumItems().compareTo(BigDecimal.ZERO) == 0)
+            return;
+        if (measure.getLength() == null || measure.getLength().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setLength(BigDecimal.ONE);
+        }
+        if (measure.getHeight() == null || measure.getHeight().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setHeight(BigDecimal.ONE);
+        }
+        if (measure.getBreadth() == null || measure.getBreadth().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setBreadth(BigDecimal.ONE);
+        }
+        if (measure.getNumItems() == null || measure.getNumItems().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setNumItems(BigDecimal.ONE);
+        }
+    }
 }

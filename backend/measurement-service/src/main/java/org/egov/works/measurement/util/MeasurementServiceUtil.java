@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,6 +110,24 @@ public class MeasurementServiceUtil {
         response.setMeasurements(measurementServiceRequest.getMeasurements());
 
         return response;
+    }
+
+    public void validateDimensions(Measure measure) {
+        if (measure.getLength().compareTo(BigDecimal.ZERO) == 0 && measure.getHeight().compareTo(BigDecimal.ZERO) == 0 &&
+                measure.getBreadth().compareTo(BigDecimal.ZERO) == 0 && measure.getNumItems().compareTo(BigDecimal.ZERO) == 0)
+            return;
+        if (measure.getLength() == null || measure.getLength().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setLength(BigDecimal.ONE);
+        }
+        if (measure.getHeight() == null || measure.getHeight().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setHeight(BigDecimal.ONE);
+        }
+        if (measure.getBreadth() == null || measure.getBreadth().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setBreadth(BigDecimal.ONE);
+        }
+        if (measure.getNumItems() == null || measure.getNumItems().compareTo(BigDecimal.ZERO) == 0) {
+            measure.setNumItems(BigDecimal.ONE);
+        }
     }
 
 }

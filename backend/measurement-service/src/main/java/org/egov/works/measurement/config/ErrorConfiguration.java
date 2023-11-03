@@ -51,7 +51,7 @@ public class ErrorConfiguration {
     public static final String ACTION_NOT_FOUND_MSG2 = " not found in config for the measurement number:: ";
 
     public static final String TOTAL_VALUE_GREATER_THAN_ESTIMATE_CODE = "TOTAL_VALUE_GREATER_THAN_ESTIMATE";
-    public static final String TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG = "Total value greater than estimate quantity :: ";
+    public static final String TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG = "For targetId : %s Total calculated value is greater than estimate quantity : %.2f";
 
     public static final String INVALID_ENTRY_DATE_CODE = "INVALID_ENTRY_DATE";
     public static final String INVALID_ENTRY_DATE_MSG = "Entry date is not within contract start and end date";
