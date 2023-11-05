@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from 'react-router-dom';
 import { FormComposer, Loader, Toast } from '@egovernments/digit-ui-react-components';
 import { getTomorrowsDate, getBankAccountUpdatePayload, getOrgPayload } from '../../../../utils';
+import debounce from 'lodash/debounce';
 
 const navConfig =  [
     {
@@ -40,7 +41,6 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
 
     const { mutate: CreateBankAccountMutation } = Digit.Hooks.bankAccount.useCreateBankAccount();
     const { mutate: UpdateBankAccountMutation } = Digit.Hooks.bankAccount.useUpdateBankAccount();
-
     //location data
     const ULB = Digit.Utils.locale.getCityLocale(tenantId);
     const ORG_VALIDTO_DATE = '2099-03-31';
@@ -276,7 +276,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     
 
 
-    const onSubmit = async (data) => {
+    const debouncedOnModalSubmit = debounce(async (data) => {
         data = Digit.Utils.trimStringsInObject(data)
         //here call org search with mobile number and see if number is already there with some other org , do an early return
         
@@ -329,7 +329,12 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             handleResponseForCreate(orgPayload, data);
         }
     }
-    }   
+    },500);  
+
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
 
     if(locationDataFetching || orgDataFetching) return <Loader/>
     return (
@@ -337,7 +342,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
         <FormComposer
           label={isModify ? "CORE_COMMON_SAVE" : t("MASTERS_CREATE_ORGANISATION")}
           config={config?.form}
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit}
           submitInForm={false}
           fieldStyle={{ marginRight: 0 }}
           inline={false}
