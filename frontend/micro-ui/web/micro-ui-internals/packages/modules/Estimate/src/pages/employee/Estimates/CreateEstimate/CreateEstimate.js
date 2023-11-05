@@ -6,6 +6,7 @@ import { createEstimateConfig } from './createEstimateConfig'
 import { createEstimatePayload } from './createEstimatePayload'
 import { useHistory,useLocation } from "react-router-dom";
 import { editEstimateUtil } from './editEstimateUtil'
+import debounce from 'lodash/debounce';
 
 
 const configNavItems = [
@@ -254,93 +255,99 @@ const CreateEstimate = () => {
         
         setShowModal(true);
     };
-    const onModalSubmit = async (_data) => {
-        _data = Digit.Utils.trimStringsInObject(_data)
+    const debouncedOnModalSubmit = debounce(async (_data) => {
+        _data = Digit.Utils.trimStringsInObject(_data);
         const completeFormData = {
-            ..._data,
-            ...inputFormData,
-            selectedApprover,
-            // selectedDept,
-            // selectedDesignation
+          ..._data,
+          ...inputFormData,
+          selectedApprover,
+          // selectedDept,
+          // selectedDesignation
         }
-       
-        
-
-        const payload = createEstimatePayload(completeFormData, projectData,isEdit,estimate)
+      
+      
+      
+        const payload = createEstimatePayload(completeFormData, projectData,isEdit,estimate);
         setShowModal(false);
-
+      
         //make a util for updateEstimatePayload since there are some deviations 
         
         if(isEdit && estimateNumber){
             
-            await EstimateUpdateMutation(payload, {
+          await EstimateUpdateMutation(payload, {
             onError: async (error, variables) => {
-                
-                setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-                setTimeout(() => {
-                    setShowToast(false);
-                }, 5000);
+
+              setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(() => {
+                setShowToast(false);
+              }, 5000);
             },
             onSuccess: async (responseData, variables) => {
-                
-                clearSessionFormData();
-                const state = {
-                    header: t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
-                    id: responseData?.estimates[0]?.estimateNumber,
-                    info: t("ESTIMATE_ESTIMATE_NO"),
-                    // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
-                    links: [
-                        {
-                            name: t("WORKS_GOTO_ESTIMATE_INBOX"),
-                            redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
-                            code: "",
-                            svg: "GotoInboxIcon",
-                            isVisible: true,
-                            type: "inbox",
-                        }
-                    ],
-                }
-                
-                history.push(`/${window?.contextPath}/employee/estimate/response`, state);
-                
+
+              clearSessionFormData();
+              const state = {
+                header: t("WORKS_ESTIMATE_RESPONSE_UPDATED_HEADER"),
+                id: responseData?.estimates[0]?.estimateNumber,
+                info: t("ESTIMATE_ESTIMATE_NO"),
+// message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
+                links: [
+                  {
+                    name: t("WORKS_GOTO_ESTIMATE_INBOX"),
+                    redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
+                    code: "",
+                    svg: "GotoInboxIcon",
+                    isVisible: true,
+                    type: "inbox",
+                  }
+                ],
+              };
+      
+              history.push(`/${window?.contextPath}/employee/estimate/response`, state);
+
             },
-        });
+          });
         }
         
 
         else{
-            await EstimateMutation(payload, {
+          await EstimateMutation(payload, {
             onError: async (error, variables) => {
-                setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-                setTimeout(() => {
-                    setShowToast(false);
-                }, 5000);
+              setShowToast({ warning: true, label: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(() => {
+                setShowToast(false);
+              }, 5000);
             },
             onSuccess: async (responseData, variables) => {
-                clearSessionFormData();
-                const state = {
-                    header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
-                    id: responseData?.estimates[0]?.estimateNumber,
-                    info: t("ESTIMATE_ESTIMATE_NO"),
-                    // message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
-                    links: [
-                        {
-                            name: t("WORKS_GOTO_ESTIMATE_INBOX"),
-                            redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
-                            code: "",
-                            svg: "GotoInboxIcon",
-                            isVisible: true,
-                            type: "inbox",
-                        }
-                    ],
-                }
-                
-                history.push(`/${window?.contextPath}/employee/estimate/response`, state);
-                
+              clearSessionFormData();
+              const state = {
+                header: t("WORKS_ESTIMATE_RESPONSE_CREATED_HEADER"),
+                id: responseData?.estimates[0]?.estimateNumber,
+                info: t("ESTIMATE_ESTIMATE_NO"),
+// message: t("WORKS_ESTIMATE_RESPONSE_MESSAGE_CREATE", { department: t(`ES_COMMON_${responseData?.estimates[0]?.executingDepartment}`) }),
+                links: [
+                  {
+                    name: t("WORKS_GOTO_ESTIMATE_INBOX"),
+                    redirectUrl: `/${window.contextPath}/employee/estimate/inbox`,
+                    code: "",
+                    svg: "GotoInboxIcon",
+                    isVisible: true,
+                    type: "inbox",
+                  }
+                ],
+              };
+      
+              history.push(`/${window?.contextPath}/employee/estimate/response`, state);
+
             },
-        });
+          });
         }
-    }
+      }, 500); // Adjust the debounce delay (in milliseconds) as needed
+      
+
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
 
     // const { isLoading: mdmsLoading, data: mdmsData, isSuccess: mdmsSuccess } = Digit.Hooks.useCustomMDMS(
     //     Digit.ULBService.getCurrentTenantId(),
@@ -407,7 +414,7 @@ const CreateEstimate = () => {
     <Fragment>
           {showModal && <WorkflowModal
               closeModal={() => setShowModal(false)}
-              onSubmit={onModalSubmit}
+              onSubmit={handleSubmit}
               config={config}
           />
           }

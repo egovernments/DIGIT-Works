@@ -5,6 +5,7 @@ import _ from "lodash";
 import { createWorkOrderUtils } from "../../../../utils/createWorkOrderUtils";
 import { useHistory } from "react-router-dom";
 import getWOModalConfig from "../../../configs/getWOModalConfig";
+import debounce from 'lodash/debounce';
 
 const navConfig =  [
     {
@@ -180,7 +181,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         updateAction : isModify ? "EDIT" : "",
     }
 
-    const onModalSubmit = async (modalData) => {
+    const debouncedOnModalSubmit = debounce(async (modalData) => {
         modalData = Digit.Utils.trimStringsInObject(modalData)
         const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams, docConfigData});
         if(isModify) {
@@ -188,7 +189,12 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         }else {
             handleResponseForCreateWO(payload);
         }
-    }
+    },500);
+
+    const handleSubmit = (_data) => {
+        // Call the debounced version of onModalSubmit
+        debouncedOnModalSubmit(_data);
+      };
 
     const sendDataToResponsePage = (contractNumber, isSuccess, message, showID) => {
         history.push({
@@ -207,7 +213,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
                 showModal && 
                 <WorkflowModal
                     closeModal={() => setShowModal(false)}
-                    onSubmit={onModalSubmit}
+                    onSubmit={handleSubmit}
                     config={createWOModalConfig}
                 />
             }

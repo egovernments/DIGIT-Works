@@ -9,7 +9,7 @@
     "packages/react-components",
     "packages/modules/Estimate",
     "packages/modules/Expenditure",
-    "packages/Mukta"
+        "packages/Mukta"
   ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "license": "MIT",
@@ -62,7 +62,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
-    "lodash": "4.17.21",
+    "lodash": "^4.17.21",
     "microbundle-crl": "0.13.11",
     "react": "17.0.2",
     "react-dom": "17.0.2",
