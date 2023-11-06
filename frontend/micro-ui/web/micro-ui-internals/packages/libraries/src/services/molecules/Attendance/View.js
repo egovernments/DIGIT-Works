@@ -138,7 +138,7 @@ const getWageSeekerSkills = async () => {
   const skillResponse = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "common-masters", [{"name": "WageSeekerSkills"}])
   const labourChangesResponse = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "expense", [{"name": "LabourCharges"}])
   skillResponse?.['common-masters']?.WageSeekerSkills.forEach(item => {
-    let amount = labourChangesResponse?.["expense"]?.LabourCharges?.find(charge => charge?.code === item?.code)?.amount
+    let amount = labourChangesResponse?.["expense"]?.LabourCharges?.find(charge => charge?.code === item?.code && charge?.effectiveFrom < Date.now() && (charge?.effectiveTo == null || charge?.effectiveTo > Date.now()))?.amount
     let skillWithAmount = {...item, amount}
     skills[item.code] = skillWithAmount
   })
