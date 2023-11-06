@@ -923,7 +923,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                           if (debouncer != null && debouncer!.isActive) {
                                                                                                                                             debouncer!.cancel(); // Cancel the previous timer if it's active.
                                                                                                                                           }
-                                                                                                                     debouncer = Timer(Duration(milliseconds: 500), () {
+                                                                                                                     debouncer = Timer(Duration(milliseconds: 1000), () {
                                                                                                                       if (selectedDateRange == null) {
                                                                                                                         Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                                       } else {
@@ -998,7 +998,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                                           if (debouncer != null && debouncer!.isActive) {
                                                                                                                                             debouncer!.cancel(); // Cancel the previous timer if it's active.
                                                                                                                                           }
-                                                                                                                                          debouncer = Timer(Duration(milliseconds: 500), () {
+                                                                                                                                          debouncer = Timer(Duration(milliseconds: 1000), () {
                                                                                                                                             if (selectedDateRange == null) {
                                                                                                                                               Notifiers.getToastMessage(
                                                                                                                                                   context,
@@ -1029,7 +1029,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                                       if (debouncer != null && debouncer!.isActive) {
                                                                                                                                         debouncer!.cancel(); // Cancel the previous timer if it's active.
                                                                                                                                       }
-                                                                                                                                      debouncer = Timer(Duration(milliseconds: 500), () {
+                                                                                                                                      debouncer = Timer(Duration(milliseconds: 1000), () {
                                                                                                                                         if (selectedDateRange == null) {
                                                                                                                                           Notifiers.getToastMessage(
                                                                                                                                               context,
@@ -1182,7 +1182,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                       if (debouncer != null && debouncer!.isActive) {
                                                                                                                                             debouncer!.cancel(); // Cancel the previous timer if it's active.
                                                                                                                                           }
-                                                                                                                  debouncer = Timer(Duration(milliseconds: 500), () {
+                                                                                                                  debouncer = Timer(Duration(milliseconds: 1000), () {
                                                                                                                   if (selectedDateRange == null) {
                                                                                                                     Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                                   } else if (updateAttendeePayload.isNotEmpty) {
@@ -1203,7 +1203,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                        if (debouncer != null && debouncer!.isActive) {
                                                                                                                                             debouncer!.cancel(); // Cancel the previous timer if it's active.
                                                                                                                                           }
-                                                                                                                  debouncer = Timer(Duration(milliseconds: 500), () {
+                                                                                                                  debouncer = Timer(Duration(milliseconds: 1000), () {
                                                                                                                   if (selectedDateRange == null) {
                                                                                                                     Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                                   } else if (createAttendeePayload.isNotEmpty) {
