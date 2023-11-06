@@ -22,6 +22,8 @@ import '../../models/wage_seeker/individual_details_model.dart';
 import '../../models/wage_seeker/location_details_model.dart';
 import '../../utils/global_variables.dart';
 import '../../utils/notifiers.dart';
+import 'package:async/async.dart';
+import 'dart:async';
 import '../../widgets/loaders.dart' as shg_loader;
 
 class SummaryDetailsPage extends StatefulWidget {
@@ -43,6 +45,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
   LocationDetails? locationDetails = LocationDetails();
   SkillDetails? skillDetails = SkillDetails();
   FinancialDetails? financialDetails = FinancialDetails();
+  Timer? debouncer;
 
   @override
   void initState() {
@@ -406,6 +409,10 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                     child: Center(
                       child: DigitElevatedButton(
                         onPressed: () {
+                            if (debouncer != null && debouncer!.isActive) {
+                              debouncer!.cancel(); // Cancel the previous timer if it's active.
+                            }
+                            debouncer = Timer(Duration(milliseconds: 1000), () {
                           context.read<WageSeekerCreateBloc>().add(
                                 CreateWageSeekerEvent(
                                     individualDetails: individualDetails,
@@ -413,6 +420,7 @@ class SummaryDetailsPageState extends State<SummaryDetailsPage> {
                                     locationDetails: locationDetails,
                                     financialDetails: financialDetails),
                               );
+                            });
                         },
                         child:
                             Center(child: Text(t.translate(i18.common.submit))),

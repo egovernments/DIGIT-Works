@@ -45,6 +45,8 @@ import '../widgets/SideBar.dart';
 import '../widgets/atoms/app_bar_logo.dart';
 import '../widgets/atoms/table_dropdown.dart';
 import '../widgets/drawer_wrapper.dart';
+import 'package:async/async.dart';
+import 'dart:async';
 import '../widgets/loaders.dart' as shg_loader;
 
 class TrackAttendancePage extends StatefulWidget {
@@ -87,6 +89,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
   List<Skill> skillList = [];
   List<String> skillDropDown = [];
   DaysInRange? daysInRange;
+  Timer? debouncer;
   List<String> dates = [];
   bool isInWorkFlow = false;
   bool skillsDisable = true;
@@ -917,6 +920,10 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                     onPressed: musterRollsSearch != null && musterRollsSearch.musterRoll!.isNotEmpty && isInWorkFlow
                                                                                                                         ? null
                                                                                                                         : () {
+                                                                                                                          if (debouncer != null && debouncer!.isActive) {
+                                                                                                                                            debouncer!.cancel(); // Cancel the previous timer if it's active.
+                                                                                                                                          }
+                                                                                                                     debouncer = Timer(Duration(milliseconds: 1000), () {
                                                                                                                       if (selectedDateRange == null) {
                                                                                                                         Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                                       } else {
@@ -930,6 +937,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                           context.read<AttendanceLogCreateBloc>().add(CreateAttendanceLogEvent(attendanceList: createAttendeePayload));
                                                                                                                         }
                                                                                                                       }
+                                                                                                                      });
                                                                                                                     },
                                                                                                                     child: Center(
                                                                                                                         child: Text(
@@ -968,44 +976,108 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                       orElse: () => Container());
                                                                                                                 },
                                                                                                                 child: DigitElevatedButton(
-                                                                                                                  onPressed: isEndOfWeek && selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch
-                                                                                                                      ? null : newList.any((n) => n.monIndex == -1 && n.tueIndex == -1 && n.wedIndex == -1 &&
-                                                                                                                      n.thuIndex == -1 && n.friIndex == -1 && n.satIndex == -1 &&
-                                                                                                                      n.sunIndex == -1) ? null
-                                                                                                                      : musterRollsModel?.musterRoll != null && musterRollsModel!.musterRoll!.first.individualEntries != null && musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty
-                                                                                                                      ? musterRollsSearch?.musterRoll != null && musterRollsSearch!.musterRoll!.isNotEmpty
-                                                                                                                      ? isInWorkFlow == false
-                                                                                                                      ? () {
-                                                                                                                    if (selectedDateRange == null) {
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
-                                                                                                                    } else if (updateAttendeePayload.isNotEmpty) {
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
-                                                                                                                    } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null && e.skill.toString().isEmpty)) {
-                                                                                                                      setState(() {
-                                                                                                                        skillsDisable = false;
-                                                                                                                      });
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
-                                                                                                                    }
-                                                                                                                  }
-                                                                                                                      : null
-                                                                                                                      : () {
-                                                                                                                    if (selectedDateRange == null) {
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
-                                                                                                                    } else if (createAttendeePayload.isNotEmpty) {
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
-                                                                                                                    } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null || e.skill.toString().isEmpty)) {
-                                                                                                                      setState(() {
-                                                                                                                        skillsDisable = false;
-                                                                                                                      });
-                                                                                                                      Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills), 'INFO');
-                                                                                                                    } else {
-                                                                                                                      createMusterLoaded = false;
-                                                                                                                      context.read<MusterCreateBloc>().add(CreateMusterEvent(tenantId: widget.tenantId, registerId: widget.id, startDate: selectedDateRange!.startDate, serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode, referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId, orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', executingAuthority: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.executingAuthority, registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '', projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '', projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '', projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '', locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '', ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '', amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500, skillsList: skillsPayLoad));
-                                                                                                                    }
-                                                                                                                  }
-                                                                                                                      : null,
+                                                                                                                  onPressed: isEndOfWeek &&
+                                                                                                                          selectedDateRange!.endDate > DateTime.now().millisecondsSinceEpoch
+                                                                                                                      ? null
+                                                                                                                      : newList.any((n) =>
+                                                                                                                              n.monIndex == -1 &&
+                                                                                                                              n.tueIndex == -1 &&
+                                                                                                                              n.wedIndex == -1 &&
+                                                                                                                              n.thuIndex == -1 &&
+                                                                                                                              n.friIndex == -1 &&
+                                                                                                                              n.satIndex == -1 &&
+                                                                                                                              n.sunIndex == -1)
+                                                                                                                          ? null
+                                                                                                                          : musterRollsModel?.musterRoll != null &&
+                                                                                                                                  musterRollsModel!.musterRoll!.first.individualEntries != null &&
+                                                                                                                                  musterRollsModel.musterRoll!.first.individualEntries!.isNotEmpty
+                                                                                                                              ? musterRollsSearch?.musterRoll != null &&
+                                                                                                                                      musterRollsSearch!.musterRoll!.isNotEmpty
+                                                                                                                                  ? isInWorkFlow == false
+                                                                                                                                      ? () {
+                                                                                                                                          if (debouncer != null && debouncer!.isActive) {
+                                                                                                                                            debouncer!.cancel(); // Cancel the previous timer if it's active.
+                                                                                                                                          }
+                                                                                                                                          debouncer = Timer(Duration(milliseconds: 1000), () {
+                                                                                                                                            if (selectedDateRange == null) {
+                                                                                                                                              Notifiers.getToastMessage(
+                                                                                                                                                  context,
+                                                                                                                                                  AppLocalizations.of(context)
+                                                                                                                                                      .translate(i18.attendanceMgmt.selectDateRangeFirst),
+                                                                                                                                                  'ERROR');
+                                                                                                                                            } else if (updateAttendeePayload.isNotEmpty) {
+                                                                                                                                              Notifiers.getToastMessage(
+                                                                                                                                                  context,
+                                                                                                                                                  AppLocalizations.of(context)
+                                                                                                                                                      .translate(i18.attendanceMgmt.attendanceChangedValidation),
+                                                                                                                                                  'INFO');
+                                                                                                                                            } else if (skillsDisable ||
+                                                                                                                                                newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any(
+                                                                                                                                                    (e) => e.skill == null && e.skill.toString().isEmpty)) {
+                                                                                                                                              setState(() {
+                                                                                                                                                skillsDisable = false;
+                                                                                                                                              });
+                                                                                                                                              Notifiers.getToastMessage(
+                                                                                                                                                  context,
+                                                                                                                                                  AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills),
+                                                                                                                                                  'INFO');
+                                                                                                                                            }
+                                                                                                                                          });
+                                                                                                                                        }
+                                                                                                                                      : null
+                                                                                                                                  : () {
+                                                                                                                                      if (debouncer != null && debouncer!.isActive) {
+                                                                                                                                        debouncer!.cancel(); // Cancel the previous timer if it's active.
+                                                                                                                                      }
+                                                                                                                                      debouncer = Timer(Duration(milliseconds: 1000), () {
+                                                                                                                                        if (selectedDateRange == null) {
+                                                                                                                                          Notifiers.getToastMessage(
+                                                                                                                                              context,
+                                                                                                                                              AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst),
+                                                                                                                                              'ERROR');
+                                                                                                                                        } else if (createAttendeePayload.isNotEmpty) {
+                                                                                                                                          Notifiers.getToastMessage(
+                                                                                                                                              context,
+                                                                                                                                              AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation),
+                                                                                                                                              'INFO');
+                                                                                                                                        } else if (skillsDisable ||
+                                                                                                                                            newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any(
+                                                                                                                                                (e) => e.skill == null || e.skill.toString().isEmpty)) {
+                                                                                                                                          setState(() {
+                                                                                                                                            skillsDisable = false;
+                                                                                                                                          });
+                                                                                                                                          Notifiers.getToastMessage(context,
+                                                                                                                                              AppLocalizations.of(context).translate(i18.attendanceMgmt.reviewSkills),
+                                                                                                                                              'INFO');
+                                                                                                                                        } else {
+                                                                                                                                          createMusterLoaded = false;
+                                                                                                                                          context.read<MusterCreateBloc>().add(CreateMusterEvent(
+                                                                                                                                                tenantId: widget.tenantId,
+                                                                                                                                                registerId: widget.id,
+                                                                                                                                                startDate: selectedDateRange!.startDate,
+                                                                                                                                                serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode,
+                                                                                                                                                referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId,
+                                                                                                                                                orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA',
+                                                                                                                                                contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA',
+                                                                                                                                                executingAuthority: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.executingAuthority,
+                                                                                                                                                registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA',
+                                                                                                                                                registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA',
+                                                                                                                                                projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '',
+                                                                                                                                                projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '',
+                                                                                                                                                projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '',
+                                                                                                                                                projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '',
+                                                                                                                                                locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '',
+                                                                                                                                                ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '',
+                                                                                                                                                amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500,
+                                                                                                                                                skillsList: skillsPayLoad,
+                                                                                                                                              ));
+                                                                                                                                        }
+                                                                                                                                      });
+                                                                                                                                    }
+                                                                                                                              : null,
                                                                                                                   child: Center(
-                                                                                                                    child: Text(AppLocalizations.of(context).translate(i18.common.sendForApproval), style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
+                                                                                                                    child: Text(AppLocalizations.of(context).translate(i18.common.sendForApproval),
+                                                                                                                        style: DigitTheme.instance.mobileTheme.textTheme.bodyLarge?.apply(color: Colors.white)),
                                                                                                                   ),
                                                                                                                 ),
                                                                                                               ),
@@ -1107,6 +1179,10 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                     ? musterRollsSearch?.musterRoll != null && musterRollsSearch!.musterRoll!.isNotEmpty
                                                                                                                     ? isInWorkFlow == false
                                                                                                                     ? () {
+                                                                                                                      if (debouncer != null && debouncer!.isActive) {
+                                                                                                                                            debouncer!.cancel(); // Cancel the previous timer if it's active.
+                                                                                                                                          }
+                                                                                                                  debouncer = Timer(Duration(milliseconds: 1000), () {
                                                                                                                   if (selectedDateRange == null) {
                                                                                                                     Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                                   } else if (updateAttendeePayload.isNotEmpty) {
@@ -1120,9 +1196,14 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                     createMusterLoaded = false;
                                                                                                                     context.read<MusterCreateBloc>().add(UpdateMusterEvent(tenantId: widget.tenantId, id: musterRollsSearch.musterRoll!.first.id.toString(), orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', reSubmitAction: musterWorkFlowModel?.processInstances?.first.nextActions?.first.action, contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', skillsList: skillsPayLoad));
                                                                                                                   }
+                                                                                                                    });
                                                                                                                 }
                                                                                                                     : null
                                                                                                                     : () {
+                                                                                                                       if (debouncer != null && debouncer!.isActive) {
+                                                                                                                                            debouncer!.cancel(); // Cancel the previous timer if it's active.
+                                                                                                                                          }
+                                                                                                                  debouncer = Timer(Duration(milliseconds: 1000), () {
                                                                                                                   if (selectedDateRange == null) {
                                                                                                                     Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                                   } else if (createAttendeePayload.isNotEmpty) {
@@ -1136,6 +1217,7 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                     createMusterLoaded = false;
                                                                                                                     context.read<MusterCreateBloc>().add(CreateMusterEvent(tenantId: widget.tenantId, registerId: widget.id, startDate: selectedDateRange!.startDate, serviceCode: individualAttendanceRegisterModel.attendanceRegister?.first.serviceCode, referenceId: individualAttendanceRegisterModel.attendanceRegister?.first.referenceId, orgName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.orgName ?? 'NA', contractId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.contractId ?? 'NA', executingAuthority: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.executingAuthority, registerNo: individualAttendanceRegisterModel.attendanceRegister?.first.registerNumber ?? 'NA', registerName: individualAttendanceRegisterModel.attendanceRegister?.first.name ?? 'NA', projectName: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectName ?? '', projectType: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectType ?? '', projectDesc: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectDesc ?? '', projectId: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.projectId ?? '', locality: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.locality ?? '', ward: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.ward ?? '', amount: individualAttendanceRegisterModel.attendanceRegister?.first.attendanceRegisterAdditionalDetails?.amount ?? 14500, skillsList: skillsPayLoad));
                                                                                                                   }
+                                                                                                                   });
                                                                                                                 }
                                                                                                                     : null,
                                                                                                                 child: Center(
