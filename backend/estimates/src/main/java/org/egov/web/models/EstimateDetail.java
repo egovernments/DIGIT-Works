@@ -34,7 +34,7 @@ public class EstimateDetail {
     private String category = null;
 
     @JsonProperty("name")
-    @Size(min = 2,max = 128)
+    @Size(min = 2,max = 256)
     private String name = null;
 
     @JsonProperty("description")

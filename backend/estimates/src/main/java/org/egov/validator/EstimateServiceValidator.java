@@ -229,6 +229,10 @@ public class EstimateServiceValidator {
                 if (StringUtils.isBlank(estimateDetail.getSorId()) && StringUtils.isBlank(estimateDetail.getName())) {
                     errorMap.put("ESTIMATE.DETAIL.NAME.OR.SOR.ID", "Estimate detail's name or sorId is mandatory");
                 }
+
+                if((estimateDetail.getCategory().equalsIgnoreCase("SOR") || estimateDetail.getCategory().equalsIgnoreCase("NON-SOR")) && (estimateDetail.getUnitRate()==null)){
+                        errorMap.put("ESTIMATE.DETAIL.UNIT_RATE", "Selected SOR doesn't have a rate effective for the given period. Please update the rate before adding it to an estimate.");
+                }
                 if (estimateDetail.getAmountDetail() == null || estimateDetail.getAmountDetail().isEmpty()) {
                     errorMap.put("ESTIMATE.DETAIL.AMOUNT.DETAILS", "Amount details are mandatory");
                 } else {
