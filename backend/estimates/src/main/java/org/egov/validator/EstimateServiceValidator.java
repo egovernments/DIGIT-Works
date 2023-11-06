@@ -126,10 +126,13 @@ public class EstimateServiceValidator {
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
 
-            if(estimateDetail.getNoOfunit()==null){
+            if(estimateDetail.getCategory().equals(OVERHEAD_CODE)){
                 continue;
             }
             else{
+                if(estimateDetail.getNoOfunit()==null){
+                    throw new CustomException("NO_OF_UNIT", "noOfUnit is mandatory");
+                }
                 BigDecimal total =new BigDecimal(1);
                 BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
                 boolean allNull =true;
@@ -230,7 +233,7 @@ public class EstimateServiceValidator {
                     errorMap.put("ESTIMATE.DETAIL.NAME.OR.SOR.ID", "Estimate detail's name or sorId is mandatory");
                 }
 
-                if((estimateDetail.getCategory().equalsIgnoreCase("SOR") || estimateDetail.getCategory().equalsIgnoreCase("NON-SOR")) && (estimateDetail.getUnitRate()==null)){
+                if((estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) || estimateDetail.getCategory().equalsIgnoreCase(NON_SOR_CODE)) && (estimateDetail.getUnitRate()==null)){
                         errorMap.put("ESTIMATE.DETAIL.UNIT_RATE", "Selected SOR doesn't have a rate effective for the given period. Please update the rate before adding it to an estimate.");
                 }
                 if (estimateDetail.getAmountDetail() == null || estimateDetail.getAmountDetail().isEmpty()) {
