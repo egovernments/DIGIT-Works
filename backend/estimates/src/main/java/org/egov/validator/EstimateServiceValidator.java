@@ -72,7 +72,7 @@ public class EstimateServiceValidator {
         Set<String> uniqueIdentifiers = new HashSet<String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
-            if(estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
+            if(estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) && estimateDetail.getSorId() != null) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
             }
         }
@@ -82,7 +82,6 @@ public class EstimateServiceValidator {
             validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
-//            validateMDMSDataV2ForRates(estimate, mdmsDataV2ForRate, uniqueIdentifiers, errorMap);
         }
 
         validateNoOfUnit(estimateDetails);
