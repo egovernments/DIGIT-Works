@@ -389,8 +389,28 @@ public class PaymentInstructionEnrichment {
                 piBeneficiary.setBenfAddress("Temp address");
             }
             piBeneficiary.setPurpose("Mukta Payment");
+            removeSpecialCharactersAndExtraSpaces(piBeneficiary);
         }
         log.info("Beneficiary details enriched and sending back.");
+
+    }
+
+    public static void removeSpecialCharactersAndExtraSpaces(Beneficiary piBeneficiary) {
+        // Remove special characters using regular expression
+        String benfName=piBeneficiary.getBenefName().replaceAll("[^a-zA-Z0-9\\s]", "");
+        String benfAddress= piBeneficiary.getBenfAddress().replaceAll("[^a-zA-Z0-9\\s]", "");
+        String purpose= piBeneficiary.getPurpose().replaceAll("[^a-zA-Z0-9\\s]", "");
+
+
+
+        // Remove extra white spaces using regular expression
+        benfName=benfName.replaceAll("\\s+", " ").trim();
+        benfAddress=benfAddress.replaceAll("\\s+", " ").trim();
+        purpose=purpose.replaceAll("\\s+", " ").trim();
+
+        piBeneficiary.setBenefName(benfName);
+        piBeneficiary.setBenefName(benfAddress);
+        piBeneficiary.setBenefName(purpose);
 
     }
 
