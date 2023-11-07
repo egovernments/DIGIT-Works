@@ -276,7 +276,7 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
     
 
 
-    const debouncedOnModalSubmit = debounce(async (data) => {
+    const OnModalSubmit = async (data) => {
         data = Digit.Utils.trimStringsInObject(data)
         //here call org search with mobile number and see if number is already there with some other org , do an early return
         
@@ -329,7 +329,9 @@ const CreateOrganizationForm = ({ createOrganizationConfig, sessionFormData, set
             handleResponseForCreate(orgPayload, data);
         }
     }
-    },500);  
+    };  
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const handleSubmit = (_data) => {
         // Call the debounced version of onModalSubmit
