@@ -210,7 +210,7 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
     const { mutate: CreateProjectMutation } = Digit.Hooks.works.useCreateProject();
     const { mutate: UpdateProjectMutation } = Digit.Hooks.works.useUpdateProject();
 
-    const debouncedOnModalSubmit = debounce(async (data) => {
+    const OnModalSubmit = async (data) => {
       const trimmedData = Digit.Utils.trimStringsInObject(data)
       //Transforming Payload to categories of Basic Details, Projects and Sub-Projects
       const transformedPayload = CreateProjectUtils.payload.transform(trimmedData);
@@ -229,8 +229,9 @@ const CreateProjectForm = ({t, sessionFormData, setSessionFormData, clearSession
       }else {
         handleResponseForUpdate(payload);
       }
-    }, 500);
+    };
 
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
     const handleResponseForCreate = async (payload) => {
       await CreateProjectMutation(payload, {
         onError: async (error, variables) => {

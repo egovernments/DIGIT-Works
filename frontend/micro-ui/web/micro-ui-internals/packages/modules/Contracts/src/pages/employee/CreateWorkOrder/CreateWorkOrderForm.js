@@ -181,7 +181,7 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         updateAction : isModify ? "EDIT" : "",
     }
 
-    const debouncedOnModalSubmit = debounce(async (modalData) => {
+    const OnModalSubmit = async (modalData) => {
         modalData = Digit.Utils.trimStringsInObject(modalData)
         const payload = createWorkOrderUtils({tenantId, estimate, project, inputFormdata, selectedApprover, modalData, createWorkOrderConfig, modifyParams, docConfigData});
         if(isModify) {
@@ -189,7 +189,9 @@ const CreateWorkOrderForm = ({createWorkOrderConfig, sessionFormData, setSession
         }else {
             handleResponseForCreateWO(payload);
         }
-    },500);
+    };
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const handleSubmit = (_data) => {
         // Call the debounced version of onModalSubmit

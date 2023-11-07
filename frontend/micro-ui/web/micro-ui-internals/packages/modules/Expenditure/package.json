@@ -1,6 +1,6 @@
 {
     "name": "@egovernments/digit-ui-module-expenditure",
-    "version": "0.2.26",
+    "version": "0.2.27",
     "description": "Expenditure Management Module UI",
     "main": "dist/index.js",
     "module": "dist/index.modern.js",

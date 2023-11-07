@@ -147,7 +147,7 @@ const CreatePurchaseBillForm = ({
     }, [approvers])
 
 
-    const debouncedOnModalSubmit = debounce(async (_data) => {
+    const OnModalSubmit = async (_data) => {
         _data = Digit.Utils.trimStringsInObject(_data)
         //here make complete data in combination with _data and inputFormData and create payload accordingly
         //also test edit flow with this change
@@ -186,7 +186,9 @@ const CreatePurchaseBillForm = ({
                 },
             });
         }
-    },500);
+    };
+
+    const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
 
     const onFormSubmit = async(data) => {
         data = Digit.Utils.trimStringsInObject(data)

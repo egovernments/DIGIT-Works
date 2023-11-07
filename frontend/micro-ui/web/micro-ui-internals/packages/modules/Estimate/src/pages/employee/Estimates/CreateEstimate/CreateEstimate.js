@@ -255,7 +255,7 @@ const CreateEstimate = () => {
         
         setShowModal(true);
     };
-    const debouncedOnModalSubmit = debounce(async (_data) => {
+    const OnModalSubmit = async (_data) => {
         _data = Digit.Utils.trimStringsInObject(_data);
         const completeFormData = {
           ..._data,
@@ -341,7 +341,9 @@ const CreateEstimate = () => {
             },
           });
         }
-      }, 500); // Adjust the debounce delay (in milliseconds) as needed
+      }; // Adjust the debounce delay (in milliseconds) as needed
+
+      const debouncedOnModalSubmit = Digit.Utils.debouncing(OnModalSubmit,500);
       
 
     const handleSubmit = (_data) => {
