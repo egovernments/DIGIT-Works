@@ -13,10 +13,7 @@ import org.egov.web.models.EstimateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.egov.util.EstimateServiceConstant.*;
 
@@ -25,10 +22,15 @@ import static org.egov.util.EstimateServiceConstant.*;
 public class MDMSUtils {
 
     public static final String PLACEHOLDER_CODE = "{code}";
-    public static final String TENANT_FILTER_CODE = "$.[?(@.code =='{code}')].code";
-    public static final String FILTER_WORKS_MODULE_CODE = "$.[?(@.active==true && @.code=='{code}')]";
-    public static final String CODE_FILTER = "$.*.code";
-    public static final String ACTIVE_FILTER_CODE = "$.[?(@.active==true)].code";
+    public static final String tenantFilterCode = "$.[?(@.code =='{code}')].code";
+    public static final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
+    public static final String codeFilter = "$.*.code";
+    public static final String activeCodeFilter = "$.[?(@.active==true)].code";
+    private static final String sorFilterCode = "@.id=='%s'";
+    private static final String orAdditionalFilter = " || ";
+    private static final String filterStart = "[?(";
+    private static final String filterEnd = ")]";
+    private static final String ratesFilterCode = "@.sorId=='%s'";
 
     @Autowired
     private EstimateServiceConfiguration config;
@@ -51,7 +53,40 @@ public class MDMSUtils {
         return result;
     }
 
+    /**
+     * Calls MDMS v2 service to fetch works master data
+     *
+     * @param request
+     * @param tenantId
+     * @return
+     */
+    public Object mdmsCallV2ForSor(EstimateRequest request, String tenantId, Set<String> sorIds, boolean isRate){
+        log.info("MDMSUtils::mDMSCallV2");
+        RequestInfo requestInfo =request.getRequestInfo();
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestV2(requestInfo,tenantId,request, sorIds, isRate);
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
+        return result;
+    }
 
+    /**
+     * Calls MDMSV2 service to fetch works master data
+     *
+     * @param request
+     * @param tenantId
+     * @param masterName
+     * @param moduleName
+     * @return
+     */
+    public Object mdmsCallV2(EstimateRequest request, String tenantId, String masterName,String moduleName){
+        log.info("MDMSUtils::mDMSCallV2");
+        RequestInfo requestInfo =request.getRequestInfo();
+        MasterDetail masterDetail = MasterDetail.builder().name(masterName).build();
+        ModuleDetail moduleDetail = ModuleDetail.builder().masterDetails(Collections.singletonList(masterDetail)).moduleName(moduleName).build();
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(moduleDetail)).tenantId(tenantId).build();
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+        Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrlV2(), mdmsCriteriaReq);
+        return result;
+    }
     /**
      * Calls MDMS service to fetch overhead category
      *
@@ -90,13 +125,11 @@ public class MDMSUtils {
         log.info("MDMSUtils::getMDMSRequest");
         ModuleDetail estimateDepartmentModuleDetail = getDepartmentModuleRequestData(request);
         ModuleDetail estimateTenantModuleDetail = getTenantModuleRequestData(request);
-        ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request);
-        ModuleDetail estimateCategoryModuleDetail = getWorksMasterMDMSDetails(request);
+        ModuleDetail estimateCategoryModuleDetail = getCategoryModuleRequestData(request);
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(estimateTenantModuleDetail);
         moduleDetails.add(estimateDepartmentModuleDetail);
-        moduleDetails.add(estimateSorIdModuleDetail);
         moduleDetails.add(estimateCategoryModuleDetail);
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
@@ -106,6 +139,19 @@ public class MDMSUtils {
                 .requestInfo(requestInfo).build();
 
         log.info("MDMSUtils::search MDMS request -> {}", mdmsCriteriaReq != null ? mdmsCriteriaReq.toString() : null);
+        return mdmsCriteriaReq;
+    }
+
+    /**
+     * Returns mdms v2 search criteria based on the tenantId and mdms search criteria
+     * @return
+     */
+
+    public MdmsCriteriaReq getMDMSRequestV2(RequestInfo requestInfo , String  tenantId , EstimateRequest request,Set<String>sorIds, boolean isRate){
+        log.info("MDMSUtils::getMDMSRequestV2");
+        ModuleDetail estimateSorIdModuleDetail = getSorIdModuleRequestData(request, sorIds, isRate);
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(estimateSorIdModuleDetail)).tenantId(tenantId).build();
+        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
         return mdmsCriteriaReq;
     }
 
@@ -144,20 +190,36 @@ public class MDMSUtils {
         return worksMasterDetail;
     }
 
-
-    private ModuleDetail getSorIdModuleRequestData(EstimateRequest request) {
+    /**
+     * Method to create SorId module with required filters for SOR and Rates for fetching master data
+     * @param request
+     * @param sorIds
+     * @param isRate
+     * @return
+     */
+    private ModuleDetail getSorIdModuleRequestData(EstimateRequest request, Set<String> sorIds, Boolean isRate) {
         log.info("MDMSUtils::getSorIdModuleRequestData");
         List<MasterDetail> estimateSorIdMasterDetails = new ArrayList<>();
-
-        MasterDetail departmentMasterDetails = MasterDetail.builder().name(MASTER_SOR_ID)
-                .filter(CODE_FILTER).build();
+        MasterDetail departmentMasterDetails;
+        StringBuilder ratesStringBuilder = new StringBuilder();
+        Iterator ratesIterator = sorIds.iterator();
+        while (ratesIterator.hasNext()) {
+            String sorIdRateFilter = String.format(isRate? ratesFilterCode:sorFilterCode, ratesIterator.next());
+            ratesStringBuilder.append(sorIdRateFilter);
+            if(ratesIterator.hasNext()){
+                ratesStringBuilder.append(orAdditionalFilter);
+            }
+        }
+        String ratesFilter =  filterStart + ratesStringBuilder + filterEnd;
+        departmentMasterDetails = MasterDetail.builder().name(isRate?MDMS_RATES_MASTER_NAME:MDMS_SOR_MASTER_NAME)
+                .filter(ratesFilter).build();
 
         estimateSorIdMasterDetails.add(departmentMasterDetails);
 
-        ModuleDetail estimateDepartmentModuleDetail = ModuleDetail.builder().masterDetails(estimateSorIdMasterDetails)
-                .moduleName(MDMS_WORKS_MODULE_NAME).build();
+        ModuleDetail estimateSorIdModuleDetail = ModuleDetail.builder().masterDetails(estimateSorIdMasterDetails)
+                .moduleName(config.getSorSearchModuleName()).build();
 
-        return estimateDepartmentModuleDetail;
+        return estimateSorIdModuleDetail;
     }
 
     private ModuleDetail getDepartmentModuleRequestData(EstimateRequest request) {
@@ -199,6 +261,15 @@ public class MDMSUtils {
      */
     public StringBuilder getMdmsSearchUrl() {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
+    }
+
+    /**
+     * Returns the url for mdms search v2 endpoint
+     *
+     * @return url for mdms search v2 endpoint
+     */
+    public StringBuilder getMdmsSearchUrlV2() {
+        return new StringBuilder().append(config.getMdmsHostV2()).append(config.getMdmsEndPointV2());
     }
 
 }

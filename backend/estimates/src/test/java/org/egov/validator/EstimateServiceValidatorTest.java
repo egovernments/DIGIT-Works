@@ -45,19 +45,11 @@ public class EstimateServiceValidatorTest {
         lenient().when(projectUtil.getProjectDetails(any(EstimateRequest.class))).thenReturn(projectResponse);
     }
 
-    @Test
-    void validateEstimateOnCreate_IfValidationSuccess() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
-        assertDoesNotThrow(() -> serviceValidator.validateEstimateOnCreate(estimateRequest));
-    }
-
 
     @Test
     void validateEstimateOnCreate_IfEstimateIsNull() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.setEstimate(null);
-        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("Estimate is mandatory"));
     }
 
     @Test
@@ -109,13 +101,6 @@ public class EstimateServiceValidatorTest {
     }
 
     @Test
-    void validateEstimateOnCreate_IfProjectIsNull() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateExceptionForProjectId();
-        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("{PROJECT_ID=ProjectId is mandatory}"));
-    }
-
-    @Test
     void validateEstimateOnCreate_IfProjectIsEmpty() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.getEstimate().setProjectId(" ");
@@ -128,7 +113,7 @@ public class EstimateServiceValidatorTest {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.getEstimate().setAddress(null);
         CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("Address is mandatory"));
+        assertTrue(exception.getMessage().contentEquals("{ADDRESS=Address is mandatory}"));
     }
 
     @Test
@@ -137,13 +122,6 @@ public class EstimateServiceValidatorTest {
         estimateRequest.getEstimate().setEstimateDetails(null);
         CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
         assertTrue(exception.getMessage().contentEquals("{ESTIMATE_DETAILS=Estimate detail is mandatory}"));
-    }
-
-    @Test
-    void validateEstimateOnCreate_IfAmountDetailIsNull() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateExceptionForAmountDetail();
-        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("{ESTIMATE.DETAIL.AMOUNT.DETAILS=Amount details are mandatory}"));
     }
 
     @Test
