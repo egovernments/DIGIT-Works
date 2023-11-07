@@ -156,18 +156,16 @@ public class MdmsUtils {
         MasterDetail headCodesMasterDetail = getMasterDetailForSubModuleAndFilter(MDMS_HEAD_CODES,FILTER_CODE);
         masterDetails.add(businessServiceMasterDetail);
         masterDetails.add(headCodesMasterDetail);
-        ModuleDetail expenseModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
+        return ModuleDetail.builder().masterDetails(masterDetails)
                 .moduleName(EXPENSE_MODULE).build();
-        return expenseModuleDetail;
     }
 
     private ModuleDetail getTenantModuleDetail() {
         List<MasterDetail> masterDetails = new ArrayList<>();
         MasterDetail masterDetail = getMasterDetailForSubModuleAndFilter(MASTER_TENANTS, FILTER_CODE);
         masterDetails.add(masterDetail);
-        ModuleDetail tenantModuleDetail = ModuleDetail.builder().masterDetails(masterDetails)
+        return ModuleDetail.builder().masterDetails(masterDetails)
                 .moduleName(MDMS_TENANT_MODULE_NAME).build();
-        return tenantModuleDetail;
     }
 
     private MdmsCriteriaReq prepareMDMSCriteria(RequestInfo requestInfo,List<ModuleDetail> moduleDetails, String tenantId){
@@ -175,11 +173,10 @@ public class MdmsUtils {
                 .moduleDetails(moduleDetails)
                 .tenantId(tenantId)
                 .build();
-        MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder()
+        return MdmsCriteriaReq.builder()
                 .mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo)
                 .build();
-        return mdmsCriteriaReq;
     }
     private MasterDetail getMasterDetailForSubModuleAndFilter(String masterDetailName, String filter){
         return MasterDetail.builder().name(masterDetailName)
@@ -191,10 +188,6 @@ public class MdmsUtils {
                 .build();
     }
 
-    private MasterDetail getMasterDetailForSubModuleAndFilter(String masterDetailName){
-        return MasterDetail.builder().name(masterDetailName)
-                .build();
-    }
 
     private ModuleDetail getLabourChargesModuleDetails() {
         List<MasterDetail> masterDetails = new ArrayList<>();
@@ -225,8 +218,7 @@ public class MdmsUtils {
 
     public Object fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String rootTenantId) {
         MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestForLabourChanges(requestInfo, rootTenantId);
-        Object result = serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
-        return result;
+        return serviceRequestRepository.fetchResult(getMDMSSearchUrl(), mdmsCriteriaReq);
     }
 
     public Object fetchMDMSDataForPayerList(RequestInfo requestInfo, String rootTenantId) {
