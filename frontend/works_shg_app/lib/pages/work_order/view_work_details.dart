@@ -689,8 +689,8 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                           'SUCCESS');
                       Future.delayed(const Duration(seconds: 1));
                       context.router.popAndPush(ViewWorkDetailsRoute(
-                          contractNumber: workOrderList.first['payload']
-                              ['contractNumber']));
+                          contractNumber: workOrderList.first['payload']['contractNumber'],
+                          wfStatus: workOrderList.first['payload']['wfStatus']));
                     },
                     orElse: () => false);
               },
