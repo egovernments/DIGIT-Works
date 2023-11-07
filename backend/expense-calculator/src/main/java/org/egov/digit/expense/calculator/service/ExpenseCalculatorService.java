@@ -342,9 +342,8 @@ public class ExpenseCalculatorService {
     }
 
     private List<LabourCharge> fetchMDMSDataForLabourCharges(RequestInfo requestInfo, String tenantId){
-        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch wage seeker skills MDMS");
-        Object mdmsData = mdmsUtils.fetchMDMSDataForLabourCharges(requestInfo, rootTenantId);
+        Object mdmsData = mdmsUtils.fetchMDMSDataForLabourCharges(requestInfo, tenantId);
         List<Object> labourChargesJson = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_LABOUR_CHARGES);
         List<LabourCharge> labourCharges = new ArrayList<>();
         for(Object obj : labourChargesJson){
@@ -435,9 +434,8 @@ public class ExpenseCalculatorService {
     }
 
     private List<BusinessService> fetchMDMSDataForBusinessService(RequestInfo requestInfo, String tenantId){
-        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch business service list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmodule(requestInfo, rootTenantId, MDMS_BUSINESS_SERVICE);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmodule(requestInfo, tenantId, MDMS_BUSINESS_SERVICE);
         List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_BUSINESS_SERVICE_VERIFICATION);
         List<BusinessService> businessServices = new ArrayList<>();
         for(Object obj : payerListJson){
@@ -449,9 +447,8 @@ public class ExpenseCalculatorService {
     }
 
     private List<Payer> fetchMDMSDataForPayers(RequestInfo requestInfo, String tenantId){
-        String rootTenantId = tenantId.split("\\.")[0];
         log.info("Fetch payer list from MDMS");
-        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, rootTenantId, MDMS_PAYER_LIST);
+        Object mdmsData = mdmsUtils.getExpenseFromMDMSForSubmoduleWithFilter(requestInfo, tenantId, MDMS_PAYER_LIST);
         List<Object> payerListJson = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_PAYER);
         List<Payer> payers = new ArrayList<>();
         for(Object obj : payerListJson){

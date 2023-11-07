@@ -465,7 +465,7 @@ public class EstimateServiceValidator {
             tenantRes = JsonPath.read(mdmsData, jsonPathForTenants);
             // sorIdRes = JsonPath.read(mdmsData, jsonPathForSorIds);
             categoryRes = JsonPath.read(mdmsData, jsonPathForCategories);
-            overHeadRes = JsonPath.read(mdmsDataForOverHead, jsonPathForOverHead);
+            overHeadRes = JsonPath.read(mdmsData, jsonPathForOverHead);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
