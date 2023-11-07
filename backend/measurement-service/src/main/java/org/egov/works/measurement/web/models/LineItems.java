@@ -39,6 +39,10 @@ public class LineItems {
     @Size(min = 1, max = 64)
     private String estimateLineItemId = null;
 
+    @JsonProperty("contractLineItemRef")
+    @Size(min = 1, max = 64)
+    private String contractLineItemRef = null;
+
     @JsonProperty("tenantId")
     @NotNull
     @Size(min = 2, max = 64)

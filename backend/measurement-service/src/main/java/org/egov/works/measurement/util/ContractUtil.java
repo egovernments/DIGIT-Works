@@ -54,7 +54,8 @@ public class ContractUtil {
      */
 
     public ContractResponse getContracts(Measurement measurement, RequestInfo requestInfo) {
-        ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId()).contractNumber(measurement.getReferenceId()).build();
+        ContractCriteria req = ContractCriteria.builder().requestInfo(requestInfo).tenantId(measurement.getTenantId())
+                .contractNumber(measurement.getReferenceId()).status(ACTIVE_STATUS).build();
         String searchContractUrl = MBServiceConfiguration.getContractHost() + MBServiceConfiguration.getContractPath();
         ContractResponse response = restTemplate.postForEntity(searchContractUrl, req, ContractResponse.class).getBody();
         return response;
@@ -83,8 +84,15 @@ public class ContractUtil {
         // return if no contract is present
         if (!isValidContract) return false;
 
-        if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
-            throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
+        if (contractResponse.getContracts().get(0).getBusinessService() != null &&
+                !contractResponse.getContracts().get(0).getBusinessService().equalsIgnoreCase("CONTRACT-REVISION")) {
+            if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
+                throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
+        } else {
+            if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase("APPROVED")) {
+                throw new CustomException(REVISED_CONTRACT_NOT_APPROVED_CODE, REVISED_CONTRACT_NOT_APPROVED_MSG);
+            }
+        }
 
         boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getEndDate()) <= 0));
         boolean isTargetIdsPresent = true;
@@ -103,7 +111,6 @@ public class ContractUtil {
             if (!isTargetIdPresent) {
                 isTargetIdsPresent = false;
                 throw new CustomException(INVALID_TARGET_ID_FOR_CONTRACT_CODE, measure.getTargetId() + INVALID_TARGET_ID_FOR_CONTRACT_MSG + measure.getReferenceId());
-//                throw errorConfigs.noActiveContractId;
             } else {
                 lineItemIdsList.add(measure.getTargetId());
                 if(!estimateIdsSet.contains(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0))) estimateIdsList.add(lineItemsToEstimateIdMap.get(measure.getTargetId()).get(0)); // take only unique ids
@@ -192,7 +199,7 @@ public class ContractUtil {
 
         List<LineItems> lineItemsList = latestContract.getLineItems();
         for(int i=0;i<lineItemsList.size();i++){
-            String Id = lineItemsList.get(i).getId();
+            String Id = lineItemsList.get(i).getContractLineItemRef();
             if(lineItemsToEstimateIdMap.containsKey(Id)){
                 String estimateId = lineItemsToEstimateIdMap.get(Id).get(0);
                 String estimateLineItemId = lineItemsToEstimateIdMap.get(Id).get(1);
@@ -232,16 +239,15 @@ public class ContractUtil {
         response.getContracts().get(0).getLineItems().forEach(
                 lineItems -> {
                     if (lineItems.getStatus().toString().equalsIgnoreCase(ACTIVE_STATUS)) {
-                        lineItemsIdList.add(lineItems.getId());  // id  remove this
+                        lineItemsIdList.add(lineItems.getContractLineItemRef());  // id  remove this
                         ArrayList<String> arr = new ArrayList<>();
                         arr.add(lineItems.getEstimateId());
                         arr.add(lineItems.getEstimateLineItemId());
-                        lineItemsToEstimateId.put(lineItems.getId(), arr);
+                        lineItemsToEstimateId.put(lineItems.getContractLineItemRef(), arr);
                     }
                 }
         );
         return lineItemsToEstimateId;
-//        return  lineItemsIdList;
     }
 
     public EstimateResponse getEstimate(RequestInfo requestInfo, String tenantId, List<String> estimateIdsList) {
@@ -262,7 +268,7 @@ public class ContractUtil {
 
     public void validateDimensions(EstimateResponse estimateResponse, Measurement measurement, ContractResponse contractResponse, Measurement measurementFromDB, Boolean isUpdate)  {
 
-        Map<String, String> targetIdToEstimateLineItemId = contractResponse.getContracts().get(0).getLineItems().stream().collect(Collectors.toMap(LineItems::getId, LineItems::getEstimateLineItemId));
+        Map<String, String> targetIdToEstimateLineItemRef = contractResponse.getContracts().get(0).getLineItems().stream().collect(Collectors.toMap(LineItems::getContractLineItemRef, LineItems::getEstimateLineItemId));
 
         Map<String, EstimateDetail> estimateLineItemIdToEstimateDetail = estimateResponse.getEstimates().get(0).getEstimateDetails().stream().collect(Collectors.toMap(EstimateDetail::getId, estimateDetail -> estimateDetail));
 
@@ -278,7 +284,7 @@ public class ContractUtil {
         }
         for (Measure measure : measurement.getMeasures()) {
             // Get the lineItemId corresponding in targetId
-            String estimateLineItemId = targetIdToEstimateLineItemId.get(measure.getTargetId());
+            String estimateLineItemId = targetIdToEstimateLineItemRef.get(measure.getTargetId());
             if (estimateLineItemId == null)
                 throw new CustomException(ESTIMATE_LINE_ITEM_ID_NOT_PRESENT_CODE, ESTIMATE_LINE_ITEM_ID_NOT_PRESENT_MSG + measure.getTargetId());
             // Get the estimateDetail corresponding to estimateLineItemId

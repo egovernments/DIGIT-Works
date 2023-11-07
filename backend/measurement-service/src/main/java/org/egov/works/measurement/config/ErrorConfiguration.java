@@ -22,6 +22,9 @@ public class ErrorConfiguration {
     public static final String CONTRACT_NOT_ACCEPTED_CODE = "CONTRACT_NOT_ACCEPTED";
     public static final String CONTRACT_NOT_ACCEPTED_MSG = "Contract not in accepted state";
 
+    public static final String REVISED_CONTRACT_NOT_APPROVED_CODE = "REVISED_CONTRACT_NOT_APPROVED";
+    public static final String REVISED_CONTRACT_NOT_APPROVED_MSG = "Revised Contract not in approved state";
+
     public static final String NOT_VALID_REFERENCE_ID_CODE = "NOT_VALID_REFERENCE_ID";
     public static final String NOT_VALID_REFERENCE_ID_MSG = "Measurement data is already there in progress state for contract number :: ";
 
