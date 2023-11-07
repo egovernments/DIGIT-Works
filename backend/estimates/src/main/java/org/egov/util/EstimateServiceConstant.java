@@ -18,6 +18,8 @@ public class EstimateServiceConstant {
 
 
     public static final String OVERHEAD_CODE = "OVERHEAD";
+    public static final String SOR_CODE = "SOR";
+    public static final String NON_SOR_CODE = "NON-SOR";
     //work flow
     public static final String ESTIMATE_MODULE_NAME = "estimate";
 

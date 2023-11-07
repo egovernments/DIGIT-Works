@@ -72,7 +72,7 @@ public class EstimateServiceValidator {
         Set<String> uniqueIdentifiers = new HashSet<String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
-            if(estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
+            if(estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) && estimateDetail.getSorId() != null) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
             }
         }
@@ -82,7 +82,6 @@ public class EstimateServiceValidator {
             validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
             Object mdmsDataV2ForRate = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, true);
             validateDateAndRates(estimate, mdmsDataV2ForRate, errorMap);
-//            validateMDMSDataV2ForRates(estimate, mdmsDataV2ForRate, uniqueIdentifiers, errorMap);
         }
 
         validateNoOfUnit(estimateDetails);
@@ -126,10 +125,13 @@ public class EstimateServiceValidator {
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
 
-            if(estimateDetail.getNoOfunit()==null){
+            if(estimateDetail.getCategory().equals(OVERHEAD_CODE)){
                 continue;
             }
             else{
+                if(estimateDetail.getNoOfunit()==null){
+                    throw new CustomException("NO_OF_UNIT", "noOfUnit is mandatory");
+                }
                 BigDecimal total =new BigDecimal(1);
                 BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
                 boolean allNull =true;
@@ -228,6 +230,10 @@ public class EstimateServiceValidator {
             for (EstimateDetail estimateDetail : estimateDetails) {
                 if (StringUtils.isBlank(estimateDetail.getSorId()) && StringUtils.isBlank(estimateDetail.getName())) {
                     errorMap.put("ESTIMATE.DETAIL.NAME.OR.SOR.ID", "Estimate detail's name or sorId is mandatory");
+                }
+
+                if((estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) || estimateDetail.getCategory().equalsIgnoreCase(NON_SOR_CODE)) && (estimateDetail.getUnitRate()==null)){
+                        errorMap.put("ESTIMATE.DETAIL.UNIT_RATE", "Selected SOR doesn't have a rate effective for the given period. Please update the rate before adding it to an estimate.");
                 }
                 if (estimateDetail.getAmountDetail() == null || estimateDetail.getAmountDetail().isEmpty()) {
                     errorMap.put("ESTIMATE.DETAIL.AMOUNT.DETAILS", "Amount details are mandatory");
