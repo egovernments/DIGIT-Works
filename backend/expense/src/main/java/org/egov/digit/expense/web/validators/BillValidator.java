@@ -67,7 +67,7 @@ public class BillValidator {
         
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
         validateBillAmountAndDate(bill, errorMap);
-        validateTenantId(billRequest, mdmsData);
+        validateTenantId(billRequest,mdmsData);
         validateMasterData(billRequest, errorMap, mdmsData, true);
 
         if (!CollectionUtils.isEmpty(errorMap))
@@ -90,7 +90,7 @@ public class BillValidator {
         validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap); 
         
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
-        validateTenantId(billRequest, mdmsData);
+        validateTenantId(billRequest,mdmsData);
         validateMasterData(billRequest, errorMap, mdmsData, false);
 
         if (!CollectionUtils.isEmpty(errorMap))
@@ -295,13 +295,9 @@ public class BillValidator {
 			errorMap.put("EG_EXPENSE_INVALID_HEADCODES", "The following head codes are invalid : " + missingHeadCodes);
 	}
 
-    private void validateTenantId(BillRequest billRequest, Map<String, Map<String, JSONArray>> mdmsData2) {
+    private void validateTenantId(BillRequest billRequest, Map<String, Map<String, JSONArray>> mdmsData) {
 
         Bill bill = billRequest.getBill();
-        String rootTenantId = bill.getTenantId().split("\\.")[0];
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-                rootTenantId, Constants.TENANT_MODULE_NAME, Constants.TENANT_MDMS_MASTER_NAMES);
-
 
         List<String> tenantIdList=null;
         try {
@@ -388,7 +384,7 @@ public class BillValidator {
 	private Map<String, Map<String, JSONArray>> getMasterDataForValidation(BillRequest billRequest, Bill bill) {
 		
 		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
-				bill.getTenantId().split("\\.")[0], Constants.EXPENSE_MODULE_NAME, Constants.MDMS_MASTER_NAMES);
+				bill.getTenantId());
         
 		if(CollectionUtils.isEmpty(mdmsData)) {
 			throw new CustomException("EG_EXPENSE_MDMS_ERROR", "MDMS Data not found for the tenantid : " + bill.getTenantId());

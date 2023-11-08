@@ -66,8 +66,8 @@ public class MusterRollValidator {
         validateEstimateMusterRoll(musterRoll, errorMap);
 
         //split the tenantId and validate tenantId
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
-        Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
+        String tenantId = musterRoll.getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, tenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
 
         if (!errorMap.isEmpty()){
@@ -93,8 +93,8 @@ public class MusterRollValidator {
         validateWorkFlow(workflow, errorMap);
 
         //split the tenantId and validate tenantId
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
-        Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
+        String tenantId = musterRoll.getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, tenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
 
         //check if the user is enrolled in the attendance register
@@ -123,8 +123,8 @@ public class MusterRollValidator {
         validateUpdateMusterRoll(musterRoll, requestInfo, workflow, errorMap);
 
         //split the tenantId and validate tenantId
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
-        Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, rootTenantId);
+        String tenantId = musterRoll.getTenantId();
+        Object mdmsData = mdmsUtils.mDMSCall(musterRollRequest, tenantId);
         validateMDMSData(musterRoll, mdmsData, errorMap);
 
         if (!errorMap.isEmpty()){

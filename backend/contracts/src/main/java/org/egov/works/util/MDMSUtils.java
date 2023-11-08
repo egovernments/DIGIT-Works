@@ -49,7 +49,6 @@ public class MDMSUtils {
                 .requestInfo(requestInfo).build();
         return mdmsCriteriaReq;
     }
-
     private ModuleDetail getWorksModuleDetailValidate() {
         List<MasterDetail> masterDetails = new ArrayList<>();
 
