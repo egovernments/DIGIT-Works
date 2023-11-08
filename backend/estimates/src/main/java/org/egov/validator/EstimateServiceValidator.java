@@ -12,6 +12,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.EstimateServiceConfiguration;
 import org.egov.repository.EstimateRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.ContractUtils;
 import org.egov.util.MDMSUtils;
 import org.egov.util.ProjectUtil;
 import org.egov.web.models.*;
@@ -41,6 +42,9 @@ public class EstimateServiceValidator {
     private EstimateServiceConfiguration config;
     @Autowired ObjectMapper mapper;
 
+    @Autowired
+    private ContractUtils contractUtils;
+
     /**
      * validate the create estimate request for all the mandatory
      * and/or
@@ -54,10 +58,23 @@ public class EstimateServiceValidator {
         Estimate estimate = request.getEstimate();
         RequestInfo requestInfo = request.getRequestInfo();
         Workflow workflow = request.getWorkflow();
+        Estimate estimateForRevision = null;
 
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow, errorMap);
+        if(estimate.getBusinessService().equalsIgnoreCase(config.getBuisnessService()) && config.getRevisionEstimateActiveStatus()){
+            if(estimate.getEstimateNumber() == null){
+                errorMap.put("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
+            }
+            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+                    EstimateSearchCriteria.SortBy.createdTime).build();
+            List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
+            estimateForRevision = estimateList.get(0);
+            if(!REVISION_ESTIMATE_INVALID_WF_STATUS.contains(estimateList.get(0).getWfStatus())){
+                errorMap.put("INVALID_ESTIMATE", "Estimate number is invalid for revision estimate");
+            }
+        }
 
         String rootTenantId = estimate.getTenantId();
 
@@ -86,8 +103,31 @@ public class EstimateServiceValidator {
 
         validateNoOfUnit(estimateDetails);
 
+        if(estimate.getBusinessService().equalsIgnoreCase(config.getBuisnessService()) && config.getRevisionEstimateActiveStatus() && estimateForRevision != null){
+            validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
+        }
+
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
+    }
+
+    private void validateContractAndMeasurementBook(EstimateRequest estimateRequest, Estimate estimateForRevision, Map<String, String> errorMap) {
+        log.info("EstimateServiceValidator::validateContractAndMeasurementBook");
+        Object contractResponse = contractUtils.getContractDetails(estimateRequest.getRequestInfo(), estimateForRevision);
+        final String jsonPathForContractNumber = "$.contracts.*.contractNumber";
+        List<Object> contractNumbers = null;
+        try {
+            contractNumbers = JsonPath.read(contractResponse, jsonPathForContractNumber);
+        } catch (Exception e) {
+            throw new CustomException("JSONPATH_ERROR", "Failed to parse contract search response");
+        }
+        if(contractNumbers == null || contractNumbers.isEmpty()){
+            errorMap.put("INVALID_CONTRACT", "No contract found for the given estimate");
+        }
+        else{
+            String contractNumber = contractNumbers.get(0).toString();
+
+        }
     }
 
     private void validateMDMSDataForUOM(Estimate estimate, Object mdmsDataForUOM, Map<String, String> errorMap) {
@@ -336,7 +376,6 @@ public class EstimateServiceValidator {
 
     private void validateDate (JsonNode filteredRates, EstimateDetail estimateDetail, Map<String, String> errorMap, Long validatingDate) {
         List<JsonNode> jsonList = new ArrayList<>();
-        Long validDate = null;
         for (JsonNode node : filteredRates) {
             jsonList.add(node);
         }

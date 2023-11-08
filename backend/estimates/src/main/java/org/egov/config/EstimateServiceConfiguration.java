@@ -107,6 +107,19 @@ public class EstimateServiceConfiguration {
     @Value("${egov.location.endpoint}")
     private String locationEndpoint;
 
+    // Contracts
+    @Value("${egov.contract.host}")
+    private String contractHost;
+
+    @Value("${egov.contract.search.endpoint}")
+    private String contractSearchEndpoint;
+
+    //Measurement Book
+    @Value("${egov.measurement.host}")
+    private String measurementBookHost;
+    @Value("${egov.measurement.search.endpoint}")
+    private String measurementBookSearchEndpoint;
+
     //Notification
     @Value("${notification.sms.enabled}")
     private Boolean isSMSEnabled;
@@ -127,6 +140,12 @@ public class EstimateServiceConfiguration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
+    // RevisionEstimate
+    @Value("${estimate.buisnessService}")
+    private String buisnessService;
+
+    @Value("${estimate.revisionEstimate.activeStatus}")
+    private Boolean revisionEstimateActiveStatus;
 
     @PostConstruct
     public void initialize() {

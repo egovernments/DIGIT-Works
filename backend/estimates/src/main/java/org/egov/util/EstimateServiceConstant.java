@@ -1,5 +1,8 @@
 package org.egov.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class EstimateServiceConstant {
 
     //Modules
@@ -76,4 +79,6 @@ public class EstimateServiceConstant {
 
     //Location Service Constants
     public static final String LOCATION_BOUNDARY_NAME_CODE ="$.*.*.boundary.*.name";
+
+    public static final List<String> REVISION_ESTIMATE_INVALID_WF_STATUS = Arrays.asList("CANCELLED", "APPROVED");
 }
