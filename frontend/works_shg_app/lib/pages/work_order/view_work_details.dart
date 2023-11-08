@@ -690,7 +690,7 @@ class _ViewWorkDetailsPage extends State<ViewWorkDetailsPage> {
                       Future.delayed(const Duration(seconds: 1));
                       context.router.popAndPush(ViewWorkDetailsRoute(
                           contractNumber: workOrderList.first['payload']['contractNumber'],
-                          wfStatus: workOrderList.first['payload']['wfStatus']));
+                          wfStatus: contractsModel?.contracts?.first.wfStatus));
                     },
                     orElse: () => false);
               },
