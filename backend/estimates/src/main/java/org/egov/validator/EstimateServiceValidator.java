@@ -63,7 +63,7 @@ public class EstimateServiceValidator {
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow, errorMap);
-        if(estimate.getBusinessService().equalsIgnoreCase(config.getBuisnessService()) && config.getRevisionEstimateActiveStatus()){
+        if(estimate.getBusinessService().equalsIgnoreCase(config.getBuisnessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
             if(estimate.getEstimateNumber() == null){
                 errorMap.put("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
             }
