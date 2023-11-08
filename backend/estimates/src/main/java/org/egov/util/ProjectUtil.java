@@ -73,9 +73,8 @@ public class ProjectUtil {
         projectSearchReqNode.putPOJO(PROJECTS, projectArrayNode);
 
         log.info("ProjectUtil::search project request -> {}",projectSearchReqNode);
-        Object projectRes = requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
 
-        return projectRes;
+        return requestRepository.fetchResult(uriBuilder, projectSearchReqNode);
     }
 
     private StringBuilder getProjectUrl() {
