@@ -22,15 +22,14 @@ import static org.egov.util.EstimateServiceConstant.*;
 public class MDMSUtils {
 
     public static final String PLACEHOLDER_CODE = "{code}";
-    public static final String tenantFilterCode = "$.[?(@.code =='{code}')].code";
-    public static final String filterWorksModuleCode = "$.[?(@.active==true && @.code=='{code}')]";
-    public static final String codeFilter = "$.*.code";
-    public static final String activeCodeFilter = "$.[?(@.active==true)].code";
-    private static final String sorFilterCode = "@.id=='%s'";
-    private static final String orAdditionalFilter = " || ";
-    private static final String filterStart = "[?(";
-    private static final String filterEnd = ")]";
-    private static final String ratesFilterCode = "@.sorId=='%s'";
+    public static final String TENANT_FILTER_CODE = "$.[?(@.code =='{code}')].code";
+    public static final String FILTER_WORKS_MODULE_CODE = "$.[?(@.active==true && @.code=='{code}')]";
+    public static final String ACTIVE_FILTER_CODE = "$.[?(@.active==true)].code";
+    private static final String SOR_FILTER_CODE = "@.id=='%s'";
+    private static final String OR_ADDITIONAL_FILTER = " || ";
+    private static final String FILTER_START = "[?(";
+    private static final String FILTER_END = ")]";
+    private static final String RATES_FILTER_CODE = "@.sorId=='%s'";
 
     @Autowired
     private EstimateServiceConfiguration config;
@@ -161,7 +160,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateOverheadMasterDetails = new ArrayList<>();
 
         MasterDetail overheadMasterDetails = MasterDetail.builder().name(MASTER_OVERHEAD)
-                .filter(activeCodeFilter).build();
+                .filter(ACTIVE_FILTER_CODE).build();
 
         estimateOverheadMasterDetails.add(overheadMasterDetails);
 
@@ -177,7 +176,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateCategoryMasterDetails = new ArrayList<>();
 
         MasterDetail categoryMasterDetails = MasterDetail.builder().name(MASTER_CATEGORY)
-                .filter(activeCodeFilter).build();
+                .filter(ACTIVE_FILTER_CODE).build();
 
         estimateCategoryMasterDetails.add(categoryMasterDetails);
 
@@ -201,13 +200,13 @@ public class MDMSUtils {
         StringBuilder ratesStringBuilder = new StringBuilder();
         Iterator ratesIterator = sorIds.iterator();
         while (ratesIterator.hasNext()) {
-            String sorIdRateFilter = String.format(isRate? ratesFilterCode:sorFilterCode, ratesIterator.next());
+            String sorIdRateFilter = String.format(isRate? RATES_FILTER_CODE:SOR_FILTER_CODE, ratesIterator.next());
             ratesStringBuilder.append(sorIdRateFilter);
             if(ratesIterator.hasNext()){
-                ratesStringBuilder.append(orAdditionalFilter);
+                ratesStringBuilder.append(OR_ADDITIONAL_FILTER);
             }
         }
-        String ratesFilter =  filterStart + ratesStringBuilder + filterEnd;
+        String ratesFilter =  FILTER_START + ratesStringBuilder + FILTER_END;
         departmentMasterDetails = MasterDetail.builder().name(isRate?MDMS_RATES_MASTER_NAME:MDMS_SOR_MASTER_NAME)
                 .filter(ratesFilter).build();
 
@@ -225,7 +224,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateDepartmentMasterDetails = new ArrayList<>();
 
         MasterDetail departmentMasterDetails = MasterDetail.builder().name(MASTER_DEPARTMENT)
-                .filter(filterWorksModuleCode.replace(PLACEHOLDER_CODE, estimate.getExecutingDepartment())).build();
+                .filter(FILTER_WORKS_MODULE_CODE.replace(PLACEHOLDER_CODE, estimate.getExecutingDepartment())).build();
 
         estimateDepartmentMasterDetails.add(departmentMasterDetails);
 
@@ -241,7 +240,7 @@ public class MDMSUtils {
         List<MasterDetail> estimateTenantMasterDetails = new ArrayList<>();
 
         MasterDetail tenantMasterDetails = MasterDetail.builder().name(MASTER_TENANTS)
-                .filter(tenantFilterCode.replace(PLACEHOLDER_CODE, estimate.getTenantId())).build();
+                .filter(TENANT_FILTER_CODE.replace(PLACEHOLDER_CODE, estimate.getTenantId())).build();
 
         estimateTenantMasterDetails.add(tenantMasterDetails);
 
