@@ -22,7 +22,7 @@ public class EstimateQueryBuilder {
 
 
     private static final String FETCH_ESTIMATE_QUERY = "SELECT est.*," +
-            "estDetail.*,estAmtDetail.*,estAdd.*, est.id as estId,estDetail.description as estDetailDescription,est.last_modified_time as estLastModifiedTime, estDetail.id AS estDetailId, " +
+            "estDetail.*,estAmtDetail.*,estAdd.*, est.id as estId,estDetail.description as estDetailDescription,est.last_modified_time as estLastModifiedTime, est.created_time as estCreatedTime, estDetail.id AS estDetailId, " +
             "estDetail.additional_details AS estDetailAdditional,estAmtDetail.additional_details AS estAmtDetailAdditional," +
             "estAdd.id AS estAddId,estAmtDetail.id AS estAmtDetailId,estDetail.estimate_id AS estDetailEstId," +
             "estDetail.is_active AS estDetailActive,estAmtDetail.is_active AS estAmtDetailActive,estDetail.name AS estDetailName "+
@@ -50,7 +50,7 @@ public class EstimateQueryBuilder {
             "ON (estDetail.id=estAmtDetail.estimate_detail_id) ";
 
     private final String paginationWrapper = "SELECT * FROM " +
-            "(SELECT *, DENSE_RANK() OVER (ORDER BY estLastModifiedTime DESC , estId) offset_ FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY estCreatedTime [] , estId) offset_ FROM " +
             "({})" +
             " result) result_offset " +
             "WHERE offset_ > ? AND offset_ <= ?";
@@ -208,7 +208,12 @@ public class EstimateQueryBuilder {
         log.info("EstimateQueryBuilder::addPaginationWrapper");
         int limit = config.getDefaultLimit();
         int offset = config.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}", query);
+        String wrapperQuery;
+        if (criteria.getSortOrder() == EstimateSearchCriteria.SortOrder.ASC)
+            wrapperQuery = paginationWrapper.replace("[]", "ASC");
+        else
+            wrapperQuery = paginationWrapper.replace("[]", "DESC");
+        String finalQuery = wrapperQuery.replace("{}", query);
 
         if (criteria.getLimit() != null) {
             if (criteria.getLimit() <= config.getMaxLimit())
