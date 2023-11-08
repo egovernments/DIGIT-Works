@@ -1005,7 +1005,17 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                                                   AppLocalizations.of(context)
                                                                                                                                                       .translate(i18.attendanceMgmt.selectDateRangeFirst),
                                                                                                                                                   'ERROR');
-                                                                                                                                            } else if (updateAttendeePayload.isNotEmpty) {
+                                                                                                                                            } else if (newList.any((item) => (item.skillCodeList?.isNotEmpty ?? false) == false)) {
+                                                                                                                                                setState(() {
+                                                                                                                                                  skillsDisable = false;
+                                                                                                                                                });
+                                                                                                                                              Notifiers.getToastMessage(
+                                                                                                                                                  context,
+                                                                                                                                                  AppLocalizations.of(context)
+                                                                                                                                                      .translate(i18.attendanceMgmt.noSkillPresent),
+                                                                                                                                                  'INFO');
+                                                                                                                                            }
+                                                                                                                                            else if (updateAttendeePayload.isNotEmpty) {
                                                                                                                                               Notifiers.getToastMessage(
                                                                                                                                                   context,
                                                                                                                                                   AppLocalizations.of(context)
@@ -1040,7 +1050,17 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                                               context,
                                                                                                                                               AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation),
                                                                                                                                               'INFO');
-                                                                                                                                        } else if (skillsDisable ||
+                                                                                                                                        } else if (newList.any((item) => (item.skillCodeList?.isNotEmpty ?? false) == false)) {
+                                                                                                                                           setState(() {
+                                                                                                                      skillsDisable = false;
+                                                                                                                    });
+                                                                                                                                              Notifiers.getToastMessage(
+                                                                                                                                                  context,
+                                                                                                                                                  AppLocalizations.of(context)
+                                                                                                                                                      .translate(i18.attendanceMgmt.noSkillPresent),
+                                                                                                                                                  'INFO');
+                                                                                                                                            }
+                                                                                                                                        else if (skillsDisable ||
                                                                                                                                             newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any(
                                                                                                                                                 (e) => e.skill == null || e.skill.toString().isEmpty)) {
                                                                                                                                           setState(() {
@@ -1187,7 +1207,17 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                     Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                                   } else if (updateAttendeePayload.isNotEmpty) {
                                                                                                                     Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
-                                                                                                                  } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null && e.skill.toString().isEmpty)) {
+                                                                                                                  } else if (newList.any((item) => (item.skillCodeList?.isNotEmpty ?? false) == false)) {
+                                                                                                                     setState(() {
+                                                                                                                      skillsDisable = false;
+                                                                                                                    });
+                                                                                                                      Notifiers.getToastMessage(
+                                                                                                                          context,
+                                                                                                                          AppLocalizations.of(context)
+                                                                                                                              .translate(i18.attendanceMgmt.noSkillPresent),
+                                                                                                                          'INFO');
+                                                                                                                    }
+                                                                                                                  else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null && e.skill.toString().isEmpty)) {
                                                                                                                     setState(() {
                                                                                                                       skillsDisable = false;
                                                                                                                     });
@@ -1208,7 +1238,17 @@ class _TrackAttendancePage extends State<TrackAttendancePage> {
                                                                                                                     Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.selectDateRangeFirst), 'ERROR');
                                                                                                                   } else if (createAttendeePayload.isNotEmpty) {
                                                                                                                     Notifiers.getToastMessage(context, AppLocalizations.of(context).translate(i18.attendanceMgmt.attendanceChangedValidation), 'INFO');
-                                                                                                                  } else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null || e.skill.toString().isEmpty)) {
+                                                                                                                  } else if (newList.any((item) => (item.skillCodeList?.isNotEmpty ?? false) == false)) {
+                                                                                                                     setState(() {
+                                                                                                                      skillsDisable = false;
+                                                                                                                    });
+                                                                                                                      Notifiers.getToastMessage(
+                                                                                                                          context,
+                                                                                                                          AppLocalizations.of(context)
+                                                                                                                              .translate(i18.attendanceMgmt.noSkillPresent),
+                                                                                                                          'INFO');
+                                                                                                                    }
+                                                                                                                  else if (skillsDisable || newList.where((n) => n.skillCodeList?.isNotEmpty ?? false).any((e) => e.skill == null || e.skill.toString().isEmpty)) {
                                                                                                                     setState(() {
                                                                                                                       skillsDisable = false;
                                                                                                                     });

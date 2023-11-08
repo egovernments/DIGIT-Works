@@ -317,6 +317,7 @@ class AttendanceMgmt {
   String get skill => 'ATM_SKILLS';
   String get skillDetails => 'ATM_SKILLS_DETAILS';
   String get reviewSkills => 'ATM_REVIEW_SKILLS_FOR_EACH_ATTENDEE';
+  String get noSkillPresent => 'ATM_NO_SKILL_IS_PRESENT';
   String get attendanceChangedValidation =>
       'ATM_ATT_CHANGED_CLICK_SAVE_DRAFT_FIRST';
   String get individualDetails => 'ATM_INDIVIDUAL_DETAILS';

@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'dart:convert';
 
 import '../../../models/attendance/individual_list_model.dart';
 import '../../../utils/global_variables.dart';
@@ -47,9 +48,28 @@ class IndividualRepository {
             "userInfo": GlobalVariables.userRequestModel,
             "accessToken": GlobalVariables.authToken,
           }));
+        // Added this filter so that wageseekers with corrupted data will not be visible in the search and not allowed to engage as well
+        // Parse the JSON response
+        final dynamic responseData = response.data;
+
+        if (responseData is Map<String, dynamic> &&
+            responseData.containsKey("items") &&
+            responseData["items"] is List) {
+          final List<dynamic> items = responseData["items"];
+          final filteredItems = items.where((item) =>
+              item != null &&
+              item.containsKey("businessObject") &&
+              item["businessObject"] is Map &&
+              item["businessObject"]["individualId"] != null &&
+              item["businessObject"]["individualId"] != "null" &&
+              item["businessObject"].containsKey("individualId")).toList();
+            print("filtered Items");
+          // Update the "items" key with the filtered items
+          responseData["items"] = filteredItems;
+        }
 
       return WMSIndividualListModelMapper.fromMap(
-          response.data as Map<String, dynamic>);
+          responseData);
     } on DioError catch (ex) {
       // Assuming there will be an errorMessage property in the JSON object
       rethrow;
