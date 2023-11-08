@@ -89,7 +89,7 @@ public class EstimateServiceValidator {
         Set<String> uniqueIdentifiers = new HashSet<String>();
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
-            if(estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
+            if(estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) && estimateDetail.getSorId() != null) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
             }
         }
@@ -110,7 +110,6 @@ public class EstimateServiceValidator {
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);
     }
-
     private void validateContractAndMeasurementBook(EstimateRequest estimateRequest, Estimate estimateForRevision, Map<String, String> errorMap) {
         log.info("EstimateServiceValidator::validateContractAndMeasurementBook");
         Object contractResponse = contractUtils.getContractDetails(estimateRequest.getRequestInfo(), estimateForRevision);
@@ -165,10 +164,13 @@ public class EstimateServiceValidator {
         for(int i=0;i<estimateDetails.size();i++){
             EstimateDetail estimateDetail = estimateDetails.get(i);
 
-            if(estimateDetail.getNoOfunit()==null){
+            if(estimateDetail.getCategory().equals(OVERHEAD_CODE)){
                 continue;
             }
             else{
+                if(estimateDetail.getNoOfunit()==null){
+                    throw new CustomException("NO_OF_UNIT", "noOfUnit is mandatory");
+                }
                 BigDecimal total =new BigDecimal(1);
                 BigDecimal noOfUnit = new BigDecimal(estimateDetail.getNoOfunit());
                 boolean allNull =true;
@@ -267,6 +269,10 @@ public class EstimateServiceValidator {
             for (EstimateDetail estimateDetail : estimateDetails) {
                 if (StringUtils.isBlank(estimateDetail.getSorId()) && StringUtils.isBlank(estimateDetail.getName())) {
                     errorMap.put("ESTIMATE.DETAIL.NAME.OR.SOR.ID", "Estimate detail's name or sorId is mandatory");
+                }
+
+                if((estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) || estimateDetail.getCategory().equalsIgnoreCase(NON_SOR_CODE)) && (estimateDetail.getUnitRate()==null)){
+                    errorMap.put("ESTIMATE.DETAIL.UNIT_RATE", "Selected SOR doesn't have a rate effective for the given period. Please update the rate before adding it to an estimate.");
                 }
                 if (estimateDetail.getAmountDetail() == null || estimateDetail.getAmountDetail().isEmpty()) {
                     errorMap.put("ESTIMATE.DETAIL.AMOUNT.DETAILS", "Amount details are mandatory");
@@ -414,39 +420,6 @@ public class EstimateServiceValidator {
         }
         log.error("No Rates found for the given date and time");
         errorMap.put("DATES_MISMATCH", "No Rates found for the given date and time");
-    }
-
-    /**
-     * validate the mdms data for sorid in mdmsv2
-     */
-    private void validateMDMSDataV2ForRates(Estimate estimate ,Object mdmsData, Set<String> ratesId,Map<String, String> errorMap){
-        log.info("EstimateServiceValidator::validateMDMSDataV2ForRates");
-        int ratesIdInputSize = ratesId.size();
-
-        final  String jsonPathForTestSor = "$.mdms[*].uniqueIdentifier";
-        final  String jsonPathForRatesActive = "$.mdms[*].isActive";
-        List<Object> ratesRes = null;
-        List<Object> isActiveValues =null;
-        try {
-            ratesRes = JsonPath.read(mdmsData,jsonPathForTestSor);
-            isActiveValues= JsonPath.read(mdmsData,jsonPathForRatesActive);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException("JSONPATH_ERROR", "Failed to parse mdms response");
-        }
-        int ratesIdOutputSize = ratesRes.size();
-        if(ratesIdInputSize!=ratesIdOutputSize){
-            errorMap.put("INVALID_RATES_ID", "The rates id is not present in MDMS");
-            throw new CustomException("RATES","rates is not in mdms");
-
-        }
-        for (Object item : isActiveValues) {
-            String active = String.valueOf(item);
-            if ("false".equals(active)) {
-                errorMap.put("RATE_INACTIVE", "The rates is inactive");
-                throw new CustomException("RATES_ACTIVE","rates is not active");
-            }
-        }
     }
 
     private void validateMDMSData(Estimate estimate, Object mdmsData, Object mdmsDataForOverHead, Map<String, String> errorMap, boolean isCreate) {

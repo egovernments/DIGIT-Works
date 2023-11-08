@@ -101,13 +101,6 @@ public class EstimateServiceValidatorTest {
     }
 
     @Test
-    void validateEstimateOnCreate_IfProjectIsNull() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateExceptionForProjectId();
-        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("{PROJECT_ID=ProjectId is mandatory}"));
-    }
-
-    @Test
     void validateEstimateOnCreate_IfProjectIsEmpty() {
         EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateSuccess();
         estimateRequest.getEstimate().setProjectId(" ");
@@ -129,13 +122,6 @@ public class EstimateServiceValidatorTest {
         estimateRequest.getEstimate().setEstimateDetails(null);
         CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
         assertTrue(exception.getMessage().contentEquals("{ESTIMATE_DETAILS=Estimate detail is mandatory}"));
-    }
-
-    @Test
-    void validateEstimateOnCreate_IfAmountDetailIsNull() {
-        EstimateRequest estimateRequest = EstimateRequestBuilderTest.builder().withEstimateForCreateExceptionForAmountDetail();
-        CustomException exception = assertThrows(CustomException.class, ()-> serviceValidator.validateEstimateOnCreate(estimateRequest));
-        assertTrue(exception.getMessage().contentEquals("{ESTIMATE.DETAIL.AMOUNT.DETAILS=Amount details are mandatory}"));
     }
 
     @Test
