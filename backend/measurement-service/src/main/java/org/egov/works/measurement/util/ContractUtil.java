@@ -84,14 +84,13 @@ public class ContractUtil {
         // return if no contract is present
         if (!isValidContract) return false;
 
-        if (contractResponse.getContracts().get(0).getBusinessService() == null ||
-                contractResponse.getContracts().get(0).getBusinessService().equalsIgnoreCase("CONTRACT")) {
+        if (contractResponse.getContracts().get(0).getBusinessService() != null &&
+                contractResponse.getContracts().get(0).getBusinessService().equalsIgnoreCase(BUSINESS_SERVICE_REVISION_CONTRACT)) {
+            if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(APPROVED_STATUS))
+                throw new CustomException(REVISED_CONTRACT_NOT_APPROVED_CODE, REVISED_CONTRACT_NOT_APPROVED_MSG);
+        } else {
             if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
                 throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
-        } else {
-            if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase("APPROVED")) {
-                throw new CustomException(REVISED_CONTRACT_NOT_APPROVED_CODE, REVISED_CONTRACT_NOT_APPROVED_MSG);
-            }
         }
 
         boolean isValidEntryDate = ((measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getStartDate()) >= 0) && (measurement.getEntryDate().compareTo(contractResponse.getContracts().get(0).getEndDate()) <= 0));
