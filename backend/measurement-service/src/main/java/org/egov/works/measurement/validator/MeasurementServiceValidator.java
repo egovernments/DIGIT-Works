@@ -214,7 +214,6 @@ public class MeasurementServiceValidator {
     }
 
     public boolean checkDocumentIdsMatch(List<String> documentIds, String responseJson) {
-        ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             Map<String, String> fileStoreIds = objectMapper.readValue(responseJson, Map.class);
@@ -241,7 +240,7 @@ public class MeasurementServiceValidator {
     public void validateWorkflowForCreate (MeasurementServiceRequest measurementServiceRequest) {
         measurementServiceRequest.getMeasurements().forEach(measurementService -> {
             BusinessService businessService = workflowUtil.getBusinessService(measurementServiceRequest.getRequestInfo(), measurementService.getTenantId(), MBServiceConfiguration.getBussinessServiceCode());
-            List<String> allowedActions = businessService.getStates().stream().filter(state -> state.getIsStartState() == true).flatMap(state -> state.getActions().stream()).map(Action::getAction).collect(Collectors.toList());
+            List<String> allowedActions = businessService.getStates().stream().filter(state -> state.getIsStartState()).flatMap(state -> state.getActions().stream()).map(Action::getAction).collect(Collectors.toList());
             if (!allowedActions.contains(measurementService.getWorkflow().getAction()))
                 throw new CustomException(ACTION_NOT_FOUND_CODE, ACTION_NOT_FOUND_MSG1 + measurementService.getWorkflow().getAction() + ACTION_NOT_FOUND_MSG2 + measurementService.getMeasurementNumber());
         });
