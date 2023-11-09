@@ -84,8 +84,8 @@ public class ContractUtil {
         // return if no contract is present
         if (!isValidContract) return false;
 
-        if (contractResponse.getContracts().get(0).getBusinessService() != null &&
-                !contractResponse.getContracts().get(0).getBusinessService().equalsIgnoreCase("CONTRACT-REVISION")) {
+        if (contractResponse.getContracts().get(0).getBusinessService() == null ||
+                contractResponse.getContracts().get(0).getBusinessService().equalsIgnoreCase("CONTRACT")) {
             if (!contractResponse.getContracts().get(0).getWfStatus().equalsIgnoreCase(ACCEPTED_STATUS))
                 throw new CustomException(CONTRACT_NOT_ACCEPTED_CODE, CONTRACT_NOT_ACCEPTED_MSG);
         } else {
@@ -302,9 +302,9 @@ public class ContractUtil {
             BigDecimal currValue = measure.getBreadth().multiply(measure.getHeight()).multiply(measure.getLength()).multiply(measure.getNumItems());
             BigDecimal totalValue = currValue.add(prevCumulativeValue);
 
-            BigDecimal maxAllowedValue = estimateDetail.getQuantity() != null ? estimateDetail.getQuantity() : BigDecimal.valueOf(estimateDetail.getNoOfunit());
-            if (totalValue.compareTo(maxAllowedValue) > 0) {
-                throw new CustomException(TOTAL_VALUE_GREATER_THAN_ESTIMATE_CODE, String.format(TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG, measure.getTargetId(), maxAllowedValue));
+
+            if (totalValue.compareTo(BigDecimal.valueOf(estimateDetail.getNoOfunit())) > 0) {
+                throw new CustomException(TOTAL_VALUE_GREATER_THAN_ESTIMATE_CODE, String.format(TOTAL_VALUE_GREATER_THAN_ESTIMATE_MSG, measure.getTargetId(), BigDecimal.valueOf(estimateDetail.getNoOfunit())));
             }
         }
     }
