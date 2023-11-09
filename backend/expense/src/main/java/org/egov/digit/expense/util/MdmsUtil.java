@@ -5,6 +5,7 @@ import org.egov.digit.expense.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.config.Constants;
 import org.egov.mdms.model.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,10 @@ public class MdmsUtil {
 
 
 
-    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
-                                                                                List<String> masterNameList) {
+    public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId) {
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
-        MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId, moduleName, masterNameList);
+        MdmsCriteriaReq mdmsCriteriaReq = prepareMdMsRequest(requestInfo, tenantId);
         Object response = new HashMap<>();
         MdmsResponse mdmsResponse = new MdmsResponse();
         try {
@@ -56,26 +56,35 @@ public class MdmsUtil {
 	 * prepares Master Data request
 	 * 
 	 * @param tenantId
-	 * @param moduleName
-	 * @param masterNames
 	 * @param requestInfo
 	 * @return
 	 */
-	public MdmsCriteriaReq prepareMdMsRequest(RequestInfo requestInfo, String tenantId, String moduleName,
-			List<String> masterNames) {
+	public MdmsCriteriaReq prepareMdMsRequest(RequestInfo requestInfo, String tenantId) {
 
-		List<MasterDetail> masterDetails = new ArrayList<>();
-		masterNames.forEach(name -> {
-			masterDetails.add(MasterDetail.builder().name(name).build());
+		// Criteria for tenant module
+		List<MasterDetail> tenantMasterDetails = new ArrayList<>();
+		Constants.TENANT_MDMS_MASTER_NAMES.forEach(name -> {
+			tenantMasterDetails.add(MasterDetail.builder().name(name).build());
 		});
 
-		ModuleDetail moduleDetail = ModuleDetail.builder()
-				.moduleName(moduleName)
-				.masterDetails(masterDetails)
+		ModuleDetail tenantModuleDetail = ModuleDetail.builder()
+				.moduleName(Constants.TENANT_MODULE_NAME)
+				.masterDetails(tenantMasterDetails)
 				.build();
-		
+
+		// Criteria for Expense module
+		List<MasterDetail> expenseMasterDetails = new ArrayList<>();
+		Constants.EXPENSE_MDMS_MASTER_NAMES.forEach(name -> {
+			expenseMasterDetails.add(MasterDetail.builder().name(name).build());
+		});
+		ModuleDetail expenseModuleDetail = ModuleDetail.builder()
+				.moduleName(Constants.EXPENSE_MODULE_NAME)
+				.masterDetails(expenseMasterDetails)
+				.build();
+
 		List<ModuleDetail> moduleDetails = new ArrayList<>();
-		moduleDetails.add(moduleDetail);
+		moduleDetails.add(tenantModuleDetail);
+		moduleDetails.add(expenseModuleDetail);
 		
 		MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
 				.tenantId(tenantId)
