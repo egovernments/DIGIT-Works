@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,13 @@ public class Estimate {
     @JsonProperty("businessService")
     @Size(min = 2,max = 64)
     private String businessService = null;
+
+    @JsonProperty("versionNumber")
+    private BigDecimal versionNumber = null;
+
+    @JsonProperty("oldUuid")
+    @Size(min = 2,max = 64)
+    private String oldUuid = null;
 
     @JsonProperty("projectId")
     @Size(min = 2,max = 64)

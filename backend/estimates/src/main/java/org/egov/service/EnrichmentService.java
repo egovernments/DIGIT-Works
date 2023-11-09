@@ -18,11 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.egov.util.EstimateServiceConstant.ACTION_REJECT;
-import static org.egov.util.EstimateServiceConstant.ALLOW_EDITING_ROLES;
+import static org.egov.util.EstimateServiceConstant.*;
 
 @Service
 @Slf4j
@@ -51,8 +51,11 @@ public class EnrichmentService {
         log.info("EnrichmentService::enrichEstimateOnCreate");
         RequestInfo requestInfo = request.getRequestInfo();
         Estimate estimate = request.getEstimate();
+        String tenantId = estimate.getTenantId();
+        Estimate estimateForRevision = null;
         List<EstimateDetail> estimateDetails = estimate.getEstimateDetails();
         Address address = estimate.getAddress();
+
         enrichNoOfUnit(estimateDetails);
 
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, true);
@@ -62,17 +65,29 @@ public class EnrichmentService {
         Date currentDT = new Date();
         BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
         estimate.setProposalDate(proposalDate);
+        if(estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()){
+            EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
+                    EstimateSearchCriteria.SortBy.createdTime).build();
+            List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
+            estimateForRevision = estimateList.get(0);
+            for(Estimate estimate1: estimateList){
+                if(estimate1.getWfStatus().equals(ESTIMATE_APPROVED_STATUS)){
+                    estimate.setOldUuid(estimate1.getId());
+                    break;
+                }
+            }
+            estimate.setVersionNumber(estimateForRevision.getVersionNumber().add(BigDecimal.valueOf(1)));
+            estimate.setRevisionNumber(estimateForRevision.getEstimateNumber() + "/RE-" + (estimate.getVersionNumber().subtract(BigDecimal.valueOf(1))));
+        }else{
+            List<String> estimateNumbers = getIdList(requestInfo, tenantId
+                    , config.getIdgenEstimateNumberName(), config.getIdgenEstimateNumberFormat(), 1);
 
-        String tenantId = estimate.getTenantId();
-
-        List<String> estimateNumbers = getIdList(requestInfo, tenantId
-                , config.getIdgenEstimateNumberName(), config.getIdgenEstimateNumberFormat(), 1);
-
-        if (estimateNumbers != null && !estimateNumbers.isEmpty()) {
-            String estimateNumber = estimateNumbers.get(0);
-            estimate.setEstimateNumber(estimateNumber);
+            if (estimateNumbers != null && !estimateNumbers.isEmpty()) {
+                String estimateNumber = estimateNumbers.get(0);
+                estimate.setEstimateNumber(estimateNumber);
+                estimate.setVersionNumber(BigDecimal.valueOf(1));
+            }
         }
-
 
         address.setId(UUID.randomUUID().toString());
         //enrich estimate detail & amount detail - id(s)

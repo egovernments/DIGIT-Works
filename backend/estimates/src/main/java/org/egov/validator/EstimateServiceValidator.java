@@ -14,6 +14,7 @@ import org.egov.repository.EstimateRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.ContractUtils;
 import org.egov.util.MDMSUtils;
+import org.egov.util.MeasurementUtils;
 import org.egov.util.ProjectUtil;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,8 @@ public class EstimateServiceValidator {
 
     @Autowired
     private ContractUtils contractUtils;
+    @Autowired
+    private MeasurementUtils measurementUtils;
 
     /**
      * validate the create estimate request for all the mandatory
@@ -63,15 +66,20 @@ public class EstimateServiceValidator {
         validateRequestInfo(requestInfo, errorMap);
         validateEstimate(estimate, errorMap);
         validateWorkFlow(workflow, errorMap);
-        if(estimate.getBusinessService().equalsIgnoreCase(config.getBuisnessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
+        if(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
             if(estimate.getEstimateNumber() == null){
                 errorMap.put("INVALID_ESTIMATE", "Estimate number is mandatory for revision estimate");
             }
             EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
                     EstimateSearchCriteria.SortBy.createdTime).build();
             List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
-            estimateForRevision = estimateList.get(0);
-            if(!REVISION_ESTIMATE_INVALID_WF_STATUS.contains(estimateList.get(0).getWfStatus())){
+            for (Estimate estimate1 : estimateList) {
+                if (estimate1.getWfStatus().equalsIgnoreCase(ESTIMATE_APPROVED_STATUS)) {
+                    estimateForRevision = estimate1;
+                    break;
+                }
+            }
+            if(estimateForRevision == null){
                 errorMap.put("INVALID_ESTIMATE", "Estimate number is invalid for revision estimate");
             }
         }
@@ -103,7 +111,7 @@ public class EstimateServiceValidator {
 
         validateNoOfUnit(estimateDetails);
 
-        if(estimate.getBusinessService().equalsIgnoreCase(config.getBuisnessService()) && config.getRevisionEstimateActiveStatus() && estimateForRevision != null){
+        if(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus() && estimateForRevision != null){
             validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
         }
 
@@ -126,7 +134,7 @@ public class EstimateServiceValidator {
         }
         else{
             String contractNumber = contractNumbers.get(0).toString();
-
+            Object measurementResponse = measurementUtils.getMeasurementDetails(estimateRequest, contractNumber);
         }
     }
 

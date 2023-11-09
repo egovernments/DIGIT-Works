@@ -81,4 +81,5 @@ public class EstimateServiceConstant {
     public static final String LOCATION_BOUNDARY_NAME_CODE ="$.*.*.boundary.*.name";
 
     public static final List<String> REVISION_ESTIMATE_INVALID_WF_STATUS = Arrays.asList("CANCELLED", "APPROVED");
+    public static final String ESTIMATE_APPROVED_STATUS = "APPROVED";
 }

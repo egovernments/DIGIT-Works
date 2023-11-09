@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -45,6 +46,10 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             String wfStatus = rs.getString("wf_status");
             String name = rs.getString("name");
             String description = rs.getString("description");
+            String revisionNumber = rs.getString("revision_number");
+            String businessService = rs.getString("business_service");
+            BigDecimal versionNumber = rs.getBigDecimal("version_number");
+            String oldUuid = rs.getString("old_uuid");
             String referenceNumber = rs.getString("reference_number");
             String executingDepartment = rs.getString("executing_department");
             String createdby = rs.getString("created_by");
@@ -62,6 +67,7 @@ public class EstimateRowMapper implements ResultSetExtractor<List<Estimate>> {
             Estimate estimate = Estimate.builder().estimateNumber(estimateNumber).id(id)
                     .wfStatus(wfStatus).status(Estimate.StatusEnum.fromValue(status)).projectId(projectId)
                     .additionalDetails(additionalDetails).tenantId(tenantId).name(name)
+                    .revisionNumber(revisionNumber).businessService(businessService).versionNumber(versionNumber).oldUuid(oldUuid)
                     .description(description).referenceNumber(referenceNumber).executingDepartment(executingDepartment)
                     .proposalDate(proposalDate).auditDetails(auditDetails).build();
 

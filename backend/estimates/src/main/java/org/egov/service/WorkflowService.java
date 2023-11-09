@@ -173,7 +173,11 @@ public class WorkflowService {
         org.egov.web.models.Workflow workflow = request.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setBusinessId(estimate.getEstimateNumber());
+        if(estimate.getBusinessService().equals(serviceConfiguration.getRevisionEstimateBusinessService()) && serviceConfiguration.getRevisionEstimateActiveStatus()){
+            processInstance.setBusinessId(estimate.getRevisionNumber());
+        }else{
+            processInstance.setBusinessId(estimate.getEstimateNumber());
+        }
         processInstance.setAction(request.getWorkflow().getAction());
         processInstance.setModuleName(serviceConfiguration.getEstimateWFModuleName());
         processInstance.setTenantId(estimate.getTenantId());
