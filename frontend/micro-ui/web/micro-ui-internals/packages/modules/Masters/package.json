@@ -1,6 +1,6 @@
 {
     "name": "@egovernments/digit-ui-module-masters",
-    "version": "0.2.30",
+    "version": "0.2.31",
     "description": "Masters Module UI",
     "main": "dist/index.js",
     "module": "dist/index.modern.js",
