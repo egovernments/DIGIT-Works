@@ -244,9 +244,7 @@ public class ContractServiceValidator {
     }
 
     private Object fetchMDMSDataForValidation(RequestInfo requestInfo, String tenantId){
-        String rootTenantId = tenantId.split("\\.")[0];
-        return mdmsUtils.fetchMDMSForValidation(requestInfo, rootTenantId);
-
+        return mdmsUtils.fetchMDMSForValidation(requestInfo, tenantId);
     }
     private void validateTenantIdAgainstMDMS(Object mdmsData,String tenantId) {
         List<Object> tenantRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);

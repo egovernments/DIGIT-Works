@@ -403,8 +403,7 @@ public class ExpenseCalculatorServiceValidator {
 //    }
 
     private Object fetchMDMSDataForValidation(RequestInfo requestInfo, String tenantId){
-        String rootTenantId = tenantId.split("\\.")[0];
-        return mdmsUtils.fetchMDMSForValidation(requestInfo, rootTenantId);
+        return mdmsUtils.fetchMDMSForValidation(requestInfo, tenantId);
 
     }
 

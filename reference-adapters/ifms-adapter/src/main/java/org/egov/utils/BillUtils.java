@@ -166,10 +166,9 @@ public class BillUtils {
 
 	public JSONArray getHeadCode(RequestInfo requestInfo, String tenantId) {
 		log.info("Getting HOA list from mdms");
-		String rootTenantId = tenantId.split("\\.")[0];
 		List<String> headCodeMasters = new ArrayList<>();
 		headCodeMasters.add(MDMS_HEAD_CODES_MASTER);
-		Map<String, Map<String, JSONArray>> headCodeResponse = mdmsUtils.fetchMdmsData(requestInfo, rootTenantId, MDMS_EXPENSE_MODULE_NAME, headCodeMasters);
+		Map<String, Map<String, JSONArray>> headCodeResponse = mdmsUtils.fetchMdmsData(requestInfo, tenantId, MDMS_EXPENSE_MODULE_NAME, headCodeMasters);
 		JSONArray headCodeList = headCodeResponse.get(MDMS_EXPENSE_MODULE_NAME).get(MDMS_HEAD_CODES_MASTER);
 		log.info("Fetched HOA list from mdms");
 		return headCodeList;
