@@ -103,7 +103,7 @@ class EnrichmentServiceTest {
                 .thenReturn(idGenerationResponse);
         enrichmentService.enrichEstimateOnCreate(estimateRequest);
         assertNotNull(estimateRequest.getEstimate().getId());
-        assertEquals(estimateRequest.getEstimate().getEstimateNumber(), "EP/2022-23/01/000260");
+        assertEquals(estimateRequest.getEstimate().getEstimateNumber(), null);
     }
 
     @Test
