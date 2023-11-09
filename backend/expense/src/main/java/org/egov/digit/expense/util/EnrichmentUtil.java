@@ -50,7 +50,7 @@ public class EnrichmentUtil {
 		AuditDetails audit = getAuditDetails(createdBy, true);
 		String billNumberIdFormatName = bill.getBusinessService().toLowerCase().concat(Constants.BILL_ID_FORMAT_SUFFIX);
 		String billNumber = idgenUtil
-				.getIdList(billRequest.getRequestInfo(), bill.getTenantId().split("\\.")[0], billNumberIdFormatName, null, 1).get(0);
+				.getIdList(billRequest.getRequestInfo(), bill.getTenantId(), billNumberIdFormatName, null, 1).get(0);
 
 	    bill.setId(UUID.randomUUID().toString());
         bill.setAuditDetails(audit);
@@ -224,7 +224,7 @@ public class EnrichmentUtil {
         payment.setReferenceStatus(defaultReferenceStatus);
         
 		String paymentNumber = idgenUtil.getIdList(paymentRequest.getRequestInfo(),
-				payment.getTenantId().split("\\.")[0],
+				payment.getTenantId(),
 				Constants.PAYMENT_ID_FORMAT_NAME,
 				null, // id-format is not needed, setting to null
 				1).get(0);

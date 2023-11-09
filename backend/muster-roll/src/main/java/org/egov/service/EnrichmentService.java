@@ -88,7 +88,7 @@ public class EnrichmentService {
         musterRoll.setAuditDetails(auditDetails);
 
         //musterRollNumber - Idgen
-        String rootTenantId = musterRoll.getTenantId().split("\\.")[0];
+        String rootTenantId = musterRoll.getTenantId();
         List<String> musterNumbers = getIdList(requestInfo, rootTenantId
                 , config.getIdgenMusterRollNumberName(), "", 1); //idformat will be fetched by idGen service
         if (musterNumbers != null && !musterNumbers.isEmpty()) {

@@ -193,14 +193,14 @@ public class NotificationService {
      * @return
      */
     public String getMessage(EstimateRequest request, String msgCode) {
-        String rootTenantId = request.getEstimate().getTenantId().split("\\.")[0];
+        String tenantId = request.getEstimate().getTenantId();
         RequestInfo requestInfo = request.getRequestInfo();
         String locale = "en_IN";
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
-        Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(requestInfo, rootTenantId,
+        Map<String, Map<String, String>> localizedMessageMap = getLocalisedMessages(requestInfo, tenantId,
                 locale, EstimateServiceConstant.ESTIMATE_MODULE_CODE);
-        return localizedMessageMap.get(locale + "|" + rootTenantId).get(msgCode);
+        return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
     }
 
     /**

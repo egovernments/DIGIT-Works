@@ -244,9 +244,7 @@ public class ContractServiceValidator {
     }
 
     private Object fetchMDMSDataForValidation(RequestInfo requestInfo, String tenantId){
-        String rootTenantId = tenantId.split("\\.")[0];
-        return mdmsUtils.fetchMDMSForValidation(requestInfo, rootTenantId);
-
+        return mdmsUtils.fetchMDMSForValidation(requestInfo, tenantId);
     }
     private void validateTenantIdAgainstMDMS(Object mdmsData,String tenantId) {
         List<Object> tenantRes = commonUtil.readJSONPathValue(mdmsData,JSON_PATH_FOR_TENANTS_VERIFICATION);
@@ -666,6 +664,8 @@ public class ContractServiceValidator {
         validateDuplicateTimeExtensionRequest (contractRequest);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
+        // Validate LineItemRef is same as previous contract
+        validateLineItemRef(contractRequest, contractsFromDB);
 
     }
 
@@ -701,6 +701,9 @@ public class ContractServiceValidator {
         validateSupplementNumber (contractRequest);
         // Validate if extended end date is not before active contract end date
         validateEndDateExtension(contractRequest, contractsFromDB);
+        // Validate LineItemRef is same as previous contract
+        validateLineItemRef(contractRequest, contractsFromDB);
+
     }
     private void validateContractNumber (ContractRequest contractRequest) {
         if (contractRequest.getContract().getContractNumber() == null || contractRequest.getContract().getContractNumber().isEmpty()) {
@@ -757,6 +760,15 @@ public class ContractServiceValidator {
             int comparisionResult = contractRequest.getContract().getEndDate().compareTo(contract.getEndDate());
             if (comparisionResult < 0) {
                 throw new CustomException("END_DATE_NOT_EXTENDED","End date should not be earlier than previous end date");
+            }
+        }
+    }
+
+    private void validateLineItemRef(ContractRequest contractRequest, List<Contract> contractsFromDB) {
+        Set<String> contractLineItemRef = contractsFromDB.get(0).getLineItems().stream().map(lineItems -> lineItems.getContractLineItemRef()).collect(Collectors.toSet());
+        for (LineItems lineItems : contractRequest.getContract().getLineItems()) {
+            if (!contractLineItemRef.contains(lineItems.getContractLineItemRef())) {
+                throw new CustomException("LINE_ITEM_REF_MISMATCH", "Contract Line Item Ref not present in previous contract " + lineItems.getContractLineItemRef());
             }
         }
     }

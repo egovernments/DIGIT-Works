@@ -80,11 +80,11 @@ public class ContractEnrichment {
             markLineItemsAndAmountBreakupsStatus(contractRequest, Status.INWORKFLOW);
 
         } else {
-            // Enrich LineItems
-            enrichContractLineItems(contractRequest,mdmsForEnrichment);
             // Enrich Contract Number
             enrichContractNumber(contractRequest);
         }
+        // Enrich LineItems
+        enrichContractLineItems(contractRequest,mdmsForEnrichment);
         // Enrich UUID and AuditDetails
         enrichIdsAgreementDateAndAuditDetailsOnCreate(contractRequest);
 
@@ -111,9 +111,8 @@ public class ContractEnrichment {
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Contract contract = contractRequest.getContract();
         String tenantId = contract.getTenantId();
-        String rootTenantId = tenantId.split("\\.")[0];
         String contractType = contract.getContractType();
-        Object mdmsData = mdmsUtils.fetchMDMSForEnrichment(requestInfo, rootTenantId, contractType);
+        Object mdmsData = mdmsUtils.fetchMDMSForEnrichment(requestInfo, tenantId, contractType);
         log.info("MDMS data fetched for enrichment. ContractId ["+contract.getId()+"]");
         return mdmsData;
     }
@@ -364,6 +363,8 @@ public class ContractEnrichment {
                 versionNumber += 1;
             }
             contract.setVersionNumber(versionNumber);
+        } else {
+            contract.getLineItems().forEach(lineItems -> lineItems.setContractLineItemRef(UUID.randomUUID().toString()));
         }
         contract.setId(String.valueOf(UUID.randomUUID()));
         BigDecimal agreementDate = contract.getAgreementDate();
@@ -394,8 +395,7 @@ public class ContractEnrichment {
     private void enrichContractNumber(ContractRequest contractRequest) {
         RequestInfo requestInfo = contractRequest.getRequestInfo();
         Contract contract = contractRequest.getContract();
-        String rootTenantId = contract.getTenantId().split("\\.")[0];
-        List<String> idList = idgenUtil.getIdList(requestInfo, rootTenantId, config.getIdgenContractNumberName(), "", 1);
+        List<String> idList = idgenUtil.getIdList(requestInfo, contract.getTenantId(), config.getIdgenContractNumberName(), "", 1);
         String generatedContractNumber = idList.get(0);
         contract.setContractNumber(generatedContractNumber);
         log.info("Contract Number enrichment is done. Generated Contract Number["+generatedContractNumber+"]");

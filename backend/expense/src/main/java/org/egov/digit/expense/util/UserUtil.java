@@ -105,37 +105,4 @@ public class UserUtil {
         return  d.getTime();
     }
 
-    /**
-     * enriches the userInfo with state-level tenantId and other fields
-     * The function creates user with user-name as mobile number.
-     * @param mobileNumber
-     * @param tenantId
-     * @param userInfo
-     */
-    public void addUserDefaultFields(String mobileNumber,String tenantId, User userInfo, UserType userType){
-        Role role = getCitizenRole(tenantId);
-        userInfo.setRoles(Collections.singleton(role));
-        userInfo.setType(userType);
-        userInfo.setUsername(mobileNumber);
-        userInfo.setTenantId(getStateLevelTenant(tenantId));
-        userInfo.setActive(true);
-    }
-
-    /**
-     * Returns role object for citizen
-     * @param tenantId
-     * @return
-     */
-    private Role getCitizenRole(String tenantId){
-        Role role = Role.builder().build();
-        role.setCode("CITIZEN");
-        role.setName("Citizen");
-        role.setTenantId(getStateLevelTenant(tenantId));
-        return role;
-    }
-
-    public String getStateLevelTenant(String tenantId){
-        return tenantId.split("\\.")[0];
-    }
-
 }
