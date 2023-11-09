@@ -47,7 +47,7 @@ public class MeasurementRegistryUtil {
     public List<Measurement> searchMeasurements(MeasurementCriteria searchCriteria, MeasurementSearchRequest measurementSearchRequest) {
 
         handleNullPagination(measurementSearchRequest);
-        if (StringUtils.isEmpty(searchCriteria.getTenantId()) || searchCriteria == null) {
+        if (searchCriteria == null || StringUtils.isEmpty(searchCriteria.getTenantId())) {
             throw new CustomException(TENANT_ID_MANDATORY_CODE, TENANT_ID_MANDATORY_MSG);
         }
         List<Measurement> measurements = serviceRequestRepository.getMeasurements(searchCriteria, measurementSearchRequest);
