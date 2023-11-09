@@ -51,13 +51,13 @@ public class OrganisationRepository {
 
     @Autowired
     private ContactDetailsOrgIdsRowMapper contactDetailsOrgIdsRowMapper;
-
-
-
+    @Autowired
+    private EncryptionService encryptionService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     public List<Organisation> getOrganisations(OrgSearchRequest orgSearchRequest) {
+        encryptionService.encryptDetails(orgSearchRequest,ORGANISATION_ENCRYPT_KEY);
         //Fetch organisation ids based on identifierType and identifierValue search criteria
         Set<String> orgIdsFromIdentifierSearch = getOrgIdsForIdentifiersBasedOnSearchCriteria(orgSearchRequest);
         //Fetch organisation ids based on boundaryCode in  search criteria
@@ -103,6 +103,8 @@ public class OrganisationRepository {
         List<Identifier> identifiers = getIdentifiersBasedOnOrganisationIds(organisationIds);
 
         log.info("Fetched organisation details for search request");
+
+        encryptionService.decrypt(organisations,ORGANISATION_ENCRYPT_KEY,orgSearchRequest);
 
         //Construct Organisation Objects with fetched organisations, addresses, contactDetails, jurisdictions, identifiers and documents using Organisation id
         return buildOrganisationSearchResult(organisations, addresses, contactDetails, documents, jurisdictions, identifiers);
