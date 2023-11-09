@@ -2,7 +2,6 @@ package org.egov.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.util.EncryptionDecryptionUtil;
 import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -19,8 +17,7 @@ public class EncryptionService {
     private EncryptionDecryptionUtil encryptionDecryptionUtil;
     public OrgRequest encryptDetails(OrgRequest orgRequest,String key){
         List<Organisation> organisationList = orgRequest.getOrganisations();
-//        String stateLevelTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
-        String stateLevelTenantId = "pg";
+        String stateLevelTenantId = organisationList.get(0).getTenantId().split("\\.")[0];
         for(Organisation organisation: organisationList){
             if (!CollectionUtils.isEmpty(organisation.getContactDetails())) {
                 List<ContactDetails> encryptedContactDetails = (List<ContactDetails>) encryptionDecryptionUtil
@@ -35,10 +32,10 @@ public class EncryptionService {
         OrgSearchCriteria searchCriteria = orgSearchRequest.getSearchCriteria();
         if (StringUtils.isNotBlank(searchCriteria.getTenantId())){
             String stateLevelTenantId = searchCriteria.getTenantId().split("\\.")[0];
-            OrgSearchCriteria encryptedSearchCrteria = (OrgSearchCriteria) encryptionDecryptionUtil
+            OrgSearchCriteria encryptedSearchCriteria = encryptionDecryptionUtil
                     .encryptObject(searchCriteria, stateLevelTenantId, key, OrgSearchCriteria.class);
 
-            orgSearchRequest.setSearchCriteria(encryptedSearchCrteria);
+            orgSearchRequest.setSearchCriteria(encryptedSearchCriteria);
         }
         return orgSearchRequest;
     }
@@ -46,7 +43,7 @@ public class EncryptionService {
     public List<Organisation> decrypt(List<Organisation> organisationList, String key,OrgSearchRequest orgSearchRequest){
         for(Organisation organisation: organisationList){
             List<ContactDetails> contactDetailsList = organisation.getContactDetails();
-            List<ContactDetails> decryptContactDetails = (List<ContactDetails>) encryptionDecryptionUtil.decryptObject(contactDetailsList,key,Organisation.class,orgSearchRequest.getRequestInfo());
+            List<ContactDetails> decryptContactDetails = encryptionDecryptionUtil.decryptObject(contactDetailsList, key, ContactDetails.class, orgSearchRequest.getRequestInfo());
             organisation.setContactDetails(decryptContactDetails);
         }
         return organisationList;
