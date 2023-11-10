@@ -19,29 +19,33 @@ import java.util.List;
 @Slf4j
 public class EstimateService {
 
-    @Autowired
-    private EstimateServiceConfiguration serviceConfiguration;
+    private final EstimateServiceConfiguration serviceConfiguration;
+
+    private final Producer producer;
+
+    private final EstimateServiceValidator serviceValidator;
+
+    private final EnrichmentService enrichmentService;
+
+    private final EstimateRepository estimateRepository;
+
+    private final WorkflowService workflowService;
+
+    private final CalculationService calculationService;
+
+    private final NotificationService notificationService;
 
     @Autowired
-    private Producer producer;
-
-    @Autowired
-    private EstimateServiceValidator serviceValidator;
-
-    @Autowired
-    private EnrichmentService enrichmentService;
-
-    @Autowired
-    private EstimateRepository estimateRepository;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private CalculationService calculationService;
-
-    @Autowired
-    private NotificationService notificationService;
+    public EstimateService(EstimateServiceConfiguration serviceConfiguration, Producer producer, EstimateServiceValidator serviceValidator, EnrichmentService enrichmentService, EstimateRepository estimateRepository, WorkflowService workflowService, CalculationService calculationService, NotificationService notificationService) {
+        this.serviceConfiguration = serviceConfiguration;
+        this.producer = producer;
+        this.serviceValidator = serviceValidator;
+        this.enrichmentService = enrichmentService;
+        this.estimateRepository = estimateRepository;
+        this.workflowService = workflowService;
+        this.calculationService = calculationService;
+        this.notificationService = notificationService;
+    }
 
     /**
      * Create Estimate by validating the details, enriched , update the workflow
@@ -70,7 +74,7 @@ public class EstimateService {
     public List<Estimate> searchEstimate(RequestInfoWrapper requestInfoWrapper, EstimateSearchCriteria searchCriteria) {
         log.info("EstimateService::searchEstimate");
         serviceValidator.validateEstimateOnSearch(requestInfoWrapper, searchCriteria);
-        enrichmentService.enrichEstimateOnSearch(requestInfoWrapper.getRequestInfo(), searchCriteria);
+        enrichmentService.enrichEstimateOnSearch(searchCriteria);
 
         List<Estimate> estimateList = estimateRepository.getEstimate(searchCriteria);
 

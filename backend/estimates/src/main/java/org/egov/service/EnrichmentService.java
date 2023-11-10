@@ -28,17 +28,21 @@ import static org.egov.util.EstimateServiceConstant.*;
 @Slf4j
 public class EnrichmentService {
 
-    @Autowired
-    private EstimateServiceUtil estimateServiceUtil;
+    private final EstimateServiceUtil estimateServiceUtil;
+
+    private final IdGenRepository idGenRepository;
+
+    private final EstimateServiceConfiguration config;
+
+    private final EstimateRepository estimateRepository;
 
     @Autowired
-    private IdGenRepository idGenRepository;
-
-    @Autowired
-    private EstimateServiceConfiguration config;
-
-    @Autowired
-    private EstimateRepository estimateRepository;
+    public EnrichmentService(EstimateServiceUtil estimateServiceUtil, IdGenRepository idGenRepository, EstimateServiceConfiguration config, EstimateRepository estimateRepository) {
+        this.estimateServiceUtil = estimateServiceUtil;
+        this.idGenRepository = idGenRepository;
+        this.config = config;
+        this.estimateRepository = estimateRepository;
+    }
 
 
     /**
@@ -61,11 +65,10 @@ public class EnrichmentService {
         AuditDetails auditDetails = estimateServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), estimate, true);
         estimate.setAuditDetails(auditDetails);
         estimate.setId(UUID.randomUUID().toString());
-        //TODO -check with FE ?
         Date currentDT = new Date();
         BigDecimal proposalDate = new BigDecimal(currentDT.getTime());
         estimate.setProposalDate(proposalDate);
-        if(estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()){
+        if(estimate.getBusinessService().equals(config.getRevisionEstimateBusinessService()) && Boolean.TRUE.equals(config.getRevisionEstimateActiveStatus())){
             EstimateSearchCriteria estimateSearchCriteria = EstimateSearchCriteria.builder().tenantId(estimate.getTenantId()).estimateNumber(estimate.getEstimateNumber()).sortOrder(EstimateSearchCriteria.SortOrder.DESC).sortBy(
                     EstimateSearchCriteria.SortBy.createdTime).build();
             List<Estimate> estimateList = estimateRepository.getEstimate(estimateSearchCriteria);
@@ -135,7 +138,7 @@ public class EnrichmentService {
      * @param requestInfo
      * @param searchCriteria
      */
-    public void enrichEstimateOnSearch(RequestInfo requestInfo, EstimateSearchCriteria searchCriteria) {
+    public void enrichEstimateOnSearch(EstimateSearchCriteria searchCriteria) {
         log.info("EnrichmentService::enrichEstimateOnSearch");
         if (searchCriteria.getLimit() == null)
             searchCriteria.setLimit(config.getDefaultLimit());
@@ -187,45 +190,6 @@ public class EnrichmentService {
             }
         }
 
-    }
-
-    /**
-     * If the workflow action is 'REJECT' then assignee will be updated
-     * with user id that is having role as 'EST_CREATOR'  (i.e the 'auditDetails.createdBy')
-     *
-     * @param request
-     */
-    private void enrichUpdateEstimateWorkFlowForActionReject(EstimateRequest request) {
-        log.info("EnrichmentService::enrichUpdateEstimateWorkFlowForActionReject");
-        Workflow workflow = request.getWorkflow();
-        AuditDetails auditDetails = request.getEstimate().getAuditDetails();
-        List<String> updatedAssignees = new ArrayList<>();
-        updatedAssignees.add(auditDetails.getCreatedBy());
-        if (workflow.getAction().equals(ACTION_REJECT)) {
-            workflow.setAssignees(updatedAssignees);
-        }
-    }
-
-    /**
-     * Check the user has edit('or' update) roles
-     *
-     * @param requestInfo
-     * @return
-     */
-    private boolean enrichEstimateBasedOnRole(RequestInfo requestInfo) {
-        log.info("EnrichmentService::enrichEstimateBasedOnRole");
-        User userInfo = requestInfo.getUserInfo();
-        boolean rolePresent = false;
-        if (userInfo.getRoles() != null && !userInfo.getRoles().isEmpty()) {
-            List<org.egov.common.contract.request.Role> roles = userInfo.getRoles();
-            List<String> updateRoles = Arrays.asList(ALLOW_EDITING_ROLES.split(","));
-
-            rolePresent = roles.stream().anyMatch(role -> {
-                return updateRoles.contains(role.getCode());
-            });
-
-        }
-        return rolePresent;
     }
 
     public void enrichNoOfUnit(List<EstimateDetail> estimateDetails){

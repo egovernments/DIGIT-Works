@@ -31,22 +31,27 @@ import static org.egov.util.EstimateServiceConstant.*;
 @Slf4j
 public class EstimateServiceValidator {
 
-    @Autowired
-    private MDMSUtils mdmsUtils;
+    private final MDMSUtils mdmsUtils;
+
+    private final EstimateRepository estimateRepository;
+
+    private final ProjectUtil projectUtil;
+    private final EstimateServiceConfiguration config;
+    final ObjectMapper mapper;
+
+    private final ContractUtils contractUtils;
+    private final MeasurementUtils measurementUtils;
 
     @Autowired
-    private EstimateRepository estimateRepository;
-
-    @Autowired
-    private ProjectUtil projectUtil;
-    @Autowired
-    private EstimateServiceConfiguration config;
-    @Autowired ObjectMapper mapper;
-
-    @Autowired
-    private ContractUtils contractUtils;
-    @Autowired
-    private MeasurementUtils measurementUtils;
+    public EstimateServiceValidator(MDMSUtils mdmsUtils, EstimateRepository estimateRepository, ProjectUtil projectUtil, EstimateServiceConfiguration config, ObjectMapper mapper, ContractUtils contractUtils, MeasurementUtils measurementUtils) {
+        this.mdmsUtils = mdmsUtils;
+        this.estimateRepository = estimateRepository;
+        this.projectUtil = projectUtil;
+        this.config = config;
+        this.mapper = mapper;
+        this.contractUtils = contractUtils;
+        this.measurementUtils = measurementUtils;
+    }
 
     /**
      * validate the create estimate request for all the mandatory
@@ -94,14 +99,13 @@ public class EstimateServiceValidator {
         validateProjectId(request, errorMap);
 
         List<EstimateDetail> estimateDetails =estimate.getEstimateDetails();
-        Set<String> uniqueIdentifiers = new HashSet<String>();
-        for(int i=0;i<estimateDetails.size();i++){
-            EstimateDetail estimateDetail = estimateDetails.get(i);
-            if(estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) && estimateDetail.getSorId() != null) {
+        Set<String> uniqueIdentifiers = new HashSet<>();
+        for (EstimateDetail estimateDetail : estimateDetails) {
+            if (estimateDetail.getCategory().equalsIgnoreCase(SOR_CODE) && estimateDetail.getSorId() != null) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
             }
         }
-        if (uniqueIdentifiers.size() != 0) {
+        if (!uniqueIdentifiers.isEmpty()) {
             Object mdmsDataV2ForSor = mdmsUtils.mdmsCallV2ForSor(request, rootTenantId, uniqueIdentifiers, false);
 
             validateMDMSDataV2ForSor(estimate, mdmsDataV2ForSor, uniqueIdentifiers, errorMap);
@@ -111,7 +115,7 @@ public class EstimateServiceValidator {
 
         validateNoOfUnit(estimateDetails);
 
-        if(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus() && estimateForRevision != null){
+        if(Boolean.TRUE.equals(estimate.getBusinessService().equalsIgnoreCase(config.getRevisionEstimateBusinessService()) && config.getRevisionEstimateActiveStatus()) && estimateForRevision != null){
             validateContractAndMeasurementBook(request, estimateForRevision, errorMap);
         }
 
@@ -130,12 +134,18 @@ public class EstimateServiceValidator {
             throw new CustomException("JSONPATH_ERROR", "Failed to parse contract search response");
         }
         if(contractNumbers == null || contractNumbers.isEmpty()){
-            errorMap.put("INVALID_CONTRACT", "No contract found for the given estimate");
+            log.info("No contract found for the given estimate");
         }
         else{
+            log.info("Contract found for the given estimate");
             String contractNumber = contractNumbers.get(0).toString();
-//            Object measurementResponse = measurementUtils.getMeasurementDetails(estimateRequest, contractNumber);
+            Object measurementResponse = measurementUtils.getMeasurementDetails(estimateRequest, contractNumber);
+            validateMeasurement(measurementResponse, estimateRequest, errorMap);
         }
+    }
+
+    private void validateMeasurement(Object measurementResponse, EstimateRequest estimateRequest, Map<String, String> errorMap) {
+        log.info("EstimateServiceValidator::validateMeasurement");
     }
 
     private void validateMDMSDataForUOM(Estimate estimate, Object mdmsDataForUOM, Map<String, String> errorMap) {
@@ -200,10 +210,7 @@ public class EstimateServiceValidator {
                     allNull = false;
                 }
                 double totalNew = total.doubleValue();
-                if(totalNew==estimateDetail.getNoOfunit() || allNull){
-                    continue;
-                }
-                else{
+                if (totalNew != estimateDetail.getNoOfunit() && !allNull) {
                     throw new CustomException("NO_OF_UNIT", "noOfUnit value is not correct");
                 }
             }
@@ -389,8 +396,8 @@ public class EstimateServiceValidator {
         }
 
         Comparator<JsonNode> comparator = (o1, o2) -> {
-            String startDate1 = o1.get("validFrom").asText();
-            String startDate2 = o2.get("validFrom").asText();
+            String startDate1 = o1.get(VALID_FROM).asText();
+            String startDate2 = o2.get(VALID_FROM).asText();
             return startDate1.compareTo(startDate2);
         };
 
@@ -402,7 +409,7 @@ public class EstimateServiceValidator {
             Long validFrom = null;
             Long validTo = null;
             try {
-                String str =  sortedJsonArray.get(i).get("validFrom").asText();
+                String str =  sortedJsonArray.get(i).get(VALID_FROM).asText();
                 validFrom = Long.parseLong(str);
             }catch (Exception e) {
                 log.error("No start date for this object");
@@ -675,10 +682,9 @@ public class EstimateServiceValidator {
         validateMDMSData(estimate, mdmsData, mdmsDataForOverHead, errorMap, false);
         validateMDMSDataForUOM(estimate, mdmsDataForUOM, errorMap);
 
-        Set<String> uniqueIdentifiers = new HashSet<String>();
-        for(int i=0;i<estimateDetails.size();i++){
-            EstimateDetail estimateDetail = estimateDetails.get(i);
-            if(estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
+        Set<String> uniqueIdentifiers = new HashSet<>();
+        for (EstimateDetail estimateDetail : estimateDetails) {
+            if (estimateDetail.getCategory().equalsIgnoreCase("SOR") && estimateDetail.getSorId() != null) {
                 uniqueIdentifiers.add(estimateDetail.getSorId());
             }
         }

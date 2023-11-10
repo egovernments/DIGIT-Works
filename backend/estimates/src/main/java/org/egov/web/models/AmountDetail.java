@@ -2,7 +2,6 @@ package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.egov.tracer.model.CustomException;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
