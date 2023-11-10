@@ -133,12 +133,12 @@ const workflowDataDetails = async (tenantId, businessIds) => {
     return response
 }
 
-const getWageSeekerSkills = async () => {
+const getWageSeekerSkills = async (data) => {
   const skills = {}
   const skillResponse = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "common-masters", [{"name": "WageSeekerSkills"}])
   const labourChangesResponse = await Digit.MDMSService.getMultipleTypesWithFilter(Digit.ULBService.getStateId(), "expense", [{"name": "LabourCharges"}])
   skillResponse?.['common-masters']?.WageSeekerSkills.forEach(item => {
-    let amount = labourChangesResponse?.["expense"]?.LabourCharges?.find(charge => charge?.code === item?.code && charge?.effectiveFrom < Date.now() && (charge?.effectiveTo == null || charge?.effectiveTo > Date.now()))?.amount
+    let amount = labourChangesResponse?.["expense"]?.LabourCharges?.find(charge => charge?.code === item?.code && charge?.effectiveFrom < data?.musterRolls?.[0]?.auditDetails?.createdTime && (charge?.effectiveTo == null || charge?.effectiveTo > data?.musterRolls?.[0]?.auditDetails?.createdTime))?.amount
     let skillWithAmount = {...item, amount}
     skills[item.code] = skillWithAmount
   })
@@ -149,7 +149,7 @@ export const fetchAttendanceDetails = async (t, tenantId, searchParams) => {
   try {
     const response = await AttendanceService.search(tenantId, searchParams);
     // const workflowDetails = await workflowDataDetails(tenantId, searchParams.musterRollNumber);
-    const skills = await getWageSeekerSkills()
+    const skills = await getWageSeekerSkills(response)
     
     return transformViewDataToApplicationDetails(t, response, skills)
   } catch (error) {
