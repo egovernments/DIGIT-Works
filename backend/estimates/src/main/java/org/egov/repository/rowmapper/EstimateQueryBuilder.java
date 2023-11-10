@@ -116,6 +116,30 @@ public class EstimateQueryBuilder {
             preparedStmtList.add(searchCriteria.getProjectId());
         }
 
+        if (StringUtils.isNotBlank(searchCriteria.getBusinessService())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.business_service=? ");
+            preparedStmtList.add(searchCriteria.getBusinessService());
+        }
+
+        if (StringUtils.isNotBlank(searchCriteria.getRevisionNumber())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.revision_number=? ");
+            preparedStmtList.add(searchCriteria.getRevisionNumber());
+        }
+
+        if (searchCriteria.getVersionNumber() != null) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.version_number=? ");
+            preparedStmtList.add(searchCriteria.getVersionNumber());
+        }
+
+        if (StringUtils.isNotBlank(searchCriteria.getOldUuid())) {
+            addClauseIfRequired(preparedStmtList, queryBuilder);
+            queryBuilder.append(" est.old_uuid=? ");
+            preparedStmtList.add(searchCriteria.getOldUuid());
+        }
+
         //added the default as active line item and amount detail
         addClauseIfRequired(preparedStmtList, queryBuilder);
         queryBuilder.append(" estDetail.is_active=? ");
